@@ -30,7 +30,7 @@ import java.io.PipedOutputStream;
  *      support infrastructure.
  * 
  * @author			Paul Bender, Copyright (C) 2009
- * @version			$Revision: 1.4 $
+ * @version			$Revision: 1.4.6.1 $
  */
 
 public class XNetSimulatorAdapter extends XNetPortController implements Runnable{
@@ -295,7 +295,7 @@ public class XNetSimulatorAdapter extends XNetPortController implements Runnable
     /**
      * Read a single byte, protecting against various timeouts, etc.
      * <P>
-     * When a javax.comm port is set to have a
+     * When a gnu.io port is set to have a
      * receive timeout (via the enableReceiveTimeout() method),
      * some will return zero bytes or an EOFException at the end of the timeout.
      * In that case, the read should be repeated to get the next real character.
