@@ -50,6 +50,14 @@
 ; -------------------------------------------------------------------------
 ; - Version History
 ; -------------------------------------------------------------------------
+; - Version 0.1.8.0
+; - Update installer for migration to new version of RXTX ensuring that
+; - correct version of the .dll is installed for 32-bit or 64-bit
+; -------------------------------------------------------------------------
+; - Version 0.1.7.0
+; - Update to ensure removal of crimson.jar library file in both old and
+; - new file layouts
+; -------------------------------------------------------------------------
 ; - Version 0.1.6.0
 ; - Corrected an error where old install location was not being read back
 ; - if previously installed.
@@ -129,7 +137,7 @@
 !define COPYRIGHT "© 1997-2009 JMRI Community"  ; Copyright string
 !define JMRI_VER  "2.8"                       ; Application version
 !define JRE_VER   "1.5"                         ; Required JRE version
-!define INST_VER  "0.1.6.0"                     ; Installer version
+!define INST_VER  "0.1.8.0"                     ; Installer version
 !define PNAME     "${APP}.${JMRI_VER}"          ; Name of installer.exe
 !define SRCDIR    "."                           ; Path to head of sources
 InstallDir        "$PROGRAMFILES\JMRI"          ; Default install directory
@@ -300,7 +308,7 @@ SectionGroup "JMRI Core Files" SEC_CORE
     Delete "$INSTDIR\jdom-jdk11.jar"
     
     ; -- Delete old .jar & support files in lib/ directory
-    ; [Placeholder for now]
+    Delete "$INSTDIR\lib\crimson.jar"
 
     ; -- Delete .jar & support files installed using previous layout
     Delete "$INSTDIR\activation.jar"
@@ -351,14 +359,29 @@ SectionGroup "JMRI Core Files" SEC_CORE
   
   Section "COM Library" SEC_COMLIB
     SectionIn RO  ; This section always selected
-    ; -- win32com library files installed here
-    SetOutPath "$JAVADIR\lib"
-    File /a "${SRCDIR}\javax.comm.properties"
-    SetOutPath "$JAVADIR\lib\ext"
-    File /a "${SRCDIR}\Serialio.jar"
-    SetOutPath "$JAVADIR\bin"
-    File /a "${SRCDIR}\jspWin.dll"
-    File /a "${SRCDIR}\win32com.dll"
+    #; -- win32com library files installed here
+    #SetOutPath "$JAVADIR\lib"
+    #File /a "${SRCDIR}\javax.comm.properties"
+    #SetOutPath "$JAVADIR\lib\ext"
+    #File /a "${SRCDIR}\Serialio.jar"
+    #SetOutPath "$JAVADIR\bin"
+    #File /a "${SRCDIR}\jspWin.dll"
+    #File /a "${SRCDIR}\win32com.dll"
+    
+    SetOutPath "$INSTDIR\lib"
+    
+    ; -- Check if we're running on x64
+    Call CheckIf64bit
+    Pop $0
+    
+    StrCmp $0 "0" Notx64 Isx64
+    Isx64:
+      File /a "${SRCDIR}\lib\win64\rxtxSerial.dll"
+      Goto DoneComLib
+    Notx64:
+      File /a "${SRCDIR}\lib\win32\rxtxSerial.dll"
+    DoneComLib:
+
   SectionEnd ; SEC_COMLIB
 
   Section "Help" SEC_HELP
@@ -372,7 +395,8 @@ SectionGroup "JMRI Core Files" SEC_CORE
     SectionIn RO  ; This section always selected
     ; -- Library files installed here
     SetOutPath "$INSTDIR\lib"
-    File /a /r "${SRCDIR}\lib\*.*"
+    ; -- Match all files in 'lib' but do not recurse into sub-directories
+    File /a "${SRCDIR}\lib\*.*"
     
     ; -- Extract and run OpenAL library installer in silent mode
     ; [Ignored for now]
@@ -1271,6 +1295,26 @@ Function un.GetParent
     Pop $1
     Exch $0
 
+FunctionEnd
+
+Function CheckIf64bit
+; -------------------------------------------------------------------------
+; - Check if this installer is running on a 64-bit system
+; - input:  none
+; - output: result on top of stack (0 if 32-bit; 1 if 64-bit)
+; -------------------------------------------------------------------------
+
+  ; -- Save variables to the stack
+  Push $0
+  
+  ; -- Determine if we're running on x64
+  System::Call kernel32::GetCurrentProcess()i.s
+  System::Call kernel32::IsWow64Process(is,*i.s)
+  Pop $0
+
+  ; -- Restore variables from the stack
+  Exch $0
+  
 FunctionEnd
 
 Function RemoveObsoleteDecoderDefinitions
