@@ -127,12 +127,12 @@ Joal 1.1.2
 jmdns.jar 
     from http://sourceforge.net/projects/jmdns
 
+jakarta-regexp-1.5.jar
 
 
 
 Older, no longer present:
 
-JMRI 1.9/2.0 had the jakarta-regexp-1.5.jar present in this directory
 
 #crimson.jar             
 # version 1.1.3
