@@ -53,6 +53,8 @@
 ; - Version 0.1.8.0
 ; - Update installer for migration to new version of RXTX ensuring that
 ; - correct version of the .dll is installed for 32-bit or 64-bit
+; - Also, changed the SerialIO installation to be localised to the JMRI
+; - program directory, rather than in the system-wide JRE
 ; -------------------------------------------------------------------------
 ; - Version 0.1.7.0
 ; - Update to ensure removal of crimson.jar library file in both old and
@@ -157,6 +159,7 @@ Var OFFLINEINSTALL ; a flag determining if this is an offline install
 Var JREINSTALLCOUNT ; a counter holding times around the JRE install loop
 Var REMOVEOLDINSTALL ; a flag to determine if old installer to be removed
 Var REMOVEOLDJMRI.BACKUPONLY ; a flag to determine if we should back-up
+Var UPGRADING ; a flag to determine if we are upgrading
 
 ; -------------------------------------------------------------------------
 ; - Compiler Flags (to reduce executable size, saves some bytes)
@@ -359,16 +362,22 @@ SectionGroup "JMRI Core Files" SEC_CORE
   
   Section "COM Library" SEC_COMLIB
     SectionIn RO  ; This section always selected
-    #; -- win32com library files installed here
-    #SetOutPath "$JAVADIR\lib"
-    #File /a "${SRCDIR}\javax.comm.properties"
-    #SetOutPath "$JAVADIR\lib\ext"
-    #File /a "${SRCDIR}\Serialio.jar"
-    #SetOutPath "$JAVADIR\bin"
-    #File /a "${SRCDIR}\jspWin.dll"
-    #File /a "${SRCDIR}\win32com.dll"
     
+    ; -- If we're upgrading, we need to make sure that
+    ; -- any previously loaded library files in the JRE
+    ; -- are removed
+    
+    StrCmp $UPGRADING "1" 0 InstallComLib
+    Delete "$JAVADIR\lib\javax.comm.properties"
+    Delete "$JAVADIR\lib\ext\Serialio.jar"
+    Delete "$JAVADIR\bin\jspWin.dll"
+    Delete "$JAVADIR\bin\win32com.dll"
+    
+    InstallComLib:
     SetOutPath "$INSTDIR\lib"
+    
+    ; -- SerialIO native library
+    File /a "${SRCDIR}\jspWin.dll"
     
     ; -- Check if we're running on x64
     Call CheckIf64bit
@@ -919,6 +928,9 @@ Function nsDialogRemoveOldJMRI
   Push $2
   Push $3
   
+  ; -- Default to not upgrading
+  StrCpy $UPGRADING 0
+  
   ; -- First check if JMRI has been installed (Current User first, then All Users)
   ReadRegStr $0 HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\JMRI" "DisplayName"
   StrCmp $0 "" 0 CheckOld
@@ -927,7 +939,9 @@ Function nsDialogRemoveOldJMRI
   
   CheckOld:
     ; -- If we get to here, then an old JMRI installation exists
-    ; -- default to uninstall and backup
+    StrCpy $UPGRADING 1
+    
+    ; -- Default to uninstall and backup
     StrCpy $REMOVEOLDJMRI.BACKUPONLY 0
     StrCpy $2 "This previous installation should be removed.$\r$\nThis wizard will backup any existing roster files and settings."
     StrCpy $3 "Remove old ${APP} installation and backup existing files"
