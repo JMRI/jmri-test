@@ -38,8 +38,6 @@
 
  <indexitem text="Consisting " target="html.tools.consisttool.ConsistTool"/>
 
- <indexitem text="Debug Menu " target="package.jmri.jmrit.DebugMenu"/>
-
  <indexitem text="DecoderPro " target="html.apps.DecoderPro.index">
   <indexitem text="Error Messages " target="html.tools.programmer.messages"/>
 
@@ -254,8 +252,6 @@
   <indexitem text="Viewing Files " target="html.apps.PanelPro.ShowPanel"/>
 
  </indexitem>
- <indexitem text="Panels Menu " target="package.jmri.jmrit.display.PanelMenuHelp"/>
-
  <indexitem text="PM4 " target="package.jmri.jmrix.loconet.pm4.PM4Frame"/>
 
  <indexitem text="PR2 " target="html.hardware.loconet.PR2"/>
@@ -448,4 +444,6 @@
   <indexitem text="Viewing Panel Files " target="html.apps.PanelPro.ShowPanel"/>
 
  </indexitem>
+ <indexitem text="Panels Menu " target="package.jmri.jmrit.display.PanelMenuHelp"/>
+
 </index>

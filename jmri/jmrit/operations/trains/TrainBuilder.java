@@ -33,7 +33,7 @@ import jmri.jmrit.operations.setup.Setup;
  * Builds a train and creates the train's manifest. 
  * 
  * @author Daniel Boudreau  Copyright (C) 2008, 2009
- * @version             $Revision: 1.70 $
+ * @version             $Revision: 1.69 $
  */
 public class TrainBuilder extends TrainCommon{
 	
@@ -178,24 +178,18 @@ public class TrainBuilder extends TrainCommon{
 		// show road names that this train will service
 		if (!train.getRoadOption().equals(Train.ALLROADS)){
 			String[] roads = train.getRoadNames();
-			StringBuffer sbuf = new StringBuffer("");    	
+	    	String roadNames ="";
 	    	for (int i=0; i<roads.length; i++){
-	    		sbuf = sbuf.append(roads[i]+", ");
+	    		roadNames = roadNames + roads[i]+", ";
 	    	}
-	       	// remove trailing separators
-	        if (sbuf.length() > 2) sbuf.setLength(sbuf.length()-2);
-	    	String roadNames = sbuf.toString();
 	    	addLine(fileOut, FIVE, "Train ("+train.getName()+") "+train.getRoadOption()+" roads: "+roadNames);
 		}
 		// show car types that this train will service
 		String[] types =train.getTypeNames();
-		StringBuffer sbuf = new StringBuffer("");
+		String typeNames ="";
     	for (int i=0; i<types.length; i++){
-    		sbuf = sbuf.append(types[i]+", ");
+    		typeNames = typeNames + types[i]+", ";
     	}
-    	// remove trailing separators
-        if (sbuf.length() > 2) sbuf.setLength(sbuf.length()-2);
-    	String typeNames = sbuf.toString();
     	addLine(fileOut, FIVE, "Train ("+train.getName()+") services rolling stock types: "+typeNames);
 		
 		// does train terminate into staging?
@@ -721,14 +715,11 @@ public class TrainBuilder extends TrainCommon{
 		// show engine types that this train will service
 		if (reqNumEngines >0){
 			String[] engineTypes = EngineTypes.instance().getNames();
-			StringBuffer sbuf = new StringBuffer("");
+			String typeNames ="";
 			for (int i=0; i<engineTypes.length; i++){
 				if (train.acceptsTypeName(engineTypes[i]))
-					sbuf = sbuf.append(engineTypes[i]+", ");
-			}   		
-			// remove trailing separators
-			if (sbuf.length() > 2) sbuf.setLength(sbuf.length()-2);
-			String typeNames = sbuf.toString();
+					typeNames = typeNames + engineTypes[i]+", ";
+			}
 			addLine(fileOut, FIVE, "Train ("+train.getName()+") services engine types: "+typeNames);
 		}
 		
