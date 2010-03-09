@@ -11,7 +11,7 @@ import jmri.util.zeroconf.ZeroConfUtil;
 
 import jmri.InstanceManager;
 
-import jmri.jmris.srcp.parser.SRCP_ProtocolParser;
+import jmri.jmris.srcp.parser.SRCPParser;
 import jmri.jmris.srcp.parser.ParseException;
 import jmri.jmris.srcp.parser.SRCPVisitor;
 import jmri.jmris.srcp.parser.SimpleNode;
@@ -20,7 +20,7 @@ import jmri.jmris.srcp.parser.*;
 /**
  * This is an implementaiton of SRCP for JMRI.
  * @author Paul Bender Copyright (C) 2009
- * @version $Revision: 1.5.2.1 $
+ * @version $Revision: 1.5.2.1.2.1 $
  *
  */
 public class JmriSRCPServer extends JmriServer{
@@ -67,7 +67,7 @@ public class JmriSRCPServer extends JmriServer{
      @SuppressWarnings("deprecation")
      public void handleClient(DataInputStream inStream, DataOutputStream outStream) throws IOException {
         // Listen for commands from the client until the connection closes
-        SRCP_ProtocolParser parser = null;
+        SRCPParser parser = null;
 	String cmd; 
 	int index=0;
         int runmode=HANDSHAKEMODE;
@@ -122,7 +122,7 @@ public class JmriSRCPServer extends JmriServer{
 	      }
            } else if (SRCPSERVERMODE == COMMANDMODE ){
 
-              if(parser==null) parser = new SRCP_ProtocolParser(inStream); 
+              if(parser==null) parser = new SRCPParser(inStream); 
               try {
                   SimpleNode e = parser.command();
                   SRCPVisitor v = new SRCPVisitor();

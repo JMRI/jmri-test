@@ -6,18 +6,18 @@ options {
   VISITOR=true;
 }
 
-PARSER_BEGIN(SRCP_ProtocolParser)
+PARSER_BEGIN(SRCPParser)
 
 package jmri.jmris.srcp.parser;
 
-public class SRCP_ProtocolParser {
+public class SRCPParser {
 
 
-   static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SRCP_ProtocolParser.class.getName());
+   static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SRCPParser.class.getName());
 
   }
 
-PARSER_END(SRCP_ProtocolParser)
+PARSER_END(SRCPParser)
 
 // The Tokenizer specification begins here:
 SKIP :

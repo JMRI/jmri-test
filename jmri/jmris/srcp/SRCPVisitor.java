@@ -2,7 +2,7 @@
 
 package jmri.jmris.srcp.parser;
 
-public class SRCPVisitor implements SRCP_ProtocolParserVisitor {
+public class SRCPVisitor implements SRCPParserVisitor {
 
 
   public Object visit(SimpleNode node, Object data)
