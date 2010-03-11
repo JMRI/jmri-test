@@ -10,6 +10,15 @@ PARSER_BEGIN(SRCPParser)
 
 package jmri.jmris.srcp.parser;
 
+/* 
+ * This file defines a JavaTree/JavaCC parser implementation for
+ * the SRCP protocol.
+ * 
+ * @author Paul Bender Copyright (C) 2010
+ * @version $Revision: 1.1.2.1.2.2 $
+ */
+
+
 public class SRCPParser {
 
 
@@ -22,9 +31,9 @@ PARSER_END(SRCPParser)
 // The Tokenizer specification begins here:
 SKIP :
 {
-  <RETURN: "\r">
-| <NEWLINE: "\n">
-| <SPACE: " ">
+    <RETURN: "\r">
+  | <NEWLINE: "\n">
+  | <SPACE: " ">
   
 }
 
@@ -45,7 +54,7 @@ TOKEN :
 | < MINSEC: ["0"-"5"]["0"-"9"]>
 | < DELAY: ("-")?(["0"-"9"])+>
 //| < COMMENT: (~["\n"])+ >
-| < EOL :(["\n"]["\r"])+ >
+| < EOL :(["\n","\r"]){2} >
 // Device types
 | < FB: <F><B> >
 | < GA: <G><A> >
@@ -107,29 +116,32 @@ SimpleNode command():{}
   }
 }
 
-SimpleNode bus():{}
+void bus():{Token t;}
 {
-  <ADDR>
+  t=<ADDR>
   {
-    log.debug("BUS Production");
+    log.debug("BUS Production " + t.image);
+    jjtThis.jjtSetValue(t.image);
+    //return jjtThis;
+  }
+}
+
+SimpleNode address():{Token t;}
+{
+  t=<ADDR>
+  {
+    log.debug("Address Production "+ t.image);
+    jjtThis.jjtSetValue(t.image);
     return jjtThis;
   }
 }
 
-SimpleNode address():{}
+SimpleNode port():{Token t;}
 {
-  <ADDR>
+  t=<ADDR>
   {
-    log.debug("Address Production");
-    return jjtThis;
-  }
-}
-
-SimpleNode port():{}
-{
-  <ADDR>
-  {
-    log.debug("PORT Production");
+    log.debug("PORT Production " +t.image);
+    jjtThis.jjtSetValue(t.image);
     return jjtThis;
   }
 }
@@ -187,7 +199,7 @@ SimpleNode term():{}
 SimpleNode check():{}
 {
   <CHECK> bus() ( gl() | sm() | ga() <ADDR> <ADDR> <ADDR> <DELAY> | 
-                 fb() | time() | power() <ONOFF> | lock() )
+                 fb() | time() | power() onoff() | lock() )
   {
     log.debug("Check Production");
     return jjtThis;
@@ -255,40 +267,58 @@ SimpleNode fb():{}
   {return jjtThis;}
 }
 
-SimpleNode time():{}
+SimpleNode time():{Token t;}
 {
-  <TIME> 
-  {return jjtThis;}
+  t=<TIME> 
+  {
+    jjtThis.jjtSetValue(t.image);
+    return jjtThis;
+  }
 }
 
-SimpleNode power():{}
+SimpleNode power():{Token t;}
 {
-  <POWER> 
-  {return jjtThis;}
+  t=<POWER> 
+  {
+    jjtThis.jjtSetValue(t.image);
+    return jjtThis;
+  }
 }
 
-SimpleNode server():{}
+SimpleNode server():{Token t;}
 {
-  <SERVER> 
-  {return jjtThis;}
+  t=<SERVER> 
+  {
+    jjtThis.jjtSetValue(t.image);
+    return jjtThis;
+  }
 }
 
-SimpleNode session():{}
+SimpleNode session():{Token t;}
 {
-  <SESSION> 
-  {return jjtThis;}
+  t=<SESSION> 
+  {
+    jjtThis.jjtSetValue(t.image);
+    return jjtThis;
+  }
 }
 
-SimpleNode lock():{}
+SimpleNode lock():{Token t;}
 {
-  <LOCK> 
-  {return jjtThis;}
+  t=<LOCK> 
+  {
+    jjtThis.jjtSetValue(t.image);
+    return jjtThis;
+  }
 }
 
-SimpleNode description():{}
+SimpleNode description():{Token t;}
 {
-  <DESCRIPTION> 
-  {return jjtThis;}
+  t=<DESCRIPTION> 
+  {
+    jjtThis.jjtSetValue(t.image);
+    return jjtThis;
+  }
 }
 
 SimpleNode comment():{}
@@ -297,10 +327,14 @@ SimpleNode comment():{}
   {return jjtThis;}
 }
 
-SimpleNode onoff():{}
+SimpleNode onoff():{Token t;}
 {
-  <ONOFF>
-  {return jjtThis;}
+  t=<ONOFF>
+  {
+     log.debug("OnOff Production " +t.image);
+     jjtThis.jjtSetValue(t.image);
+     return jjtThis;
+  }
 }
 
 SimpleNode zeroone():{}

@@ -9,8 +9,6 @@ import java.io.*;
 // imports for ZeroConf.
 import jmri.util.zeroconf.ZeroConfUtil;
 
-import jmri.InstanceManager;
-
 import jmri.jmris.srcp.parser.SRCPParser;
 import jmri.jmris.srcp.parser.ParseException;
 import jmri.jmris.srcp.parser.SRCPVisitor;
@@ -20,7 +18,7 @@ import jmri.jmris.srcp.parser.*;
 /**
  * This is an implementaiton of SRCP for JMRI.
  * @author Paul Bender Copyright (C) 2009
- * @version $Revision: 1.5.2.1.2.1 $
+ * @version $Revision: 1.5.2.1.2.2 $
  *
  */
 public class JmriSRCPServer extends JmriServer{
@@ -73,7 +71,8 @@ public class JmriSRCPServer extends JmriServer{
         int runmode=HANDSHAKEMODE;
 
         // interface components
-        JmriSRCPPowerServer powerServer = new JmriSRCPPowerServer(outStream);
+        serviceHandler sh= new serviceHandler();
+        sh.setPowerServer(new JmriSRCPPowerServer(outStream));
 
         // Start by sending a welcome message
         outStream.writeBytes("SRCP 0.8.3\n");
@@ -126,7 +125,7 @@ public class JmriSRCPServer extends JmriServer{
               try {
                   SimpleNode e = parser.command();
                   SRCPVisitor v = new SRCPVisitor();
-                  e.jjtAccept(v,null);
+                  e.jjtAccept(v,sh);
               } catch (ParseException pe){
                    if(log.isDebugEnabled())
                    {
@@ -135,50 +134,6 @@ public class JmriSRCPServer extends JmriServer{
                    }
                    outStream.writeBytes("425 ERROR not supported\n");
               }
-          /*    int bus;
-              if(cmd.startsWith("GET")){
-                        index=cmd.indexOf(" ",index)+1;
-                        bus=Integer.parseInt(cmd.substring(index,cmd.indexOf(" ")));
-                        index=cmd.indexOf(" ",index)+1;
-                        if(cmd.substring(index).startsWith("POWER")){
-			   try {
-		 		powerServer.sendStatus(InstanceManager.powerManagerInstance().getPower());
-                           } catch(jmri.JmriException je) {
-                             outStream.writeBytes("425 ERROR not supported\n");
-                           }
-                        }
-                        else {
-                           outStream.writeBytes("425 ERROR not supported\n");
-                        }
-              } else if(cmd.startsWith("SET")){
-                        index=cmd.indexOf(" ",index)+1;
-                        bus=Integer.parseInt(cmd.substring(index,cmd.indexOf(" ",index)));
-                        index=cmd.indexOf(" ",index)+1;
-                        if(log.isDebugEnabled()) 
-                           log.debug("Bus: " + bus);
-                        if(cmd.substring(index).startsWith("POWER")){
-			    try {
-                                powerServer.parseStatus(cmd);
-				powerServer.sendStatus(InstanceManager.powerManagerInstance().getPower());
-                            } catch(jmri.JmriException je) {
-                              outStream.writeBytes("425 ERROR not supported\n");
-                            }
-                        } else {
-                           outStream.writeBytes("425 ERROR not supported\n");
-                        }
-              } else if(cmd.startsWith("CHECK")){
-                  outStream.writeBytes("425 ERROR not supported\n");
-              } else if(cmd.startsWith("WAIT")){
-                  outStream.writeBytes("425 ERROR not supported\n");
-              } else if(cmd.startsWith("INIT")){
-                  outStream.writeBytes("425 ERROR not supported\n");
-              } else if(cmd.startsWith("TERM")){
-                  outStream.writeBytes("425 ERROR not supported\n");
-              } else if(cmd.startsWith("RESET")){
-                  outStream.writeBytes("425 ERROR not supported\n");
-              } else if(cmd.startsWith("VERIFY")){
-                  outStream.writeBytes("425 ERROR not supported\n");
-              }*/
            } else if (SRCPSERVERMODE == INFOMODE) {
               cmd = inStream.readLine(); 
               if(log.isDebugEnabled()) log.debug("Received from client: " + cmd);
