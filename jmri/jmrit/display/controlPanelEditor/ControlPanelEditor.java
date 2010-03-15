@@ -79,15 +79,8 @@ public class ControlPanelEditor extends Editor {
     private boolean _newItem = false;       // item newly created in this session
 //    private String _name;
 
-    public ControlPanelEditor() {
-    }
-
     public ControlPanelEditor(String name) {
         super(name);
-        init(name);
-    }
-
-    protected void init(String name) {
         _debug = log.isDebugEnabled();
         java.awt.Container contentPane = this.getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
@@ -323,7 +316,7 @@ public class ControlPanelEditor extends Editor {
         _fileMenu.add(editItem);
         editItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-					changeView("jmri.jmrit.display.panelEditor.PanelEditor");
+					changeView("jmri.jmrit.display.panelEditor.configurexml.PanelEditorXml");
                 }
             });
 
