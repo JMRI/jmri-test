@@ -15,7 +15,7 @@ package jmri.jmris.srcp.parser;
  * the SRCP protocol.
  * 
  * @author Paul Bender Copyright (C) 2010
- * @version $Revision: 1.1.2.1.2.2 $
+ * @version $Revision: 1.1.2.1.2.3 $
  */
 
 
@@ -255,10 +255,13 @@ SimpleNode sm():{}
   {return jjtThis;}
 }
 
-SimpleNode ga():{}
+SimpleNode ga():{Token t;}
 {
-  <GA>
-  {return jjtThis;}
+  t=<GA>
+  { 
+    jjtThis.jjtSetValue(t.image);
+    return jjtThis;
+  }
 }
 
 SimpleNode fb():{}

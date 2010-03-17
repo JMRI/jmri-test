@@ -18,7 +18,7 @@ import jmri.jmris.srcp.parser.*;
 /**
  * This is an implementaiton of SRCP for JMRI.
  * @author Paul Bender Copyright (C) 2009
- * @version $Revision: 1.5.2.1.2.2 $
+ * @version $Revision: 1.5.2.1.2.3 $
  *
  */
 public class JmriSRCPServer extends JmriServer{
@@ -73,9 +73,10 @@ public class JmriSRCPServer extends JmriServer{
         // interface components
         serviceHandler sh= new serviceHandler();
         sh.setPowerServer(new JmriSRCPPowerServer(outStream));
+        sh.setTurnoutServer(new JmriSRCPTurnoutServer(inStream,outStream));
 
-        // Start by sending a welcome message
-        outStream.writeBytes("SRCP 0.8.3\n");
+          // Start by sending a welcome message
+          outStream.writeBytes("SRCP 0.8.3\n");
 
 	    while(true) {
 	   // Read the command from the client

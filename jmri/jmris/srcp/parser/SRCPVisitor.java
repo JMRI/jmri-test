@@ -7,7 +7,7 @@ import jmri.InstanceManager;
 /* This class provides an interface between the JavaTree/JavaCC 
  * parser for the SRCP protocol and the JMRI back end.
  * @author Paul Bender Copyright (C) 2010
- * @version $Revision: 1.1.2.2 $
+ * @version $Revision: 1.1.2.3 $
  */
 
 public class SRCPVisitor implements SRCPParserVisitor {
@@ -23,10 +23,12 @@ public class SRCPVisitor implements SRCPParserVisitor {
     log.debug("Command " + node.jjtGetValue() );
     return node.childrenAccept(this,data);
   }
+
+
   public Object visit(ASTget node, Object data)
   {
     log.debug("Get " +((SimpleNode)node.jjtGetChild(1)).jjtGetValue());
-    if(((SimpleNode)node.jjtGetChild(1)).jjtGetValue().equals("POWER"))
+    if(((SimpleNode)node.jjtGetChild(1)).jjtGetValue().equals("POWER")) {
        try {
        ((jmri.jmris.serviceHandler)data).getPowerServer().sendStatus(
                            InstanceManager.powerManagerInstance().getPower());
@@ -35,12 +37,25 @@ public class SRCPVisitor implements SRCPParserVisitor {
              // If we do, something is horibly wrong.
        } catch(java.io.IOException ie) {
        }
+    }
+    else if(((SimpleNode)node.jjtGetChild(1)).jjtGetValue().equals("GA"))
+    {
+       int bus = Integer.parseInt(((String)((SimpleNode)node.jjtGetChild(0)).jjtGetValue()));
+       int address = Integer.parseInt(((String)((SimpleNode)node.jjtGetChild(2)).jjtGetValue()));
+       try {
+       ((jmri.jmris.srcp.JmriSRCPTurnoutServer)((jmri.jmris.serviceHandler)data).getTurnoutServer()).sendStatus(bus,address);
+       } catch(java.io.IOException ie) {
+       }
+    }
     return data;
   }
+
+
   public Object visit(ASTset node, Object data)
   {
     log.debug("Set " +((SimpleNode)node.jjtGetChild(1)).jjtGetValue());
     if(((SimpleNode)node.jjtGetChild(1)).jjtGetValue().equals("POWER"))
+    {
        try {
        ((jmri.jmris.serviceHandler)data).getPowerServer().parseStatus(
                   ((String)((SimpleNode)node.jjtGetChild(2)).jjtGetValue()));
@@ -48,8 +63,25 @@ public class SRCPVisitor implements SRCPParserVisitor {
              // We shouldn't have any errors here.
              // If we do, something is horibly wrong.
        }
+    }
+    else if(((SimpleNode)node.jjtGetChild(1)).jjtGetValue().equals("GA"))
+    {
+       int bus = Integer.parseInt(((String)((SimpleNode)node.jjtGetChild(0)).jjtGetValue()));
+       int address = Integer.parseInt(((String)((SimpleNode)node.jjtGetChild(2)).jjtGetValue()));
+       int port = Integer.parseInt(((String)((SimpleNode)node.jjtGetChild(3)).jjtGetValue()));
+
+       try {
+       ((jmri.jmris.srcp.JmriSRCPTurnoutServer)((jmri.jmris.serviceHandler)data).getTurnoutServer()).parseStatus(bus,address,port);
+       } catch(jmri.JmriException je) {
+             // We shouldn't have any errors here.
+             // If we do, something is horibly wrong.
+       } catch(java.io.IOException ie) {
+       }
+    }
     return data;
   }
+
+
   public Object visit(ASTterm node, Object data)
   {
     log.debug("TERM " +((SimpleNode)node.jjtGetChild(1)).jjtGetValue());
