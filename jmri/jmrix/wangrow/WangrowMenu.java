@@ -4,6 +4,7 @@ package jmri.jmrix.wangrow;
 
 import java.util.ResourceBundle;
 
+import jmri.jmrix.nce.NceSystemConnectionMemo;
 import javax.swing.JMenu;
 
 /**
@@ -13,19 +14,24 @@ import javax.swing.JMenu;
  * {@link jmri.jmrix.nce} package.
  *
  * @author	Bob Jacobsen   Copyright 2003
- * @version     $Revision: 1.2 $
+ * @version     $Revision: 1.2.16.1 $
  */
 public class WangrowMenu extends JMenu {
-    public WangrowMenu(String name) {
-        this();
-        setText(name);
-    }
-
-    public WangrowMenu() {
+	
+	NceSystemConnectionMemo memo = null;
+	
+    public WangrowMenu(NceSystemConnectionMemo m) {
 
         super();
+        this.memo = m;
 
         ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.JmrixSystemsBundle");
+        
+        if (memo != null)
+            setText(memo.getUserName());
+        else
+            setText(rb.getString("MenuWangrow"));
+
 
         setText(rb.getString("MenuItemWangrow"));
 
