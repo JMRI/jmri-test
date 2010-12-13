@@ -16,13 +16,17 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import jmri.jmrix.nce.ncemon.NceMonFrame;
+import jmri.jmrix.nce.NceTrafficController;
 
 import jmri.jmrix.nce.*;
 
 public class NceMonFrameTest extends TestCase {
-    
+
+	NceInterfaceScaffold controller;  // holds dummy NceTrafficController for testing
+
     public void testCreate() {
-        NceMonFrame f = new NceMonFrame();
+        controller = new NceInterfaceScaffold();
+        NceMonFrame f = new NceMonFrame(controller);
         Assert.assertNotNull("exists", f );
     }
     

@@ -14,14 +14,14 @@ import junit.framework.TestSuite;
  * JUnit tests for the NcePowerManager class.
  *
  * @author	Bob Jacobsen
- * @version	$Revision: 1.9 $
+ * @version	$Revision: 1.9.12.1 $
  */
 public class NcePowerManagerTest extends AbstractPowerManagerTest {
 
     /**
      * provide an implementation to detect outbound messages
      */
-    class NceInterfaceScaffold extends NceTrafficController {
+    public class NceInterfaceScaffold extends NceTrafficController {
         public NceInterfaceScaffold() {
         }
 
@@ -102,7 +102,7 @@ public class NcePowerManagerTest extends AbstractPowerManagerTest {
     // setup a default NceTrafficController interface
     public void setUp() {
         controller = new NceInterfaceScaffold();
-        p = new NcePowerManager();
+        p = new NcePowerManager(controller, "N");
     }
 
     NceInterfaceScaffold controller;  // holds dummy NceTrafficController for testing
