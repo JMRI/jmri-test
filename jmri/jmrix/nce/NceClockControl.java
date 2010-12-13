@@ -38,7 +38,7 @@ import java.util.ResourceBundle;
  * @author      Ken Cameron Copyright (C) 2007
  * @author      Dave Duchamp Copyright (C) 2007
  * @author		Bob Jacobsen, Alex Shepherd
- * @version     $Revision: 1.16 $
+ * @version     $Revision: 1.16.2.1 $
  */
 public class NceClockControl extends DefaultClockControl implements NceListener
 {
@@ -47,8 +47,10 @@ public class NceClockControl extends DefaultClockControl implements NceListener
     /**
      * Create a ClockControl object for a NCE clock
      */
-    public NceClockControl() {
+    public NceClockControl(NceTrafficController tc, String prefix) {
         super();
+        this.tc = tc;
+        this.prefix = prefix;
 
         // Create a Timebase listener for the Minute change events
         internalClock = InstanceManager.timebaseInstance();
@@ -65,6 +67,9 @@ public class NceClockControl extends DefaultClockControl implements NceListener
         }
         internalClock.addMinuteChangeListener(minuteChangeListener);
     }
+    @SuppressWarnings("unused")
+	private String prefix = "";
+    private NceTrafficController tc = null;
 	
     /* constants, variables, etc */
     
@@ -432,7 +437,7 @@ public class NceClockControl extends DefaultClockControl implements NceListener
         NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_CLOCK_SET_REPLY_SIZE);
         waiting++;
         waitingForCmdRatio = true;
-        jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+        tc.sendNceMessage(cmdNce, this);
     }
     
     @SuppressWarnings("unused")
@@ -441,7 +446,7 @@ public class NceClockControl extends DefaultClockControl implements NceListener
 		NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_CLOCK_SET_REPLY_SIZE);
 		waiting++;
 		waitingForCmd1224 = true;
-		jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+		tc.sendNceMessage(cmdNce, this);
     }
     
     private void issueClockStop() {
@@ -449,7 +454,7 @@ public class NceClockControl extends DefaultClockControl implements NceListener
         NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_CLOCK_SET_REPLY_SIZE);
         waiting++;
         waitingForCmdStop = true;
-        jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+        tc.sendNceMessage(cmdNce, this);
     }
     
     private void issueClockStart() {
@@ -457,7 +462,7 @@ public class NceClockControl extends DefaultClockControl implements NceListener
         NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_CLOCK_SET_REPLY_SIZE);
         waiting++;
         waitingForCmdStart = true;
-        jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+        tc.sendNceMessage(cmdNce, this);
     }
 
     private void issueReadOnlyRequest() {
@@ -466,7 +471,7 @@ public class NceClockControl extends DefaultClockControl implements NceListener
             NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CS_CLOCK_MEM_SIZE);
             waiting++;
             waitingForCmdRead = true;
-            jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+            tc.sendNceMessage(cmdNce, this);
             //			log.debug("issueReadOnlyRequest at " + internalClock.getTime());
         }
     }
@@ -483,7 +488,7 @@ public class NceClockControl extends DefaultClockControl implements NceListener
         NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_MEM_SET_REPLY_SIZE);
         waiting++;
         waitingForCmdTime = true;
-        jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+        tc.sendNceMessage(cmdNce, this);
     }
    
     @SuppressWarnings({ "deprecation", "unused" })

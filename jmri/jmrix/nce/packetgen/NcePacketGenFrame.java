@@ -4,6 +4,7 @@ package jmri.jmrix.nce.packetgen;
 
 import jmri.util.*;
 import jmri.jmrix.nce.*;
+
 import java.awt.*;
 import javax.swing.*;
 
@@ -12,7 +13,7 @@ import javax.swing.*;
  * Frame for user input of Nce messages
  * @author	Bob Jacobsen   Copyright (C) 2001
  * @author Dan Boudreau 	Copyright (C) 2007
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.8.14.1 $
  */
 public class NcePacketGenFrame extends jmri.util.JmriJFrame implements jmri.jmrix.nce.NceListener {
 
@@ -22,6 +23,8 @@ public class NcePacketGenFrame extends jmri.util.JmriJFrame implements jmri.jmri
     javax.swing.JTextField packetTextField = new javax.swing.JTextField(20);
     javax.swing.JCheckBox checkBoxBinCmd = new javax.swing.JCheckBox ();
     javax.swing.JTextField replyLenTextField = new javax.swing.JTextField(2);
+    
+    private NceTrafficController tc = null;
 
     public NcePacketGenFrame() {
         super();
@@ -88,7 +91,7 @@ public class NcePacketGenFrame extends jmri.util.JmriJFrame implements jmri.jmri
 				m.setReplyLen(replyLen);
 			else
 				m.setReplyLen(getMessageLength(m.getOpCode()));
-			NceTrafficController.instance().sendNceMessage(m, this);
+			tc.sendNceMessage(m, this);
 		} else {
 			// ASCII Mode selected
 
@@ -96,7 +99,7 @@ public class NcePacketGenFrame extends jmri.util.JmriJFrame implements jmri.jmri
 			for (int i = 0; i < packetTextField.getText().length(); i++)
 				m.setElement(i, packetTextField.getText().charAt(i));
 
-			NceTrafficController.instance().sendNceMessage(m, this);
+			tc.sendNceMessage(m, this);
 
 		}
 	}

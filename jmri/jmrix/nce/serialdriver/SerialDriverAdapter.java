@@ -25,7 +25,7 @@ import gnu.io.SerialPort;
  *
  *
  * @author			Bob Jacobsen   Copyright (C) 2001, 2002
- * @version			$Revision: 1.49 $
+ * @version			$Revision: 1.49.2.1 $
  */
 public class SerialDriverAdapter extends NcePortController  implements jmri.jmrix.SerialPortAdapter {
 
@@ -34,7 +34,12 @@ public class SerialDriverAdapter extends NcePortController  implements jmri.jmri
     public SerialDriverAdapter() {
         super();
         adaptermemo = new NceSystemConnectionMemo();
-        setManufacturer(jmri.jmrix.DCCManufacturerList.NCE);
+        //setManufacturer(jmri.jmrix.DCCManufacturerList.NCE);
+    }
+
+    @Override
+    public NceSystemConnectionMemo getSystemConnectionMemo() {
+    	return adaptermemo;
     }
 
     public String openPort(String portName, String appName)  {
@@ -109,6 +114,12 @@ public class SerialDriverAdapter extends NcePortController  implements jmri.jmri
      */
     public void configure() {
 
+        // connect to the traffic controller
+        NceTrafficController tc = new NceTrafficController(); 
+        tc.connectPort(this);
+        tc.setAdapterMemo(adaptermemo);
+        adaptermemo.setNceTrafficController(tc);
+        
         if (getCurrentOption1Setting().equals(validOption1()[0])) {
             adaptermemo.configureCommandStation(NceMessage.OPTION_2004);
         } else {
@@ -116,11 +127,6 @@ public class SerialDriverAdapter extends NcePortController  implements jmri.jmri
             adaptermemo.configureCommandStation(NceMessage.OPTION_2006);
         }
         
-        // connect to the traffic controller
-        NceTrafficController tc = NceTrafficController.instance(); 
-        tc.connectPort(this);
-     
-        adaptermemo.setNceTrafficController(tc);
         adaptermemo.configureManagers();
        
         jmri.jmrix.nce.ActiveFlag.setActive();
@@ -185,14 +191,14 @@ public class SerialDriverAdapter extends NcePortController  implements jmri.jmri
     private boolean opened = false;
     InputStream serialStream = null;
 
-    static public SerialDriverAdapter instance() {
-        if (mInstance == null){
-            mInstance = new SerialDriverAdapter();
-        }
-        return mInstance;
-    }
-    
-    static SerialDriverAdapter mInstance = null;
+//    static public SerialDriverAdapter instance() {
+//        if (mInstance == null){
+//            mInstance = new SerialDriverAdapter();
+//        }
+//        return mInstance;
+//    }
+//    
+//    static SerialDriverAdapter mInstance = null;
     
     public void dispose(){
         if (adaptermemo!=null)

@@ -15,19 +15,22 @@ import jmri.jmrix.nce.NceReply;
 
 public class NceMonFrame extends jmri.jmrix.AbstractMonFrame implements NceListener {
 
-	public NceMonFrame() {
+    private NceTrafficController tc = null;
+    
+	public NceMonFrame(NceTrafficController t) {
 		super();
+		this.tc = t;
 	}
 
 	protected String title() { return "NCE Command Monitor"; }
 	
 	protected void init() {
 		// connect to TrafficController
-		NceTrafficController.instance().addNceListener(this);
+		tc.addNceListener(this);
 	}
   
 	public void dispose() {
-		NceTrafficController.instance().removeNceListener(this);
+		tc.removeNceListener(this);
 		super.dispose();
 	}
 			

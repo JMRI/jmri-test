@@ -66,7 +66,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * FF10 = link macro 16 
  * 
  * @author Dan Boudreau Copyright (C) 2007
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.16.6.1 $
  */
 
 public class NceMacroEditFrame extends jmri.util.JmriJFrame implements jmri.jmrix.nce.NceListener {
@@ -193,8 +193,11 @@ public class NceMacroEditFrame extends jmri.util.JmriJFrame implements jmri.jmri
     JButton cmdButton10 = new JButton();
     JButton deleteButton10 = new JButton();	
     
-    public NceMacroEditFrame() {
+    private NceTrafficController tc = null;
+    
+    public NceMacroEditFrame(NceTrafficController t) {
         super();
+        this.tc = t;
     }
  
 
@@ -406,13 +409,13 @@ public class NceMacroEditFrame extends jmri.util.JmriJFrame implements jmri.jmri
 			
 	    	if (ae.getSource() == backUpButton){
 	    		
-	            Thread mb = new NceMacroBackup();
+	            Thread mb = new NceMacroBackup(tc);
 	            mb.setName("Macro Backup");
 	            mb.start ();
 	    	}
 	   		
 	    	if (ae.getSource() == restoreButton){
-	            Thread mr = new NceMacroRestore();
+	            Thread mr = new NceMacroRestore(tc);
 	            mr.setName("Macro Restore");
 	            mr.start ();
 	    	}
@@ -568,7 +571,7 @@ public class NceMacroEditFrame extends jmri.util.JmriJFrame implements jmri.jmri
 		}
 		
 		NceMessage m = readMacroMemory (mN, false);
-		NceTrafficController.instance().sendNceMessage(m, this);
+		tc.sendNceMessage(m, this);
 		return mN;
     }
   
@@ -690,9 +693,9 @@ public class NceMacroEditFrame extends jmri.util.JmriJFrame implements jmri.jmri
         }
           
         NceMessage m = writeMacroMemory(macroNum, macroAccy,  false);
-        NceTrafficController.instance().sendNceMessage(m, this);
+        tc.sendNceMessage(m, this);
         NceMessage m2 = writeMacroMemory(macroNum, macroAccy,  true);
-        NceTrafficController.instance().sendNceMessage(m2, this);
+        tc.sendNceMessage(m2, this);
         return true;
      }
     
@@ -1029,7 +1032,7 @@ public class NceMacroEditFrame extends jmri.util.JmriJFrame implements jmri.jmri
     // gets the last 4 bytes of the macro by reading 16 bytes of data 
     private void getMacro2ndHalf (int mN){
     	NceMessage m = readMacroMemory (mN, true);
-		NceTrafficController.instance().sendNceMessage(m, this);
+		tc.sendNceMessage(m, this);
     }
  
     // Reads 16 bytes of NCE macro memory, and adjusts for second read if needed 

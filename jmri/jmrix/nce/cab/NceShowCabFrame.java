@@ -124,7 +124,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * 
  * @author Dan Boudreau Copyright (C) 2009, 2010
  * @author Ken Cameron Copyright (C) 2010
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.11.2.1 $
  */
 
 public class NceShowCabFrame extends jmri.util.JmriJFrame implements jmri.jmrix.nce.NceListener {
@@ -207,6 +207,8 @@ public class NceShowCabFrame extends jmri.util.JmriJFrame implements jmri.jmrix.
     
     JPanel cabsPanel = new JPanel();
     JScrollPane cabsPane;
+
+    private NceTrafficController tc = null;
     
     public NceShowCabFrame() {
         super();
@@ -584,7 +586,7 @@ public class NceShowCabFrame extends jmri.util.JmriJFrame implements jmri.jmrix.
 		byte[] bl = NceBinaryCommand.accMemoryWriteN(nceCabAddr, 1);
 		bl[4] = (byte)value;
 		NceMessage m = NceMessage.createBinaryMessage(bl, REPLY_1);
-		NceTrafficController.instance().sendNceMessage(m, this);
+		tc.sendNceMessage(m, this);
     }
     
     // Reads 1 byte of NCE cab memory 
@@ -594,7 +596,7 @@ public class NceShowCabFrame extends jmri.util.JmriJFrame implements jmri.jmrix.
     	waiting++;
 		byte[] bl = NceBinaryCommand.accMemoryRead1(nceCabAddr);
 		NceMessage m = NceMessage.createBinaryMessage(bl, REPLY_1);
-		NceTrafficController.instance().sendNceMessage(m, this);
+		tc.sendNceMessage(m, this);
     }
     
     // Reads 16 bytes of NCE cab memory 
@@ -604,7 +606,7 @@ public class NceShowCabFrame extends jmri.util.JmriJFrame implements jmri.jmrix.
     	waiting++;
 		byte[] bl = NceBinaryCommand.accMemoryRead(nceCabAddr);
 		NceMessage m = NceMessage.createBinaryMessage(bl, REPLY_16);
-		NceTrafficController.instance().sendNceMessage(m, this);
+		tc.sendNceMessage(m, this);
     }
     
 	protected void addItem(JPanel p, JComponent c, int x, int y) {

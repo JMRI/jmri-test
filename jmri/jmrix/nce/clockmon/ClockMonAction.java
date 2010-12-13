@@ -5,6 +5,7 @@ package jmri.jmrix.nce.clockmon;
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 
+import jmri.jmrix.nce.NceTrafficController;
 import jmri.jmrix.nce.NceUSB;
 
 
@@ -12,7 +13,7 @@ import jmri.jmrix.nce.NceUSB;
  * Create and register a NceClockMonitorFrame object.
  *
  * @author			Ken Cameron    Copyright (C) 2007
- * @version			$Revision: 1.3 $
+ * @version			$Revision: 1.3.14.1 $
  *
  * based on LocoNet.ClockMonAction by Bob Jacobsen Copyright (C) 2003
  */
@@ -27,15 +28,18 @@ public class ClockMonAction extends AbstractAction {
 		}
 	}
     
-    public ClockMonAction() {
+	private NceTrafficController tc = null;
+	
+    public ClockMonAction(NceTrafficController t) {
         this("NCE clock monitor");
+        tc = t;
     }
 
     ClockMonFrame f = null;
     
     public void actionPerformed(ActionEvent e) {
         if (f == null) {
-            f = new ClockMonFrame();
+            f = new ClockMonFrame(tc);
             try {
                 f.initComponents();
                 }

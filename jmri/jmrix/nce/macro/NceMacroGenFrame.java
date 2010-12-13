@@ -11,7 +11,7 @@ import javax.swing.*;
  * Frame for user input of Nce macros
  * @author	Bob Jacobsen   Copyright (C) 2001
  * @author Dan Boudreau 	Copyright (C) 2007
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.7.14.1 $
  **/
 
 public class NceMacroGenFrame extends jmri.util.JmriJFrame implements jmri.jmrix.nce.NceListener {
@@ -24,6 +24,8 @@ public class NceMacroGenFrame extends jmri.util.JmriJFrame implements jmri.jmrix
     javax.swing.JLabel macroReply = new javax.swing.JLabel();
     javax.swing.JButton sendButton = new javax.swing.JButton();
     javax.swing.JTextField packetTextField = new javax.swing.JTextField(4);
+    
+    private NceTrafficController tc = null;
 
     public NceMacroGenFrame() {
         super();
@@ -82,12 +84,12 @@ public class NceMacroGenFrame extends jmri.util.JmriJFrame implements jmri.jmrix
 			return;
 		}
 		macroReply.setText("waiting");
-		NceTrafficController.instance().sendNceMessage(m, this);
+		tc.sendNceMessage(m, this);
 		
 		// Unfortunately, the new command doesn't tell us if the macro is empty
 		// so we send old command for status
 		NceMessage m2 = createOldMacroCmd(packetTextField.getText());
-		NceTrafficController.instance().sendNceMessage(m2, this);
+		tc.sendNceMessage(m2, this);
 	}
 
     public void  message(NceMessage m) {}  // ignore replies

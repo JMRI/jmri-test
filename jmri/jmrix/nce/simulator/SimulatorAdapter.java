@@ -121,7 +121,13 @@ import java.io.IOException;
  * @author			Bob Jacobsen   Copyright (C) 2001, 2002
  * @author			Paul Bender, Copyright (C) 2009
  * @author 			Daniel Boudreau Copyright (C) 2010
- * @version			$Revision: 1.12 $
+<<<<<<< SimulatorAdapter.java
+ * converting to multiple connection
+ * @author kcameron Copyright (C) 2010
+ * @version			$Revision: 1.12.2.1 $
+=======
+ * @version			$Revision: 1.12.2.1 $
+>>>>>>> 1.12
  */
 public class SimulatorAdapter extends NcePortController implements
 		jmri.jmrix.SerialPortAdapter, Runnable {
@@ -148,9 +154,14 @@ public class SimulatorAdapter extends NcePortController implements
     
     public SimulatorAdapter (){
         super();
-        adaptermemo= new NceSystemConnectionMemo();
+        adaptermemo = new NceSystemConnectionMemo();
         setManufacturer(jmri.jmrix.DCCManufacturerList.NCE);
     }
+
+    @Override
+    public NceSystemConnectionMemo getSystemConnectionMemo() {
+    	return adaptermemo;
+	}
 
 	static SimulatorAdapter mInstance = null;
 	static public SimulatorAdapter instance() {
@@ -186,13 +197,13 @@ public class SimulatorAdapter extends NcePortController implements
 	 * station.
 	 */
 	public void configure() {
+        NceTrafficController tc = new NceTrafficController(); 
+        tc.connectPort(this);
+        adaptermemo.setNceTrafficController(tc);
+		
 		// setting binary mode
         adaptermemo.configureCommandStation(NceMessage.OPTION_2006);
-        
-        NceTrafficController tc = NceTrafficController.instance(); 
-        tc.connectPort(this);
-        
-        adaptermemo.setNceTrafficController(tc);
+                
         adaptermemo.configureManagers();
         
 		jmri.jmrix.nce.ActiveFlag.setActive();
@@ -259,14 +270,16 @@ public class SimulatorAdapter extends NcePortController implements
 					buf.append(Integer.toHexString(0xFF & m.getElement(i)) + " ");
 				log.debug(buf.toString());
 			}
-			NceReply r = generateReply(m);
-			writeReply(r);
-			if (log.isDebugEnabled() && r != null) {
-				StringBuffer buf = new StringBuffer();
-				buf.append("Nce Simulator Thread sent reply: ");
-				for (int i = 0; i < r.getNumDataElements(); i++)
-					buf.append(Integer.toHexString(0xFF & r.getElement(i)) + " ");
-				log.debug(buf.toString());
+			if (m != null) {
+				NceReply r = generateReply(m);
+				writeReply(r);
+				if (log.isDebugEnabled() && r != null) {
+					StringBuffer buf = new StringBuffer();
+					buf.append("Nce Simulator Thread sent reply: ");
+					for (int i = 0; i < r.getNumDataElements(); i++)
+						buf.append(Integer.toHexString(0xFF & r.getElement(i)) + " ");
+					log.debug(buf.toString());
+				}
 			}
 		}
 	}
@@ -399,8 +412,8 @@ public class SimulatorAdapter extends NcePortController implements
 	 * command station memory.  There are three memory blocks that are
 	 * supported, turnout status, macros, and consists.  The turnout status
 	 * memory is 256 bytes and starts at memory address 0xEC00. The macro memory
-	 * is 256*20 or 5120 bytes and starts at memory addres 0xC800. The consist
-	 * memory is 256*6 or 1536 bytes and starts at memroy address 0xF500.
+	 * is 256*20 or 5120 bytes and starts at memory address 0xC800. The consist
+	 * memory is 256*6 or 1536 bytes and starts at memory address 0xF500.
 	 * 
 	 */
 	private NceReply readMemory (NceMessage m, NceReply reply, int num){

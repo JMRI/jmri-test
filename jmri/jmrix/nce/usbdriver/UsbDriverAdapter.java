@@ -27,7 +27,7 @@ import gnu.io.SerialPort;
  * 
  * @author Bob Jacobsen Copyright (C) 2001, 2002
  * @author Daniel Boudreau Copyright (C) 2007
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.23.2.1 $
  */
 public class UsbDriverAdapter extends NcePortController {
 
@@ -38,6 +38,11 @@ public class UsbDriverAdapter extends NcePortController {
         super();
         adaptermemo = new NceSystemConnectionMemo();
         setManufacturer(jmri.jmrix.DCCManufacturerList.NCE);
+    }
+
+    @Override
+    public NceSystemConnectionMemo getSystemConnectionMemo() {
+    	return adaptermemo; 
     }
 
     public String openPort(String portName, String appName)  {
@@ -115,7 +120,7 @@ public class UsbDriverAdapter extends NcePortController {
         
         adaptermemo.configureCommandStation(NceMessage.OPTION_2006);
         // connect to the traffic controller
-        NceTrafficController tc = NceTrafficController.instance(); 
+        NceTrafficController tc = adaptermemo.getNceTrafficController(); 
         tc.connectPort(this);
         
         //set the system the USB is connected to
@@ -191,13 +196,13 @@ public class UsbDriverAdapter extends NcePortController {
     private boolean opened = false;
     InputStream serialStream = null;
 
-    static public UsbDriverAdapter instance() {
-        if (mInstance == null){
-            mInstance = new UsbDriverAdapter();
-        }
-        return mInstance;
-    }
-    static UsbDriverAdapter mInstance = null;
+//    static public UsbDriverAdapter instance() {
+//        if (mInstance == null){
+//            mInstance = new UsbDriverAdapter();
+//        }
+//        return mInstance;
+//    }
+//    static UsbDriverAdapter mInstance = null;
     
     public void dispose(){
         if (adaptermemo!=null)

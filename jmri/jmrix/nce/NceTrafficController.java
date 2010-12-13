@@ -21,7 +21,7 @@ import jmri.jmrix.AbstractMRTrafficController;
  * message.
  * 
  * @author Bob Jacobsen Copyright (C) 2001
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.33.2.1 $
  */
 public class NceTrafficController extends AbstractMRTrafficController implements NceInterface, CommandStation {
 
@@ -49,7 +49,7 @@ public class NceTrafficController extends AbstractMRTrafficController implements
      */
     public void sendPacket(byte[] packet,int count) {
         NceMessage m = NceMessage.sendPacketMessage(packet);
-	    NceTrafficController.instance().sendNceMessage(m, null);
+	    this.sendNceMessage(m, null);
     }
     
     /**
@@ -96,13 +96,13 @@ public class NceTrafficController extends AbstractMRTrafficController implements
 		
 		if (pollAiuStatus == null){
 			// No, do it this time
-			pollAiuStatus = new NceAIUChecker();
+			pollAiuStatus = new NceAIUChecker(this);
 			return pollAiuStatus.nceAiuPoll();
 		}
 
 		// Start NCE memory poll for accessory states
 		if (pollHandler == null)
-			pollHandler = new NceTurnoutMonitor();
+			pollHandler = new NceTurnoutMonitor(this);
 
 		// minimize impact to NCE CS
 		mWaitBeforePoll = NceTurnoutMonitor.POLL_TIME; // default = 25
@@ -116,8 +116,7 @@ public class NceTrafficController extends AbstractMRTrafficController implements
 	NceTurnoutMonitor pollHandler = null;
 	
 	boolean expectReplyEprom = false;
-    
- 
+     
     protected AbstractMRListener pollReplyHandler() {
         // First time through, handle reply by checking EPROM revision
     	// Second time through, handle AIU broadcast check
@@ -165,11 +164,26 @@ public class NceTrafficController extends AbstractMRTrafficController implements
         return self;
     }
 
-    static NceTrafficController self = null;
+
+	public void setAdapterMemo(NceSystemConnectionMemo adaptermemo) {
+		memo = adaptermemo;
+	}
+	
+	public NceSystemConnectionMemo getAdapterMemo() {
+		return memo;
+	}
+
+	private NceSystemConnectionMemo memo = null;
+	static NceTrafficController self = null;
+    
+    /**
+     * instance use of the traffic controller is no longer used for multiple connections
+     */
+    public void setInstance(){}
     
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
                         justification="temporary until mult-system; only set at startup")
-    protected synchronized void setInstance() { self = this; }
+//    protected synchronized void setInstance() { self = this; }
 
     protected AbstractMRReply newReply() { 
         NceReply reply = new NceReply();

@@ -13,7 +13,7 @@ import jmri.*;
  * particular system.
  *
  * @author		Bob Jacobsen  Copyright (C) 2010
- * @version             $Revision: 1.3 $
+ * @version             $Revision: 1.3.2.1 $
  */
 public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
 
@@ -24,8 +24,8 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
         InstanceManager.store(this, NceSystemConnectionMemo.class); // also register as specific type
         
         // create and register the ComponentFactory
-        /*InstanceManager.store(cf = new jmri.jmrix.Nce.swing.ComponentFactory(this), 
-                                jmri.jmrix.swing.ComponentFactory.class);*/
+        InstanceManager.store(cf = new jmri.jmrix.nce.swing.NceComponentFactory(this), 
+                                jmri.jmrix.swing.ComponentFactory.class);
     }
     
     public NceSystemConnectionMemo() {
@@ -34,8 +34,8 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
         InstanceManager.store(this, NceSystemConnectionMemo.class); // also register as specific type
         
         // create and register the ComponentFactory
-        /*InstanceManager.store(cf = new jmri.jmrix.Nce.swing.ComponentFactory(this), 
-                                jmri.jmrix.swing.ComponentFactory.class);*/
+        InstanceManager.store(cf = new jmri.jmrix.nce.swing.NceComponentFactory(this), 
+                                jmri.jmrix.swing.ComponentFactory.class);
     }
     
     jmri.jmrix.swing.ComponentFactory cf = null;
@@ -98,32 +98,36 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
             return (T)getProgrammerManager();
         return null; // nothing, by default
     }
-        
+
+    private NcePowerManager powerManager;
+    private NceTurnoutManager turnoutManager;
+    private NceLightManager lightManager;
+    private NceSensorManager sensorManager;
+    private NceThrottleManager throttleManager;
+    private NceClockControl clockManager;
+    
     /**
      * Configure the common managers for Nce connections.
      * This puts the common manager config in one
      * place.  
      */
     public void configureManagers() {
-        InstanceManager.setPowerManager(
-            new jmri.jmrix.nce.NcePowerManager());
+    	powerManager = new jmri.jmrix.nce.NcePowerManager(getNceTrafficController(), getSystemPrefix());
+        InstanceManager.setPowerManager(powerManager);
 
-        InstanceManager.setTurnoutManager(
-            new jmri.jmrix.nce.NceTurnoutManager());  
-            
-        InstanceManager.setLightManager(
-            new jmri.jmrix.nce.NceLightManager(getNceTrafficController(),getSystemPrefix()));
-        
-        NceSensorManager s;
-        InstanceManager.setSensorManager(
-            s = new jmri.jmrix.nce.NceSensorManager());
-        NceTrafficController.instance().setSensorManager(s);
-        
+        turnoutManager = new jmri.jmrix.nce.NceTurnoutManager(getNceTrafficController(), getSystemPrefix());
+        InstanceManager.setTurnoutManager(turnoutManager);  
 
-        InstanceManager.setThrottleManager(
-            new jmri.jmrix.nce.NceThrottleManager());
+        lightManager = new jmri.jmrix.nce.NceLightManager(getNceTrafficController(), getSystemPrefix());
+        InstanceManager.setLightManager(lightManager);
+
+        sensorManager = new jmri.jmrix.nce.NceSensorManager(getNceTrafficController(), getSystemPrefix());
+        InstanceManager.setSensorManager(sensorManager);
+
+        throttleManager = new jmri.jmrix.nce.NceThrottleManager(getNceTrafficController(), getSystemPrefix());
+        InstanceManager.setThrottleManager(throttleManager);
         
-        if (getNceUSB()!=NceUSB.USB_SYSTEM_NONE) {
+        if (getNceUSB() != NceUSB.USB_SYSTEM_NONE) {
             if (getNceUSB() != NceUSB.USB_SYSTEM_POWERHOUSE) {
                 jmri.InstanceManager.setProgrammerManager(new NceProgrammerManager(
 					new NceProgrammer()));
@@ -133,16 +137,35 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
                 getProgrammerManager());
         }
 
-        InstanceManager.addClockControl(
-           new jmri.jmrix.nce.NceClockControl());
+        clockManager = new jmri.jmrix.nce.NceClockControl(getNceTrafficController(), getSystemPrefix());
+        InstanceManager.addClockControl(clockManager);
 
     }
+
+    public NcePowerManager getNcePowerManager() { return powerManager; }
+    public NceTurnoutManager  getNceTurnoutManager() { return turnoutManager; }
+    public NceLightManager  getNceLightManager() { return lightManager; }
+    public NceSensorManager  getNceSensorManager() { return sensorManager; }
+    public NceThrottleManager  getNceThrottleManager() { return throttleManager; }
+    public NceClockControl  getNceClockControl() { return clockManager; }
     
     public void dispose() {
         lt = null;
         InstanceManager.deregister(this, NceSystemConnectionMemo.class);
         if (cf != null) 
             InstanceManager.deregister(cf, jmri.jmrix.swing.ComponentFactory.class);
+        if (powerManager != null) 
+            InstanceManager.deregister(powerManager, jmri.jmrix.nce.NcePowerManager.class);
+        if (turnoutManager != null) 
+            InstanceManager.deregister(turnoutManager, jmri.jmrix.nce.NceTurnoutManager.class);
+        if (lightManager != null) 
+            InstanceManager.deregister(lightManager, jmri.jmrix.nce.NceLightManager.class);
+        if (sensorManager != null) 
+            InstanceManager.deregister(sensorManager, jmri.jmrix.nce.NceSensorManager.class);
+        if (throttleManager != null) 
+            InstanceManager.deregister(throttleManager, jmri.jmrix.nce.NceThrottleManager.class);
+        if (clockManager != null) 
+            InstanceManager.deregister(clockManager, jmri.jmrix.nce.NceClockControl.class);
         super.dispose();
     }
     

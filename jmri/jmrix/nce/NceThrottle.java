@@ -14,7 +14,7 @@ import jmri.jmrix.AbstractThrottle;
  * Based on Glen Oberhauser's original LnThrottleManager implementation
  *
  * @author	Bob Jacobsen  Copyright (C) 2001
- * @version     $Revision: 1.22 $
+ * @version     $Revision: 1.22.2.1 $
  */
 public class NceThrottle extends AbstractThrottle{
 	
@@ -24,13 +24,16 @@ public class NceThrottle extends AbstractThrottle{
 	 * commands if the command station eprom was built after 2004. 
 	 */
 	public boolean sendA2command = true; 
-	
+
+    private NceTrafficController tc = null;
+    
     /**
      * Constructor.
      */
-    public NceThrottle(DccLocoAddress address)
+    public NceThrottle(NceTrafficController t, DccLocoAddress address)
     {
         super();
+        this.tc = t;
         super.speedStepMode = SpeedStepMode128;
 
         // cache settings. It would be better to read the
@@ -97,7 +100,7 @@ public class NceThrottle extends AbstractThrottle{
 			byte[] bl = NceBinaryCommand.nceLocoCmd(locoAddr,
 					NceBinaryCommand.LOCO_CMD_FG1, (byte) data);
 			NceMessage m = NceMessage.createBinaryMessage(bl);
-			NceTrafficController.instance().sendNceMessage(m, null);
+			tc.sendNceMessage(m, null);
 
 			// This code can be eliminated once we confirm that the NCE 0xA2
 			// commands work properly
@@ -106,7 +109,7 @@ public class NceThrottle extends AbstractThrottle{
 					.getNumber(), address.isLongAddress(), getF0(), getF1(),
 					getF2(), getF3(), getF4());
 			NceMessage m = NceMessage.sendPacketMessage(result);
-			NceTrafficController.instance().sendNceMessage(m, null);
+			tc.sendNceMessage(m, null);
 		}
 	}
 
@@ -129,7 +132,7 @@ public class NceThrottle extends AbstractThrottle{
 			byte[] bl = NceBinaryCommand.nceLocoCmd(locoAddr,
 					NceBinaryCommand.LOCO_CMD_FG2, (byte) data);
 			NceMessage m = NceMessage.createBinaryMessage(bl);
-			NceTrafficController.instance().sendNceMessage(m, null);
+			tc.sendNceMessage(m, null);
 
 			// This code can be eliminated once we confirm that the NCE 0xA2
 			// commands work properly
@@ -138,7 +141,7 @@ public class NceThrottle extends AbstractThrottle{
 					.getNumber(), address.isLongAddress(), getF5(), getF6(),
 					getF7(), getF8());
 			NceMessage m = NceMessage.sendPacketMessage(result);
-			NceTrafficController.instance().sendNceMessage(m, null);
+			tc.sendNceMessage(m, null);
 		}
 	}
 
@@ -161,7 +164,7 @@ public class NceThrottle extends AbstractThrottle{
 			byte[] bl = NceBinaryCommand.nceLocoCmd(locoAddr,
 					NceBinaryCommand.LOCO_CMD_FG3, (byte) data);
 			NceMessage m = NceMessage.createBinaryMessage(bl);
-			NceTrafficController.instance().sendNceMessage(m, null);
+			tc.sendNceMessage(m, null);
 
 			// This code can be eliminated once we confirm that the NCE 0xA2
 			// commands work properly
@@ -170,7 +173,7 @@ public class NceThrottle extends AbstractThrottle{
 					.getNumber(), address.isLongAddress(), getF9(), getF10(),
 					getF11(), getF12());
 			NceMessage m = NceMessage.sendPacketMessage(result);
-			NceTrafficController.instance().sendNceMessage(m, null);
+			tc.sendNceMessage(m, null);
 		}
 	}
 
@@ -197,7 +200,7 @@ public class NceThrottle extends AbstractThrottle{
 			byte[] bl = NceBinaryCommand.nceLocoCmd(locoAddr,
 					NceBinaryCommand.LOCO_CMD_FG4, (byte) data);
 			NceMessage m = NceMessage.createBinaryMessage(bl);
-			NceTrafficController.instance().sendNceMessage(m, null);
+			tc.sendNceMessage(m, null);
 			
 		} else {
 			// Note NCE EPROM 2004 doesn't support LOCO_CMD_FG4
@@ -205,7 +208,7 @@ public class NceThrottle extends AbstractThrottle{
 					.getNumber(), address.isLongAddress(), getF13(), getF14(),
 					getF15(), getF16(), getF17(), getF18(), getF19(), getF20());
 			NceMessage m = NceMessage.sendPacketMessage(result);
-			NceTrafficController.instance().sendNceMessage(m, null);
+			tc.sendNceMessage(m, null);
 		}
 	}
 
@@ -232,7 +235,7 @@ public class NceThrottle extends AbstractThrottle{
 			byte[] bl = NceBinaryCommand.nceLocoCmd(locoAddr,
 					NceBinaryCommand.LOCO_CMD_FG5, (byte) data);
 			NceMessage m = NceMessage.createBinaryMessage(bl);
-			NceTrafficController.instance().sendNceMessage(m, null);
+			tc.sendNceMessage(m, null);
 
 		} else {
 			// Note NCE EPROM 2004 doesn't support LOCO_CMD_FG5
@@ -240,7 +243,7 @@ public class NceThrottle extends AbstractThrottle{
 					.getNumber(), address.isLongAddress(), getF21(), getF22(),
 					getF23(), getF24(), getF25(), getF25(), getF27(), getF28());
 			NceMessage m = NceMessage.sendPacketMessage(result);
-			NceTrafficController.instance().sendNceMessage(m, null);
+			tc.sendNceMessage(m, null);
 		}
 	}
 
@@ -290,7 +293,7 @@ public class NceThrottle extends AbstractThrottle{
 						(byte) value);
 			}
 			NceMessage m = NceMessage.createBinaryMessage(bl);
-			NceTrafficController.instance().sendNceMessage(m, null);
+			tc.sendNceMessage(m, null);
 
 		// This code can be eliminated once we confirm that the NCE 0xA2 commands work properly
 		} else {
@@ -313,7 +316,7 @@ public class NceThrottle extends AbstractThrottle{
 						address.isLongAddress(), value, isForward);
 			}
 			NceMessage m = NceMessage.queuePacketMessage(bl);
-			NceTrafficController.instance().sendNceMessage(m, null);
+			tc.sendNceMessage(m, null);
 
 		}
         if (oldSpeed != this.speedSetting)

@@ -27,7 +27,7 @@ import java.util.Arrays;
  *
  * @author	Bob Jacobsen  Copyright (C) 2001
  * @author Daniel Boudreau Copyright (C) 2007
- * @version     $Revision: 1.44 $
+ * @version     $Revision: 1.44.2.1 $
  */
 public class NceMessage extends jmri.jmrix.AbstractMRMessage {
 	
@@ -104,7 +104,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
 
 
     // static methods to return a formatted message
-    static public NceMessage getEnableMain() {
+    public static NceMessage getEnableMain() {
     	// this command isn't supported by the NCE USB
     	if (NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_NONE){
     		log.error("attempt to send unsupported binary command ENABLE_MAIN_CMD to NCE USB");
@@ -122,7 +122,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
         return m;
     }
 
-    static public NceMessage getKillMain() {
+    public static NceMessage getKillMain() {
     	// this command isn't supported by the NCE USB
     	if (NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_NONE){
     		log.error("attempt to send unsupported binary command KILL_MAIN_CMD to NCE USB");
@@ -140,7 +140,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
         return m;
     }
 
-    static public NceMessage getProgMode() {
+    public static NceMessage getProgMode() {
 		// not supported by USB connected to SB3 or PH
 		if (NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_SB3
 				|| NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_POWERHOUSE){
@@ -162,10 +162,10 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
 		return m;
 	}
 
-    static public NceMessage getExitProgMode() {
+    public static NceMessage getExitProgMode() {
         NceMessage m = new NceMessage(1);
         if (getCommandOptions() >= OPTION_2006) {
-        	// Sending exit programing mode binary can crash pre 2006 EPROMs
+        	// Sending exit programming mode binary can crash pre 2006 EPROMs
         	// assumption is that program mode hasn't been entered, so exit without 
         	// sending command
             if (ncsProgMode == false)
@@ -190,7 +190,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
         return m;
     }
 
-    static public NceMessage getReadPagedCV(int cv) { //Rxxx
+    public static NceMessage getReadPagedCV(int cv) { //Rxxx
 		// not supported by USB connected to SB3 or PH
 		if (NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_SB3
 				|| NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_POWERHOUSE){
@@ -218,7 +218,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
         }
     }
 
-    static public NceMessage getWritePagedCV(int cv, int val) { //Pxxx xxx
+    public static NceMessage getWritePagedCV(int cv, int val) { //Pxxx xxx
 		// not supported by USB connected to SB3 or PH
 		if (NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_SB3
 				|| NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_POWERHOUSE){
@@ -249,7 +249,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
         }
     }
 
-    static public NceMessage getReadRegister(int reg) { //Vx
+    public static NceMessage getReadRegister(int reg) { //Vx
 		// not supported by USB connected to SB3 or PH
 		if (NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_SB3
 				|| NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_POWERHOUSE){
@@ -278,7 +278,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
         }
     }
 
-    static public NceMessage getWriteRegister(int reg, int val) { //Sx xxx
+    public static NceMessage getWriteRegister(int reg, int val) { //Sx xxx
 		// not supported by USB connected to SB3 or PH
 		if (NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_SB3
 				|| NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_POWERHOUSE){
@@ -310,7 +310,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
         }
     }
 
-    static public NceMessage getReadDirectCV(int cv) { //Rxxx
+    public static NceMessage getReadDirectCV(int cv) { //Rxxx
 		// not supported by USB connected to SB3 or PH
 		if (NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_SB3
 				|| NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_POWERHOUSE){
@@ -330,7 +330,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
         return m;
     }
 
-    static public NceMessage getWriteDirectCV(int cv, int val) { //Pxxx xxx
+    public static NceMessage getWriteDirectCV(int cv, int val) { //Pxxx xxx
 		// not supported by USB connected to SB3 or PH
 		if (NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_SB3
 				|| NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_POWERHOUSE){
@@ -351,12 +351,12 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
         return m;
     }
     
-    static public NceMessage sendPacketMessage(byte[] bytes) {
+    public static NceMessage sendPacketMessage(byte[] bytes) {
     	NceMessage m = sendPacketMessage(bytes, 2);
     	return m;
     }
     
-    static public NceMessage sendPacketMessage(byte[] bytes, int retries) {
+    public static NceMessage sendPacketMessage(byte[] bytes, int retries) {
     	// this command isn't supported by the NCE USB
     	if (NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_NONE){
     		log.error("attempt to send unsupported sendPacketMessage to NCE USB");
@@ -398,7 +398,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
             return m;
         }
     }
-    static public NceMessage createBinaryMessage(byte[] bytes) {
+    public static NceMessage createBinaryMessage(byte[] bytes) {
         if (getCommandOptions() < OPTION_2004)
             log.error("Attempt to send NCE command to EPROM built before 2004");
         if (bytes.length<1 || bytes.length>20)
@@ -413,7 +413,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
         return m;
     }
     
-    static public NceMessage createBinaryMessage(byte[] bytes, int replyLen) {
+    public static NceMessage createBinaryMessage(byte[] bytes, int replyLen) {
         if (getCommandOptions() < OPTION_2004)
             log.error("Attempt to send NCE command to EPROM built before 2004");
         if (bytes.length<1 || bytes.length>20)
@@ -430,7 +430,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
         return m;
     }
 
-    static public NceMessage queuePacketMessage(byte[] bytes) {
+    public static NceMessage queuePacketMessage(byte[] bytes) {
     	// this command isn't supported by the NCE USB
     	if (NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_NONE){
     		log.error("attempt to send unsupported queuePacketMessage to NCE USB");
@@ -494,10 +494,10 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
      */
     static public final int OPTION_FORCE_BINARY = 10000;
     
-    static int commandOptions = OPTION_2004;
+    private static int commandOptions = OPTION_2004;
     
     // package-level access so NceTrafficController can see it
-    static boolean commandOptionSet = false;
+    public static boolean commandOptionSet = false;
     
     /** 
      * Control which command format should be used for various
@@ -515,7 +515,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
      *</UL>
      *
      */
-     static public void setCommandOptions(int val) {
+     public static void setCommandOptions(int val) {
         commandOptions = val;
         if (commandOptionSet) {
             log.error("setCommandOptions called more than once");
@@ -540,7 +540,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
      *</UL>
      *
      */
-    static public int getCommandOptions() { return commandOptions; }
+    public static int getCommandOptions() { return commandOptions; }
     
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(NceMessage.class.getName());
 

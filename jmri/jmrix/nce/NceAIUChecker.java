@@ -13,7 +13,7 @@ import jmri.jmrix.ConnectionStatus;
  * AIU broadcasts, 0 = disabled, 1 = enabled.
  *  
  * @author Daniel Boudreau (C) 2007
- * @version     $Revision: 1.7 $
+ * @version     $Revision: 1.7.2.1 $
  * 
  */
 
@@ -23,6 +23,13 @@ public class NceAIUChecker implements NceListener {
 	private static final int REPLY_LEN = 1; 	// number of bytes read
 	private boolean EXPECT_REPLY = false; 		// flag 
 
+	private NceTrafficController tc = null;
+	
+	public NceAIUChecker(NceTrafficController t) {
+		super();
+		this.tc = t;
+	}
+	
 	public NceMessage nceAiuPoll() {
 
 		if (NceMessage.getCommandOptions() <= NceMessage.OPTION_1999)
@@ -64,7 +71,7 @@ public class NceAIUChecker implements NceListener {
 			if (AIUstatus == 1) {
 				log.warn("AIU broadcasts are enabled");
 				ConnectionStatus.instance().setConnectionState(
-						NceTrafficController.instance().getPortName(),
+						tc.getPortName(),
 						ConnectionStatus.CONNECTION_DOWN);
 				JOptionPane.showMessageDialog(null,
 								"JMRI has detected that AIU broadcasts are enabled. \n"

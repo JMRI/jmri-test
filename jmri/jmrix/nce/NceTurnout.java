@@ -16,19 +16,20 @@ import jmri.PushbuttonPacket;
  *
  * @author	Bob Jacobsen Copyright (C) 2001
  * @author Daniel Boudreau (C) 2007
- * @version	$Revision: 1.35 $
+ * @version	$Revision: 1.35.2.1 $
  */
 public class NceTurnout extends AbstractTurnout {
-
-    final String prefix = "NT";
-
+    
+	NceTrafficController tc = null;
+	String prefix = "";
     /**
      * NCE turnouts use the NMRA number (0-2044) as their numerical identification.
      */
-
-    public NceTurnout(int number) {
-    	super("NT"+number);
-    	_number = number;
+    public NceTurnout(NceTrafficController t, String p, int i) {
+    	super(p + "T" + i);
+    	this.tc = t;
+    	this.prefix = p;
+    	_number = i;
     	// At construction, register for messages
     	initialize();
     }
@@ -103,7 +104,7 @@ public class NceTurnout extends AbstractTurnout {
 		
 		byte[] bl = PushbuttonPacket.pushbuttonPkt(prefix, _number, pushButtonLockout);
 		NceMessage m = NceMessage.sendPacketMessage(bl);
-		NceTrafficController.instance().sendNceMessage(m, null);
+		tc.sendNceMessage(m, null);
 	}
 
     // data members
@@ -215,7 +216,7 @@ public class NceTurnout extends AbstractTurnout {
     		
     		NceMessage m = NceMessage.createBinaryMessage(bl);
 
-    		NceTrafficController.instance().sendNceMessage(m, null);
+    		tc.sendNceMessage(m, null);
 
     	
     	} else {
@@ -229,7 +230,7 @@ public class NceTurnout extends AbstractTurnout {
     	
     		NceMessage m = NceMessage.sendPacketMessage(bl);
 
-    		NceTrafficController.instance().sendNceMessage(m, null);
+    		tc.sendNceMessage(m, null);
     	}
     }
  

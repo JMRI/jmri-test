@@ -14,12 +14,17 @@ package jmri.jmrix.nce.consist;
 
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
+
+import jmri.jmrix.nce.NceTrafficController;
 import jmri.jmrix.nce.NceUSB;
 
 public class NceConsistEditAction  extends AbstractAction {
 
-	public NceConsistEditAction(String s) { 
+    private NceTrafficController tc = null;
+    
+	public NceConsistEditAction(NceTrafficController t, String s) { 
 		super(s);
+		this.tc = t;
 		
 		// disable if NCE USB selected
 		if (NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_NONE) {
@@ -28,7 +33,7 @@ public class NceConsistEditAction  extends AbstractAction {
 	}
 	
     public void actionPerformed(ActionEvent e) {
-		NceConsistEditFrame f = new NceConsistEditFrame();
+		NceConsistEditFrame f = new NceConsistEditFrame(tc);
 		try {
 			f.initComponents();
 			}

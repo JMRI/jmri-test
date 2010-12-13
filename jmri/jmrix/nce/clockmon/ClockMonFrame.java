@@ -8,6 +8,7 @@ import jmri.TimebaseRateException;
 import jmri.jmrix.nce.NceListener;
 import jmri.jmrix.nce.NceMessage;
 import jmri.jmrix.nce.NceReply;
+import jmri.jmrix.nce.NceTrafficController;
 import jmri.jmrix.nce.NceUSB;
 
 import java.util.Date;
@@ -30,7 +31,7 @@ import javax.swing.*;
  * contact NCE Inc for separate permission.
  *
  * @author			Ken Cameron   Copyright (C) 2007
- * @version			$Revision: 1.25 $
+ * @version			$Revision: 1.25.2.1 $
  *
  * derived from loconet.clockmonframe by Bob Jacobson Copyright (C) 2003
  * 
@@ -177,7 +178,12 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
     JButton setPollingSpeedButton = new JButton(rb.getString("SetInterfaceUpdRate"));
     JButton setPidButton = new JButton(rb.getString("SetPid"));
     
-    public ClockMonFrame() { super(); }
+    private NceTrafficController tc = null;
+    
+    public ClockMonFrame(NceTrafficController t) {
+    	super();
+    	tc = t;
+    }
     
     public void initComponents() throws Exception {
         setTitle(rb.getString("TitleNceClockMonitor"));
@@ -1573,7 +1579,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
             NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CS_CLOCK_MEM_SIZE);
             waiting++;
             waitingForCmdRead = true;
-            jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+            tc.sendNceMessage(cmdNce, this);
             //			log.debug("issueReadOnlyRequest at " + internalClock.getTime());
         }
     }
@@ -1584,7 +1590,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
             NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CS_CLOCK_MEM_SIZE);
             waiting++;
             waitingForCmdRead = true;
-            jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+            tc.sendNceMessage(cmdNce, this);
         }
         updateTimeFromRead = true;
         updateRatioFromRead = true;
@@ -1599,7 +1605,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
             NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CS_CLOCK_MEM_SIZE);
             waiting++;
             waitingForCmdRead = true;
-            jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+            tc.sendNceMessage(cmdNce, this);
         }
         updateTimeFromRead = true;
     }
@@ -1611,7 +1617,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
             NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CS_CLOCK_MEM_SIZE);
             waiting++;
             waitingForCmdRead = true;
-            jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+            tc.sendNceMessage(cmdNce, this);
         }
         updateRatioFromRead = true;
     }
@@ -1623,7 +1629,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
             NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CS_CLOCK_MEM_SIZE);
             waiting++;
             waitingForCmdRead = true;
-            jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+            tc.sendNceMessage(cmdNce, this);
         }
         updateFormatFromRead = true;
     }
@@ -1635,7 +1641,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
             NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CS_CLOCK_MEM_SIZE);
             waiting++;
             waitingForCmdRead = true;
-            jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+            tc.sendNceMessage(cmdNce, this);
         }
         updateStatusFromRead = true;
     }
@@ -1652,7 +1658,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
         NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_MEM_SET_REPLY_SIZE);
         waiting++;
         waitingForCmdTime = true;
-        jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+        tc.sendNceMessage(cmdNce, this);
     }
    
     private void issueClockRatio(int r) {
@@ -1660,7 +1666,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
         NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_CLOCK_SET_REPLY_SIZE);
         waiting++;
         waitingForCmdRatio = true;
-        jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+        tc.sendNceMessage(cmdNce, this);
     }
     
     private void issueClock1224(boolean mode) {
@@ -1668,7 +1674,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
 		NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_CLOCK_SET_REPLY_SIZE);
 		waiting++;
 		waitingForCmd1224 = true;
-		jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+		tc.sendNceMessage(cmdNce, this);
     }
     
     private void issueClockStop() {
@@ -1676,7 +1682,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
         NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_CLOCK_SET_REPLY_SIZE);
         waiting++;
         waitingForCmdStop = true;
-        jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+        tc.sendNceMessage(cmdNce, this);
     }
     
     private void issueClockStart() {
@@ -1684,7 +1690,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
         NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_CLOCK_SET_REPLY_SIZE);
         waiting++;
         waitingForCmdStart = true;
-        jmri.jmrix.nce.NceTrafficController.instance().sendNceMessage(cmdNce, this);
+        tc.sendNceMessage(cmdNce, this);
     }
     
     /**

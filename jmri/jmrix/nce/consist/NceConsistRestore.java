@@ -28,7 +28,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * The restore routine checks that each line of the file begins with the appropriate consist address.
  * 
  * @author Dan Boudreau Copyright (C) 2007
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.8.2.1 $
  */
 
 
@@ -43,6 +43,13 @@ public class NceConsistRestore extends Thread implements jmri.jmrix.nce.NceListe
 	
 	javax.swing.JLabel textConsist = new javax.swing.JLabel();
 	javax.swing.JLabel consistNumber = new javax.swing.JLabel();
+	
+	private NceTrafficController tc = null;
+	
+	public NceConsistRestore(NceTrafficController t) {
+		super();
+		this.tc = t;
+	}
 	
 	public void run() {
 
@@ -141,7 +148,7 @@ public class NceConsistRestore extends Thread implements jmri.jmrix.nce.NceListe
 			}
 
 			NceMessage m = writeNceConsistMemory(curConsist, consistData);
-			NceTrafficController.instance().sendNceMessage(m, this);
+			tc.sendNceMessage(m, this);
 
 			curConsist += CONSIST_LNTH;
 

@@ -15,9 +15,11 @@ import java.util.Vector;
  * This has two states:  NOTPROGRAMMING, and COMMANDSENT.  The transitions
  * to and from programming mode are now handled in the TrafficController code.
  * @author	Bob Jacobsen  Copyright (C) 2001
- * @version     $Revision: 1.24 $
+ * @version     $Revision: 1.24.2.1 $
  */
 public class NceProgrammer extends AbstractProgrammer implements NceListener {
+	
+    private NceTrafficController tc = null;
 
     public NceProgrammer() {
         super.SHORT_TIMEOUT = 4000;
@@ -268,7 +270,7 @@ public class NceProgrammer extends AbstractProgrammer implements NceListener {
     protected NceTrafficController controller() {
         // connect the first time
         if (_controller == null) {
-            _controller = NceTrafficController.instance();
+            _controller = tc;
         }
         return _controller;
     }

@@ -55,7 +55,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * mid loco4) :0000
  * 
  * @author Dan Boudreau Copyright (C) 2007 2008
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.35.2.1 $
  */
 
 public class NceConsistEditFrame extends jmri.util.JmriJFrame implements
@@ -232,9 +232,12 @@ public class NceConsistEditFrame extends jmri.util.JmriJFrame implements
 	JButton adrButton6 = new JButton();
 	JButton cmdButton6 = new JButton();
 	JButton dirButton6 = new JButton();
+	
+	private NceTrafficController tc = null;
 
-	public NceConsistEditFrame() {
+	public NceConsistEditFrame(NceTrafficController t) {
 		super();
+		this.tc = t;
 	}
 
 	public void initComponents() throws Exception {
@@ -525,12 +528,12 @@ public class NceConsistEditFrame extends jmri.util.JmriJFrame implements
 			consistNum = getConsist();
 		}
 		if (ae.getSource() == backUpButton) {
-			Thread mb = new NceConsistBackup();
+			Thread mb = new NceConsistBackup(tc);
 			mb.setName("Consist Backup");
 			mb.start();
 		}
 		if (ae.getSource() == restoreButton) {
-			Thread mr = new NceConsistRestore();
+			Thread mr = new NceConsistRestore(tc);
 			mr.setName("Consist Restore");
 			mr.start();
 		}
@@ -1805,7 +1808,7 @@ public class NceConsistEditFrame extends jmri.util.JmriJFrame implements
 		NceMessage m = NceMessage.createBinaryMessage(b, replyLength);
 		waiting++;
 		replyLen = replyLength; // Expect n byte response
-		NceTrafficController.instance().sendNceMessage(m, this);
+		tc.sendNceMessage(m, this);
 	}
 
 	// get loco address type, returns true if long

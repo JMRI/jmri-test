@@ -13,7 +13,7 @@ import jmri.NmraPacket;
  *  Based in part on SerialLight.java
  *
  * @author      Dave Duchamp Copyright (C) 2010
- * @version     $Revision: 1.5 $
+ * @version     $Revision: 1.5.2.1 $
  */
 public class NceLight extends AbstractLight {
 
@@ -75,7 +75,7 @@ public class NceLight extends AbstractLight {
     		
     		NceMessage m = NceMessage.createBinaryMessage(bl);
 
-    		NceTrafficController.instance().sendNceMessage(m, null);
+    		tc.sendNceMessage(m, null);
 
     	
     	} else {
@@ -89,7 +89,7 @@ public class NceLight extends AbstractLight {
     	
     		NceMessage m = NceMessage.sendPacketMessage(bl);
 
-    		NceTrafficController.instance().sendNceMessage(m, null);
+    		tc.sendNceMessage(m, null);
     	}
 
     }

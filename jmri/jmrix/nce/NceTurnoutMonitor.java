@@ -28,7 +28,7 @@ import jmri.Turnout;
  * 
  *  
  * @author Daniel Boudreau (C) 2007
- * @version     $Revision: 1.33 $
+ * @version     $Revision: 1.33.2.1 $
  */
 
 public class NceTurnoutMonitor implements NceListener,java.beans.PropertyChangeListener {
@@ -63,8 +63,14 @@ public class NceTurnoutMonitor implements NceListener,java.beans.PropertyChangeL
     
     // debug final
     static final boolean debugTurnoutMonitor = false;	// Control verbose debug
+    private NceTrafficController tc = null;
         
-    public NceMessage pollMessage() {
+    public NceTurnoutMonitor(NceTrafficController t) {
+		super();
+		this.tc = t;
+	}
+
+	public NceMessage pollMessage() {
     	
     	if (NceMessage.getCommandOptions() < NceMessage.OPTION_2006 )return null;	//Only 2007 CS EPROMs support polling
     	if (NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_NONE)return null;								//Can't poll USB!
@@ -84,7 +90,7 @@ public class NceTurnoutMonitor implements NceListener,java.beans.PropertyChangeL
 
             		for (int i = 0; i < 128; i++) { // Check 128 turnouts per block 
             			int NTnum = 1 + i + (block*128);
-            			Turnout mControlTurnout = InstanceManager.turnoutManagerInstance().getBySystemName("NT"+ NTnum);
+            			Turnout mControlTurnout = tc.getAdapterMemo().getNceTurnoutManager().getBySystemName(tc.getAdapterMemo().getSystemPrefix() + "T" + NTnum);
             			if (mControlTurnout != null){
            					// remove listener in case we're already listening
         					mControlTurnout.removePropertyChangeListener(this);
@@ -282,7 +288,7 @@ public class NceTurnoutMonitor implements NceListener,java.beans.PropertyChangeL
     private void monitorActionCommanded(int NTnum, int recMemByte, int bit) {
 
 		NceTurnout rControlTurnout = (NceTurnout) InstanceManager
-				.turnoutManagerInstance().getBySystemName("NT" + NTnum);
+				.turnoutManagerInstance().getBySystemName(tc.getAdapterMemo().getSystemPrefix() + NTnum);
 		if (rControlTurnout == null)
 			return;
 		
@@ -336,7 +342,7 @@ public class NceTurnoutMonitor implements NceListener,java.beans.PropertyChangeL
     private void monitorActionKnown(int NTnum, int recMemByte, int bit) {
 
 		NceTurnout rControlTurnout = (NceTurnout) InstanceManager
-				.turnoutManagerInstance().getBySystemName("NT" + NTnum);
+				.turnoutManagerInstance().getBySystemName(tc.getAdapterMemo().getSystemPrefix() + NTnum);
 		if (rControlTurnout == null)
 			return;
 

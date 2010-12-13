@@ -13,12 +13,17 @@ package jmri.jmrix.nce.macro;
 
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
+
+import jmri.jmrix.nce.NceTrafficController;
 import jmri.jmrix.nce.NceUSB;
 
 public class NceMacroEditAction  extends AbstractAction {
 
-	public NceMacroEditAction(String s) {
+    private NceTrafficController tc = null;
+    
+	public NceMacroEditAction(NceTrafficController t, String s) {
 		super(s);
+		this.tc = t;
 
 		// disable if NCE USB detected
 		if (NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_NONE) {
@@ -27,7 +32,7 @@ public class NceMacroEditAction  extends AbstractAction {
 	}
 	
     public void actionPerformed(ActionEvent e) {
-		NceMacroEditFrame f = new NceMacroEditFrame();
+		NceMacroEditFrame f = new NceMacroEditFrame(tc);
 		f.addHelpMenu("package.jmri.jmrix.nce.macro.NceMacroEditFrame", true);
 		try {
 			f.initComponents();
