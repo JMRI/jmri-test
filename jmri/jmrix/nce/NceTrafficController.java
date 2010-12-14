@@ -21,7 +21,7 @@ import jmri.jmrix.AbstractMRTrafficController;
  * message.
  * 
  * @author Bob Jacobsen Copyright (C) 2001
- * @version $Revision: 1.33.2.3 $
+ * @version $Revision: 1.33.2.4 $
  */
 public class NceTrafficController extends AbstractMRTrafficController implements NceInterface, CommandStation {
 
@@ -48,7 +48,7 @@ public class NceTrafficController extends AbstractMRTrafficController implements
      * CommandStation implementation
      */
     public void sendPacket(byte[] packet,int count) {
-        NceMessage m = NceMessage.sendPacketMessage(packet);
+        NceMessage m = NceMessage.sendPacketMessage(this, packet);
 	    this.sendNceMessage(m, null);
     }
     
@@ -119,8 +119,8 @@ public class NceTrafficController extends AbstractMRTrafficController implements
      public void setCommandOptions(int val) {
         commandOptions = val;
         if (commandOptionSet) {
-            log.error("setCommandOptions called more than once");
-            new Exception().printStackTrace();
+            log.warn("setCommandOptions called more than once");
+            //new Exception().printStackTrace(); TODO need to remove for testing
         }
         commandOptionSet = true;
     }
@@ -197,6 +197,16 @@ public class NceTrafficController extends AbstractMRTrafficController implements
 	 * 
 	 */
 	public int getUsbSystem() {return usbSystem;}
+	
+	private boolean nceProgMode = false;					// Do not use exit program mode unless active
+	
+	public boolean getNceProgMode(){
+		return nceProgMode;
+	}
+	
+	public void setNceProgMode(boolean b){
+		nceProgMode = b;
+	}
     
     /**
 	 * Check NCE EPROM and start NCE CS accessory memory poll
@@ -270,10 +280,10 @@ public class NceTrafficController extends AbstractMRTrafficController implements
     protected boolean unsolicitedSensorMessageSeen = false;
     
     protected AbstractMRMessage enterProgMode() {
-        return NceMessage.getProgMode();
+        return NceMessage.getProgMode(this);
     }
     protected AbstractMRMessage enterNormalMode() {
-        return NceMessage.getExitProgMode();
+        return NceMessage.getExitProgMode(this);
     }
 
     /**

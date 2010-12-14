@@ -12,7 +12,7 @@ import jmri.*;
  *
  * @see             jmri.Programmer
  * @author			Bob Jacobsen Copyright (C) 2002
- * @version			$Revision: 1.11.2.1 $
+ * @version			$Revision: 1.11.2.2 $
  */
 public class NceOpsModeProgrammer extends NceProgrammer  {
 
@@ -40,14 +40,14 @@ public class NceOpsModeProgrammer extends NceProgrammer  {
         	int locoAddr = mAddress;
         	if (mLongAddr)
         		locoAddr += 0xC000;
-        	byte[] bl = NceBinaryCommand.usbOpsModeLoco(locoAddr, CV, val);
-        	msg = NceMessage.createBinaryMessage(bl);
+        	byte[] bl = NceBinaryCommand.usbOpsModeLoco(tc, locoAddr, CV, val);
+        	msg = NceMessage.createBinaryMessage(tc, bl);
 
 		} else {
 			// create the message and fill it,
 			byte[] contents = NmraPacket.opsCvWriteByte(mAddress, mLongAddr,
 					CV, val);
-			msg = NceMessage.sendPacketMessage(contents, 5);	// retry 5 times
+			msg = NceMessage.sendPacketMessage(tc, contents, 5);	// retry 5 times
 		}
         // record state. COMMANDSENT is just waiting for a reply...
         useProgrammer(p);

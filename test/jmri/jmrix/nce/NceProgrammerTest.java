@@ -16,7 +16,7 @@ import jmri.jmrix.nce.NceProgrammer;
 /**
  * JUnit tests for the NceProgrammer class
  * @author			Bob Jacobsen
- * @version          $Revision: 1.13.6.2 $
+ * @version          $Revision: 1.13.6.3 $
  */
 public class NceProgrammerTest extends TestCase {
 
@@ -32,10 +32,12 @@ public class NceProgrammerTest extends TestCase {
     int saveCommandOptions;
     
     public void testWriteCvSequenceAscii() throws JmriException {
-    	tc.setCommandOptions(NceTrafficController.OPTION_2004);
+
         // infrastructure objects
         NceInterfaceScaffold t = new NceInterfaceScaffold();
         NceListenerScaffold l = new NceListenerScaffold();
+        NceTrafficController tc = new NceTrafficController();
+        tc.setCommandOptions(NceTrafficController.OPTION_2004);
 
         NceProgrammer p = new NceProgrammer(tc);
 

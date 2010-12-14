@@ -19,7 +19,7 @@ import jmri.jmrix.ConnectionStatus;
  * Also checks for March 2007 EPROM and warns user about Monitoring feedback.
  *  
  * @author Daniel Boudreau (C) 2007, 2010
- * @version     $Revision: 1.13.2.3 $
+ * @version     $Revision: 1.13.2.4 $
  * 
  */
 
@@ -224,7 +224,7 @@ public class NceConnectionStatus implements NceListener {
 			epromState = WAIT_STATE;
 
 		byte[] bl = NceBinaryCommand.getNceEpromRev();
-		NceMessage m = NceMessage.createBinaryMessage(bl, REPLY_LEN);
+		NceMessage m = NceMessage.createBinaryMessage(tc, bl, REPLY_LEN);
 		return m;
 
 	}

@@ -72,7 +72,7 @@ package jmri.jmrix.nce;
   * Also see NceMessage.java for additional commands
   * 
   * @author Daniel Boudreau (C) 2007
-  * @version     $Revision: 1.24.2.1 $
+  * @version     $Revision: 1.24.2.2 $
   */
 
 public class NceBinaryCommand {
@@ -414,10 +414,10 @@ public class NceBinaryCommand {
 	 * @param cvData
 	 * @return byte[] containing message
 	 */
-	public static byte[] usbOpsModeLoco(int locoAddr, int cvAddr, int cvData) {
+	public static byte[] usbOpsModeLoco(NceTrafficController tc, int locoAddr, int cvAddr, int cvData) {
 		// ONLY USB connected to PowerCab or SB3 can send this message
-		if (NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_POWERCAB
-				|| NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_SB3) {
+		if (tc.getUsbSystem() == NceTrafficController.USB_SYSTEM_POWERCAB
+				|| tc.getUsbSystem() == NceTrafficController.USB_SYSTEM_SB3) {
 
 			byte[] retVal = new byte[6];
 			int locoAddr_h = locoAddr / 256;

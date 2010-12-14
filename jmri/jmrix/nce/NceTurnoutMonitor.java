@@ -28,7 +28,7 @@ import jmri.Turnout;
  * 
  *  
  * @author Daniel Boudreau (C) 2007
- * @version     $Revision: 1.33.2.2 $
+ * @version     $Revision: 1.33.2.3 $
  */
 
 public class NceTurnoutMonitor implements NceListener,java.beans.PropertyChangeListener {
@@ -145,7 +145,7 @@ public class NceTurnoutMonitor implements NceListener,java.beans.PropertyChangeL
 				// Read NCE CS memory
 				int nceAccAddress = CS_ACCY_MEMORY + currentBlock * BLOCK_LEN;
 				byte[] bl = NceBinaryCommand.accMemoryRead(nceAccAddress);
-				NceMessage m = NceMessage.createBinaryMessage(bl, REPLY_LEN);
+				NceMessage m = NceMessage.createBinaryMessage(tc, bl, REPLY_LEN);
 				return m;
 			}
 		}

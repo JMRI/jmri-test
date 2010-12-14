@@ -227,28 +227,32 @@ package jmri.jmrix.nce;
  * <P>
  * 
  * @author Daniel Boudreau Copyright (C) 2007
- * @version $Revision: 1.8.14.1 $
+ * @version $Revision: 1.8.14.2 $
  */
 public class NceUSB  {
 	
 	/**
 	 * Default when a NCE USB isn't selected in user system preferences
 	 */
+	@Deprecated
 	static public final int USB_SYSTEM_NONE = 0;
 	
 	/**
 	 * Create commands compatible with a NCE USB connected to a PowerCab
 	 */
+	@Deprecated
 	static public final int USB_SYSTEM_POWERCAB = 1;
 	
 	/**
 	 * Create commands compatible with a NCE USB connected to a Smart Booster
 	 */
+	@Deprecated
 	static public final int USB_SYSTEM_SB3 = 2;
 	
 	/**
 	 * Create commands compatible with a NCE USB connected to a PowerHouse
 	 */
+	@Deprecated
 	static public final int USB_SYSTEM_POWERHOUSE = 4;
 	
 	static int usbSystem = USB_SYSTEM_NONE;

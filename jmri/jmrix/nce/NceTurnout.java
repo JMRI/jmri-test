@@ -16,7 +16,7 @@ import jmri.PushbuttonPacket;
  *
  * @author	Bob Jacobsen Copyright (C) 2001
  * @author Daniel Boudreau (C) 2007
- * @version	$Revision: 1.35.2.2 $
+ * @version	$Revision: 1.35.2.3 $
  */
 public class NceTurnout extends AbstractTurnout {
     
@@ -103,7 +103,7 @@ public class NceTurnout extends AbstractTurnout {
 					+ " Pushbutton NT" + _number);
 		
 		byte[] bl = PushbuttonPacket.pushbuttonPkt(prefix, _number, pushButtonLockout);
-		NceMessage m = NceMessage.sendPacketMessage(bl);
+		NceMessage m = NceMessage.sendPacketMessage(tc, bl);
 		tc.sendNceMessage(m, null);
 	}
 
@@ -214,7 +214,7 @@ public class NceTurnout extends AbstractTurnout {
                     						+" "+Integer.toHexString(0xFF & bl[3])
                     						+" "+Integer.toHexString(0xFF & bl[4]));
     		
-    		NceMessage m = NceMessage.createBinaryMessage(bl);
+    		NceMessage m = NceMessage.createBinaryMessage(tc, bl);
 
     		tc.sendNceMessage(m, null);
 
@@ -228,7 +228,7 @@ public class NceTurnout extends AbstractTurnout {
                                             +" "+Integer.toHexString(0xFF & bl[1])
                                             +" "+Integer.toHexString(0xFF & bl[2]));
     	
-    		NceMessage m = NceMessage.sendPacketMessage(bl);
+    		NceMessage m = NceMessage.sendPacketMessage(tc, bl);
 
     		tc.sendNceMessage(m, null);
     	}

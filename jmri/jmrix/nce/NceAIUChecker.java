@@ -13,7 +13,7 @@ import jmri.jmrix.ConnectionStatus;
  * AIU broadcasts, 0 = disabled, 1 = enabled.
  *  
  * @author Daniel Boudreau (C) 2007
- * @version     $Revision: 1.7.2.2 $
+ * @version     $Revision: 1.7.2.3 $
  * 
  */
 
@@ -42,7 +42,7 @@ public class NceAIUChecker implements NceListener {
 		// read one byte from NCE memory to determine if AIU broadcasts are enabled
 
 		byte[] bl = NceBinaryCommand.accMemoryRead1(MEM_AIU);
-		NceMessage m = NceMessage.createBinaryMessage(bl, REPLY_LEN);
+		NceMessage m = NceMessage.createBinaryMessage(tc, bl, REPLY_LEN);
 		EXPECT_REPLY = true;
 		return m;
 

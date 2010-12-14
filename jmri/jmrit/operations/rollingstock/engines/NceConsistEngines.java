@@ -40,7 +40,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * 127 mid loco4) :0000
  * 
  * @author Dan Boudreau Copyright (C)2008
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.10.2.1 $
  */
 
 
@@ -235,8 +235,9 @@ jmri.jmrix.nce.NceListener {
 		int nceConsistAddr = (num * REPLY_16) + CS_CONSIST_MEM;
 		replyLen = REPLY_16; 			// Expect 16 byte response
 		waiting++;
+		NceTrafficController tc = null;	//TODO get the nce traffic controller
 		byte[] bl = NceBinaryCommand.accMemoryRead(nceConsistAddr);
-		NceMessage m = NceMessage.createBinaryMessage(bl, REPLY_16);
+		NceMessage m = NceMessage.createBinaryMessage(tc, bl, REPLY_16);
 		return m;
 	}
 	

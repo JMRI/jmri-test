@@ -66,7 +66,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * FF10 = link macro 16 
  * 
  * @author Dan Boudreau Copyright (C) 2007
- * @version $Revision: 1.16.6.1 $
+ * @version $Revision: 1.16.6.2 $
  */
 
 public class NceMacroEditFrame extends jmri.util.JmriJFrame implements jmri.jmrix.nce.NceListener {
@@ -1044,7 +1044,7 @@ public class NceMacroEditFrame extends jmri.util.JmriJFrame implements jmri.jmri
     	replyLen = REPLY_16;			// Expect 16 byte response
     	waiting++;
 		byte[] bl = NceBinaryCommand.accMemoryRead(nceMacroAddr);
-		NceMessage m = NceMessage.createBinaryMessage(bl, REPLY_16);
+		NceMessage m = NceMessage.createBinaryMessage(tc, bl, REPLY_16);
 		return m;
     }
     
@@ -1071,7 +1071,7 @@ public class NceMacroEditFrame extends jmri.util.JmriJFrame implements jmri.jmri
 			for (int i = 0; i < 16; i++, j++)
 				bl[j] = b[i];
 		}
-		NceMessage m = NceMessage.createBinaryMessage(bl, REPLY_1);
+		NceMessage m = NceMessage.createBinaryMessage(tc, bl, REPLY_1);
 		return m;
 	}
     

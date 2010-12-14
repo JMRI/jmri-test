@@ -31,7 +31,7 @@ import javax.swing.*;
  * contact NCE Inc for separate permission.
  *
  * @author			Ken Cameron   Copyright (C) 2007
- * @version			$Revision: 1.25.2.1 $
+ * @version			$Revision: 1.25.2.2 $
  *
  * derived from loconet.clockmonframe by Bob Jacobson Copyright (C) 2003
  * 
@@ -1576,7 +1576,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
     private void issueReadOnlyRequest() {
         if (!waitingForCmdRead){
             byte [] cmd = jmri.jmrix.nce.NceBinaryCommand.accMemoryRead(CS_CLOCK_MEM_ADDR);
-            NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CS_CLOCK_MEM_SIZE);
+            NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(tc, cmd, CS_CLOCK_MEM_SIZE);
             waiting++;
             waitingForCmdRead = true;
             tc.sendNceMessage(cmdNce, this);
@@ -1587,7 +1587,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
     private void issueReadAllRequest() {
         if(!waitingForCmdRead){
             byte [] cmd = jmri.jmrix.nce.NceBinaryCommand.accMemoryRead(CS_CLOCK_MEM_ADDR);
-            NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CS_CLOCK_MEM_SIZE);
+            NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(tc, cmd, CS_CLOCK_MEM_SIZE);
             waiting++;
             waitingForCmdRead = true;
             tc.sendNceMessage(cmdNce, this);
@@ -1602,7 +1602,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
 	private void issueReadTimeRequest() {
         if (!waitingForCmdRead) {
             byte [] cmd = jmri.jmrix.nce.NceBinaryCommand.accMemoryRead(CS_CLOCK_MEM_ADDR);
-            NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CS_CLOCK_MEM_SIZE);
+            NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(tc, cmd, CS_CLOCK_MEM_SIZE);
             waiting++;
             waitingForCmdRead = true;
             tc.sendNceMessage(cmdNce, this);
@@ -1614,7 +1614,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
 	private void issueReadRatioRequest() {
         if (!waitingForCmdRead){
             byte [] cmd = jmri.jmrix.nce.NceBinaryCommand.accMemoryRead(CS_CLOCK_MEM_ADDR);
-            NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CS_CLOCK_MEM_SIZE);
+            NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(tc, cmd, CS_CLOCK_MEM_SIZE);
             waiting++;
             waitingForCmdRead = true;
             tc.sendNceMessage(cmdNce, this);
@@ -1626,7 +1626,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
 	private void issueReadFormatRequest() {
         if (!waitingForCmdRead){
             byte [] cmd = jmri.jmrix.nce.NceBinaryCommand.accMemoryRead(CS_CLOCK_MEM_ADDR);
-            NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CS_CLOCK_MEM_SIZE);
+            NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(tc, cmd, CS_CLOCK_MEM_SIZE);
             waiting++;
             waitingForCmdRead = true;
             tc.sendNceMessage(cmdNce, this);
@@ -1638,7 +1638,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
 	private void issueReadStatusRequest() {
         if (!waitingForCmdRead){
             byte [] cmd = jmri.jmrix.nce.NceBinaryCommand.accMemoryRead(CS_CLOCK_MEM_ADDR);
-            NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CS_CLOCK_MEM_SIZE);
+            NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(tc, cmd, CS_CLOCK_MEM_SIZE);
             waiting++;
             waitingForCmdRead = true;
             tc.sendNceMessage(cmdNce, this);
@@ -1655,7 +1655,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
         cmd[4] = (byte) ss;
         cmd[5] = (byte) mm;
         cmd[6] = (byte) hh;
-        NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_MEM_SET_REPLY_SIZE);
+        NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(tc, cmd, CMD_MEM_SET_REPLY_SIZE);
         waiting++;
         waitingForCmdTime = true;
         tc.sendNceMessage(cmdNce, this);
@@ -1663,7 +1663,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
    
     private void issueClockRatio(int r) {
         byte [] cmd = jmri.jmrix.nce.NceBinaryCommand.accSetClockRatio(r);
-        NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_CLOCK_SET_REPLY_SIZE);
+        NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(tc, cmd, CMD_CLOCK_SET_REPLY_SIZE);
         waiting++;
         waitingForCmdRatio = true;
         tc.sendNceMessage(cmdNce, this);
@@ -1671,7 +1671,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
     
     private void issueClock1224(boolean mode) {
         byte [] cmd = jmri.jmrix.nce.NceBinaryCommand.accSetClock1224(mode);
-		NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_CLOCK_SET_REPLY_SIZE);
+		NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(tc, cmd, CMD_CLOCK_SET_REPLY_SIZE);
 		waiting++;
 		waitingForCmd1224 = true;
 		tc.sendNceMessage(cmdNce, this);
@@ -1679,7 +1679,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
     
     private void issueClockStop() {
         byte [] cmd = jmri.jmrix.nce.NceBinaryCommand.accStopClock();
-        NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_CLOCK_SET_REPLY_SIZE);
+        NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(tc, cmd, CMD_CLOCK_SET_REPLY_SIZE);
         waiting++;
         waitingForCmdStop = true;
         tc.sendNceMessage(cmdNce, this);
@@ -1687,7 +1687,7 @@ public class ClockMonFrame extends jmri.util.JmriJFrame implements NceListener {
     
     private void issueClockStart() {
         byte [] cmd = jmri.jmrix.nce.NceBinaryCommand.accStartClock();
-        NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(cmd, CMD_CLOCK_SET_REPLY_SIZE);
+        NceMessage cmdNce = jmri.jmrix.nce.NceMessage.createBinaryMessage(tc, cmd, CMD_CLOCK_SET_REPLY_SIZE);
         waiting++;
         waitingForCmdStart = true;
         tc.sendNceMessage(cmdNce, this);

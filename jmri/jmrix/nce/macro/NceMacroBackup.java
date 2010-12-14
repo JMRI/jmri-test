@@ -58,7 +58,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * This backup routine uses the same macro data format as NCE.
  * 
  * @author Dan Boudreau Copyright (C) 2007
- * @version $Revision: 1.14.2.1 $
+ * @version $Revision: 1.14.2.2 $
  */
 
 
@@ -245,7 +245,7 @@ public class NceMacroBackup extends Thread implements jmri.jmrix.nce.NceListener
 		replyLen = REPLY_16; 			// Expect 16 byte response
 		waiting++;
 		byte[] bl = NceBinaryCommand.accMemoryRead(nceMacroAddr);
-		NceMessage m = NceMessage.createBinaryMessage(bl, REPLY_16);
+		NceMessage m = NceMessage.createBinaryMessage(tc, bl, REPLY_16);
 		return m;
 	}
 

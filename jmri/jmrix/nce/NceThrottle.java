@@ -14,7 +14,7 @@ import jmri.jmrix.AbstractThrottle;
  * Based on Glen Oberhauser's original LnThrottleManager implementation
  *
  * @author	Bob Jacobsen  Copyright (C) 2001
- * @version     $Revision: 1.22.2.2 $
+ * @version     $Revision: 1.22.2.3 $
  */
 public class NceThrottle extends AbstractThrottle{
 	
@@ -99,7 +99,7 @@ public class NceThrottle extends AbstractThrottle{
 			
 			byte[] bl = NceBinaryCommand.nceLocoCmd(locoAddr,
 					NceBinaryCommand.LOCO_CMD_FG1, (byte) data);
-			NceMessage m = NceMessage.createBinaryMessage(bl);
+			NceMessage m = NceMessage.createBinaryMessage(tc, bl);
 			tc.sendNceMessage(m, null);
 
 			// This code can be eliminated once we confirm that the NCE 0xA2
@@ -108,7 +108,7 @@ public class NceThrottle extends AbstractThrottle{
 			byte[] result = jmri.NmraPacket.function0Through4Packet(address
 					.getNumber(), address.isLongAddress(), getF0(), getF1(),
 					getF2(), getF3(), getF4());
-			NceMessage m = NceMessage.sendPacketMessage(result);
+			NceMessage m = NceMessage.sendPacketMessage(tc, result);
 			tc.sendNceMessage(m, null);
 		}
 	}
@@ -131,7 +131,7 @@ public class NceThrottle extends AbstractThrottle{
 			
 			byte[] bl = NceBinaryCommand.nceLocoCmd(locoAddr,
 					NceBinaryCommand.LOCO_CMD_FG2, (byte) data);
-			NceMessage m = NceMessage.createBinaryMessage(bl);
+			NceMessage m = NceMessage.createBinaryMessage(tc, bl);
 			tc.sendNceMessage(m, null);
 
 			// This code can be eliminated once we confirm that the NCE 0xA2
@@ -140,7 +140,7 @@ public class NceThrottle extends AbstractThrottle{
 			byte[] result = jmri.NmraPacket.function5Through8Packet(address
 					.getNumber(), address.isLongAddress(), getF5(), getF6(),
 					getF7(), getF8());
-			NceMessage m = NceMessage.sendPacketMessage(result);
+			NceMessage m = NceMessage.sendPacketMessage(tc, result);
 			tc.sendNceMessage(m, null);
 		}
 	}
@@ -163,7 +163,7 @@ public class NceThrottle extends AbstractThrottle{
 			
 			byte[] bl = NceBinaryCommand.nceLocoCmd(locoAddr,
 					NceBinaryCommand.LOCO_CMD_FG3, (byte) data);
-			NceMessage m = NceMessage.createBinaryMessage(bl);
+			NceMessage m = NceMessage.createBinaryMessage(tc, bl);
 			tc.sendNceMessage(m, null);
 
 			// This code can be eliminated once we confirm that the NCE 0xA2
@@ -172,7 +172,7 @@ public class NceThrottle extends AbstractThrottle{
 			byte[] result = jmri.NmraPacket.function9Through12Packet(address
 					.getNumber(), address.isLongAddress(), getF9(), getF10(),
 					getF11(), getF12());
-			NceMessage m = NceMessage.sendPacketMessage(result);
+			NceMessage m = NceMessage.sendPacketMessage(tc, result);
 			tc.sendNceMessage(m, null);
 		}
 	}
@@ -199,7 +199,7 @@ public class NceThrottle extends AbstractThrottle{
 			
 			byte[] bl = NceBinaryCommand.nceLocoCmd(locoAddr,
 					NceBinaryCommand.LOCO_CMD_FG4, (byte) data);
-			NceMessage m = NceMessage.createBinaryMessage(bl);
+			NceMessage m = NceMessage.createBinaryMessage(tc, bl);
 			tc.sendNceMessage(m, null);
 			
 		} else {
@@ -207,7 +207,7 @@ public class NceThrottle extends AbstractThrottle{
 			byte[] result = jmri.NmraPacket.function13Through20Packet(address
 					.getNumber(), address.isLongAddress(), getF13(), getF14(),
 					getF15(), getF16(), getF17(), getF18(), getF19(), getF20());
-			NceMessage m = NceMessage.sendPacketMessage(result);
+			NceMessage m = NceMessage.sendPacketMessage(tc, result);
 			tc.sendNceMessage(m, null);
 		}
 	}
@@ -234,7 +234,7 @@ public class NceThrottle extends AbstractThrottle{
 			
 			byte[] bl = NceBinaryCommand.nceLocoCmd(locoAddr,
 					NceBinaryCommand.LOCO_CMD_FG5, (byte) data);
-			NceMessage m = NceMessage.createBinaryMessage(bl);
+			NceMessage m = NceMessage.createBinaryMessage(tc, bl);
 			tc.sendNceMessage(m, null);
 
 		} else {
@@ -242,7 +242,7 @@ public class NceThrottle extends AbstractThrottle{
 			byte[] result = jmri.NmraPacket.function21Through28Packet(address
 					.getNumber(), address.isLongAddress(), getF21(), getF22(),
 					getF23(), getF24(), getF25(), getF25(), getF27(), getF28());
-			NceMessage m = NceMessage.sendPacketMessage(result);
+			NceMessage m = NceMessage.sendPacketMessage(tc, result);
 			tc.sendNceMessage(m, null);
 		}
 	}
@@ -292,7 +292,7 @@ public class NceThrottle extends AbstractThrottle{
 								: NceBinaryCommand.LOCO_CMD_REV_28SPEED),
 						(byte) value);
 			}
-			NceMessage m = NceMessage.createBinaryMessage(bl);
+			NceMessage m = NceMessage.createBinaryMessage(tc, bl);
 			tc.sendNceMessage(m, null);
 
 		// This code can be eliminated once we confirm that the NCE 0xA2 commands work properly
@@ -315,7 +315,7 @@ public class NceThrottle extends AbstractThrottle{
 				bl = jmri.NmraPacket.speedStep28Packet(address.getNumber(),
 						address.isLongAddress(), value, isForward);
 			}
-			NceMessage m = NceMessage.queuePacketMessage(bl);
+			NceMessage m = NceMessage.queuePacketMessage(tc, bl);
 			tc.sendNceMessage(m, null);
 
 		}

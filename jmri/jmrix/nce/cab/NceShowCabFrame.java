@@ -124,7 +124,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * 
  * @author Dan Boudreau Copyright (C) 2009, 2010
  * @author Ken Cameron Copyright (C) 2010
- * @version $Revision: 1.11.2.1 $
+ * @version $Revision: 1.11.2.2 $
  */
 
 public class NceShowCabFrame extends jmri.util.JmriJFrame implements jmri.jmrix.nce.NceListener {
@@ -585,7 +585,7 @@ public class NceShowCabFrame extends jmri.util.JmriJFrame implements jmri.jmrix.
     	waiting++;
 		byte[] bl = NceBinaryCommand.accMemoryWriteN(nceCabAddr, 1);
 		bl[4] = (byte)value;
-		NceMessage m = NceMessage.createBinaryMessage(bl, REPLY_1);
+		NceMessage m = NceMessage.createBinaryMessage(tc, bl, REPLY_1);
 		tc.sendNceMessage(m, this);
     }
     
@@ -595,7 +595,7 @@ public class NceShowCabFrame extends jmri.util.JmriJFrame implements jmri.jmrix.
     	replyLen = REPLY_1;			// Expect 1 byte response
     	waiting++;
 		byte[] bl = NceBinaryCommand.accMemoryRead1(nceCabAddr);
-		NceMessage m = NceMessage.createBinaryMessage(bl, REPLY_1);
+		NceMessage m = NceMessage.createBinaryMessage(tc, bl, REPLY_1);
 		tc.sendNceMessage(m, this);
     }
     
@@ -605,7 +605,7 @@ public class NceShowCabFrame extends jmri.util.JmriJFrame implements jmri.jmrix.
     	replyLen = REPLY_16;			// Expect 16 byte response
     	waiting++;
 		byte[] bl = NceBinaryCommand.accMemoryRead(nceCabAddr);
-		NceMessage m = NceMessage.createBinaryMessage(bl, REPLY_16);
+		NceMessage m = NceMessage.createBinaryMessage(tc, bl, REPLY_16);
 		tc.sendNceMessage(m, this);
     }
     

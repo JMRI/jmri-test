@@ -55,7 +55,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * mid loco4) :0000
  * 
  * @author Dan Boudreau Copyright (C) 2007 2008
- * @version $Revision: 1.35.2.1 $
+ * @version $Revision: 1.35.2.2 $
  */
 
 public class NceConsistEditFrame extends jmri.util.JmriJFrame implements
@@ -1805,7 +1805,7 @@ public class NceConsistEditFrame extends jmri.util.JmriJFrame implements
 	}
 
 	private void sendNceMessage(byte[] b, int replyLength) {
-		NceMessage m = NceMessage.createBinaryMessage(b, replyLength);
+		NceMessage m = NceMessage.createBinaryMessage(tc, b, replyLength);
 		waiting++;
 		replyLen = replyLength; // Expect n byte response
 		tc.sendNceMessage(m, this);

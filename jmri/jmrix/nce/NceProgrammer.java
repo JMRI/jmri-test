@@ -15,7 +15,7 @@ import java.util.Vector;
  * This has two states:  NOTPROGRAMMING, and COMMANDSENT.  The transitions
  * to and from programming mode are now handled in the TrafficController code.
  * @author	Bob Jacobsen  Copyright (C) 2001
- * @version     $Revision: 1.24.2.2 $
+ * @version     $Revision: 1.24.2.3 $
  */
 public class NceProgrammer extends AbstractProgrammer implements NceListener {
 	
@@ -181,19 +181,19 @@ public class NceProgrammer extends AbstractProgrammer implements NceListener {
         if (val < 0) {
             // read
             if (_mode == Programmer.PAGEMODE)
-                return NceMessage.getReadPagedCV(cvnum);
+                return NceMessage.getReadPagedCV(tc, cvnum);
             else if (_mode == Programmer.DIRECTBYTEMODE)
-                return NceMessage.getReadDirectCV(cvnum);
+                return NceMessage.getReadDirectCV(tc, cvnum);
 			else
-                return NceMessage.getReadRegister(registerFromCV(cvnum));
+                return NceMessage.getReadRegister(tc, registerFromCV(cvnum));
         } else {
             // write
             if (_mode == Programmer.PAGEMODE)
-                return NceMessage.getWritePagedCV(cvnum, val);
+                return NceMessage.getWritePagedCV(tc, cvnum, val);
             else if (_mode == Programmer.DIRECTBYTEMODE)
-                return NceMessage.getWriteDirectCV(cvnum, val);
+                return NceMessage.getWriteDirectCV(tc, cvnum, val);
             else
-                return NceMessage.getWriteRegister(registerFromCV(cvnum), val);
+                return NceMessage.getWriteRegister(tc, registerFromCV(cvnum), val);
         }
     }
 
