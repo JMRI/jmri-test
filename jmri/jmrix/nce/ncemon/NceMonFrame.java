@@ -13,6 +13,7 @@ import jmri.jmrix.nce.NceTrafficController;
 import jmri.jmrix.nce.NceMessage;
 import jmri.jmrix.nce.NceReply;
 
+@Deprecated
 public class NceMonFrame extends jmri.jmrix.AbstractMonFrame implements NceListener {
 
     private NceTrafficController tc = null;

@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import jmri.jmrix.nce.NceTrafficController;
 
 
+@Deprecated
 public class NceMonAction 			extends AbstractAction {
 
     private NceTrafficController tc = null;
