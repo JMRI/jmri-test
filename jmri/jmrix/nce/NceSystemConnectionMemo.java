@@ -13,13 +13,13 @@ import jmri.*;
  * particular system.
  *
  * @author		Bob Jacobsen  Copyright (C) 2010
- * @version             $Revision: 1.3.2.1 $
+ * @version             $Revision: 1.3.2.2 $
  */
 public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
 
-    public NceSystemConnectionMemo(NceTrafficController lt) {
+    public NceSystemConnectionMemo(NceTrafficController tc) {
         super("N", "NCE");
-        this.lt = lt;
+        this.tc = tc;
         register(); // registers general type
         InstanceManager.store(this, NceSystemConnectionMemo.class); // also register as specific type
         
@@ -40,15 +40,15 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
     
     jmri.jmrix.swing.ComponentFactory cf = null;
     
-    public void setNceUSB(int result) { NceUSB.setUsbSystem(result); }
-    public int getNceUSB() { return NceUSB.getUsbSystem(); }
+    public void setNceUSB(int result) { tc.setUsbSystem(result); }
+    public int getNceUSB() { return tc.getUsbSystem(); }
     /**
      * Provides access to the TrafficController for this
      * particular connection.
      */
-    public NceTrafficController getNceTrafficController() { return lt; }
-    private NceTrafficController lt;
-    public void setNceTrafficController(NceTrafficController lt) { this.lt = lt; }
+    public NceTrafficController getNceTrafficController() { return tc; }
+    private NceTrafficController tc;
+    public void setNceTrafficController(NceTrafficController tc) { this.tc = tc; }
     /*public NceMessageManager getNceMessageManager() {
         // create when needed
         if (Ncem == null) 
@@ -64,7 +64,7 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
         if (getDisabled())
                 return null;
         if (programmerManager == null)
-            programmerManager = new NceProgrammerManager(new NceProgrammer());
+            programmerManager = new NceProgrammerManager(tc, new NceProgrammer(tc));
         return programmerManager;
     }
     public void setProgrammerManager(ProgrammerManager p) {
@@ -75,7 +75,7 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
      * Sets the NCE message option.
      */
     public void configureCommandStation(int val) {
-        NceMessage.setCommandOptions(val);
+        tc.setCommandOptions(val);
     }
 
     /** 
@@ -127,10 +127,10 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
         throttleManager = new jmri.jmrix.nce.NceThrottleManager(getNceTrafficController(), getSystemPrefix());
         InstanceManager.setThrottleManager(throttleManager);
         
-        if (getNceUSB() != NceUSB.USB_SYSTEM_NONE) {
-            if (getNceUSB() != NceUSB.USB_SYSTEM_POWERHOUSE) {
-                jmri.InstanceManager.setProgrammerManager(new NceProgrammerManager(
-					new NceProgrammer()));
+        if (getNceUSB() != NceTrafficController.USB_SYSTEM_NONE) {
+            if (getNceUSB() != NceTrafficController.USB_SYSTEM_POWERHOUSE) {
+                jmri.InstanceManager.setProgrammerManager(new NceProgrammerManager( tc,
+					new NceProgrammer(tc)));
             }
         } else {
             InstanceManager.setProgrammerManager(
@@ -150,7 +150,7 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
     public NceClockControl  getNceClockControl() { return clockManager; }
     
     public void dispose() {
-        lt = null;
+        tc = null;
         InstanceManager.deregister(this, NceSystemConnectionMemo.class);
         if (cf != null) 
             InstanceManager.deregister(cf, jmri.jmrix.swing.ComponentFactory.class);

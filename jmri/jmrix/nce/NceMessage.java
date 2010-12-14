@@ -27,7 +27,7 @@ import java.util.Arrays;
  *
  * @author	Bob Jacobsen  Copyright (C) 2001
  * @author Daniel Boudreau Copyright (C) 2007
- * @version     $Revision: 1.44.2.1 $
+ * @version     $Revision: 1.44.2.2 $
  */
 public class NceMessage extends jmri.jmrix.AbstractMRMessage {
 	
@@ -515,6 +515,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
      *</UL>
      *
      */
+    @Deprecated
      public static void setCommandOptions(int val) {
         commandOptions = val;
         if (commandOptionSet) {
@@ -525,11 +526,14 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
     }
 
     /** 
+     * Deprecated, use NceTrafficControler.getCommandOptions()
+     * <p>
+     * 
      * Determine which command format should be used for various
      * commands: ASCII or binary.
      *<P>
      * The valid return values are the class "OPTION"
-     * contants, which are interpreted in the various methods to
+     * constants, which are interpreted in the various methods to
      * get a particular message.
      *<UL>
      *<LI>{@link #OPTION_FORCE_ASCII}
@@ -540,6 +544,7 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
      *</UL>
      *
      */
+    @Deprecated
     public static int getCommandOptions() { return commandOptions; }
     
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(NceMessage.class.getName());

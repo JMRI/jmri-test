@@ -13,7 +13,7 @@ import jmri.NmraPacket;
  *  Based in part on SerialLight.java
  *
  * @author      Dave Duchamp Copyright (C) 2010
- * @version     $Revision: 1.5.2.1 $
+ * @version     $Revision: 1.5.2.2 $
  */
 public class NceLight extends AbstractLight {
 
@@ -62,7 +62,7 @@ public class NceLight extends AbstractLight {
 	protected void doNewState(int oldState, int newState) {
 		boolean state = true;
 		if (newState==OFF) state = false;
-		if (NceMessage.getCommandOptions() >= NceMessage.OPTION_2006) {
+		if (tc.getCommandOptions() >= NceTrafficController.OPTION_2006) {
     		
     		byte [] bl = NceBinaryCommand.accDecoder(mBit, state);
     		

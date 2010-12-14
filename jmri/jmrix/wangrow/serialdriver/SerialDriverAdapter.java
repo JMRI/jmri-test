@@ -32,7 +32,7 @@ import gnu.io.SerialPort;
  *
  *
  * @author			Bob Jacobsen   Copyright (C) 2001, 2002
- * @version			$Revision: 1.13.6.1 $
+ * @version			$Revision: 1.13.6.2 $
  */
 public class SerialDriverAdapter extends NcePortController  implements jmri.jmrix.SerialPortAdapter {
 
@@ -128,7 +128,7 @@ public class SerialDriverAdapter extends NcePortController  implements jmri.jmri
         adaptermemo.configureManagers();
         
     	// set the command option
-        NceMessage.setCommandOptions(NceMessage.OPTION_1999);
+        tc.setCommandOptions(NceMessage.OPTION_1999);
                 
         ActiveFlag.setActive();
 

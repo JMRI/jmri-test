@@ -21,12 +21,12 @@ public class NceMacroEditAction  extends AbstractAction {
 
     private NceTrafficController tc = null;
     
-	public NceMacroEditAction(NceTrafficController t, String s) {
+	public NceMacroEditAction(NceTrafficController tc, String s) {
 		super(s);
-		this.tc = t;
+		this.tc = tc;
 
 		// disable if NCE USB detected
-		if (NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_NONE) {
+		if (tc.getUsbSystem() != NceTrafficController.USB_SYSTEM_NONE) {
 			setEnabled(false);
 		}
 	}

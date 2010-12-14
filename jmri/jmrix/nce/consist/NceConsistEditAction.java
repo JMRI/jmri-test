@@ -16,18 +16,17 @@ import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 
 import jmri.jmrix.nce.NceTrafficController;
-import jmri.jmrix.nce.NceUSB;
 
 public class NceConsistEditAction  extends AbstractAction {
 
     private NceTrafficController tc = null;
     
-	public NceConsistEditAction(NceTrafficController t, String s) { 
+	public NceConsistEditAction(NceTrafficController tc, String s) { 
 		super(s);
-		this.tc = t;
+		this.tc = tc;
 		
 		// disable if NCE USB selected
-		if (NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_NONE) {
+		if (tc.getUsbSystem() != NceTrafficController.USB_SYSTEM_NONE) {
 			setEnabled(false);
 		}
 	}

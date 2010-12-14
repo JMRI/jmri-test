@@ -14,7 +14,7 @@ import jmri.jmrix.AbstractThrottle;
  * Based on Glen Oberhauser's original LnThrottleManager implementation
  *
  * @author	Bob Jacobsen  Copyright (C) 2001
- * @version     $Revision: 1.22.2.1 $
+ * @version     $Revision: 1.22.2.2 $
  */
 public class NceThrottle extends AbstractThrottle{
 	
@@ -72,7 +72,7 @@ public class NceThrottle extends AbstractThrottle{
         this.isForward    = true;
         
         // send NMRA style packets to old versions of NCE eprom
-        if (NceMessage.getCommandOptions() <= NceMessage.OPTION_2004)
+        if (tc.getCommandOptions() <= NceTrafficController.OPTION_2004)
         	sendA2command = false;
     }
 

@@ -16,26 +16,28 @@ import jmri.jmrix.nce.NceProgrammer;
 /**
  * JUnit tests for the NceProgrammer class
  * @author			Bob Jacobsen
- * @version          $Revision: 1.13.6.1 $
+ * @version          $Revision: 1.13.6.2 $
  */
 public class NceProgrammerTest extends TestCase {
 
     public void setUp() {
-        saveCommandOptions = NceMessage.getCommandOptions();
+    	tc = new NceTrafficController();
+        saveCommandOptions = tc.getCommandOptions();
     }
     
     public void tearDown() {
-        NceMessage.setCommandOptions(saveCommandOptions);
+        tc.setCommandOptions(saveCommandOptions);
     }
+    NceTrafficController tc;
     int saveCommandOptions;
     
     public void testWriteCvSequenceAscii() throws JmriException {
-    	NceMessage.setCommandOptions(NceMessage.OPTION_2004);
+    	tc.setCommandOptions(NceTrafficController.OPTION_2004);
         // infrastructure objects
         NceInterfaceScaffold t = new NceInterfaceScaffold();
         NceListenerScaffold l = new NceListenerScaffold();
 
-        NceProgrammer p = new NceProgrammer();
+        NceProgrammer p = new NceProgrammer(tc);
 
         // and do the write
         p.writeCV(10, 20, l);
@@ -51,12 +53,12 @@ public class NceProgrammerTest extends TestCase {
     }
 
     public void testWriteCvSequenceBin() throws JmriException {
-    	NceMessage.setCommandOptions(NceMessage.OPTION_2006);
+    	tc.setCommandOptions(NceTrafficController.OPTION_2006);
         // infrastructure objects
         NceInterfaceScaffold t = new NceInterfaceScaffold();
         NceListenerScaffold l = new NceListenerScaffold();
 
-        NceProgrammer p = new NceProgrammer();
+        NceProgrammer p = new NceProgrammer(tc);
 
         // and do the write
         p.writeCV(10, 20, l);
@@ -72,12 +74,12 @@ public class NceProgrammerTest extends TestCase {
     }
 
     public void testWriteRegisterSequenceAscii() throws JmriException {
-    	NceMessage.setCommandOptions(NceMessage.OPTION_2004);
+    	tc.setCommandOptions(NceTrafficController.OPTION_2004);
         // infrastructure objects
         NceInterfaceScaffold t = new NceInterfaceScaffold();
         NceListenerScaffold l = new NceListenerScaffold();
 
-        NceProgrammer p = new NceProgrammer();
+        NceProgrammer p = new NceProgrammer(tc);
 
         // set register mode
         p.setMode(Programmer.REGISTERMODE);
@@ -96,12 +98,12 @@ public class NceProgrammerTest extends TestCase {
     }
 
     public void testWriteRegisterSequenceBin() throws JmriException {
-    	NceMessage.setCommandOptions(NceMessage.OPTION_2006);
+    	tc.setCommandOptions(NceTrafficController.OPTION_2006);
         // infrastructure objects
         NceInterfaceScaffold t = new NceInterfaceScaffold();
         NceListenerScaffold l = new NceListenerScaffold();
 
-        NceProgrammer p = new NceProgrammer();
+        NceProgrammer p = new NceProgrammer(tc);
 
         // set register mode
         p.setMode(Programmer.REGISTERMODE);
@@ -120,12 +122,12 @@ public class NceProgrammerTest extends TestCase {
     }
 
     public void testReadCvSequenceAscii() throws JmriException {
-    	NceMessage.setCommandOptions(NceMessage.OPTION_2004);
+    	tc.setCommandOptions(NceTrafficController.OPTION_2004);
         // infrastructure objects
         NceInterfaceScaffold t = new NceInterfaceScaffold();
         NceListenerScaffold l = new NceListenerScaffold();
 
-        NceProgrammer p = new NceProgrammer();
+        NceProgrammer p = new NceProgrammer(tc);
 
         // and do the read
         p.readCV(10, l);
@@ -146,12 +148,12 @@ public class NceProgrammerTest extends TestCase {
     }
 
     public void testReadCvSequenceBin() throws JmriException {
-    	NceMessage.setCommandOptions(NceMessage.OPTION_2006);
+    	tc.setCommandOptions(NceTrafficController.OPTION_2006);
         // infrastructure objects
         NceInterfaceScaffold t = new NceInterfaceScaffold();
         NceListenerScaffold l = new NceListenerScaffold();
 
-        NceProgrammer p = new NceProgrammer();
+        NceProgrammer p = new NceProgrammer(tc);
 
         // and do the read
         p.readCV(10, l);
@@ -172,12 +174,12 @@ public class NceProgrammerTest extends TestCase {
     }
 
     public void testReadRegisterSequenceAscii() throws JmriException {
-    	NceMessage.setCommandOptions(NceMessage.OPTION_2004);
+    	tc.setCommandOptions(NceTrafficController.OPTION_2004);
         // infrastructure objects
         NceInterfaceScaffold t = new NceInterfaceScaffold();
         NceListenerScaffold l = new NceListenerScaffold();
 
-        NceProgrammer p = new NceProgrammer();
+        NceProgrammer p = new NceProgrammer(tc);
 
         // set register mode
         p.setMode(Programmer.REGISTERMODE);
@@ -201,12 +203,12 @@ public class NceProgrammerTest extends TestCase {
     }
 
     public void testReadRegisterSequenceBin() throws JmriException {
-    	NceMessage.setCommandOptions(NceMessage.OPTION_2006);
+    	tc.setCommandOptions(NceTrafficController.OPTION_2006);
         // infrastructure objects
         NceInterfaceScaffold t = new NceInterfaceScaffold();
         NceListenerScaffold l = new NceListenerScaffold();
 
-        NceProgrammer p = new NceProgrammer();
+        NceProgrammer p = new NceProgrammer(tc);
 
         // set register mode
         p.setMode(Programmer.REGISTERMODE);

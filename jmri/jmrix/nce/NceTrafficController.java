@@ -21,7 +21,7 @@ import jmri.jmrix.AbstractMRTrafficController;
  * message.
  * 
  * @author Bob Jacobsen Copyright (C) 2001
- * @version $Revision: 1.33.2.2 $
+ * @version $Revision: 1.33.2.3 $
  */
 public class NceTrafficController extends AbstractMRTrafficController implements NceInterface, CommandStation {
 
@@ -70,6 +70,133 @@ public class NceTrafficController extends AbstractMRTrafficController implements
     public void setSensorManager(NceSensorManager m) { mSensorManager = m; }
     public NceSensorManager getSensorManager() { return mSensorManager; }
     
+    /**
+     * Create all commands in the ASCII format.
+     */
+    static public final int OPTION_FORCE_ASCII  = -1;
+    /**
+     * Create commands compatible with the 1999 EPROM.
+     *<P>
+     * This is binary for everything except service-mode CV programming operations.
+     */
+    static public final int OPTION_1999 = 0;
+    /**
+     * Create commands compatible with the 2004 EPROM.
+     *<P>
+     * This is binary for everything except service-mode CV programming operations.
+     */
+    static public final int OPTION_2004 = 10;
+    /**
+     * Create commands compatible with the 2006 EPROM.
+     *<P>
+     * This is binary for everything, including service-mode CV programming operations.
+     */
+    static public final int OPTION_2006 = 20;
+    /**
+     * Create all commands in the binary format.
+     */
+    static public final int OPTION_FORCE_BINARY = 10000;
+    
+    private int commandOptions = OPTION_2004;
+    public boolean commandOptionSet = false;
+    
+    /** 
+     * Control which command format should be used for various
+     * commands: ASCII or binary.
+     *<P>
+     * The valid argument values are the class "OPTION"
+     * constants, which are interpreted in the various methods to
+     * get a particular message.
+     *<UL>
+     *<LI>{@link #OPTION_FORCE_ASCII}
+     *<LI>{@link #OPTION_1999}
+     *<LI>{@link #OPTION_2004}
+     *<LI>{@link #OPTION_2006}
+     *<LI>{@link #OPTION_FORCE_BINARY}
+     *</UL>
+     *
+     */
+     public void setCommandOptions(int val) {
+        commandOptions = val;
+        if (commandOptionSet) {
+            log.error("setCommandOptions called more than once");
+            new Exception().printStackTrace();
+        }
+        commandOptionSet = true;
+    }
+     
+    /** 
+     * Determine which command format should be used for various
+     * commands: ASCII or binary.
+     *<P>
+     * The valid return values are the class "OPTION"
+     * constants, which are interpreted in the various methods to
+     * get a particular message.
+     *<UL>
+     *<LI>{@link #OPTION_FORCE_ASCII}
+     *<LI>{@link #OPTION_1999}
+     *<LI>{@link #OPTION_2004}
+     *<LI>{@link #OPTION_2006}
+     *<LI>{@link #OPTION_FORCE_BINARY}
+     *</UL>
+     *
+     */
+    public int getCommandOptions() { return commandOptions; }
+    
+	/**
+	 * Default when a NCE USB isn't selected in user system preferences
+	 */
+	static public final int USB_SYSTEM_NONE = 0;
+	
+	/**
+	 * Create commands compatible with a NCE USB connected to a PowerCab
+	 */
+	static public final int USB_SYSTEM_POWERCAB = 1;
+	
+	/**
+	 * Create commands compatible with a NCE USB connected to a Smart Booster
+	 */
+	static public final int USB_SYSTEM_SB3 = 2;
+	
+	/**
+	 * Create commands compatible with a NCE USB connected to a PowerHouse
+	 */
+	static public final int USB_SYSTEM_POWERHOUSE = 4;
+
+	private int usbSystem = USB_SYSTEM_NONE;
+	private boolean usbSystemSet = false;
+
+	/**
+	 * Set the type of system the NCE USB is connected to
+	 * <UL>
+	 * <LI>{@link #USB_SYSTEM_NONE}
+	 * <LI>{@link #USB_SYSTEM_POWERCAB}
+	 * <LI>{@link #USB_SYSTEM_SB3}
+	 * <LI>{@link #USB_SYSTEM_POWERHOUSE}
+	 * </UL>
+	 * 
+	 * @param val
+	 */
+	public void setUsbSystem(int val) {
+		usbSystem = val;
+		if (usbSystemSet) {
+			log.error("setUsbSystem called more than once");
+			new Exception().printStackTrace();
+		}
+		usbSystemSet = true;
+	}
+
+	/**
+	 * Get the type of system the NCE USB is connected to
+	 * <UL>
+	 * <LI>{@link #USB_SYSTEM_NONE}
+	 * <LI>{@link #USB_SYSTEM_POWERCAB}
+	 * <LI>{@link #USB_SYSTEM_SB3}
+	 * <LI>{@link #USB_SYSTEM_POWERHOUSE}
+	 * </UL>
+	 * 
+	 */
+	public int getUsbSystem() {return usbSystem;}
     
     /**
 	 * Check NCE EPROM and start NCE CS accessory memory poll
@@ -77,7 +204,7 @@ public class NceTrafficController extends AbstractMRTrafficController implements
 	protected AbstractMRMessage pollMessage() {
 		
 		// Check to see if command options are valid
-		if (NceMessage.commandOptionSet == false){
+		if (commandOptionSet == false){
 			if (log.isDebugEnabled())log.debug("Command options are not valid yet!!");
 			return null;
 		}
@@ -180,6 +307,7 @@ public class NceTrafficController extends AbstractMRTrafficController implements
     /**
      * instance use of the traffic controller is no longer used for multiple connections
      */
+	@Deprecated
     public void setInstance(){}
     
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
@@ -194,7 +322,7 @@ public class NceTrafficController extends AbstractMRTrafficController implements
     
     // pre 2006 EPROMs can't stop AIU broadcasts so we have to accept them
 	protected boolean canReceive() {
-		if (NceMessage.getCommandOptions() < NceMessage.OPTION_2006) {
+		if (getCommandOptions() < OPTION_2006) {
 			return true;
 		} else if (replyLen > 0) {
 			return true;
@@ -216,7 +344,7 @@ public class NceTrafficController extends AbstractMRTrafficController implements
 			// This code is problematic, it is data sensitive.
 			// We can also incorrectly forward an AIU broadcast to a routine
 			// that is waiting for a reply
-			if (replyLen == 0 && NceMessage.getCommandOptions() < NceMessage.OPTION_2006) {
+			if (replyLen == 0 && getCommandOptions() < OPTION_2006) {
 				if (msg.getNumDataElements() == 1 && msg.getElement(0) == 0x61)
 					return false;
 				if (msg.getNumDataElements() == 2 && msg.getElement(0) == 0x61

@@ -27,7 +27,7 @@ import gnu.io.SerialPort;
  * 
  * @author Bob Jacobsen Copyright (C) 2001, 2002
  * @author Daniel Boudreau Copyright (C) 2007
- * @version $Revision: 1.23.2.1 $
+ * @version $Revision: 1.23.2.2 $
  */
 public class UsbDriverAdapter extends NcePortController {
 
@@ -125,11 +125,11 @@ public class UsbDriverAdapter extends NcePortController {
         
         //set the system the USB is connected to
         if (getCurrentOption1Setting().equals(validOption1()[0])) {
-                adaptermemo.setNceUSB(NceUSB.USB_SYSTEM_POWERCAB);
+                adaptermemo.setNceUSB(NceTrafficController.USB_SYSTEM_POWERCAB);
         } else if (getCurrentOption1Setting().equals(validOption1()[1])) {
-                adaptermemo.setNceUSB(NceUSB.USB_SYSTEM_SB3);
+                adaptermemo.setNceUSB(NceTrafficController.USB_SYSTEM_SB3);
         } else{
-                adaptermemo.setNceUSB(NceUSB.USB_SYSTEM_POWERHOUSE);
+                adaptermemo.setNceUSB(NceTrafficController.USB_SYSTEM_POWERHOUSE);
         }
         
         adaptermemo.setNceTrafficController(tc);

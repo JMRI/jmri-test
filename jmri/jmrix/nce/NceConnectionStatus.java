@@ -19,7 +19,7 @@ import jmri.jmrix.ConnectionStatus;
  * Also checks for March 2007 EPROM and warns user about Monitoring feedback.
  *  
  * @author Daniel Boudreau (C) 2007, 2010
- * @version     $Revision: 1.13.2.2 $
+ * @version     $Revision: 1.13.2.3 $
  * 
  */
 
@@ -100,7 +100,7 @@ public class NceConnectionStatus implements NceListener {
 
 	public NceMessage nceEpromPoll() {
 		
-		if (NceMessage.getCommandOptions() <= NceMessage.OPTION_1999)
+		if (tc.getCommandOptions() <= NceTrafficController.OPTION_1999)
 			return null;
 		
 		if (epromState == CHECK_STATE) { // normal state for this routine
@@ -269,7 +269,7 @@ public class NceConnectionStatus implements NceListener {
 
 			// Confirm that user selected correct revision of EPROM, check for old EPROM installed, new EPROM preferences
 			if ((VV <= VV_2007 && MM < MM_2007)
-					&& (NceMessage.getCommandOptions() >= NceMessage.OPTION_2006)) {
+					&& (tc.getCommandOptions() >= NceTrafficController.OPTION_2006)) {
 				log.error("Wrong revision ("
 								+ Integer.toHexString(VV & 0xFF)+ "."
 								+ Integer.toHexString(MM & 0xFF)+ "."
@@ -281,7 +281,7 @@ public class NceConnectionStatus implements NceListener {
 			// Confirm that user selected correct revision of EPROM, check for new EPROM installed, old EPROM preferences
 			boolean eprom2007orNewer = ((VV == VV_2007) && (MM >= MM_2007));
 			if (((VV > VV_2007) || eprom2007orNewer)
-					&& (NceMessage.getCommandOptions() < NceMessage.OPTION_2006)) {
+					&& (tc.getCommandOptions() < NceTrafficController.OPTION_2006)) {
 				log.error("Wrong revision ("
 								+ Integer.toHexString(VV & 0xFF)+ "."
 								+ Integer.toHexString(MM & 0xFF)+ "."
@@ -294,7 +294,7 @@ public class NceConnectionStatus implements NceListener {
 			// PowerHouse? 3 cases for PH, 1999, 2004, & 2007
 			if (VV == VV_1999 || (VV == VV_2004 && MM == MM_2004) || (VV == VV_2007 && MM == MM_2007))
 				// make sure system connection is not NCE USB
-				if (NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_NONE) {
+				if (tc.getUsbSystem() != NceTrafficController.USB_SYSTEM_NONE) {
 					log.error("System Connection is incorrect, detected Power Pro");
 					epromState = ERROR4_STATE;
 				}
@@ -302,15 +302,15 @@ public class NceConnectionStatus implements NceListener {
 			// Check for USB
 			if (VV == VV_USB && MM == MM_USB) {
 				// USB detected, check to see if user preferences are correct
-				if (mm == mm_USB_PwrCab	&& NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_POWERCAB) {
+				if (mm == mm_USB_PwrCab	&& tc.getUsbSystem() != NceTrafficController.USB_SYSTEM_POWERCAB) {
 					log.error("System Connection is incorrect, detected USB connected to a PowerCab");
 					epromState = ERROR5_STATE;
 				}
-				if (mm == mm_USB_SB3 && NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_SB3) {
+				if (mm == mm_USB_SB3 && tc.getUsbSystem() != NceTrafficController.USB_SYSTEM_SB3) {
 					log.error("System Connection is incorrect, detected USB connected to a Smart Booster SB3");
 					epromState = ERROR6_STATE;
 				}
-				if (mm == mm_USB_PH && NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_POWERHOUSE) {
+				if (mm == mm_USB_PH && tc.getUsbSystem() != NceTrafficController.USB_SYSTEM_POWERHOUSE) {
 					log.error("System Connection is incorrect, detected USB connected to a Power Pro");
 					epromState = ERROR7_STATE;
 				}

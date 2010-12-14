@@ -11,7 +11,7 @@ import javax.swing.*;
  * Frame for user input of Nce macros
  * @author	Bob Jacobsen   Copyright (C) 2001
  * @author Dan Boudreau 	Copyright (C) 2007
- * @version $Revision: 1.7.14.1 $
+ * @version $Revision: 1.7.14.2 $
  **/
 
 public class NceMacroGenFrame extends jmri.util.JmriJFrame implements jmri.jmrix.nce.NceListener {
@@ -120,7 +120,7 @@ public class NceMacroGenFrame extends jmri.util.JmriJFrame implements jmri.jmrix
 		if (macroNum < 0 | macroNum > 255)
 			return null;
 		
-		if (NceMessage.getCommandOptions() >= NceMessage.OPTION_2006) {
+		if (tc.getCommandOptions() >= NceTrafficController.OPTION_2006) {
 
 			// NCE always responds with okay (!) if macro number is in range.
 			// We need to send this version of macro command to cause turnout

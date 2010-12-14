@@ -13,7 +13,7 @@ import jmri.jmrix.nce.NceUSB;
  * Create and register a NceClockMonitorFrame object.
  *
  * @author			Ken Cameron    Copyright (C) 2007
- * @version			$Revision: 1.3.14.1 $
+ * @version			$Revision: 1.3.14.2 $
  *
  * based on LocoNet.ClockMonAction by Bob Jacobsen Copyright (C) 2003
  */
@@ -23,7 +23,7 @@ public class ClockMonAction extends AbstractAction {
 		super(s);
 		
 		// disable if NCE USB detected
-		if (NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_NONE) {
+		if (tc.getUsbSystem() != NceTrafficController.USB_SYSTEM_NONE) {
 			setEnabled(false);
 		}
 	}

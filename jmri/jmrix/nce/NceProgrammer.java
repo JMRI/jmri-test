@@ -15,15 +15,16 @@ import java.util.Vector;
  * This has two states:  NOTPROGRAMMING, and COMMANDSENT.  The transitions
  * to and from programming mode are now handled in the TrafficController code.
  * @author	Bob Jacobsen  Copyright (C) 2001
- * @version     $Revision: 1.24.2.1 $
+ * @version     $Revision: 1.24.2.2 $
  */
 public class NceProgrammer extends AbstractProgrammer implements NceListener {
 	
-    private NceTrafficController tc = null;
+    protected NceTrafficController tc = null;
 
-    public NceProgrammer() {
+    public NceProgrammer(NceTrafficController tc) {
+    	this.tc = tc;
         super.SHORT_TIMEOUT = 4000;
-        if (NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_SB3){
+        if (tc.getUsbSystem() == NceTrafficController.USB_SYSTEM_SB3){
         	_mode = Programmer.OPSBYTEMODE;
         }
     }
@@ -58,7 +59,7 @@ public class NceProgrammer extends AbstractProgrammer implements NceListener {
      * @return True if paged or register mode
      */
     public boolean hasMode(int mode) {
-    	if (NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_SB3){
+    	if (tc.getUsbSystem() == NceTrafficController.USB_SYSTEM_SB3){
     		log.debug("NCE USB-SB3 hasMode returns false on mode "+mode);
     		return false;
     	}
@@ -68,7 +69,7 @@ public class NceProgrammer extends AbstractProgrammer implements NceListener {
             return true;
         }
         if ( mode == Programmer.DIRECTBYTEMODE && 
-             NceMessage.getCommandOptions() >= NceMessage.OPTION_2006) {
+             tc.getCommandOptions() >= NceTrafficController.OPTION_2006) {
             log.debug("hasMode request on mode "+mode+" returns true (2)");
             return true;
         }
@@ -79,7 +80,7 @@ public class NceProgrammer extends AbstractProgrammer implements NceListener {
     public int getMode() { return _mode; }
 
     public boolean getCanRead() {
-    	if (NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_SB3)
+    	if (tc.getUsbSystem() == NceTrafficController.USB_SYSTEM_SB3)
     		return false;
     	else
     		return true;

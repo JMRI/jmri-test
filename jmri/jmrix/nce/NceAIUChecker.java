@@ -13,7 +13,7 @@ import jmri.jmrix.ConnectionStatus;
  * AIU broadcasts, 0 = disabled, 1 = enabled.
  *  
  * @author Daniel Boudreau (C) 2007
- * @version     $Revision: 1.7.2.1 $
+ * @version     $Revision: 1.7.2.2 $
  * 
  */
 
@@ -32,11 +32,11 @@ public class NceAIUChecker implements NceListener {
 	
 	public NceMessage nceAiuPoll() {
 
-		if (NceMessage.getCommandOptions() <= NceMessage.OPTION_1999)
+		if (tc.getCommandOptions() <= NceTrafficController.OPTION_1999)
 			return null;
 		
 		// If USB, just return
-		if (NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_NONE)
+		if (tc.getUsbSystem() != NceTrafficController.USB_SYSTEM_NONE)
 			return null;
 		
 		// read one byte from NCE memory to determine if AIU broadcasts are enabled

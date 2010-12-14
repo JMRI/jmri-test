@@ -16,7 +16,7 @@ import jmri.PushbuttonPacket;
  *
  * @author	Bob Jacobsen Copyright (C) 2001
  * @author Daniel Boudreau (C) 2007
- * @version	$Revision: 1.35.2.1 $
+ * @version	$Revision: 1.35.2.2 $
  */
 public class NceTurnout extends AbstractTurnout {
     
@@ -25,9 +25,9 @@ public class NceTurnout extends AbstractTurnout {
     /**
      * NCE turnouts use the NMRA number (0-2044) as their numerical identification.
      */
-    public NceTurnout(NceTrafficController t, String p, int i) {
+    public NceTurnout(NceTrafficController tc, String p, int i) {
     	super(p + "T" + i);
-    	this.tc = t;
+    	this.tc = tc;
     	this.prefix = p;
     	_number = i;
     	// At construction, register for messages
@@ -37,7 +37,7 @@ public class NceTurnout extends AbstractTurnout {
     private synchronized void initialize(){  
     	numNtTurnouts++;	// increment the total number of NCE turnouts
     	// update feedback modes, MONITORING requires PowerHouse system with new EPROM   	
-    	if (NceMessage.getCommandOptions() >= NceMessage.OPTION_2006 && NceUSB.getUsbSystem() == NceUSB.USB_SYSTEM_NONE) {
+    	if (tc.getCommandOptions() >= NceTrafficController.OPTION_2006 && tc.getUsbSystem() == NceTrafficController.USB_SYSTEM_NONE) {
     		if (modeNames == null) {
     			if (_validFeedbackNames.length != _validFeedbackModes.length)
     				log.error("int and string feedback arrays different length");
@@ -155,7 +155,7 @@ public class NceTurnout extends AbstractTurnout {
      */
     public boolean canLock(int turnoutLockout) {
     	// can not lock if using a USB
-    	if (NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_NONE)
+    	if (tc.getUsbSystem() != NceTrafficController.USB_SYSTEM_NONE)
     		return false;
     	// check to see if push button lock is enabled and valid decoder
 		if ((turnoutLockout & PUSHBUTTONLOCKOUT) > 0 && _enablePushButtonLockout    
@@ -203,7 +203,7 @@ public class NceTurnout extends AbstractTurnout {
         // get the packet
     	// dBoudreau  Added support for new accessory binary command
  
-    	if (NceMessage.getCommandOptions() >= NceMessage.OPTION_2006) {
+    	if (tc.getCommandOptions() >= NceTrafficController.OPTION_2006) {
     		
     		byte [] bl = NceBinaryCommand.accDecoder(_number, closed);
     		
