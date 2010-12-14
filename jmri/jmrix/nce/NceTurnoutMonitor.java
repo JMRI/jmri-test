@@ -28,7 +28,7 @@ import jmri.Turnout;
  * 
  *  
  * @author Daniel Boudreau (C) 2007
- * @version     $Revision: 1.33.2.3 $
+ * @version     $Revision: 1.33.2.4 $
  */
 
 public class NceTurnoutMonitor implements NceListener,java.beans.PropertyChangeListener {
@@ -287,10 +287,11 @@ public class NceTurnoutMonitor implements NceListener,java.beans.PropertyChangeL
     // update turnout's CommandedState if necessary
     private void monitorActionCommanded(int NTnum, int recMemByte, int bit) {
 
-		NceTurnout rControlTurnout = (NceTurnout) InstanceManager
-				.turnoutManagerInstance().getBySystemName(tc.getAdapterMemo().getSystemPrefix() + NTnum);
-		if (rControlTurnout == null)
+		NceTurnout rControlTurnout = (NceTurnout) tc.getAdapterMemo().getNceTurnoutManager().getBySystemName(tc.getAdapterMemo().getSystemPrefix() + "T" + NTnum);
+		if (rControlTurnout == null){
+			log.debug("Null nce turnout number: "+NTnum+" system prefix: "+tc.getAdapterMemo().getSystemPrefix() );
 			return;
+		}
 		
 		int tCommandedState = rControlTurnout.getCommandedState();
 		
@@ -341,8 +342,8 @@ public class NceTurnoutMonitor implements NceListener,java.beans.PropertyChangeL
     // update turnout's KnownState if necessary
     private void monitorActionKnown(int NTnum, int recMemByte, int bit) {
 
-		NceTurnout rControlTurnout = (NceTurnout) InstanceManager
-				.turnoutManagerInstance().getBySystemName(tc.getAdapterMemo().getSystemPrefix() + NTnum);
+    	NceTurnout rControlTurnout = (NceTurnout) tc.getAdapterMemo().getNceTurnoutManager().getBySystemName(tc.getAdapterMemo().getSystemPrefix() + "T" + NTnum);
+
 		if (rControlTurnout == null)
 			return;
 
