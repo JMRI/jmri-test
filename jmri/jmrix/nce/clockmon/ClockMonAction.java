@@ -6,14 +6,13 @@ import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 
 import jmri.jmrix.nce.NceTrafficController;
-import jmri.jmrix.nce.NceUSB;
 
 
 /**
  * Create and register a NceClockMonitorFrame object.
  *
  * @author			Ken Cameron    Copyright (C) 2007
- * @version			$Revision: 1.3.14.2 $
+ * @version			$Revision: 1.3.14.3 $
  *
  * based on LocoNet.ClockMonAction by Bob Jacobsen Copyright (C) 2003
  */

@@ -13,7 +13,6 @@
 package jmri.jmrix.nce.ncemon;
 
 import jmri.jmrix.nce.*;
-import jmri.jmrix.nce.ncemon.NceMonAction;
 import jmri.jmrix.nce.swing.*;
 
 

@@ -5,7 +5,6 @@ package jmri.jmrix.nce.usbdriver;
 import jmri.jmrix.nce.NceMessage;
 import jmri.jmrix.nce.NcePortController;
 import jmri.jmrix.nce.NceTrafficController;
-import jmri.jmrix.nce.NceUSB;
 import jmri.jmrix.nce.NceSystemConnectionMemo;
 
 import java.io.DataInputStream;
@@ -27,7 +26,7 @@ import gnu.io.SerialPort;
  * 
  * @author Bob Jacobsen Copyright (C) 2001, 2002
  * @author Daniel Boudreau Copyright (C) 2007
- * @version $Revision: 1.23.2.2 $
+ * @version $Revision: 1.23.2.3 $
  */
 public class UsbDriverAdapter extends NcePortController {
 

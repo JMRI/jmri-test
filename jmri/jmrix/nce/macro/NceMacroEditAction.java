@@ -15,7 +15,6 @@ import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 
 import jmri.jmrix.nce.NceTrafficController;
-import jmri.jmrix.nce.NceUSB;
 
 public class NceMacroEditAction  extends AbstractAction {
 
