@@ -19,7 +19,7 @@ import jmri.jmrix.ConnectionStatus;
  * Also checks for March 2007 EPROM and warns user about Monitoring feedback.
  *  
  * @author Daniel Boudreau (C) 2007, 2010
- * @version     $Revision: 1.13.2.1 $
+ * @version     $Revision: 1.13.2.2 $
  * 
  */
 
@@ -91,6 +91,13 @@ public class NceConnectionStatus implements NceListener {
 	private static final int mm_USB_PC161 = 4; 	// Future use, PowerCab 1.61, not currently used
 	private static final int mm_USB_SB161 = 5; 	// Future use, SB3 1.61, not currently used
 
+	 private NceTrafficController tc = null;
+	
+	public NceConnectionStatus(NceTrafficController tc) {
+		super();
+		this.tc = tc;
+	}
+
 	public NceMessage nceEpromPoll() {
 		
 		if (NceMessage.getCommandOptions() <= NceMessage.OPTION_1999)
@@ -98,7 +105,7 @@ public class NceConnectionStatus implements NceListener {
 		
 		if (epromState == CHECK_STATE) { // normal state for this routine
 			// are there interface timeouts?
-			if (NceTrafficController.instance().hasTimeouts()) {
+			if (tc.hasTimeouts()) {
 				epromState = INIT_STATE;
 			} else {
 				return null;
@@ -107,7 +114,7 @@ public class NceConnectionStatus implements NceListener {
 		
 		if (epromState == CHECK_OK) {
 			ConnectionStatus.instance().setConnectionState(
-					NceTrafficController.instance().getPortName(),
+					tc.getPortName(),
 					ConnectionStatus.CONNECTION_UP);
 			epromState = CHECK_STATE;
 			return null;
@@ -115,7 +122,7 @@ public class NceConnectionStatus implements NceListener {
 
 		if (epromState != INIT_STATE)
 			ConnectionStatus.instance().setConnectionState(
-					NceTrafficController.instance().getPortName(),
+					tc.getPortName(),
 					ConnectionStatus.CONNECTION_DOWN);
 			
 		// no response from command station?
@@ -166,7 +173,7 @@ public class NceConnectionStatus implements NceListener {
 						" contact NCE if you want to use MONITORING feedback ",
 						"Warning", JOptionPane.INFORMATION_MESSAGE);
 			ConnectionStatus.instance().setConnectionState(
-					NceTrafficController.instance().getPortName(),
+					tc.getPortName(),
 					ConnectionStatus.CONNECTION_UP);
 			epromState = CHECK_STATE;
 			return null;

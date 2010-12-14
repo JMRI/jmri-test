@@ -21,7 +21,7 @@ import jmri.jmrix.AbstractMRTrafficController;
  * message.
  * 
  * @author Bob Jacobsen Copyright (C) 2001
- * @version $Revision: 1.33.2.1 $
+ * @version $Revision: 1.33.2.2 $
  */
 public class NceTrafficController extends AbstractMRTrafficController implements NceInterface, CommandStation {
 
@@ -111,7 +111,7 @@ public class NceTrafficController extends AbstractMRTrafficController implements
 
 	}
 
-	NceConnectionStatus pollEprom = new NceConnectionStatus();
+	NceConnectionStatus pollEprom = new NceConnectionStatus(this);
 	NceAIUChecker pollAiuStatus = null;
 	NceTurnoutMonitor pollHandler = null;
 	
@@ -154,6 +154,7 @@ public class NceTrafficController extends AbstractMRTrafficController implements
      * @return The registered NceTrafficController instance for general use,
      *         if need be creating one.
      */
+    @Deprecated
     public static synchronized NceTrafficController instance() {
         if (self == null) {
             if (log.isDebugEnabled()) log.debug("creating a new NceTrafficController object");
