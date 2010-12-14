@@ -3,7 +3,7 @@
  *
  * Description:	    tests for the jmri.jmrix.nce.NceTurnoutManager class
  * @author			Bob Jacobsen
- * @version  $Revision: 1.6.12.1 $
+ * @version  $Revision: 1.6.12.2 $
  */
 
 package jmri.jmrix.nce;
@@ -17,12 +17,14 @@ import jmri.jmrix.nce.NceInterfaceScaffold;
 
 public class NceTurnoutManagerTest extends jmri.managers.AbstractTurnoutMgrTest  {
 
+	private NceInterfaceScaffold nis = null;
+	
 	public void setUp() {
 		// prepare an interface, register
-		NceInterfaceScaffold nis = new NceInterfaceScaffold();
+		nis = new NceInterfaceScaffold();
 		// create and register the manager object
-		NceTurnoutManager n = new NceTurnoutManager(nis, "N");
-		jmri.InstanceManager.setTurnoutManager(n);
+		l = new NceTurnoutManager(nis, "N");
+		jmri.InstanceManager.setTurnoutManager(l);
 	}
 
 	public String getSystemName(int n) {
@@ -38,8 +40,8 @@ public class NceTurnoutManagerTest extends jmri.managers.AbstractTurnoutMgrTest 
 		assertTrue( null != (NceTurnout)o);
 
 		// make sure loaded into tables
-		if (log.isDebugEnabled()) log.debug("by system name: "+l.getBySystemName("NT21"));
-		if (log.isDebugEnabled()) log.debug("by user name:   "+l.getByUserName("my name"));
+		if (log.isDebugEnabled()) log.debug("by system name: " + l.getBySystemName("NT21"));
+		if (log.isDebugEnabled()) log.debug("by user name:   " + l.getByUserName("my name"));
 
 		assertTrue(null != l.getBySystemName("NT21"));
 		assertTrue(null != l.getByUserName("my name"));
