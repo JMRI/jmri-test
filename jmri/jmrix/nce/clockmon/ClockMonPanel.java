@@ -33,7 +33,7 @@ import javax.swing.*;
  * contact NCE Inc for separate permission.
  *
  * @author			Ken Cameron   Copyright (C) 2007
- * @version			$Revision: 1.1.2.1 $
+ * @version			$Revision: 1.1.2.2 $
  *
  * derived from loconet.clockmonframe by Bob Jacobson Copyright (C) 2003
  * 
@@ -322,7 +322,7 @@ public class ClockMonPanel extends NcePanel implements NceListener {
         pane2.add(setSyncButton, gConstraints);
         setSyncModeInternalMaster.setEnabled(true);
         setSyncModeNceMaster.setEnabled(true);
-        if (NceUSB.getUsbSystem() != NceUSB.USB_SYSTEM_NONE) {	// needs memory commands to sync
+        if (tc.getUsbSystem() != NceUSB.USB_SYSTEM_NONE) {	// needs memory commands to sync
             setSyncModeInternalMaster.setEnabled(false);
             setSyncModeNceMaster.setEnabled(false);
         }
