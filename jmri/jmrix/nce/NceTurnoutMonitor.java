@@ -2,7 +2,6 @@
 
 package jmri.jmrix.nce;
 
-import jmri.InstanceManager;
 import jmri.Turnout;
 
 /**
@@ -28,7 +27,7 @@ import jmri.Turnout;
  * 
  *  
  * @author Daniel Boudreau (C) 2007
- * @version     $Revision: 1.33.2.4 $
+ * @version     $Revision: 1.33.2.5 $
  */
 
 public class NceTurnoutMonitor implements NceListener,java.beans.PropertyChangeListener {
