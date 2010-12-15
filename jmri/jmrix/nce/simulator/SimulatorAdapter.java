@@ -124,9 +124,9 @@ import java.io.IOException;
 <<<<<<< SimulatorAdapter.java
  * converting to multiple connection
  * @author kcameron Copyright (C) 2010
- * @version			$Revision: 1.12.2.1 $
+ * @version			$Revision: 1.12.2.2 $
 =======
- * @version			$Revision: 1.12.2.1 $
+ * @version			$Revision: 1.12.2.2 $
 >>>>>>> 1.12
  */
 public class SimulatorAdapter extends NcePortController implements
@@ -197,17 +197,19 @@ public class SimulatorAdapter extends NcePortController implements
 	 * station.
 	 */
 	public void configure() {
-        NceTrafficController tc = new NceTrafficController(); 
-        tc.connectPort(this);
+        NceTrafficController tc = new NceTrafficController();
         adaptermemo.setNceTrafficController(tc);
+        tc.setAdapterMemo(adaptermemo);
+        tc.connectPort(this);     
 		
 		// setting binary mode
-        adaptermemo.configureCommandStation(NceMessage.OPTION_2006);
+        adaptermemo.configureCommandStation(NceTrafficController.OPTION_2006);
                 
         adaptermemo.configureManagers();
         
 		jmri.jmrix.nce.ActiveFlag.setActive();
 
+		// start the simulator
 		sourceThread = new Thread(this);
 		sourceThread.setName("Nce Simulator");
 		sourceThread.setPriority(Thread.MIN_PRIORITY);

@@ -2,7 +2,6 @@
 
 package jmri.jmrix.nce.networkdriver;
 
-import jmri.jmrix.nce.NceMessage;
 import jmri.jmrix.nce.NceNetworkPortController;
 import jmri.jmrix.nce.NceTrafficController;
 import jmri.jmrix.nce.NceSystemConnectionMemo;
@@ -14,7 +13,7 @@ import jmri.jmrix.nce.NceSystemConnectionMemo;
  * Normally controlled by the NetworkDriverFrame class.
  *
  * @author	Bob Jacobsen   Copyright (C) 2001, 2002, 2003
- * @version	$Revision: 1.20.2.1 $
+ * @version	$Revision: 1.20.2.2 $
  */
 public class NetworkDriverAdapter extends NceNetworkPortController {
 
@@ -34,20 +33,22 @@ public class NetworkDriverAdapter extends NceNetworkPortController {
      * station connected to this port
      */
     public void configure() {
-        NceTrafficController tc = new NceTrafficController(); 
-        tc.connectPort(this);
-        
+        NceTrafficController tc = new NceTrafficController();
         adaptermemo.setNceTrafficController(tc);
-        adaptermemo.configureManagers();
-        
+        tc.setAdapterMemo(adaptermemo);           
+               
     	// set the command options, Note that the NetworkDriver uses
     	// the second option for EPROM revision
         if (getCurrentOption2Setting().equals(validOption2()[0])) {
-        	adaptermemo.configureCommandStation(NceMessage.OPTION_2004);
+        	adaptermemo.configureCommandStation(NceTrafficController.OPTION_2004);
         } else {
             // setting binary mode
-            adaptermemo.configureCommandStation(NceMessage.OPTION_2006);
+            adaptermemo.configureCommandStation(NceTrafficController.OPTION_2006);
         }
+        
+        tc.connectPort(this); 
+        
+        adaptermemo.configureManagers();
         
         jmri.jmrix.nce.ActiveFlag.setActive();
 

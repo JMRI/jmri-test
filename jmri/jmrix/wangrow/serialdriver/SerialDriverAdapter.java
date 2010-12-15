@@ -3,7 +3,6 @@
 package jmri.jmrix.wangrow.serialdriver;
 
 import jmri.jmrix.SystemConnectionMemo;
-import jmri.jmrix.nce.NceMessage;
 import jmri.jmrix.nce.NcePortController;
 import jmri.jmrix.nce.NceSystemConnectionMemo;
 import jmri.jmrix.nce.NceTrafficController;
@@ -32,7 +31,7 @@ import gnu.io.SerialPort;
  *
  *
  * @author			Bob Jacobsen   Copyright (C) 2001, 2002
- * @version			$Revision: 1.13.6.2 $
+ * @version			$Revision: 1.13.6.3 $
  */
 public class SerialDriverAdapter extends NcePortController  implements jmri.jmrix.SerialPortAdapter {
 
@@ -121,15 +120,17 @@ public class SerialDriverAdapter extends NcePortController  implements jmri.jmri
      * station connected to this port
      */
     public void configure() {
-        NceTrafficController tc = new NceTrafficController(); 
-        tc.connectPort(this);
-        
+        NceTrafficController tc = new NceTrafficController();
         adaptermemo.setNceTrafficController(tc);
-        adaptermemo.configureManagers();
+        tc.setAdapterMemo(adaptermemo);
         
     	// set the command option
-        tc.setCommandOptions(NceMessage.OPTION_1999);
-                
+        tc.setCommandOptions(NceTrafficController.OPTION_1999);
+        
+        tc.connectPort(this);
+        
+        adaptermemo.configureManagers();
+                     
         ActiveFlag.setActive();
 
     }

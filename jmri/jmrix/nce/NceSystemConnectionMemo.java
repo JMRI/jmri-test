@@ -13,7 +13,7 @@ import jmri.*;
  * particular system.
  *
  * @author		Bob Jacobsen  Copyright (C) 2010
- * @version             $Revision: 1.3.2.2 $
+ * @version             $Revision: 1.3.2.3 $
  */
 public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
 
@@ -49,13 +49,6 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
     public NceTrafficController getNceTrafficController() { return tc; }
     private NceTrafficController tc;
     public void setNceTrafficController(NceTrafficController tc) { this.tc = tc; }
-    /*public NceMessageManager getNceMessageManager() {
-        // create when needed
-        if (Ncem == null) 
-            Ncem = new NceMessageManager(getNceTrafficController());
-        return Ncem;
-    }
-    private NceMessage Ncem = null;*/
     
     private ProgrammerManager programmerManager;
     
