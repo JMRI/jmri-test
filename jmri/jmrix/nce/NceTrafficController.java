@@ -21,7 +21,7 @@ import jmri.jmrix.AbstractMRTrafficController;
  * message.
  * 
  * @author Bob Jacobsen Copyright (C) 2001
- * @version $Revision: 1.33.2.4 $
+ * @version $Revision: 1.33.2.5 $
  */
 public class NceTrafficController extends AbstractMRTrafficController implements NceInterface, CommandStation {
 
@@ -180,8 +180,8 @@ public class NceTrafficController extends AbstractMRTrafficController implements
 	public void setUsbSystem(int val) {
 		usbSystem = val;
 		if (usbSystemSet) {
-			log.error("setUsbSystem called more than once");
-			new Exception().printStackTrace();
+			log.warn("setUsbSystem called more than once");
+			//new Exception().printStackTrace();
 		}
 		usbSystemSet = true;
 	}
