@@ -13,8 +13,9 @@ import javax.swing.*;
  * Frame for user input of Nce messages
  * @author	Bob Jacobsen   Copyright (C) 2001
  * @author Dan Boudreau 	Copyright (C) 2007
- * @version $Revision: 1.8.14.1 $
+ * @version $Revision: 1.8.14.2 $
  */
+@Deprecated
 public class NcePacketGenFrame extends jmri.util.JmriJFrame implements jmri.jmrix.nce.NceListener {
 
     // member declarations

@@ -15,6 +15,7 @@ import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 import jmri.jmrix.nce.NceUSB;
 
+@Deprecated
 public class NceShowCabAction  extends AbstractAction {
 
 	public NceShowCabAction(String s) {

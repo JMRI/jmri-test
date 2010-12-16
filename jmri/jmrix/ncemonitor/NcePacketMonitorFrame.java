@@ -20,9 +20,11 @@ import java.io.DataInputStream;
  * The rest of the GUI then appears.
  *
  * @author			Bob Jacobsen   Copyright (C) 2001, 2002
- * @version			$Revision: 1.25 $
+ * @version			$Revision: 1.25.2.1 $
  */
+
 @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="IS2_INCONSISTENT_SYNC", justification="serialStream is access from separate thread, and this class isn't used much")
+@Deprecated
 public class NcePacketMonitorFrame extends jmri.jmrix.AbstractMonFrame {
 
     Vector<String> portNameVector = null;

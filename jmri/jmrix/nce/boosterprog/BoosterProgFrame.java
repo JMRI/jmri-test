@@ -12,8 +12,9 @@ import jmri.*;
  * Frame for configuring a NCE booster
  *
  * @author		Bob Jacobsen   Copyright (C) 2004
- * @version             $Revision: 1.6 $
+ * @version             $Revision: 1.6.14.1 $
  */
+@Deprecated
 public class BoosterProgFrame extends jmri.util.JmriJFrame {
     JTextField start = new JTextField(6);
     JTextField length = new JTextField(12);

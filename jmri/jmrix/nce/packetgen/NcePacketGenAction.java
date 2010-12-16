@@ -10,9 +10,10 @@ import java.awt.event.ActionEvent;
  *       			NcePacketGenFrame object
  *
  * @author	    Bob Jacobsen    Copyright (C) 2001
- * @version		$Revision: 1.6 $	
+ * @version		$Revision: 1.6.14.1 $	
  */
 
+@Deprecated
 public class NcePacketGenAction extends AbstractAction {
 
 	public NcePacketGenAction(String s) { super(s);}

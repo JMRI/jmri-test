@@ -12,8 +12,9 @@ import javax.swing.AbstractAction;
  * BoosterProgFrame object.
  *
  * @author	    Bob Jacobsen    Copyright (C) 2004
- * @version         $Revision: 1.2 $
+ * @version         $Revision: 1.2.14.1 $
  */
+@Deprecated
 public class BoosterProgAction extends AbstractAction {
     static ResourceBundle res = ResourceBundle.getBundle("jmri.jmrix.nce.boosterprog.BoosterProgBundle");
 

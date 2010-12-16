@@ -124,9 +124,9 @@ import java.io.IOException;
 <<<<<<< SimulatorAdapter.java
  * converting to multiple connection
  * @author kcameron Copyright (C) 2010
- * @version			$Revision: 1.12.2.2 $
+ * @version			$Revision: 1.12.2.3 $
 =======
- * @version			$Revision: 1.12.2.2 $
+ * @version			$Revision: 1.12.2.3 $
 >>>>>>> 1.12
  */
 public class SimulatorAdapter extends NcePortController implements
@@ -163,14 +163,14 @@ public class SimulatorAdapter extends NcePortController implements
     	return adaptermemo;
 	}
 
-	static SimulatorAdapter mInstance = null;
-	static public SimulatorAdapter instance() {
-		if (mInstance == null) {
-			mInstance = new SimulatorAdapter();
-        }
-		return mInstance;
-	}
-    
+//	static SimulatorAdapter mInstance = null;
+//	static public SimulatorAdapter instance() {
+//		if (mInstance == null) {
+//			mInstance = new SimulatorAdapter();
+//        }
+//		return mInstance;
+//	}
+//    
     public void dispose(){
         if (adaptermemo!=null)
             adaptermemo.dispose();

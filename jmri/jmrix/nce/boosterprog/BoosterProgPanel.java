@@ -8,7 +8,6 @@ import javax.swing.*;
 
 import jmri.*;
 import jmri.jmrix.nce.NceSystemConnectionMemo;
-import jmri.jmrix.nce.NceTrafficController;
 
 /**
  * Panel for configuring a NCE booster
@@ -16,7 +15,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * @author	ken cameron Copyright (C) 2010
  * Derived from BoosterProgFrame by
  * @author		Bob Jacobsen   Copyright (C) 2004
- * @version             $Revision: 1.1.2.1 $
+ * @version             $Revision: 1.1.2.2 $
  */
 public class BoosterProgPanel extends jmri.jmrix.nce.swing.NcePanel {
 	
@@ -26,8 +25,6 @@ public class BoosterProgPanel extends jmri.jmrix.nce.swing.NcePanel {
     JLabel status = new JLabel();
     
     static ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.nce.boosterprog.BoosterProgBundle");
-
-    private NceTrafficController tc = null;
     
     public BoosterProgPanel() {
     	super();
@@ -51,7 +48,6 @@ public class BoosterProgPanel extends jmri.jmrix.nce.swing.NcePanel {
     
     public void initComponents(NceSystemConnectionMemo m) throws Exception {
     	this.memo = m;
-        this.tc = m.getNceTrafficController();
         
         // general GUI config
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -100,17 +96,15 @@ public class BoosterProgPanel extends jmri.jmrix.nce.swing.NcePanel {
         status.setText(rb.getString("StatusOK"));
     }
 
-    static Programmer p = null;
+    private Programmer p = null;
     
-    static void getProgrammer() {
-        p = InstanceManager.programmerManagerInstance().
-                            getAddressedProgrammer(true, 0);
+    private void getProgrammer() {
+        p = memo.getProgrammerManager().getAddressedProgrammer(true, 0);
     }
     
-    static void releaseProgrammer() {
-        if (p!=null)
-            InstanceManager.programmerManagerInstance().
-                            releaseAddressedProgrammer(p);
+    private void releaseProgrammer() {
+        if (p != null)
+        	memo.getProgrammerManager().releaseAddressedProgrammer(p);
         p = null;
     }
     
@@ -130,7 +124,7 @@ public class BoosterProgPanel extends jmri.jmrix.nce.swing.NcePanel {
         } finally { releaseProgrammer(); }
     }
     
-    static public void setStart(int val) {
+     void setStart(int val) {
         getProgrammer();
         
         try {
@@ -142,7 +136,7 @@ public class BoosterProgPanel extends jmri.jmrix.nce.swing.NcePanel {
         } finally { releaseProgrammer(); }
     }
     
-    static public void setDuration(final int val) {
+    void setDuration(final int val) {
         getProgrammer();
         
         try {

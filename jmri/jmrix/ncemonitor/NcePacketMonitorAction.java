@@ -10,8 +10,9 @@ import java.awt.event.ActionEvent;
  *       			NcePacketMonitorFrame object
  *
  * @author			Bob Jacobsen    Copyright (C) 2002
- * @version			$Revision: 1.6 $
+ * @version			$Revision: 1.6.14.1 $
  */
+@Deprecated
 public class NcePacketMonitorAction extends AbstractAction  {
 
     public NcePacketMonitorAction(String s) { super(s);}
