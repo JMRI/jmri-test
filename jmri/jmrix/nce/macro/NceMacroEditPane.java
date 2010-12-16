@@ -70,7 +70,7 @@ import jmri.jmrix.nce.swing.NcePanelInterface;
  * FF10 = link macro 16 
  * 
  * @author Dan Boudreau Copyright (C) 2007
- * @version $Revision: 1.1.2.2 $
+ * @version $Revision: 1.1.2.3 $
  */
 
 public class NceMacroEditPane extends NcePanel implements NcePanelInterface, jmri.jmrix.nce.NceListener  {
@@ -745,7 +745,7 @@ public class NceMacroEditPane extends NcePanel implements NcePanelInterface, jmr
 		}
 		waiting--;
 		if (r.getNumDataElements() != replyLen) {
-			macroReply.setText("error");
+			macroReply.setText(rb.getString("error"));
 			return;
 		}
 		// Macro command
@@ -753,9 +753,9 @@ public class NceMacroEditPane extends NcePanel implements NcePanelInterface, jmr
 			// Looking for proper response
 			int recChar = r.getElement(0);
 			if (recChar == '!')
-				macroReply.setText("okay");
+				macroReply.setText(rb.getString("okay"));
 			if (recChar == '0')
-				macroReply.setText("empty");
+				macroReply.setText(rb.getString("macroEmpty"));
 		}
 		// Macro memory read
 		if (replyLen == REPLY_16) {
