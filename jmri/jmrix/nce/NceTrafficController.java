@@ -3,6 +3,7 @@
 package jmri.jmrix.nce;
 
 import jmri.CommandStation;
+import jmri.JmriException;
 
 import jmri.jmrix.AbstractMRListener;
 import jmri.jmrix.AbstractMRMessage;
@@ -21,7 +22,7 @@ import jmri.jmrix.AbstractMRTrafficController;
  * message.
  * 
  * @author Bob Jacobsen Copyright (C) 2001
- * @version $Revision: 1.33.2.5 $
+ * @version $Revision: 1.33.2.6 $
  */
 public class NceTrafficController extends AbstractMRTrafficController implements NceInterface, CommandStation {
 
@@ -266,7 +267,13 @@ public class NceTrafficController extends AbstractMRTrafficController implements
      * Forward a preformatted message to the actual interface.
      */
     public void sendNceMessage(NceMessage m, NceListener reply) {
-        sendMessage(m, reply);
+    	try{
+    		NceMessageCheck.checkMessage(getAdapterMemo(), m);
+    	} catch (JmriException e) {
+    		log.error(e.getMessage());
+    		new Exception().printStackTrace();
+    	}
+    	sendMessage(m, reply);
     }
 
     protected void forwardToPort(AbstractMRMessage m, AbstractMRListener reply) {
