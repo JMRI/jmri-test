@@ -11,7 +11,7 @@ import jmri.jmrix.nce.NceReply;
 import jmri.jmrix.nce.NceSystemConnectionMemo;
 import jmri.jmrix.nce.NceTrafficController;
 import jmri.jmrix.nce.NceUSB;
-import jmri.jmrix.nce.swing.NcePanel;
+import jmri.jmrix.nce.swing.NcePanelInterface;
 
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -33,7 +33,7 @@ import javax.swing.*;
  * contact NCE Inc for separate permission.
  *
  * @author			Ken Cameron   Copyright (C) 2007
- * @version			$Revision: 1.1.2.2 $
+ * @version			$Revision: 1.1.2.3 $
  *
  * derived from loconet.clockmonframe by Bob Jacobson Copyright (C) 2003
  * 
@@ -60,7 +60,7 @@ import javax.swing.*;
  * 6. The nce clock must be left running, or it doesn't tic and therefore doesn't go out the bus.
  *  
  */
-public class ClockMonPanel extends NcePanel implements NceListener {
+public class ClockMonPanel extends jmri.jmrix.nce.swing.NcePanel implements NcePanelInterface, NceListener {
 
     ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.nce.clockmon.ClockMonBundle");
     
@@ -181,15 +181,12 @@ public class ClockMonPanel extends NcePanel implements NceListener {
     JButton setPidButton = new JButton(rb.getString("SetPid"));
     
     private NceTrafficController tc = null;
-    private NceSystemConnectionMemo memo = null;
     
-    public ClockMonPanel(NceSystemConnectionMemo m) {
+    public ClockMonPanel() {
     	super();
-    	memo = m;
-    	tc = memo.getNceTrafficController();
     }
-
-    public void initContext(Object context) {
+    
+    public void initContext(Object context) throws Exception {
         if (context instanceof NceSystemConnectionMemo ) {
             try {
 				initComponents((NceSystemConnectionMemo) context);
@@ -204,9 +201,8 @@ public class ClockMonPanel extends NcePanel implements NceListener {
         return rb.getString("TitleNceClockMonitor"); 
     }
     
-    public void initComponents(NceSystemConnectionMemo memo) {
-        this.memo = memo;
-        memo.getNceTrafficController().addNceListener(this);
+    public void initComponents(NceSystemConnectionMemo m) throws Exception {
+        this.tc = m.getNceTrafficController();
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         

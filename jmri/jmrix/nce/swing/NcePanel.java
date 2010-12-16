@@ -14,7 +14,7 @@ import jmri.jmrix.nce.NceSystemConnectionMemo;
  * @since 2.9.4
  * Copied from LocoNet.swing
  * @author kcameron 2010
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  */
 
 abstract public class NcePanel extends jmri.util.swing.JmriPanel implements NcePanelInterface {
@@ -25,13 +25,18 @@ abstract public class NcePanel extends jmri.util.swing.JmriPanel implements NceP
      */
     protected NceSystemConnectionMemo memo;
     
-    public void initComponents(NceSystemConnectionMemo memo) {
+    public void initComponents(NceSystemConnectionMemo memo) throws Exception {
         this.memo = memo;
     }
     
-    public void initContext(Object context) {
+    public void initContext(Object context) throws Exception {
         if (context instanceof NceSystemConnectionMemo ) {
-            initComponents((NceSystemConnectionMemo) context);
+            try {
+				initComponents((NceSystemConnectionMemo) context);
+			} catch (Exception e) {
+				//log.error("NcePanel initContext failed");
+				e.printStackTrace();
+			}
         }
     }
     
