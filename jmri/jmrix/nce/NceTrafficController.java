@@ -22,7 +22,7 @@ import jmri.jmrix.AbstractMRTrafficController;
  * message.
  * 
  * @author Bob Jacobsen Copyright (C) 2001
- * @version $Revision: 1.33.2.6 $
+ * @version $Revision: 1.33.2.7 $
  */
 public class NceTrafficController extends AbstractMRTrafficController implements NceInterface, CommandStation {
 
@@ -272,6 +272,7 @@ public class NceTrafficController extends AbstractMRTrafficController implements
     	} catch (JmriException e) {
     		log.error(e.getMessage());
     		new Exception().printStackTrace();
+    		return;		// don't send bogus message to interface
     	}
     	sendMessage(m, reply);
     }
