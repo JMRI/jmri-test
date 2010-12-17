@@ -58,7 +58,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * @author Dan Boudreau Copyright (C) 2007 2008
  * Cloned from NceConsistEditFrame by
  * @author kcameron Copyright (C) 2010
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  */
 
 public class NceConsistEditPanel extends jmri.jmrix.nce.swing.NcePanel implements
@@ -153,10 +153,10 @@ public class NceConsistEditPanel extends jmri.jmrix.nce.swing.NcePanel implement
 	// for padding out panel
 	JLabel space1 = new JLabel("            ");
 	JLabel space2 = new JLabel(" ");
-	JLabel space3a = new JLabel("              ");
-	JLabel space3b = new JLabel("              ");
-	JLabel space3c = new JLabel("              ");
-	JLabel space3d = new JLabel("              ");
+	JLabel space3a = new JLabel("                            ");
+	JLabel space3b = new JLabel("                            ");
+	JLabel space3c = new JLabel("                            ");
+	JLabel space3d = new JLabel("                            ");
 	
 	JLabel space15 = new JLabel(" ");
 
