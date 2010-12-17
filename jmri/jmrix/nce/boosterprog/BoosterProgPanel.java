@@ -15,7 +15,7 @@ import jmri.jmrix.nce.NceSystemConnectionMemo;
  * @author	ken cameron Copyright (C) 2010
  * Derived from BoosterProgFrame by
  * @author		Bob Jacobsen   Copyright (C) 2004
- * @version             $Revision: 1.1.2.2 $
+ * @version             $Revision: 1.1.2.3 $
  */
 public class BoosterProgPanel extends jmri.jmrix.nce.swing.NcePanel {
 	
@@ -198,4 +198,7 @@ public class BoosterProgPanel extends jmri.jmrix.nce.swing.NcePanel {
             status.setText(rb.getString("StatusError")+e);
         } finally { releaseProgrammer(); }
     }
+    
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger
+	.getLogger(BoosterProgPanel.class.getName());
 }
