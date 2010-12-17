@@ -12,7 +12,7 @@ import jmri.jmrix.nce.NceSystemConnectionMemo;
  * @author	Bob Jacobsen   Copyright 2003, 2010
  * converted to multiple connection
  * @author	kcameron	Copyright 2010
- * @version     $Revision: 1.1.2.5 $
+ * @version     $Revision: 1.1.2.6 $
  */
 
 public class NceMenu extends JMenu {
@@ -48,9 +48,9 @@ public class NceMenu extends JMenu {
     Item[] panelItems = new Item[] {
         new Item("MenuItemCommandMonitor", "jmri.jmrix.nce.ncemon.NceMonPane"),
         new Item("MenuItemSendCommand", "jmri.jmrix.nce.packetgen.NcePacketGenPanel"),
-        new Item("MenuItemMacroCommand", "jmri.jmrix.nce.macro.NceMacroGenAction"),
+        new Item("MenuItemMacroCommand", "jmri.jmrix.nce.macro.NceMacroGenPane"),
         new Item("MenuItemMacroEdit", "jmri.jmrix.nce.macro.NceMacroEditPane"),
-        new Item("MenuItemConsistEdit", "jmri.jmrix.nce.consist.NceConsistEditAction"),
+        new Item("MenuItemConsistEdit", "jmri.jmrix.nce.consist.NceConsistEditPane"),
         new Item("MenuItemTrackPacketMonitor", "jmri.jmrix.ncemonitor.NcePacketMonitorPanel"),
         new Item("MenuItemClockMon", "jmri.jmrix.nce.clockmon.ClockMonPanel"),
         new Item("MenuItemShowCabs", "jmri.jmrix.nce.cab.NceShowCabPanel"),

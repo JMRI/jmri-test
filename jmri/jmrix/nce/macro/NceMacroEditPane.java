@@ -20,7 +20,6 @@ import jmri.jmrix.nce.NceMessage;
 import jmri.jmrix.nce.NceReply;
 import jmri.jmrix.nce.NceSystemConnectionMemo;
 import jmri.jmrix.nce.NceTrafficController;
-import jmri.jmrix.nce.swing.NcePanel;
 import jmri.jmrix.nce.swing.NcePanelInterface;
 
 /**
@@ -70,10 +69,10 @@ import jmri.jmrix.nce.swing.NcePanelInterface;
  * FF10 = link macro 16 
  * 
  * @author Dan Boudreau Copyright (C) 2007
- * @version $Revision: 1.1.2.3 $
+ * @version $Revision: 1.1.2.4 $
  */
 
-public class NceMacroEditPane extends NcePanel implements NcePanelInterface, jmri.jmrix.nce.NceListener  {
+public class NceMacroEditPane extends jmri.jmrix.nce.swing.NcePanel implements NcePanelInterface, jmri.jmrix.nce.NceListener  {
 
 	static ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.nce.macro.NceMacroBundle");
 	
