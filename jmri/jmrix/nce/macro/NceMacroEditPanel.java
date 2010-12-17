@@ -1,4 +1,4 @@
-// NceMacroEditFrame.java
+// NceMacroEditPanel.java
 
 package jmri.jmrix.nce.macro;
 
@@ -69,10 +69,10 @@ import jmri.jmrix.nce.swing.NcePanelInterface;
  * FF10 = link macro 16 
  * 
  * @author Dan Boudreau Copyright (C) 2007
- * @version $Revision: 1.1.2.4 $
+ * @version $Revision: 1.1.2.1 $
  */
 
-public class NceMacroEditPane extends jmri.jmrix.nce.swing.NcePanel implements NcePanelInterface, jmri.jmrix.nce.NceListener  {
+public class NceMacroEditPanel extends jmri.jmrix.nce.swing.NcePanel implements NcePanelInterface, jmri.jmrix.nce.NceListener  {
 
 	static ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.nce.macro.NceMacroBundle");
 	
@@ -204,7 +204,7 @@ public class NceMacroEditPane extends jmri.jmrix.nce.swing.NcePanel implements N
     
     private NceTrafficController tc = null;
     
-    public NceMacroEditPane() {
+    public NceMacroEditPanel() {
         super();
     }
     
@@ -1150,6 +1150,6 @@ public class NceMacroEditPane extends jmri.jmrix.nce.swing.NcePanel implements N
     }
     
    
-    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(NceMacroEditPane.class.getName());	
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(NceMacroEditPanel.class.getName());	
 }
 

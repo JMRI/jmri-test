@@ -16,9 +16,9 @@ import jmri.jmrix.nce.*;
 import jmri.jmrix.nce.swing.*;
 
 
-public class NceMonPane extends jmri.jmrix.AbstractMonPane implements NceListener, NcePanelInterface{
+public class NceMonPanel extends jmri.jmrix.AbstractMonPane implements NceListener, NcePanelInterface{
 
-    public NceMonPane() {
+    public NceMonPanel() {
         super();
     }
     
@@ -78,12 +78,12 @@ public class NceMonPane extends jmri.jmrix.AbstractMonPane implements NceListene
         public Default() {
             super("Nce Command Monitor", 
                 new jmri.util.swing.sdi.JmriJFrameInterface(), 
-                NceMonPane.class.getName(), 
+                NceMonPanel.class.getName(), 
                 jmri.InstanceManager.getDefault(NceSystemConnectionMemo.class));
         }
     }
 
-	static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(NceMonPane.class.getName());
+	static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(NceMonPanel.class.getName());
 
 }
 
