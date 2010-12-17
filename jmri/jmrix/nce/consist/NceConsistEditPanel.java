@@ -1,4 +1,4 @@
-// NceConsistEditPane.java
+// NceConsistEditPanel.java
 
 package jmri.jmrix.nce.consist;
 
@@ -16,7 +16,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -59,10 +58,10 @@ import jmri.jmrix.nce.NceTrafficController;
  * @author Dan Boudreau Copyright (C) 2007 2008
  * Cloned from NceConsistEditFrame by
  * @author kcameron Copyright (C) 2010
- * @version $Revision: 1.1.2.2 $
+ * @version $Revision: 1.1.2.1 $
  */
 
-public class NceConsistEditPane extends jmri.jmrix.nce.swing.NcePanel implements
+public class NceConsistEditPanel extends jmri.jmrix.nce.swing.NcePanel implements
 		jmri.jmrix.nce.NceListener {
 
     ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.nce.consist.NceConsistBundle");
@@ -152,9 +151,14 @@ public class NceConsistEditPane extends jmri.jmrix.nce.swing.NcePanel implements
 	JComboBox conRosterBox = NceConsistRoster.instance().fullRosterComboBox();
 
 	// for padding out panel
-	JLabel space1 = new JLabel();
-	JLabel space2 = new JLabel();
-	JLabel space3 = new JLabel();
+	JLabel space1 = new JLabel("            ");
+	JLabel space2 = new JLabel(" ");
+	JLabel space3a = new JLabel("              ");
+	JLabel space3b = new JLabel("              ");
+	JLabel space3c = new JLabel("              ");
+	JLabel space3d = new JLabel("              ");
+	
+	JLabel space15 = new JLabel(" ");
 
 	// lead loco
 	JLabel textLoco1 = new JLabel();
@@ -206,7 +210,7 @@ public class NceConsistEditPane extends jmri.jmrix.nce.swing.NcePanel implements
 	
 	private NceTrafficController tc = null;
 
-	public NceConsistEditPane() {
+	public NceConsistEditPanel() {
 		super();
 	}
 
@@ -223,6 +227,14 @@ public class NceConsistEditPane extends jmri.jmrix.nce.swing.NcePanel implements
     public String getHelpTarget() { return "package.jmri.jmrix.nce.consist.NceConsistEditFrame"; }
     public String getTitle() { 
         return rb.getString("NceConsistEditTitle"); 
+    }
+    public List<JMenu> getMenus() {
+		// build menu
+		JMenu toolMenu = new JMenu("Tools");
+		toolMenu.add(new NceConsistRosterMenu("Roster", jmri.jmrit.roster.RosterMenu.MAINMENU, this));
+		List<JMenu> l = new ArrayList<JMenu>();
+		l.add(toolMenu);
+		return l;
     }
     
     public void initComponents(NceSystemConnectionMemo m) throws Exception {
@@ -318,13 +330,6 @@ public class NceConsistEditPane extends jmri.jmrix.nce.swing.NcePanel implements
 		checkBoxConsist.setSelected(true);
 		checkBoxConsist.setToolTipText(rb.getString("ToolTipConsist"));
 
-		space1.setText("            ");
-		space1.setVisible(true);
-		space2.setText(" ");
-		space2.setVisible(true);
-		space3.setText(" ");
-		space3.setVisible(true);
-
 		initLocoFields();
 
 		setLayout(new GridBagLayout());
@@ -343,7 +348,10 @@ public class NceConsistEditPane extends jmri.jmrix.nce.swing.NcePanel implements
 		addItem(getButton, 2, 2);
 		addItem(checkBoxVerify, 5, 2);
 		// row 3
-		addItem(space3, 1, 3);
+		addItem(space3a, 1, 3);
+		addItem(space3b, 2, 3);
+		addItem(space3c, 3, 3);
+		addItem(space3d, 4, 3);
 		// row 4
 		addItem(textConRoster, 1, 4);
 		// row 5
@@ -383,7 +391,7 @@ public class NceConsistEditPane extends jmri.jmrix.nce.swing.NcePanel implements
 				dirButton6, cmdButton6, 13);
 
 		// row 15 padding for looks
-		addItem(space2, 2, 15);
+		addItem(space15, 2, 15);
 		// row 16
 		addItem(throttleButton, 0, 16);
 		addItem(clearCancelButton, 1, 16);
@@ -407,15 +415,6 @@ public class NceConsistEditPane extends jmri.jmrix.nce.swing.NcePanel implements
 		addCheckBoxAction(checkBoxConsist);
 		checkBoxConsist ();
 		
-		// build menu
-		JMenuBar menuBar = new JMenuBar();
-		JMenu toolMenu = new JMenu("Tools");
-		toolMenu.add(new NceConsistRosterMenu("Roster", jmri.jmrit.roster.RosterMenu.MAINMENU, this));
-		menuBar.add(toolMenu);
-		//setJMenuBar(menuBar);
-
-		// set frame size for display
-		if ( (getWidth()<450) && (getHeight()<380)) setSize(450, 380);
 	}
 
 	// Previous, Next, Get, Throttle, Clear/Cancel, Save/Load, Delete, Restore & Backup buttons
@@ -2109,5 +2108,5 @@ public class NceConsistEditPane extends jmri.jmrix.nce.swing.NcePanel implements
 	}
 
 	static org.apache.log4j.Logger log = org.apache.log4j.Logger
-	.getLogger(NceConsistEditFrame.class.getName());
+	.getLogger(NceConsistEditPanel.class.getName());
 }

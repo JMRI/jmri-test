@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 
 import jmri.jmrix.nce.NceTrafficController;
 
+@Deprecated
 public class NceConsistEditAction  extends AbstractAction {
 
     private NceTrafficController tc = null;

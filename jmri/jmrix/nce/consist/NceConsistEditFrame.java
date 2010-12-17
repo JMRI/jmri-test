@@ -55,9 +55,9 @@ import jmri.jmrix.nce.NceTrafficController;
  * mid loco4) :0000
  * 
  * @author Dan Boudreau Copyright (C) 2007 2008
- * @version $Revision: 1.35.2.2 $
+ * @version $Revision: 1.35.2.3 $
  */
-
+@Deprecated
 public class NceConsistEditFrame extends jmri.util.JmriJFrame implements
 		jmri.jmrix.nce.NceListener {
 

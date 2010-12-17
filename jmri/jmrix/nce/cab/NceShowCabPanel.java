@@ -125,7 +125,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * 
  * @author Dan Boudreau Copyright (C) 2009, 2010
  * @author Ken Cameron Copyright (C) 2010
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  */
 
 public class NceShowCabPanel extends jmri.jmrix.nce.swing.NcePanel implements jmri.jmrix.nce.NceListener {
@@ -654,6 +654,6 @@ public class NceShowCabPanel extends jmri.jmrix.nce.swing.NcePanel implements jm
 		});
 	}
    
-    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(NceShowCabFrame.class.getName());	
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(NceShowCabPanel.class.getName());	
 }
 
