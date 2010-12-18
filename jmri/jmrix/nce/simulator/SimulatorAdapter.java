@@ -10,8 +10,8 @@ import jmri.jmrix.nce.NcePortController;
 import jmri.jmrix.nce.NceTrafficController;
 import jmri.jmrix.nce.NceTurnoutMonitor;
 import jmri.jmrix.nce.NceSystemConnectionMemo;
-import jmri.jmrix.nce.consist.NceConsistEditFrame;
-import jmri.jmrix.nce.macro.NceMacroEditFrame;
+import jmri.jmrix.nce.consist.NceConsistEditPanel;
+import jmri.jmrix.nce.macro.NceMacroEditPanel;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -124,9 +124,9 @@ import java.io.IOException;
 <<<<<<< SimulatorAdapter.java
  * converting to multiple connection
  * @author kcameron Copyright (C) 2010
- * @version			$Revision: 1.12.2.3 $
+ * @version			$Revision: 1.12.2.4 $
 =======
- * @version			$Revision: 1.12.2.3 $
+ * @version			$Revision: 1.12.2.4 $
 >>>>>>> 1.12
  */
 public class SimulatorAdapter extends NcePortController implements
@@ -431,16 +431,16 @@ public class SimulatorAdapter extends NcePortController implements
 				reply.setElement(i, turnoutMemory[offset+i]);
 			return reply;
 		}
-		if (nceMemoryAddress >= NceConsistEditFrame.CS_CONSIST_MEM && nceMemoryAddress < NceConsistEditFrame.CS_CONSIST_MEM+256*6){
+		if (nceMemoryAddress >= NceConsistEditPanel.CS_CONSIST_MEM && nceMemoryAddress < NceConsistEditPanel.CS_CONSIST_MEM+256*6){
 			log.debug("Reading consist memory: "+Integer.toHexString(nceMemoryAddress));
-			int offset = nceMemoryAddress-NceConsistEditFrame.CS_CONSIST_MEM;
+			int offset = nceMemoryAddress-NceConsistEditPanel.CS_CONSIST_MEM;
 			for (int i=0; i<num; i++)
 				reply.setElement(i, consistMemory[offset+i]);
 			return reply;
 		}
-		if (nceMemoryAddress >= NceMacroEditFrame.CS_MACRO_MEM && nceMemoryAddress < NceMacroEditFrame.CS_MACRO_MEM+256*20){
+		if (nceMemoryAddress >= NceMacroEditPanel.CS_MACRO_MEM && nceMemoryAddress < NceMacroEditPanel.CS_MACRO_MEM+256*20){
 			log.debug("Reading macro memory: "+Integer.toHexString(nceMemoryAddress));
-			int offset = nceMemoryAddress-NceMacroEditFrame.CS_MACRO_MEM;
+			int offset = nceMemoryAddress-NceMacroEditPanel.CS_MACRO_MEM;
 			log.debug("offset:"+offset);
 			for (int i=0; i<num; i++)
 				reply.setElement(i, macroMemory[offset+i]);
@@ -466,15 +466,15 @@ public class SimulatorAdapter extends NcePortController implements
 			for (int i=0; i<num; i++)
 				turnoutMemory[offset+i] = (byte)m.getElement(i+byteDataBegins);
 		}
-		if (nceMemoryAddress >= NceConsistEditFrame.CS_CONSIST_MEM && nceMemoryAddress < NceConsistEditFrame.CS_CONSIST_MEM+256*6){
+		if (nceMemoryAddress >= NceConsistEditPanel.CS_CONSIST_MEM && nceMemoryAddress < NceConsistEditPanel.CS_CONSIST_MEM+256*6){
 			log.debug("Writing consist memory: "+Integer.toHexString(nceMemoryAddress));
-			int offset = nceMemoryAddress-NceConsistEditFrame.CS_CONSIST_MEM;
+			int offset = nceMemoryAddress-NceConsistEditPanel.CS_CONSIST_MEM;
 			for (int i=0; i<num; i++)
 				consistMemory[offset+i] = (byte)m.getElement(i+byteDataBegins);
 		}
-		if (nceMemoryAddress >= NceMacroEditFrame.CS_MACRO_MEM && nceMemoryAddress < NceMacroEditFrame.CS_MACRO_MEM+256*20){
+		if (nceMemoryAddress >= NceMacroEditPanel.CS_MACRO_MEM && nceMemoryAddress < NceMacroEditPanel.CS_MACRO_MEM+256*20){
 			log.debug("Writing macro memory: "+Integer.toHexString(nceMemoryAddress));
-			int offset = nceMemoryAddress-NceMacroEditFrame.CS_MACRO_MEM;
+			int offset = nceMemoryAddress-NceMacroEditPanel.CS_MACRO_MEM;
 			log.debug("offset:"+offset);
 			for (int i=0; i<num; i++)
 				macroMemory[offset+i] = (byte)m.getElement(i+byteDataBegins);

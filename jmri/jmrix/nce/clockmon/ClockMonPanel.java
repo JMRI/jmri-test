@@ -10,7 +10,6 @@ import jmri.jmrix.nce.NceMessage;
 import jmri.jmrix.nce.NceReply;
 import jmri.jmrix.nce.NceSystemConnectionMemo;
 import jmri.jmrix.nce.NceTrafficController;
-import jmri.jmrix.nce.NceUSB;
 import jmri.jmrix.nce.swing.NcePanelInterface;
 
 import java.util.Date;
@@ -33,7 +32,7 @@ import javax.swing.*;
  * contact NCE Inc for separate permission.
  *
  * @author			Ken Cameron   Copyright (C) 2007
- * @version			$Revision: 1.1.2.3 $
+ * @version			$Revision: 1.1.2.4 $
  *
  * derived from loconet.clockmonframe by Bob Jacobson Copyright (C) 2003
  * 
@@ -318,7 +317,7 @@ public class ClockMonPanel extends jmri.jmrix.nce.swing.NcePanel implements NceP
         pane2.add(setSyncButton, gConstraints);
         setSyncModeInternalMaster.setEnabled(true);
         setSyncModeNceMaster.setEnabled(true);
-        if (tc.getUsbSystem() != NceUSB.USB_SYSTEM_NONE) {	// needs memory commands to sync
+        if (tc.getUsbSystem() != NceTrafficController.USB_SYSTEM_NONE) {	// needs memory commands to sync
             setSyncModeInternalMaster.setEnabled(false);
             setSyncModeNceMaster.setEnabled(false);
         }
