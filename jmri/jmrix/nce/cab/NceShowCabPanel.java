@@ -126,7 +126,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * 
  * @author Dan Boudreau Copyright (C) 2009, 2010
  * @author Ken Cameron Copyright (C) 2010
- * @version $Revision: 1.1.2.3 $
+ * @version $Revision: 1.1.2.4 $
  */
 
 public class NceShowCabPanel extends jmri.jmrix.nce.swing.NcePanel implements jmri.jmrix.nce.NceListener {
@@ -233,9 +233,17 @@ public class NceShowCabPanel extends jmri.jmrix.nce.swing.NcePanel implements jm
     }
 
     public String getHelpTarget() { return "package.jmri.jmrix.nce.cab.NceShowCabFrame"; }
-    
+
     public String getTitle() { 
-        return rb.getString("Title"); 
+    	StringBuilder x = new StringBuilder();
+    	if (memo != null) {
+    		x.append(memo.getUserName());
+    	} else {
+    		x.append("NCE_");
+    	}
+		x.append(": ");
+    	x.append(rb.getString("Title"));
+        return x.toString(); 
     }
     
     public void initComponents(NceSystemConnectionMemo m) throws Exception {

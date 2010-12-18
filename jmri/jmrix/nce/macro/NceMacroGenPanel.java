@@ -16,7 +16,7 @@ import javax.swing.*;
  * @author Dan Boudreau 	Copyright (C) 2007
  * Cloned into a Panel by
  * @author kcameron
- * @version $Revision: 1.1.2.2 $
+ * @version $Revision: 1.1.2.3 $
  **/
 
 public class NceMacroGenPanel extends jmri.jmrix.nce.swing.NcePanel implements jmri.jmrix.nce.NceListener {
@@ -54,11 +54,21 @@ public class NceMacroGenPanel extends jmri.jmrix.nce.swing.NcePanel implements j
     }
 
     public String getHelpTarget() { return "package.jmri.jmrix.nce.macro.NceMacroEditFrame"; }
+
     public String getTitle() { 
-        return rb.getString("TitleNceMacroGen"); 
+    	StringBuilder x = new StringBuilder();
+    	if (memo != null) {
+    		x.append(memo.getUserName());
+    	} else {
+    		x.append("NCE_");
+    	}
+		x.append(": ");
+    	x.append(rb.getString("TitleNceMacroGen"));
+        return x.toString(); 
     }
     
     public void initComponents(NceSystemConnectionMemo memo) throws Exception {
+    	this.memo = memo;
         tc = memo.getNceTrafficController();
         // the following code sets the frame's initial state
         

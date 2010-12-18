@@ -23,8 +23,17 @@ public class NceMonPanel extends jmri.jmrix.AbstractMonPane implements NceListen
     }
     
     public String getHelpTarget() { return null; }
+
     public String getTitle() { 
-        return "NCE Command Monitor"; 
+    	StringBuilder x = new StringBuilder();
+    	if (memo != null) {
+    		x.append(memo.getUserName());
+    	} else {
+    		x.append("NCE_");
+    	}
+		x.append(": ");
+    	x.append("Command Monitor");
+        return x.toString(); 
     }
 
     public void dispose() {

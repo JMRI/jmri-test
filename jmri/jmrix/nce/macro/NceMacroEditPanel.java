@@ -69,7 +69,7 @@ import jmri.jmrix.nce.swing.NcePanelInterface;
  * FF10 = link macro 16 
  * 
  * @author Dan Boudreau Copyright (C) 2007
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  */
 
 public class NceMacroEditPanel extends jmri.jmrix.nce.swing.NcePanel implements NcePanelInterface, jmri.jmrix.nce.NceListener  {
@@ -215,9 +215,21 @@ public class NceMacroEditPanel extends jmri.jmrix.nce.swing.NcePanel implements 
     }
     
     public String getHelpTarget() { return "package.jmri.jmrix.nce.macro.NceMacroEditFrame"; }
-    public String getTitle() { return rb.getString("TitleEditNCEMacro"); }
+
+    public String getTitle() { 
+    	StringBuilder x = new StringBuilder();
+    	if (memo != null) {
+    		x.append(memo.getUserName());
+    	} else {
+    		x.append("NCE_");
+    	}
+		x.append(": ");
+    	x.append(rb.getString("TitleEditNCEMacro"));
+        return x.toString(); 
+    }
 
     public void initComponents(NceSystemConnectionMemo memo) throws Exception {
+    	this.memo = memo;
         this.tc = memo.getNceTrafficController();
         
         // the following code sets the frame's initial state

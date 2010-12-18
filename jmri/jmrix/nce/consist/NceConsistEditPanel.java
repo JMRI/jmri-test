@@ -58,7 +58,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * @author Dan Boudreau Copyright (C) 2007 2008
  * Cloned from NceConsistEditFrame by
  * @author kcameron Copyright (C) 2010
- * @version $Revision: 1.1.2.2 $
+ * @version $Revision: 1.1.2.3 $
  */
 
 public class NceConsistEditPanel extends jmri.jmrix.nce.swing.NcePanel implements
@@ -225,9 +225,19 @@ public class NceConsistEditPanel extends jmri.jmrix.nce.swing.NcePanel implement
     }
 
     public String getHelpTarget() { return "package.jmri.jmrix.nce.consist.NceConsistEditFrame"; }
+
     public String getTitle() { 
-        return rb.getString("NceConsistEditTitle"); 
+    	StringBuilder x = new StringBuilder();
+    	if (memo != null) {
+    		x.append(memo.getUserName());
+    	} else {
+    		x.append("NCE_");
+    	}
+		x.append(": ");
+    	x.append(rb.getString("NceConsistEditTitle"));
+        return x.toString(); 
     }
+    
     public List<JMenu> getMenus() {
 		// build menu
 		JMenu toolMenu = new JMenu("Tools");
@@ -238,6 +248,7 @@ public class NceConsistEditPanel extends jmri.jmrix.nce.swing.NcePanel implement
     }
     
     public void initComponents(NceSystemConnectionMemo m) throws Exception {
+    	this.memo = m;
     	this.tc = m.getNceTrafficController();
 		// the following code sets the frame's initial state
 

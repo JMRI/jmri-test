@@ -26,7 +26,7 @@ import jmri.jmrix.nce.swing.NcePanelInterface;
  * @author			Ken Cameron Copyright (C) 2010
  * derived from - 
  * @author			Bob Jacobsen   Copyright (C) 2001, 2002
- * @version			$Revision: 1.1.2.2 $
+ * @version			$Revision: 1.1.2.3 $
  */
 @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="IS2_INCONSISTENT_SYNC", justification="serialStream is access from separate thread, and this class isn't used much")
 public class NcePacketMonitorPanel extends jmri.jmrix.AbstractMonPane implements NcePanelInterface {
@@ -60,7 +60,15 @@ public class NcePacketMonitorPanel extends jmri.jmrix.AbstractMonPane implements
     public String getHelpTarget() { return "package.jmri.jmrix.nce.analyzer.NcePacketMonitorFrame"; }
     
     public String getTitle() { 
-        return rb.getString("Title"); 
+    	StringBuilder x = new StringBuilder();
+    	if (memo != null) {
+    		x.append(memo.getUserName());
+    	} else {
+    		x.append("NCE_");
+    	}
+		x.append(": ");
+    	x.append(rb.getString("Title"));
+        return x.toString(); 
     }
     
     public void initComponents(NceSystemConnectionMemo m) throws Exception {

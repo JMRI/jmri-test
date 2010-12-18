@@ -32,7 +32,7 @@ import javax.swing.*;
  * contact NCE Inc for separate permission.
  *
  * @author			Ken Cameron   Copyright (C) 2007
- * @version			$Revision: 1.1.2.4 $
+ * @version			$Revision: 1.1.2.5 $
  *
  * derived from loconet.clockmonframe by Bob Jacobson Copyright (C) 2003
  * 
@@ -197,10 +197,19 @@ public class ClockMonPanel extends jmri.jmrix.nce.swing.NcePanel implements NceP
 
     public String getHelpTarget() { return "package.jmri.jmrix.nce.clockmon.ClockMonFrame"; }
     public String getTitle() { 
-        return rb.getString("TitleNceClockMonitor"); 
+    	StringBuilder x = new StringBuilder();
+    	if (memo != null) {
+    		x.append(memo.getUserName());
+    	} else {
+    		x.append("NCE_");
+    	}
+		x.append(": ");
+    	x.append(rb.getString("TitleNceClockMonitor"));
+        return x.toString(); 
     }
     
     public void initComponents(NceSystemConnectionMemo m) throws Exception {
+    	this.memo = m;
         this.tc = m.getNceTrafficController();
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

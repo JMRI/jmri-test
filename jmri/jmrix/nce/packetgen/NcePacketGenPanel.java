@@ -17,7 +17,7 @@ import javax.swing.*;
  * derived from:
  * @author	Bob Jacobsen   Copyright (C) 2001
  * @author Dan Boudreau 	Copyright (C) 2007
- * @version $Revision: 1.1.2.2 $
+ * @version $Revision: 1.1.2.3 $
  */
 public class NcePacketGenPanel extends jmri.jmrix.nce.swing.NcePanel implements jmri.jmrix.nce.NceListener {
 	
@@ -49,7 +49,15 @@ public class NcePacketGenPanel extends jmri.jmrix.nce.swing.NcePanel implements 
     public String getHelpTarget() { return "package.jmri.jmrix.nce.packetgen.NcePacketGenFrame"; }
     
     public String getTitle() { 
-        return rb.getString("Title"); 
+    	StringBuilder x = new StringBuilder();
+    	if (memo != null) {
+    		x.append(memo.getUserName());
+    	} else {
+    		x.append("NCE_");
+    	}
+		x.append(": ");
+    	x.append(rb.getString("Title"));
+        return x.toString(); 
     }
 
     public void initComponents(NceSystemConnectionMemo m) throws Exception {
