@@ -15,7 +15,7 @@ import jmri.jmrix.nce.NceSystemConnectionMemo;
  * @author	ken cameron Copyright (C) 2010
  * Derived from BoosterProgFrame by
  * @author		Bob Jacobsen   Copyright (C) 2004
- * @version             $Revision: 1.1.2.4 $
+ * @version             $Revision: 1.1.2.5 $
  */
 public class BoosterProgPanel extends jmri.jmrix.nce.swing.NcePanel {
 	
@@ -43,7 +43,15 @@ public class BoosterProgPanel extends jmri.jmrix.nce.swing.NcePanel {
     public String getHelpTarget() { return "package.jmri.jmrix.nce.boosterprog.BoosterProgPanel"; }
     
     public String getTitle() { 
-        return rb.getString("TitleBoosterProg"); 
+    	StringBuilder x = new StringBuilder();
+    	if (memo != null) {
+    		x.append(memo.getUserName());
+    	} else {
+    		x.append("NCE_");
+    	}
+		x.append(": ");
+    	x.append(rb.getString("TitleBoosterProg"));
+        return x.toString(); 
     }
     
     public void initComponents(NceSystemConnectionMemo m) throws Exception {
