@@ -4,6 +4,7 @@ package jmri.jmrix.nce.cab;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 
@@ -125,7 +126,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * 
  * @author Dan Boudreau Copyright (C) 2009, 2010
  * @author Ken Cameron Copyright (C) 2010
- * @version $Revision: 1.1.2.2 $
+ * @version $Revision: 1.1.2.3 $
  */
 
 public class NceShowCabPanel extends jmri.jmrix.nce.swing.NcePanel implements jmri.jmrix.nce.NceListener {
@@ -203,8 +204,14 @@ public class NceShowCabPanel extends jmri.jmrix.nce.swing.NcePanel implements jm
     JTextField purgeCabId = new JTextField(3);
     
     // for padding out panel
-    JLabel space1 = new JLabel(" ");
+    JLabel space1a = new JLabel("    ");
+    JLabel space1b = new JLabel("    ");
+    JLabel space1c = new JLabel("    ");
+    JLabel space1d = new JLabel("    ");
     JLabel space2 = new JLabel(" ");
+    JLabel space3 = new JLabel(" ");
+    JLabel space4 = new JLabel(" ");
+    JLabel space5 = new JLabel(" ");
     
     JPanel cabsPanel = new JPanel();
     JScrollPane cabsPane;
@@ -220,12 +227,12 @@ public class NceShowCabPanel extends jmri.jmrix.nce.swing.NcePanel implements jm
             try {
 				initComponents((NceSystemConnectionMemo) context);
 			} catch (Exception e) {
-				//log.error("BoosterProg initContext failed");
+				
 			}
         }
     }
 
-    public String getHelpTarget() { return "package.jmri.jmrix.nce.cab.NceCabBundle"; }
+    public String getHelpTarget() { return "package.jmri.jmrix.nce.cab.NceShowCabFrame"; }
     
     public String getTitle() { 
         return rb.getString("Title"); 
@@ -252,13 +259,17 @@ public class NceShowCabPanel extends jmri.jmrix.nce.swing.NcePanel implements jm
     	purgeCabId.setToolTipText(rb.getString("PurgeCabIdToolTip"));
     	purgeButton.setToolTipText(rb.getString("PurgeButtonToolTip"));
     	addItem(p1, refreshButton, 2, 1);
-    	addItem(p1, textStatus, 3, 1);
-    	addItem(p1, checkBoxActive, 4, 1);
-    	addItem(p1, purgeCabId, 5, 1);
-    	addItem(p1, purgeButton, 6, 1);
+    	addItem(p1, space1a, 3, 1);
+    	addItem(p1, textStatus, 4, 1);
+    	addItem(p1, space1b, 5, 1);
+    	addItem(p1, checkBoxActive, 6, 1);
+    	addItem(p1, space1c, 7, 1);
+    	addItem(p1, purgeCabId, 8, 1);
+    	addItem(p1, space1d, 9, 1);
+    	addItem(p1, purgeButton, 10, 1);
     	
     	// row 2
-    	addItem(p1, space1, 2, 2);
+    	addItem(p1, space2, 4, 2);
     	
         // row 3
     	JPanel p2 = new JPanel();
@@ -277,11 +288,15 @@ public class NceShowCabPanel extends jmri.jmrix.nce.swing.NcePanel implements jm
     	add(p1);
     	add(p2);
     	add(cabsPane);
-    	refreshPanel();
-
-    	// set frame size for display
-    	setSize(500, 250);
     	
+    	// pad out panel
+    	cabsPanel.setLayout(new GridBagLayout());
+    	cabsPanel.setVisible(true);
+    	addItem(cabsPanel, space3, 0, 0);
+    	addItem(cabsPanel, space4, 0, 1);
+    	addItem(cabsPanel, space5, 0, 2);
+    	cabsPane.setVisible(true);
+    	refreshPanel();
     }
 
     // refresh button
@@ -335,10 +350,19 @@ public class NceShowCabPanel extends jmri.jmrix.nce.swing.NcePanel implements jm
     	NceCabUpdateThread.start();
     }
     
+    private boolean firstTime = true; // wait for panel to display
     // Thread to update cab info, allows the use of sleep or wait
-    private void cabUpdate() {	
+    private void cabUpdate() {
+    	if (firstTime){
+    		try {
+    			Thread.sleep(1000);	// wait for panel to display 
+    		} catch (InterruptedException e) {
+    			e.printStackTrace();
+    		}
+    	}
+    	firstTime = false;
     	cabsPanel.removeAll();
-    	cabsPanel.setLayout(new GridBagLayout());
+    	int numberOfCabs = 0;
         // build table of cabs
         for (int i=1; i<CAB_MAX; i++){
         	JLabel number = new JLabel();
@@ -362,14 +386,20 @@ public class NceShowCabPanel extends jmri.jmrix.nce.swing.NcePanel implements jm
         	}
         	cabFlag1Array[i] = recChar;
         	int flags1 = recChar & FLAGS1_MASK; // mask off don't care bits
-        	if (flags1 == FLAGS1_PROCAB)
+        	if (flags1 == FLAGS1_PROCAB){
         		type.setText("ProCab");
-        	else if (flags1 == FLAGS1_CAB04) 
+        		numberOfCabs++;
+        	}
+        	else if (flags1 == FLAGS1_CAB04){ 
         		type.setText("Cab04/06");	// Cab04 or Cab06
-           	else if (flags1 == FLAGS1_USB)
+        		numberOfCabs++;
+        	}
+           	else if (flags1 == FLAGS1_USB){
         		type.setText("USB/M-P");	// USB or Mini-Panel
-            else if (flags1 == FLAGS1_AIU)
+           	}
+            else if (flags1 == FLAGS1_AIU){
         		type.setText("AIU");
+            }
             else {
             	if (checkBoxActive.isSelected())
             		continue;
@@ -541,10 +571,10 @@ public class NceShowCabPanel extends jmri.jmrix.nce.swing.NcePanel implements jm
             txt.append(s);
             lastUsed.setText(txt.toString());
         }
-    	validate();
+ 
     	cabsPane.setVisible(true);
     	cabsPane.repaint();
-    	textStatus.setText("");
+    	textStatus.setText(MessageFormat.format(rb.getString("FoundCabs"), new Object[]{numberOfCabs}));
     }
     
     // puts the thread to sleep while we wait for the read CS memory to complete

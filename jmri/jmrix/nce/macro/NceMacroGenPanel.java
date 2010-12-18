@@ -16,7 +16,7 @@ import javax.swing.*;
  * @author Dan Boudreau 	Copyright (C) 2007
  * Cloned into a Panel by
  * @author kcameron
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  **/
 
 public class NceMacroGenPanel extends jmri.jmrix.nce.swing.NcePanel implements jmri.jmrix.nce.NceListener {
@@ -53,7 +53,7 @@ public class NceMacroGenPanel extends jmri.jmrix.nce.swing.NcePanel implements j
         }
     }
 
-    public String getHelpTarget() { return "package.jmri.jmrix.nce.macro.NceMacroGenFrame"; }
+    public String getHelpTarget() { return "package.jmri.jmrix.nce.macro.NceMacroEditFrame"; }
     public String getTitle() { 
         return rb.getString("TitleNceMacroGen"); 
     }
