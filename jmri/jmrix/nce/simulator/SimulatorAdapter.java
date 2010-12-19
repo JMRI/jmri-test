@@ -124,9 +124,9 @@ import java.io.IOException;
 <<<<<<< SimulatorAdapter.java
  * converting to multiple connection
  * @author kcameron Copyright (C) 2010
- * @version			$Revision: 1.12.2.4 $
+ * @version			$Revision: 1.12.2.5 $
 =======
- * @version			$Revision: 1.12.2.4 $
+ * @version			$Revision: 1.12.2.5 $
 >>>>>>> 1.12
  */
 public class SimulatorAdapter extends NcePortController implements
@@ -155,7 +155,6 @@ public class SimulatorAdapter extends NcePortController implements
     public SimulatorAdapter (){
         super();
         adaptermemo = new NceSystemConnectionMemo();
-        setManufacturer(jmri.jmrix.DCCManufacturerList.NCE);
     }
 
     @Override

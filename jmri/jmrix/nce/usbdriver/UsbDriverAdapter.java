@@ -25,7 +25,7 @@ import gnu.io.SerialPort;
  * 
  * @author Bob Jacobsen Copyright (C) 2001, 2002
  * @author Daniel Boudreau Copyright (C) 2007
- * @version $Revision: 1.23.2.4 $
+ * @version $Revision: 1.23.2.5 $
  */
 public class UsbDriverAdapter extends NcePortController {
 
@@ -35,7 +35,6 @@ public class UsbDriverAdapter extends NcePortController {
     public UsbDriverAdapter() {
         super();
         adaptermemo = new NceSystemConnectionMemo();
-        setManufacturer(jmri.jmrix.DCCManufacturerList.NCE);
     }
 
     @Override
