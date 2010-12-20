@@ -32,7 +32,7 @@ import javax.swing.*;
  * contact NCE Inc for separate permission.
  *
  * @author			Ken Cameron   Copyright (C) 2007
- * @version			$Revision: 1.1.2.5 $
+ * @version			$Revision: 1.1.2.6 $
  *
  * derived from loconet.clockmonframe by Bob Jacobson Copyright (C) 2003
  * 
@@ -1752,6 +1752,6 @@ public class ClockMonPanel extends jmri.jmrix.nce.swing.NcePanel implements NceP
         super.dispose();
     }
     
-    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ClockMonFrame.class.getName());
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ClockMonPanel.class.getName());
     
 }
