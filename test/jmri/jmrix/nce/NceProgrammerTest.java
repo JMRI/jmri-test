@@ -20,7 +20,7 @@ import jmri.jmrix.nce.NceProgrammer;
 /**
  * JUnit tests for the NceProgrammer class
  * @author			Bob Jacobsen
- * @version          $Revision: 1.13.6.4 $
+ * @version          $Revision: 1.13.6.5 $
  */
 public class NceProgrammerTest extends TestCase {
 
@@ -63,7 +63,7 @@ public class NceProgrammerTest extends TestCase {
         Assert.assertEquals("write message contents", "P010 020",
                             ((t.outbound.elementAt(0))).toString());
         // reply from programmer arrives
-        NceReply r = new NceReply();
+        NceReply r = new NceReply(tc);
         t.sendTestReply(r, p);
         Assert.assertEquals(" got data value back", 20, rcvdValue);
         Assert.assertEquals(" listener invoked", 1, rcvdInvoked);
@@ -84,7 +84,7 @@ public class NceProgrammerTest extends TestCase {
         Assert.assertEquals("write message contents", "A0 00 0A 14",
                             ((t.outbound.elementAt(0))).toString());
         // reply from programmer arrives
-        NceReply r = new NceReply();
+        NceReply r = new NceReply(tc);
         t.sendTestReply(r, p);
         Assert.assertEquals(" got data value back", 20, rcvdValue);
         Assert.assertEquals(" listener invoked", 1, rcvdInvoked);
@@ -108,7 +108,7 @@ public class NceProgrammerTest extends TestCase {
         Assert.assertEquals("write message contents", "S3 012",
                             ((t.outbound.elementAt(0))).toString());
         // reply from programmer arrives
-        NceReply r = new NceReply();
+        NceReply r = new NceReply(tc);
         t.sendTestReply(r, p);
         Assert.assertEquals(" got data value back", 12, rcvdValue);
         Assert.assertEquals(" listener invoked", 1, rcvdInvoked);
@@ -132,7 +132,7 @@ public class NceProgrammerTest extends TestCase {
         Assert.assertEquals("write message contents", "A6 03 0C",
                             ((t.outbound.elementAt(0))).toString());
         // reply from programmer arrives
-        NceReply r = new NceReply();
+        NceReply r = new NceReply(tc);
         t.sendTestReply(r, p);
         Assert.assertEquals(" got data value back", 12, rcvdValue);
         Assert.assertEquals(" listener invoked", 1, rcvdInvoked);
@@ -154,7 +154,7 @@ public class NceProgrammerTest extends TestCase {
         Assert.assertEquals("read message contents", "R010",
                             ((t.outbound.elementAt(0))).toString());
         // reply from programmer arrives
-        NceReply r = new NceReply();
+        NceReply r = new NceReply(tc);
         r.setElement(0, '0');
         r.setElement(1, '2');
         r.setElement(2, '0');
@@ -180,7 +180,7 @@ public class NceProgrammerTest extends TestCase {
         Assert.assertEquals("read message contents", "A1 00 0A",
                             ((t.outbound.elementAt(0))).toString());
         // reply from programmer arrives
-        NceReply r = new NceReply();
+        NceReply r = new NceReply(tc);
         r.setElement(0, '0');
         r.setElement(1, '2');
         r.setElement(2, '0');
@@ -209,7 +209,7 @@ public class NceProgrammerTest extends TestCase {
         Assert.assertEquals("read message contents", "V3",
                             ((t.outbound.elementAt(0))).toString());
         // reply from programmer arrives
-        NceReply r = new NceReply();
+        NceReply r = new NceReply(tc);
         r.setElement(0, '0');
         r.setElement(1, '2');
         r.setElement(2, '0');
@@ -238,7 +238,7 @@ public class NceProgrammerTest extends TestCase {
         Assert.assertEquals("read message contents", "A7 03",
                             ((t.outbound.elementAt(0))).toString());
         // reply from programmer arrives
-        NceReply r = new NceReply();
+        NceReply r = new NceReply(tc);
         r.setElement(0, '0');
         r.setElement(1, '2');
         r.setElement(2, '0');

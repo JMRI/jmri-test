@@ -14,7 +14,7 @@ import junit.framework.TestSuite;
  * JUnit tests for the NcePowerManager class.
  *
  * @author	Bob Jacobsen
- * @version	$Revision: 1.9.12.1 $
+ * @version	$Revision: 1.9.12.2 $
  */
 public class NcePowerManagerTest extends AbstractPowerManagerTest {
 
@@ -64,18 +64,18 @@ public class NcePowerManagerTest extends AbstractPowerManagerTest {
 
     }
 
-    // service routines to simulate recieving on, off from interface
+    // service routines to simulate receiving on, off from interface
     protected void hearOn() {
         // this does nothing, as there is no unsolicited on
     }
 
     protected void sendOnReply() {
-        NceReply l = new NceReply();
+        NceReply l = new NceReply(controller);
         controller.sendTestReply(l);
     }
 
     protected void sendOffReply() {
-        NceReply l = new NceReply();
+        NceReply l = new NceReply(controller);
         controller.sendTestReply(l);
     }
 

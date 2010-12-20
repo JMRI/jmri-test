@@ -124,9 +124,9 @@ import java.io.IOException;
 <<<<<<< SimulatorAdapter.java
  * converting to multiple connection
  * @author kcameron Copyright (C) 2010
- * @version			$Revision: 1.12.2.5 $
+ * @version			$Revision: 1.12.2.6 $
 =======
- * @version			$Revision: 1.12.2.5 $
+ * @version			$Revision: 1.12.2.6 $
 >>>>>>> 1.12
  */
 public class SimulatorAdapter extends NcePortController implements
@@ -319,7 +319,7 @@ public class SimulatorAdapter extends NcePortController implements
 	// generateReply is the heart of the simulation.  It translates an 
 	// incoming NceMessage into an outgoing NceReply.
 	private NceReply generateReply(NceMessage m) {
-		NceReply reply = new NceReply();
+		NceReply reply = new NceReply(adaptermemo.getNceTrafficController());
 		int command = m.getElement(0);
 		if (command < 0x80) 					// NOTE: NCE command station does not respond to
 			return null;						// command less than 0x80 (times out)
