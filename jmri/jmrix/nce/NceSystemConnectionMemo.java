@@ -13,7 +13,7 @@ import jmri.*;
  * particular system.
  *
  * @author		Bob Jacobsen  Copyright (C) 2010
- * @version             $Revision: 1.3.2.4 $
+ * @version             $Revision: 1.3.2.5 $
  */
 public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
     
@@ -30,7 +30,10 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
     jmri.jmrix.swing.ComponentFactory componentFactory = null;
     
     public void setNceUSB(int result) { getNceTrafficController().setUsbSystem(result); }
-    public int getNceUSB() { return getNceTrafficController().getUsbSystem(); }
+    public int getNceUSB() { 
+    	if (getNceTrafficController() != null)
+    		return getNceTrafficController().getUsbSystem(); 
+    	return NceTrafficController.USB_SYSTEM_NONE;} // error no connection!
     /**
      * Provides access to the TrafficController for this
      * particular connection.

@@ -13,7 +13,7 @@ import jmri.jmrix.nce.NceTrafficController;
  * @author	Bob Jacobsen   Copyright 2003, 2010
  * converted to multiple connection
  * @author	kcameron	Copyright 2010
- * @version     $Revision: 1.1.2.10 $
+ * @version     $Revision: 1.1.2.11 $
  */
 
 public class NceMenu extends JMenu {
@@ -48,6 +48,10 @@ public class NceMenu extends JMenu {
                 a.setEnabled(item.enable.equals(ALL) || (item.enable.equals(PH) && memo.getNceUSB() == NceTrafficController.USB_SYSTEM_NONE));               	
             }
         }
+        
+        // do we have a NceTrafficController?
+        setEnabled(memo.getNceTrafficController() != null);	// disable menu, no connection, no tools!
+        
         add(new javax.swing.JSeparator());
     }
     
