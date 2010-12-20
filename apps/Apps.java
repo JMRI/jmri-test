@@ -38,7 +38,7 @@ import net.roydesign.mac.MRJAdapter;
  * @author	Bob Jacobsen   Copyright 2003, 2007, 2008, 2010
  * @author  Dennis Miller  Copyright 2005
  * @author Giorgio Terdina Copyright 2008
- * @version     $Revision: 1.126 $
+ * @version     $Revision: 1.126.2.1 $
  */
 public class Apps extends JPanel implements PropertyChangeListener, java.awt.event.WindowListener {
 
@@ -491,16 +491,18 @@ public class Apps extends JPanel implements PropertyChangeListener, java.awt.eve
     protected void updateLine(int number, JLabel cs) {
         if (AppConfigPanel.getDisabled(number))
             return;
-    	if (ConnectionStatus.instance().isConnectionOk(AppConfigPanel.getPort(number))){
+        String cf = "";
+    	if (ConnectionStatus.instance().isConnectionOk(AppConfigBase.getPort(number))){
     		cs.setForeground(Color.black);
-			cs.setText(AppConfigPanel.getManufacturerName(number)+" "+ AppConfigPanel.getConnection(number));
+			cf = MessageFormat.format(rb.getString("ConnectionSucceeded"),
+					new Object[] {AppConfigBase.getConnectionName(number), AppConfigBase.getManufacturerName(number), AppConfigBase.getConnection(number), AppConfigBase.getPort(number)});
 		} else {
 			cs.setForeground(Color.red);
-			String cf = MessageFormat.format(rb.getString("ConnectionFailed"),
-					new Object[] {AppConfigPanel.getManufacturerName(number), AppConfigPanel.getConnection(number), AppConfigPanel.getPort(number)});
-			cf = cf.toUpperCase();
-			cs.setText(cf);
+			cf = MessageFormat.format(rb.getString("ConnectionFailed"),
+					new Object[] {AppConfigBase.getConnectionName(number), AppConfigBase.getManufacturerName(number), AppConfigBase.getConnection(number), AppConfigBase.getPort(number)});
 		}
+    	cf = cf.toUpperCase();
+		cs.setText(cf);
 		this.revalidate();
 	}
  
