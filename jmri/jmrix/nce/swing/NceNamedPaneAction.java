@@ -13,7 +13,7 @@ import jmri.util.swing.*;
  * @author		Bob Jacobsen Copyright (C) 2010
  * Copied from LocoNet
  * @author kcameron
- * @version		$Revision: 1.1.2.1 $
+ * @version		$Revision: 1.1.2.2 $
  */
  
 public class NceNamedPaneAction extends jmri.util.swing.JmriNamedPaneAction {
@@ -52,4 +52,4 @@ public class NceNamedPaneAction extends jmri.util.swing.JmriNamedPaneAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(NceNamedPaneAction.class.getName());
 }
 
-/* @(#)LnNamedPaneAction.java */
+/* @(#)NceNamedPaneAction.java */

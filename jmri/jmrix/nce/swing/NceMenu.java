@@ -5,33 +5,37 @@ package jmri.jmrix.nce.swing;
 import java.util.ResourceBundle;
 import javax.swing.*;
 import jmri.jmrix.nce.NceSystemConnectionMemo;
+import jmri.jmrix.nce.NceTrafficController;
 
 /**
- * Create a "Systems" menu containing the Jmri Nce-specific tools.
+ * Create a "Systems" menu containing the JMRI NCE-specific tools.
  *
  * @author	Bob Jacobsen   Copyright 2003, 2010
  * converted to multiple connection
  * @author	kcameron	Copyright 2010
- * @version     $Revision: 1.1.2.9 $
+ * @version     $Revision: 1.1.2.10 $
  */
 
 public class NceMenu extends JMenu {
 
     /**
-     * Create a Nce menu.
-     * Preloads the TrafficController to certain actions.
+     * Create a NCE menu.
+     * And loads the NceSystemConnectionMemo to the various actions.
      * Actions will open new windows.
      */
-    // Need to Sort out the Nce server menu items;
+    // Need to Sort out the NCE server menu items;
     public NceMenu(NceSystemConnectionMemo memo) {
         super();
 
         ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.JmrixSystemsBundle");
 
-        if (memo != null)
-            setText(memo.getUserName());
-        else
-            setText(rb.getString("MenuNce"));
+        // memo can not be null!
+        if (memo == null){
+        	new Exception().printStackTrace();
+        	return;
+        }        	
+            
+        setText(memo.getUserName());
             
         jmri.util.swing.WindowInterface wi = new jmri.util.swing.sdi.JmriJFrameInterface();
         
@@ -39,32 +43,40 @@ public class NceMenu extends JMenu {
             if (item == null) {
                 add(new javax.swing.JSeparator());
             } else {
-                add(new NceNamedPaneAction( rb.getString(item.name), wi, item.load, memo));
+            	NceNamedPaneAction a = new NceNamedPaneAction( rb.getString(item.name), wi, item.load, memo);
+                add(a);
+                a.setEnabled(item.enable.equals(ALL) || (item.enable.equals(PH) && memo.getNceUSB() == NceTrafficController.USB_SYSTEM_NONE));               	
             }
         }
         add(new javax.swing.JSeparator());
     }
+    
+    // Enable or disable menu items based on system connection
+    private final String ALL = "All NCE connections";
+    private final String PH = "NCE Power House Only";
         
     private Item[] panelItems = new Item[] {
-        new Item("MenuItemCommandMonitor", "jmri.jmrix.nce.ncemon.NceMonPanel"),
-        new Item("MenuItemSendCommand", "jmri.jmrix.nce.packetgen.NcePacketGenPanel"),
-        new Item("MenuItemMacroCommand", "jmri.jmrix.nce.macro.NceMacroGenPanel"),
-        new Item("MenuItemMacroEdit", "jmri.jmrix.nce.macro.NceMacroEditPanel"),
-        new Item("MenuItemConsistEdit", "jmri.jmrix.nce.consist.NceConsistEditPanel"),
-        new Item("MenuItemTrackPacketMonitor", "jmri.jmrix.ncemonitor.NcePacketMonitorPanel"),
-        new Item("MenuItemClockMon", "jmri.jmrix.nce.clockmon.ClockMonPanel"),
-        new Item("MenuItemShowCabs", "jmri.jmrix.nce.cab.NceShowCabPanel"),
-        new Item("MenuItemBoosterProg", "jmri.jmrix.nce.boosterprog.BoosterProgPanel")
+        new Item("MenuItemCommandMonitor", "jmri.jmrix.nce.ncemon.NceMonPanel", ALL),
+        new Item("MenuItemSendCommand", "jmri.jmrix.nce.packetgen.NcePacketGenPanel", ALL),
+        new Item("MenuItemMacroCommand", "jmri.jmrix.nce.macro.NceMacroGenPanel", ALL),
+        new Item("MenuItemMacroEdit", "jmri.jmrix.nce.macro.NceMacroEditPanel", PH),
+        new Item("MenuItemConsistEdit", "jmri.jmrix.nce.consist.NceConsistEditPanel", PH),
+        new Item("MenuItemTrackPacketMonitor", "jmri.jmrix.ncemonitor.NcePacketMonitorPanel", ALL),
+        new Item("MenuItemClockMon", "jmri.jmrix.nce.clockmon.ClockMonPanel", PH),
+        new Item("MenuItemShowCabs", "jmri.jmrix.nce.cab.NceShowCabPanel", PH),
+        new Item("MenuItemBoosterProg", "jmri.jmrix.nce.boosterprog.BoosterProgPanel", ALL)
     };
     
     static class Item {
-        Item(String name, String load) {
+        Item(String name, String load, String enable) {
             this.name = name;
             this.load = load;
+            this.enable = enable;
         }
         String name;
         String load;
+        String enable;
     }
 }
 
-
+/* @(#)NceMenu.java */
