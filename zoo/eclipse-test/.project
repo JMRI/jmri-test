@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>java</name>
-	<comment></comment>
+	<name>JMRI</name>
+	<comment>JMRI Project for Eclipse</comment>
 	<projects>
 	</projects>
 	<buildSpec>

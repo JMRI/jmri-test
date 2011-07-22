@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="**/.cvsignore|**/COPYING" kind="src" output="classes" path="src"/>
-	<classpathentry excluding="**/.cvsignore|**/COPYING" kind="src" output="classes" path="tmp"/>
-	<classpathentry excluding="**/.cvsignore|**/COPYING" kind="src" path="test"/>
+	<classpathentry excluding="**/.cvsignore|**/COPYING" kind="src" output="java/classes" path="java/src"/>
+	<classpathentry excluding="**/.cvsignore|**/COPYING" kind="src" output="java/classes" path="java/tmp"/>
+	<classpathentry excluding="**/.cvsignore|**/COPYING" kind="src" path="java/test"/>
 	<classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
 	<classpathentry kind="lib" path="lib/javacsv.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
@@ -30,5 +30,5 @@
 	<classpathentry kind="lib" path="lib/jfcunit.jar"/>
 	<classpathentry kind="lib" path="lib/annotations.jar"/>
 	<classpathentry kind="lib" path="lib/jsr305.jar"/>
-	<classpathentry kind="output" path="classes"/>
+	<classpathentry kind="output" path="java/classes"/>
 </classpath>
