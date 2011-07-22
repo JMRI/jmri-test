@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<!-- Copyright ($Author$) 2009 -->
+<!-- $Id$ -->
+<title>Comprehensive Programmer - Advanced Features Pane</title>
+
+<!-- Style -->
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="/css/default.css" media="screen">
+<link rel="stylesheet" type="text/css" href="/css/print.css" media="print">
+<link rel="icon" href="/images/jmri.ico" TYPE="image/png">
+<link rel="home" title="Home" href="/">
+<!-- /Style -->
+</head>
+
+<body>
+<!--#include virtual="/Header" -->
+
+<!--#include virtual="Sidebar" -->
+<div id="mainContent">
+
+<a NAME="Top"></a>
+
+<h1>Using DecoderPro&reg; to Operate Trains</h1>
+<h1>What does Operations do?</h1>
+
+<div align=right>
+<p><a href="Ops_Settings.shtml">Next</a></p>
+<p><a href="index.shtml#Operations">Back to Index</a></p>
+</div>
+
+<hr>
+<p>The operations program allows you to build computer generated car  manifests for your railroad. A manifest or switch list defines where a  car is located on the railroad and how and where it should be eventually  positioned on the railroad. The program allows you to build a roster of  cars, define locations on the railroad, and routes for trains to travel.  The car roster includes information about the car, including road name,  type of car, color, length, date built, and its owner. Trains are  assigned routes that define locations where cars can be picked up or  dropped. Features include the ability to define what car types and car  road names a location can service, the available track space for a  location, and the maximum length the train can be between any two  locations on the route. Locations can have sidings, yards, staging and  interchange tracks. Optionally, trains can be configured to require a  caboose or car with FRED. The program generates car manifests for each  train and optionally for any location. The program can also place icons  representing trains on a JMRI panel. The icon can be taught to move in  the panel along with the train from location to location.</p>
+<em><strong>Operations Demo Files </strong></em>
+<p>The operations program provides a set of demo files to help introduce  you to the some of the features and capabilities of this program. </p>
+<p>&nbsp;</p>
+<table width="90%" border="1" cellspacing="1" cellpadding="2">
+  <tr>
+    <th width="45%" scope="col"><img src="images/Ops_Demo.png" width="426" height="489" alt="operations demo"></th>
+    <th width="55%" align="left" valign="top" scope="col"><p>Load the demo files from the Tools menu in the Operations Settings window, select Load Demo Files, the demo files will load after you restart DecoderPro.</p>
+    <p><img src="images/Ops_Demo01.png" width="500" height="420" alt="Demo "></p></th>
+  </tr>
+</table>
+<p> The program  will create a backup of your current configuration if you have one, and  then load the demo files. Restart JMRI to complete the demo load  process.&nbsp;&nbsp;To get rid of the demo files, use the Restore function to reload the  first backup date, which is the blank entry form.</p>
+<p>The program also supplies a simple panel to show how the train  icons work. Load the panel before building the trains by selecting in  the main JMRI menu, "Panels-&gt;Load Panels .." a window should appear and  open the "operations" directory and then open the "Operations Demo  Panel" xml file. </p>
+<em><strong>Quick Start</strong></em>
+<p align="left">In the Main DecoderPro menu Select<strong> Tools </strong>menu.</p>
+<p align="left"><img src="images/Ops_menu.png" width="255" height="214" alt="Operations menu"></p>
+<p align="left">There  are six items in this menu. It is recommended that you start with <strong>Settings</strong> and work your way down to <strong>Trains.</strong> We also recommend that when defining  your locations that you first use yard and siding tracks, and try  staging and interchange tracks when you're more comfortable with how the  program operates. </p>
+<strong><em>British Railways </em></strong>
+<p>The program supports an alternate set of railway terminology for our  British modelers. To use British terminologies, go to the JMRI Advanced  Preferences (Edit-&gt;Preferences.. select the Show Advanced Preferences  checkbox) and select English (United Kingdom) in the "Locale:" menu  box. The program will also convert from centimeters to meters when  entering wagon, locomotive, or location lengths, just append "cm" to any  length.
+</p>
+<hr>
+
+<div align=right>
+<p><a href="Ops_Settings.shtml">Next</a></p>
+<p><a href="index.shtml#Operations">Back to Index</a></p>
+</div>
+
+<!--#include virtual="/Footer" -->
+</body>
+</html>
