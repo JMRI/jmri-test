@@ -443,7 +443,7 @@
 	     with the only differences among them being the value of the initial classname
 	     to run and the startup configfile as specified in the antargline -->
      
-    <target name="decoderpro" depends="debug" description="build and run DecoderPro app">
+    <target name="decoderpro" depends="debug, copyfiles" description="build and run DecoderPro app">
       <antcall target="-run-jmri-application">
         <param name="application.classname" value="apps.DecoderPro.DecoderPro" />
   	    <param name="antargline" value="DecoderProConfig2.xml" />
