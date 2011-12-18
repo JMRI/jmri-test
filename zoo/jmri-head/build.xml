@@ -102,7 +102,7 @@
     <property name="test"         value="${javadir}/test"/>
     <property name="templatedir"  value="${javadir}/template"/>
     <property name="tmptarget"    value="${javadir}/tmp"/>
-    <property name="tmpdir"       value="${basedir}/tempdir"/>    <!-- actual tmp files -->
+    <property name="tempdir"      value="${basedir}/tempdir"/>    <!-- actual tmp files -->
 
     <!-- location for all generated java code -->
     <property name="genjavasrcdir" value="${tmptarget}/"/>
@@ -255,7 +255,7 @@
             <fileset dir="${dist}"/>
             <fileset dir="${genjavasrcdir}"/>
             <fileset file="${javadir}/manifest"/>
-            <fileset dir="${tmpdir}"/>
+            <fileset dir="${tempdir}"/>
         </delete>
     </target>
 
@@ -1334,8 +1334,8 @@
     <property name="repository.jmri-trunk" value="${repository.base-url}${svndir.trunk}"/>
     <property name="repository.release-dir" value="${repository.base-url}${svndir.releases}"/>
 
-    <property name="head-dir" value="${tmpdir}/HEAD"/>
-    <property name="branch-dir" value="${tmpdir}/BRANCH"/>
+    <property name="head-dir" value="${tempdir}/HEAD"/>
+    <property name="branch-dir" value="${tempdir}/BRANCH"/>
 
 
     <!-- several steps are involved in creating a new test release
@@ -1359,8 +1359,8 @@
              the new release branch (that what depth="files" does).
              This working copy might not be the trunk HEAD, so we
              don't want to modify the file right here -->
-        <delete dir="${tmpdir}"/>
-        <mkdir dir="${tmpdir}"/>
+        <delete dir="${tempdir}"/>
+        <mkdir dir="${tempdir}"/>
         <svn refid="svn.settings">
             <checkout url="${repository.jmri-trunk}"
                       depth="files"
@@ -1389,9 +1389,16 @@
             <commit file="${branch-dir}/release.properties"
                     message="set release.is-branched to true"/>
             <commit file="${head-dir}/release.properties"
-                    message="set new revision number due to release branch creation"/>
+                    message="set new revision number due to ${release} release branch creation"/>
+        </svn>
+
+        <!-- lastly, since we're probably in a HEAD tree, we're going
+             to try to update the release.properties file in this directory
+             to help keep things in sync -->
+        <svn refid="svn.settings">
             <update file="release.properties"/>
         </svn>
+        <echo message="new release branch URL is ${repository.release-dir}/${release}"/>
     </target>
 
 
