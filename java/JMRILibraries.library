@@ -10,7 +10,7 @@
     <path>[lib/jhall.jar]</path>
     <path>[lib/junit.jar]</path>
     <path>[lib/Serialio.jar]</path>
-    <path>[lib/RXTXcomm.jar]</path>
+    <path>[lib/nrjavaserial-3.7.5.jar]</path>
     <path>[lib/jython.jar]</path>
     <path>[lib/jinput.jar]</path>
     <path>[lib/vecmath.jar]</path>
