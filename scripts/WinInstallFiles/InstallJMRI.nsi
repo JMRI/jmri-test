@@ -50,6 +50,10 @@
 ; -------------------------------------------------------------------------
 ; - Version History
 ; -------------------------------------------------------------------------
+; - Version 0.1.21.0
+; -------------------------------------------------------------------------
+; - Remove RXTX support files following switch to nrjavaserial
+; -------------------------------------------------------------------------
 ; - Version 0.1.20.0
 ; - Update installer to no longer install on Windows 98 and Windows ME
 ; - Change JRE version and copyright date to be determined by build.xml
@@ -208,7 +212,7 @@
   ; -- usually, this will be determined by the build.xml ant script
   !define JRE_VER   "1.6"                       ; Required JRE version
 !endif
-!define INST_VER  "0.1.20.0"                    ; Installer version
+!define INST_VER  "0.1.21.0"                    ; Installer version
 !define PNAME     "${APP}.${JMRI_VER}"          ; Name of installer.exe
 !define SRCDIR    "."                           ; Path to head of sources
 InstallDir        "$PROGRAMFILES\JMRI"          ; Default install directory
@@ -449,6 +453,11 @@ SectionGroup "JMRI Core Files" SEC_CORE
     Delete "$OUTDIR\resources\GreenPowerLED.gif"
     Delete "$OUTDIR\resources\RedPowerLED.gif"
     Delete "$OUTDIR\resources\YellowPowerLED.gif"
+
+    ; -- Delete RXTX files following switch to nrjavaserial
+    Delete "$OUTDIR\lib\RXTXcomm.jar"
+    Delete "$OUTDIR\lib\x64\rxtxSerial.dll"
+    Delete "$OUTDIR\lib\x86\rxtxSerial.dll"
 
   SectionEnd ; SEC_CLEANUP
   
