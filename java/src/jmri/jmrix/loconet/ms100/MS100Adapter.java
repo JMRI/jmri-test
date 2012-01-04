@@ -137,7 +137,7 @@ public class MS100Adapter extends LnPortController implements jmri.jmrix.SerialP
             CommPortIdentifier portID = CommPortIdentifier.getPortIdentifier(portName);
             gnu.io.SerialPort activeSerialPort = null;
             try {
-                activeSerialPort = (SerialPort) portID.open(appName, 2000);  // name of program, msec to wait
+                activeSerialPort = portID.open(appName, 2000);  // name of program, msec to wait
             }
             catch (PortInUseException p) {
                 return handlePortBusy(p, portName, log);
