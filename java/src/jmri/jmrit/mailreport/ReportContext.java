@@ -3,7 +3,7 @@
 package jmri.jmrit.mailreport;
 
 import jmri.util.JmriInsets;
-import gnu.io.CommPortIdentifier;
+import purejavacomm.CommPortIdentifier;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;

@@ -25,7 +25,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import gnu.io.CommPortIdentifier;
+import purejavacomm.CommPortIdentifier;
 
 import jmri.util.PortNameMapper;
 import jmri.util.PortNameMapper.SerialPortFriendlyName;
@@ -236,7 +236,7 @@ abstract public class AbstractSerialConnectionConfig extends AbstractConnectionC
         	    else log.debug("Zero-length port vector");
             }
         } catch (java.lang.UnsatisfiedLinkError e1) {
-            log.error("UnsatisfiedLinkError - the gnu.io library has not been installed properly");
+            log.error("UnsatisfiedLinkError - the purejavacomm library has not been installed properly");
             log.error("java.library.path="+System.getProperty("java.library.path","<unknown>"));
             javax.swing.JOptionPane.showMessageDialog(null, "Failed to load comm library.\nYou have to fix that before setting preferences.");
             return;

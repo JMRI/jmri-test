@@ -6,7 +6,7 @@ import jmri.jmrix.SystemConnectionMemo;
 import jmri.jmrix.loconet.locobuffer.LocoBufferAdapter;
 import jmri.jmrix.loconet.*;
 
-import gnu.io.SerialPort;
+import purejavacomm.SerialPort;
 
 /**
  * Update the code in jmri.jmrix.loconet.locobuffer so that it 
@@ -32,7 +32,7 @@ public class PR2Adapter extends LocoBufferAdapter {
     /**
      * Always use flow control, not considered a user-setable option
      */
-    protected void setSerialPort(SerialPort activeSerialPort) throws gnu.io.UnsupportedCommOperationException {
+    protected void setSerialPort(SerialPort activeSerialPort) throws purejavacomm.UnsupportedCommOperationException {
         // find the baud rate value, configure comm options
         int baud = 57600;  // default, but also defaulted in the initial value of selectedSpeed
         for (int i = 0; i<validBaudNumber().length; i++ )

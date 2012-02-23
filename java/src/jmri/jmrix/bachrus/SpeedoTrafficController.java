@@ -6,8 +6,8 @@ import java.io.DataInputStream;
 import java.io.OutputStream;
 import java.util.Vector;
 
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
+import purejavacomm.SerialPortEvent;
+import purejavacomm.SerialPortEventListener;
 
 /**
  * Converts Stream-based I/O to/from speedo messages.  The "SpeedoInterface"

@@ -11,11 +11,11 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
+import purejavacomm.CommPortIdentifier;
+import purejavacomm.PortInUseException;
+import purejavacomm.SerialPort;
+import purejavacomm.SerialPortEvent;
+import purejavacomm.SerialPortEventListener;
 
 /**
  * Provide access to LocoNet via a LocoBuffer attached to a serial comm port.
@@ -56,7 +56,7 @@ public class LocoBufferAdapter extends LnPortController implements jmri.jmrix.Se
             // get and open the primary port
             CommPortIdentifier portID = CommPortIdentifier.getPortIdentifier(portName);
             try {
-                activeSerialPort = portID.open(appName, 2000);  // name of program, msec to wait
+                activeSerialPort = (SerialPort) portID.open(appName, 2000);  // name of program, msec to wait
             }
             catch (PortInUseException p) {
                 return handlePortBusy(p, portName, log);
@@ -64,7 +64,7 @@ public class LocoBufferAdapter extends LnPortController implements jmri.jmrix.Se
             // try to set it for LocoNet via LocoBuffer
             try {
                 setSerialPort(activeSerialPort);
-            } catch (gnu.io.UnsupportedCommOperationException e) {
+            } catch (purejavacomm.UnsupportedCommOperationException e) {
                 log.error("Cannot set serial parameters on port "+portName+": "+e.getMessage());
                 return "Cannot set serial parameters on port "+portName+": "+e.getMessage();
             }
@@ -165,7 +165,7 @@ public class LocoBufferAdapter extends LnPortController implements jmri.jmrix.Se
 
             opened = true;
 
-        } catch (gnu.io.NoSuchPortException p) {
+        } catch (purejavacomm.NoSuchPortException p) {
             return handlePortNotFound(p, portName, log);
         } catch (Exception ex) {
             log.error("Unexpected exception while opening port "+portName+" trace follows: "+ex);
@@ -238,7 +238,7 @@ public class LocoBufferAdapter extends LnPortController implements jmri.jmrix.Se
     /**
      * Local method to do specific configuration, overridden in class
      */
-    protected void setSerialPort(SerialPort activeSerialPort) throws gnu.io.UnsupportedCommOperationException {
+    protected void setSerialPort(SerialPort activeSerialPort) throws purejavacomm.UnsupportedCommOperationException {
         // find the baud rate value, configure comm options
         int baud = currentBaudNumber(mBaudRate);
         activeSerialPort.setSerialPortParams(baud, SerialPort.DATABITS_8,

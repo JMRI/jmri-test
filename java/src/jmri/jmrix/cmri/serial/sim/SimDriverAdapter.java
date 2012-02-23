@@ -88,7 +88,7 @@ public class SimDriverAdapter extends jmri.jmrix.cmri.serial.serialdriver.Serial
     /**
      * Local method to do specific port configuration
      */
-    protected void setSerialPort() throws gnu.io.UnsupportedCommOperationException {
+    protected void setSerialPort() throws purejavacomm.UnsupportedCommOperationException {
     }
 
     /**

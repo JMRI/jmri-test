@@ -2,9 +2,9 @@
 
 package jmri.jmrix.ncemonitor;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
+import purejavacomm.CommPortIdentifier;
+import purejavacomm.PortInUseException;
+import purejavacomm.SerialPort;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Enumeration;
@@ -426,7 +426,7 @@ public class NcePacketMonitorPanel extends jmri.jmrix.AbstractMonPane implements
             // get and open the primary port
             CommPortIdentifier portID = CommPortIdentifier.getPortIdentifier(portName);
             try {
-                activeSerialPort = portID.open(appName, 2000);  // name of program, msec to wait
+                activeSerialPort = (SerialPort) portID.open(appName, 2000);  // name of program, msec to wait
             }
             catch (PortInUseException p) {
                 handlePortBusy(p, portName);
@@ -437,7 +437,7 @@ public class NcePacketMonitorPanel extends jmri.jmrix.AbstractMonPane implements
             try {
                 // Doc says 7 bits, but 8 seems needed
                 activeSerialPort.setSerialPortParams(38400, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-            } catch (gnu.io.UnsupportedCommOperationException e) {
+            } catch (purejavacomm.UnsupportedCommOperationException e) {
                 log.error("Cannot set serial parameters on port "+portName+": "+e.getMessage());
                 return "Cannot set serial parameters on port "+portName+": "+e.getMessage();
             }
@@ -483,17 +483,17 @@ public class NcePacketMonitorPanel extends jmri.jmrix.AbstractMonPane implements
         } catch (java.io.IOException ex) {
             log.error("IO error while opening port "+portName, ex);
             return "IO error while opening port "+portName+": "+ex;
-        } catch (gnu.io.UnsupportedCommOperationException ex) {
+        } catch (purejavacomm.UnsupportedCommOperationException ex) {
             log.error("Unsupported communications operation while opening port "+portName, ex);
             return "Unsupported communications operation while opening port "+portName+": "+ex;
-        } catch (gnu.io.NoSuchPortException ex) {
+        } catch (purejavacomm.NoSuchPortException ex) {
             log.error("No such port: "+portName, ex);
             return "No such port: "+portName+": "+ex;
         }
         return null; // indicates OK return
     }
 
-    void handlePortBusy(gnu.io.PortInUseException p, String port ) {
+    void handlePortBusy(purejavacomm.PortInUseException p, String port ) {
         log.error("Port "+p+" in use, cannot open");
     }
 

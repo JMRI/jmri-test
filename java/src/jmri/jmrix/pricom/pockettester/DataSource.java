@@ -2,9 +2,9 @@
 
 package jmri.jmrix.pricom.pockettester;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
+import purejavacomm.CommPortIdentifier;
+import purejavacomm.PortInUseException;
+import purejavacomm.SerialPort;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Enumeration;
@@ -297,7 +297,7 @@ public class DataSource extends jmri.util.JmriJFrame {
             // get and open the primary port
             CommPortIdentifier portID = CommPortIdentifier.getPortIdentifier(portName);
             try {
-                activeSerialPort = portID.open(appName, 2000);  // name of program, msec to wait
+                activeSerialPort = (SerialPort) portID.open(appName, 2000);  // name of program, msec to wait
             }
             catch (PortInUseException p) {
                 handlePortBusy(p, portName);
@@ -311,7 +311,7 @@ public class DataSource extends jmri.util.JmriJFrame {
                 speed = Integer.parseInt((String)speedBox.getSelectedItem());
                 // 8-bits, 1-stop, no parity
                 activeSerialPort.setSerialPortParams(speed, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-            } catch (gnu.io.UnsupportedCommOperationException e) {
+            } catch (purejavacomm.UnsupportedCommOperationException e) {
                 log.error("Cannot set serial parameters on port "+portName+": "+e.getMessage());
                 return "Cannot set serial parameters on port "+portName+": "+e.getMessage();
             }
@@ -357,17 +357,17 @@ public class DataSource extends jmri.util.JmriJFrame {
         } catch (java.io.IOException ex) {
             log.error("Unexpected I/O exception while opening port "+portName,ex);
             return "Unexpected error while opening port "+portName+": "+ex;
-        } catch (gnu.io.NoSuchPortException ex) {
+        } catch (purejavacomm.NoSuchPortException ex) {
             log.error("No such port while opening port "+portName,ex);
             return "Unexpected error while opening port "+portName+": "+ex;
-        } catch (gnu.io.UnsupportedCommOperationException ex) {
+        } catch (purejavacomm.UnsupportedCommOperationException ex) {
             log.error("Unexpected comm exception while opening port "+portName,ex);
             return "Unexpected error while opening port "+portName+": "+ex;
         }
         return null; // indicates OK return
     }
 
-    void handlePortBusy(gnu.io.PortInUseException p, String port ) {
+    void handlePortBusy(purejavacomm.PortInUseException p, String port ) {
         log.error("Port "+p+" in use, cannot open");
     }
 

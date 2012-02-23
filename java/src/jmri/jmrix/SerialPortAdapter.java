@@ -96,7 +96,7 @@ public interface SerialPortAdapter extends PortAdapter {
      * Error handling for busy port at open.
      * @see jmri.jmrix.AbstractSerialPortController
      */
-    public String handlePortBusy(gnu.io.PortInUseException p,
+    public String handlePortBusy(purejavacomm.PortInUseException p,
                             String portName,
                             org.apache.log4j.Logger log);
                             

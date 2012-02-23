@@ -11,11 +11,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
+import purejavacomm.CommPortIdentifier;
+import purejavacomm.PortInUseException;
+import purejavacomm.SerialPort;
+import purejavacomm.SerialPortEvent;
+import purejavacomm.SerialPortEventListener;
 
 /**
  * Implements SerialPortAdapter for connecting to two sensors via the
@@ -39,7 +39,7 @@ public class SerialSensorAdapter extends AbstractSerialPortController
             // get and open the primary port
             CommPortIdentifier portID = CommPortIdentifier.getPortIdentifier(portName);
             try {
-                activeSerialPort = portID.open(appName, 2000);  // name of program, msec to wait
+                activeSerialPort = (SerialPort) portID.open(appName, 2000);  // name of program, msec to wait
             }
             catch (PortInUseException p) {
                 return handlePortBusy(p, portName, log);
@@ -48,7 +48,7 @@ public class SerialSensorAdapter extends AbstractSerialPortController
             // try to set it for comunication via SerialDriver
             try {
                 activeSerialPort.setSerialPortParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-            } catch (gnu.io.UnsupportedCommOperationException e) {
+            } catch (purejavacomm.UnsupportedCommOperationException e) {
                 log.error("Cannot set serial parameters on port "+portName+": "+e.getMessage());
                 return "Cannot set serial parameters on port "+portName+": "+e.getMessage();
             }
@@ -124,10 +124,10 @@ public class SerialSensorAdapter extends AbstractSerialPortController
 
             opened = true;
 
-        } catch (gnu.io.NoSuchPortException ex1) {
+        } catch (purejavacomm.NoSuchPortException ex1) {
             log.error("No such port "+portName, ex1);
             return "No such port "+portName+": "+ex1;
-        } catch (gnu.io.UnsupportedCommOperationException ex2) {
+        } catch (purejavacomm.UnsupportedCommOperationException ex2) {
             log.error("Exception to operation on port "+portName, ex2);
             return "Exception to operation on port "+portName+": "+ex2;
         } catch (java.util.TooManyListenersException ex3) {

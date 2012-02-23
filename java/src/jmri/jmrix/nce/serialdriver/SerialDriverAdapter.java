@@ -10,9 +10,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
+import purejavacomm.CommPortIdentifier;
+import purejavacomm.PortInUseException;
+import purejavacomm.SerialPort;
 
 /**
  * Implements SerialPortAdapter for the NCE system.
@@ -47,7 +47,7 @@ public class SerialDriverAdapter extends NcePortController  implements jmri.jmri
             // get and open the primary port
             CommPortIdentifier portID = CommPortIdentifier.getPortIdentifier(portName);
             try {
-                activeSerialPort = portID.open(appName, 2000);  // name of program, msec to wait
+                activeSerialPort = (SerialPort) portID.open(appName, 2000);  // name of program, msec to wait
             } catch (PortInUseException p) {
                 return handlePortBusy(p, portName, log);
             }
@@ -60,7 +60,7 @@ public class SerialDriverAdapter extends NcePortController  implements jmri.jmri
                     if (validSpeeds[i].equals(mBaudRate))
                         baud = validSpeedValues[i];
                 activeSerialPort.setSerialPortParams(baud, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-            } catch (gnu.io.UnsupportedCommOperationException e) {
+            } catch (purejavacomm.UnsupportedCommOperationException e) {
                 log.error("Cannot set serial parameters on port "+portName+": "+e.getMessage());
                 return "Cannot set serial parameters on port "+portName+": "+e.getMessage();
             }
@@ -95,7 +95,7 @@ public class SerialDriverAdapter extends NcePortController  implements jmri.jmri
                 		+activeSerialPort.getBaudRate()+" baud");
             opened = true;
 
-        } catch (gnu.io.NoSuchPortException p) {
+        } catch (purejavacomm.NoSuchPortException p) {
             return handlePortNotFound(p, portName, log);
         } catch (Exception ex) {
             log.error("Unexpected exception while opening port "+portName+" trace follows: "+ex);

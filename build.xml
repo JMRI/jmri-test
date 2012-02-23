@@ -114,7 +114,8 @@
          packages
     -->
     <path id="runtime.class.path">
-        <pathelement location="${libdir}/nrjavaserial-3.7.5.jar"/>
+        <pathelement location="${libdir}/jna.jar"/>
+        <pathelement location="${libdir}/purejavacomm.jar"/>
         <pathelement location="${libdir}/Serialio.jar"/>
         <pathelement location="${libdir}/ch.ntb.usb.jar"/>
         <pathelement location="${libdir}/xercesImpl.jar"/>

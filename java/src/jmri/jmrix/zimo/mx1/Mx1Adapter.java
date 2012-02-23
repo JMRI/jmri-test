@@ -17,11 +17,11 @@ import jmri.jmrix.zimo.Mx1CommandStation;
 import jmri.jmrix.zimo.Mx1Packetizer;
 import jmri.jmrix.zimo.Mx1PortController;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPortEventListener;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPort;
+import purejavacomm.CommPortIdentifier;
+import purejavacomm.PortInUseException;
+import purejavacomm.SerialPortEventListener;
+import purejavacomm.SerialPortEvent;
+import purejavacomm.SerialPort;
 
 import java.io.DataOutputStream;
 import java.io.DataInputStream;
@@ -37,7 +37,7 @@ public class Mx1Adapter extends Mx1PortController implements jmri.jmrix.SerialPo
 			// get and open the primary port
 			CommPortIdentifier portID = CommPortIdentifier.getPortIdentifier(portName);
 			try {
-	  			activeSerialPort = portID.open(appName, 2000);  // name of program, msec to wait
+	  			activeSerialPort = (SerialPort) portID.open(appName, 2000);  // name of program, msec to wait
 	  			}
 			catch (PortInUseException p) {
 				return handlePortBusy(p, portName, log);
@@ -45,7 +45,7 @@ public class Mx1Adapter extends Mx1PortController implements jmri.jmrix.SerialPo
 			// try to set it for Can Net
 			try {
 				setSerialPort();
-			} catch (gnu.io.UnsupportedCommOperationException e) {
+			} catch (purejavacomm.UnsupportedCommOperationException e) {
 				log.error("Cannot set serial parameters on port "+portName+": "+e.getMessage());
 				return "Cannot set serial parameters on port "+portName+": "+e.getMessage();
 			}
@@ -142,7 +142,7 @@ public class Mx1Adapter extends Mx1PortController implements jmri.jmrix.SerialPo
 
 			opened = true;
 
-                }  catch (gnu.io.NoSuchPortException p) {
+                }  catch (purejavacomm.NoSuchPortException p) {
                      return handlePortNotFound(p, portName, log);
                 }  catch (Exception ex) {
 			log.error("Unexpected exception while opening port "+portName+" trace follows: "+ex);
@@ -211,7 +211,7 @@ public class Mx1Adapter extends Mx1PortController implements jmri.jmrix.SerialPo
 	/**
 	 * Local method to do specific configuration
 	 */
-	protected void setSerialPort() throws gnu.io.UnsupportedCommOperationException {
+	protected void setSerialPort() throws purejavacomm.UnsupportedCommOperationException {
 		// find the baud rate value, configure comm options
 		int baud = validSpeedValues[0];  // default, but also defaulted in the initial value of selectedSpeed
 		for (int i = 0; i<validSpeeds.length; i++ )

@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import java.util.Vector;
 import jmri.jmrix.qsi.serialdriver.SerialDriverAdapter;
 
-import gnu.io.SerialPort;
+import purejavacomm.SerialPort;
 
 /**
  * Converts Stream-based I/O to/from QSI messages.  The "QsiInterface"

@@ -11,11 +11,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
+import purejavacomm.CommPortIdentifier;
+import purejavacomm.PortInUseException;
+import purejavacomm.SerialPort;
+import purejavacomm.SerialPortEvent;
+import purejavacomm.SerialPortEventListener;
 
 import jmri.util.SerialUtil;
 
@@ -40,7 +40,7 @@ public class ZTC640Adapter extends XNetSerialPortController implements jmri.jmri
             // get and open the primary port
             CommPortIdentifier portID = CommPortIdentifier.getPortIdentifier(portName);
             try {
-                activeSerialPort = portID.open(appName, 2000);  // name of program, msec to wait
+                activeSerialPort = (SerialPort) portID.open(appName, 2000);  // name of program, msec to wait
             }
             catch (PortInUseException p) {
                 return handlePortBusy(p, portName, log);
@@ -48,7 +48,7 @@ public class ZTC640Adapter extends XNetSerialPortController implements jmri.jmri
             // try to set it for XNet
             try {
                 setSerialPort();
-            } catch (gnu.io.UnsupportedCommOperationException e) {
+            } catch (purejavacomm.UnsupportedCommOperationException e) {
                 log.error("Cannot set serial parameters on port "+portName+": "+e.getMessage());
                 return "Cannot set serial parameters on port "+portName+": "+e.getMessage();
             }
@@ -150,7 +150,7 @@ public class ZTC640Adapter extends XNetSerialPortController implements jmri.jmri
             
             opened = true;
             
-        } catch (gnu.io.NoSuchPortException p) {
+        } catch (purejavacomm.NoSuchPortException p) {
             return handlePortNotFound(p, portName, log);
         } catch (Exception ex) {
             log.error("Unexpected exception while opening port "+portName+" trace follows: "+ex);
@@ -241,7 +241,7 @@ public class ZTC640Adapter extends XNetSerialPortController implements jmri.jmri
     /**
      * Local method to do specific configuration
      */
-    protected void setSerialPort() throws gnu.io.UnsupportedCommOperationException {
+    protected void setSerialPort() throws purejavacomm.UnsupportedCommOperationException {
         // find the baud rate value, configure comm options
         int baud = validSpeedValues[0];  // default, but also defaulted in the initial value of selectedSpeed
         for (int i = 0; i<validSpeeds.length; i++ )

@@ -12,9 +12,9 @@ import jmri.jmrix.AbstractSerialPortController;
 import jmri.jmrix.sprog.SprogConstants.SprogState;
 import jmri.jmrix.sprog.serialdriver.SerialDriverAdapter;
 
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
+import purejavacomm.SerialPort;
+import purejavacomm.SerialPortEvent;
+import purejavacomm.SerialPortEventListener;
 
 /**
  * Converts Stream-based I/O to/from Sprog messages.  The "SprogInterface"
