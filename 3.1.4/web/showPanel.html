@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<!-- Draw a JMRI panel in the browser ==========================-->
+<!--  If no parm passed, will list links to available panels.   --> 
+<!--  (see showPanel.js for more info)                          -->  
+
+<html>
+<head>
+  <title>Show Panel</title>
+  <link rel='stylesheet' href='/css/miniServer.css' />
+  <link rel='stylesheet' href='/css/showPanel.css' />
+  <script src="/js/jquery-1.7.1.min.js"></script>
+  <script type='text/javascript' src='/js/showPanel.js'></script>
+</head>
+<div id="workingMessage" class="modal">
+  <img src='/web/images/ajax-loader.gif'>
+  <div id="messageText"></div>
+  <a class="reload" onClick="window.location.reload()" href="#">[Reload Panel]</a>&nbsp;
+  <a class="list" href="?">[List]</a>&nbsp;<a class="home" href="/">[Home]</a>&nbsp;
+  <a class="help" href="/help/en/html/web/showPanelHelp.shtml">[Help]</a>&nbsp;&nbsp;
+</div>
+<div id='panelArea'>
+</div>
+<div id="panelFooter">
+  <a class="list" href="?">[List]</a>&nbsp;<a class="home" href="/">[Home]</a>&nbsp;
+  <a class="help" href="/help/en/html/web/showPanelHelp.shtml">[Help]</a>&nbsp;
+</div>
+<div id='logArea'></div>
+
+</body>
+
+</html>
