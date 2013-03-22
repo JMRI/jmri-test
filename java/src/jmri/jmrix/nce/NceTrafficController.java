@@ -24,6 +24,7 @@ import jmri.jmrix.AbstractMRTrafficController;
  * message.
  * 
  * @author Bob Jacobsen Copyright (C) 2001
+ * @author ken cameron Copyright (C) 2013
  * @version $Revision$
  */
 public class NceTrafficController extends AbstractMRTrafficController implements NceInterface, CommandStation {
@@ -293,6 +294,10 @@ public class NceTrafficController extends AbstractMRTrafficController implements
 	 * <LI>{@link #CMDS_AUI_READ}
 	 * <LI>{@link #CMDS_MEM}
 	 * <LI>{@link #CMDS_OPS_PGM}
+	 * <LI>{@link #CMDS_CLOCK}
+	 * <LI>{@link #CMDS_USB}
+	 * <LI>{@link #CMDS_NOT_USB}
+	 * <LI>{@link #CMDS_ALL_SYS}
 	 * </UL>
 	 * 
 	 * @param val
@@ -315,6 +320,10 @@ public class NceTrafficController extends AbstractMRTrafficController implements
 	 * <LI>{@link #CMDS_AUI_READ}
 	 * <LI>{@link #CMDS_MEM}
 	 * <LI>{@link #CMDS_OPS_PGM}
+	 * <LI>{@link #CMDS_CLOCK}
+	 * <LI>{@link #CMDS_USB}
+	 * <LI>{@link #CMDS_NOT_USB}
+	 * <LI>{@link #CMDS_ALL_SYS}
 	 * </UL>
 	 * 
 	 */
