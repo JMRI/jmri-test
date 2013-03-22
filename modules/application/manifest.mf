@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.jmri.application
+OpenIDE-Module-Localizing-Bundle: org/jmri/application/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
