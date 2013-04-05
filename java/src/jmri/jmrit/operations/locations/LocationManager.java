@@ -65,7 +65,7 @@ public class LocationManager implements java.beans.PropertyChangeListener {
 	public Location getLocationByName(String name) {
 		Location l;
 		Enumeration<Location> en = _locationHashTable.elements();
-		for (int i = 0; i < _locationHashTable.size(); i++) {
+		while (en.hasMoreElements()) {
 			l = en.nextElement();
 			if (l.getName().equals(name))
 				return l;
@@ -257,6 +257,14 @@ public class LocationManager implements java.beans.PropertyChangeListener {
 			}
 		}
 		return moveList;
+	}
+	
+	public void resetMoves() {
+		List<String> sortList = getList();
+		for (int i = 0; i < sortList.size(); i++) {
+			Location loc = getLocationById(sortList.get(i));
+			loc.resetMoves();
+		}
 	}
 
 	public JComboBox getComboBox() {

@@ -1118,6 +1118,7 @@ public class TrainBuilder extends TrainCommon {
 			// save final destination and track values in case of train reset
 			car.setPreviousFinalDestination(car.getFinalDestination());
 			car.setPreviousFinalDestinationTrack(car.getFinalDestinationTrack());
+			car.setPreviousScheduleId(car.getScheduleId());
 		}
 	}
 
@@ -1357,10 +1358,16 @@ public class TrainBuilder extends TrainCommon {
 		for (carIndex = 0; carIndex < carList.size(); carIndex++) {
 			Car c = carManager.getById(carList.get(carIndex));
 			// only print out the first 500 cars
-			if (carIndex < 500)
-				addLine(buildReport, FIVE, MessageFormat.format(Bundle.getMessage("buildCarAtLocWithMoves"),
-						new Object[] { c.toString(), (c.getLocationName() + ", " + c.getTrackName()),
-								c.getMoves(), c.getLoadPriority() }));
+			if (carIndex < 500) {
+				if (c.getLoadPriority().equals(CarLoad.PRIORITY_LOW))
+					addLine(buildReport, FIVE, MessageFormat.format(Bundle.getMessage("buildCarAtLocWithMoves"),
+							new Object[] { c.toString(), c.getType(), (c.getLocationName() + ", " + c.getTrackName()),
+						c.getMoves() }));
+				else
+					addLine(buildReport, FIVE, MessageFormat.format(Bundle.getMessage("buildCarAtLocWithMovesPriority"),
+							new Object[] { c.toString(), c.getType(), (c.getLocationName() + ", " + c.getTrackName()),
+						c.getMoves(), c.getLoadPriority() }));
+			}
 			if (carIndex == 500)
 				addLine(buildReport, FIVE, Bundle.getMessage("buildOnlyFirst500Cars"));
 			// use only the lead car in a kernel for building trains
@@ -2527,28 +2534,31 @@ public class TrainBuilder extends TrainCommon {
 						|| !track.checkSchedule(car).equals(Track.OKAY))
 					continue;
 			}
+			
+			addLine(buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("buildSetFinalDestination"),
+					new Object[] { car.toString(), car.getLoad(), track.getLocation().getName(),
+							track.getName() }));
 
 			// check the number of in bound cars to this track
-			if (track.getScheduleMode() == Track.MATCH && !track.isSpaceAvailable(car)) {
-				addLine(buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("buildNoDestTrackSpace"),
-						new Object[] { car.toString(), track.getLocation().getName(), track.getName(),
-								track.getNumberOfCarsInRoute(), track.getReservedInRoute(),
-								track.getReservationFactor() }));
-				// determine if this car can be routed to this track
+			if (!track.isSpaceAvailable(car)) {
+				// Now determine if we should move the car or just leave it where it is
+				String id = track.getScheduleItemId();	// save the tracks schedule item id
+				// determine if this car can be routed to the spur
 				car.setFinalDestination(track.getLocation());
 				car.setFinalDestinationTrack(track);
 				if (Router.instance().setDestination(car, train, buildReport))
 					routeToSpurFound = true; // if we don't find another spur, keep the car here for now
-				car.setDestination(null, null); // TODO this breaks schedules in sequential mode, so the schedule needs
-												// to be in match mode
+				car.setDestination(null, null); 
 				car.setFinalDestination(null);
 				car.setFinalDestinationTrack(null);
+				track.setScheduleItemId(id);	// restore id
+				addLine(buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("buildNoDestTrackSpace"),
+						new Object[] { car.toString(), track.getLocation().getName(), track.getName(),
+								track.getNumberOfCarsInRoute(), track.getReservedInRoute(),
+								track.getReservationFactor() }));
 				continue;
 			}
 			// try to send car to this spur
-			addLine(buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("buildSetFinalDestination"),
-					new Object[] { car.toString(), car.getLoad(), track.getLocation().getName(),
-							track.getName() }));
 			car.setFinalDestination(track.getLocation());
 			car.setFinalDestinationTrack(track);
 			// test to see if destination is reachable by this train

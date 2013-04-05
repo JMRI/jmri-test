@@ -57,17 +57,25 @@ public class JsonClientHandler {
      * Currently JSON strings in four different forms are handled by this
      * method:<ul> <li>list requests in the form:
      * <code>{"type":"list","list":"trains"}</code> that are passed to the
-     * JsonLister for handling.</li> <li>individual item state requests in the
+     * JsonUtil for handling.</li> <li>individual item state requests in the
      * form:
      * <code>{"type":"turnout","data":{"name":"LT14"}}</code> that are passed to
      * type-specific handlers. In addition to the initial response, these
      * requests will initiate "listeners", which will send updated responses
-     * every time the item's state changes.</li> <li>a heartbeat in the form
+     * every time the item's state changes.<ul>
+     * <li>an item's state can be set by adding a <strong>state</strong> node to the
+     * <em>data</em> node:
+     * <code>{"type":"turnout","data":{"name":"LT14","state":4}}</code>
+     * <li>individual types can be created if a <strong>method</strong> node with the
+     * value <em>post</em> is included in the <em>data</em> node:
+     * <code>{"type":"turnout","data":{"name":"LT14","method":"put"}}</code>
+     * Note that not all types support this.</li></ul>
+     * </li><li>a heartbeat in the form
      * <code>*</code> or
      * <code>{"type":"ping"}</code>. The
      * <code>*</code> heartbeat gets no response, while the JSON heartbeat
      * causes a
-     * <code>{"type":"pong"}</code> response.</li> <li>a signoff in the form:
+     * <code>{"type":"pong"}</code> response.</li> <li>a sign off in the form:
      * <code>{"type":"goodbye"}</code> to which an identical response is sent
      * before the connection gets closed.</li>
      *
@@ -95,33 +103,35 @@ public class JsonClientHandler {
                 JsonNode reply;
                 String list = root.path(LIST).asText();
                 if (list.equals(CARS)) {
-                    reply = JsonLister.getCars();
+                    reply = JsonUtil.getCars();
                 } else if (list.equals(ENGINES)) {
-                    reply = JsonLister.getEngines();
+                    reply = JsonUtil.getEngines();
                 } else if (list.equals(LIGHTS)) {
-                    reply = JsonLister.getLights();
+                    reply = JsonUtil.getLights();
                 } else if (list.equals(LOCATIONS)) {
-                    reply = JsonLister.getLocations();
+                    reply = JsonUtil.getLocations();
                 } else if (list.equals(MEMORIES)) {
-                    reply = JsonLister.getMemories();
+                    reply = JsonUtil.getMemories();
                 } else if (list.equals(METADATA)) {
-                    reply = JsonLister.getMetadata();
+                    reply = JsonUtil.getMetadata();
                 } else if (list.equals(PANELS)) {
-                    reply = JsonLister.getPanels();
+                    reply = JsonUtil.getPanels((data.path(FORMAT).isMissingNode()) ? XML : data.path(FORMAT).asText());
+                } else if (list.equals(REPORTERS)) {
+                    reply = JsonUtil.getReporters();
                 } else if (list.equals(ROSTER)) {
-                    reply = JsonLister.getRoster();
+                    reply = JsonUtil.getRoster();
                 } else if (list.equals(ROUTES)) {
-                    reply = JsonLister.getRoutes();
+                    reply = JsonUtil.getRoutes();
                 } else if (list.equals(SENSORS)) {
-                    reply = JsonLister.getSensors();
+                    reply = JsonUtil.getSensors();
                 } else if (list.equals(SIGNAL_HEADS)) {
-                    reply = JsonLister.getSignalHeads();
+                    reply = JsonUtil.getSignalHeads();
                 } else if (list.equals(SIGNAL_MASTS)) {
-                    reply = JsonLister.getSignalMasts();
+                    reply = JsonUtil.getSignalMasts();
                 } else if (list.equals(TRAINS)) {
-                    reply = JsonLister.getTrains();
+                    reply = JsonUtil.getTrains();
                 } else if (list.equals(TURNOUTS)) {
-                    reply = JsonLister.getTurnouts();
+                    reply = JsonUtil.getTurnouts();
                 } else {
                     this.sendErrorMessage(404, Bundle.getMessage("ErrorUnknownList", list));
                     return;
@@ -133,6 +143,8 @@ public class JsonClientHandler {
                     this.lightServer.parseRequest(data);
                 } else if (type.equals(MEMORY)) {
                     this.memoryServer.parseRequest(data);
+                } else if (type.equals(METADATA)) {
+                    this.connection.sendMessage(this.mapper.writeValueAsString(JsonUtil.getMetadata(data.path(NAME).asText())));
                 } else if (type.equals(OPERATIONS)) {
                     this.operationsServer.parseRequest(data);
                 } else if (type.equals(POWER)) {
@@ -148,7 +160,7 @@ public class JsonClientHandler {
                 } else if (type.equals(REPORTER)) {
                     this.reporterServer.parseRequest(data);
                 } else if (type.equals(ROSTER_ENTRY)) {
-                    this.connection.sendMessage(this.mapper.writeValueAsString(JsonLister.getRosterEntry(data.path(NAME).asText())));
+                    this.connection.sendMessage(this.mapper.writeValueAsString(JsonUtil.getRosterEntry(data.path(NAME).asText())));
                 } else if (type.equals(ROUTE)) {
                     this.routeServer.parseRequest(data);
                 } else if (type.equals(THROTTLE)) {
@@ -159,13 +171,15 @@ public class JsonClientHandler {
                     this.sendErrorMessage(404, Bundle.getMessage("ErrorUnknownType", type));
                 }
             } else {
-                this.sendErrorMessage(500, Bundle.getMessage("ErrorMissingData"));
+                this.sendErrorMessage(400, Bundle.getMessage("ErrorMissingData"));
             }
         } catch (JsonProcessingException pe) {
             log.warn("Exception processing \"" + string + "\"\n" + pe.getMessage());
             this.sendErrorMessage(500, Bundle.getMessage("ErrorProcessingJSON", pe.getLocalizedMessage()));
         } catch (JmriException je) {
             this.sendErrorMessage(500, Bundle.getMessage("ErrorUnsupportedOperation", je.getLocalizedMessage()));
+        } catch (JsonException je) {
+            this.sendErrorMessage(je);
         }
     }
 
@@ -180,11 +194,11 @@ public class JsonClientHandler {
     }
 
     private void sendErrorMessage(int code, String message) throws IOException {
-        ObjectNode root = this.mapper.createObjectNode();
-        root.put(TYPE, ERROR);
-        ObjectNode data = root.putObject(ERROR);
-        data.put(CODE, code);
-        data.put(MESSAGE, message);
-        this.connection.sendMessage(this.mapper.writeValueAsString(root));
+        JsonException ex = new JsonException(code, message);
+        this.sendErrorMessage(ex);
+    }
+
+    private void sendErrorMessage(JsonException ex) throws IOException {
+        this.connection.sendMessage(this.mapper.writeValueAsString(ex.getJsonMessage()));
     }
 }

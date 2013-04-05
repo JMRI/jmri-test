@@ -1,4 +1,4 @@
-// JsonLister.java
+// JsonUtil.java
 package jmri.jmris.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -42,13 +42,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * A set of static methods for converting certain objects to/from JSON
+ * representations
  *
  * @author rhwood
  */
-public class JsonLister {
+public class JsonUtil {
 
     private static ObjectMapper mapper = new ObjectMapper();
-    private static Logger log = LoggerFactory.getLogger(JsonLister.class);
+    private static Logger log = LoggerFactory.getLogger(JsonUtil.class);
 
     static public JsonNode getCar(String id) {
         ObjectNode root = mapper.createObjectNode();
@@ -129,19 +131,39 @@ public class JsonLister {
         return root;
     }
 
-    static public void setLight(String name, int state) throws JsonException {
-        switch (state) {
-            case Light.OFF:
-            case Light.ON:
-                try {
+    static public void putLight(String name, JsonNode data) throws JsonException {
+        try {
+            InstanceManager.lightManagerInstance().provideLight(name);
+        } catch (Exception ex) {
+            throw new JsonException(500, Bundle.getMessage("ErrorCreatingObject", LIGHT, name));
+        }
+        setLight(name, data);
+    }
+
+    static public void setLight(String name, JsonNode data) throws JsonException {
+        try {
+            Light light = InstanceManager.lightManagerInstance().getBySystemName(name);
+            if (data.path(USERNAME).isTextual()) {
+                light.setUserName(data.path(USERNAME).asText());
+            }
+            if (data.path(COMMENT).isTextual()) {
+                light.setComment(data.path(COMMENT).asText());
+            }
+            int state = data.path(STATE).asInt(Light.UNKNOWN);
+            switch (state) {
+                case Light.OFF:
+                case Light.ON:
                     InstanceManager.lightManagerInstance().getLight(name).setState(state);
-                } catch (NullPointerException e) {
-                    log.error("Unable to get light [" + name + "].", e);
-                    throw new JsonException(404, Bundle.getMessage("ErrorObject", LIGHT, name));
-                }
-                break;
-            default:
-                throw new JsonException(400, Bundle.getMessage("ErrorUnknownState", LIGHT, state));
+                    break;
+                case Light.UNKNOWN:
+                    // silently ignore
+                    break;
+                default:
+                    throw new JsonException(400, Bundle.getMessage("ErrorUnknownState", LIGHT, state));
+            }
+        } catch (NullPointerException e) {
+            log.error("Unable to get light {}", name, e);
+            throw new JsonException(404, Bundle.getMessage("ErrorObject", LIGHT, name));
         }
     }
 
@@ -156,10 +178,8 @@ public class JsonLister {
             data.put(LENGTH, location.getLength());
             data.put(COMMENT, location.getComment());
         } catch (NullPointerException e) {
-            root.put(TYPE, ERROR);
-            data.put(CODE, 404);
-            data.put(MESSAGE, Bundle.getMessage("ErrorObject", LOCATION, id));
-            log.error("Unable to get location id=" + id + ".", e);
+            root = handleError(404, Bundle.getMessage("ErrorObject", LOCATION, id));
+            log.error("Unable to get location id={}.", id, e);
         }
         return root;
     }
@@ -194,30 +214,61 @@ public class JsonLister {
             data.put(USERNAME, memory.getUserName());
             data.put(COMMENT, memory.getComment());
             if (memory.getValue() == null) {
-                data.put(VALUE, (String) memory.getValue());
+                data.putNull(VALUE);
             } else {
                 data.put(VALUE, memory.getValue().toString());
             }
         } catch (NullPointerException e) {
-            root.put(TYPE, ERROR);
-            data.put(CODE, 404);
-            data.put(MESSAGE, Bundle.getMessage("ErrorObject", MEMORY, name));
-            log.error("Unable to get memory: " + name + ".");
+            root = handleError(404, Bundle.getMessage("ErrorObject", MEMORY, name));
+            log.error("Unable to get memory {}", name);
         }
         return root;
     }
 
-    static public void setMemory(String name, String value, String valueType) throws JsonException {
+    static public void putMemory(String name, JsonNode data) throws JsonException {
         try {
-            if (NULL.equals(valueType)) {
-                InstanceManager.memoryManagerInstance().getMemory(name).setValue(null);
-            } else {
-                InstanceManager.memoryManagerInstance().getMemory(name).setValue(value);
+            InstanceManager.memoryManagerInstance().provideMemory(name);
+        } catch (Exception ex) {
+            throw new JsonException(500, Bundle.getMessage("ErrorCreatingObject", MEMORY, name));
+        }
+        setMemory(name, data);
+    }
+
+    static public void setMemory(String name, JsonNode data) throws JsonException {
+        try {
+            Memory memory = InstanceManager.memoryManagerInstance().getMemory(name);
+            if (data.path(USERNAME).isTextual()) {
+                memory.setUserName(data.path(USERNAME).asText());
+            }
+            if (data.path(COMMENT).isTextual()) {
+                memory.setComment(data.path(COMMENT).asText());
+            }
+            if (!data.path(VALUE).isMissingNode()) {
+                if (data.path(VALUE).isNull()) {
+                    memory.setValue(null);
+                } else {
+                    memory.setValue(data.path(VALUE).asText());
+                }
             }
         } catch (NullPointerException ex) {
-            log.error("Unable to get memory [" + name + "].");
+            log.error("Unable to get memory {}", name);
             throw new JsonException(500, ex);
         }
+    }
+
+    static public JsonNode getMetadata(String name) {
+        String metadata = Metadata.getBySystemName(name);
+        ObjectNode root;
+        if (metadata != null) {
+            root = mapper.createObjectNode();
+            root.put(TYPE, METADATA);
+            ObjectNode data = root.putObject(DATA);
+            data.put(NAME, name);
+            data.put(VALUE, Metadata.getBySystemName(name));
+        } else {
+            root = handleError(404, Bundle.getMessage("ErrorObject", METADATA, name));
+        }
+        return root;
     }
 
     static public JsonNode getMetadata() {
@@ -226,17 +277,12 @@ public class JsonLister {
         ArrayNode metadatas = root.putArray(LIST);
         List<String> names = Metadata.getSystemNameList();
         for (String name : names) {
-            ObjectNode metadata = mapper.createObjectNode();
-            metadata.put(TYPE, METADATA);
-            ObjectNode data = metadata.putObject(DATA);
-            data.put(NAME, name);
-            data.put(VALUE, Metadata.getBySystemName(name));
-            metadatas.add(metadata);
+            metadatas.add(getMetadata(name));
         }
         return root;
     }
 
-    static public JsonNode getPanels() {
+    static public JsonNode getPanels(String format) {
         List<String> disallowedFrames = WebServerManager.getWebServerPreferences().getDisallowedFrames();
         ObjectNode root = mapper.createObjectNode();
         root.put(TYPE, LIST);
@@ -251,7 +297,7 @@ public class JsonLister {
                     panel.put(TYPE, PANEL);
                     ObjectNode data = panel.putObject(DATA);
                     data.put(NAME, "ControlPanel/" + title.replaceAll(" ", "%20").replaceAll("#", "%23")); // NOI18N
-                    data.put(URL, "/panel/" + data.path(NAME).asText() + "?format=json"); // NOI18N
+                    data.put(URL, "/panel/" + data.path(NAME).asText() + "?format=" + format); // NOI18N
                     data.put(USERNAME, title);
                     data.put(TYPE, CONTROL_PANEL);
                     panels.add(data);
@@ -267,7 +313,7 @@ public class JsonLister {
                     panel.put(TYPE, PANEL);
                     ObjectNode data = panel.putObject(DATA);
                     data.put(NAME, "Panel/" + title.replaceAll(" ", "%20").replaceAll("#", "%23")); // NOI18N
-                    data.put(URL, "/panel/" + data.path(NAME).asText() + "?format=json"); // NOI18N
+                    data.put(URL, "/panel/" + data.path(NAME).asText() + "?format=" + format); // NOI18N
                     data.put(USERNAME, title);
                     data.put(TYPE, PANEL_PANEL);
                     panels.add(data);
@@ -283,7 +329,7 @@ public class JsonLister {
                     panel.put(TYPE, PANEL);
                     ObjectNode data = panel.putObject(DATA);
                     data.put(NAME, "Layout/" + title.replaceAll(" ", "%20").replaceAll("#", "%23")); // NOI18N
-                    data.put(URL, "/panel/" + data.path(NAME).asText() + "?format=json"); // NOI18N
+                    data.put(URL, "/panel/" + data.path(NAME).asText() + "?format=" + format); // NOI18N
                     data.put(USERNAME, title);
                     data.put(TYPE, LAYOUT_PANEL);
                     panels.add(data);
@@ -306,7 +352,8 @@ public class JsonLister {
         return root;
     }
 
-    static public void setPower(int state) throws JsonException {
+    static public void setPower(JsonNode data) throws JsonException {
+        int state = data.path(STATE).asInt(PowerManager.UNKNOWN);
         switch (state) {
             case PowerManager.OFF:
             case PowerManager.ON:
@@ -315,6 +362,9 @@ public class JsonLister {
                 } catch (JmriException ex) {
                     throw new JsonException(500, ex);
                 }
+                break;
+            case PowerManager.UNKNOWN:
+                // quietly ignore
                 break;
             default:
                 throw new JsonException(400, Bundle.getMessage("ErrorUnknownState", POWER, state));
@@ -353,12 +403,28 @@ public class JsonLister {
         return root;
     }
 
-    static public void setReporter(String name, String value, String valueType) throws JsonException {
+    static public void putReporter(String name, JsonNode data) throws JsonException {
         try {
-            if (NULL.equals(valueType)) {
+            InstanceManager.reporterManagerInstance().provideReporter(name);
+        } catch (Exception ex) {
+            throw new JsonException(500, Bundle.getMessage("ErrorCreatingObject", REPORTER, name));
+        }
+        setReporter(name, data);
+    }
+
+    static public void setReporter(String name, JsonNode data) throws JsonException {
+        try {
+            Reporter reporter = InstanceManager.reporterManagerInstance().getBySystemName(name);
+            if (data.path(USERNAME).isTextual()) {
+                reporter.setUserName(data.path(USERNAME).asText());
+            }
+            if (data.path(COMMENT).isTextual()) {
+                reporter.setComment(data.path(COMMENT).asText());
+            }
+            if (data.path(REPORT).isNull()) {
                 InstanceManager.reporterManagerInstance().getReporter(name).setReport(null);
             } else {
-                InstanceManager.reporterManagerInstance().getReporter(name).setReport(value);
+                InstanceManager.reporterManagerInstance().getReporter(name).setReport(data.path(REPORT).asText());
             }
         } catch (NullPointerException ex) {
             throw new JsonException(404, Bundle.getMessage("ErrorObject", ROUTE, name));
@@ -414,11 +480,9 @@ public class JsonLister {
             data.put(NAME, route.getSystemName());
             data.put(USERNAME, route.getUserName());
             data.put(COMMENT, route.getComment());
-            data.put(STATE, (s.provideSensor(route.getTurnoutsAlignedSensor()) != null) ? (s.provideSensor(route.getTurnoutsAlignedSensor())).getKnownState() : Route.UNKNOWN);
+            data.put(STATE, (s.getSensor(route.getTurnoutsAlignedSensor()) != null) ? (s.getSensor(route.getTurnoutsAlignedSensor())).getKnownState() : Route.UNKNOWN);
         } catch (NullPointerException e) {
-            root.put(TYPE, ERROR);
-            data.put(CODE, 404);
-            data.put(MESSAGE, Bundle.getMessage("ErrorObject", ROUTE, name));
+            root = handleError(404, Bundle.getMessage("ErrorObject", ROUTE, name));
             log.error("Unable to get route.", e);
         }
         return root;
@@ -434,18 +498,34 @@ public class JsonLister {
         return root;
     }
 
-    static public void setRoute(String name, int state) throws JsonException {
+    /**
+     * Routes can be set by passing a JsonNode with the node <em>state</em>
+     * equal to <em>8</em> (the aspect of {@link jmri.Route#TOGGLE}).
+     *
+     * @param name The name of the route
+     * @param data A JsonNode containing route attributes to set
+     * @throws JsonException
+     * @see jmri.Route#TOGGLE
+     */
+    static public void setRoute(String name, JsonNode data) throws JsonException {
         try {
             Route route = InstanceManager.routeManagerInstance().getRoute(name);
+            if (data.path(USERNAME).isTextual()) {
+                route.setUserName(data.path(USERNAME).asText());
+            }
+            if (data.path(COMMENT).isTextual()) {
+                route.setComment(data.path(COMMENT).asText());
+            }
+            int state = data.path(STATE).asInt(Route.UNKNOWN);
             switch (state) {
-                case Sensor.ACTIVE:
+                case Route.TOGGLE:
                     route.setRoute();
                     break;
                 default:
                     throw new JsonException(400, Bundle.getMessage("ErrorUnknownState", ROUTE, state));
             }
         } catch (NullPointerException ex) {
-            log.error("Unable to get route [" + name + "].");
+            log.error("Unable to get route {}", name);
             throw new JsonException(404, Bundle.getMessage("ErrorObject", ROUTE, name));
         }
     }
@@ -462,9 +542,7 @@ public class JsonLister {
             data.put(INVERTED, sensor.getInverted());
             data.put(STATE, sensor.getKnownState());
         } catch (NullPointerException e) {
-            root.put(TYPE, ERROR);
-            data.put(CODE, 404);
-            data.put(MESSAGE, Bundle.getMessage("ErrorObject", SENSOR, name));
+            root = handleError(404, Bundle.getMessage("ErrorObject", SENSOR, name));
             log.error("Unable to get sensor.", e);
         }
         return root;
@@ -480,19 +558,41 @@ public class JsonLister {
         return root;
     }
 
-    static public void setSensor(String name, int state) throws JsonException {
+    static public void putSensor(String name, JsonNode data) throws JsonException {
+        try {
+            InstanceManager.sensorManagerInstance().provideSensor(name);
+        } catch (Exception ex) {
+            throw new JsonException(500, Bundle.getMessage("ErrorCreatingObject", TURNOUT, name));
+        }
+        setTurnout(name, data);
+    }
+
+    static public void setSensor(String name, JsonNode data) throws JsonException {
         try {
             Sensor sensor = InstanceManager.sensorManagerInstance().getSensor(name);
+            if (data.path(USERNAME).isTextual()) {
+                sensor.setUserName(data.path(USERNAME).asText());
+            }
+            if (data.path(INVERTED).isBoolean()) {
+                sensor.setInverted(data.path(INVERTED).asBoolean());
+            }
+            if (data.path(COMMENT).isTextual()) {
+                sensor.setComment(data.path(COMMENT).asText());
+            }
+            int state = data.path(STATE).asInt(Sensor.UNKNOWN);
             switch (state) {
                 case Sensor.ACTIVE:
                 case Sensor.INACTIVE:
                     sensor.setKnownState(state);
                     break;
+                case Sensor.UNKNOWN:
+                    // silently ignore
+                    break;
                 default:
                     throw new JsonException(400, Bundle.getMessage("ErrorUnknownState", SENSOR, state));
             }
         } catch (NullPointerException e) {
-            log.error("Unable to get sensor [" + name + "].", e);
+            log.error("Unable to get sensor [{}].", name, e);
             throw new JsonException(404, Bundle.getMessage("ErrorObject", SENSOR, name));
         } catch (JmriException ex) {
             throw new JsonException(500, ex);
@@ -519,10 +619,8 @@ public class JsonLister {
             }
             data.put(APPEARANCE_NAME, signalHead.getAppearanceName());
         } catch (NullPointerException e) {
-            root.put(TYPE, ERROR);
-            data.put(CODE, 404);
-            data.put(MESSAGE, Bundle.getMessage("ErrorObject", SIGNAL_HEAD, name));
-            log.error("Unable to get signalHead [" + name + "].", e);
+            root = handleError(404, Bundle.getMessage("ErrorObject", SIGNAL_HEAD, name));
+            log.error("Unable to get signalHead [{}].", name, e);
         }
         return root;
     }
@@ -537,9 +635,16 @@ public class JsonLister {
         return root;
     }
 
-    static public void setSignalHead(String name, int state) throws JsonException {
+    static public void setSignalHead(String name, JsonNode data) throws JsonException {
         try {
             SignalHead signalHead = InstanceManager.signalHeadManagerInstance().getSignalHead(name);
+            if (data.path(USERNAME).isTextual()) {
+                signalHead.setUserName(data.path(USERNAME).asText());
+            }
+            if (data.path(COMMENT).isTextual()) {
+                signalHead.setComment(data.path(COMMENT).asText());
+            }
+            int state = data.path(STATE).asInt(SignalHead.UNKNOWN);
             boolean isValid = false;
             for (int validState : signalHead.getValidStates()) {
                 if (state == validState) {
@@ -553,7 +658,7 @@ public class JsonLister {
                 throw new JsonException(400, Bundle.getMessage("ErrorUnknownState", SIGNAL_HEAD, state));
             }
         } catch (NullPointerException e) {
-            log.error("Unable to get signal head [" + name + "].", e);
+            log.error("Unable to get signal head {}", name, e);
             throw new JsonException(404, Bundle.getMessage("ErrorObject", SIGNAL_HEAD, name));
         }
     }
@@ -585,10 +690,8 @@ public class JsonLister {
                 data.put(STATE, aspect);
             }
         } catch (NullPointerException e) {
-            root.put(TYPE, ERROR);
-            data.put(CODE, 404);
-            data.put(MESSAGE, Bundle.getMessage("ErrorObject", SIGNAL_MAST, name));
-            log.error("Unable to get signalMast [" + name + "].", e);
+            root = handleError(404, Bundle.getMessage("ErrorObject", SIGNAL_MAST, name));
+            log.error("Unable to get signalMast [{}].", name, e);
         }
         return root;
     }
@@ -604,23 +707,23 @@ public class JsonLister {
     }
 
     // TODO: test for HELD and DARK aspects
-    static public void setSignalMast(String name, String value, String valueType) throws JsonException {
+    static public void setSignalMast(String name, JsonNode data) throws JsonException {
         try {
             SignalMast signalMast = InstanceManager.signalMastManagerInstance().getSignalMast(name);
-            boolean isValid = false;
-            for (String validValue : signalMast.getValidAspects()) {
-                if (value.equals(validValue)) {
-                    isValid = true;
-                    break;
-                }
+            if (data.path(USERNAME).isTextual()) {
+                signalMast.setUserName(data.path(USERNAME).asText());
             }
-            if (isValid) {
-                signalMast.setAspect(value);
+            if (data.path(COMMENT).isTextual()) {
+                signalMast.setComment(data.path(COMMENT).asText());
+            }
+            String aspect = data.path(ASPECT).asText();
+            if (signalMast.getValidAspects().contains(aspect)) {
+                signalMast.setAspect(aspect);
             } else {
-                throw new JsonException(400, Bundle.getMessage("ErrorUnknownState", SIGNAL_MAST, value));
+                throw new JsonException(400, Bundle.getMessage("ErrorUnknownState", SIGNAL_MAST, aspect));
             }
         } catch (NullPointerException e) {
-            log.error("Unable to get signal mast [" + name + "].", e);
+            log.error("Unable to get signal mast [{}].", name, e);
             throw new JsonException(404, Bundle.getMessage("ErrorObject", SIGNAL_MAST, name));
         }
     }
@@ -659,10 +762,8 @@ public class JsonLister {
             }
 
         } catch (NullPointerException e) {
-            root.put(TYPE, ERROR);
-            data.put(CODE, 404);
-            data.put(MESSAGE, Bundle.getMessage("ErrorObject", TRAIN, id));
-            log.error("Unable to get train id= " + id + ".", e);
+            root = handleError(404, Bundle.getMessage("ErrorObject", TRAIN, id));
+            log.error("Unable to get train id= {}.", id, e);
         }
         return root;
     }
@@ -677,9 +778,9 @@ public class JsonLister {
         return root;
     }
 
-    static public void setTrainLocation(String id, String location) {
+    static public void setTrain(String id, JsonNode data) {
         Train train = TrainManager.instance().getTrainById(id);
-        train.move(location);
+        train.move(data.path(id).asText());
     }
 
     static public JsonNode getTurnout(String name) {
@@ -694,8 +795,8 @@ public class JsonLister {
             data.put(INVERTED, turnout.getInverted());
             data.put(STATE, turnout.getKnownState());
         } catch (NullPointerException e) {
-            handleError(404, Bundle.getMessage("ErrorObject", TURNOUT, name));
-            log.error("Unable to get turnout [" + name + "].", e);
+            root = handleError(404, Bundle.getMessage("ErrorObject", TURNOUT, name));
+            log.error("Unable to get turnout [{}].", name, e);
         }
         return root;
     }
@@ -710,30 +811,47 @@ public class JsonLister {
         return root;
     }
 
-    static public void setTurnout(String name, int state) throws JsonException {
+    static public void putTurnout(String name, JsonNode data) throws JsonException {
+        try {
+            InstanceManager.turnoutManagerInstance().provideTurnout(name);
+        } catch (Exception ex) {
+            throw new JsonException(500, Bundle.getMessage("ErrorCreatingObject", TURNOUT, name));
+        }
+        setTurnout(name, data);
+    }
+
+    static public void setTurnout(String name, JsonNode data) throws JsonException {
         try {
             Turnout turnout = InstanceManager.turnoutManagerInstance().getTurnout(name);
+            if (data.path(USERNAME).isTextual()) {
+                turnout.setUserName(data.path(USERNAME).asText());
+            }
+            if (data.path(INVERTED).isBoolean()) {
+                turnout.setInverted(data.path(INVERTED).asBoolean());
+            }
+            if (data.path(COMMENT).isTextual()) {
+                turnout.setComment(data.path(COMMENT).asText());
+            }
+            int state = data.path(STATE).asInt(Turnout.UNKNOWN);
             switch (state) {
                 case Turnout.THROWN:
                 case Turnout.CLOSED:
                     turnout.setCommandedState(state);
                     break;
+                case Turnout.UNKNOWN:
+                    // leave state alone in this case
+                    break;
                 default:
                     throw new JsonException(400, Bundle.getMessage("ErrorUnknownState", TURNOUT, state));
             }
-        } catch (NullPointerException e) {
-            log.error("Unable to get turnout [" + name + "].", e);
+        } catch (NullPointerException ex) {
+            log.error("Unable to get turnout {}.", name, ex);
             throw new JsonException(404, Bundle.getMessage("ErrorObject", TURNOUT, name));
         }
     }
 
     static public JsonNode getUnknown(String type) {
-        ObjectNode root = mapper.createObjectNode();
-        root.put(TYPE, ERROR);
-        ObjectNode data = root.putObject(DATA);
-        data.put(CODE, 404);
-        data.put(MESSAGE, Bundle.getMessage("ErrorUnknownType", type));
-        return root;
+        return handleError(404, Bundle.getMessage("ErrorUnknownType", type));
     }
 
     static private ArrayNode getCarsForTrain(Train train) {

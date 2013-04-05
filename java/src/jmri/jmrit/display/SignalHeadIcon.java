@@ -168,14 +168,8 @@ public class SignalHeadIcon extends PositionableIcon implements java.beans.Prope
     }
 
     public String getNameString() {
-        String name;
-        if (namedHead == null) name = Bundle.getMessage("NotConnected");
-        else if (getSignalHead().getUserName()!=null)
-            name = getSignalHead().getUserName();
-        	//name = getSignalHead().getUserName()+" ("+getSignalHead().getSystemName()+")";
-        else
-            name = getSignalHead().getSystemName();
-        return name;
+        if (namedHead == null) return Bundle.getMessage("NotConnected");
+        return namedHead.getName();
     }
 
     ButtonGroup litButtonGroup = null;
@@ -252,7 +246,7 @@ public class SignalHeadIcon extends PositionableIcon implements java.beans.Prope
                     jmri.jmrit.blockboss.BlockBossFrame f = new jmri.jmrit.blockboss.BlockBossFrame();
                     String name = getNameString();
                     f.setTitle(java.text.MessageFormat.format(Bundle.getMessage("SignalLogic"), name));
-                    f.setSignal(name);
+                    f.setSignal(getSignalHead());
                     f.setVisible(true);
                 }
             });

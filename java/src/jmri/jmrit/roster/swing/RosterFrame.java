@@ -448,6 +448,10 @@ public class RosterFrame extends TwoPaneTBWindow implements RosterEntrySelector,
         Object selectedRosterGroup = p.getProperty(getWindowFrameRef(), "selectedRosterGroup");
         groups = new RosterGroupsPanel((selectedRosterGroup != null) ? selectedRosterGroup.toString() : null);
         groups.setNewWindowMenuAction(this.getNewWindowAction());
+        if (groups == null) {
+            log.debug("Groups is null");
+        }
+        log.debug("Selected Roster group is {}", groups.getSelectedRosterGroup());
         setTitle(groups.getSelectedRosterGroup());
         final JPanel rosters = new JPanel();
         rosters.setLayout(new BorderLayout());

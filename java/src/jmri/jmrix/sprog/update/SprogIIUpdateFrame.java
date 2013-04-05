@@ -77,7 +77,7 @@ public class SprogIIUpdateFrame
         }
     }
 
-    protected void frameCheck() {
+    synchronized protected void frameCheck() {
         // If SPROG II is in boot mode, check message framing and checksum
         if ((bootState != BootState.RESETSENT) && tc.isSIIBootMode() && !reply.strip()) {
             stopTimer();
@@ -97,7 +97,7 @@ public class SprogIIUpdateFrame
         }
     }
 
-    protected void stateBootVerReqSent() {
+    synchronized protected void stateBootVerReqSent() {
         stopTimer();
         if (log.isDebugEnabled()) { log.debug("reply in VERREQSENT state"); }
         // see if reply is the version
@@ -138,7 +138,7 @@ public class SprogIIUpdateFrame
         }
     }
 
-    protected void stateWriteSent() {
+    synchronized protected void stateWriteSent() {
         stopTimer();
         if (log.isDebugEnabled()) { log.debug("reply in WRITESENT state"); }
         // Check for correct response to type of write that was sent
@@ -162,7 +162,7 @@ public class SprogIIUpdateFrame
         }
     }
 
-    protected void stateEraseSent() {
+    synchronized protected void stateEraseSent() {
         stopTimer();
         if (log.isDebugEnabled()) { log.debug("reply in ERASESENT state"); }
         // Check for correct response to erase that was sent
@@ -195,7 +195,7 @@ public class SprogIIUpdateFrame
         }
     }
 
-    protected void stateSprogModeSent() {
+    synchronized protected void stateSprogModeSent() {
         stopTimer();
         if (log.isDebugEnabled()) {
             log.debug("reply in SROGMODESENT state");
@@ -218,7 +218,7 @@ public class SprogIIUpdateFrame
         }
     }
 
-    protected void stateResetSent() {
+    synchronized protected void stateResetSent() {
         stopTimer();
         if (log.isDebugEnabled()) { log.debug("reply in RESETSENT state"); }
         // Check for correct response to type of write that was sent
@@ -229,18 +229,18 @@ public class SprogIIUpdateFrame
         bootState = BootState.IDLE;
     }
 
-  protected void requestBoot() {
-    // Look for SPROG in boot mode by requesting bootloader version.
-    if (log.isDebugEnabled()) { log.debug("Request bootloader version"); }
-    // allow parsing of bootloader replies
-    tc.setSprogState(SprogState.SIIBOOTMODE);
-    bootState = BootState.VERREQSENT;
-    msg = SprogMessage.getReadBootVersion();
-    tc.sendSprogMessage(msg, this);
-    startLongTimer();
-  }
+    synchronized protected void requestBoot() {
+        // Look for SPROG in boot mode by requesting bootloader version.
+        if (log.isDebugEnabled()) { log.debug("Request bootloader version"); }
+        // allow parsing of bootloader replies
+        tc.setSprogState(SprogState.SIIBOOTMODE);
+        bootState = BootState.VERREQSENT;
+        msg = SprogMessage.getReadBootVersion();
+        tc.sendSprogMessage(msg, this);
+        startLongTimer();
+    }
 
-    protected void sendWrite() {
+    synchronized protected void sendWrite() {
         if (hexFile.getAddressU() >= 0xF0) {
             // Write to EEPROM
             if (log.isDebugEnabled()) { log.debug("Send write EE " + hexFile.getAddress()); }
@@ -272,7 +272,7 @@ public class SprogIIUpdateFrame
         }
     }
 
-  private void sendErase() {
+  synchronized private void sendErase() {
     if (log.isDebugEnabled()) { log.debug("Erase Flash " + eraseAddress); }
     int rows = 8; // 512 bytes
     msg = SprogMessage.getEraseFlash(eraseAddress, rows);
@@ -284,7 +284,7 @@ public class SprogIIUpdateFrame
     startLongTimer();
   }
 
-  protected void doneWriting() {
+  synchronized protected void doneWriting() {
     // Finished
     if (log.isDebugEnabled()) { log.debug("Done writing"); }
     statusBar.setText("Write Complete");
@@ -295,7 +295,7 @@ public class SprogIIUpdateFrame
     bootState = BootState.IDLE;
   }
 
-    public synchronized void programButtonActionPerformed(java.awt.event.ActionEvent e) {
+   synchronized public void programButtonActionPerformed(java.awt.event.ActionEvent e) {
         if (hexFile != null) {
             openFileChooserButton.setEnabled(false);
             programButton.setEnabled(false);

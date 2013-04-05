@@ -53,7 +53,7 @@ public class JmriJFrameServlet extends HttpServlet {
     protected String serverName = "JMRI-JFrameServer";
     static java.util.ResourceBundle rb = java.util.ResourceBundle.getBundle("jmri.web.servlet.frameimage.JmriJFrameServlet");
     // store parameters here because the image clicks are not key=value mapped parameters
-    private Map<String, String[]> parameters = new HashMap<String, String[]>();
+    Map<String, String[]> parameters = new HashMap<String, String[]>();
 
     void sendClick(String name, Component c, int xg, int yg, Container FrameContentPane) {  // global positions
         int x = xg - c.getLocation().x;
@@ -367,10 +367,11 @@ public class JmriJFrameServlet extends HttpServlet {
 
     // The HttpServeletRequest does not like image maps, so we need to process
     // the parameter names to see if an image map was clicked
-    private void populateParameterMap(Map<String, String[]> map) {
+    void populateParameterMap(Map<String, String[]> map) {
         parameters.clear();
-        for (String key : map.keySet()) {
-            String[] value = map.get(key);
+        for (Map.Entry<String, String[]> entry : map.entrySet()) {
+            String[] value = entry.getValue();
+            String key = entry.getKey();
             if (value[0].contains("?")) {
                 // a user's click is in another key's value
                 String[] values = value[0].split("\\?");

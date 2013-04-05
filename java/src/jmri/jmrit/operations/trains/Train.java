@@ -1307,7 +1307,7 @@ public class Train implements java.beans.PropertyChangeListener {
 		if (!acceptsTypeName(rs.getType()) || !acceptsBuiltDate(rs.getBuilt())
 				|| !acceptsOwnerName(rs.getOwner()) || !acceptsRoadName(rs.getRoad())) {
 			if (debugFlag)
-				log.debug("Car (" + rs.toString() + ") not serviced by train "+getName());
+				log.debug("Car (" + rs.toString() + ") not serviced by train " + getName());
 			return false;
 		}
 		int length = Integer.parseInt(rs.getLength()) + Car.COUPLER;
@@ -1316,10 +1316,15 @@ public class Train implements java.beans.PropertyChangeListener {
 			Car car = (Car) rs;
 			if (!acceptsLoad(car.getLoad(), car.getType()))
 				return false;
-			if (!isAllowThroughCarsEnabled() && !isLocalSwitcher() && !car.isCaboose()
-					&& !car.hasFred() && !car.isPassenger()
-					&& TrainCommon.splitString(car.getLocationName()).equals(TrainCommon.splitString(getTrainDepartsName()))
-					&& TrainCommon.splitString(car.getDestinationName()).equals(TrainCommon.splitString(getTrainTerminatesName()))) {
+			if (!isAllowThroughCarsEnabled()
+					&& !isLocalSwitcher()
+					&& !car.isCaboose()
+					&& !car.hasFred()
+					&& !car.isPassenger()
+					&& TrainCommon.splitString(car.getLocationName()).equals(
+							TrainCommon.splitString(getTrainDepartsName()))
+					&& TrainCommon.splitString(car.getDestinationName()).equals(
+							TrainCommon.splitString(getTrainTerminatesName()))) {
 				if (debugFlag)
 					log.debug("Through car (" + rs.toString() + ") not allowed");
 				return false;
@@ -1335,11 +1340,12 @@ public class Train implements java.beans.PropertyChangeListener {
 			if (rLocations.size() == 1) {
 				RouteLocation rLoc = route.getLocationById(rLocations.get(0));
 				if (rLoc.getName().equals(rs.getLocationName()) && rLoc.canPickup()
-						&& rLoc.getMaxCarMoves() > 0 && !skipsLocation(rLoc.getId())
-						&& rLoc.getName().equals(rs.getDestinationName()) && rLoc.canDrop()) {
+						&& rLoc.getMaxCarMoves() > 0 && !skipsLocation(rLoc.getId()) && rLoc.canDrop()) {
 					if (rs.getTrack() != null && !rs.getTrack().acceptsPickupTrain(this)) {
 						return false;
 					}
+					if (rs.getDestination() != null && !rLoc.getName().equals(rs.getDestinationName()))
+						return false;
 					if (rs.getDestinationTrack() != null && !rs.getDestinationTrack().acceptsDropTrain(this)) {
 						return false;
 					}
@@ -1362,7 +1368,10 @@ public class Train implements java.beans.PropertyChangeListener {
 					}
 					if (debugFlag)
 						log.debug("Car (" + rs.toString() + ") can be picked up by train (" + getName()
-								+ ") from (" + rs.getLocationName() + ", " + rs.getTrackName() + ")"); // NOI18N
+								+ ") location (" + rs.getLocationName() + ", " + rs.getTrackName()
+								+ ") destination ("// NOI18N
+								+ rs.getDestinationName() + ", "// NOI18N
+								+ rs.getDestinationTrackName() + ")"); // NOI18N
 					if (rs.getDestination() == null) {
 						if (debugFlag)
 							log.debug("Car (" + rs.toString() + ") does not have a destination");
@@ -1392,6 +1401,9 @@ public class Train implements java.beans.PropertyChangeListener {
 								if (!status.equals(Track.OKAY))
 									continue;
 							} else {
+								if (debugFlag)
+									log.debug("Find track for car (" + rs.toString() + ") at destination "
+											+ rs.getDestinationName());
 								// determine if there's a track that is willing to accept this car
 								String status = "";
 								List<String> trackIds = rLoc.getLocation().getTrackIdsByIdList();
@@ -1402,12 +1414,18 @@ public class Train implements java.beans.PropertyChangeListener {
 										continue;
 									// will the track accept this car?
 									status = track.accepts(rs);
-									if (status.equals(Track.OKAY) || status.startsWith(Track.LENGTH))
+									if (status.equals(Track.OKAY) || status.startsWith(Track.LENGTH)) {
+										if (debugFlag)
+											log.debug("Found track (" + track.getName() + ") for car ("
+													+ rs.toString() + ")");
 										break; // yes, done
+									}
 								}
 								if (!status.equals(Track.OKAY) && !status.startsWith(Track.LENGTH)) {
 									if (debugFlag)
-										log.debug("Destination ("+rs.getDestinationName()+") can not service car ("+rs.toString()+") using train ("+getName()+")");
+										log.debug("Destination (" + rs.getDestinationName()
+												+ ") can not service car (" + rs.toString()
+												+ ") using train (" + getName() + ")");
 									continue;
 								}
 							}

@@ -56,6 +56,10 @@ public class NceMessage extends jmri.jmrix.AbstractMRMessage {
     protected static final int NCE_DIRECT_CV_TIMEOUT=10000;			
     protected static final int SHORT_TIMEOUT=10000;				// worst case is when loading the first panel
     
+	public static final int REPLY_1 = 1;			// reply length of 1 byte
+	public static final int REPLY_2 = 2;			// reply length of 2 byte
+	public static final int REPLY_4 = 4;			// reply length of 4 byte
+	public static final int REPLY_16 = 16;			// reply length of 16 bytes	
     
     public NceMessage() {
         super();

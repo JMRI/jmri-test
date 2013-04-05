@@ -525,7 +525,7 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
         if(!destList.containsKey(destination)){
             return new ArrayList<Block>();
         }
-        if(destList.get(destination).xingAutoBlocks.size()==0){
+        if(destList.get(destination).xingAutoBlocks.size()==0 && destList.get(destination).dblCrossOverAutoBlocks.size()==0){
             return destList.get(destination).getAutoBlocks();
         }
         ArrayList<Block> returnList = destList.get(destination).getAutoBlocks();
@@ -534,6 +534,12 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
                 returnList.remove(blk);
             }
         }
+        for(Block blk:destList.get(destination).getAutoBlocks()){
+            if(destList.get(destination).dblCrossOverAutoBlocks.contains(blk)){
+                returnList.remove(blk);
+            }
+        }
+        
         return returnList;
     
     }
@@ -1036,6 +1042,7 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
         LinkedHashMap<Block, Integer> autoBlocks = new LinkedHashMap<Block, Integer>(0);
         
         ArrayList<Block> xingAutoBlocks = new ArrayList<Block>(0);
+        ArrayList<Block> dblCrossOverAutoBlocks = new ArrayList<Block>(0);
         SignalMast destination;
         boolean active = false;
         boolean destMastInit = false;
@@ -1143,7 +1150,7 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
             } else {
                     Enumeration<NamedBeanHandle<Turnout>> e = turnouts.keys();
                     while(e.hasMoreElements()){
-                        NamedBeanHandle nbh = e.nextElement();
+                        NamedBeanHandle<Turnout> nbh = e.nextElement();
                         NamedBeanSetting nbs = new NamedBeanSetting(nbh, turnouts.get(nbh));
                         userSetTurnouts.add(nbs);
                     }
@@ -1229,7 +1236,7 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
                 Enumeration<Block> e = blocks.keys();
                 while(e.hasMoreElements()){
                     Block blk = e.nextElement();
-                    NamedBeanHandle nbh = jmri.InstanceManager.getDefault(jmri.NamedBeanHandleManager.class).getNamedBeanHandle(blk.getDisplayName(), blk);
+                    NamedBeanHandle<?> nbh = jmri.InstanceManager.getDefault(jmri.NamedBeanHandleManager.class).getNamedBeanHandle(blk.getDisplayName(), blk);
                     NamedBeanSetting nbs = new NamedBeanSetting(nbh, blocks.get(blk));
                     userSetBlocks.add(nbs);
                 }
@@ -1267,8 +1274,6 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
                     }
                 }
             }
-            // TODO: what is this?
-            log.debug(Integer.toString(autoBlocks.size()));
             firePropertyChange("autoblocks", null, this.destination);
         }
 
@@ -1291,7 +1296,7 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
                 Enumeration<SignalMast> e = masts.keys();
                 while(e.hasMoreElements()){
                     SignalMast mast = e.nextElement();
-                    NamedBeanHandle nbh = jmri.InstanceManager.getDefault(jmri.NamedBeanHandleManager.class).getNamedBeanHandle(mast.getDisplayName(), mast);
+                    NamedBeanHandle<?> nbh = jmri.InstanceManager.getDefault(jmri.NamedBeanHandleManager.class).getNamedBeanHandle(mast.getDisplayName(), mast);
                     NamedBeanSetting nbs = new NamedBeanSetting(nbh, masts.get(mast));
                     userSetMasts.add(nbs);
                 }
@@ -1358,7 +1363,7 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
             } else {
                     Enumeration<NamedBeanHandle<Sensor>> e = sensors.keys();
                     while(e.hasMoreElements()){
-                        NamedBeanHandle nbh = e.nextElement();
+                        NamedBeanHandle<?> nbh = e.nextElement();
                         NamedBeanSetting nbs = new NamedBeanSetting(nbh, sensors.get(nbh));
                         userSetSensors.add(nbs);
                     }
@@ -1420,7 +1425,7 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
         ArrayList<NamedBeanHandle<Turnout>> getNamedTurnouts(){
             ArrayList<NamedBeanHandle<Turnout>> out = new ArrayList<NamedBeanHandle<Turnout>>();
             for(NamedBeanSetting nbh:userSetTurnouts){
-                out.add(nbh.getNamedBean());
+                out.add((NamedBeanHandle<Turnout>) nbh.getNamedBean());
             }
             return out;
         }
@@ -1463,7 +1468,7 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
         ArrayList<NamedBeanHandle<Sensor>> getNamedSensors(){
             ArrayList<NamedBeanHandle<Sensor>> out = new ArrayList<NamedBeanHandle<Sensor>>();
             for(NamedBeanSetting nbh:userSetSensors){
-                out.add(nbh.getNamedBean());
+                out.add((NamedBeanHandle<Sensor>) nbh.getNamedBean());
             }
             return out;
         }
@@ -1944,8 +1949,6 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
             List<LayoutBlock> protectingBlocks = new ArrayList<LayoutBlock>();
             // We don't care which layout editor panel the signalmast is on, just so long as
             // as the routing is done via layout blocks
-            // TODO: what is this?
-            log.debug(Integer.toString(layout.size()));
             LayoutBlock remoteProtectingBlock = null;
             for(int i = 0; i<layout.size(); i++){
                 if(log.isDebugEnabled())
@@ -2057,6 +2060,33 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
                                         }
                                     }
                                     turnoutSettings.put(turnout, throwlist.get(x));
+                                    LayoutTurnout lt = turnoutlist.get(x);
+                                    /* TODO: We could do with a more inteligent way to deal with double crossovers, other than just looking at the state of the other conflicting blocks
+                                       such as looking at Signalmasts that protect the other blocks and the settings of any other turnouts along the way.
+                                    */
+                                    if(lt.getTurnoutType()==LayoutTurnout.DOUBLE_XOVER){
+                                        if(throwlist.get(x)==jmri.Turnout.THROWN){
+                                            if(lt.getLayoutBlock()==lblks.get(i) || lt.getLayoutBlockC()==lblks.get(i)){
+                                                if(lt.getLayoutBlockB()!=null){
+                                                    dblCrossOverAutoBlocks.add(lt.getLayoutBlockB().getBlock());
+                                                    block.put(lt.getLayoutBlockB().getBlock(), Block.UNOCCUPIED);
+                                                }
+                                                if(lt.getLayoutBlockD()!=null){
+                                                    dblCrossOverAutoBlocks.add(lt.getLayoutBlockD().getBlock());
+                                                    block.put(lt.getLayoutBlockD().getBlock(), Block.UNOCCUPIED);
+                                                }                                                
+                                            } else if(lt.getLayoutBlockB()==lblks.get(i) || lt.getLayoutBlockD()==lblks.get(i)){
+                                                if(lt.getLayoutBlock()!=null){
+                                                    dblCrossOverAutoBlocks.add(lt.getLayoutBlock().getBlock());
+                                                    block.put(lt.getLayoutBlock().getBlock(), Block.UNOCCUPIED);
+                                                }
+                                                if(lt.getLayoutBlockC()!=null){
+                                                    dblCrossOverAutoBlocks.add(lt.getLayoutBlockC().getBlock());
+                                                    block.put(lt.getLayoutBlockC().getBlock(), Block.UNOCCUPIED);
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -2084,9 +2114,6 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
                             }
                         }
                     }
-                    if(log.isDebugEnabled())
-                        // TODO: what is this?
-                        log.debug(Integer.toString(block.size()));
                     if(useLayoutEditorBlocks)
                         setAutoBlocks(block);
                     else
@@ -2104,6 +2131,7 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
             }
             initialise();
         }
+        
         /*
          * The generation of auto signalmast, looks through all the other logics
          * to see if there are any blocks that are in common and thus will add
@@ -2517,15 +2545,15 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
         }
         
         class NamedBeanSetting {
-            NamedBeanHandle namedBean;
+            NamedBeanHandle<?> namedBean;
             int setting = 0;
             String strSetting = null;
-            NamedBeanSetting(NamedBeanHandle namedBean, int setting){
+            NamedBeanSetting(NamedBeanHandle<?> namedBean, int setting){
                 this.namedBean = namedBean;
                 this.setting = setting;
             }
             
-            NamedBeanSetting (NamedBeanHandle namedBean, String setting){
+            NamedBeanSetting (NamedBeanHandle<?> namedBean, String setting){
                 this.namedBean = namedBean;
                 strSetting = setting;
             }
@@ -2534,7 +2562,7 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
                 return (NamedBean)namedBean.getBean();
             }
             
-            NamedBeanHandle getNamedBean(){
+            NamedBeanHandle<?> getNamedBean(){
                 return namedBean;
             }
             int getSetting(){

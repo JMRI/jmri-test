@@ -18,6 +18,12 @@ public final class JSON {
     public static final String PONG = "pong"; // NOI18N
     public static final String GOODBYE = "goodbye"; // NOI18N
     public static final String NAME = "name"; // NOI18N
+    /* JSON methods */
+    public static final String METHOD = "method"; // NOI18N
+    public static final String DELETE = "delete"; // NOI18N
+    public static final String GET = "get"; // NOI18N
+    public static final String POST = "post"; // NOI18N
+    public static final String PUT = "put"; // NOI18N
     /* JSON common tokens */
     public static final String COMMENT = "comment"; // NOI18N
     public static final String USERNAME = "userName"; // NOI18N
@@ -41,6 +47,7 @@ public final class JSON {
     public static final String MEMORIES = "memories"; // NOI18N
     public static final String METADATA = "metadata"; // NOI18N
     public static final String PANELS = "panels"; // NOI18N
+    public static final String REPORTERS = "reporters"; // NOI18N
     public static final String ROSTER = "roster"; // NOI18N
     public static final String ROUTES = "routes"; // NOI18N
     public static final String SENSORS = "sensors"; // NOI18N
@@ -79,6 +86,9 @@ public final class JSON {
     public static final String LAYOUT_PANEL = "Layout"; // NOI18N
     public static final String PANEL_PANEL = "Panel"; // NOI18N
     public static final String URL = "URL"; // NOI18N
+    public static final String FORMAT = "format"; // NOI18N
+    public static final String JSON = "json"; // NOI18N
+    public static final String XML = "xml"; // NOI18N
     /* JSON programmer tokens */
     public static final String MODE = "mode"; // NOI18N
     public static final String NODE_CV = "CV"; // NOI18N

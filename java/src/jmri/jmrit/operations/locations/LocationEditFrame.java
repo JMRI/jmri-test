@@ -71,7 +71,7 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 	JCheckBox westCheckBox = new JCheckBox(Bundle.getMessage("West"));
 	
 	// radio buttons
-    JRadioButton stageRadioButton = new JRadioButton(Bundle.getMessage("Staging"));
+    JRadioButton stageRadioButton = new JRadioButton(Bundle.getMessage("StagingOnly"));
     JRadioButton interchangeRadioButton = new JRadioButton(Bundle.getMessage("Interchange"));
     JRadioButton yardRadioButton = new JRadioButton(Bundle.getMessage("Yards"));
     JRadioButton spurRadioButton = new JRadioButton(Bundle.getMessage("Spurs"));
@@ -200,7 +200,7 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 		// row 9
 		JPanel pOp = new JPanel();
 		pOp.setLayout(new GridBagLayout());
-		pOp.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("Ops")));
+		pOp.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("TracksAtLocation")));
 		pOp.add(spurRadioButton);
 		pOp.add(yardRadioButton);
 		pOp.add(interchangeRadioButton);
