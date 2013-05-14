@@ -209,7 +209,7 @@ public class CombinedLocoSelTreePane extends CombinedLocoSelPane {
                     + (familyElement == null ? "<null>" : familyElement.toString() + "(" + familyElement.getChildCount() + ")"));
             
             // skip not-shown decoders
-            if (!decoder.getShowable()) continue;
+            if (decoder.getShowable()!= DecoderFile.Showable.YES) continue;
             // build elements
             if (mfgElement == null || !mfg.equals(mfgElement.toString())) {
                 // need new mfg node
