@@ -414,8 +414,8 @@
         <output name="Brake"/>
         <size length="0.57" width="0.355" height="0.132" units="inches"/>
       </model>
-      <model show="no" model="M1P-UK" numOuts="2" numFns="14" maxMotorCurrent="1A (peak=2A)" formFactor="HO"replacementModel="M1P-UK" replacementFamily="June 2007"
-          >
+      <model show="no" model="M1P-UK" numOuts="2" numFns="14" maxMotorCurrent="1A (peak=2A)" formFactor="HO"
+          replacementModel="M1P-UK" replacementFamily="June 2007">
         <output name="1" label="White" connection="plug" maxcurrent="100 mA"/>
         <output name="2" label="Yellow" connection="plug" maxcurrent="100 mA"/>
         <output name="Dim"/>

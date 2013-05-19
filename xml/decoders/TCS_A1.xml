@@ -22,7 +22,7 @@
   <decoder>
     <family name="TCS A1 decoder" mfg="Train Control Systems">
       <model show="no" model="A1" numOuts="4" numFns="2" lowVersionID="161" highVersionID="161"
-           replacementModel="A1" replacementFamily="Jan 2000">
+           replacementModel="A1" replacementFamily="Jan 2000" />
     </family>
     <programming direct="yes" paged="yes" register="yes" ops="yes"/>
     <variables>

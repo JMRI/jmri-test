@@ -561,7 +561,7 @@
             
             <xi:include href="http://jmri.org/xml/decoders/tcs/CV1_CV99_FW41.xml"/>
             
-            <xi:include href="http://jmri.org/xml/decoders/tcs/CV100_CV157_FW41xml"/>
+            <xi:include href="http://jmri.org/xml/decoders/tcs/CV100_CV157_FW41.xml"/>
             
             <xi:include href="http://jmri.org/xml/decoders/tcs/CV249_CV252_FW41.xml"/>
             

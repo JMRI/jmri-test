@@ -21,7 +21,7 @@
                 <output name="2" label="Purple" connection="solder" maxcurrent="100 mA"/>
                 <size length="1.000" width="0.650" height="0.160" units="inches"/>
             </model>
-            <model show="maybe" model="FL4" numOuts="4" numFns="14" lowVersionID="41 highVersionID="51" maxMotorCurrent="1.3A (peak=2A)" formFactor="PnP"  productID="7">
+            <model show="maybe" model="FL4" numOuts="4" numFns="14" lowVersionID="41" highVersionID="51" maxMotorCurrent="1.3A (peak=2A)" formFactor="PnP"  productID="7">
                 <output name="1" label="Green" connection="solder" maxcurrent="200 mA"/>
                 <output name="2" label="Purple" connection="solder" maxcurrent="200 mA"/>
                 <output name="3" label="Brown" connection="solder" maxcurrent="200 mA"/>
