@@ -342,7 +342,7 @@ public class CombinedLocoSelTreePane extends CombinedLocoSelPane {
                     
         selectedPath = new ArrayList<TreePath>();
 
-        // Select the selected decoder(s) in the tree
+        // Find decoder nodes in tree and set selected
         for (int i = 0; i < pList.size(); i++) { // loop over selected decoders
 
             DecoderFile f = pList.get(i);
@@ -351,8 +351,10 @@ public class CombinedLocoSelTreePane extends CombinedLocoSelPane {
             String findModel = f.getModel();
 
             e = dRoot.breadthFirstEnumeration();
-            while (e.hasMoreElements()) { // loop over the tree
+            while (e.hasMoreElements()) { // loop over the tree & find node
                 DecoderTreeNode node = e.nextElement();
+                // never match show=NO nodes
+                if (node.getShowable() == DecoderFile.Showable.NO) continue;
                 // convert path to comparison string
                 TreeNode[] list = node.getPath();
                 if (list.length == 3) {
@@ -365,9 +367,6 @@ public class CombinedLocoSelTreePane extends CombinedLocoSelPane {
                         ((DecoderTreeNode)list[1]).setIdentified(true);
                         ((DecoderTreeNode)list[2]).setIdentified(true);
                         TreePath path = new TreePath(node.getPath());
-                        dTree.addSelectionPath(path);
-                        dTree.expandPath(path);
-                        dTree.scrollPathToVisible(path);
                         selectedPath.add(path);
                         break;
                     }
@@ -383,16 +382,18 @@ public class CombinedLocoSelTreePane extends CombinedLocoSelPane {
                         ((DecoderTreeNode)list[2]).setIdentified(true);
                         ((DecoderTreeNode)list[3]).setIdentified(true);
                         TreePath path = new TreePath(node.getPath());
-                        dTree.addSelectionPath(path);
-                        dTree.expandPath(path);
-                        dTree.scrollPathToVisible(path);
                         selectedPath.add(path);
                         break;
                     }
                 }
             }
         }
-    
+        // now select and show paths in tree
+        for (TreePath path : selectedPath ) {
+            dTree.addSelectionPath(path);
+            dTree.expandPath(path);
+            dTree.scrollPathToVisible(path);
+        }
     }
 
     /**
@@ -650,6 +651,9 @@ class DecoderTreeNode extends DefaultMutableTreeNode {
 
     public void setShowable(DecoderFile.Showable showable) {
         this.showable = showable;
+    }
+    public DecoderFile.Showable getShowable() {
+        return this.showable;
     }
 
     private boolean isVisible(boolean filterIsActive) {
