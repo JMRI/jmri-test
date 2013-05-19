@@ -17,7 +17,6 @@
         
     <decoder>
         <family name="Jan 2012" mfg="Train Control Systems" comment="TCS FW Starting Jan 2012">
-            
              <model model="A4X" numOuts="4" numFns="14" maxMotorCurrent="1.3A (peak=2A)" formFactor="PnP"
                 lowVersionID="86" highVersionID="88" productID="4">
                 <output name="1" label="White" connection="solder" maxcurrent="100 mA"/>
@@ -285,7 +284,23 @@
                 <output name="Brake"/>
                 <size length="2.53" width="0.542" height="0.155" units="inches"/>
             </model>
-             <model model="K0D8-D" numOuts="8" numFns="14" maxMotorCurrent="1.0A (peak=2A)" formFactor="PnP" lowVersionID="86" highVersionID="88" productID="28"> 
+            <model model="K0D8-D" numOuts="8" numFns="14" maxMotorCurrent="1.0A (peak=2A)" formFactor="PnP" lowVersionID="86" highVersionID="88" productID="28">
+                <output name="1" label="White" connection="other" maxcurrent="60 mA"/>
+                <output name="2" label="Yellow" connection="other" maxcurrent="60 mA"/>
+                <output name="3" label="Green" connection="solder" maxcurrent="60 mA"/>
+                <output name="4" label="Purple" connection="solder" maxcurrent="60 mA"/>
+                <output name="5" label="Brown" connection="solder" maxcurrent="60 mA"/>
+                <output name="6" label="Pink" connection="solder" maxcurrent="60 mA"/>
+                <output name="7" label="Pnk/Pur" connection="solder" maxcurrent="60 mA"/>
+                <output name="8" label="Grn/Brn" connection="solder" maxcurrent="60 mA"/>
+                <output name="Dim"/>
+                <output name="Ditch"/>
+                <output name="Motor"/>
+                <output name="BEMF"/>
+                <output name="Brake"/>
+                <size length="2.53" width="0.542" height="0.155" units="inches"/>
+            </model>
+            <model model="K0D8-E" numOuts="8" numFns="14" maxMotorCurrent="1.0A (peak=2A)" formFactor="PnP" lowVersionID="86" highVersionID="88" productID="56">
                 <output name="1" label="White" connection="other" maxcurrent="60 mA"/>
                 <output name="2" label="Yellow" connection="other" maxcurrent="60 mA"/>
                 <output name="3" label="Green" connection="solder" maxcurrent="60 mA"/>
@@ -338,7 +353,7 @@
                 <output name="Brake"/>
                 <size length="2.7" width="0.4" height="0.0" units="inches"/>
             </model>
-             <model model="K3D3" numOuts="3" numFns="14" maxMotorCurrent="1.0A (peak=2A)" formFactor="PnP" lowVersionID="86" highVersionID="88" productID="32">
+            <model model="K3D3" numOuts="3" numFns="14" maxMotorCurrent="1.0A (peak=2A)" formFactor="PnP" lowVersionID="86" highVersionID="88" productID="32">
                 <output name="1" label="White" connection="other" maxcurrent="50 mA"/>
                 <output name="2" label="Yellow" connection="other" maxcurrent="50 mA"/>
                 <output name="3" label="Green" connection="solder" maxcurrent="50 mA"/>
@@ -348,6 +363,38 @@
                 <output name="BEMF"/>
                 <output name="Brake"/>
                 <size length="2.860" width="0.680" height="0.145" units="inches"/>
+            </model>
+            <model model="K4D6" numOuts="8" numFns="14" maxMotorCurrent="1.0A (peak=2A)" formFactor="PnP" lowVersionID="86" highVersionID="88" productID="46">
+                <output name="1" label="White" connection="other" maxcurrent="60 mA"/>
+                <output name="2" label="Yellow" connection="other" maxcurrent="60 mA"/>
+                <output name="3" label="Green" connection="solder" maxcurrent="60 mA"/>
+                <output name="4" label="Purple" connection="solder" maxcurrent="60 mA"/>
+                <output name="5" label="Brown" connection="solder" maxcurrent="60 mA"/>
+                <output name="6" label="Pink" connection="solder" maxcurrent="60 mA"/>
+                <output name="7" label="Pnk/Pur" connection="solder" maxcurrent="60 mA"/>
+                <output name="8" label="Grn/Brn" connection="solder" maxcurrent="60 mA"/>
+                <output name="Dim"/>
+                <output name="Ditch"/>
+                <output name="Motor"/>
+                <output name="BEMF"/>
+                <output name="Brake"/>
+                <size length="2.53" width="0.542" height="0.155" units="inches"/>
+            </model>
+            <model model="K5D7" numOuts="8" numFns="14" maxMotorCurrent="1.0A (peak=2A)" formFactor="PnP" lowVersionID="86" highVersionID="88" productID="59">
+                <output name="1" label="White" connection="other" maxcurrent="60 mA"/>
+                <output name="2" label="Yellow" connection="other" maxcurrent="60 mA"/>
+                <output name="3" label="Green" connection="solder" maxcurrent="60 mA"/>
+                <output name="4" label="Purple" connection="solder" maxcurrent="60 mA"/>
+                <output name="5" label="Brown" connection="solder" maxcurrent="60 mA"/>
+                <output name="6" label="Pink" connection="solder" maxcurrent="60 mA"/>
+                <output name="7" label="Pnk/Pur" connection="solder" maxcurrent="60 mA"/>
+                <output name="8" label="Grn/Brn" connection="solder" maxcurrent="60 mA"/>
+                <output name="Dim"/>
+                <output name="Ditch"/>
+                <output name="Motor"/>
+                <output name="BEMF"/>
+                <output name="Brake"/>
+                <size length="2.53" width="0.542" height="0.155" units="inches"/>
             </model>
              <model model="LL8" numOuts="8" numFns="14" maxMotorCurrent="1.0A (peak=2A)" formFactor="PnP" lowVersionID="86" highVersionID="88" productID="43">
                 <output name="1" label="White" connection="other" maxcurrent="100 mA"/>

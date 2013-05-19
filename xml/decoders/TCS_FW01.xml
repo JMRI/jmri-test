@@ -529,7 +529,7 @@
             
             <xi:include href="http://jmri.org/xml/decoders/tcs/CV1_CV99_FW01.xml"/>
             
-            <xi:include href="http://jmri.org/xml/decoders/tcs/CV100_CV157_FW01.xml"/>
+            <xi:include href="http://jmri.org/xml/decoders/tcs/CV100_CV157_FW01xml"/>
 
             
         </variables>
