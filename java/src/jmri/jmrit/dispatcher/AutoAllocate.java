@@ -350,7 +350,7 @@ public class AutoAllocate {
 				curAS = null;
 				for (int i = aSectionList.size()-1; i>=0; i--) {
 					AllocatedSection as = aSectionList.get(i);
-					if ( (as!=null) && (as.getSequence()==curSeq)) curAS = as;						
+					if ( (as!=null) && (as.getSequence()==curSeq)) curAS = as;
 				}
 				if ( (curAS!=null) && (curAS.getSection().getOccupancy()!=jmri.Section.OCCUPIED) ) {
 					//previous allocated section exists and is not occupied, test previous one
@@ -1081,7 +1081,10 @@ log.info("auto allocating Section "+ar.getSection().getUserName());
         
         if(ar==null)
             return false;
-
+        if(ar.getAutoDispatcherHeldMast()){
+            //SignalMast has been held by the autoDispatcher so we can ignore the held status;
+            return false;
+        }
         Section sec = ar.getSection();
         ActiveTrain mActiveTrain = ar.getActiveTrain();
         

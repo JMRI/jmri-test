@@ -18,6 +18,7 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import jmri.jmrit.operations.OperationsFrame;
 import jmri.jmrit.operations.locations.Location;
@@ -61,8 +62,6 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 	JLabel textTrack2 = new JLabel(Bundle.getMessage("Track"));
 	JLabel textName3 = new JLabel(Bundle.getMessage("Name"));
 	JLabel textTrack3 = new JLabel(Bundle.getMessage("Track"));
-	JLabel textName4 = new JLabel(Bundle.getMessage("Name"));
-	JLabel textTrack4 = new JLabel(Bundle.getMessage("Track"));
 
 	// major buttons
 	protected JButton saveButton = new JButton(Bundle.getMessage("Save"));
@@ -72,8 +71,6 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 	protected JComboBox trackLocationBox = new JComboBox();
 	protected JComboBox destinationBox = LocationManager.instance().getComboBox();
 	protected JComboBox trackDestinationBox = new JComboBox();
-	protected JComboBox destReturnWhenEmptyBox = LocationManager.instance().getComboBox();
-	protected JComboBox trackReturnWhenEmptyBox = new JComboBox();
 	protected JComboBox finalDestinationBox = LocationManager.instance().getComboBox();
 	protected JComboBox finalDestTrackBox = new JComboBox();
 	protected JComboBox trainBox = TrainManager.instance().getComboBox();
@@ -82,7 +79,6 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 	protected JCheckBox autoTrackCheckBox = new JCheckBox(Bundle.getMessage("Auto"));
 	protected JCheckBox autoDestinationTrackCheckBox = new JCheckBox(Bundle.getMessage("Auto"));
 	protected JCheckBox autoFinalDestTrackCheckBox = new JCheckBox(Bundle.getMessage("Auto"));
-	protected JCheckBox autoReturnWhenEmptyTrackCheckBox = new JCheckBox(Bundle.getMessage("Auto"));
 	protected JCheckBox autoTrainCheckBox = new JCheckBox(Bundle.getMessage("Auto"));
 
 	protected JCheckBox locationUnknownCheckBox = new JCheckBox(Bundle.getMessage("LocationUnknown"));
@@ -90,7 +86,6 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 
 	protected JCheckBox ignoreStatusCheckBox = new JCheckBox(Bundle.getMessage("Ignore"));
 	protected JCheckBox ignoreLocationCheckBox = new JCheckBox(Bundle.getMessage("Ignore"));
-	protected JCheckBox ignoreRWECheckBox = new JCheckBox(Bundle.getMessage("Ignore"));
 	protected JCheckBox ignoreDestinationCheckBox = new JCheckBox(Bundle.getMessage("Ignore"));
 	protected JCheckBox ignoreFinalDestinationCheckBox = new JCheckBox(Bundle.getMessage("Ignore"));
 	protected JCheckBox ignoreTrainCheckBox = new JCheckBox(Bundle.getMessage("Ignore"));
@@ -103,7 +98,6 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 	private static boolean autoTrackCheckBoxSelected = false;
 	private static boolean autoDestinationTrackCheckBoxSelected = false;
 	private static boolean autoFinalDestTrackCheckBoxSelected = false;
-	private static boolean autoReturnWhenEmptyTrackCheckBoxSelected = false;
 	private static boolean autoTrainCheckBoxSelected = false;
 
 	public RollingStockSetFrame() {
@@ -161,27 +155,11 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 		addItem(pLocation, autoTrackCheckBox, 3, 1);
 		pPanel.add(pLocation);
 
-		// optional panel return when empty
-		pOptional.setLayout(new BoxLayout(pOptional, BoxLayout.Y_AXIS));
-		pOptional.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("BorderLayoutOptional")));
-
-		// row 5
-		JPanel pReturnWhenEmpty = new JPanel();
-		pReturnWhenEmpty.setLayout(new GridBagLayout());
-		pReturnWhenEmpty.setBorder(BorderFactory.createTitledBorder(Bundle
-				.getMessage("BorderLayoutReturnWhenEmpty")));
-		addItem(pReturnWhenEmpty, textName4, 1, 0);
-		addItem(pReturnWhenEmpty, textTrack4, 2, 0);
-		addItem(pReturnWhenEmpty, ignoreRWECheckBox, 0, 1);
-		addItem(pReturnWhenEmpty, destReturnWhenEmptyBox, 1, 1);
-		addItem(pReturnWhenEmpty, trackReturnWhenEmptyBox, 2, 1);
-		addItem(pReturnWhenEmpty, autoReturnWhenEmptyTrackCheckBox, 3, 1);
-		pOptional.add(pReturnWhenEmpty);
-
 		// optional panel 2
 		JPanel pOptional2 = new JPanel();
+		JScrollPane paneOptional2 = new JScrollPane(pOptional2);
 		pOptional2.setLayout(new BoxLayout(pOptional2, BoxLayout.Y_AXIS));
-		pOptional2.setBorder(BorderFactory.createTitledBorder(Bundle
+		paneOptional2.setBorder(BorderFactory.createTitledBorder(Bundle
 				.getMessage("BorderLayoutOptionalProgram")));
 
 		// row 6
@@ -227,13 +205,12 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		getContentPane().add(pPanel);
 		getContentPane().add(pOptional);
-		getContentPane().add(pOptional2);
+		getContentPane().add(paneOptional2);
 		getContentPane().add(pButtons);
 
 		// Don't show ignore buttons
 		ignoreStatusCheckBox.setVisible(false);
 		ignoreLocationCheckBox.setVisible(false);
-		ignoreRWECheckBox.setVisible(false);
 		ignoreDestinationCheckBox.setVisible(false);
 		ignoreFinalDestinationCheckBox.setVisible(false);
 		ignoreTrainCheckBox.setVisible(false);
@@ -245,7 +222,6 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 		addComboBoxAction(locationBox);
 		addComboBoxAction(destinationBox);
 		addComboBoxAction(finalDestinationBox);
-		addComboBoxAction(destReturnWhenEmptyBox);
 		addComboBoxAction(trainBox);
 
 		// setup checkbox
@@ -254,12 +230,10 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 		addCheckBoxAction(autoTrackCheckBox);
 		addCheckBoxAction(autoDestinationTrackCheckBox);
 		addCheckBoxAction(autoFinalDestTrackCheckBox);
-		addCheckBoxAction(autoReturnWhenEmptyTrackCheckBox);
 		addCheckBoxAction(autoTrainCheckBox);
 
 		addCheckBoxAction(ignoreStatusCheckBox);
 		addCheckBoxAction(ignoreLocationCheckBox);
-		addCheckBoxAction(ignoreRWECheckBox);
 		addCheckBoxAction(ignoreDestinationCheckBox);
 		addCheckBoxAction(ignoreFinalDestinationCheckBox);
 		addCheckBoxAction(ignoreTrainCheckBox);
@@ -268,20 +242,17 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 		autoTrackCheckBox.setSelected(autoTrackCheckBoxSelected);
 		autoDestinationTrackCheckBox.setSelected(autoDestinationTrackCheckBoxSelected);
 		autoFinalDestTrackCheckBox.setSelected(autoFinalDestTrackCheckBoxSelected);
-		autoReturnWhenEmptyTrackCheckBox.setSelected(autoReturnWhenEmptyTrackCheckBoxSelected);
 		autoTrainCheckBox.setSelected(autoTrainCheckBoxSelected);
 
 		// add tool tips
 		autoTrackCheckBox.setToolTipText(getRb().getString("rsTipAutoTrack"));
 		autoDestinationTrackCheckBox.setToolTipText(getRb().getString("rsTipAutoTrack"));
 		autoFinalDestTrackCheckBox.setToolTipText(getRb().getString("rsTipAutoTrack"));
-		autoReturnWhenEmptyTrackCheckBox.setToolTipText(getRb().getString("rsTipAutoTrack"));
 		autoTrainCheckBox.setToolTipText(Bundle.getMessage("rsTipAutoTrain"));
 		locationUnknownCheckBox.setToolTipText(Bundle.getMessage("TipLocationUnknown"));
 
 		ignoreStatusCheckBox.setToolTipText(Bundle.getMessage("TipIgnore"));
 		ignoreLocationCheckBox.setToolTipText(Bundle.getMessage("TipIgnore"));
-		ignoreRWECheckBox.setToolTipText(Bundle.getMessage("TipIgnore"));
 		ignoreDestinationCheckBox.setToolTipText(Bundle.getMessage("TipIgnore"));
 		ignoreFinalDestinationCheckBox.setToolTipText(Bundle.getMessage("TipIgnore"));
 		ignoreTrainCheckBox.setToolTipText(Bundle.getMessage("TipIgnore"));
@@ -343,7 +314,6 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 		autoTrackCheckBoxSelected = autoTrackCheckBox.isSelected();
 		autoDestinationTrackCheckBoxSelected = autoDestinationTrackCheckBox.isSelected();
 		autoFinalDestTrackCheckBoxSelected = autoFinalDestTrackCheckBox.isSelected();
-		autoReturnWhenEmptyTrackCheckBoxSelected = autoReturnWhenEmptyTrackCheckBox.isSelected();
 		autoTrainCheckBoxSelected = autoTrainCheckBox.isSelected();
 
 		// save the statuses
@@ -590,7 +560,6 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 		locationManager.updateComboBox(locationBox);
 		locationManager.updateComboBox(destinationBox);
 		locationManager.updateComboBox(finalDestinationBox);
-		locationManager.updateComboBox(destReturnWhenEmptyBox);
 		trainManager.updateComboBox(trainBox);
 		if (_rs != null) {
 			locationBox.setSelectedItem(_rs.getLocation());
@@ -663,11 +632,6 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 			trackLocationBox.setEnabled(!ignoreLocationCheckBox.isSelected());
 			autoTrackCheckBox.setEnabled(!ignoreLocationCheckBox.isSelected());
 		}
-		if (ae.getSource() == ignoreRWECheckBox) {
-			destReturnWhenEmptyBox.setEnabled(!ignoreRWECheckBox.isSelected());
-			trackReturnWhenEmptyBox.setEnabled(!ignoreRWECheckBox.isSelected());
-			autoReturnWhenEmptyTrackCheckBox.setEnabled(!ignoreRWECheckBox.isSelected());
-		}
 		if (ae.getSource() == ignoreDestinationCheckBox) {
 			destinationBox.setEnabled(!ignoreDestinationCheckBox.isSelected());
 			trackDestinationBox.setEnabled(!ignoreDestinationCheckBox.isSelected());
@@ -690,25 +654,21 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 		trackLocationBox.setEnabled(!ignoreLocationCheckBox.isSelected() & enabled);
 		destinationBox.setEnabled(!ignoreDestinationCheckBox.isSelected() & enabled);
 		trackDestinationBox.setEnabled(!ignoreDestinationCheckBox.isSelected() & enabled);
-		destReturnWhenEmptyBox.setEnabled(!ignoreRWECheckBox.isSelected() & enabled);
-		trackReturnWhenEmptyBox.setEnabled(!ignoreRWECheckBox.isSelected() & enabled);
 		finalDestinationBox.setEnabled(!ignoreFinalDestinationCheckBox.isSelected() & enabled);
 		finalDestTrackBox.setEnabled(!ignoreFinalDestinationCheckBox.isSelected() & enabled);
 		trainBox.setEnabled(!ignoreTrainCheckBox.isSelected() & enabled);
 		// checkboxes
 		autoTrackCheckBox.setEnabled(!ignoreLocationCheckBox.isSelected() & enabled);
 		autoDestinationTrackCheckBox.setEnabled(!ignoreDestinationCheckBox.isSelected() & enabled);
-		autoFinalDestTrackCheckBox.setEnabled(!ignoreFinalDestinationCheckBox.isSelected() & enabled);
-		autoReturnWhenEmptyTrackCheckBox.setEnabled(!ignoreRWECheckBox.isSelected() & enabled);
+		autoFinalDestTrackCheckBox.setEnabled(!ignoreFinalDestinationCheckBox.isSelected() & enabled);	
 		autoTrainCheckBox.setEnabled(!ignoreTrainCheckBox.isSelected() & enabled);
 		locationUnknownCheckBox.setEnabled(!ignoreStatusCheckBox.isSelected());
 		outOfServiceCheckBox.setEnabled(!ignoreStatusCheckBox.isSelected() & enabled);
 
 		ignoreStatusCheckBox.setEnabled(enabled);
 		ignoreLocationCheckBox.setEnabled(enabled);
-		ignoreRWECheckBox.setEnabled(enabled);
 		ignoreDestinationCheckBox.setEnabled(enabled);
-		ignoreFinalDestinationCheckBox.setEnabled(enabled);
+		ignoreFinalDestinationCheckBox.setEnabled(Setup.isCarRoutingEnabled() & enabled);
 		ignoreTrainCheckBox.setEnabled(enabled);
 	}
 
