@@ -43,7 +43,10 @@ public class IndexedPairVariableValue extends VariableValue
         _secondCVrow = secondCVrow;
         _maxVal = maxVal;
         _minVal = minVal;
-        _value = new JTextField("0",4);
+        int len = 4;
+        if (maxVal>999) len = 5;
+        if (maxVal>9999) len = 6;
+        _value = new JTextField("0",len);
         _defaultColor = _value.getBackground();
         _value.setBackground(COLOR_UNKNOWN);
         _upperFirst = upperFirst;
