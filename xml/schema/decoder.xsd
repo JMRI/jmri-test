@@ -577,6 +577,15 @@
                     <xs:attribute name="offset" type="xs:string"/>
                     <xs:attribute name="comment" type="xs:string"/>
                     <xs:attribute name="upperMask" type="xs:string"/>
+                    <xs:attribute name="order" default="lowFirst">
+                        <xs:annotation><xs:documentation>Controls whether high CV or low CV written first</xs:documentation></xs:annotation>
+                        <xs:simpleType>
+                          <xs:restriction base="xs:string">
+                            <xs:enumeration value="lowFirst"/>
+                            <xs:enumeration value="highFirst"/>
+                          </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>    
                   </xs:complexType>
                 </xs:element>
               </xs:choice>
