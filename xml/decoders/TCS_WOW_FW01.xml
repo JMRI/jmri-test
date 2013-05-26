@@ -35,6 +35,13 @@
             
             <xi:include href="http://jmri.org/xml/decoders/tcs/CV249_CV252_FW86.xml"/>
             
+            <!-- Sample CV for program test -->
+            <constant item="PICV" default="49" comment="CV used for Primary Index"/>
+            <constant item="SICV" default="50" comment="CV used for Secondary Index"/>
+            <ivariable label="Button 0 Sound" CVname="204.1.0" CV="204" PI="1" SI="0" item="Sound Option 1">
+                <indexedPairVal highCVname="203.1.0" order="highFirst"/>
+            </ivariable>
+    
         </variables>
         <resets>
             <factReset label="Reset All CVs" CV="8" default="2"/>
