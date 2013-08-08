@@ -262,7 +262,7 @@ public class TrainsTableFrame extends OperationsFrame implements java.beans.Prop
 		// add help menu to window
 		addHelpMenu("package.jmri.jmrit.operations.Operations_Trains", true); // NOI18N
 
-		pack();
+		initComponents();
 
 		// listen for timetable changes
 		trainManager.addPropertyChangeListener(this);
@@ -302,7 +302,7 @@ public class TrainsTableFrame extends OperationsFrame implements java.beans.Prop
 		// log.debug("train button activated");
 		if (ae.getSource() == addButton) {
 			TrainEditFrame f = new TrainEditFrame();
-			f.setTitle(Bundle.getMessage("TitleTrainAdd"));
+//			f.setTitle(Bundle.getMessage("TitleTrainAdd"));
 			f.initComponents(null);
 		}
 		if (ae.getSource() == buildButton) {
@@ -355,12 +355,12 @@ public class TrainsTableFrame extends OperationsFrame implements java.beans.Prop
 		}
 		if (ae.getSource() == runFileButton) {
 			// Processes the CSV Manifest files using an external custom program.
-			if (!CustomManifest.manifestCreatorFileExists()) {
+			if (!TrainCustomManifest.manifestCreatorFileExists()) {
 				log.warn("Manifest creator file not found!, directory name: "
-						+ CustomManifest.getDirectoryName() + ", file name: " + CustomManifest.getFileName()); // NOI18N
+						+ TrainCustomManifest.getDirectoryName() + ", file name: " + TrainCustomManifest.getFileName()); // NOI18N
 				JOptionPane.showMessageDialog(null, MessageFormat.format(Bundle
 						.getMessage("DirectoryNameFileName"), new Object[] {
-						CustomManifest.getDirectoryName(), CustomManifest.getFileName() }), Bundle
+						TrainCustomManifest.getDirectoryName(), TrainCustomManifest.getFileName() }), Bundle
 						.getMessage("ManifestCreatorNotFound"), JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -381,13 +381,13 @@ public class TrainsTableFrame extends OperationsFrame implements java.beans.Prop
 						// Make sure our csv manifest file exists for this Train.
 						File csvFile = train.createCSVManifestFile();
 						// Add it to our collection to be processed.
-						CustomManifest.addCVSFile(csvFile);
+						TrainCustomManifest.addCVSFile(csvFile);
 					}
 				}
 			}
 			
 			// Now run the user specified custom Manifest processor program
-			CustomManifest.process();
+			TrainCustomManifest.process();
 		}
 		if (ae.getSource() == printSwitchButton) {
 			if (tslef != null)

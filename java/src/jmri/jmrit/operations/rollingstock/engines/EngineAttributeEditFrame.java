@@ -4,6 +4,8 @@ package jmri.jmrit.operations.rollingstock.engines;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.text.MessageFormat;
 import java.util.List;
@@ -100,10 +102,7 @@ public class EngineAttributeEditFrame extends OperationsFrame implements
 		addHelpMenu("package.jmri.jmrit.operations.Operations_Engines", true); // NOI18N
 
 		pack();
-		if (getWidth() < 300)
-			setSize(300, getHeight());
-		if (getHeight() < 180)
-			setSize(getWidth(), 180);
+		setMinimumSize(new Dimension(Control.smallPanelWidth, Control.smallPanelHeight));
 		setVisible(true);
 	}
 
@@ -257,12 +256,12 @@ public class EngineAttributeEditFrame extends OperationsFrame implements
 						// get the old configuration for this model
 						String length = engine.getLength();
 						String hp = engine.getHp();
-						String type = engine.getType();
+						String type = engine.getTypeName();
 						// now update the new model
 						engine.setModel(newItem);
 						engine.setLength(length);
 						engine.setHp(hp);
-						engine.setType(type);
+						engine.setTypeName(type);
 					}
 				}
 			}

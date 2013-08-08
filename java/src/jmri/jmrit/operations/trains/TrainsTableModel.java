@@ -18,6 +18,7 @@ import javax.swing.table.TableColumnModel;
 
 import jmri.jmrit.beantable.EnablingCheckboxRenderer;
 import jmri.jmrit.operations.locations.Track;
+import jmri.jmrit.operations.routes.RouteEditFrame;
 import jmri.jmrit.operations.setup.Control;
 import jmri.jmrit.operations.setup.Setup;
 import jmri.util.table.ButtonEditor;
@@ -244,6 +245,7 @@ public class TrainsTableModel extends javax.swing.table.AbstractTableModel imple
 		switch (col) {
 		case BUILDCOLUMN:
 		case BUILDBOXCOLUMN:
+		case ROUTECOLUMN:
 		case ACTIONCOLUMN:
 		case EDITCOLUMN:
 			return true;
@@ -253,13 +255,17 @@ public class TrainsTableModel extends javax.swing.table.AbstractTableModel imple
 	}
 
 	public synchronized Object getValueAt(int row, int col) {
-		// Funky code to put the tef frame in focus after the edit table buttons is used.
+		// Funky code to put the tef or ref frame in focus after the edit table buttons is used.
 		// The button editor for the table does a repaint of the button cells after the setValueAt code
 		// is called which then returns the focus back onto the table. We need the edit frame
 		// in focus.
 		if (focusTef) {
 			focusTef = false;
 			tef.requestFocus();
+		}
+		if (focusRef) {
+			focusRef = false;
+			ref.requestFocus();
 		}
 		// more funkyness for the conductor window.
 		if (tcf != null) {
@@ -340,6 +346,9 @@ public class TrainsTableModel extends javax.swing.table.AbstractTableModel imple
 		case BUILDCOLUMN:
 			buildTrain(row);
 			break;
+		case ROUTECOLUMN:
+			editRoute(row);
+			break;
 		case ACTIONCOLUMN:
 			actionTrain(row);
 			break;
@@ -362,15 +371,38 @@ public class TrainsTableModel extends javax.swing.table.AbstractTableModel imple
 		tef = new TrainEditFrame();
 		Train train = manager.getTrainById(sysList.get(row));
 		log.debug("Edit train (" + train.getName() + ")");
-		tef.setTitle(Bundle.getMessage("TitleTrainEdit"));
 		tef.initComponents(train);
 		focusTef = true;
 	}
-
-	private synchronized void buildTrain(int row) {
+	
+	boolean focusRef = false;
+	RouteEditFrame ref = null;
+	
+	private synchronized void editRoute(int row) {
+		if (ref != null)
+			ref.dispose();
+		ref = new RouteEditFrame();
 		Train train = manager.getTrainById(sysList.get(row));
+		log.debug("Edit route for train (" + train.getName() + ")");
+		ref.initComponents(train.getRoute(), train);
+		focusRef = true;
+	}
+
+	Thread build;
+	private synchronized void buildTrain(int row) {
+		final Train train = manager.getTrainById(sysList.get(row));
 		if (!train.isBuilt()) {
-			train.build();
+			// only one train build at a time
+			if (build != null && build.isAlive())
+				return;
+			// use a thread to allow table updates during build
+			build = new Thread(new Runnable() {
+				public void run() {
+					train.build();
+				}
+			});
+			build.setName("Build Train"); // NOI18N
+			build.start();
 			// print build report, print manifest, run or open file
 		} else {
 			if (manager.isBuildReportEnabled())
@@ -386,6 +418,9 @@ public class TrainsTableModel extends javax.swing.table.AbstractTableModel imple
 
 	// one of four buttons: Report, Move, Conductor or Terminate
 	private synchronized void actionTrain(int row) {
+		// no actions while a train is being built
+		if (build != null && build.isAlive())
+			return;
 		Train train = manager.getTrainById(sysList.get(row));
 		// move button becomes report if failure
 		if (train.getBuildFailed()) {

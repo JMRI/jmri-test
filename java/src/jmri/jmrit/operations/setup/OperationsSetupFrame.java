@@ -144,6 +144,9 @@ public class OperationsSetupFrame extends OperationsFrame implements
 		saveButton.setToolTipText(Bundle.getMessage("SaveToolTip"));
 		panelTextField.setToolTipText(Bundle.getMessage("EnterPanelName"));
 		yearTextField.setToolTipText(Bundle.getMessage("EnterYearModeled"));
+		autoSaveCheckBox.setToolTipText(Bundle.getMessage("AutoSaveTip"));
+		autoBackupCheckBox.setToolTipText(Bundle.getMessage("AutoBackUpTip"));
+		maxLengthTextField.setToolTipText(Bundle.getMessage("MaxLengthTip"));
 
 		// Layout the panel by rows
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -381,12 +384,7 @@ public class OperationsSetupFrame extends OperationsFrame implements
 		setJMenuBar(menuBar);
 		addHelpMenu("package.jmri.jmrit.operations.Operations_Settings", true); // NOI18N
 
-		/*
-		 * all JMRI window position and size are now saved // set frame size and location for display if
-		 * (Setup.getOperationsSetupFramePosition()!= null){ setLocation(Setup.getOperationsSetupFramePosition()); }
-		 */
-		packFrame();
-		setVisible(true);
+		super.initComponents();
 	}
 
 	// Save, Delete, Add buttons
@@ -410,16 +408,11 @@ public class OperationsSetupFrame extends OperationsFrame implements
 	}
 
 	private void save() {
-		/*
-		 * String addOwner = ownerTextField.getText(); if (addOwner.length() > Control.max_len_string_attibute) {
-		 * JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle.getMessage("OwnerText"), new Object[] { Integer
-		 * .toString(Control.max_len_string_attibute) }), Bundle.getMessage("CanNotAddOwner"), JOptionPane.ERROR_MESSAGE);
-		 * return; }
-		 */
 
 		// check input fields
+		int maxTrainLength;
 		try {
-			Integer.parseInt(maxLengthTextField.getText());
+			maxTrainLength = Integer.parseInt(maxLengthTextField.getText());
 		} catch (NumberFormatException e) {
 			JOptionPane.showMessageDialog(this, Bundle.getMessage("MaxLength"),
 					Bundle.getMessage("CanNotAcceptNumber"), JOptionPane.ERROR_MESSAGE);
@@ -453,21 +446,12 @@ public class OperationsSetupFrame extends OperationsFrame implements
 		// if max train length has changed, check routes
 		checkRoutes();
 
-		// add owner name to setup
-		// Setup.setOwnerName(addOwner);
-		// add owner name to list
-		// CarOwners.instance().addName(addOwner);
-
 		// set car types
 		if (typeDesc.isSelected() && !Setup.getCarTypes().equals(Setup.DESCRIPTIVE)
 				|| typeAAR.isSelected() && !Setup.getCarTypes().equals(Setup.AAR)) {
 
 			// backup files before changing car type descriptions
 			AutoBackup backup = new AutoBackup();
-			// String backupName = backup.createBackupDirectoryName();
-			// now backup files
-			// boolean success = backup.backupFiles(backupName);
-
 			try {
 				backup.autoBackup();
 			} catch (Exception ex) {
@@ -514,8 +498,6 @@ public class OperationsSetupFrame extends OperationsFrame implements
 		if (northCheckBox.isSelected())
 			direction += Setup.NORTH + Setup.SOUTH;
 		Setup.setTrainDirection(direction);
-		// set max train length
-		Setup.setTrainLength(Integer.parseInt(maxLengthTextField.getText()));
 		// set max engine length
 		Setup.setEngineSize(Integer.parseInt(maxEngineSizeTextField.getText()));
 		// set switch time
@@ -552,6 +534,18 @@ public class OperationsSetupFrame extends OperationsFrame implements
 		if (meterUnit.isSelected())
 			Setup.setLengthUnit(Setup.METER);
 		Setup.setYearModeled(yearTextField.getText());
+		// warn about train length being too short
+		if (maxTrainLength != Setup.getTrainLength()) {
+			if (maxTrainLength < 500 && Setup.getLengthUnit().equals(Setup.FEET) || maxTrainLength < 160
+					&& Setup.getLengthUnit().equals(Setup.METER)) {
+				JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle
+						.getMessage("LimitTrainLength"), new Object[] { maxTrainLength,
+						Setup.getLengthUnit().toLowerCase() }), Bundle.getMessage("WarningTooShort"),
+						JOptionPane.WARNING_MESSAGE);
+			}
+		}
+		// set max train length
+		Setup.setTrainLength(Integer.parseInt(maxLengthTextField.getText()));
 		OperationsSetupXml.instance().writeOperationsFile();
 		if (Setup.isCloseWindowOnSaveEnabled())
 			dispose();

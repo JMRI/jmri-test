@@ -9,10 +9,9 @@ import java.awt.Component;
 import java.awt.event.*;
 import java.beans.PropertyChangeListener;
 import java.util.Vector;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+import java.util.ArrayList;
+import javax.swing.*;
 import javax.swing.text.Document;
-
 
 /**
  * Extends VariableValue to represent a indexed variable
@@ -26,6 +25,7 @@ import javax.swing.text.Document;
  * Value to put in text field = ((value in High CV) * Factor) + Low CV
  *
  * @author   Howard G. Penny  Copyright (C) 2005
+ * @author   Bob Jacobsen  Copyright (C) 2013
  * @version  $Revision$
  *
  */
@@ -36,15 +36,20 @@ public class IndexedPairVariableValue extends VariableValue
                                      boolean readOnly, boolean infoOnly, boolean writeOnly, boolean opsOnly,
                                      int cvNum, String mask, int minVal, int maxVal,
                                      Vector<CvValue> v, JLabel status, String stdname,
-                                     int secondCVrow, String pSecondCV, int pFactor, int pOffset, String uppermask) {
+                                     int secondCVrow, String pSecondCV, int pFactor, int pOffset, String uppermask,
+                                     boolean upperFirst) {
         super(name, comment, cvName, readOnly, infoOnly, writeOnly, opsOnly, cvNum, mask, v, status, stdname);
         _row    = row;
         _secondCVrow = secondCVrow;
         _maxVal = maxVal;
         _minVal = minVal;
-        _value = new JTextField("0",3);
+        int len = 4;
+        if (maxVal>999) len = 5;
+        if (maxVal>9999) len = 6;
+        _value = new JTextField("0",len);
         _defaultColor = _value.getBackground();
         _value.setBackground(COLOR_UNKNOWN);
+        _upperFirst = upperFirst;
         mFactor = pFactor;
         mOffset = pOffset;
         if (log.isDebugEnabled()) log.debug("CV "+getCvNum()+","+getSecondCvNum()+" mfactor "+mFactor+" and mOffset="+mOffset);
@@ -111,6 +116,8 @@ public class IndexedPairVariableValue extends VariableValue
     int _maxVal;
     int _minVal;
 
+    boolean _upperFirst;
+    
     public Object rangeVal() {
         return "Split value";
     }
@@ -214,6 +221,8 @@ public class IndexedPairVariableValue extends VariableValue
             return _value;
     }
 
+    ArrayList<IndexedPairVarSlider> sliders = new ArrayList<IndexedPairVarSlider>();
+
     public void setValue(int value) {
         if (log.isDebugEnabled()) log.debug("CV "+getCvNum()+","+getSecondCvNum()+" enter setValue "+value);
         int oldVal;
@@ -231,33 +240,60 @@ public class IndexedPairVariableValue extends VariableValue
     Color _defaultColor;
 
     // implement an abstract member to set colors
+    Color getColor() { return _value.getBackground(); }
     void setColor(Color c) {
         if (c != null) _value.setBackground(c);
         else _value.setBackground(_defaultColor);
     }
 
     public Component getNewRep(String format)  {
-        JTextField value = new VarTextField(_value.getDocument(),_value.getText(), 3, this);
-        if (getReadOnly() || getInfoOnly()) {
-            value.setEditable(false);
+        if (format.equals("vslider")) {
+            IndexedPairVarSlider b = new IndexedPairVarSlider(this, _minVal, _maxVal);
+            b.setOrientation(JSlider.VERTICAL);
+            sliders.add(b);
+            reps.add(b);
+            updateRepresentation(b);
+            return b;
         }
-        reps.add(value);
-        updateRepresentation(value);
-        return value;
+        else if (format.equals("hslider")) {
+            IndexedPairVarSlider b = new IndexedPairVarSlider(this, _minVal, _maxVal);
+            b.setOrientation(JSlider.HORIZONTAL);
+            sliders.add(b);
+            reps.add(b);
+            updateRepresentation(b);
+            return b;
+        }
+        else {
+            JTextField value = new VarTextField(_value.getDocument(),_value.getText(), 3, this);
+            if (getReadOnly() || getInfoOnly()) {
+                value.setEditable(false);
+            }
+            reps.add(value);
+            updateRepresentation(value);
+            return value;
+        }
     }
 
     public void setAvailable(boolean a) {
         _value.setVisible(a);
+        for (Component c : sliders) c.setVisible(a);
         for (Component c : reps) c.setVisible(a);
         super.setAvailable(a);
     }
 
-    java.util.List<Component> reps = new java.util.ArrayList<Component>();
+    ArrayList<Component> reps = new ArrayList<Component>();
 
     private int _progState = 0;
+    
+    // if true, we're read/writing/confirming the low CV
     private boolean programmingLow = true;
+    
+    // these mark which operations are needed
+    private boolean doLow = false;
+    private boolean doHigh = false;
+    
     private static final int IDLE = 0;
-    private static final int WRITING_PI4R = 1;
+    private static final int WRITING_PI4R = 1;  // R, W, C suffix is Read, Write, Confirm
     private static final int WRITING_PI4W = 2;
     private static final int WRITING_SI4R = 3;
     private static final int WRITING_SI4W = 4;
@@ -320,6 +356,19 @@ public class IndexedPairVariableValue extends VariableValue
     }
 
     public void readAll() {
+        if (_upperFirst) {
+            programmingLow = false;
+            doLow = true;
+            doHigh = false;
+        } else {
+            programmingLow = true;
+            doLow = false;
+            doHigh = true;
+        }
+        doRead();
+    }
+    
+    public void doRead() {
         setBusy(true);  // will be reset when value changes
         setToRead(false);
         if (_progState != IDLE) log.warn("Programming state "+_progState+", not IDLE, in read()");
@@ -340,6 +389,20 @@ public class IndexedPairVariableValue extends VariableValue
         if (getReadOnly()) {
             log.error("unexpected write operation when readOnly is set");
         }
+
+        if (_upperFirst) {
+            programmingLow = false;
+            doLow = true;
+            doHigh = false;
+        } else {
+            programmingLow = true;
+            doLow = false;
+            doHigh = true;
+        }
+        doWrite();
+    }
+    
+    public void doWrite() {
         setBusy(true);  // will be reset when value changes
         setToWrite(false);
         if (_progState != IDLE) log.warn("Programming state "+_progState+", not IDLE, in write()");
@@ -350,12 +413,22 @@ public class IndexedPairVariableValue extends VariableValue
             _progState = WRITING_SI4W;
         }
         retries = 0;
-        if (log.isDebugEnabled()) log.debug("invoke PI write for CV write");
+        if (log.isDebugEnabled()) log.debug("invoke PI write for CV write "+programmingLow+" "+_progState);
         // to write any indexed CV we must write the PI
         (_cvVector.elementAt(programmingLow ? _row : _secondCVrow)).writePI(_status);
     }
     
     public void confirmAll() {
+        if (_upperFirst) {
+            programmingLow = false;
+            doLow = true;
+            doHigh = false;
+        } else {
+            programmingLow = true;
+            doLow = false;
+            doHigh = true;
+        }
+
         setBusy(true);  // will be reset when value changes
         setToRead(false);
         if (_progState != IDLE) log.warn("Programming state "+_progState+", not IDLE, in confirm()");
@@ -452,9 +525,14 @@ public class IndexedPairVariableValue extends VariableValue
                     retries = 0;
                     
                     _progState = IDLE;
-                    if (programmingLow) {
+                    if (doHigh) {
+                        doHigh = false;
                         programmingLow = false;
-                        readAll();
+                        doRead();
+                    } else if (doLow) {
+                        doLow = false;
+                        programmingLow = true;
+                        doRead();
                     } else {
                         programmingLow = true;
                         setBusy(false);
@@ -491,11 +569,15 @@ public class IndexedPairVariableValue extends VariableValue
                     retries = 0;
                     
                     _progState = IDLE;
-                    if (programmingLow) {
+                    if (doHigh) {
+                        doHigh = false;
                         programmingLow = false;
-                        writeAll();
-                    } else {
+                        doWrite();
+                    } else if (doLow) {
+                        doLow = false;
                         programmingLow = true;
+                        doWrite();
+                    } else {
                         super.setState(STORED);
                         setBusy(false);
                     }

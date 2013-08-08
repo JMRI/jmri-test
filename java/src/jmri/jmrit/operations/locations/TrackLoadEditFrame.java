@@ -261,9 +261,7 @@ public class TrackLoadEditFrame extends OperationsFrame implements java.beans.Pr
 		loadAndTypeCheckBox.setSelected(loadAndType);
 		shipLoadAndTypeCheckBox.setSelected(shipLoadAndType);
 		
-		setMinimumSize(new Dimension(500, Control.panelHeight));
-		pack();
-		setVisible(true);
+		super.initComponents();
 	}
 
 	// Save, Delete, Add
@@ -332,8 +330,8 @@ public class TrackLoadEditFrame extends OperationsFrame implements java.beans.Pr
 		loadAndTypeCheckBox.setEnabled(enabled);
 		
 		boolean en = enabled && (_track.isAddCustomLoadsAnyStagingTrackEnabled()
-				|| _track.isAddLoadsAnySpurEnabled()
-				|| _track.isAddLoadsEnabled());
+				|| _track.isAddCustomLoadsAnySpurEnabled()
+				|| _track.isAddCustomLoadsEnabled());
 		
 		shipLoadNameAll.setEnabled(en);
 		shipLoadNameInclude.setEnabled(en);

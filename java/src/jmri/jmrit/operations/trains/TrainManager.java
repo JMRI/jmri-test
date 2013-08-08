@@ -4,6 +4,8 @@ package jmri.jmrit.operations.trains;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -27,7 +29,7 @@ import jmri.jmrit.operations.setup.Setup;
  * Manages trains.
  * 
  * @author Bob Jacobsen Copyright (C) 2003
- * @author Daniel Boudreau Copyright (C) 2008, 2009, 2010, 2011, 2012
+ * @author Daniel Boudreau Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013
  * @version $Revision$
  */
 public class TrainManager implements java.beans.PropertyChangeListener {
@@ -385,12 +387,14 @@ public class TrainManager implements java.beans.PropertyChangeListener {
 	 * @param car
 	 * @return Train that can service car from its current location to the its destination.
 	 */
-	public Train getTrainForCar(Car car) {
+	public Train getTrainForCar(Car car, PrintWriter buildReport) {
 		List<String> trains = getTrainsByIdList();
 		for (int i = 0; i < trains.size(); i++) {
 			Train train = getTrainById(trains.get(i));
+			if (Setup.isOnlyActiveTrainsEnabled() && !train.isBuildEnabled())
+				continue;
 			// does this train service this car?
-			if (train.servicesCar(car))
+			if (train.services(buildReport, car))
 				return train;
 		}
 		return null;
@@ -585,7 +589,7 @@ public class TrainManager implements java.beans.PropertyChangeListener {
 		List<String> trains = getTrainsByNameList();
 		for (int i = 0; i < trains.size(); i++) {
 			Train train = getTrainById(trains.get(i));
-			if (train.servicesCar(car))
+			if (train.services(car))
 				box.addItem(train);
 		}
 	}
@@ -750,22 +754,37 @@ public class TrainManager implements java.beans.PropertyChangeListener {
 	}
 	
 	/**
-	 * Sets the flag that all of the build trains have updated switch lists 
+	 * Sets the switch list status for all built trains.  Used for
+	 * switch lists in consolidated mode.
 	 */
-	public void setTrainsPrintedSwitchLists() {
+	public void setTrainsSwitchListStatus(String status) {
 		List<String> trains = getTrainsByTimeList();
 		for (int i = 0; i < trains.size(); i++) {
 			Train train = getTrainById(trains.get(i));
 			if (!train.isBuilt())
-				continue; // train wasn't built so skip
-			train.setSwitchListStatus(Train.PRINTED);
+				continue; // train isn't built so skip
+			train.setSwitchListStatus(status);
+		}
+	}
+	
+	/**
+	 * Sets all built trains manifests to modified.  This causes the
+	 * train's manifest to be recreated.
+	 */
+	public void setTrainsModified() {
+		List<String> trains = getTrainsByTimeList();
+		for (int i = 0; i < trains.size(); i++) {
+			Train train = getTrainById(trains.get(i));
+			if (!train.isBuilt() || train.isTrainInRoute())
+				continue; // train wasn't built or in route, so skip
+			train.setModified(true);
 		}
 	}
 	
 	public void load(Element root) {
 		if (root.getChild(Xml.OPTIONS) != null) {
 			Element options = root.getChild(Xml.OPTIONS);
-			CustomManifest.load(options);
+			TrainCustomManifest.load(options);
 			Element e = options.getChild(Xml.TRAIN_OPTIONS);
 			Attribute a;
 			if (e != null) {
@@ -881,7 +900,7 @@ public class TrainManager implements java.beans.PropertyChangeListener {
 			options.addContent(es);
 		}
 		
-		CustomManifest.store(options);	// save custom manifest elements
+		TrainCustomManifest.store(options);	// save custom manifest elements
 		
 		root.addContent(options);
 

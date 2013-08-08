@@ -7,14 +7,13 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
 import jmri.InstanceManager;
 import jmri.ShutDownTask;
 import jmri.implementation.QuietShutDownTask;
+import static jmri.jmris.json.JSON.JSON;
+import static jmri.jmris.json.JSON.JSON_PROTOCOL_VERSION;
 import jmri.util.FileUtil;
 import jmri.util.zeroconf.ZeroConfService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
@@ -23,7 +22,9 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.component.LifeCycle;
-import org.eclipse.jetty.util.thread.ExecutorThreadPool;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An HTTP server that handles requests for HTTPServlets.
@@ -65,7 +66,10 @@ public final class WebServer implements LifeCycle.Listener {
             connector.setMaxIdleTime(5 * 60 * 1000); // 5 minutes
             connector.setSoLingerTime(-1);
             connector.setPort(preferences.getPort());
-            connector.setThreadPool(new ExecutorThreadPool(10, 1000, 10, TimeUnit.SECONDS));
+            QueuedThreadPool threadPool = new QueuedThreadPool();
+            threadPool.setName("WebServer");
+            threadPool.setMaxThreads(1000);
+            server.setThreadPool(threadPool);
             server.setConnectors(new Connector[]{connector});
 
             ContextHandlerCollection contexts = new ContextHandlerCollection();
@@ -164,13 +168,11 @@ public final class WebServer implements LifeCycle.Listener {
 
     @Override
     public void lifeCycleStarted(LifeCycle lc) {
-        zeroConfService = ZeroConfService.create("_http._tcp.local.", preferences.getPort(), new HashMap<String, String>() { // NOI18N
-            {
-                put("path", "/index.html"); // NOI18N
-            }
-        });
+        HashMap<String, String> properties = new HashMap<String, String>();
+        properties.put("path", "/index.html"); // NOI18N
+        properties.put(JSON, JSON_PROTOCOL_VERSION);
+        zeroConfService = ZeroConfService.create("_http._tcp.local.", preferences.getPort(), properties); // NOI18N
         zeroConfService.publish();
-
         log.info("Starting ZeroConfService _http._tcp.local for Web Server");
         log.debug("Web Server finished starting");
     }

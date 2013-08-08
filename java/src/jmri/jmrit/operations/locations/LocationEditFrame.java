@@ -77,10 +77,10 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
     JRadioButton spurRadioButton = new JRadioButton(Bundle.getMessage("Spurs"));
         
 	// text field
-	JTextField locationNameTextField = new JTextField(20);
+	JTextField locationNameTextField = new JTextField(Control.max_len_string_location_name);
 	
 	// text area
-	JTextArea commentTextArea	= new JTextArea(2,80);
+	JTextArea commentTextArea	= new JTextArea(2,60);
 	JScrollPane commentScroller = new JScrollPane(commentTextArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	Dimension minScrollerDim = new Dimension(800,42);
 	
@@ -276,11 +276,7 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 		addHelpMenu("package.jmri.jmrit.operations.Operations_Locations", true);	// NOI18N
 
 		pack();
-		if (getWidth()<750)
-			setSize(750, getHeight());
-		if (getHeight()<Control.panelHeight)
-			setSize(getWidth(), Control.panelHeight);
-		setMinimumSize(new Dimension(750, Control.panelHeight));
+		setMinimumSize(new Dimension(Control.minPanelWidth, Control.panelHeight));
 		setVisible(true);
 		
         // create ShutDownTasks

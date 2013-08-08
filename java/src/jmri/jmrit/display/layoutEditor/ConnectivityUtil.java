@@ -242,6 +242,7 @@ public class ConnectivityUtil
                             }
                             else {
                                 log.error("Cannot determine turnout setting for "+ltx.getTurnoutName());
+                                log.error("lb " + lb + " nlb " + nlb + " connect B " + ((TrackSegment)ltx.getConnectB()).getLayoutBlock() + " connect C " + ((TrackSegment)ltx.getConnectC()).getLayoutBlock());
                                 companion.add(Integer.valueOf(Turnout.CLOSED));
                             }
                             break;
@@ -462,7 +463,7 @@ public class ConnectivityUtil
 					// end of line
 					tr = null;
 				}
-				else if (((PositionablePoint)cObject).getType() == PositionablePoint.ANCHOR) {
+				else if (((PositionablePoint)cObject).getType() == PositionablePoint.ANCHOR || (((PositionablePoint)cObject).getType() == PositionablePoint.EDGE_CONNECTOR)) {
 					// proceed to next track segment if within the same Block
 					if (((PositionablePoint)cObject).getConnect1() == tr) {
 						tr = ((PositionablePoint)cObject).getConnect2();
@@ -2353,7 +2354,7 @@ public class ConnectivityUtil
 						// end of line without reaching 'nlb'
 						curTS = null;					
 					}
-					else if (((PositionablePoint)conObj).getType() == PositionablePoint.ANCHOR) {
+					else if (((PositionablePoint)conObj).getType() == PositionablePoint.ANCHOR || ((PositionablePoint)conObj).getType() == PositionablePoint.EDGE_CONNECTOR ) {
 						// proceed to next track segment if within the same Block
 						if (((PositionablePoint)conObj).getConnect1() == curTS) {
 							curTS = (((PositionablePoint)conObj).getConnect2());

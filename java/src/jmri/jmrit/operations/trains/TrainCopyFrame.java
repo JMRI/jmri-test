@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import jmri.jmrit.operations.OperationsFrame;
 import jmri.jmrit.operations.setup.Control;
 
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.text.MessageFormat;
 import javax.swing.BoxLayout;
@@ -29,7 +30,7 @@ public class TrainCopyFrame extends OperationsFrame {
 	javax.swing.JLabel textTrainName = new javax.swing.JLabel(Bundle.getMessage("Name"));
 
 	// text field
-	javax.swing.JTextField trainNameTextField = new javax.swing.JTextField(20);
+	javax.swing.JTextField trainNameTextField = new javax.swing.JTextField(Control.max_len_string_train_name);
 
 	// major buttons
 	javax.swing.JButton copyButton = new javax.swing.JButton(Bundle.getMessage("Copy"));
@@ -64,10 +65,7 @@ public class TrainCopyFrame extends OperationsFrame {
 		addHelpMenu("package.jmri.jmrit.operations.Operations_Trains", true); // NOI18N
 
 		pack();
-		if (getWidth() < 400)
-			setSize(400, getHeight());
-		if (getHeight() < 150)
-			setSize(getWidth(), 150);
+		setMinimumSize(new Dimension(Control.mediumPanelWidth, Control.smallPanelHeight));
 		
 		setTitle(Bundle.getMessage("TitleTrainCopy"));
 
@@ -105,8 +103,6 @@ public class TrainCopyFrame extends OperationsFrame {
 
 			TrainEditFrame f = new TrainEditFrame();
 			f.initComponents(newTrain);
-			f.setTitle(Bundle.getMessage("TitleTrainEdit"));
-			f.setVisible(true);
 		}
 	}
 

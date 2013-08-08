@@ -72,7 +72,6 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 			LocationManager.instance().newLocation("Test_Location " + i);
 
 		TrainsTableFrame f = new TrainsTableFrame();
-		f.setVisible(true);
 		f.setLocation(10, 20);
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.saveButton));
 
@@ -145,8 +144,8 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		e4.setModel("FT");
 
 		TrainEditFrame trainEditFrame = new TrainEditFrame();
-		trainEditFrame.setTitle("Test Edit Train Frame");
 		trainEditFrame.initComponents(null);
+		trainEditFrame.setTitle("Test Edit Train Frame");
 		// fill in name and description fields
 		trainEditFrame.trainNameTextField.setText("Test Train Name");
 		trainEditFrame.trainDescriptionTextField.setText("Test Train Description");
@@ -275,9 +274,9 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		t.setRoute(route);
 
 		TrainEditFrame trainEditFrame = new TrainEditFrame();
-		trainEditFrame.setTitle("Test Build Options Train Frame");
 		trainEditFrame.setLocation(0, 0); // entire panel must be visible for tests to work properly
 		trainEditFrame.initComponents(t);
+		trainEditFrame.setTitle("Test Build Options Train Frame");
 
 		TrainEditBuildOptionsFrame f = new TrainEditBuildOptionsFrame();
 		f.setLocation(0, 0); // entire panel must be visible for tests to work properly
@@ -337,17 +336,6 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		Assert.assertEquals("return to staging", false, t.isAllowReturnToStagingEnabled());
 		Assert.assertEquals("allow local moves", false, t.isAllowLocalMovesEnabled());
 		Assert.assertEquals("allow through cars", false, t.isAllowThroughCarsEnabled());
-
-		// test car road options
-		getHelper().enterClickAndLeave(new MouseEventData(this, f.roadNameExclude));
-		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
-		Assert.assertEquals("train car road exclude", Train.EXCLUDEROADS, t.getRoadOption());
-		getHelper().enterClickAndLeave(new MouseEventData(this, f.roadNameInclude));
-		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
-		Assert.assertEquals("train car road include", Train.INCLUDEROADS, t.getRoadOption());
-		getHelper().enterClickAndLeave(new MouseEventData(this, f.roadNameAll));
-		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
-		Assert.assertEquals("train car road all", Train.ALLROADS, t.getRoadOption());
 
 		// test car owner options
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.ownerNameExclude));
@@ -525,8 +513,8 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		t.setCabooseRoad("CP");
 
 		TrainEditFrame f = new TrainEditFrame();
-		f.setTitle("Test Edit Train Frame");
 		f.initComponents(t);
+		f.setTitle("Test Edit Train Frame");
 
 		Assert.assertEquals("train name", "Test Train Name", f.trainNameTextField.getText());
 		Assert.assertEquals("train description", "Test Train Description", f.trainDescriptionTextField
@@ -638,8 +626,8 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		Train t = tmanager.getTrainByName("Test Train Name");
 
 		TrainEditFrame trainEditFrame = new TrainEditFrame();
-		trainEditFrame.setTitle("Test Delete Train Frame");
 		trainEditFrame.initComponents(t);
+		trainEditFrame.setTitle("Test Delete Train Frame");
 
 		getHelper().enterClickAndLeave(new MouseEventData(this, trainEditFrame.deleteTrainButton));
 		// And now press the confirmation button

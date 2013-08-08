@@ -233,10 +233,10 @@ public class PrintLocationsAction extends AbstractAction {
 								+ Bundle.getMessage("ScheduleMode") + ": " + mode  + NEW_LINE;
 						writer.write(s);
 						// show alternate track if there's one
-						if (spur.getAlternativeTrack() != null) {
+						if (spur.getAlternateTrack() != null) {
 							s = padOutString("", MAX_NAME_LENGTH)+ SPACE
 									+ MessageFormat.format(Bundle.getMessage("AlternateTrackName"), new Object[] { spur
-											.getAlternativeTrack().getName() }) + NEW_LINE;
+											.getAlternateTrack().getName() }) + NEW_LINE;
 							writer.write(s);
 						}
 						// show custom loads from staging if not 100%
@@ -320,9 +320,9 @@ public class PrintLocationsAction extends AbstractAction {
 			int totalTrackLength = 0;
 			for (int j = 0; j < cars.size(); j++) {
 				Car car = carManager.getById(cars.get(j));
-				if (car.getType().equals(type) && car.getLocation() != null) {
+				if (car.getTypeName().equals(type) && car.getLocation() != null) {
 					numberOfCars++;
-					totalTrackLength = totalTrackLength + Integer.parseInt(car.getLength()) + Car.COUPLER;
+					totalTrackLength = totalTrackLength + car.getTotalLength();
 				}
 			}
 			writer.write(MessageFormat.format(Bundle.getMessage("NumberTypeLength"), new Object[] {
@@ -725,11 +725,11 @@ public class PrintLocationsAction extends AbstractAction {
 				+ TAB
 				+ MessageFormat.format(Bundle.getMessage("TrackScheduleName"), new Object[] { track
 						.getScheduleName() }) + NEW_LINE);
-		if (track.getAlternativeTrack() != null)
+		if (track.getAlternateTrack() != null)
 			buf.append(TAB
 					+ TAB
 					+ MessageFormat.format(Bundle.getMessage("AlternateTrackName"), new Object[] { track
-							.getAlternativeTrack().getName() }) + NEW_LINE);
+							.getAlternateTrack().getName() }) + NEW_LINE);
 		if (track.getReservationFactor() != 100)
 			buf.append(TAB
 					+ TAB

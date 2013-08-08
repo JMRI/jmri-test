@@ -14,9 +14,18 @@ $(document).ready(function() {
             jmri.getPower();
         },
         console: function(data) {
-            var console = $('#console');
-            console.append(data + '<br/>');
-            console.scrollTop(console[0].scrollHeight - console.height());
+            if (data !== '{"type":"pong"}') {
+                var console = $('#console');
+                console.append(data + '<br/>');
+                console.scrollTop(console[0].scrollHeight - console.height());
+            } else {
+                $('#powerImg').addClass('animated pulse');
+                var wait = window.setTimeout(function() {
+                    $('#powerImg').removeClass('animated pulse');
+                },
+                        1300
+                        );
+            }
         },
         power: function(state) {
             power = state;
@@ -36,6 +45,12 @@ $(document).ready(function() {
     $('input#sendCmd').click(function() {
         jmri.socket._send($('input#command').val());
         return false;
+    });
+    $('input#command').keypress(function(e) {
+        if (e.which === 13) {
+            jmri.socket._send($('input#command').val());
+            return false;
+        }
     });
     $('#footer-menu>li+li+li').before("<li><a href='/help/en/html/web/JsonServlet.shtml'>Json Servlet Help</a></li>");
 });

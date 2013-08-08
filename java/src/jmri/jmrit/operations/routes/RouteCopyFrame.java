@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import jmri.jmrit.operations.OperationsFrame;
 import jmri.jmrit.operations.setup.Control;
 
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.text.MessageFormat;
 
@@ -30,7 +31,7 @@ public class RouteCopyFrame extends OperationsFrame {
 	javax.swing.JLabel textRouteName = new javax.swing.JLabel(Bundle.getMessage("RouteName"));
 
 	// text field
-	javax.swing.JTextField routeNameTextField = new javax.swing.JTextField(20);
+	javax.swing.JTextField routeNameTextField = new javax.swing.JTextField(Control.max_len_string_route_name);
 
 	// check boxes
 	javax.swing.JCheckBox invertCheckBox = new javax.swing.JCheckBox(Bundle.getMessage("Invert"));
@@ -70,10 +71,7 @@ public class RouteCopyFrame extends OperationsFrame {
 		addHelpMenu("package.jmri.jmrit.operations.Operations_CopyRoute", true); // NOI18N
 
 		pack();
-		if (getWidth() < 400)
-			setSize(400, getHeight());
-		if (getHeight() < 150)
-			setSize(getWidth(), 150);
+		setMinimumSize(new Dimension(Control.mediumPanelWidth, Control.smallPanelHeight));
 
 		// setup buttons
 		addButtonAction(copyButton);
@@ -110,8 +108,6 @@ public class RouteCopyFrame extends OperationsFrame {
 
 			RouteEditFrame f = new RouteEditFrame();
 			f.initComponents(newRoute);
-			f.setTitle(Bundle.getMessage("TitleRouteEdit"));
-			f.setVisible(true);
 		}
 	}
 

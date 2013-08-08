@@ -16,6 +16,9 @@ import javax.swing.JTextField;
 import java.util.ResourceBundle;
 import jmri.util.table.ButtonEditor;
 import jmri.util.table.ButtonRenderer;
+import jmri.util.JmriJFrame;
+import java.awt.Container;
+import java.awt.Color;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -43,8 +46,6 @@ public class AddEntryExitPairPanel extends jmri.util.swing.JmriPanel{
     JComboBox fromPoint = new JComboBox();
     JComboBox toPoint = new JComboBox();
     
-    String [] clearOptions = {"Prompt User", "Clear Route", "Cancel Route"};
-    JComboBox clearEntry = new JComboBox(clearOptions);
     String [] interlockTypes = {"Set Turnouts Only", "Set Turnouts and SignalMasts", "Full Interlock"};
     JComboBox typeBox = new JComboBox(interlockTypes);
     
@@ -90,20 +91,8 @@ public class AddEntryExitPairPanel extends jmri.util.swing.JmriPanel{
         top.add(typeBox);
         add(top);
 
-        clearEntry.setSelectedIndex(nxPairs.getClearDownOption());
-        ActionListener clearEntryListener = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                nxPairs.setClearDownOption(clearEntry.getSelectedIndex());
-            }
-        };
-        
-        top.add(new JLabel(""));
-        top.add(new JLabel(""));
-        clearEntry.addActionListener(clearEntryListener);
-        clearEntry.setToolTipText("set the action for when the NX buttons are reselected");
-        top.add(new JLabel("ReSelection Action"));
-        top.add(clearEntry);
-        add(top);
+
+        //add(top);
         
         JPanel p=new JPanel();
         JButton ok = new JButton(rb.getString("Add"));
@@ -155,10 +144,10 @@ public class AddEntryExitPairPanel extends jmri.util.swing.JmriPanel{
     JLabel sourceLabel = new JLabel();
     
     private void autoDiscovery(){
-        if (!InstanceManager.layoutBlockManagerInstance().isAdvancedRoutingEnabled()){
+        if (!InstanceManager.getDefault(jmri.jmrit.display.layoutEditor.LayoutBlockManager.class).isAdvancedRoutingEnabled()){
             int response = JOptionPane.showConfirmDialog(null, rb.getString("EnableLayoutBlockRouting"));
             if (response == 0){
-                InstanceManager.layoutBlockManagerInstance().enableAdvancedRouting(true);
+                InstanceManager.getDefault(jmri.jmrit.display.layoutEditor.LayoutBlockManager.class).enableAdvancedRouting(true);
                 JOptionPane.showMessageDialog(null, rb.getString("LayoutBlockRoutingEnabled"));
             }
         }
@@ -196,7 +185,6 @@ public class AddEntryExitPairPanel extends jmri.util.swing.JmriPanel{
                 nxPairs.addPropertyChangeListener(propertyNXListener);
                 nxPairs.automaticallyDiscoverEntryExitPairs(panels.get(selectPanel.getSelectedIndex()), typeBox.getSelectedIndex());
             } catch (jmri.JmriException e){
-                log.info("Exception here");
                 nxPairs.removePropertyChangeListener(propertyNXListener);
                 JOptionPane.showMessageDialog(null, e.toString());
                 entryExitFrame.setVisible(false);
@@ -546,6 +534,121 @@ public class AddEntryExitPairPanel extends jmri.util.swing.JmriPanel{
         String getDescription(){
             return description;
         }
+    }
+    
+    JmriJFrame optionsFrame = null;
+    Container optionsPane = null;
+    String [] clearOptions = {"Prompt User", "Clear Route", "Cancel Route"};
+    JComboBox clearEntry = new JComboBox(clearOptions);
+    JTextField durationSetting = new JTextField(10);
+    String[] colorText = {"None", "Black","DarkGray","Gray", 
+			"LightGray","White","Red","Pink","Orange",
+			"Yellow","Green","Blue","Magenta","Cyan"};
+	Color[] colorCode = {null, Color.black,Color.darkGray,Color.gray,
+			Color.lightGray,Color.white,Color.red,Color.pink,Color.orange,
+			Color.yellow,Color.green,Color.blue,Color.magenta,Color.cyan};
+	int numColors = 14;  // number of entries in the above arrays
+    JCheckBox dispatcherUse = new JCheckBox(Bundle.getMessage("DispatcherInt"));
+    
+    JComboBox settingTrackColorBox = new JComboBox();
+    
+    private void initializeColorCombo(JComboBox colorCombo) {
+		colorCombo.removeAllItems();
+		for (int i = 0;i<numColors;i++) {
+			colorCombo.addItem( rb.getString(colorText[i]) );
+		}
+	}
+	private void setColorCombo(JComboBox colorCombo,Color color) {
+		for (int i = 0;i<numColors;i++) {
+			if (color==colorCode[i]) {
+				colorCombo.setSelectedIndex(i);
+				return;
+			}
+		}
+	}
+	private Color getSelectedColor(JComboBox colorCombo) {
+		return (colorCode[colorCombo.getSelectedIndex()]);
+	}
+	
+	/**
+	 * Utility methods for converting between string and color
+	 * Note: These names are only used internally, so don't need a resource bundle
+	 */
+    
+    protected void optionWindow(ActionEvent e){
+        if(optionsFrame==null){
+            optionsFrame = new JmriJFrame(Bundle.getMessage("OptionsTitle"),false,true);
+            //optionsFrame.addHelpMenu("package.jmri.jmrit.dispatcher.Options", true);
+            optionsPane = optionsFrame.getContentPane();
+            optionsPane.setLayout(new BoxLayout(optionsFrame.getContentPane(), BoxLayout.Y_AXIS));
+            clearEntry.setSelectedIndex(nxPairs.getClearDownOption());
+            JPanel p1 = new JPanel();
+            //clearEntry.addActionListener(clearEntryListener);
+            clearEntry.setToolTipText("set the action for when the NX buttons are reselected");
+            p1.add(new JLabel(Bundle.getMessage("Reselection")));
+            p1.add(clearEntry);
+            optionsPane.add(p1);
+            JPanel p2 = new JPanel();
+            initializeColorCombo(settingTrackColorBox);
+            setColorCombo(settingTrackColorBox,nxPairs.getSettingRouteColor());
+            ActionListener settingTrackColorListener = new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    
+                    if(getSelectedColor(settingTrackColorBox)!=null){
+                        durationSetting.setEnabled(true);
+                    } else {
+                        durationSetting.setEnabled(false);
+                    }
+                }
+            };
+            
+            settingTrackColorBox.addActionListener(settingTrackColorListener);
+            p2.add(new JLabel(Bundle.getMessage("RouteSetColour")));
+            p2.add(settingTrackColorBox);
+            optionsPane.add(p2);
+            durationSetting.setText(""+nxPairs.getSettingTimer());
+            if(nxPairs.useDifferentColorWhenSetting()){
+                durationSetting.setEnabled(true);
+            } else {
+                durationSetting.setEnabled(false);
+            }
+            JPanel p3 = new JPanel();
+            p3.add(new JLabel(Bundle.getMessage("SettingDuration")));
+            p3.add(durationSetting);
+            optionsPane.add(p3);
+
+            JPanel p4 = new JPanel();
+            p4.add(dispatcherUse);
+            dispatcherUse.setSelected(nxPairs.getDispatcherIntegration());
+            optionsPane.add(p4);
+            
+            JButton ok = new JButton(Bundle.getMessage("ButtonOkay"));
+            optionsPane.add(ok);
+            ok.addActionListener(
+            new ActionListener() {
+                public void actionPerformed(ActionEvent e){
+                    optionSaveButton();
+                }
+            });
+        }
+        optionsFrame.pack();
+        optionsFrame.setVisible(true);
+    }
+    
+    void optionSaveButton(){
+        int settingTimer = 2000;
+        try {
+            settingTimer = Integer.parseInt(durationSetting.getText());
+        } catch (Exception e){
+            JOptionPane.showMessageDialog(null, Bundle.getMessage("ValueBeNumber"));
+            return;
+        }
+        nxPairs.setSettingTimer(settingTimer);
+        nxPairs.setSettingRouteColor(getSelectedColor(settingTrackColorBox));
+        nxPairs.setClearDownOption(clearEntry.getSelectedIndex());
+        nxPairs.setDispatcherIntegration(dispatcherUse.isSelected());
+        optionsFrame.setVisible(false);
+    
     }
     
     static final Logger log = LoggerFactory.getLogger(AddEntryExitPairPanel.class.getName());

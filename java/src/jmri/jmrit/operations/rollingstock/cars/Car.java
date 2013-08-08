@@ -50,6 +50,8 @@ public class Car extends RollingStock {
 	public static final String FINAL_DESTINATION_CHANGED_PROPERTY = "Car final destination changed"; // NOI18N
 	public static final String FINAL_DESTINATION_TRACK_CHANGED_PROPERTY = "Car final destination track changed"; // NOI18N
 	public static final String RETURN_WHEN_EMPTY_CHANGED_PROPERTY = "Car return when empty changed"; // NOI18N
+	public static final String SCHEDULE_ID_CHANGED_PROPERTY = "car schedule id changed"; // NOI18N
+	public static final String KERNEL_NAME_CHANGED_PROPERTY = "kernel name changed"; // NOI18N
 
 	public Car() {
 
@@ -59,6 +61,19 @@ public class Car extends RollingStock {
 		super(road, number);
 		log.debug("New car " + road + " " + number);
 		addPropertyChangeListeners();
+	}
+	
+	public Car copy() {
+		Car car = new Car();
+		car.setBuilt(_built);
+		car.setColor(_color);
+		car.setLength(_length);
+		car.setLoadName(_load);
+		car.setNumber(_number);
+		car.setOwner(_owner);
+		car.setRoadName(_road);
+		car.setTypeName(_type);	
+		return car;
 	}
 
 	public void setHazardous(boolean hazardous) {
@@ -94,14 +109,14 @@ public class Car extends RollingStock {
 		return _fred;
 	}
 
-	public void setLoad(String load) {
+	public void setLoadName(String load) {
 		String old = _load;
 		_load = load;
 		if (!old.equals(load))
 			firePropertyChange(LOAD_CHANGED_PROPERTY, old, load);
 	}
 
-	public String getLoad() {
+	public String getLoadName() {
 		return _load;
 	}
 
@@ -113,11 +128,11 @@ public class Car extends RollingStock {
 	}
 
 	public String getPickupComment() {
-		return carLoads.getPickupComment(getType(), getLoad());
+		return carLoads.getPickupComment(getTypeName(), getLoadName());
 	}
 
 	public String getDropComment() {
-		return carLoads.getDropComment(getType(), getLoad());
+		return carLoads.getDropComment(getTypeName(), getLoadName());
 	}
 
 	public void setLoadGeneratedFromStaging(boolean fromStaging) {
@@ -133,21 +148,21 @@ public class Car extends RollingStock {
 		String old = _scheduleId;
 		_scheduleId = id;
 		if (!old.equals(id))
-			firePropertyChange("car schedule id changed", old, id); // NOI18N
+			firePropertyChange(SCHEDULE_ID_CHANGED_PROPERTY, old, id);
 	}
 
 	public String getScheduleId() {
 		return _scheduleId;
 	}
 
-	public void setNextLoad(String load) {
+	public void setNextLoadName(String load) {
 		String old = _nextLoad;
 		_nextLoad = load;
 		if (!old.equals(load))
 			firePropertyChange(LOAD_CHANGED_PROPERTY, old, load);
 	}
 
-	public String getNextLoad() {
+	public String getNextLoadName() {
 		return _nextLoad;
 	}
 
@@ -176,7 +191,7 @@ public class Car extends RollingStock {
 			weightTons = Integer.parseInt(getWeightTons());
 			// adjust for empty weight if car is empty, 1/3 of loaded weight
 			if (!isCaboose() && !isPassenger()
-					&& CarLoads.instance().getLoadType(getType(), getLoad()).equals(CarLoad.LOAD_TYPE_EMPTY))
+					&& CarLoads.instance().getLoadType(getTypeName(), getLoadName()).equals(CarLoad.LOAD_TYPE_EMPTY))
 				weightTons = weightTons / 3;
 		} catch (Exception e) {
 			log.debug("Car (" + toString() + ") weight not set");
@@ -392,7 +407,7 @@ public class Car extends RollingStock {
 			newName = _kernel.getName();
 		}
 		if (!old.equals(newName))
-			firePropertyChange("kernel name changed", old, newName); // NOI18N
+			firePropertyChange(KERNEL_NAME_CHANGED_PROPERTY, old, newName); // NOI18N
 	}
 
 	public Kernel getKernel() {
@@ -417,10 +432,10 @@ public class Car extends RollingStock {
 				c.setFinalDestination(getFinalDestination());
 				c.setFinalDestinationTrack(getFinalDestinationTrack());
 				c.setLoadGeneratedFromStaging(isLoadGeneratedFromStaging());
-				if (CarLoads.instance().containsName(c.getType(), getLoad()))
-					c.setLoad(getLoad());
-				if (CarLoads.instance().containsName(c.getType(), getNextLoad()))
-					c.setNextLoad(getNextLoad());
+				if (CarLoads.instance().containsName(c.getTypeName(), getLoadName()))
+					c.setLoadName(getLoadName());
+				if (CarLoads.instance().containsName(c.getTypeName(), getNextLoadName()))
+					c.setNextLoadName(getNextLoadName());
 			}
 		}
 	}
@@ -500,45 +515,46 @@ public class Car extends RollingStock {
 		setWait(getNextWait());
 		setNextWait(0);
 		if (destTrack != null && destTrack.getLocType().equals(Track.SPUR)) {
-			if (!getNextLoad().equals("")) {
-				setLoad(getNextLoad());
-				setNextLoad("");
+			if (!getNextLoadName().equals("")) {
+				setLoadName(getNextLoadName());
+				setNextLoadName("");
 				// is the next load default empty? Check for car return when empty
-				if (getLoad().equals(carLoads.getDefaultEmptyName()) && getFinalDestination() == null)
+				if (getLoadName().equals(carLoads.getDefaultEmptyName()) && getFinalDestination() == null)
 					setLoadEmpty();
 				return;
 			}
 			// if car doesn't have a schedule load, flip load status
-			if (getLoad().equals(carLoads.getDefaultEmptyName()))
-				setLoad(carLoads.getDefaultLoadName());
+			if (getLoadName().equals(carLoads.getDefaultEmptyName()))
+				setLoadName(carLoads.getDefaultLoadName());
 			else
 				setLoadEmpty();
 		}
 		// update load optionally when car reaches staging
 		if (destTrack != null && destTrack.getLocType().equals(Track.STAGING)) {
 			if (destTrack.isLoadSwapEnabled()) {
-				if (getLoad().equals(carLoads.getDefaultEmptyName())) {
-					setLoad(carLoads.getDefaultLoadName());
-				} else if (getLoad().equals(carLoads.getDefaultLoadName())) {
+				if (getLoadName().equals(carLoads.getDefaultEmptyName())) {
+					setLoadName(carLoads.getDefaultLoadName());
+				} else if (getLoadName().equals(carLoads.getDefaultLoadName())) {
 					setLoadEmpty();
 				}
 			}
-			if (destTrack.isSetLoadEmptyEnabled() && getLoad().equals(carLoads.getDefaultLoadName())) {
+			if (destTrack.isSetLoadEmptyEnabled() && getLoadName().equals(carLoads.getDefaultLoadName())) {
 				setLoadEmpty();
 			}
-			// empty car if it has a schedule load
-			if (destTrack.isRemoveLoadsEnabled() && !getLoad().equals(carLoads.getDefaultEmptyName())
-					&& !getLoad().equals(carLoads.getDefaultLoadName())) {
-				setLoadEmpty();
+			// empty car if it has a custom load
+			if (destTrack.isRemoveCustomLoadsEnabled() && !getLoadName().equals(carLoads.getDefaultEmptyName())
+					&& !getLoadName().equals(carLoads.getDefaultLoadName())) {
 				// remove this car's final destination if it has one
 				setFinalDestination(null);
 				setFinalDestinationTrack(null);
+				// note that RWE sets the car's final destination
+				setLoadEmpty();
 			}
 		}
 	}
 
 	private void setLoadEmpty() {
-		setLoad(carLoads.getDefaultEmptyName());
+		setLoadName(carLoads.getDefaultEmptyName());
 		if (getReturnWhenEmptyDestination() != null) {
 			setFinalDestination(getReturnWhenEmptyDestination());
 			if (getReturnWhenEmptyDestTrack() != null) {
@@ -549,15 +565,15 @@ public class Car extends RollingStock {
 		}
 	}
 
-	protected void reset() {
+	public void reset() {
 		setScheduleId(getPreviousScheduleId());	// revert to previous
-		setNextLoad("");
+		setNextLoadName("");
 		setNextWait(0);
 		setFinalDestination(getPreviousFinalDestination()); // revert to previous
 		setFinalDestinationTrack(getPreviousFinalDestinationTrack()); // revert to previous
 		if (isLoadGeneratedFromStaging()) {
 			setLoadGeneratedFromStaging(false);
-			setLoad(CarLoads.instance().getDefaultEmptyName());
+			setLoadName(CarLoads.instance().getDefaultEmptyName());
 		}
 
 		super.reset();
@@ -679,8 +695,8 @@ public class Car extends RollingStock {
 			if (getKernel().isLead(this))
 				e.setAttribute(Xml.LEAD_KERNEL, Xml.TRUE);
 		}
-		if (!getLoad().equals("")) {
-			e.setAttribute(Xml.LOAD, getLoad());
+		if (!getLoadName().equals("")) {
+			e.setAttribute(Xml.LOAD, getLoadName());
 		}
 		if (isLoadGeneratedFromStaging())
 			e.setAttribute(Xml.LOAD_FROM_STAGING, Xml.TRUE);
@@ -693,8 +709,8 @@ public class Car extends RollingStock {
 			e.setAttribute(Xml.SCHEDULE_ID, getScheduleId());
 		}
 
-		if (!getNextLoad().equals("")) {
-			e.setAttribute(Xml.NEXT_LOAD, getNextLoad());
+		if (!getNextLoadName().equals("")) {
+			e.setAttribute(Xml.NEXT_LOAD, getNextLoadName());
 		}
 
 		if (getNextWait() != 0) {
@@ -739,11 +755,11 @@ public class Car extends RollingStock {
 	public void propertyChange(PropertyChangeEvent e) {
 		super.propertyChange(e);
 		if (e.getPropertyName().equals(CarTypes.CARTYPES_NAME_CHANGED_PROPERTY)) {
-			if (e.getOldValue().equals(getType())) {
+			if (e.getOldValue().equals(getTypeName())) {
 				if (log.isDebugEnabled())
 					log.debug("Car (" + toString() + ") sees type name change old: " + e.getOldValue()
 							+ " new: " + e.getNewValue());	// NOI18N
-				setType((String) e.getNewValue());
+				setTypeName((String) e.getNewValue());
 			}
 		}
 		if (e.getPropertyName().equals(CarLengths.CARLENGTHS_NAME_CHANGED_PROPERTY)) {

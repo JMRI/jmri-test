@@ -44,7 +44,8 @@ import jmri.jmrit.display.PositionableLabel;
 import jmri.jmrit.display.LinkingLabel;
 
 /**
-*  ItemPanel for for plain icons and backgrounds 
+*  ItemPanel for for plain icons and backgrounds
+*  Does NOT use IconDialog class to add, replace or delete icons. 
 */
 public class IconItemPanel extends ItemPanel implements MouseListener {
 
@@ -238,7 +239,12 @@ public class IconItemPanel extends ItemPanel implements MouseListener {
     */
     protected void addNewIcon() {
         if (log.isDebugEnabled()) log.debug("addNewIcon Action: iconMap.size()= "+_iconMap.size());
-        String name = Bundle.getMessage("RedX");
+//        String name = Bundle.getMessage("RedX");
+        String name = JOptionPane.showInputDialog(this,
+    			Bundle.getMessage("NoIconName"), null);
+        if ( name==null || name.trim().length()==0) {
+        	return;
+        }
         if (_iconMap.get(name)!=null) {
             JOptionPane.showMessageDialog(this,
                     Bundle.getMessage("DuplicateIconName", name),

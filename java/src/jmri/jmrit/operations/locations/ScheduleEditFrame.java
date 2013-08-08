@@ -192,10 +192,9 @@ public class ScheduleEditFrame extends OperationsFrame implements java.beans.Pro
 		_track.addPropertyChangeListener(this);
 
 		// set frame size and schedule for display
-		pack();
-		if (getWidth() < Control.panelWidth)
-			setSize(Control.panelWidth, getHeight());
-		setVisible(true);
+		super.initComponents();
+		if (getWidth() < Control.widePanelWidth)
+			setSize(Control.widePanelWidth, getHeight());
 	}
 
 	// Save, Delete, Add

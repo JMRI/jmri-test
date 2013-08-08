@@ -38,6 +38,8 @@ import jmri.jmrit.operations.setup.Setup;
 import jmri.jmrit.operations.trains.Train;
 import jmri.jmrit.operations.trains.TrainCommon;
 import jmri.jmrit.operations.trains.TrainManager;
+import jmri.jmrit.operations.trains.TrainManifestText;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,8 +68,6 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 	// labels
 	protected JLabel textRailRoadName = new JLabel();
 	protected JLabel textTrainDescription = new JLabel();
-	protected JLabel textTrainRouteComment = new JLabel();
-	protected JLabel textTrainRouteLocationComment = new JLabel();
 	protected JLabel textLocationName = new JLabel();
 	protected JLabel textStatus = new JLabel();
 
@@ -80,6 +80,8 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 	// text panes
 	protected JTextPane textLocationComment = new JTextPane();
 	protected JTextPane textTrainComment = new JTextPane();
+	protected JTextPane textTrainRouteComment = new JTextPane();
+	protected JTextPane textTrainRouteLocationComment = new JTextPane();
 
 	// panels
 	protected JPanel pRailRoadName = new JPanel();
@@ -98,7 +100,7 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 	
 	protected JPanel pPickups = new JPanel();
 	protected JPanel pSetouts = new JPanel();
-	protected JPanel pWorkPanes = new JPanel();	// place car pick ups and set outs side by side
+	protected JPanel pWorkPanes = new JPanel();	// place car pick ups and set outs side by side using two columns
 	protected JPanel pMoves = new JPanel();
 	
 	protected JPanel pStatus = new JPanel();
@@ -175,17 +177,19 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 		// train route comment
 		pTrainRouteComment.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("RouteComment")));
 		pTrainRouteComment.add(textTrainRouteComment);
+		textTrainRouteComment.setBackground(null);
 
 		// train route location comment
 		pTrainRouteLocationComment.setBorder(BorderFactory.createTitledBorder(Bundle
 				.getMessage("RouteLocationComment")));
 		pTrainRouteLocationComment.add(textTrainRouteLocationComment);
+		textTrainRouteLocationComment.setBackground(null);
 
 		// row 12
 		pWorkPanes.setLayout(new BoxLayout(pWorkPanes, BoxLayout.X_AXIS));
 		pWorkPanes.add(pickupPane);
 		pWorkPanes.add(setoutPane);
-		pWorkPanes.setPreferredSize(new Dimension(600, 400));
+//		pWorkPanes.setPreferredSize(new Dimension(600, 400));
 
 		// row 13
 		pStatus.setLayout(new GridBagLayout());
@@ -204,7 +208,7 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 		addButtonAction(clearButton);
 		addButtonAction(setButton);
 
-		setMinimumSize(new Dimension(600, Control.panelHeight));
+		setMinimumSize(new Dimension(Control.minPanelWidth, Control.panelHeight));
 	}
 
 	// Select, Clear, and Set Buttons
@@ -228,10 +232,14 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 		pMoves.removeAll();
 
 		// turn everything off and re-enable if needed
+		pWorkPanes.setVisible(false);
 		pickupPane.setVisible(false);
 		setoutPane.setVisible(false);
 		locoPane.setVisible(false);
 		movePane.setVisible(false);
+		
+		pTrainRouteLocationComment.setVisible(false);
+		pLocationComment.setVisible(false);
 
 		setButtonText();
 	}
@@ -349,10 +357,11 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 					Car car = carManager.getById(carList.get(k));
 					// determine if car is a pick up from the right track
 					if (car.getTrack() != null
-							&& (!Setup.isSortByTrackEnabled() || car.getTrack().getName().equals(track.getName()))
+							&& (!Setup.isSortByTrackEnabled() || car.getTrackName().equals(track.getName()))
 							&& car.getRouteLocation() == rl && car.getRouteDestination() == rld
 							&& car.getRouteDestination() != rl) {
 						// yes we have a pick up
+						pWorkPanes.setVisible(true);
 						pickupPane.setVisible(true);
 						if (!rollingStock.contains(car)) {
 							rollingStock.add(car);
@@ -394,6 +403,8 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 								&& car.getDestinationTrack() != null
 								&& (!Setup.isSortByTrackEnabled() || car.getDestinationTrack().getName().equals(track.getName())) 
 								&& car.getRouteDestination() == rl)) {
+					// we have set outs
+					pWorkPanes.setVisible(true);
 					setoutPane.setVisible(true);
 					if (!rollingStock.contains(car)) {
 						rollingStock.add(car);
@@ -492,12 +503,12 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 	protected String getStatus(RouteLocation rl) {
 		if (Setup.isPrintLoadsAndEmptiesEnabled()) {
 			int emptyCars = _train.getNumberEmptyCarsInTrain(rl);
-			return MessageFormat.format(Bundle.getMessage("TrainDepartsLoads"), new Object[] {
+			return MessageFormat.format(TrainManifestText.getStringTrainDepartsLoads(), new Object[] {
 					TrainCommon.splitString(rl.getName()), rl.getTrainDirectionString(),
 					_train.getNumberCarsInTrain(rl) - emptyCars, emptyCars, _train.getTrainLength(rl),
 					Setup.getLengthUnit().toLowerCase(), _train.getTrainWeight(rl) });
 		} else {
-			return MessageFormat.format(Bundle.getMessage("TrainDepartsCars"), new Object[] {
+			return MessageFormat.format(TrainManifestText.getStringTrainDepartsCars(), new Object[] {
 					TrainCommon.splitString(rl.getName()), rl.getTrainDirectionString(),
 					_train.getNumberCarsInTrain(rl), _train.getTrainLength(rl),
 					Setup.getLengthUnit().toLowerCase(), _train.getTrainWeight(rl) });

@@ -172,7 +172,9 @@ public class SignalMastIcon extends PositionableIcon implements java.beans.Prope
             name = getSignalMast().getUserName()+" ("+getSignalMast().getSystemName()+")";
         return name;
     }
-
+    
+    ButtonGroup litButtonGroup = null;
+    
     /**
      * Pop-up just displays the name
      */
@@ -209,6 +211,35 @@ public class SignalMastIcon extends PositionableIcon implements java.beans.Prope
             clickMenu.add(r);
             popup.add(clickMenu);
             
+            // add menu to select handling of lit parameter
+            JMenu litMenu = new JMenu(Bundle.getMessage("WhenNotLit"));
+            litButtonGroup = new ButtonGroup();
+            r = new JRadioButtonMenuItem(Bundle.getMessage("ShowAppearance"));
+            r.setIconTextGap(10);
+            r.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) { 
+                    setLitMode(false);
+                    displayState(mastState());
+                }
+            });
+            litButtonGroup.add(r);
+            if (!litMode)  r.setSelected(true);
+            else r.setSelected(false);
+            litMenu.add(r);
+            r = new JRadioButtonMenuItem(Bundle.getMessage("ShowDarkIcon"));
+            r.setIconTextGap(10);
+            r.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    setLitMode(true);
+                    displayState(mastState());
+                }
+            });
+            litButtonGroup.add(r);
+            if (litMode)  r.setSelected(true);
+            else r.setSelected(false);
+            litMenu.add(r);
+            popup.add(litMenu);
+            
             java.util.Enumeration<String> en = getSignalMast().getSignalSystem().getImageTypeList();
             if(en.hasMoreElements()){
                 JMenu iconSetMenu = new JMenu(Bundle.getMessage("SignalMastIconSet"));
@@ -231,6 +262,7 @@ public class SignalMastIcon extends PositionableIcon implements java.beans.Prope
                 });
             }
             popup.add(aspect);
+            addTransitPopup(popup);
         }
         else {
             final java.util.Vector <String> aspects = getSignalMast().getValidAspects();
@@ -245,6 +277,52 @@ public class SignalMastIcon extends PositionableIcon implements java.beans.Prope
         }
         return true;
     }
+    
+    private void addTransitPopup(JPopupMenu popup){
+        if ((InstanceManager.sectionManagerInstance().getSystemNameList().size()) > 0 &&
+               jmri.InstanceManager.getDefault(jmri.jmrit.display.layoutEditor.LayoutBlockManager.class).isAdvancedRoutingEnabled()){
+            
+            if(tct == null){
+                tct = new jmri.jmrit.display.layoutEditor.TransitCreationTool();
+            }
+            popup.addSeparator();
+            String addString = Bundle.getMessage("MenuTransitCreate");
+            if(tct.isToolInUse())
+                addString = Bundle.getMessage("MenuTransitAddTo");
+            popup.add(new AbstractAction(addString){
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        tct.addNamedBean(getSignalMast());
+                    } catch (jmri.JmriException ex){
+                        JOptionPane.showMessageDialog(null, ex.getMessage(),Bundle.getMessage("TransitErrorTitle"), JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+            if(tct.isToolInUse()){
+                popup.add(new AbstractAction(Bundle.getMessage("MenuTransitAddComplete")){
+                    public void actionPerformed(ActionEvent e) {
+                        Transit created;
+                        try {
+                            tct.addNamedBean(getSignalMast());
+                            created = tct.createTransit();
+                            JOptionPane.showMessageDialog(null, Bundle.getMessage("TransitCreatedMessage", created.getDisplayName()), Bundle.getMessage("TransitCreatedTitle"), JOptionPane.INFORMATION_MESSAGE);
+                        } catch (jmri.JmriException ex){
+                            JOptionPane.showMessageDialog(null, ex.getMessage(),Bundle.getMessage("TransitErrorTitle"), JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
+                });
+                popup.add(new AbstractAction(Bundle.getMessage("MenuTransitCancel")){
+                    public void actionPerformed(ActionEvent e) {
+                        tct.cancelTransitCreate();
+                    }
+                });
+            }
+            popup.addSeparator();
+        }
+    }
+    
+    static jmri.jmrit.display.layoutEditor.TransitCreationTool tct;
     
     private void setImageTypeList(ButtonGroup iconTypeGroup, JMenu iconSetMenu, final String item){
         JRadioButtonMenuItem im;
@@ -396,7 +474,7 @@ public class SignalMastIcon extends PositionableIcon implements java.beans.Prope
                 if ((getSignalMast().getHeld()) && (getSignalMast().getAppearanceMap().getSpecificAppearance(jmri.SignalAppearanceMap.HELD)!=null)) {
                     s = getSignalMast().getAppearanceMap().getImageLink("$held", useIconSet);
                 }
-                else if((getSignalMast().getLit()) && (getSignalMast().getAppearanceMap().getSpecificAppearance(jmri.SignalAppearanceMap.DARK)!=null)) {
+                else if(getLitMode() && !getSignalMast().getLit() && (getSignalMast().getAppearanceMap().getImageLink("$dark", useIconSet)!=null)) {
                     s = getSignalMast().getAppearanceMap().getImageLink("$dark", useIconSet);
                 }
                 if(s.equals("")){
@@ -466,15 +544,13 @@ public class SignalMastIcon extends PositionableIcon implements java.beans.Prope
      * <P>
      * False means ignore (always show R/Y/G/etc appearance on screen);
      * True means show DefaultSignalAppearanceMap.DARK if lit is set false.
-     * <P>
-     * Note that setting the appearance "DefaultSignalAppearanceMap.DARK" explicitly
-     * will show the dark icon regardless of how this is set.
      */
     protected boolean litMode = false;
     
     public void setLitMode(boolean mode) {
         litMode = mode;
     }
+    
     public boolean getLitMode() {
         return litMode;
     }

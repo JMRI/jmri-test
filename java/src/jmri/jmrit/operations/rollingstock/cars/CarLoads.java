@@ -445,9 +445,8 @@ public class CarLoads {
 	 * Create an XML element to represent this Entry. This member has to remain synchronized with the detailed DTD in
 	 * operations-cars.dtd.
 	 * 
-	 * @return Contents in a JDOM Element
 	 */
-	public Element store() {
+	public void store(Element root) {
 		Element values = new Element(Xml.LOADS);
 		// store default load and empty
 		Element defaults = new Element(Xml.DEFAULTS);
@@ -488,7 +487,7 @@ public class CarLoads {
 			if (!buf.toString().equals(getDefaultLoadName() + getDefaultEmptyName()))
 				values.addContent(load);
 		}
-		return values;
+		root.addContent(values);
 	}
 
 	public void load(Element e) {

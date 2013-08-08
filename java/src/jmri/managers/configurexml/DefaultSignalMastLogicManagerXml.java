@@ -18,6 +18,7 @@ import jmri.SignalMastLogic;
 import jmri.SignalMastLogicManager;
 import jmri.Block;
 import jmri.Sensor;
+import jmri.Section;
 import jmri.SignalMast;
 import jmri.Turnout;
 import jmri.NamedBeanHandle;
@@ -44,6 +45,7 @@ public class DefaultSignalMastLogicManagerXml extends jmri.managers.configurexml
         for(int i = 0; i<sml.size(); i++){
             SignalMastLogic sm = sml.get(i);
             Element source = new Element("signalmastlogic");
+            source.setAttribute("source", sm.getSourceMast().getDisplayName());// added purely to make human reading of the xml easier
             source.addContent(new Element("sourceSignalMast").addContent(sm.getSourceMast().getDisplayName()));
             ArrayList<SignalMast> destination = sm.getDestinationList();
             if(destination.size()!=0){
@@ -51,6 +53,7 @@ public class DefaultSignalMastLogicManagerXml extends jmri.managers.configurexml
                     SignalMast dest = destination.get(k);
                     if(sml.get(i).getStoreState(dest)!=SignalMastLogic.STORENONE){
                         Element elem = new Element("destinationMast");
+                        elem.setAttribute("destination", dest.getDisplayName()); // added purely to make human reading of the xml easier
                         elem.addContent(new Element("destinationSignalMast").addContent(dest.getDisplayName()));
                         elem.addContent(new Element("comment").addContent(sm.getComment(dest)));
                         if(sm.isEnabled(dest))
@@ -78,6 +81,9 @@ public class DefaultSignalMastLogicManagerXml extends jmri.managers.configurexml
                         else
                             elem.addContent(new Element("useLayoutEditorBlocks").addContent("no"));
                         
+                        if(sm.getAssociatedSection(dest)!=null){
+                            elem.addContent(new Element("associatedSection").addContent(sm.getAssociatedSection(dest).getDisplayName()));
+                        }
                         if(sm.isTurnoutLockAllowed(dest))
                             elem.addContent(new Element("lockTurnouts").addContent("yes"));
                         else
@@ -227,6 +233,11 @@ public class DefaultSignalMastLogicManagerXml extends jmri.managers.configurexml
                     } catch (jmri.JmriException e){
                         //Considered normal if layout editor hasn't yet been set up.
                     }
+                }
+                
+                if(s.getChild("associatedSection")!=null){
+                    Section sect = InstanceManager.sectionManagerInstance().getSection(s.getChild("associatedSection").getText());
+                    logic.setAssociatedSection(sect, dest);
                 }
                 
                 Element turnoutElem = s.getChild("turnouts");

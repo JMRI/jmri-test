@@ -119,10 +119,15 @@ public class RollingStockLogger extends XmlFile implements java.beans.PropertyCh
 		if (rs.getTrack() == null && mustHaveTrack)
 			return;
 
-		String rsType = rs.getType();
+		String rsRoad = rs.getRoadName();
+		if (rsRoad.contains(DEL)) {
+			log.debug("RS (" + rs.toString() + ") has delimiter in road field: " + rsRoad);
+			rsRoad = ESC + rs.getRoadName() + ESC;
+		}
+		String rsType = rs.getTypeName();
 		if (rsType.contains(DEL)) {
 			log.debug("RS (" + rs.toString() + ") has delimiter in type field: " + rsType);
-			rsType = ESC + rs.getType() + ESC;
+			rsType = ESC + rs.getTypeName() + ESC;
 		}
 		String rsLocationName = rs.getLocationName();
 		if (rsLocationName.contains(DEL)) {
@@ -135,15 +140,20 @@ public class RollingStockLogger extends XmlFile implements java.beans.PropertyCh
 			log.debug("RS (" + rs.toString() + ") has delimiter in track field: " + rsTrackName);
 			rsTrackName = ESC + rs.getTrackName() + ESC;
 		}
+		String rsTrainName = rs.getTrainName();
+		if (rsTrainName.contains(DEL)) {
+			log.debug("RS (" + rs.toString() + ") has delimiter in train field: " + rsTrainName);
+			rsTrainName = ESC + rs.getTrainName() + ESC;
+		}
 		String carLoad = " ";
 		String carFinalDest = " ";
 		String carFinalDestTrack = " ";
 		if (rs.getClass().equals(Car.class)) {
 			Car car = (Car) rs;
-			carLoad = car.getLoad();
+			carLoad = car.getLoadName();
 			if (carLoad.contains(DEL)) {
 				log.debug("RS (" + rs.toString() + ") has delimiter in car load field: " + carLoad);
-				carLoad = ESC + car.getLoad() + ESC;
+				carLoad = ESC + car.getLoadName() + ESC;
 			}
 			carFinalDest = car.getFinalDestinationName();
 			if (carFinalDest.contains(DEL)) {
@@ -160,9 +170,9 @@ public class RollingStockLogger extends XmlFile implements java.beans.PropertyCh
 			}
 		}
 
-		String line = rs.getNumber() + DEL + rs.getRoad() + DEL + rsType + DEL + carLoad + DEL
+		String line = rs.getNumber() + DEL + rsRoad + DEL + rsType + DEL + carLoad + DEL
 				+ rsLocationName + DEL + rsTrackName + DEL + carFinalDest + DEL + carFinalDestTrack
-				+ DEL + rs.getTrainName() + DEL + rs.getMoves() + DEL + getTime();
+				+ DEL + rsTrainName + DEL + rs.getMoves() + DEL + getTime();
 
 		// append line to file
 		fileOut(line);

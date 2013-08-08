@@ -61,7 +61,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 	public static final String LOCATION_CHANGED_PROPERTY = "rolling stock location";  // NOI18N property change descriptions
 	public static final String TRACK_CHANGED_PROPERTY = "rolling stock track location"; // NOI18N
 	public static final String DESTINATION_CHANGED_PROPERTY = "rolling stock destination"; // NOI18N
-	public static final String DESTINATIONTRACK_CHANGED_PROPERTY = "rolling stock track destination"; // NOI18N
+	public static final String DESTINATION_TRACK_CHANGED_PROPERTY = "rolling stock track destination"; // NOI18N
 	public static final String TRAIN_CHANGED_PROPERTY = "rolling stock train"; // NOI18N
 	public static final String LENGTH_CHANGED_PROPERTY = "rolling stock length"; // NOI18N
 	public static final String TYPE_CHANGED_PROPERTY = "rolling stock type"; // NOI18N
@@ -112,14 +112,14 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		return _number;
 	}
 
-	public void setRoad(String road) {
+	public void setRoadName(String road) {
 		String old = _road;
 		_road = road;
 		if (!old.equals(road))
 			firePropertyChange("rolling stock road", old, road); // NOI18N
 	}
 
-	public String getRoad() {
+	public String getRoadName() {
 		return _road;
 	}
 
@@ -127,7 +127,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 	 * For combobox and identification
 	 */
 	public String toString() {
-		return getRoad() + " " + getNumber();
+		return getRoadName() + " " + getNumber();
 	}
 
 	/**
@@ -136,14 +136,14 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 	 * @param type
 	 *            The type of rolling stock.
 	 */
-	public void setType(String type) {
+	public void setTypeName(String type) {
 		String old = _type;
 		_type = type;
 		if (!old.equals(type))
 			firePropertyChange("rolling stock type", old, type); // NOI18N
 	}
 
-	public String getType() {
+	public String getTypeName() {
 		return _type;
 	}
 
@@ -183,6 +183,20 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 
 	public String getLength() {
 		return _length;
+	}
+	
+	/**
+	 * Returns the length of the rolling stock including the couplers
+	 * @return total length of the rolling stock
+	 */
+	public int getTotalLength() {
+		int length = 0;
+		try {
+			length = Integer.parseInt(getLength()) + RollingStock.COUPLER;
+		} catch (Exception e) {
+			log.error("Rolling stock ("+toString()+") length ("+getLength()+") is not valid ");
+		}
+		return length;
 	}
 
 	public void setColor(String color) {
@@ -510,7 +524,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 			}
 
 			firePropertyChange(DESTINATION_CHANGED_PROPERTY, oldDestination, destination);
-			firePropertyChange(DESTINATIONTRACK_CHANGED_PROPERTY, oldTrack, track);
+			firePropertyChange(DESTINATION_TRACK_CHANGED_PROPERTY, oldTrack, track);
 		}
 		return status;
 	}
@@ -859,7 +873,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		}
 	}
 
-	protected void reset() {
+	public void reset() {
 		// the order of the next two instructions is important, otherwise rs will have train's route id
 		setTrain(null);
 		setDestination(null, null);
@@ -913,7 +927,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 			track = location.getTrackById(a.getValue());
 		String status = setLocation(location, track, true); // force location
 		if (!status.equals(Track.OKAY) && location != null && track != null)
-			log.warn("Could not place (" + getRoad() + " " + getNumber() + ") at location ("
+			log.warn("Could not place (" + getRoadName() + " " + getNumber() + ") at location ("
 					+ location.getName() + ") track (" + track.getName() + ") because of (" // NOI18N
 					+ status + ")"); // NOI18N
 		Location destination = null;
@@ -924,7 +938,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 			trackDestination = destination.getTrackById(a.getValue());
 		status = setDestination(destination, trackDestination, true); // force destination
 		if (!status.equals(Track.OKAY) && destination != null && trackDestination != null)
-			log.warn("Forced destination for rolling stock (" + getRoad() + " " + getNumber()
+			log.warn("Forced destination for rolling stock (" + getRoadName() + " " + getNumber()
 					+ ") destination (" + destination.getName() + ") track (" // NOI18N
 					+ trackDestination.getName() + ") because of (" + status + ")"); // NOI18N
 		if ((a = e.getAttribute(Xml.MOVES)) != null)
@@ -968,9 +982,9 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 	 */
 	protected org.jdom.Element store(org.jdom.Element e) {
 		e.setAttribute(Xml.ID, getId());
-		e.setAttribute(Xml.ROAD_NAME, getRoad());
+		e.setAttribute(Xml.ROAD_NAME, getRoadName());
 		e.setAttribute(Xml.ROAD_NUMBER, getNumber());
-		e.setAttribute(Xml.TYPE, getType());
+		e.setAttribute(Xml.TYPE, getTypeName());
 		e.setAttribute(Xml.LENGTH, getLength());
 		if (!getColor().equals(""))
 			e.setAttribute(Xml.COLOR, getColor());
@@ -1083,12 +1097,12 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 			reset();
 		}
 		if (e.getPropertyName().equals(CarRoads.CARROADS_NAME_CHANGED_PROPERTY)) {
-			if (e.getOldValue().equals(getRoad())) {
+			if (e.getOldValue().equals(getRoadName())) {
 				if (log.isDebugEnabled())
 					log.debug("Rolling stock (" + toString() + ") sees road name change from "
 							+ e.getOldValue() + " to " + e.getNewValue()); // NOI18N
 				if (e.getNewValue() != null)
-					setRoad((String) e.getNewValue());
+					setRoadName((String) e.getNewValue());
 			}
 		}
 		if (e.getPropertyName().equals(CarOwners.CAROWNERS_NAME_CHANGED_PROPERTY)) {

@@ -50,7 +50,6 @@ public class OperationsLocationsGuiTest extends jmri.util.SwingTestCase {
 		Location l5 = lManager.newLocation("Test Loc A");
 		l5.setLength(1005);
 		LocationsTableFrame f = new LocationsTableFrame();
-		f.setVisible(true);
 		
 		// should be 5 rows
 		Assert.assertEquals("number of rows", 5, f.locationsModel.getRowCount());
@@ -513,13 +512,13 @@ public class OperationsLocationsGuiTest extends jmri.util.SwingTestCase {
 		Assert.assertEquals("number of items", 4, list.size());
 		
 		ScheduleItem si = s.getItemById(list.get(0));		
-		Assert.assertEquals("1st type", "Tank Food", si.getType());
+		Assert.assertEquals("1st type", "Tank Food", si.getTypeName());
 		si = s.getItemById(list.get(1));		
-		Assert.assertEquals("2nd type", "Boxcar", si.getType());
+		Assert.assertEquals("2nd type", "Boxcar", si.getTypeName());
 		si = s.getItemById(list.get(2));		
-		Assert.assertEquals("3rd type", "Flatcar", si.getType());
+		Assert.assertEquals("3rd type", "Flatcar", si.getTypeName());
 		si = s.getItemById(list.get(3));		
-		Assert.assertEquals("3rd type", "Coilcar", si.getType());
+		Assert.assertEquals("3rd type", "Coilcar", si.getTypeName());
 		
 		//f.deleteScheduleButton.doClick();
 		getHelper().enterClickAndLeave( new MouseEventData( this, f.deleteScheduleButton ) );
@@ -545,13 +544,13 @@ public class OperationsLocationsGuiTest extends jmri.util.SwingTestCase {
 		Schedule s1 = sm.newSchedule("new schedule");
 		Schedule s2 = sm.newSchedule("newer schedule");
 		ScheduleItem i1 = s1.addItem("BoxCar");
-		i1.setRoad("new road");
-		i1.setLoad("new load");
-		i1.setShip("new ship load");
+		i1.setRoadName("new road");
+		i1.setReceiveLoadName("new load");
+		i1.setShipLoadName("new ship load");
 		ScheduleItem i2 = s1.addItem("Caboose");
-		i2.setRoad("road");
-		i2.setLoad("load");
-		i2.setShip("ship load");
+		i2.setRoadName("road");
+		i2.setReceiveLoadName("load");
+		i2.setShipLoadName("ship load");
 		
 		Assert.assertEquals("1 First schedule name", "new schedule", s1.getName());
 		Assert.assertEquals("1 First schedule name", "newer schedule", s2.getName());
@@ -594,7 +593,6 @@ public class OperationsLocationsGuiTest extends jmri.util.SwingTestCase {
 	
 	public void testScheduleTableFrame(){
 		SchedulesTableFrame f = new SchedulesTableFrame();
-		f.setVisible(true);
 		f.dispose();
 	}
 	

@@ -55,6 +55,7 @@ public class JsonServlet extends WebSocketServlet {
 
     public JsonServlet() {
         super();
+        InstanceManager.consistManagerInstance().requestUpdateFromLayout();
     }
 
     @Override
@@ -79,6 +80,7 @@ public class JsonServlet extends WebSocketServlet {
 
     @Override
     public WebSocket doWebSocketConnect(HttpServletRequest hsr, String string) {
+        log.debug("Creating WebSocket for {} at {}", hsr.getRemoteHost(), hsr.getRequestURL());
         return new JsonWebSocket();
     }
 
@@ -92,7 +94,7 @@ public class JsonServlet extends WebSocketServlet {
      * sample responses:
      * <ul>
      * <li>{"type":"sensor","data":{"name":"IS22","userName":"FarEast","comment":null,"inverted":false,"state":4}}</li>
-     * <li>{"type":"list","list":[{"type":"sensor","data":{"name":"IS22","userName":"FarEast","comment":null,"inverted":false,"state":4}}]}</li>
+     * <li>[{"type":"sensor","data":{"name":"IS22","userName":"FarEast","comment":null,"inverted":false,"state":4}}]</li>
      * </ul>
      * note that data will vary for each type
      */
@@ -111,84 +113,96 @@ public class JsonServlet extends WebSocketServlet {
             response.setContentType("application/json"); // NOI18N
             String name = (rest.length > 2) ? rest[2] : null;
             JsonNode reply;
-            if (name == null) {
-                if (type.equals(CARS)) {
-                    reply = JsonUtil.getCars();
-                } else if (type.equals(ENGINES)) {
-                    reply = JsonUtil.getEngines();
-                } else if (type.equals(LIGHTS)) {
-                    reply = JsonUtil.getLights();
-                } else if (type.equals(LOCATIONS)) {
-                    reply = JsonUtil.getLocations();
-                } else if (type.equals(MEMORIES)) {
-                    reply = JsonUtil.getMemories();
-                } else if (type.equals(METADATA)) {
-                    reply = JsonUtil.getMetadata();
-                } else if (type.equals(PANELS)) {
-                    reply = JsonUtil.getPanels((request.getParameter(FORMAT) != null) ? request.getParameter(FORMAT) : XML);
-                } else if (type.equals(POWER)) {
-                    reply = JsonUtil.getPower();
-                } else if (type.equals(RAILROAD)) {
-                    reply = JsonUtil.getRailroad();
-                } else if (type.equals(REPORTERS)) {
-                    reply = JsonUtil.getReporters();
-                } else if (type.equals(ROSTER)) {
-                    reply = JsonUtil.getRoster();
-                } else if (type.equals(ROUTES)) {
-                    reply = JsonUtil.getRoutes();
-                } else if (type.equals(SENSORS)) {
-                    reply = JsonUtil.getSensors();
-                } else if (type.equals(SIGNAL_HEADS)) {
-                    reply = JsonUtil.getSignalHeads();
-                } else if (type.equals(SIGNAL_MASTS)) {
-                    reply = JsonUtil.getSignalMasts();
-                } else if (type.equals(TRAINS)) {
-                    reply = JsonUtil.getTrains();
-                } else if (type.equals(TURNOUTS)) {
-                    reply = JsonUtil.getTurnouts();
+            try {
+                if (name == null) {
+                    if (type.equals(CARS)) {
+                        reply = JsonUtil.getCars();
+                    } else if (type.equals(CONSISTS)) {
+                        reply = JsonUtil.getConsists();
+                    } else if (type.equals(ENGINES)) {
+                        reply = JsonUtil.getEngines();
+                    } else if (type.equals(LIGHTS)) {
+                        reply = JsonUtil.getLights();
+                    } else if (type.equals(LOCATIONS)) {
+                        reply = JsonUtil.getLocations();
+                    } else if (type.equals(MEMORIES)) {
+                        reply = JsonUtil.getMemories();
+                    } else if (type.equals(METADATA)) {
+                        reply = JsonUtil.getMetadata();
+                    } else if (type.equals(PANELS)) {
+                        reply = JsonUtil.getPanels((request.getParameter(FORMAT) != null) ? request.getParameter(FORMAT) : XML);
+                    } else if (type.equals(POWER)) {
+                        reply = JsonUtil.getPower();
+                    } else if (type.equals(RAILROAD)) {
+                        reply = JsonUtil.getRailroad();
+                    } else if (type.equals(REPORTERS)) {
+                        reply = JsonUtil.getReporters();
+                    } else if (type.equals(ROSTER)) {
+                        reply = JsonUtil.getRoster();
+                    } else if (type.equals(ROUTES)) {
+                        reply = JsonUtil.getRoutes();
+                    } else if (type.equals(SENSORS)) {
+                        reply = JsonUtil.getSensors();
+                    } else if (type.equals(SIGNAL_HEADS)) {
+                        reply = JsonUtil.getSignalHeads();
+                    } else if (type.equals(SIGNAL_MASTS)) {
+                        reply = JsonUtil.getSignalMasts();
+                    } else if (type.equals(TRAINS)) {
+                        reply = JsonUtil.getTrains();
+                    } else if (type.equals(TURNOUTS)) {
+                        reply = JsonUtil.getTurnouts();
+                    } else if (type.equals(HELLO)) {
+                        reply = JsonUtil.getHello(JsonServerManager.getJsonServerPreferences().getHeartbeatInterval());
+                    } else if (type.equals(NETWORK_SERVICES)) {
+                        reply = JsonUtil.getNetworkServices();
+                    } else {
+                        log.warn("Type {} unknown.", type);
+                        reply = JsonUtil.getUnknown(type);
+                    }
                 } else {
-                    log.warn("Type {} unknown.", type);
-                    reply = JsonUtil.getUnknown(type);
+                    if (type.equals(CAR)) {
+                        reply = JsonUtil.getCar(name);
+                    } else if (type.equals(CONSIST)) {
+                        reply = JsonUtil.getConsist(JsonUtil.addressForString(name));
+                    } else if (type.equals(ENGINE)) {
+                        reply = JsonUtil.getEngine(name);
+                    } else if (type.equals(LIGHT)) {
+                        reply = JsonUtil.getLight(name);
+                    } else if (type.equals(LOCATION)) {
+                        reply = JsonUtil.getLocation(name);
+                    } else if (type.equals(MEMORY)) {
+                        reply = JsonUtil.getMemory(name);
+                    } else if (type.equals(METADATA)) {
+                        reply = JsonUtil.getMetadata(name);
+                    } else if (type.equals(REPORTER)) {
+                        reply = JsonUtil.getReporter(name);
+                    } else if (type.equals(ROSTER_ENTRY) || type.equals(ROSTER)) {
+                        reply = JsonUtil.getRosterEntry(name);
+                    } else if (type.equals(ROUTE)) {
+                        reply = JsonUtil.getRoute(name);
+                    } else if (type.equals(SENSOR)) {
+                        reply = JsonUtil.getSensor(name);
+                    } else if (type.equals(SIGNAL_HEAD)) {
+                        reply = JsonUtil.getSignalHead(name);
+                    } else if (type.equals(SIGNAL_MAST)) {
+                        reply = JsonUtil.getSignalMast(name);
+                    } else if (type.equals(TRAIN)) {
+                        reply = JsonUtil.getTrain(name);
+                    } else if (type.equals(TURNOUT)) {
+                        reply = JsonUtil.getTurnout(name);
+                    } else {
+                        log.warn("Type {} unknown.", type);
+                        reply = JsonUtil.getUnknown(type);
+                    }
                 }
-            } else {
-                if (type.equals(CAR)) {
-                    reply = JsonUtil.getCar(name);
-                } else if (type.equals(ENGINE)) {
-                    reply = JsonUtil.getEngine(name);
-                } else if (type.equals(LIGHT)) {
-                    reply = JsonUtil.getLight(name);
-                } else if (type.equals(LOCATION)) {
-                    reply = JsonUtil.getLocation(name);
-                } else if (type.equals(MEMORY)) {
-                    reply = JsonUtil.getMemory(name);
-                } else if (type.equals(METADATA)) {
-                    reply = JsonUtil.getMetadata(name);
-                } else if (type.equals(REPORTER)) {
-                    reply = JsonUtil.getReporter(name);
-                } else if (type.equals(ROSTER_ENTRY) || type.equals(ROSTER)) {
-                    reply = JsonUtil.getRosterEntry(name);
-                } else if (type.equals(ROUTE)) {
-                    reply = JsonUtil.getRoute(name);
-                } else if (type.equals(SENSOR)) {
-                    reply = JsonUtil.getSensor(name);
-                } else if (type.equals(SIGNAL_HEAD)) {
-                    reply = JsonUtil.getSignalHead(name);
-                } else if (type.equals(SIGNAL_MAST)) {
-                    reply = JsonUtil.getSignalMast(name);
-                } else if (type.equals(TRAIN)) {
-                    reply = JsonUtil.getTrain(name);
-                } else if (type.equals(TURNOUT)) {
-                    reply = JsonUtil.getTurnout(name);
-                } else {
-                    log.warn("Type {} unknown.", type);
-                    reply = JsonUtil.getUnknown(type);
-                }
+            } catch (JsonException ex) {
+                reply = ex.getJsonMessage();
             }
             int code = reply.path(DATA).path(CODE).asInt(200); // use HTTP error codes when possible
             if (code == 200) {
                 response.getWriter().write(this.mapper.writeValueAsString(reply));
             } else {
-                response.sendError(code, this.mapper.writeValueAsString(reply));
+                this.sendError(response, code, this.mapper.writeValueAsString(reply));
             }
         } else {
             response.setContentType("text/html"); // NOI18N
@@ -241,7 +255,10 @@ public class JsonServlet extends WebSocketServlet {
                     name = data.path(NAME).asText();
                 }
                 if (name != null) {
-                    if (type.equals(LIGHT)) {
+                    if (type.equals(CONSIST)) {
+                        JsonUtil.setConsist(JsonUtil.addressForString(name), data);
+                        reply = JsonUtil.getConsist(JsonUtil.addressForString(name));
+                    } else if (type.equals(LIGHT)) {
                         JsonUtil.setLight(name, data);
                         reply = JsonUtil.getLight(name);
                     } else if (type.equals(MEMORY)) {
@@ -290,7 +307,7 @@ public class JsonServlet extends WebSocketServlet {
         if (code == 200) {
             response.getWriter().write(this.mapper.writeValueAsString(reply));
         } else {
-            response.sendError(code, this.mapper.writeValueAsString(reply));
+            this.sendError(response, code, this.mapper.writeValueAsString(reply));
         }
     }
 
@@ -325,7 +342,10 @@ public class JsonServlet extends WebSocketServlet {
                     name = data.path(NAME).asText();
                 }
                 if (name != null) {
-                    if (type.equals(LIGHT)) {
+                    if (type.equals(CONSIST)) {
+                        JsonUtil.putConsist(JsonUtil.addressForString(name), data);
+                        reply = JsonUtil.getConsist(JsonUtil.addressForString(name));
+                    } else if (type.equals(LIGHT)) {
                         JsonUtil.putLight(name, data);
                         reply = JsonUtil.getLight(name);
                     } else if (type.equals(MEMORY)) {
@@ -362,8 +382,52 @@ public class JsonServlet extends WebSocketServlet {
         if (code == 200) {
             response.getWriter().write(this.mapper.writeValueAsString(reply));
         } else {
-            response.sendError(code, this.mapper.writeValueAsString(reply));
+            this.sendError(response, code, this.mapper.writeValueAsString(reply));
         }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Date now = new Date();
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json"); // NOI18N
+        response.setHeader("Connection", "Keep-Alive"); // NOI18N
+        response.setDateHeader("Date", now.getTime()); // NOI18N
+        response.setDateHeader("Last-Modified", now.getTime()); // NOI18N
+        response.setDateHeader("Expires", now.getTime()); // NOI18N
+
+        String[] rest = request.getPathInfo().split("/"); // NOI18N
+        String type = (rest.length > 1) ? rest[1] : null;
+        String name = (rest.length > 2) ? rest[2] : null;
+        JsonNode reply = mapper.createObjectNode();
+        try {
+            if (type != null) {
+                if (name == null) {
+                    throw new JsonException(400, "name must be specified"); // need to I18N
+                }
+                if (type.equals(CONSIST)) {
+                    JsonUtil.delConsist(JsonUtil.addressForString(name));
+                } else {
+                    // not a deletable item
+                    throw new JsonException(400, type + " is not a deletable type"); // need to I18N
+                }
+            } else {
+                log.warn("Type not specified.");
+                reply = JsonUtil.getUnknown(type);
+            }
+        } catch (JsonException ex) {
+            reply = ex.getJsonMessage();
+        }
+        int code = reply.path(DATA).path(CODE).asInt(200); // use HTTP error codes when possible
+        // only include a response body if something went wrong
+        if (code != 200) {
+            this.sendError(response, code, this.mapper.writeValueAsString(reply));
+        }
+    }
+
+    public void sendError(HttpServletResponse response, int code, String message) throws IOException {
+        response.setStatus(code);
+        response.getWriter().write(message);
     }
 
     public class JsonWebSocket implements WebSocket.OnTextMessage {
@@ -379,16 +443,18 @@ public class JsonServlet extends WebSocketServlet {
 
         @Override
         public void onOpen(Connection cnctn) {
+            log.debug("Opening connnection");
             this.wsConnection = cnctn;
             this.jmriConnection = new JmriConnection(this.wsConnection);
             this.wsConnection.setMaxIdleTime(JsonServerManager.getJsonServerPreferences().getHeartbeatInterval());
             this.mapper = new ObjectMapper();
-            this.handler = new JsonClientHandler(this.jmriConnection);
+            this.handler = new JsonClientHandler(this.jmriConnection, this.mapper);
             sockets.add(this);
             try {
+                log.debug("Sending hello");
                 this.handler.sendHello(this.wsConnection.getMaxIdleTime());
-            } catch (IOException e) {
-                log.warn(e.getMessage(), e);
+            } catch (Exception e) {
+                log.warn("Error openning WebSocket:\n{}", e.getMessage(), e);
                 this.wsConnection.close();
                 sockets.remove(this);
             }
@@ -396,6 +462,7 @@ public class JsonServlet extends WebSocketServlet {
 
         @Override
         public void onClose(int i, String string) {
+            log.debug("Closing connection because {} ({})", string, i);
             this.handler.onClose();
             sockets.remove(this);
         }
@@ -404,8 +471,8 @@ public class JsonServlet extends WebSocketServlet {
         public void onMessage(String string) {
             try {
                 this.handler.onMessage(string);
-            } catch (IOException e) {
-                log.warn(e.getMessage(), e);
+            } catch (Exception e) {
+                log.error("Error on WebSocket message:\n{}", e.getMessage(), e);
                 this.wsConnection.close();
                 sockets.remove(this);
             }

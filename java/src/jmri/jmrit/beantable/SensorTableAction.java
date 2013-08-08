@@ -271,19 +271,56 @@ public class SensorTableAction extends AbstractTableAction {
         m.fireTableDataChanged();
     }
     
+    protected void setDefaultState(JFrame _who){
+        String[] sensorStates = new String[]{ Bundle.getMessage("BeanStateUnknown"),  Bundle.getMessage("SensorStateInactive"), Bundle.getMessage("SensorStateActive"), Bundle.getMessage("BeanStateInconsistent")};
+        JComboBox stateCombo = new JComboBox(sensorStates);
+        switch(jmri.managers.InternalSensorManager.getDefaultStateForNewSensors()){
+            case jmri.Sensor.ACTIVE : stateCombo.setSelectedItem(Bundle.getMessage("SensorStateActive")); break;
+            case jmri.Sensor.INACTIVE : stateCombo.setSelectedItem(Bundle.getMessage("SensorStateInactive")); break;
+            case jmri.Sensor.INCONSISTENT : stateCombo.setSelectedItem(Bundle.getMessage("BeanStateInconsistent")); break;
+            default : stateCombo.setSelectedItem(Bundle.getMessage("BeanStateUnknown"));
+        }
+        int retval = JOptionPane.showOptionDialog(_who,
+                              Bundle.getMessage("SensorInitialStateMessageBox"), Bundle.getMessage("InitialSensorState"),
+                              0, JOptionPane.INFORMATION_MESSAGE, null,
+                              new Object[]{Bundle.getMessage("ButtonCancel"), Bundle.getMessage("ButtonOK"), stateCombo}, null );
+        if (retval != 1) {
+            return;
+        }
+        int defaultState = jmri.Sensor.UNKNOWN;
+        String selectedState = (String)stateCombo.getSelectedItem();
+        if(selectedState.equals(Bundle.getMessage("SensorStateActive"))){
+            defaultState = jmri.Sensor.ACTIVE;
+        } else if (selectedState.equals(Bundle.getMessage("SensorStateInactive"))){
+            defaultState = jmri.Sensor.INACTIVE;
+        } else if (selectedState.equals(Bundle.getMessage("BeanStateInconsistent"))){
+            defaultState  = jmri.Sensor.INCONSISTENT;
+        }
+        
+        jmri.managers.InternalSensorManager.setDefaultStateForNewSensors(defaultState);
+        
+    }
+    
     public void setMenuBar(BeanTableFrame f){
         final jmri.util.JmriJFrame finalF = f;			// needed for anonymous ActionListener class
         JMenuBar menuBar = f.getJMenuBar();
 
-        JMenu debounceMenu = new JMenu(rb.getString("Debounce"));
-        JMenuItem item = new JMenuItem("Defaults...");
-        debounceMenu.add(item);
+        JMenu optionsMenu = new JMenu(Bundle.getMessage("MenuDefaults"));
+        JMenuItem item = new JMenuItem(Bundle.getMessage("GlobalDebounce"));
+        optionsMenu.add(item);
         item.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
                     setDefaultDebounce(finalF);
         	}
-            });
-        menuBar.add(debounceMenu);
+        });
+        item = new JMenuItem(Bundle.getMessage("InitialSensorState"));
+        optionsMenu.add(item);
+        item.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+                    setDefaultState(finalF);
+        	}
+        });
+        menuBar.add(optionsMenu);
     }
 
     void showDebounceChanged() {

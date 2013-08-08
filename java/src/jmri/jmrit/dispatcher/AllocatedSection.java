@@ -114,7 +114,25 @@ public class AllocatedSection {
 	}
 	public int getSequence() {return mSequence;}
 	public jmri.Section getNextSection() {return mNextSection;}
-	public int getNextSectionSequence() {return mNextSectionSequence;}	
+	public int getNextSectionSequence() {return mNextSectionSequence;}
+    
+    protected boolean setNextSection(jmri.Section sec, int i){
+        if(sec==null){
+            mNextSection=null;
+            mNextSectionSequence = i;
+            return true;
+        }
+        if(mNextSection!=null){
+            log.error("Next section is already set");
+            return false;
+        }
+        mNextSection=sec;
+        return true;
+    }
+    
+    public void setNextSectionSequence(int i){
+        mNextSectionSequence = i;
+    }
 	public boolean getEntered() {return mEntered;}
 	public boolean getExited() {return mExited;}
 	public int getAllocationNumber() {return mAllocationNumber;}
@@ -184,7 +202,15 @@ public class AllocatedSection {
 				mActiveTrain.getAutoActiveTrain().handleSectionOccupancyChange(this);
 			}
 		}
-		DispatcherFrame.instance().sectionOccupancyChanged();
+		
+        
+        if(mEntered && !mExited && mActiveTrain.getResetWhenDone() && mActiveTrain.getDelayedRestart()!=ActiveTrain.NODELAY){
+            if(getSequence()==mActiveTrain.getEndBlockSectionSequenceNumber()){
+                mActiveTrain.setRestart();
+            }
+        }
+        
+        DispatcherFrame.instance().sectionOccupancyChanged();
 	}
 	public synchronized void initializeMonitorBlockOccupancy() {
 		if (mBlockList != null) return;
@@ -210,7 +236,7 @@ public class AllocatedSection {
 				if (!isInActiveBlockList(b)) {
 					int occ = b.getState();
 					Runnable handleBlockChange = new RespondToBlockStateChange(b,occ,this);
-					Thread tBlockChange = new Thread(handleBlockChange);
+					Thread tBlockChange = new Thread(handleBlockChange, "Allocated Section Block Change on " + b.getDisplayName());
 					tBlockChange.start();
 					addToActiveBlockList(b);
 					if (DispatcherFrame.instance().getSupportVSDecoder())

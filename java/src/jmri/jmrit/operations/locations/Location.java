@@ -287,7 +287,7 @@ public class Location implements java.beans.PropertyChangeListener {
 		boolean old = _switchList;
 		_switchList = switchList;
 		if (old != switchList)
-			setDirtyAndFirePropertyChange(SWITCHLIST_CHANGED_PROPERTY, old ? "true" : "false",
+			setDirtyAndFirePropertyChange(SWITCHLIST_CHANGED_PROPERTY, old ? "true" : "false",  // NOI18N
 					switchList ? "true" : "false"); // NOI18N
 	}
 
@@ -316,7 +316,7 @@ public class Location implements java.beans.PropertyChangeListener {
 	 * was printed or CSV generated.
 	 * 
 	 */
-	public void setStatus() {
+	public void setStatusModified() {
 		if (getStatus().equals(PRINTED) || getStatus().equals(CSV_GENERATED) || !Setup.isSwitchListRealTime())
 			setStatus(MODIFIED);
 	}
@@ -349,6 +349,10 @@ public class Location implements java.beans.PropertyChangeListener {
 			setDirtyAndFirePropertyChange("SwitchListState", old, state); // NOI18N
 	}
 
+	/**
+	 * Returns the state of the switch list for this location.
+	 * @return Location.SW_CREATE, Location.SW_PRINTED or Location.SW_APPEND
+	 */
 	public int getSwitchListState() {
 		return _switchListState;
 	}
@@ -406,12 +410,12 @@ public class Location implements java.beans.PropertyChangeListener {
 	 */
 	public void addRS(RollingStock rs) {
 		setNumberRS(getNumberRS() + 1);
-		setUsedLength(getUsedLength() + Integer.parseInt(rs.getLength()) + RollingStock.COUPLER);
+		setUsedLength(getUsedLength() + rs.getTotalLength());
 	}
 
 	public void deleteRS(RollingStock rs) {
 		setNumberRS(getNumberRS() - 1);
-		setUsedLength(getUsedLength() - (Integer.parseInt(rs.getLength()) + RollingStock.COUPLER));
+		setUsedLength(getUsedLength() - rs.getTotalLength());
 	}
 
 	/**
@@ -511,7 +515,7 @@ public class Location implements java.beans.PropertyChangeListener {
 	 */
 	public void addTypeName(String type) {
 		// insert at start of list, sort later
-		if (_listTypes.contains(type))
+		if (type == null || _listTypes.contains(type))
 			return;
 		_listTypes.add(0, type);
 		log.debug("location (" + getName() + ") add rolling stock type " + type);

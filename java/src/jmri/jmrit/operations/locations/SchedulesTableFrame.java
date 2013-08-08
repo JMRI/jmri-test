@@ -70,7 +70,7 @@ public class SchedulesTableFrame extends OperationsFrame {
 		// addButton.setText(Bundle.getMessage("Add"));
 		// addButton.setVisible(true);
 		// controlPanel.add (addButton);
-		controlPanel.setMaximumSize(new Dimension(Control.panelWidth, 50));
+		controlPanel.setMaximumSize(new Dimension(Control.widePanelWidth, 50));
 		getContentPane().add(controlPanel);
 
 		// setup buttons
@@ -89,9 +89,9 @@ public class SchedulesTableFrame extends OperationsFrame {
 		setJMenuBar(menuBar);
 		addHelpMenu("package.jmri.jmrit.operations.Operations_Schedules", true); // NOI18N
 
-		pack();
-		if (getWidth() < Control.panelWidth)
-			setSize(Control.panelWidth, getHeight());
+		initComponents();
+		if (getWidth() < Control.widePanelWidth)
+			setSize(Control.widePanelWidth, getHeight());
 
 	}
 

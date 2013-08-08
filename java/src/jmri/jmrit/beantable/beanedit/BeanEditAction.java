@@ -2,17 +2,19 @@
 
 package jmri.jmrit.beantable.beanedit;
 
-import jmri.NamedBean;
-import javax.swing.*;
 import java.awt.*;
-import javax.swing.AbstractAction;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import jmri.NamedBean;
 import jmri.util.JmriJFrame;
-
-import java.awt.BorderLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides the basic information and structure for
@@ -44,6 +46,14 @@ abstract class BeanEditAction extends AbstractAction {
     */
     protected void initPanels(){
         basicDetails();
+    }
+    
+    protected void initPanelsFirst(){
+    
+    }
+    protected void initPanelsLast(){
+        usageDetails();
+        propertiesDetails();
     }
     
     JTextField userNameField = new JTextField(20);
@@ -78,6 +88,65 @@ abstract class BeanEditAction extends AbstractAction {
         });
         bei.add(basic);
         return basic;
+    }
+    
+    BeanItemPanel usageDetails(){
+        BeanItemPanel usage = new BeanItemPanel();
+        
+        usage.setName("Usage");
+        usage.setLayout(new BoxLayout(usage, BoxLayout.Y_AXIS));
+        
+        usage.addItem(new BeanEditItem(null, null, Bundle.getMessage("UsageText", bean.getDisplayName())));
+        
+        ArrayList<String> listeners = new ArrayList<String>();
+        for (String ref: bean.getListenerRefs()){
+            if(!listeners.contains(ref))
+                listeners.add(ref);
+        }
+                    
+        Object[] strArray = new Object[listeners.size()];
+        listeners.toArray(strArray);
+        JList list = new JList(strArray);
+        list.setLayoutOrientation(JList.VERTICAL);
+        list.setVisibleRowCount(-1);
+        list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        JScrollPane listScroller = new JScrollPane(list);
+        listScroller.setPreferredSize(new Dimension(250, 80));
+        listScroller.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black)));
+        usage.addItem(new BeanEditItem(listScroller, "Location", null));
+        
+        bei.add(usage);
+        return usage;
+    }
+    BeanPropertiesTableModel propertiesModel;
+    
+    BeanItemPanel propertiesDetails(){
+        BeanItemPanel properties = new BeanItemPanel();
+        properties.setName(Bundle.getMessage("Properties"));
+        properties.addItem(new BeanEditItem(null, null, Bundle.getMessage("NamedBeanPropertiesTableDescription")));
+        properties.setLayout(new BoxLayout(properties, BoxLayout.Y_AXIS));
+        propertiesModel = new BeanPropertiesTableModel();
+        JTable jtAttributes = new JTable();
+        jtAttributes.setModel(propertiesModel);
+        JScrollPane jsp = new JScrollPane(jtAttributes);
+        Dimension tableDim = new Dimension(400,200);
+        jsp.setMinimumSize(tableDim);
+		jsp.setMaximumSize(tableDim);
+		jsp.setPreferredSize(tableDim);
+        properties.addItem(new BeanEditItem(jsp,"", null));
+        properties.setSaveItem(new AbstractAction(){
+            public void actionPerformed(ActionEvent e) {
+                propertiesModel.updateModel(bean);
+            }
+        });
+        properties.setResetItem(new AbstractAction(){
+            public void actionPerformed(ActionEvent e) {
+                propertiesModel.setModel(bean);
+            }
+        });
+        
+        bei.add(properties);
+        return properties;
     }
     
     protected void saveBasicItems(ActionEvent e){
@@ -119,7 +188,9 @@ abstract class BeanEditAction extends AbstractAction {
             f = new JmriJFrame("Edit " + getBeanType() + " " + bean.getDisplayName(), false,false);
             f.addHelpMenu(helpTarget(), true);
             java.awt.Container containerPanel = f.getContentPane();
+            initPanelsFirst();
             initPanels();
+            initPanelsLast();
             
             for(BeanItemPanel bi:bei){
                 addToPanel(bi, bi.getListOfItems());
@@ -190,6 +261,7 @@ abstract class BeanEditAction extends AbstractAction {
         for(BeanEditItem it:items){
             if(it.getDescription()!=null && it.getComponent()!=null){
                 JLabel decript = new JLabel(it.getDescription() + ":", JLabel.LEFT);
+                if(it.getDescription().equals("")) decript.setText("");
                 cL.gridx = 0;
                 cL.gridy = y;
                 cL.ipadx = 3;
@@ -329,5 +401,129 @@ abstract class BeanEditAction extends AbstractAction {
         bean.setUserName(null);
     }
     
-    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(BeanEditAction.class.getName());
+    //At this stage we purely use this to allow the user to delete properties, but not add them, changing is possible but only for strings
+    //Based upon the code from the RosterMediaPane
+    private static class BeanPropertiesTableModel extends AbstractTableModel { 
+		Vector<KeyValueModel>  attributes;
+		String titles[];
+		boolean wasModified;
+
+		private static class KeyValueModel {
+			public KeyValueModel(Object k, Object v) { key=k; value=v; }
+			public Object key, value;
+		}
+
+		public BeanPropertiesTableModel() { 
+			titles = new String[2];
+			titles[0] = Bundle.getMessage("NamedBeanPropertyName");
+			titles[1] = Bundle.getMessage("NamedBeanPropertyValue");
+		} 
+
+		public void setModel(NamedBean nb) {
+			if (nb.getPropertyKeys() != null) {
+				attributes = new Vector<KeyValueModel>(nb.getPropertyKeys().size());
+				Iterator<Object> ite = nb.getPropertyKeys().iterator();
+				while (ite.hasNext()) {
+					Object key = ite.next();
+					KeyValueModel kv = new KeyValueModel(key, nb.getProperty(key));
+					attributes.add(kv);
+				} 
+			}
+			else{
+				attributes = new Vector<KeyValueModel>(0);
+            }
+			wasModified = false;
+		}
+
+		public void updateModel(NamedBean nb) {
+            if(!wasModified())
+                return; //No changed made
+			// add and update keys
+			for (int i=0; i<attributes.size(); i++) {
+				KeyValueModel kv = attributes.get(i);
+				if ( (kv.key!=null) && // only update if key value defined, will do the remove to
+						((nb.getPropertyKeys() == null) || (nb.getProperty(kv.key)==null) || (!kv.value.equals(nb.getProperty(kv.key)))) )
+					nb.setProperty(kv.key, kv.value);
+			}
+			//remove undefined keys
+			if (nb.getPropertyKeys() != null) {
+				Iterator<Object> ite = nb.getPropertyKeys().iterator();
+				while (ite.hasNext()) 
+					if (! keyExist(ite.next())) // not very efficient algorithm!
+						ite.remove();
+			}
+            wasModified = false;
+		}
+
+		private boolean keyExist(Object k) {
+			if (k==null) return false;
+			for (int i=0; i<attributes.size(); i++)
+				if ( k.equals(attributes.get(i).key) )
+					return true;
+			return false;
+		}
+
+		public int getColumnCount() { 
+			return 2; 
+		}
+
+		public int getRowCount() { 
+			return attributes.size();
+		}
+
+		public String getColumnName(int col){ 
+			return titles[col]; 
+		}
+
+		public Object getValueAt(int row, int col) {
+			if (row<attributes.size()) {
+				if (col == 0)
+					return attributes.get(row).key;
+				if (col == 1)
+					return attributes.get(row).value;
+			}
+			return "...";
+		}
+
+		public void setValueAt(Object value, int row, int col) {
+			KeyValueModel kv;
+			
+			if (row<attributes.size()) // already exist?
+				kv =  attributes.get(row);
+			else
+				kv = new KeyValueModel("","");
+			
+			if (col == 0) // update key
+                //Force keys to be save as a single string with no spaces
+				if (! keyExist(((String) value).replaceAll("\\s", ""))) // if not exist
+					kv.key = ((String) value).replaceAll("\\s", "");
+				else {
+					setValueAt(value+"-1", row, col); // else change key name
+					return;
+				}
+
+			if (col == 1) // update value
+				kv.value = value;
+			if (row<attributes.size()) // existing one
+				attributes.set(row, kv);
+			else
+				attributes.add(row, kv); // new one
+
+			if ((col==0) && (kv.key.equals("")))
+				attributes.remove(row); // actually maybe remove
+			
+			wasModified = true;
+			fireTableCellUpdated(row, col);
+		}
+
+		public boolean isCellEditable(int row, int col) {
+			return true;
+		}
+
+		public boolean wasModified() {
+			return wasModified;
+		}
+	}
+    
+    static Logger log = LoggerFactory.getLogger(BeanEditAction.class);
 }

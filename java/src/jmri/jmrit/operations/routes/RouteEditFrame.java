@@ -59,7 +59,7 @@ public class RouteEditFrame extends OperationsFrame implements java.beans.Proper
 	ButtonGroup groupTime = new ButtonGroup();
 
 	// text field
-	JTextField routeNameTextField = new JTextField(20);
+	JTextField routeNameTextField = new JTextField(Control.max_len_string_route_name);
 	JTextField commentTextField = new JTextField(35);
 
 	// combo boxes
@@ -69,7 +69,7 @@ public class RouteEditFrame extends OperationsFrame implements java.beans.Proper
 	public static final String DISPOSE = "dispose"; // NOI18N
 
 	public RouteEditFrame() {
-		super();
+		super(Bundle.getMessage("TitleRouteEdit"));
 	}
 	
 	public void initComponents(Route route, Train train) {
@@ -98,6 +98,7 @@ public class RouteEditFrame extends OperationsFrame implements java.beans.Proper
 			routeModel.initTable(this, routeTable, route);
 			enableButtons(true);
 		} else {
+			setTitle(Bundle.getMessage("TitleRouteAdd"));
 			enableButtons(false);
 		}
 
@@ -193,10 +194,9 @@ public class RouteEditFrame extends OperationsFrame implements java.beans.Proper
 		LocationManager.instance().addPropertyChangeListener(this);
 
 		// set frame size and route for display
-		pack();
-		if (getWidth() < Control.panelWidth)
-			setSize(Control.panelWidth, Control.panelHeight);
-		setVisible(true);
+		initComponents();
+		if (getWidth() < Control.widePanelWidth)
+			setSize(Control.widePanelWidth, Control.minPanelHeight);
 
 		// create ShutDownTasks
 		createShutDownTask();

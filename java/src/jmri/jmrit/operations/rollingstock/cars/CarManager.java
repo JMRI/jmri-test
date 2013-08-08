@@ -36,7 +36,7 @@ public class CarManager extends RollingStockManager{
 	
 	protected Hashtable<String, Kernel> _kernelHashTable = new Hashtable<String, Kernel>(); // stores Kernels by number
 
-	public static final String KERNELLISTLENGTH_CHANGED_PROPERTY = "KernelListLength"; // NOI18N
+	public static final String KERNEL_LISTLENGTH_CHANGED_PROPERTY = "KernelListLength"; // NOI18N
 
     public CarManager() {
     }
@@ -112,7 +112,7 @@ public class CarManager extends RollingStockManager{
     		kernel = new Kernel(name);
     		Integer oldSize = Integer.valueOf(_kernelHashTable.size());
     		_kernelHashTable.put(name, kernel);
-    		firePropertyChange(KERNELLISTLENGTH_CHANGED_PROPERTY, oldSize, Integer.valueOf(_kernelHashTable.size()));
+    		firePropertyChange(KERNEL_LISTLENGTH_CHANGED_PROPERTY, oldSize, Integer.valueOf(_kernelHashTable.size()));
     	}
     	return kernel;
     }
@@ -127,7 +127,7 @@ public class CarManager extends RollingStockManager{
     		kernel.dispose();
     		Integer oldSize = Integer.valueOf(_kernelHashTable.size());
     		_kernelHashTable.remove(name);
-    		firePropertyChange(KERNELLISTLENGTH_CHANGED_PROPERTY, oldSize, Integer.valueOf(_kernelHashTable.size()));
+    		firePropertyChange(KERNEL_LISTLENGTH_CHANGED_PROPERTY, oldSize, Integer.valueOf(_kernelHashTable.size()));
     	}
     }
     
@@ -241,7 +241,7 @@ public class CarManager extends RollingStockManager{
     protected Object getRsAttribute(RollingStock rs, int attribute){
     	Car car = (Car)rs;
     	switch (attribute){
-    	case BY_LOAD: return car.getLoad();
+    	case BY_LOAD: return car.getLoadName();
     	case BY_KERNEL: return car.getKernelName();
     	case BY_RWE: return car.getReturnWhenEmptyDestName();
     	case BY_FINAL_DEST: return car.getFinalDestinationName() + car.getFinalDestinationTrackName();
@@ -301,8 +301,8 @@ public class CarManager extends RollingStockManager{
        	Enumeration<String> en = _hashTable.keys();
     	while (en.hasMoreElements()) { 
     		Car car = getById(en.nextElement());
-    		if (car.isCaboose() && !names.contains(car.getRoad())){
-    			names.add(car.getRoad());
+    		if (car.isCaboose() && !names.contains(car.getRoadName())){
+    			names.add(car.getRoadName());
     		}
     	}
     	return sortList(names);
@@ -317,8 +317,8 @@ public class CarManager extends RollingStockManager{
        	Enumeration<String> en = _hashTable.keys();
     	while (en.hasMoreElements()) { 
     		Car car = getById(en.nextElement());
-    		if (car.hasFred() && !names.contains(car.getRoad())){
-    			names.add(car.getRoad());
+    		if (car.hasFred() && !names.contains(car.getRoadName())){
+    			names.add(car.getRoadName());
     		}
     	}
     	return sortList(names);
@@ -334,11 +334,11 @@ public class CarManager extends RollingStockManager{
     	List<String> cars = getList();
     	for (int i = 0; i < cars.size(); i++) {
     		Car car = getById(cars.get(i));
-    		if (car.getType().equals(type) && car.getLoad().equals(oldLoadName))
+    		if (car.getTypeName().equals(type) && car.getLoadName().equals(oldLoadName))
     			if (newLoadName != null)
-    				car.setLoad(newLoadName);
+    				car.setLoadName(newLoadName);
     			else
-    				car.setLoad(CarLoads.instance().getDefaultEmptyName());
+    				car.setLoadName(CarLoads.instance().getDefaultEmptyName());
     	}
     }
 	

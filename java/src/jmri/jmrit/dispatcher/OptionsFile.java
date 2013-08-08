@@ -98,6 +98,11 @@ public class OptionsFile extends jmri.jmrit.XmlFile {
 							}									
 						}
 					}
+                    if(options.getAttribute("usesignaltype")!=null){
+                        dispatcher.setSignalType(0x00);
+                        if(options.getAttribute("usesignaltype").getValue().equals("signalmast"))
+                            dispatcher.setSignalType(0x01);
+                    }
 					if (options.getAttribute("useconnectivity")!=null) {
 						dispatcher.setUseConnectivity(true);
 						if (options.getAttribute("useconnectivity").getValue().equals("no"))
@@ -171,6 +176,11 @@ public class OptionsFile extends jmri.jmrit.XmlFile {
 						if (options.getAttribute("usescalemeters").getValue().equals("no"))
 							dispatcher.setUseScaleMeters(false);
 					}
+                    if(options.getAttribute("userosterentryinblock")!=null){
+                        dispatcher.setRosterEntryInBlock(false);
+						if (options.getAttribute("userosterentryinblock").getValue().equals("yes"))
+							dispatcher.setRosterEntryInBlock(true);
+                    }
 				}
 			}
 		} 
@@ -212,6 +222,12 @@ public class OptionsFile extends jmri.jmrit.XmlFile {
 		options.setAttribute("supportvsdecoder", ""+(dispatcher.getSupportVSDecoder()?"yes":"no"));
 		options.setAttribute("layoutscale", Scale.getShortScaleID(dispatcher.getScale()));
 		options.setAttribute("usescalemeters", ""+(dispatcher.getUseScaleMeters()?"yes":"no"));
+		options.setAttribute("userosterentryinblock", ""+(dispatcher.getRosterEntryInBlock()?"yes":"no"));
+        if(dispatcher.getSignalType()==0x00){
+            options.setAttribute("usesignaltype", "signalhead");
+        } else {
+            options.setAttribute("usesignaltype", "signalmast");
+        }
 		root.addContent(options);
 			
 		// write out the file
