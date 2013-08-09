@@ -134,6 +134,7 @@ public final class JmriApplication {
 
     protected void registerDefaultShutDownTasks() {
         InstanceManager.shutDownManagerInstance().register(new AbstractShutDownTask("Writing Blocks") {
+            @Override
             public boolean execute() {
                 // Save block values prior to exit, if necessary
                 log.debug("Start writing block info");
