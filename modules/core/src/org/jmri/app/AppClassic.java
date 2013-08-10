@@ -10,17 +10,21 @@ import apps.SystemConsole;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.EventObject;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import javax.help.SwingHelpUtilities;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
@@ -37,30 +41,65 @@ import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import jmri.IdTagManager;
 import jmri.InstanceManager;
 import jmri.JmriException;
-import jmri.jmrit.XmlFile;
+import jmri.JmriPlugin;
+import jmri.NamedBeanHandleManager;
+import jmri.UserPreferencesManager;
+import jmri.configurexml.ConfigXmlManager;
+import jmri.configurexml.swing.DialogErrorHandler;
+import jmri.implementation.AbstractShutDownTask;
+import jmri.jmrit.DebugMenu;
+import jmri.jmrit.ToolsMenu;
+import jmri.jmrit.automat.SampleAutomaton2Action;
+import jmri.jmrit.automat.SampleAutomaton3Action;
+import jmri.jmrit.automat.SampleAutomatonAction;
 import jmri.jmrit.decoderdefn.DecoderIndexFile;
+import jmri.jmrit.decoderdefn.PrintDecoderListAction;
+import jmri.jmrit.display.PanelMenu;
+import jmri.jmrit.display.layoutEditor.BlockValueFile;
 import jmri.jmrit.jython.Jynstrument;
 import jmri.jmrit.jython.JynstrumentFactory;
+import jmri.jmrit.jython.RunJythonScript;
+import jmri.jmrit.operations.OperationsMenu;
+import jmri.jmrit.revhistory.FileHistory;
+import jmri.jmrit.roster.swing.RosterMenu;
+import jmri.jmrit.signalling.EntryExitPairs;
+import jmri.jmrit.symbolicprog.autospeed.AutoSpeedAction;
 import jmri.jmrit.throttle.ThrottleFrame;
+import jmri.jmrit.withrottle.WiThrottleCreationAction;
 import jmri.jmrix.ConnectionConfig;
 import jmri.jmrix.ConnectionStatus;
 import jmri.jmrix.JmrixConfigPane;
-import jmri.plaf.macosx.Application;
+import jmri.jmrix.jinput.treecontrol.TreeAction;
+import jmri.jmrix.libusb.UsbViewAction;
+import jmri.managers.DefaultIdTagManager;
+import jmri.managers.DefaultUserMessagePreferences;
 import jmri.plaf.macosx.PreferencesHandler;
 import jmri.plaf.macosx.QuitHandler;
 import jmri.util.FileUtil;
+import jmri.util.HelpUtil;
 import jmri.util.JmriJFrame;
 import jmri.util.SystemType;
 import jmri.util.WindowMenu;
+import jmri.util.exceptionhandler.AwtHandler;
+import jmri.util.exceptionhandler.UncaughtExceptionHandler;
 import jmri.util.iharder.dnd.FileDrop;
+import jmri.util.swing.FontComboUtil;
 import jmri.util.swing.JFrameInterface;
+import jmri.util.swing.SliderSnap;
 import jmri.util.swing.WindowInterface;
+import jmri.web.server.WebServerAction;
+import org.apache.log4j.Appender;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.RollingFileAppender;
+import org.jmri.managers.NetBeansShutDownManager;
+import org.netbeans.api.options.OptionsDisplayer;
 
 /**
  *
@@ -68,8 +107,8 @@ import org.apache.log4j.PropertyConfigurator;
  */
 public class AppClassic extends JPanel implements PropertyChangeListener, java.awt.event.WindowListener {
 
-    private static final String jmriLog ="****** JMRI log *******";        
-    static Logger log = Logger.getLogger(AppClassic.class);
+    private static final String jmriLog = "****** JMRI log *******";
+    static org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AppClassic.class);
 
     public AppClassic(JFrame frame) {
         super(true);
@@ -78,30 +117,31 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
         setButtonSpace();
         setJynstrumentSpace();
 
+        // Using jmri.Application since Application is ambigious
         jmri.Application.setLogo(logo());
         jmri.Application.setURL(line2());
 
         // Enable proper snapping of JSliders
-        jmri.util.swing.SliderSnap.init();
+        SliderSnap.init();
 
         // Prepare font lists
         prepareFontLists();
 
         // install shutdown manager
-        InstanceManager.setShutDownManager(
-                new jmri.managers.DefaultShutDownManager());
+        InstanceManager.setShutDownManager(new NetBeansShutDownManager());
 
         // add the default shutdown task to save blocks
         // as a special case, register a ShutDownTask to write out blocks
         InstanceManager.shutDownManagerInstance().
-                register(new jmri.implementation.AbstractShutDownTask("Writing Blocks") {
+                register(new AbstractShutDownTask("Writing Blocks") {
+            @Override
             public boolean execute() {
                 // Save block values prior to exit, if necessary
                 log.debug("Start writing block info");
                 try {
-                    new jmri.jmrit.display.layoutEditor.BlockValueFile().writeBlockValues();
+                    new BlockValueFile().writeBlockValues();
                 } //catch (org.jdom.JDOMException jde) { log.error("Exception writing blocks: "+jde); }                           
-                catch (java.io.IOException ioe) {
+                catch (IOException ioe) {
                     log.error("Exception writing blocks: " + ioe);
                 }
 
@@ -110,30 +150,32 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
             }
         });
 
+        // TODO: edit ShutDownManager to use NetBeans LifeCycleManager
+
         // Install configuration manager and Swing error handler
-        jmri.configurexml.ConfigXmlManager cm = new jmri.configurexml.ConfigXmlManager();
+        ConfigXmlManager cm = new ConfigXmlManager();
         InstanceManager.setConfigureManager(cm);
-        jmri.configurexml.ConfigXmlManager.setErrorHandler(new jmri.configurexml.swing.DialogErrorHandler());
+        ConfigXmlManager.setErrorHandler(new DialogErrorHandler());
         InstanceManager.setConfigureManager(cm);
 
         // Install a history manager
-        jmri.InstanceManager.store(new jmri.jmrit.revhistory.FileHistory(), jmri.jmrit.revhistory.FileHistory.class);
+        InstanceManager.store(new FileHistory(), FileHistory.class);
         // record startup
-        jmri.InstanceManager.getDefault(jmri.jmrit.revhistory.FileHistory.class).addOperation("app", nameString, null);
+        InstanceManager.getDefault(FileHistory.class).addOperation("app", nameString, null);
 
         // Install a user preferences manager
-        jmri.InstanceManager.store(jmri.managers.DefaultUserMessagePreferences.getInstance(), jmri.UserPreferencesManager.class);
-        jmri.InstanceManager.store(new jmri.NamedBeanHandleManager(), jmri.NamedBeanHandleManager.class);
+        InstanceManager.store(DefaultUserMessagePreferences.getInstance(), UserPreferencesManager.class);
+        InstanceManager.store(new NamedBeanHandleManager(), NamedBeanHandleManager.class);
         // Install an IdTag manager
-        jmri.InstanceManager.store(new jmri.managers.DefaultIdTagManager(), jmri.IdTagManager.class);
+        InstanceManager.store(new DefaultIdTagManager(), IdTagManager.class);
         //Install Entry Exit Pairs Manager
-        jmri.InstanceManager.store(new jmri.jmrit.signalling.EntryExitPairs(), jmri.jmrit.signalling.EntryExitPairs.class);
+        InstanceManager.store(new EntryExitPairs(), EntryExitPairs.class);
 
         // install preference manager
         InstanceManager.setTabbedPreferences(new apps.gui3.TabbedPreferences());
 
         // Install abstractActionModel
-        jmri.InstanceManager.store(new apps.CreateButtonModel(), apps.CreateButtonModel.class);
+        InstanceManager.store(new apps.CreateButtonModel(), apps.CreateButtonModel.class);
 
         // find preference file and set location in configuration manager
         FileUtil.createDirectory(FileUtil.getUserFilesPath());
@@ -199,7 +241,7 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
             try {
                 Thread.sleep(sleep);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage(), e);
             }
         }
 
@@ -213,7 +255,7 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage(), e);
             }
         }
         // Now load deferred config items
@@ -246,10 +288,9 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
             @Override
             public void run() {
                 try {
-                    jmri.InstanceManager.tabbedPreferencesInstance().init();
+                    InstanceManager.tabbedPreferencesInstance().init();
                 } catch (Exception ex) {
-                    log.error("Error in trying to setup preferences " + ex.toString());
-                    ex.printStackTrace();
+                    log.error("Error in trying to setup preferences {}", ex.toString(), ex);
                 }
             }
         };
@@ -311,7 +352,7 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
     }
 
     protected final void addToActionModel() {
-        apps.CreateButtonModel bm = jmri.InstanceManager.getDefault(apps.CreateButtonModel.class);
+        apps.CreateButtonModel bm = InstanceManager.getDefault(apps.CreateButtonModel.class);
         ResourceBundle actionList = ResourceBundle.getBundle("apps.ActionListBundle");
         Enumeration<String> e = actionList.getKeys();
         while (e.hasMoreElements()) {
@@ -331,7 +372,7 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
      * just creates an empty space for these to be added to.
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
-    justification = "only one application at a time")
+            justification = "only one application at a time")
     protected void setButtonSpace() {
         _buttonSpace = new JPanel();
         _buttonSpace.setLayout(new FlowLayout());
@@ -339,7 +380,7 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
     static JComponent _jynstrumentSpace = null;
 
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
-    justification = "only one application at a time")
+            justification = "only one application at a time")
     protected void setJynstrumentSpace() {
         _jynstrumentSpace = new JPanel();
         _jynstrumentSpace.setLayout(new FlowLayout());
@@ -377,7 +418,7 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
         log.debug("start building menus");
 
         if (SystemType.isMacOSX()) {
-            Application.getApplication().setQuitHandler(new QuitHandler() {
+            jmri.plaf.macosx.Application.getApplication().setQuitHandler(new QuitHandler() {
                 @Override
                 public boolean handleQuitRequest(EventObject eo) {
                     return handleQuit();
@@ -410,8 +451,8 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
         JMenu fileMenu = new JMenu(rb.getString("MenuFile"));
         menuBar.add(fileMenu);
 
-        fileMenu.add(new jmri.jmrit.decoderdefn.PrintDecoderListAction(rb.getString("MenuPrintDecoderDefinitions"), wi.getFrame(), false));
-        fileMenu.add(new jmri.jmrit.decoderdefn.PrintDecoderListAction(rb.getString("MenuPrintPreviewDecoderDefinitions"), wi.getFrame(), true));
+        fileMenu.add(new PrintDecoderListAction(rb.getString("MenuPrintDecoderDefinitions"), wi.getFrame(), false));
+        fileMenu.add(new PrintDecoderListAction(rb.getString("MenuPrintPreviewDecoderDefinitions"), wi.getFrame(), true));
 
         // Use Mac OS X native Quit if using Aqua look and feel
         if (!(SystemType.isMacOSX() && UIManager.getLookAndFeel().isNativeLookAndFeel())) {
@@ -460,7 +501,7 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
         prefsAction = new apps.gui3.TabbedPreferencesAction("Preferences");
         // Put prefs in Apple's prefered area on Mac OS X
         if (SystemType.isMacOSX()) {
-            Application.getApplication().setPreferencesHandler(new PreferencesHandler() {
+            jmri.plaf.macosx.Application.getApplication().setPreferencesHandler(new PreferencesHandler() {
                 @Override
                 public void handlePreferences(EventObject eo) {
                     doPreferences();
@@ -476,19 +517,29 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
     }
 
     protected void toolsMenu(JMenuBar menuBar, WindowInterface wi) {
-        menuBar.add(new jmri.jmrit.ToolsMenu(rb.getString("MenuTools")));
+        // menuBar.add(new ToolsMenu(rb.getString("MenuTools")));
+        ToolsMenu toolsMenu = new ToolsMenu(rb.getString("MenuTools"));
+        toolsMenu.addSeparator();
+        toolsMenu.add(new AbstractAction("NetBeans Options") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                OptionsDisplayer.getDefault().open();
+            }
+        });
+        menuBar.add(toolsMenu);
     }
 
     protected void operationsMenu(JMenuBar menuBar, WindowInterface wi) {
-        menuBar.add(new jmri.jmrit.operations.OperationsMenu(rb.getString("MenuOperations")));
+        menuBar.add(new OperationsMenu(rb.getString("MenuOperations")));
     }
 
     protected void rosterMenu(JMenuBar menuBar, WindowInterface wi) {
-        menuBar.add(new jmri.jmrit.roster.swing.RosterMenu(rb.getString("MenuRoster"), jmri.jmrit.roster.swing.RosterMenu.MAINMENU, this));
+        menuBar.add(new RosterMenu(rb.getString("MenuRoster"), RosterMenu.MAINMENU, this));
     }
 
     protected void panelMenu(JMenuBar menuBar, WindowInterface wi) {
-        menuBar.add(jmri.jmrit.display.PanelMenu.instance());
+        menuBar.add(PanelMenu.instance());
     }
 
     /**
@@ -506,25 +557,25 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
     }
 
     protected void debugMenu(JMenuBar menuBar, WindowInterface wi) {
-        JMenu d = new jmri.jmrit.DebugMenu(this);
+        JMenu d = new DebugMenu(this);
 
         // also add some tentative items from jmrix
         d.add(new JSeparator());
         d.add(new jmri.jmrix.pricom.PricomMenu());
         d.add(new JSeparator());
 
-        d.add(new jmri.jmrix.jinput.treecontrol.TreeAction());
-        d.add(new jmri.jmrix.libusb.UsbViewAction());
+        d.add(new TreeAction());
+        d.add(new UsbViewAction());
 
         d.add(new JSeparator());
-        d.add(new jmri.jmrit.jython.RunJythonScript("RailDriver Throttle", new java.io.File("jython/RailDriver.py")));
+        d.add(new RunJythonScript("RailDriver Throttle", new File("jython/RailDriver.py")));
 
         // also add some tentative items from webserver
         d.add(new JSeparator());
-        d.add(new jmri.web.server.WebServerAction());
+        d.add(new WebServerAction());
 
         d.add(new JSeparator());
-        d.add(new jmri.jmrit.withrottle.WiThrottleCreationAction());
+        d.add(new WiThrottleCreationAction());
         menuBar.add(d);
 
     }
@@ -541,11 +592,11 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
     protected void developmentMenu(JMenuBar menuBar, WindowInterface wi) {
         JMenu devMenu = new JMenu("Development");
         menuBar.add(devMenu);
-        devMenu.add(new jmri.jmrit.symbolicprog.autospeed.AutoSpeedAction("Auto-speed tool"));
+        devMenu.add(new AutoSpeedAction("Auto-speed tool"));
         devMenu.add(new JSeparator());
-        devMenu.add(new jmri.jmrit.automat.SampleAutomatonAction("Sample automaton 1"));
-        devMenu.add(new jmri.jmrit.automat.SampleAutomaton2Action("Sample automaton 2"));
-        devMenu.add(new jmri.jmrit.automat.SampleAutomaton3Action("Sample automaton 3"));
+        devMenu.add(new SampleAutomatonAction("Sample automaton 1"));
+        devMenu.add(new SampleAutomaton2Action("Sample automaton 2"));
+        devMenu.add(new SampleAutomaton3Action("Sample automaton 3"));
         //devMenu.add(new JSeparator());
         //devMenu.add(new jmri.jmrix.serialsensor.SerialSensorAction("Serial port sensors"));
     }
@@ -554,10 +605,10 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
         try {
 
             // create menu and standard items
-            JMenu helpMenu = jmri.util.HelpUtil.makeHelpMenu(mainWindowHelpID(), true);
+            JMenu helpMenu = HelpUtil.makeHelpMenu(mainWindowHelpID(), true);
 
             // tell help to use default browser for external types
-            javax.help.SwingHelpUtilities.setContentViewerUI("jmri.util.ExternalLinkContentViewerUI");
+            SwingHelpUtilities.setContentViewerUI("jmri.util.ExternalLinkContentViewerUI");
 
             // use as main help menu 
             menuBar.add(helpMenu);
@@ -691,11 +742,11 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
 
         // add listerner for Com port updates
         ConnectionStatus.instance().addPropertyChangeListener(this);
-        ArrayList<Object> connList = jmri.InstanceManager.configureManagerInstance().getInstanceList(jmri.jmrix.ConnectionConfig.class);
+        ArrayList<Object> connList = InstanceManager.configureManagerInstance().getInstanceList(ConnectionConfig.class);
         int i = 0;
         if (connList != null) {
             for (int x = 0; x < connList.size(); x++) {
-                jmri.jmrix.ConnectionConfig conn = (jmri.jmrix.ConnectionConfig) connList.get(x);
+                ConnectionConfig conn = (ConnectionConfig) connList.get(x);
                 if (!conn.getDisabled()) {
                     connection[i] = conn;
                     i++;
@@ -716,13 +767,13 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
         return pane1;
     }
     //int[] connection = {-1,-1,-1,-1};
-    jmri.jmrix.ConnectionConfig[] connection = {null, null, null, null};
+    ConnectionConfig[] connection = {null, null, null, null};
 
     /**
      * Closing the main window is a shutdown request
      */
     @Override
-    public void windowClosing(java.awt.event.WindowEvent e) {
+    public void windowClosing(WindowEvent e) {
         if (JOptionPane.showConfirmDialog(null,
                 rb.getString("MessageLongCloseWarning"),
                 rb.getString("MessageShortCloseWarning"),
@@ -783,21 +834,19 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
     }
     static JComponent _buttonSpace = null;
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "MS_PKGPROTECT",
-    justification = "Needs protected access so it can be reloaded after reading the configuration file so the locale is set properly")
+            justification = "Needs protected access so it can be reloaded after reading the configuration file so the locale is set properly")
     protected static ResourceBundle rb = ResourceBundle.getBundle("apps.AppsBundle");
     static AppConfigBase prefs;
 
     static public AppConfigBase getPrefs() {
         return prefs;
     }
-
     /**
      * deprecated as of 2.13.3, directly access the connection configuration
      * from the instance list
-     * jmri.InstanceManager.configureManagerInstance().getInstanceList(jmri.jmrix.ConnectionConfig.class)
+     * InstanceManager.configureManagerInstance().getInstanceList(jmri.jmrix.ConnectionConfig.class)
      */
-    
-    static java.awt.event.AWTEventListener debugListener = null;
+    static AWTEventListener debugListener = null;
     static boolean debugFired = false;
     static boolean debugmsg = false;
 
@@ -843,23 +892,23 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
             log.error("Exception starting logging: " + e);
         }
         // install default exception handlers
-        System.setProperty("sun.awt.exception.handler", jmri.util.exceptionhandler.AwtHandler.class.getName());
-        Thread.setDefaultUncaughtExceptionHandler(new jmri.util.exceptionhandler.UncaughtExceptionHandler());
+        System.setProperty("sun.awt.exception.handler", AwtHandler.class.getName());
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
 
-        log = Logger.getLogger(AppClassic.class);
+        log = org.slf4j.LoggerFactory.getLogger(AppClassic.class);
         // first log entry
         log.info(jmriLog);
 
         // now indicate logging locations
         @SuppressWarnings("unchecked")
-        Enumeration<org.apache.log4j.Logger> e = org.apache.log4j.Logger.getRootLogger().getAllAppenders();
+        Enumeration<Logger> e = Logger.getRootLogger().getAllAppenders();
 
         while (e.hasMoreElements()) {
-            org.apache.log4j.Appender a = (org.apache.log4j.Appender) e.nextElement();
-            if (a instanceof org.apache.log4j.RollingFileAppender) {
-                log.info("This log is stored in file: " + ((org.apache.log4j.RollingFileAppender) a).getFile());
-            } else if (a instanceof org.apache.log4j.FileAppender) {
-                log.info("This log is stored in file: " + ((org.apache.log4j.FileAppender) a).getFile());
+            Appender a = (Appender) e.nextElement();
+            if (a instanceof RollingFileAppender) {
+                log.info("This log is stored in file: " + ((RollingFileAppender) a).getFile());
+            } else if (a instanceof FileAppender) {
+                log.info("This log is stored in file: " + ((FileAppender) a).getFile());
             }
         }
     }
@@ -904,7 +953,7 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
         // create the main frame and menus
 
         // invoke plugin, if any
-        jmri.JmriPlugin.start(frame, containedPane.menuBar);
+        JmriPlugin.start(frame, containedPane.menuBar);
 
         frame.setJMenuBar(containedPane.menuBar);
         frame.getContentPane().add(containedPane);
@@ -938,10 +987,10 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
     // The following MUST be protected for 3rd party applications 
     // (such as CATS) which are derived from this class.
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "MS_PKGPROTECT",
-    justification = "The following MUST be protected for 3rd party applications (such as CATS) which are derived from this class.")
+            justification = "The following MUST be protected for 3rd party applications (such as CATS) which are derived from this class.")
     protected static boolean configOK;
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "MS_PKGPROTECT",
-    justification = "The following MUST be protected for 3rd party applications (such as CATS) which are derived from this class.")
+            justification = "The following MUST be protected for 3rd party applications (such as CATS) which are derived from this class.")
     protected static boolean configDeferredLoadOK;
     // GUI members
     private JMenuBar menuBar;
@@ -950,7 +999,7 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
         setApplication(program);
         nameString = (program + " version " + jmri.Version.name()
                 + " starts under Java " + System.getProperty("java.version", "<unknown>")
-                + " at " + (new java.util.Date()));
+                + " at " + (new Date()));
         return nameString;
     }
     static String nameString = "JMRI program";
@@ -971,7 +1020,7 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
             @Override
             public void run() {
                 log.debug("Prepare font lists...");
-                jmri.util.swing.FontComboUtil.prepareFontLists();
+                FontComboUtil.prepareFontLists();
                 log.debug("...Font lists built");
             }
         }).start();
