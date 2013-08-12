@@ -7,6 +7,8 @@
             <suite-component/>
             <module-dependencies/>
             <public-packages>
+                <package>org.apache.log4j</package>
+                <package>org.apache.log4j.spi</package>
                 <package>org.slf4j</package>
                 <package>org.slf4j.helpers</package>
                 <package>org.slf4j.spi</package>
@@ -14,6 +16,10 @@
             <class-path-extension>
                 <runtime-relative-path>ext/slf4j-api-1.7.2.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/slf4j-api-1.7.2.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/log4j-1.2.17.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/log4j-1.2.17.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/slf4j-jdk14-1.7.2.jar</runtime-relative-path>
