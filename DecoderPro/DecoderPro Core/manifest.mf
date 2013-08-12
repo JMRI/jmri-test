@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.jmri.app.decoderpro
+OpenIDE-Module-Localizing-Bundle: org/jmri/app/decoderpro/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
