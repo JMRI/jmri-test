@@ -7,7 +7,7 @@
             <suite-component/>
             <module-dependencies>
                 <dependency>
-                    <code-name-base>org.jmri.logging</code-name-base>
+                    <code-name-base>javax.help</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
@@ -15,20 +15,11 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.netbeans.modules.options.api</code-name-base>
+                    <code-name-base>org.jmri.logging</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <release-version>1</release-version>
-                        <specification-version>1.31.2</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
-                    <code-name-base>org.openide.util</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <specification-version>8.29.3</specification-version>
+                        <specification-version>1.0</specification-version>
                     </run-dependency>
                 </dependency>
             </module-dependencies>
@@ -530,7 +521,6 @@
                 <package>jmri.web.servlet.xmlio</package>
                 <package>jmri.web.xmlio</package>
                 <package>net.jcip.annotations</package>
-                <package>org.jmri.app</package>
             </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/antlr-3.4-complete.jar</runtime-relative-path>
@@ -557,10 +547,6 @@
                 <binary-origin>release/modules/ext/jetty-server-8.1.0.v20120127.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/log4j-1.2.17.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/log4j-1.2.17.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/xercesImpl.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/xercesImpl.jar</binary-origin>
             </class-path-extension>
@@ -583,10 +569,6 @@
             <class-path-extension>
                 <runtime-relative-path>ext/joal.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/joal.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jhall.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jhall.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jetty-servlet-8.1.0.v20120127.jar</runtime-relative-path>
