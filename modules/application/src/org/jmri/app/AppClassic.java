@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.jmri.app;
 
 import apps.AppConfigBase;
@@ -15,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -23,6 +20,8 @@ import java.util.Enumeration;
 import java.util.EventObject;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
 import javax.help.SwingHelpUtilities;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -90,15 +89,9 @@ import jmri.util.swing.JFrameInterface;
 import jmri.util.swing.SliderSnap;
 import jmri.util.swing.WindowInterface;
 import jmri.web.server.WebServerAction;
-import org.apache.log4j.Appender;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.RollingFileAppender;
 import org.jmri.managers.NetBeansShutDownManager;
 import org.netbeans.api.options.OptionsDisplayer;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -108,7 +101,7 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
 
     private static final String jmriLog = "****** JMRI log *******";
     static boolean loggingInitialized = false;
-    static org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AppClassic.class);
+    static org.slf4j.Logger log = LoggerFactory.getLogger(AppClassic.class);
 
     public AppClassic(JFrame frame) {
         super(true);
@@ -250,6 +243,7 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
             configDeferredLoadOK = false;
         }
 
+        // TODO: All these threds should eventually be pushed into Initialzers.
         /*Once all the preferences have been loaded we can initial the preferences
          doing it in a thread at this stage means we can let it work in the background*/
         Runnable r = new Runnable() {
@@ -823,52 +817,50 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
         return AppsBase.handleRestart();
     }
 
+    // TODO: rewrite to use JUL LogManager
+    // Store default logging instructions in JMRI Logging Resources
+    // Read user logging instructions from User directory
     static public void initLogging() {
         if (loggingInitialized) {
             log.debug("initLog4J already initialized!");
             return;
         }
         // Initialise JMRI System Console
-        // Need to do this before initialising log4j so that the new
-        // stdout and stderr streams are set-up and usable by the ConsoleAppender
+        // TODO: figure out how to get logging done before this
+        // into the console, since NetBeans starts logging before any JMRI code
+        // is called.
         SystemConsole.create();
 
         loggingInitialized = true;
-        // initialize log4j - from logging control file (lcf) only
-        // if can find it!
-        String logFile = "default.lcf";
+        // initialize JUL from logging.properties if found.
+        String logFile = "logging.properties";
         try {
-            if (new File(logFile).canRead()) {
-                PropertyConfigurator.configure(logFile);
-            } else if (new File(FileUtil.getProgramPath() + logFile).canRead()) {
-                PropertyConfigurator.configure(FileUtil.getProgramPath() + logFile);
-            } else {
-                BasicConfigurator.configure();
-                Logger.getRootLogger().setLevel(Level.WARN);
+            File f = new File(jmri.util.FileUtil.getPreferencesPath() + logFile);
+            if (!f.canRead()) {
+                f = new File(jmri.util.FileUtil.getProgramPath() + logFile);
             }
-        } catch (java.lang.NoSuchMethodError e) {
-            log.error("Exception starting logging: " + e);
+            if (!f.canRead()) {
+                f = org.openide.filesystems.FileUtil.toFile(org.openide.filesystems.FileUtil.getConfigFile(logFile));
+            }
+            if (f.canRead()) {
+                LogManager.getLogManager().readConfiguration(new FileInputStream(f));
+            } else {
+                java.util.logging.Logger.getGlobal().setLevel(Level.WARNING);
+            }
+        } catch (IOException e) {
+            log.error("Exception configuring logging.", e);
+        } catch (NoSuchMethodError e) {
+            log.error("Exception starting logging.", e);
         }
         // install default exception handlers
         System.setProperty("sun.awt.exception.handler", AwtHandler.class.getName());
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
 
-        log = org.slf4j.LoggerFactory.getLogger(AppClassic.class);
+        log = LoggerFactory.getLogger(AppClassic.class);
         // first log entry
         log.info(jmriLog);
 
-        // now indicate logging locations
-        @SuppressWarnings("unchecked")
-        Enumeration<Logger> e = Logger.getRootLogger().getAllAppenders();
-
-        while (e.hasMoreElements()) {
-            Appender a = (Appender) e.nextElement();
-            if (a instanceof RollingFileAppender) {
-                log.info("This log is stored in file: " + ((RollingFileAppender) a).getFile());
-            } else if (a instanceof FileAppender) {
-                log.info("This log is stored in file: " + ((FileAppender) a).getFile());
-            }
-        }
+        // TODO: dump logging config (especially file names) to console
     }
 
     /**
