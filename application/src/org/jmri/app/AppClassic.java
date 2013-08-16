@@ -845,7 +845,9 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
             if (f.canRead()) {
                 LogManager.getLogManager().readConfiguration(new FileInputStream(f));
             } else {
-                java.util.logging.Logger.getGlobal().setLevel(Level.WARNING);
+                // Make logging detailed while still working on getting a real logging configuration loaded
+                // java.util.logging.Logger.getGlobal().setLevel(Level.WARNING);
+                java.util.logging.Logger.getGlobal().setLevel(Level.FINE);
             }
         } catch (IOException e) {
             log.error("Exception configuring logging.", e);
