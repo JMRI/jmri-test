@@ -4,8 +4,6 @@
  */
 package org.jmri.app.decoderpro;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.UIManager;
 import jmri.util.JmriJFrame;
 import jmri.util.SystemType;
@@ -25,7 +23,6 @@ public class Initializer implements Runnable {
     public void run() {
         String[] args = {};
         AppClassic.initLogging();
-        Logger.getGlobal().setLevel(Level.FINE);
         if (SystemType.isMacOSX()) {
             if (UIManager.getLookAndFeel().isNativeLookAndFeel()) {
                 System.setProperty("apple.laf.useScreenMenuBar", "true");
