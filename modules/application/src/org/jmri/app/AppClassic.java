@@ -840,7 +840,11 @@ public class AppClassic extends JPanel implements PropertyChangeListener, java.a
                 f = new File(jmri.util.FileUtil.getProgramPath() + logFile);
             }
             if (!f.canRead()) {
-                f = org.openide.filesystems.FileUtil.toFile(org.openide.filesystems.FileUtil.getConfigFile(logFile));
+                try {
+                    f = org.openide.filesystems.FileUtil.toFile(org.openide.filesystems.FileUtil.getConfigFile(logFile));
+                } catch (NullPointerException e) {
+                    // Do nothing. Next f.canRead() test will handle this correctly.
+                }
             }
             if (f.canRead()) {
                 LogManager.getLogManager().readConfiguration(new FileInputStream(f));
