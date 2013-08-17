@@ -24,6 +24,7 @@ public class EditPortalDirection extends jmri.util.JmriJFrame implements ActionL
     private JRadioButton _toButton;
     private JRadioButton _fromButton;
     private JRadioButton _noButton;
+    private boolean _regular;		// true when TO_ARROW show entry into ToBlock
 
 
     static int STRUT_SIZE = 10;
@@ -96,19 +97,19 @@ public class EditPortalDirection extends jmri.util.JmriJFrame implements ActionL
         panel.add(Box.createHorizontalStrut(200));
         
         ButtonGroup group = new ButtonGroup();
-        _toButton = new JRadioButton(PortalIcon._toArrowIcon);
+        _toButton = new JRadioButton(_parent._editor.getPortalIcon(PortalIcon.TO_ARROW));
         _toButton.setActionCommand(PortalIcon.TO_ARROW);
         _toButton.addActionListener(this);
         group.add(_toButton);
         panel.add(_toButton);
         
-        _fromButton = new JRadioButton(PortalIcon._fromArrowIcon);
+        _fromButton = new JRadioButton(_parent._editor.getPortalIcon(PortalIcon.FROM_ARROW));
         _fromButton.setActionCommand(PortalIcon.FROM_ARROW);
         _fromButton.addActionListener(this);
         group.add(_fromButton);
         panel.add(_fromButton);
         
-        _noButton = new JRadioButton(Bundle.getMessage("noIcon"), PortalIcon._hiddenIcon);
+        _noButton = new JRadioButton(Bundle.getMessage("noIcon"), _parent._editor.getPortalIcon(PortalIcon.HIDDEN));
         _noButton.setVerticalTextPosition(AbstractButton.CENTER);
         _noButton.setHorizontalTextPosition(AbstractButton.CENTER);
         _noButton.setActionCommand(PortalIcon.HIDDEN);
@@ -129,13 +130,14 @@ public class EditPortalDirection extends jmri.util.JmriJFrame implements ActionL
         JLabel l = new JLabel(Bundle.getMessage("PortalDirection1", _homeBlock.getDisplayName()));
         l.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         panel.add(l);
+        panel.add(Box.createVerticalStrut(STRUT_SIZE/2));
         l = new JLabel(Bundle.getMessage("PortalDirection2"));
         l.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         panel.add(l);
         l = new JLabel(Bundle.getMessage("PortalDirection3"));
         l.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         panel.add(l);
-        portalPanel.add(Box.createVerticalStrut(STRUT_SIZE));
+        panel.add(Box.createVerticalStrut(STRUT_SIZE));
         l = new JLabel(Bundle.getMessage("PortalDirection4"));
         l.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         panel.add(l);
@@ -162,26 +164,42 @@ public class EditPortalDirection extends jmri.util.JmriJFrame implements ActionL
     		return;
     	}
     	if (PortalIcon.TO_ARROW.equals(e.getActionCommand())) {
-        	_icon.setIcon(PortalIcon.TO_ARROW, PortalIcon._toArrowIcon);
-        	_icon.setIcon(PortalIcon.FROM_ARROW, PortalIcon._fromArrowIcon);    		
+    		if (_regular) {
+            	_icon.setIcon(PortalIcon.TO_ARROW, _parent._editor.getPortalIcon(PortalIcon.TO_ARROW));    			
+            	_icon.setIcon(PortalIcon.FROM_ARROW, _parent._editor.getPortalIcon(PortalIcon.FROM_ARROW));    		
+    		} else {    			
+            	_icon.setIcon(PortalIcon.TO_ARROW, _parent._editor.getPortalIcon(PortalIcon.FROM_ARROW));    		
+            	_icon.setIcon(PortalIcon.FROM_ARROW, _parent._editor.getPortalIcon(PortalIcon.TO_ARROW));    		
+    		}
         	_icon.setStatus(PortalIcon.TO_ARROW);
     	} else if (PortalIcon.FROM_ARROW.equals(e.getActionCommand())) {
-        	_icon.setIcon(PortalIcon.TO_ARROW, PortalIcon._fromArrowIcon);    		
-        	_icon.setIcon(PortalIcon.FROM_ARROW, PortalIcon._toArrowIcon);
+    		if (_regular) {
+            	_icon.setIcon(PortalIcon.TO_ARROW, _parent._editor.getPortalIcon(PortalIcon.FROM_ARROW));    			
+            	_icon.setIcon(PortalIcon.FROM_ARROW, _parent._editor.getPortalIcon(PortalIcon.TO_ARROW));    		
+    		} else {    			
+            	_icon.setIcon(PortalIcon.TO_ARROW, _parent._editor.getPortalIcon(PortalIcon.TO_ARROW));    		
+            	_icon.setIcon(PortalIcon.FROM_ARROW, _parent._editor.getPortalIcon(PortalIcon.FROM_ARROW));    		
+    		}
         	_icon.setStatus(PortalIcon.TO_ARROW);
     	} else if (PortalIcon.HIDDEN.equals(e.getActionCommand())) {
-        	_icon.setIcon(PortalIcon.TO_ARROW, PortalIcon._hiddenIcon);    		
+        	_icon.setIcon(PortalIcon.TO_ARROW, _parent._editor.getPortalIcon(PortalIcon.HIDDEN));    		
         	_icon.setStatus(PortalIcon.TO_ARROW);
     	}
     }
-    
+
     protected void setPortalIcon(PortalIcon icon) {
         _parent._editor.highlight(icon);
         if (_icon!=null) {
     		_icon.setStatus(PortalIcon.VISIBLE);        	
         }
     	if (icon!=null) {
-    		icon.setStatus(PortalIcon.TO_ARROW);
+    		if (_homeBlock.equals(icon.getPortal().getToBlock())) {    			
+        		icon.setStatus(PortalIcon.TO_ARROW);
+        		_regular = true;
+    		} else {    			
+        		icon.setStatus(PortalIcon.FROM_ARROW);
+        		_regular = false;
+    		}
     		_toButton.setEnabled(true);
     		_fromButton.setEnabled(true);
     		_noButton.setEnabled(true);

@@ -179,6 +179,7 @@ public class TrainCommon {
 			List<String> routeList, RouteLocation rl, int r, boolean isManifest) {
 		List<String> trackIds = rl.getLocation().getTrackIdsByNameList(null);
 		List<String> trackNames = new ArrayList<String>();
+		clearUtilityCarTypes(); // list utility cars by quantity
 		for (int i = 0; i < trackIds.size(); i++) {
 			Track track = rl.getLocation().getTrackById(trackIds.get(i));
 			if (trackNames.contains(splitString(track.getName())))
@@ -187,7 +188,6 @@ public class TrainCommon {
 			// block cars by destination
 			for (int j = r; j < routeList.size(); j++) {
 				RouteLocation rld = train.getRoute().getLocationById(routeList.get(j));
-				clearUtilityCarTypes(); // list utility cars by quantity
 				for (int k = 0; k < carList.size(); k++) {
 					Car car = carManager.getById(carList.get(k));
 					if (Setup.isSortByTrackEnabled()
@@ -563,7 +563,7 @@ public class TrainCommon {
 		if (count == 0)
 			return; // already printed out this car type
 		pickUpCar(fileOut, car, new StringBuffer(Setup.getPickupCarPrefix() + " "
-				+ tabString(Integer.toString(count), 3)), messageFormat, Setup.getManifestOrientation());
+				+ padString(Integer.toString(count), 3)), messageFormat, Setup.getManifestOrientation());
 	}
 	
 	/**
@@ -576,6 +576,7 @@ public class TrainCommon {
 	 */
 	protected void setoutUtilityCars(PrintWriter fileOut, List<String> carList, Car car, RouteLocation rl,
 			boolean isManifest) {
+		// TODO should we be using isLocal(car)?
 		boolean isLocal = car.getRouteLocation().equals(car.getRouteDestination()) && car.getTrack() != null;
 		StringBuffer buf = new StringBuffer(Setup.getDropCarPrefix());
 		String[] messageFormat = Setup.getSetoutUtilityCarMessageFormat();
@@ -592,7 +593,7 @@ public class TrainCommon {
 		int count = countUtiltiyCars(messageFormat, carList, car, rl, null, !PICKUP);
 		if (count == 0)
 			return; // already printed out this car type
-		buf.append(" " + tabString(Integer.toString(count), 3));
+		buf.append(" " + padString(Integer.toString(count), 3));
 		dropCar(fileOut, car, buf, messageFormat, isLocal, Setup.getManifestOrientation());
 	}
 	
@@ -630,7 +631,10 @@ public class TrainCommon {
 			return null;
 		StringBuffer buf = new StringBuffer(" " + padString(Integer.toString(count), 3));
 		for (int i = 0; i < messageFormat.length; i++) {
-			String s = getCarAttribute(car, messageFormat[i], !PICKUP, isLocal);
+			// TODO the Setup.Location doesn't work correctly for the conductor
+			// window
+			// therefore we use the local true to disable it.
+			String s = getCarAttribute(car, messageFormat[i], !PICKUP, LOCAL);
 			buf.append(s);
 		}
 		return buf.toString();
@@ -655,16 +659,21 @@ public class TrainCommon {
 		// figure out if the user want to show the car's loads
 		boolean showLoad = showUtilityCarLoad(messageFormat);
 		boolean showLocation = false;
+		boolean showDestination = false;
 		String[] carType = car.getTypeName().split("-");
 		String carAttributes;
 		// Note for car pick up: type, id, track name. For set out type, track name, id.
 		if (isPickup) {
 			carAttributes = carType[0] + car.getRouteLocationId() + splitString(car.getTrackName());
+			showDestination = showUtilityCarDestination(messageFormat);
+			if (showDestination)
+				carAttributes = carAttributes + car.getRouteDestinationId();
 		} else {
+			// set outs and local moves
 			carAttributes = carType[0] + splitString(car.getDestinationTrackName())
 					+ car.getRouteDestinationId();
 			showLocation = showUtilityCarLocation(messageFormat);
-			if (showLocation)
+			if (showLocation && car.getTrack() != null)
 				carAttributes = carAttributes + car.getRouteLocationId();
 		}
 		if (showLength)
@@ -688,6 +697,10 @@ public class TrainCommon {
 					continue;
 				if (showLocation && !c.getRouteLocationId().equals(car.getRouteLocationId()))
 					continue;
+				if (showDestination && !c.getRouteDestinationId().equals(car.getRouteDestinationId()))
+					continue;
+				if (isLocalMove(car) ^ isLocalMove(c))
+					continue;
 				if (isPickup && c.getRouteLocation() == rl
 						&& splitString(c.getTrackName()).equals(splitString(car.getTrackName()))) {
 					count++;
@@ -709,24 +722,24 @@ public class TrainCommon {
 	}
 
 	private boolean showUtilityCarLength(String[] mFormat) {
-		for (int i = 0; i < mFormat.length; i++) {
-			if (mFormat[i].equals(Setup.LENGTH))
-				return true;
-		}
-		return false;
+		return showUtilityCarAttribute(Setup.LENGTH, mFormat);
 	}
 
 	private boolean showUtilityCarLoad(String[] mFormat) {
-		for (int i = 0; i < mFormat.length; i++) {
-			if (mFormat[i].equals(Setup.LOAD))
-				return true;
-		}
-		return false;
+		return showUtilityCarAttribute(Setup.LOAD, mFormat);
 	}
 	
 	private boolean showUtilityCarLocation(String[] mFormat) {
+		return showUtilityCarAttribute(Setup.LOCATION, mFormat);
+	}
+	
+	private boolean showUtilityCarDestination(String[] mFormat) {
+		return showUtilityCarAttribute(Setup.DESTINATION, mFormat);
+	}
+	
+	private boolean showUtilityCarAttribute(String string, String[] mFormat) {
 		for (int i = 0; i < mFormat.length; i++) {
-			if (mFormat[i].equals(Setup.LOCATION))
+			if (mFormat[i].equals(string))
 				return true;
 		}
 		return false;

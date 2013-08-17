@@ -5,6 +5,9 @@ import jmri.InstanceManager;
 import jmri.jmrix.configurexml.AbstractSerialConnectionConfigXml;
 import jmri.jmrix.ieee802154.serialdriver.ConnectionConfig;
 import jmri.jmrix.ieee802154.serialdriver.SerialDriverAdapter;
+import jmri.jmrix.ieee802154.serialdriver.SerialTrafficController;
+import jmri.jmrix.ieee802154.serialdriver.SerialSystemConnectionMemo;
+import jmri.jmrix.ieee802154.serialdriver.SerialNode;
 import org.jdom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,26 +31,33 @@ public class ConnectionConfigXml extends AbstractSerialConnectionConfigXml {
         super();
     }
 
-//    /**
-//     * Write out the SerialNode objects too
-//     * @param e Element being extended
-//     */
-//    protected void extendElement(Element e) {
-//        SerialNode node = SerialTrafficController.instance().getSerialNode(0);
-//        int index = 1;
-//        while (node != null) {
-//            // add node as an element
-//            Element n = new Element("node");
-//            n.setAttribute("name",""+node.getNodeAddress());
-//            e.addContent(n);
-//            // add parameters to the node as needed
-//            n.addContent(makeParameter("nodetype", ""+node.getNodeType()));
-//
-//            // look for the next node
-//            node = SerialTrafficController.instance().getSerialNode(index);
-//            index ++;
-//        }
-//    }
+    /**
+     * Write out the SerialNode objects too
+     * @param e Element being extended
+     */
+    protected void extendElement(Element e) {
+        SerialSystemConnectionMemo scm = (SerialSystemConnectionMemo)adapter.getSystemConnectionMemo();
+        SerialTrafficController stc=(SerialTrafficController)scm.getTrafficController();
+        SerialNode node = (SerialNode) stc.getNode(0);
+        int index = 1;
+        while (node != null) {
+            // add node as an element
+            Element n = new Element("node");
+            n.setAttribute("name",""+node.getNodeAddress());
+            e.addContent(n);
+            // add parameters to the node as needed
+            n.addContent(makeParameter("PAN", ""+ 
+                      jmri.util.StringUtil.hexStringFromBytes(node.getPANAddress())));
+            n.addContent(makeParameter("address", ""+ 
+                      jmri.util.StringUtil.hexStringFromBytes(node.getUserAddress())));
+            n.addContent(makeParameter("GUID", ""+ 
+                      jmri.util.StringUtil.hexStringFromBytes(node.getGlobalAddress())));
+
+            // look for the next node
+            node = (SerialNode) stc.getNode(index);
+            index ++;
+        }
+    }
 
 	protected Element makeParameter(String name, String value) {
     	Element p = new Element("parameter");
@@ -64,25 +74,29 @@ public class ConnectionConfigXml extends AbstractSerialConnectionConfigXml {
         adapter = ((ConnectionConfig)object).getAdapter();
     }
 
-//    /**
-//     * Unpack the node information when reading the "connection" element
-//     * @param e Element containing the connection info
-//     */
-//    @SuppressWarnings("unchecked")
-//	protected void unpackElement(Element e) {
-//        List<Element> l = e.getChildren("node");
-//        for (int i = 0; i<l.size(); i++) {
-//            Element n = l.get(i);
-//            int addr = Integer.parseInt(n.getAttributeValue("name"));
-//            int type = Integer.parseInt(findParmValue(n,"nodetype"));            
-//
-//            // create node (they register themselves)
-//            SerialNode node = new SerialNode(addr, type);
-//            
-//            // Trigger initialization of this Node to reflect these parameters
-//            SerialTrafficController.instance().initializeSerialNode(node);
-//        }
-//    }
+    /**
+     * Unpack the node information when reading the "connection" element
+     * @param e Element containing the connection info
+     */
+    @SuppressWarnings("unchecked")
+	protected void unpackElement(Element e) {
+        List<Element> l = e.getChildren("node");
+        for (int i = 0; i<l.size(); i++) {
+            Element n = l.get(i);
+            int addr = Integer.parseInt(n.getAttributeValue("name"));
+            byte PAN[] = jmri.util.StringUtil.bytesFromHexString(findParmValue(n,"PAN"));            
+            byte address[] = jmri.util.StringUtil.bytesFromHexString(findParmValue(n,"address")); 
+            byte GUID[] = jmri.util.StringUtil.bytesFromHexString(findParmValue(n,"GUID"));            
+
+            // create node (they register themselves)
+            SerialNode node = new SerialNode(PAN,address,GUID);
+            
+            // Trigger initialization of this Node to reflect these parameters
+            SerialSystemConnectionMemo scm = (SerialSystemConnectionMemo)adapter.getSystemConnectionMemo();
+            SerialTrafficController stc=(SerialTrafficController)scm.getTrafficController();
+            stc.registerNode(node);
+        }
+    }
 
     /**
      * Service routine to look through "parameter" child elements
