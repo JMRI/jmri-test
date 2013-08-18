@@ -11,11 +11,11 @@
         core module. Ultimately it would be preferable to reduce the core to
         nothing with everything modularized.
     -->
-    <target name="-pre-jar-prep">
+    <target name="-pre-release">
         <subant target="jar-resources">
             <fileset dir="${suite.dir}/.." includes="build.xml" />
         </subant>
-        <copy file="${suite.dir}/../jmri.jar" todir="${basedir}/release/modules/ext/jmri.jar" />
+        <copy file="${suite.dir}/../jmri.jar" todir="${basedir}/release/modules/ext" />
     </target>
-    <target name="jar-prep" depends="-pre-jar-prep,projectized-common.jar-prep"/>
+    <target name="release" depends="-pre-release,projectized-common.release"/>
 </project>

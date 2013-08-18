@@ -237,6 +237,17 @@
                 <package>jmri.jmrix.grapevine.serialdriver</package>
                 <package>jmri.jmrix.grapevine.serialdriver.configurexml</package>
                 <package>jmri.jmrix.grapevine.serialmon</package>
+                <package>jmri.jmrix.ieee802154</package>
+                <package>jmri.jmrix.ieee802154.serialdriver</package>
+                <package>jmri.jmrix.ieee802154.serialdriver.configurexml</package>
+                <package>jmri.jmrix.ieee802154.swing</package>
+                <package>jmri.jmrix.ieee802154.swing.mon</package>
+                <package>jmri.jmrix.ieee802154.swing.nodeconfig</package>
+                <package>jmri.jmrix.ieee802154.swing.packetgen</package>
+                <package>jmri.jmrix.ieee802154.xbee</package>
+                <package>jmri.jmrix.ieee802154.xbee.configurexml</package>
+                <package>jmri.jmrix.ieee802154.xbee.swing</package>
+                <package>jmri.jmrix.ieee802154.xbee.swing.nodeconfig</package>
                 <package>jmri.jmrix.internal</package>
                 <package>jmri.jmrix.internal.configurexml</package>
                 <package>jmri.jmrix.jinput</package>
@@ -378,6 +389,7 @@
                 <package>jmri.jmrix.openlcb</package>
                 <package>jmri.jmrix.openlcb.configurexml</package>
                 <package>jmri.jmrix.openlcb.swing</package>
+                <package>jmri.jmrix.openlcb.swing.clockmon</package>
                 <package>jmri.jmrix.openlcb.swing.hub</package>
                 <package>jmri.jmrix.openlcb.swing.monitor</package>
                 <package>jmri.jmrix.openlcb.swing.networktree</package>
