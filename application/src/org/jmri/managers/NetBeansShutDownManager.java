@@ -5,6 +5,7 @@
 package org.jmri.managers;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 import jmri.ShutDownManager;
 import jmri.ShutDownTask;
 import org.openide.LifecycleManager;
@@ -30,8 +31,10 @@ public class NetBeansShutDownManager implements ShutDownManager {
 
     @Override
     public void deregister(ShutDownTask sdt) {
-        if (!this.tasks.remove(sdt)) {
-            log.error("does not contain {}", sdt.name());
+        if (!shuttingDown) { // if we are shutting down, leave the tasks list
+            if (!this.tasks.remove(sdt)) {
+                log.error("does not contain {}", sdt.name());
+            }
         }
     }
 
@@ -52,7 +55,11 @@ public class NetBeansShutDownManager implements ShutDownManager {
     public Boolean shutdown(int status, Boolean restart) {
         if (!shuttingDown) {
             shuttingDown = true;
-            for (ShutDownTask task : this.tasks) {
+            // Copy this.tasks so a ConcurrentModificationException is not thrown when a task deregisters itself.
+            // Use a ListIterator starting at the end of the list to iterate backwards.
+            ListIterator<ShutDownTask> li = (new ArrayList<ShutDownTask>(this.tasks)).listIterator(this.tasks.size());
+            while (li.hasPrevious()) {
+                ShutDownTask task = li.previous();
                 try {
                     if (!task.execute()) {
                         shuttingDown = false;
