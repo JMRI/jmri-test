@@ -5,4 +5,17 @@
 <project name="jmri" default="netbeans" basedir=".">
     <description>Builds, tests, and runs the project jmri.</description>
     <import file="nbproject/build-impl.xml"/>
+
+    <!--
+        Build and copy jmri.jar into the correct place to be included in the
+        core module. Ultimately it would be preferable to reduce the core to
+        nothing with everything modularized.
+    -->
+    <target name="-pre-jar-prep">
+        <subant target="jar-resources">
+            <fileset dir="${suite.dir}/.." includes="build.xml" />
+        </subant>
+        <copy file="${suite.dir}/../jmri.jar" todir="${basedir}/release/modules/ext/jmri.jar" />
+    </target>
+    <target name="jar-prep" depends="-pre-jar-prep,projectized-common.jar-prep"/>
 </project>
