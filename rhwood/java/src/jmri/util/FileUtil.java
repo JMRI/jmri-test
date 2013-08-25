@@ -3,6 +3,7 @@ package jmri.util;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -74,8 +75,23 @@ public class FileUtil {
     static private String scriptsPath = null;
     /* path to the user's files directory */
     static private String userFilesPath = null;
+    /* path to the current profile */
+    static private String profilePath = null;
     // initialize logging
     static private Logger log = LoggerFactory.getLogger(FileUtil.class.getName());
+
+    /**
+     * Get the {@link java.io.File} that
+     * @param path
+     * @return
+     */
+    static public File getFile(String path) throws FileNotFoundException {
+        try {
+            return new File(FileUtil.getAbsoluteFilename(path));
+        } catch (NullPointerException ex) {
+            throw new FileNotFoundException("Cannot find file at " + path);
+        }
+    }
 
     /**
      * Get the resource file corresponding to a name. There are five cases: <UL>
@@ -280,13 +296,13 @@ public class FileUtil {
 
     /**
      * Get the user's files directory. If not set by the user, this is the same
-     * as the preferences path.
+     * as the profile path.
      *
-     * @see #getPreferencesPath()
+     * @see #getProfilePath()
      * @return User's files directory as a String
      */
     static public String getUserFilesPath() {
-        return (FileUtil.userFilesPath != null) ? FileUtil.userFilesPath : FileUtil.getPreferencesPath();
+        return (FileUtil.userFilesPath != null) ? FileUtil.userFilesPath : FileUtil.getProfilePath();
     }
 
     /**
@@ -300,6 +316,30 @@ public class FileUtil {
             path = path + File.separator;
         }
         FileUtil.userFilesPath = path;
+    }
+
+    /**
+     * Get the profile directory. If not set, this is the same as the
+     * preferences path.
+     *
+     * @see #getPreferencesPath()
+     * @return Profile directory as a String
+     */
+    static public String getProfilePath() {
+        return (FileUtil.profilePath != null) ? FileUtil.profilePath : FileUtil.getPreferencesPath();
+    }
+
+    /**
+     * Set the profile directory.
+     *
+     * @see #getProfilePath()
+     * @param path The path to the profile directory
+     */
+    static public void setProfilePath(String path) {
+        if (path != null && !path.endsWith(File.separator)) {
+            path = path + File.separator;
+        }
+        FileUtil.profilePath = path;
     }
 
     /**
@@ -437,7 +477,7 @@ public class FileUtil {
 
     /**
      * Get the resources directory within the user's files directory.
-     * 
+     *
      * @return path to [user's file]/resources/
      */
     static public String getUserResourcePath() {
@@ -483,12 +523,10 @@ public class FileUtil {
             log.debug("Attempting to find " + path + " in " + Arrays.toString(searchPaths));
         }
         URL resource;
-        if (searchPaths != null) {
-            for (String searchPath : searchPaths) {
-                resource = FileUtil.findURL(searchPath + File.separator + path);
-                if (resource != null) {
-                    return resource;
-                }
+        for (String searchPath : searchPaths) {
+            resource = FileUtil.findURL(searchPath + File.separator + path);
+            if (resource != null) {
+                return resource;
             }
         }
         try {

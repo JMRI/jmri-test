@@ -2,50 +2,49 @@
 
 package apps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jmri.InstanceManager;
-import jmri.JmriException;
-import jmri.jmrit.jython.Jynstrument;
-import jmri.jmrit.jython.JynstrumentFactory;
-import jmri.jmrit.throttle.ThrottleFrame;
-import jmri.jmrit.decoderdefn.DecoderIndexFile;
-import jmri.jmrix.ConnectionStatus;
-import jmri.jmrix.ConnectionConfig;
-import jmri.jmrix.JmrixConfigPane;
-import jmri.util.JmriJFrame;
-import jmri.util.WindowMenu;
-import jmri.util.SystemType;
-import jmri.util.iharder.dnd.FileDrop;
-import jmri.util.iharder.dnd.FileDrop.Listener;
-
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.event.*;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.EventObject;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.ArrayList;
-
-import java.util.EventObject;
 import javax.swing.*;
-import java.awt.AWTEvent;
-import java.awt.Toolkit;
-import java.net.URL;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
+import jmri.InstanceManager;
+import jmri.JmriException;
+import jmri.jmrit.decoderdefn.DecoderIndexFile;
+import jmri.jmrit.jython.Jynstrument;
+import jmri.jmrit.jython.JynstrumentFactory;
+import jmri.jmrit.throttle.ThrottleFrame;
+import jmri.jmrix.ConnectionConfig;
+import jmri.jmrix.ConnectionStatus;
+import jmri.jmrix.JmrixConfigPane;
 import jmri.plaf.macosx.Application;
 import jmri.plaf.macosx.PreferencesHandler;
 import jmri.plaf.macosx.QuitHandler;
+import jmri.profile.ProfileManager;
 import jmri.util.FileUtil;
+import jmri.util.JmriJFrame;
+import jmri.util.SystemType;
+import jmri.util.WindowMenu;
+import jmri.util.iharder.dnd.FileDrop;
+import jmri.util.iharder.dnd.FileDrop.Listener;
 import jmri.util.swing.JFrameInterface;
 import jmri.util.swing.WindowInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -58,6 +57,8 @@ import jmri.util.swing.WindowInterface;
  * @version     $Revision$
  */
 public class Apps extends JPanel implements PropertyChangeListener, java.awt.event.WindowListener {
+
+    static String profileFilename;
 
     @edu.umd.cs.findbugs.annotations.SuppressWarnings({"ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD","SC_START_IN_CTOR"})//"only one application at a time. The thread is only called to help improve user experiance when opening the preferences, it is not critical for it to be run at this stage"
     public Apps(JFrame frame) {
@@ -128,6 +129,33 @@ public class Apps extends JPanel implements PropertyChangeListener, java.awt.eve
 
         // find preference file and set location in configuration manager
         FileUtil.createDirectory(FileUtil.getPreferencesPath());
+        // Needs to be declared final as we might need to
+        // refer to this on the Swing thread
+        File profileFile;
+        profileFilename = configFilename.replaceFirst(".xml", ".properties");
+        // decide whether name is absolute or relative
+        if (!new File(profileFilename).isAbsolute()) {
+            // must be relative, but we want it to
+            // be relative to the preferences directory
+            profileFile = new File(FileUtil.getPreferencesPath() + profileFilename);
+        } else {
+            profileFile = new File(profileFilename);
+        }
+        try {
+            if (!profileFile.exists()) {
+                ProfileManager.getDefaultManager().saveActiveProfile(profileFile);
+            } else {
+                ProfileManager.getDefaultManager().readActiveProfile(profileFile);
+            }
+        } catch (IOException ex) {
+            log.info("Profiles not configurable. Using fallback per-application configuration.");
+        }
+        if (ProfileManager.getDefaultManager().getActiveProfile() != null) {
+            configFilename = FileUtil.getProfilePath() + configFilename;
+        } else {
+            // TODO: display profile chooser dialog
+            // It should be a guide if no profiles are defined
+        }
         // Needs to be declared final as we might need to
         // refer to this on the Swing thread
         final File file;

@@ -313,7 +313,8 @@ public abstract class AppsBase {
         }
     }
 
-    // We will use the value stored in the system property 
+    // We will use the value stored in the system property
+    // TODO: change to return profile-name/profile.xml
     static public String getConfigFileName() {
         if (System.getProperty("org.jmri.Apps.configFilename") != null) {
             return System.getProperty("org.jmri.Apps.configFilename");
