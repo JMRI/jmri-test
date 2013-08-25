@@ -1,0 +1,194 @@
+package jmri.profile;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+import jmri.util.FileUtil;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Manage JMRI configuration profiles.
+ *
+ * @author rhwood
+ */
+public class ProfileManager {
+
+    private ArrayList<Profile> profiles = new ArrayList<Profile>();
+    private ArrayList<String> profilePaths = new ArrayList<String>();
+    private Profile activeProfile = null;
+    private boolean startWithActiveProfile = true;
+    private File catalog;
+    private static ProfileManager instance = null;
+    private static final String ACTIVE = "activeProfile"; // NOI18N
+    private static final String CATALOG = "profiles.xml"; // NOI18N
+    private static final String PROFILE = "profile"; // NOI18N
+    private static final String PROFILES = "profiles"; // NOI18N
+    private static final String PROFILECONFIG = "profile-config"; // NOI18N
+    private static final String SEARCHPATHS = "search-paths"; // NOI18N
+    private static Logger log = LoggerFactory.getLogger(ProfileManager.class);
+
+    public ProfileManager() {
+        this.catalog = new File(FileUtil.getPreferencesPath() + CATALOG);
+        try {
+            this.readProfiles();
+        } catch (JDOMException ex) {
+            log.error(ex.getLocalizedMessage(), ex);
+        } catch (IOException ex) {
+            log.error(ex.getLocalizedMessage(), ex);
+        }
+    }
+
+    public static ProfileManager getDefaultManager() {
+        if (instance == null) {
+            instance = new ProfileManager();
+        }
+        return instance;
+    }
+
+    public Profile getActiveProfile() {
+        return activeProfile;
+    }
+
+    public void setActiveProfile(String id) {
+        if (id == null) {
+            activeProfile = null;
+            FileUtil.setProfilePath(null);
+            return;
+        }
+        for (Profile p : profiles) {
+            if (p.getId().equals(id)) {
+                activeProfile = p;
+                FileUtil.setProfilePath(p.getPath().toString());
+                return;
+            }
+        }
+    }
+
+    public void saveActiveProfile(File file) throws IOException {
+        Properties p = new Properties();
+        FileOutputStream os = null;
+
+        if (this.getActiveProfile() != null) {
+            p.setProperty(ACTIVE, this.getActiveProfile().getId());
+        }
+        if (!file.exists() && !file.createNewFile()) {
+            throw new IOException("Unable to create file at " + file.getAbsolutePath()); // NOI18N
+        }
+        try {
+            os = new FileOutputStream(file);
+            p.storeToXML(os, "Active profile configuration (saved at " + (new Date()).toString() + ")"); // NOI18N
+            os.close();
+        } catch (IOException ex) {
+            if (os != null) {
+                os.close();
+            }
+            throw ex;
+        }
+
+    }
+
+    public void readActiveProfile(File file) throws IOException {
+        Properties p = new Properties();
+        FileInputStream is = null;
+        try {
+            is = new FileInputStream(file);
+            p.loadFromXML(is);
+            is.close();
+        } catch (IOException ex) {
+            if (is != null) {
+                is.close();
+            }
+            throw ex;
+        }
+        this.setActiveProfile(p.getProperty(ACTIVE));
+    }
+
+    protected void addProfile(Profile profile) {
+        profiles.add(profile);
+    }
+
+    protected void removeProfile(Profile profile) {
+        profiles.remove(profile);
+    }
+
+    protected void addSearchPath(String path) {
+        profilePaths.add(path);
+    }
+
+    protected void removeSearchPath(String path) {
+        profilePaths.remove(path);
+    }
+
+    private void readProfiles() throws JDOMException, IOException {
+        if (!catalog.exists()) {
+            this.writeProfiles();
+        }
+        if (!catalog.canRead()) {
+            return;
+        }
+        Document doc = (new SAXBuilder()).build(catalog);
+        profiles.clear();
+        for (Element e : (List<Element>) doc.getRootElement().getChild(PROFILES).getChildren()) {
+            profiles.add(new Profile(e.getAttributeValue(Profile.ID), FileUtil.getFile(e.getAttributeValue(Profile.PATH))));
+        }
+    }
+
+    private void writeProfiles() throws IOException {
+        FileWriter fw = null;
+        Document doc = new Document();
+        doc.setRootElement(new Element(PROFILECONFIG));
+        Element profilesElement = new Element(PROFILES);
+        Element pathsElement = new Element(SEARCHPATHS);
+        for (Profile p : this.profiles) {
+            Element e = new Element(PROFILE);
+            e.setAttribute(Profile.ID, p.getId());
+            e.setAttribute(Profile.PATH, FileUtil.getPortableFilename(p.getPath()));
+            profilesElement.addContent(e);
+        }
+        for (String s : this.profilePaths) {
+            Element e = new Element(Profile.PATH);
+            e.setAttribute(Profile.PATH, s);
+            pathsElement.addContent(e);
+        }
+        doc.getRootElement().addContent(profilesElement);
+        doc.getRootElement().addContent(pathsElement);
+        try {
+            fw = new FileWriter(catalog);
+            (new XMLOutputter()).output(doc, fw);
+            fw.close();
+        } catch (IOException ex) {
+            // close fw if possible
+            if (fw != null) {
+                fw.close();
+            }
+            // rethrow the error
+            throw ex;
+        }
+    }
+
+    /**
+     * @return the startWithActiveProfile
+     */
+    public boolean isStartWithActiveProfile() {
+        return startWithActiveProfile;
+    }
+
+    /**
+     * @param startWithActiveProfile the startWithActiveProfile to set
+     */
+    public void setStartWithActiveProfile(boolean startWithActiveProfile) {
+        this.startWithActiveProfile = startWithActiveProfile;
+    }
+}
