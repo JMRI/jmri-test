@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import jmri.beans.Bean;
 import jmri.util.FileUtil;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -23,18 +24,19 @@ import org.slf4j.LoggerFactory;
  *
  * @author rhwood
  */
-public class ProfileManager {
+public class ProfileManager extends Bean {
 
     private ArrayList<Profile> profiles = new ArrayList<Profile>();
-    private ArrayList<String> profilePaths = new ArrayList<String>();
+    private ArrayList<String> searchPaths = new ArrayList<String>();
     private Profile activeProfile = null;
     private boolean startWithActiveProfile = true;
     private File catalog;
+    private boolean readingProfiles = false;
     private static ProfileManager instance = null;
     private static final String ACTIVE = "activeProfile"; // NOI18N
     private static final String CATALOG = "profiles.xml"; // NOI18N
     private static final String PROFILE = "profile"; // NOI18N
-    private static final String PROFILES = "profiles"; // NOI18N
+    public static final String PROFILES = "profiles"; // NOI18N
     private static final String PROFILECONFIG = "profile-config"; // NOI18N
     private static final String SEARCHPATHS = "search-paths"; // NOI18N
     private static Logger log = LoggerFactory.getLogger(ProfileManager.class);
@@ -69,11 +71,20 @@ public class ProfileManager {
         }
         for (Profile p : profiles) {
             if (p.getId().equals(id)) {
-                activeProfile = p;
-                FileUtil.setProfilePath(p.getPath().toString());
+                this.setActiveProfile(p);
                 return;
             }
         }
+    }
+
+    public void setActiveProfile(Profile profile) {
+        if (profile == null) {
+            activeProfile = null;
+            FileUtil.setProfilePath(null);
+            return;
+        }
+        activeProfile = profile;
+        FileUtil.setProfilePath(profile.getPath().toString());
     }
 
     public void saveActiveProfile(File file) throws IOException {
@@ -115,33 +126,80 @@ public class ProfileManager {
         this.setActiveProfile(p.getProperty(ACTIVE));
     }
 
+    public Profile[] getProfiles() {
+        return profiles.toArray(new Profile[profiles.size()]);
+    }
+
+    public Profile getProfiles(int index) {
+        return profiles.get(index);
+    }
+
+    public void setProfiles(Profile profile, int index) {
+        Profile oldProfile = profiles.get(index);
+        if (!this.readingProfiles) {
+            profiles.set(index, profile);
+            this.fireIndexedPropertyChange(PROFILES, index, oldProfile, profile);
+        }
+    }
+
     protected void addProfile(Profile profile) {
         profiles.add(profile);
+        if (!this.readingProfiles) {
+            int index = profiles.indexOf(profile);
+            this.fireIndexedPropertyChange(PROFILES, index, null, profile);
+        }
     }
 
     protected void removeProfile(Profile profile) {
-        profiles.remove(profile);
+        int index = profiles.indexOf(profile);
+        if (profiles.remove(profile)) {
+            this.fireIndexedPropertyChange(PROFILES, index, profile, null);
+        }
+    }
+
+    public ArrayList<String> getSearchPaths() {
+        return new ArrayList<String>(searchPaths);
     }
 
     protected void addSearchPath(String path) {
-        profilePaths.add(path);
+        searchPaths.add(path);
     }
 
     protected void removeSearchPath(String path) {
-        profilePaths.remove(path);
+        searchPaths.remove(path);
     }
 
     private void readProfiles() throws JDOMException, IOException {
-        if (!catalog.exists()) {
-            this.writeProfiles();
-        }
-        if (!catalog.canRead()) {
-            return;
-        }
-        Document doc = (new SAXBuilder()).build(catalog);
-        profiles.clear();
-        for (Element e : (List<Element>) doc.getRootElement().getChild(PROFILES).getChildren()) {
-            profiles.add(new Profile(e.getAttributeValue(Profile.ID), FileUtil.getFile(e.getAttributeValue(Profile.PATH))));
+        try {
+            if (!catalog.exists()) {
+                this.writeProfiles();
+            }
+            if (!catalog.canRead()) {
+                return;
+            }
+            this.readingProfiles = true;
+            Document doc = (new SAXBuilder()).build(catalog);
+            profiles.clear();
+            for (Element e : (List<Element>) doc.getRootElement().getChild(PROFILES).getChildren()) {
+                profiles.add(new Profile(e.getAttributeValue(Profile.ID), FileUtil.getFile(e.getAttributeValue(Profile.PATH))));
+            }
+            searchPaths.clear();
+            for (Element e : (List<Element>) doc.getRootElement().getChild(SEARCHPATHS).getChildren()) {
+                String path = e.getAttributeValue(Profile.PATH);
+                if (searchPaths.contains(path)) {
+                    searchPaths.add(path);
+                }
+            }
+            if (searchPaths.isEmpty()) {
+                searchPaths.add(FileUtil.getPreferencesPath());
+            }
+            this.readingProfiles = false;
+        } catch (JDOMException ex) {
+            this.readingProfiles = false;
+            throw ex;
+        } catch (IOException ex) {
+            this.readingProfiles = false;
+            throw ex;
         }
     }
 
@@ -157,7 +215,7 @@ public class ProfileManager {
             e.setAttribute(Profile.PATH, FileUtil.getPortableFilename(p.getPath()));
             profilesElement.addContent(e);
         }
-        for (String s : this.profilePaths) {
+        for (String s : this.searchPaths) {
             Element e = new Element(Profile.PATH);
             e.setAttribute(Profile.PATH, s);
             pathsElement.addContent(e);
