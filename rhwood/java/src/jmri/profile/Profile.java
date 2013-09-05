@@ -112,4 +112,9 @@ public class Profile {
             throw ex;
         }
     }
+
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 }
