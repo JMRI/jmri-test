@@ -61,7 +61,7 @@ public class Profile {
         }
         try {
             os = new FileOutputStream(f);
-            p.storeToXML(os, name, name);
+            p.storeToXML(os, "JMRI Profile");
             os.close();
         } catch (IOException ex) {
             if (os != null) {
