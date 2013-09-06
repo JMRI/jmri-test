@@ -33,6 +33,7 @@ public class ProfileManager extends Bean {
     private Profile activeProfile = null;
     private boolean startWithActiveProfile = true;
     private File catalog;
+    private File configFile = null;
     private boolean readingProfiles = false;
     private static ProfileManager instance = null;
     private static final String ACTIVE = "activeProfile"; // NOI18N
@@ -90,18 +91,18 @@ public class ProfileManager extends Bean {
         FileUtil.setProfilePath(profile.getPath().toString());
     }
 
-    public void saveActiveProfile(File file) throws IOException {
+    public void saveActiveProfile() throws IOException {
         Properties p = new Properties();
         FileOutputStream os = null;
 
         if (this.getActiveProfile() != null) {
             p.setProperty(ACTIVE, this.getActiveProfile().getId());
         }
-        if (!file.exists() && !file.createNewFile()) {
-            throw new IOException("Unable to create file at " + file.getAbsolutePath()); // NOI18N
+        if (!this.configFile.exists() && !this.configFile.createNewFile()) {
+            throw new IOException("Unable to create file at " + this.getConfigFile().getAbsolutePath()); // NOI18N
         }
         try {
-            os = new FileOutputStream(file);
+            os = new FileOutputStream(this.getConfigFile());
             p.storeToXML(os, "Active profile configuration (saved at " + (new Date()).toString() + ")"); // NOI18N
             os.close();
         } catch (IOException ex) {
@@ -113,20 +114,22 @@ public class ProfileManager extends Bean {
 
     }
 
-    public void readActiveProfile(File file) throws IOException {
+    public void readActiveProfile() throws IOException {
         Properties p = new Properties();
         FileInputStream is = null;
-        try {
-            is = new FileInputStream(file);
-            p.loadFromXML(is);
-            is.close();
-        } catch (IOException ex) {
-            if (is != null) {
+        if (this.configFile.exists()) {
+            try {
+                is = new FileInputStream(this.getConfigFile());
+                p.loadFromXML(is);
                 is.close();
+            } catch (IOException ex) {
+                if (is != null) {
+                    is.close();
+                }
+                throw ex;
             }
-            throw ex;
+            this.setActiveProfile(p.getProperty(ACTIVE));
         }
-        this.setActiveProfile(p.getProperty(ACTIVE));
     }
 
     public Profile[] getProfiles() {
@@ -270,5 +273,19 @@ public class ProfileManager extends Bean {
                 }
             }
         }
+    }
+
+    /**
+     * @return the configFile
+     */
+    public File getConfigFile() {
+        return configFile;
+    }
+
+    /**
+     * @param configFile the configFile to set
+     */
+    public void setConfigFile(File configFile) {
+        this.configFile = configFile;
     }
 }
