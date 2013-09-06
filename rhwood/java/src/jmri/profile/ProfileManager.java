@@ -194,7 +194,11 @@ public class ProfileManager extends Bean {
             Document doc = (new SAXBuilder()).build(catalog);
             profiles.clear();
             for (Element e : (List<Element>) doc.getRootElement().getChild(PROFILES).getChildren()) {
-                profiles.add(new Profile(FileUtil.getFile(FileUtil.getExternalFilename(e.getAttributeValue(Profile.PATH)))));
+                try {
+                    profiles.add(new Profile(FileUtil.getFile(FileUtil.getExternalFilename(e.getAttributeValue(Profile.PATH)))));
+                } catch (ProfileException ex) {
+                    log.info("Skipping disabled profile cataloged as {}", e.getAttributeValue(Profile.ID));
+                }
             }
             searchPaths.clear();
             for (Element e : (List<Element>) doc.getRootElement().getChild(SEARCHPATHS).getChildren()) {
@@ -276,6 +280,8 @@ public class ProfileManager extends Bean {
                     this.addProfile(new Profile(pp));
                 } catch (IOException ex) {
                     log.error("Error attempting to read Profile at {}", pp, ex);
+                } catch (ProfileException ex) {
+                    log.info("Skipping diabled profile found in {}", pp);
                 }
             }
         }

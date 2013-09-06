@@ -23,13 +23,20 @@ public class Profile {
 
     /**
      * Create a Profile object given just a path to it.
-     * 
+     *
      * @param path The Profile's directory
-     * @throws IOException 
+     * @throws IOException
      */
-    public Profile(File path) throws IOException {
+    public Profile(File path) throws IOException, ProfileException {
         this.path = path;
         this.readProfile();
+        if (!this.path.getName().equals(this.id)) {
+            if (!this.path.getName().endsWith("~")) {
+                throw new ProfileException("Profile \"" + this.name + "\" is disabled.");
+            } else {
+                throw new ProfileException("Refusing to create Profile: id (" + id + ") and path do not match");
+            }
+        }
     }
 
     /**
@@ -41,6 +48,9 @@ public class Profile {
      * @throws IllegalArgumentException
      */
     public Profile(String name, String id, File path) throws IOException, IllegalArgumentException {
+        if (!path.getName().equals(id)) {
+            throw new IllegalArgumentException(id + " " + path.getName() + " do not match");
+        }
         this.name = name;
         this.id = id;
         this.path = path;
@@ -75,6 +85,18 @@ public class Profile {
             }
             throw ex;
         }
+    }
+
+    /**
+     * Append ~ to the directory containing the profile so that the Profile's Id
+     * is not equal to the Profile's location. This method also removes the
+     * Profile from the ProfileManager's list of available Profiles.
+     */
+    public void disable() throws ProfileException {
+        if (!this.path.renameTo(new File(this.path.getAbsolutePath() + "~"))) {
+            throw new ProfileException("Unable to disable Profile \"" + this.name + "\"");
+        }
+        ProfileManager.getDefaultManager().removeProfile(this);
     }
 
     /**
