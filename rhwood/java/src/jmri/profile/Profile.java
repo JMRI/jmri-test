@@ -19,7 +19,7 @@ public class Profile {
     protected static final String NAME = "name"; // NOI18N
     protected static final String PATH = "path"; // NOI18N
     protected static final String PROPERTIES = "profile.properties"; // NOI18N
-    public static final String CONFIG_FILENAME = "profileConfig.xml"; // NOI18N
+    public static final String CONFIG_FILENAME = "ProfileConfig.xml"; // NOI18N
 
     /**
      * Create a Profile object given just a path to it.
