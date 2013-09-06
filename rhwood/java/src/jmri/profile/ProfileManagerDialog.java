@@ -20,6 +20,8 @@ import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -48,8 +50,9 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
         jScrollPane1 = new JScrollPane();
         profiles = new JList();
         btnSelect = new JButton();
-        btnAdd = new JButton();
+        btnCreate = new JButton();
         btnDelete = new JButton();
+        btnUseExisting = new JButton();
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         ResourceBundle bundle = ResourceBundle.getBundle("jmri/profile/Bundle"); // NOI18N
@@ -72,10 +75,10 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
             }
         });
 
-        btnAdd.setText(bundle.getString("ProfileManagerDialog.btnAdd.text")); // NOI18N
-        btnAdd.addActionListener(new ActionListener() {
+        btnCreate.setText(bundle.getString("ProfileManagerDialog.btnCreate.text")); // NOI18N
+        btnCreate.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                btnAddActionPerformed(evt);
+                btnCreateActionPerformed(evt);
             }
         });
 
@@ -83,6 +86,13 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
         btnDelete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 btnDeleteActionPerformed(evt);
+            }
+        });
+
+        btnUseExisting.setText(bundle.getString("ProfileManagerDialog.btnUseExisting.text")); // NOI18N
+        btnUseExisting.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                btnUseExistingActionPerformed(evt);
             }
         });
 
@@ -98,10 +108,12 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnDelete)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnAdd)
+                        .addComponent(btnUseExisting)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCreate)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSelect))
-                    .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -109,13 +121,14 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
                     .addComponent(listLabel))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSelect)
-                    .addComponent(btnAdd)
-                    .addComponent(btnDelete))
+                    .addComponent(btnCreate)
+                    .addComponent(btnDelete)
+                    .addComponent(btnUseExisting))
                 .addContainerGap())
         );
 
@@ -130,11 +143,11 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
         }
     }//GEN-LAST:event_btnSelectActionPerformed
 
-    private void btnAddActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+    private void btnCreateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
         AddProfileDialog apd = new AddProfileDialog(this, true);
         apd.setLocationRelativeTo(this);
         apd.setVisible(true);
-    }//GEN-LAST:event_btnAddActionPerformed
+    }//GEN-LAST:event_btnCreateActionPerformed
 
     private void btnDeleteActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO remove item from list and from ProfileManager
@@ -143,10 +156,16 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
             ProfileManager.getDefaultManager().removeProfile((Profile) (profiles.getSelectedValue()));
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnUseExistingActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnUseExistingActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnUseExistingActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton btnAdd;
+    private JButton btnCreate;
     private JButton btnDelete;
     private JButton btnSelect;
+    private JButton btnUseExisting;
     private JScrollPane jScrollPane1;
     private JLabel listLabel;
     private JList profiles;
@@ -158,4 +177,6 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
             // TODO: update list of Profiles
         }
     }
+
+    private static final Logger log = LoggerFactory.getLogger(ProfileManagerDialog.class);
 }
