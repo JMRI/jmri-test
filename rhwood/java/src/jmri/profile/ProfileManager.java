@@ -35,13 +35,15 @@ public class ProfileManager extends Bean {
     private File catalog;
     private File configFile = null;
     private boolean readingProfiles = false;
+    private boolean autoStartActiveProfile = false;
     private static ProfileManager instance = null;
-    private static final String ACTIVE = "activeProfile"; // NOI18N
+    public static final String ACTIVE_PROFILE = "activeProfile"; // NOI18N
+    private static final String AUTO_START = "autoStart"; // NOI18N
     private static final String CATALOG = "profiles.xml"; // NOI18N
     private static final String PROFILE = "profile"; // NOI18N
     public static final String PROFILES = "profiles"; // NOI18N
-    private static final String PROFILECONFIG = "profile-config"; // NOI18N
-    private static final String SEARCHPATHS = "search-paths"; // NOI18N
+    private static final String PROFILECONFIG = "profileConfig"; // NOI18N
+    private static final String SEARCHPATHS = "searchPaths"; // NOI18N
     private static Logger log = LoggerFactory.getLogger(ProfileManager.class);
 
     public ProfileManager() {
@@ -96,7 +98,8 @@ public class ProfileManager extends Bean {
         FileOutputStream os = null;
 
         if (this.getActiveProfile() != null) {
-            p.setProperty(ACTIVE, this.getActiveProfile().getId());
+            p.setProperty(ACTIVE_PROFILE, this.getActiveProfile().getId());
+            p.setProperty(AUTO_START, Boolean.toString(this.isStartWithActiveProfile()));
         }
         if (!this.configFile.exists() && !this.configFile.createNewFile()) {
             throw new IOException("Unable to create file at " + this.getConfigFile().getAbsolutePath()); // NOI18N
@@ -128,7 +131,10 @@ public class ProfileManager extends Bean {
                 }
                 throw ex;
             }
-            this.setActiveProfile(p.getProperty(ACTIVE));
+            this.setActiveProfile(p.getProperty(ACTIVE_PROFILE));
+            if (p.containsKey(AUTO_START)) {
+                this.setAutoStartActiveProfile(Boolean.getBoolean(p.getProperty(AUTO_START)));
+            }
         }
     }
 
@@ -287,5 +293,19 @@ public class ProfileManager extends Bean {
      */
     public void setConfigFile(File configFile) {
         this.configFile = configFile;
+    }
+
+    /**
+     * @return the autoStartActiveProfile
+     */
+    public boolean isAutoStartActiveProfile() {
+        return (this.getActiveProfile() != null && autoStartActiveProfile);
+    }
+
+    /**
+     * @param autoStartActiveProfile the autoStartActiveProfile to set
+     */
+    public void setAutoStartActiveProfile(boolean autoStartActiveProfile) {
+        this.autoStartActiveProfile = autoStartActiveProfile;
     }
 }

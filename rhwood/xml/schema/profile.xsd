@@ -33,7 +33,7 @@
             "
 >
   
-    <xs:element name="profile-config">
+    <xs:element name="profileConfig">
         <xs:annotation>
             <xs:documentation>
                 This is the schema representing a profile catalog
@@ -68,10 +68,10 @@
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="search-paths" minOccurs="1" maxOccurs="1">
+                <xs:element name="searchPaths" minOccurs="1" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="search-path" minOccurs="1" maxOccurs="unbounded">
+                            <xs:element name="path" minOccurs="1" maxOccurs="unbounded">
                                 <xs:complexType>
                                     <xs:attribute name="path" type="xs:string" use="required">
                                         <xs:annotation>
