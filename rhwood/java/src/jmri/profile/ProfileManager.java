@@ -3,6 +3,7 @@ package jmri.profile;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -194,8 +195,11 @@ public class ProfileManager extends Bean {
             Document doc = (new SAXBuilder()).build(catalog);
             profiles.clear();
             for (Element e : (List<Element>) doc.getRootElement().getChild(PROFILES).getChildren()) {
+                File pp = FileUtil.getFile(FileUtil.getExternalFilename(e.getAttributeValue(Profile.PATH)));
                 try {
-                    profiles.add(new Profile(FileUtil.getFile(FileUtil.getExternalFilename(e.getAttributeValue(Profile.PATH)))));
+                    profiles.add(new Profile(pp));
+                } catch (FileNotFoundException ex) {
+                    log.info("Skipping cataloged profile \"{}\" without profile.properties file", e.getAttributeValue(Profile.ID));
                 } catch (ProfileException ex) {
                     log.info("Skipping disabled profile cataloged as {}", e.getAttributeValue(Profile.ID));
                 }
@@ -281,7 +285,7 @@ public class ProfileManager extends Bean {
                 } catch (IOException ex) {
                     log.error("Error attempting to read Profile at {}", pp, ex);
                 } catch (ProfileException ex) {
-                    log.info("Skipping diabled profile found in {}", pp);
+                    log.info("Skipping disabled profile found in {}", pp);
                 }
             }
         }
