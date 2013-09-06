@@ -80,7 +80,9 @@ import jmri.managers.DefaultUserMessagePreferences;
 import jmri.plaf.macosx.Application;
 import jmri.plaf.macosx.PreferencesHandler;
 import jmri.plaf.macosx.QuitHandler;
+import jmri.profile.Profile;
 import jmri.profile.ProfileManager;
+import jmri.profile.ProfileManagerDialog;
 import jmri.util.FileUtil;
 import jmri.util.HelpUtil;
 import jmri.util.JmriJFrame;
@@ -156,6 +158,38 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
             }
         });
 
+        // Get configuration profile
+        // Needs to be done before loading a ConfigManager or UserPreferencesManager
+        FileUtil.createDirectory(FileUtil.getPreferencesPath());
+        // Needs to be declared final as we might need to
+        // refer to this on the Swing thread
+        final File profileFile;
+        profileFilename = configFilename.replaceFirst(".xml", ".properties");
+        // decide whether name is absolute or relative
+        if (!new File(profileFilename).isAbsolute()) {
+            // must be relative, but we want it to
+            // be relative to the preferences directory
+            profileFile = new File(FileUtil.getPreferencesPath() + profileFilename);
+        } else {
+            profileFile = new File(profileFilename);
+        }
+        ProfileManager.getDefaultManager().setConfigFile(profileFile);
+        try {
+            ProfileManager.getDefaultManager().readActiveProfile();
+            if (ProfileManager.getDefaultManager().getActiveProfile() == null) {
+                ProfileManagerDialog pmd = new ProfileManagerDialog(sp, true);
+                pmd.setLocationRelativeTo(sp);
+                pmd.setVisible(true);
+                ProfileManager.getDefaultManager().saveActiveProfile();
+            }
+            // Manually setting the configFilename property since calling
+            // Apps.setConfigFilename() does not reset the system property
+            configFilename = FileUtil.getProfilePath() + Profile.CONFIG_FILENAME;
+            System.setProperty("org.jmri.Apps.configFilename", Profile.CONFIG_FILENAME);
+        } catch (IOException ex) {
+            log.info("Profiles not configurable. Using fallback per-application configuration.");
+        }
+
         // Install configuration manager and Swing error handler
         ConfigXmlManager cm = new ConfigXmlManager();
         InstanceManager.setConfigureManager(cm);
@@ -182,34 +216,6 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         InstanceManager.store(new apps.CreateButtonModel(), apps.CreateButtonModel.class);
 
         // find preference file and set location in configuration manager
-        FileUtil.createDirectory(FileUtil.getPreferencesPath());
-        // Needs to be declared final as we might need to
-        // refer to this on the Swing thread
-        File profileFile;
-        profileFilename = configFilename.replaceFirst(".xml", ".properties");
-        // decide whether name is absolute or relative
-        if (!new File(profileFilename).isAbsolute()) {
-            // must be relative, but we want it to
-            // be relative to the preferences directory
-            profileFile = new File(FileUtil.getPreferencesPath() + profileFilename);
-        } else {
-            profileFile = new File(profileFilename);
-        }
-        try {
-            if (!profileFile.exists()) {
-                ProfileManager.getDefaultManager().saveActiveProfile(profileFile);
-            } else {
-                ProfileManager.getDefaultManager().readActiveProfile(profileFile);
-            }
-        } catch (IOException ex) {
-            log.info("Profiles not configurable. Using fallback per-application configuration.");
-        }
-        if (ProfileManager.getDefaultManager().getActiveProfile() != null) {
-            configFilename = FileUtil.getProfilePath() + configFilename;
-        } else {
-            // TODO: display profile chooser dialog
-            // It should be a guide if no profiles are defined
-        }
         // Needs to be declared final as we might need to
         // refer to this on the Swing thread
         final File file;
