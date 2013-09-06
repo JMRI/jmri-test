@@ -36,7 +36,7 @@
     <xs:element name="profile-config">
         <xs:annotation>
             <xs:documentation>
-                This is the schema representing the over-all roster element
+                This is the schema representing a profile catalog
             </xs:documentation>
             <xs:appinfo>
                 <jmri:usingclass configurexml="false">jmri.profile.ProfileManager</jmri:usingclass>
