@@ -176,7 +176,7 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         ProfileManager.getDefaultManager().setConfigFile(profileFile);
         try {
             ProfileManager.getDefaultManager().readActiveProfile();
-            if (ProfileManager.getDefaultManager().getActiveProfile() == null) {
+            if (!ProfileManager.getDefaultManager().isAutoStartActiveProfile()) {
                 ProfileManagerDialog pmd = new ProfileManagerDialog(sp, true);
                 pmd.setLocationRelativeTo(sp);
                 pmd.setVisible(true);
