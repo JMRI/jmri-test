@@ -18,10 +18,15 @@ public class Profile {
     protected static final String ID = "id"; // NOI18N
     protected static final String NAME = "name"; // NOI18N
     protected static final String PATH = "path"; // NOI18N
-    private static final String PROPERTIES = "profile.properties"; // NOI18N
+    protected static final String PROPERTIES = "profile.properties"; // NOI18N
 
-    public Profile(String id, File path) throws IOException {
-        this.id = id;
+    /**
+     * Create a Profile object given just a path to it.
+     * 
+     * @param path The Profile's directory
+     * @throws IOException 
+     */
+    public Profile(File path) throws IOException {
         this.path = path;
         this.readProfile();
     }
@@ -61,7 +66,7 @@ public class Profile {
         }
         try {
             os = new FileOutputStream(f);
-            p.storeToXML(os, "JMRI Profile");
+            p.storeToXML(os, "JMRI Profile"); // NOI18N
             os.close();
         } catch (IOException ex) {
             if (os != null) {
@@ -111,6 +116,8 @@ public class Profile {
             }
             throw ex;
         }
+        this.id = p.getProperty(ID);
+        this.name = p.getProperty(NAME);
     }
 
     @Override

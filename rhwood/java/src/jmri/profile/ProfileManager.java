@@ -1,11 +1,13 @@
 package jmri.profile;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -27,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public class ProfileManager extends Bean {
 
     private ArrayList<Profile> profiles = new ArrayList<Profile>();
-    private ArrayList<String> searchPaths = new ArrayList<String>();
+    private ArrayList<File> searchPaths = new ArrayList<File>();
     private Profile activeProfile = null;
     private boolean startWithActiveProfile = true;
     private File catalog;
@@ -45,6 +47,7 @@ public class ProfileManager extends Bean {
         this.catalog = new File(FileUtil.getPreferencesPath() + CATALOG);
         try {
             this.readProfiles();
+            this.findProfiles();
         } catch (JDOMException ex) {
             log.error(ex.getLocalizedMessage(), ex);
         } catch (IOException ex) {
@@ -157,15 +160,16 @@ public class ProfileManager extends Bean {
         }
     }
 
-    public ArrayList<String> getSearchPaths() {
-        return new ArrayList<String>(searchPaths);
+    public ArrayList<File> getSearchPaths() {
+        return new ArrayList<File>(searchPaths);
     }
 
-    protected void addSearchPath(String path) {
+    protected void addSearchPath(File path) {
         searchPaths.add(path);
+        this.findProfiles();
     }
 
-    protected void removeSearchPath(String path) {
+    protected void removeSearchPath(File path) {
         searchPaths.remove(path);
     }
 
@@ -181,17 +185,17 @@ public class ProfileManager extends Bean {
             Document doc = (new SAXBuilder()).build(catalog);
             profiles.clear();
             for (Element e : (List<Element>) doc.getRootElement().getChild(PROFILES).getChildren()) {
-                profiles.add(new Profile(e.getAttributeValue(Profile.ID), FileUtil.getFile(e.getAttributeValue(Profile.PATH))));
+                profiles.add(new Profile(FileUtil.getFile(FileUtil.getExternalFilename(e.getAttributeValue(Profile.PATH)))));
             }
             searchPaths.clear();
             for (Element e : (List<Element>) doc.getRootElement().getChild(SEARCHPATHS).getChildren()) {
-                String path = e.getAttributeValue(Profile.PATH);
-                if (searchPaths.contains(path)) {
+                File path = FileUtil.getFile(FileUtil.getExternalFilename(e.getAttributeValue(Profile.PATH)));
+                if (!searchPaths.contains(path)) {
                     searchPaths.add(path);
                 }
             }
             if (searchPaths.isEmpty()) {
-                searchPaths.add(FileUtil.getPreferencesPath());
+                searchPaths.add(FileUtil.getFile(FileUtil.getPreferencesPath()));
             }
             this.readingProfiles = false;
         } catch (JDOMException ex) {
@@ -215,9 +219,9 @@ public class ProfileManager extends Bean {
             e.setAttribute(Profile.PATH, FileUtil.getPortableFilename(p.getPath()));
             profilesElement.addContent(e);
         }
-        for (String s : this.searchPaths) {
+        for (File f : this.searchPaths) {
             Element e = new Element(Profile.PATH);
-            e.setAttribute(Profile.PATH, s);
+            e.setAttribute(Profile.PATH, FileUtil.getPortableFilename(f.getPath()));
             pathsElement.addContent(e);
         }
         doc.getRootElement().addContent(profilesElement);
@@ -248,5 +252,23 @@ public class ProfileManager extends Bean {
      */
     public void setStartWithActiveProfile(boolean startWithActiveProfile) {
         this.startWithActiveProfile = startWithActiveProfile;
+    }
+
+    private void findProfiles() {
+        for (File sp : this.searchPaths) {
+            File[] profilePaths = sp.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File pathname) {
+                    return (pathname.isDirectory() && Arrays.asList(pathname.list()).contains(Profile.PROPERTIES));
+                }
+            });
+            for (File pp : profilePaths) {
+                try {
+                    this.addProfile(new Profile(pp));
+                } catch (IOException ex) {
+                    log.error("Error attempting to read Profile at {}", pp, ex);
+                }
+            }
+        }
     }
 }
