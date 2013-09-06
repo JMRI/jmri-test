@@ -81,9 +81,13 @@ public class FileUtil {
     static private Logger log = LoggerFactory.getLogger(FileUtil.class.getName());
 
     /**
-     * Get the {@link java.io.File} that
+     * Get the {@link java.io.File} that path refers to. Throws a
+     * {@link java.io.FileNotFoundException} if the file cannot be found instead
+     * of returning null (as File would).
+     *
      * @param path
-     * @return
+     * @return {@link java.io.File} at path
+     * @throws {@link java.io.FileNotFoundException}
      */
     static public File getFile(String path) throws FileNotFoundException {
         try {
@@ -647,6 +651,23 @@ public class FileUtil {
      */
     public static void setScriptsPath(String path) {
         scriptsPath = path;
+    }
+
+    /**
+     * Replaces most non-alphanumeric characters in name with an underscore.
+     * 
+     * @param name The filename to be sanitized.
+     * @return The sanitized filename.
+     */
+    public static String sanitizeFilename(String name) {
+        name = name.trim().replaceAll(" ", "_").replaceAll("[.]+", ".");
+        StringBuilder filename = new StringBuilder();
+        for (char c : name.toCharArray()) {
+            if (c == '.' || Character.isJavaIdentifierPart(c)) {
+                filename.append(c);
+            }
+        }
+        return filename.toString();
     }
 
     /**
