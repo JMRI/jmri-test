@@ -72,8 +72,10 @@ public class ProfileManager extends Bean {
 
     public void setActiveProfile(String id) {
         if (id == null) {
+            Profile old = activeProfile;
             activeProfile = null;
             FileUtil.setProfilePath(null);
+            this.firePropertyChange(ProfileManager.ACTIVE_PROFILE, old, null);
             return;
         }
         for (Profile p : profiles) {
@@ -85,13 +87,16 @@ public class ProfileManager extends Bean {
     }
 
     public void setActiveProfile(Profile profile) {
+        Profile old = activeProfile;
         if (profile == null) {
             activeProfile = null;
             FileUtil.setProfilePath(null);
+            this.firePropertyChange(ProfileManager.ACTIVE_PROFILE, old, null);
             return;
         }
         activeProfile = profile;
         FileUtil.setProfilePath(profile.getPath().toString());
+        this.firePropertyChange(ProfileManager.ACTIVE_PROFILE, old, profile);
     }
 
     public void saveActiveProfile() throws IOException {
