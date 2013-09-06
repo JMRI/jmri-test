@@ -263,7 +263,9 @@ public class AddProfileDialog extends javax.swing.JDialog {
 
     private void btnOkActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
         try {
-            ProfileManager.getDefaultManager().addProfile(new Profile(this.profileName.getText(), this.profileId, new File(this.profileFolder.getText())));
+            Profile p = new Profile(this.profileName.getText(), this.profileId, new File(this.profileFolder.getText()));
+            ProfileManager.getDefaultManager().addProfile(p);
+            ProfileManager.getDefaultManager().setActiveProfile(p);
             this.dispose();
         } catch (IOException ex) {
             log.error("Error saving profile", ex);
