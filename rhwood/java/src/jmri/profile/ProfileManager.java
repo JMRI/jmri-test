@@ -18,6 +18,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -276,7 +277,7 @@ public class ProfileManager extends Bean {
         doc.getRootElement().addContent(pathsElement);
         try {
             fw = new FileWriter(catalog);
-            (new XMLOutputter()).output(doc, fw);
+            (new XMLOutputter(Format.getPrettyFormat())).output(doc, fw);
             fw.close();
         } catch (IOException ex) {
             // close fw if possible
