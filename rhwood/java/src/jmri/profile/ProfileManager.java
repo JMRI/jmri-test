@@ -191,6 +191,11 @@ public class ProfileManager extends Bean {
             if (!this.readingProfiles) {
                 int index = profiles.indexOf(profile);
                 this.fireIndexedPropertyChange(PROFILES, index, null, profile);
+                try {
+                    this.writeProfiles();
+                } catch (IOException ex) {
+                    log.warn("Unable to write profiles while adding profile {}.", profile.getId(), ex);
+                }
             }
         }
     }
