@@ -10,16 +10,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileView;
+import jmri.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +44,16 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
     public ProfileManagerDialog(Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        ProfileManager.getDefaultManager().addPropertyChangeListener(ProfileManager.ACTIVE_PROFILE, new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                profiles.setSelectedValue(ProfileManager.getDefaultManager().getActiveProfile(), true);
+                profiles.repaint();
+            }
+        });
+        // Hide/disable the delete button since it should not be here,
+        // but I want to have the code available for the preferences later.
+        this.btnDelete.setVisible(false);
     }
 
     /**
@@ -62,6 +81,7 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
         listLabel.setText(bundle.getString("ProfileManagerDialog.listLabel.text")); // NOI18N
 
         profiles.setModel(new ProfileListModel());
+        profiles.setSelectedValue(ProfileManager.getDefaultManager().getActiveProfile(), true);
         profiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         profiles.setToolTipText(bundle.getString("ProfileManagerDialog.profiles.toolTipText")); // NOI18N
         profiles.setNextFocusableComponent(btnSelect);
@@ -150,17 +170,74 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
     }//GEN-LAST:event_btnCreateActionPerformed
 
     private void btnDeleteActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO remove item from list and from ProfileManager
         // NOTE should only remove item if >1 items in list
         if (profiles.getModel().getSize() > 1) {
-            ProfileManager.getDefaultManager().removeProfile((Profile) (profiles.getSelectedValue()));
+            int i = profiles.getSelectedIndex();
+            ((Profile) (profiles.getSelectedValue())).setDisabled(true);
+            if (i >= profiles.getModel().getSize()) {
+                profiles.setSelectedIndex(profiles.getModel().getSize() - 1);
+            } else {
+                profiles.setSelectedIndex(i);
+            }
+            profiles.repaint();
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnUseExistingActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnUseExistingActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnUseExistingActionPerformed
+        JFileChooser chooser = new JFileChooser(FileUtil.getPreferencesPath());
+        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooser.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return (f.isDirectory());
+            }
 
+            @Override
+            public String getDescription() {
+                return "JMRI Profiles";
+            }
+        });
+        chooser.setFileView(new FileView() {
+            @Override
+            public String getDescription(File f) {
+                if (!this.isTraversable(f)) {
+                    return "JMRI Profile with Id " + f.getName();
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public Boolean isTraversable(File f) {
+                if (f.isDirectory() && Arrays.asList(f.list()).contains(Profile.PROPERTIES)) {
+                    return false;
+                }
+                return null;
+            }
+
+            @Override
+            public Icon getIcon(File f) {
+                if (f.isDirectory() && Arrays.asList(f.list()).contains(Profile.PROPERTIES)) {
+                    return new ImageIcon(FileUtil.getExternalFilename(FileUtil.PROGRAM + "resources/jmri16x16.gif"));
+                } else {
+                    return null;
+                }
+            }
+        });
+        // TODO: Use NetBeans OpenDialog if its availble
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try {
+                Profile p = new Profile(chooser.getSelectedFile());
+                ProfileManager.getDefaultManager().addProfile(p);
+                if (p.isDisabled()) {
+                    // TODO: Display dialog asking if profile should be enabled
+                }
+            } catch (IOException ex) {
+                log.warn("{} is not a profile directory", chooser.getSelectedFile());
+                // TODO: Display error dialog - selected file is not a profile directory
+            }
+        }
+    }//GEN-LAST:event_btnUseExistingActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton btnCreate;
     private JButton btnDelete;
@@ -177,6 +254,5 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
             // TODO: update list of Profiles
         }
     }
-
     private static final Logger log = LoggerFactory.getLogger(ProfileManagerDialog.class);
 }
