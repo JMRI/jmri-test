@@ -180,13 +180,17 @@ public class ProfileManager extends Bean {
 
     protected void addProfile(Profile profile) {
         if (profile.isDisabled()) {
-            disabledProfiles.add(profile);
+            if (!disabledProfiles.contains(profile)) {
+                disabledProfiles.add(profile);
+            }
             return;
         }
-        profiles.add(profile);
-        if (!this.readingProfiles) {
-            int index = profiles.indexOf(profile);
-            this.fireIndexedPropertyChange(PROFILES, index, null, profile);
+        if (!profiles.contains(profile)) {
+            profiles.add(profile);
+            if (!this.readingProfiles) {
+                int index = profiles.indexOf(profile);
+                this.fireIndexedPropertyChange(PROFILES, index, null, profile);
+            }
         }
     }
 
@@ -202,8 +206,10 @@ public class ProfileManager extends Bean {
     }
 
     protected void addSearchPath(File path) {
-        searchPaths.add(path);
-        this.findProfiles();
+        if (!searchPaths.contains(path)) {
+            searchPaths.add(path);
+            this.findProfiles();
+        }
     }
 
     protected void removeSearchPath(File path) {
@@ -233,11 +239,11 @@ public class ProfileManager extends Bean {
             for (Element e : (List<Element>) doc.getRootElement().getChild(SEARCHPATHS).getChildren()) {
                 File path = FileUtil.getFile(FileUtil.getExternalFilename(e.getAttributeValue(Profile.PATH)));
                 if (!searchPaths.contains(path)) {
-                    searchPaths.add(path);
+                    this.addSearchPath(path);
                 }
             }
             if (searchPaths.isEmpty()) {
-                searchPaths.add(FileUtil.getFile(FileUtil.getPreferencesPath()));
+                this.addSearchPath(FileUtil.getFile(FileUtil.getPreferencesPath()));
             }
             this.readingProfiles = false;
         } catch (JDOMException ex) {
@@ -344,11 +350,17 @@ public class ProfileManager extends Bean {
 
     protected void disableProfile(Profile p) {
         this.removeProfile(p);
-        disabledProfiles.add(p);
+        if (!p.isDisabled()) {
+            p.setDisabled(true);
+        }
+        this.addProfile(p);
     }
 
     protected void enableProfile(Profile p) {
         disabledProfiles.remove(p);
+        if (p.isDisabled()) {
+            p.setDisabled(false);
+        }
         this.addProfile(p);
     }
 }
