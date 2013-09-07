@@ -15,7 +15,7 @@ public class Profile {
     private String name;
     private String id;
     private File path;
-    private Boolean disabled;
+    private Boolean disabled = false;
     protected static final String ID = "id"; // NOI18N
     protected static final String NAME = "name"; // NOI18N
     protected static final String PATH = "path"; // NOI18N
@@ -49,7 +49,7 @@ public class Profile {
         this.name = name;
         this.id = id + "." + Integer.toHexString(Float.floatToIntBits((float)Math.random()));
         this.path = path;
-        if (!path.exists() && path.mkdir()) {
+        if (path.mkdirs()) {
             this.save();
         }
         if (!path.isDirectory()) {
