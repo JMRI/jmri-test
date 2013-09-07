@@ -229,6 +229,7 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
             try {
                 Profile p = new Profile(chooser.getSelectedFile());
                 ProfileManager.getDefaultManager().addProfile(p);
+                profiles.setSelectedValue(p, true);
                 if (p.isDisabled()) {
                     // TODO: Display dialog asking if profile should be enabled
                 }
