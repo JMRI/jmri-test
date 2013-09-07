@@ -8,6 +8,8 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -25,7 +27,10 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle;
 import javax.swing.ListSelectionModel;
+import javax.swing.Timer;
 import javax.swing.WindowConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 import jmri.util.FileUtil;
@@ -36,7 +41,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author rhwood
  */
-public class ProfileManagerDialog extends JDialog implements PropertyChangeListener {
+public class ProfileManagerDialog extends JDialog {
+
+    private Timer timer;
 
     /**
      * Creates new form ProfileManagerDialog
@@ -77,6 +84,11 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
         ResourceBundle bundle = ResourceBundle.getBundle("jmri/profile/Bundle"); // NOI18N
         setTitle(bundle.getString("ProfileManagerDialog.title")); // NOI18N
         setMinimumSize(new Dimension(310, 110));
+        addWindowListener(new WindowAdapter() {
+            public void windowOpened(WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         listLabel.setText(bundle.getString("ProfileManagerDialog.listLabel.text")); // NOI18N
 
@@ -85,6 +97,11 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
         profiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         profiles.setToolTipText(bundle.getString("ProfileManagerDialog.profiles.toolTipText")); // NOI18N
         profiles.setNextFocusableComponent(btnSelect);
+        profiles.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent evt) {
+                profilesValueChanged(evt);
+            }
+        });
         jScrollPane1.setViewportView(profiles);
         profiles.getAccessibleContext().setAccessibleName(bundle.getString("ProfileManagerDialog.profiles.AccessibleContext.accessibleName")); // NOI18N
 
@@ -164,6 +181,7 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
     }//GEN-LAST:event_btnSelectActionPerformed
 
     private void btnCreateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
+        timer.stop();
         AddProfileDialog apd = new AddProfileDialog(this, true);
         apd.setLocationRelativeTo(this);
         apd.setVisible(true);
@@ -184,6 +202,7 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnUseExistingActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnUseExistingActionPerformed
+        timer.stop();
         JFileChooser chooser = new JFileChooser(FileUtil.getPreferencesPath());
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooser.setFileFilter(new FileFilter() {
@@ -239,6 +258,25 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
             }
         }
     }//GEN-LAST:event_btnUseExistingActionPerformed
+
+    private void formWindowOpened(WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        if (profiles.getModel().getSize() <= 0) {
+            timer = new Timer(30000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setVisible(false);
+                    ProfileManager.getDefaultManager().setActiveProfile((Profile) profiles.getSelectedValue());
+                    dispose();
+                }
+            });
+            timer.setRepeats(false);
+            timer.start();
+        }
+    }//GEN-LAST:event_formWindowOpened
+
+    private void profilesValueChanged(ListSelectionEvent evt) {//GEN-FIRST:event_profilesValueChanged
+        timer.stop();
+    }//GEN-LAST:event_profilesValueChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton btnCreate;
     private JButton btnDelete;
@@ -249,11 +287,5 @@ public class ProfileManagerDialog extends JDialog implements PropertyChangeListe
     private JList profiles;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getSource().equals(ProfileManager.getDefaultManager())) {
-            // TODO: update list of Profiles
-        }
-    }
     private static final Logger log = LoggerFactory.getLogger(ProfileManagerDialog.class);
 }
