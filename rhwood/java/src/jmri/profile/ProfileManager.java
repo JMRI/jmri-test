@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 public class ProfileManager extends Bean {
 
     private ArrayList<Profile> profiles = new ArrayList<Profile>();
+    private ArrayList<Profile> disabledProfiles = new ArrayList<Profile>();
     private ArrayList<File> searchPaths = new ArrayList<File>();
     private Profile activeProfile = null;
     private boolean startWithActiveProfile = true;
@@ -43,6 +44,7 @@ public class ProfileManager extends Bean {
     private static final String CATALOG = "profiles.xml"; // NOI18N
     private static final String PROFILE = "profile"; // NOI18N
     public static final String PROFILES = "profiles"; // NOI18N
+    public static final String DISABLED_PROFILES = "disabledProfiles"; // NOI18N
     private static final String PROFILECONFIG = "profileConfig"; // NOI18N
     private static final String SEARCHPATHS = "searchPaths"; // NOI18N
     private static Logger log = LoggerFactory.getLogger(ProfileManager.class);
@@ -160,7 +162,27 @@ public class ProfileManager extends Bean {
         }
     }
 
+    public Profile[] getDisabledProfiles() {
+        return disabledProfiles.toArray(new Profile[disabledProfiles.size()]);
+    }
+
+    public Profile getDisabledProfiles(int index) {
+        return disabledProfiles.get(index);
+    }
+
+    public void setDisabledProfiles(Profile profile, int index) {
+        Profile oldProfile = profiles.get(index);
+        if (!this.readingProfiles) {
+            disabledProfiles.set(index, profile);
+            this.fireIndexedPropertyChange(DISABLED_PROFILES, index, oldProfile, profile);
+        }
+    }
+
     protected void addProfile(Profile profile) {
+        if (profile.isDisabled()) {
+            disabledProfiles.add(profile);
+            return;
+        }
         profiles.add(profile);
         if (!this.readingProfiles) {
             int index = profiles.indexOf(profile);
@@ -202,11 +224,9 @@ public class ProfileManager extends Bean {
             for (Element e : (List<Element>) doc.getRootElement().getChild(PROFILES).getChildren()) {
                 File pp = FileUtil.getFile(FileUtil.getExternalFilename(e.getAttributeValue(Profile.PATH)));
                 try {
-                    profiles.add(new Profile(pp));
+                    this.addProfile(new Profile(pp));
                 } catch (FileNotFoundException ex) {
                     log.info("Skipping cataloged profile \"{}\" without profile.properties file", e.getAttributeValue(Profile.ID));
-                } catch (ProfileException ex) {
-                    log.info("Skipping disabled profile cataloged as {}", e.getAttributeValue(Profile.ID));
                 }
             }
             searchPaths.clear();
@@ -289,8 +309,6 @@ public class ProfileManager extends Bean {
                     this.addProfile(new Profile(pp));
                 } catch (IOException ex) {
                     log.error("Error attempting to read Profile at {}", pp, ex);
-                } catch (ProfileException ex) {
-                    log.info("Skipping disabled profile found in {}", pp);
                 }
             }
         }
@@ -322,5 +340,15 @@ public class ProfileManager extends Bean {
      */
     public void setAutoStartActiveProfile(boolean autoStartActiveProfile) {
         this.autoStartActiveProfile = autoStartActiveProfile;
+    }
+
+    protected void disableProfile(Profile p) {
+        this.removeProfile(p);
+        disabledProfiles.add(p);
+    }
+
+    protected void enableProfile(Profile p) {
+        disabledProfiles.remove(p);
+        this.addProfile(p);
     }
 }

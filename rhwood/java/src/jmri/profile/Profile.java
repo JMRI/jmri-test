@@ -15,9 +15,11 @@ public class Profile {
     private String name;
     private String id;
     private File path;
+    private Boolean disabled;
     protected static final String ID = "id"; // NOI18N
     protected static final String NAME = "name"; // NOI18N
     protected static final String PATH = "path"; // NOI18N
+    protected static final String DISABLED = "disabled"; // NOI18N
     protected static final String PROPERTIES = "profile.properties"; // NOI18N
     public static final String CONFIG_FILENAME = "ProfileConfig.xml"; // NOI18N
 
@@ -27,16 +29,9 @@ public class Profile {
      * @param path The Profile's directory
      * @throws IOException
      */
-    public Profile(File path) throws IOException, ProfileException {
+    public Profile(File path) throws IOException {
         this.path = path;
         this.readProfile();
-        if (!this.path.getName().equals(this.id)) {
-            if (!this.path.getName().endsWith("~")) {
-                throw new ProfileException("Profile \"" + this.name + "\" is disabled.");
-            } else {
-                throw new ProfileException("Refusing to create Profile: id (" + id + ") and path do not match");
-            }
-        }
     }
 
     /**
@@ -52,7 +47,7 @@ public class Profile {
             throw new IllegalArgumentException(id + " " + path.getName() + " do not match");
         }
         this.name = name;
-        this.id = id;
+        this.id = id + "." + Integer.toHexString(Float.floatToIntBits((float)Math.random()));
         this.path = path;
         if (!path.exists() && path.mkdir()) {
             this.save();
@@ -72,6 +67,7 @@ public class Profile {
 
         p.setProperty(NAME, this.name);
         p.setProperty(ID, this.id);
+        p.setProperty(DISABLED, Boolean.toString(this.disabled));
         if (!f.exists() && !f.createNewFile()) {
             throw new IOException("Unable to create file at " + f.getAbsolutePath()); // NOI18N
         }
@@ -92,11 +88,17 @@ public class Profile {
      * is not equal to the Profile's location. This method also removes the
      * Profile from the ProfileManager's list of available Profiles.
      */
-    public void disable() throws ProfileException {
-        if (!this.path.renameTo(new File(this.path.getAbsolutePath() + "~"))) {
-            throw new ProfileException("Unable to disable Profile \"" + this.name + "\"");
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+        if (disabled) {
+            ProfileManager.getDefaultManager().disableProfile(this);
+        } else {
+            ProfileManager.getDefaultManager().enableProfile(this);
         }
-        ProfileManager.getDefaultManager().removeProfile(this);
+    }
+
+    public Boolean isDisabled() {
+        return this.disabled;
     }
 
     /**
@@ -141,6 +143,7 @@ public class Profile {
         }
         this.id = p.getProperty(ID);
         this.name = p.getProperty(NAME);
+        this.disabled = Boolean.getBoolean(p.getProperty(DISABLED, Boolean.toString(false)));
     }
 
     @Override
