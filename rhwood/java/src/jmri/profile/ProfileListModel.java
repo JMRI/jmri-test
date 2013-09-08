@@ -16,7 +16,7 @@ import javax.swing.AbstractListModel;
 public class ProfileListModel extends AbstractListModel {
 
     public ProfileListModel() {
-        ProfileManager.getDefaultManager().addPropertyChangeListener(new PropertyChangeListener() {
+        ProfileManager.getDefaultManager().addPropertyChangeListener(ProfileManager.PROFILES, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if (evt instanceof IndexedPropertyChangeEvent
