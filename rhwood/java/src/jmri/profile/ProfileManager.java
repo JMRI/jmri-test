@@ -145,7 +145,7 @@ public class ProfileManager extends Bean {
             }
             this.setActiveProfile(p.getProperty(ACTIVE_PROFILE));
             if (p.containsKey(AUTO_START)) {
-                this.setAutoStartActiveProfile(Boolean.getBoolean(p.getProperty(AUTO_START)));
+                this.setAutoStartActiveProfile(Boolean.parseBoolean(p.getProperty(AUTO_START)));
             }
         }
     }
