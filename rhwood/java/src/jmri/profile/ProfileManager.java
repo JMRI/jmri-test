@@ -156,7 +156,10 @@ public class ProfileManager extends Bean {
     }
 
     public Profile getProfiles(int index) {
-        return profiles.get(index);
+        if (index >= 0 && index < profiles.size()) {
+            return profiles.get(index);
+        }
+        return null;
     }
 
     public void setProfiles(Profile profile, int index) {
@@ -172,7 +175,10 @@ public class ProfileManager extends Bean {
     }
 
     public Profile getDisabledProfiles(int index) {
-        return disabledProfiles.get(index);
+        if (index >= 0 && index < disabledProfiles.size()) {
+            return disabledProfiles.get(index);
+        }
+        return null;
     }
 
     public void setDisabledProfiles(Profile profile, int index) {
@@ -187,6 +193,10 @@ public class ProfileManager extends Bean {
         if (profile.isDisabled()) {
             if (!disabledProfiles.contains(profile)) {
                 disabledProfiles.add(profile);
+                if (!this.readingProfiles) {
+                    int index = disabledProfiles.indexOf(profile);
+                    this.fireIndexedPropertyChange(DISABLED_PROFILES, index, null, profile);
+                }
             }
             return;
         }
@@ -206,8 +216,15 @@ public class ProfileManager extends Bean {
 
     protected void removeProfile(Profile profile) {
         int index = profiles.indexOf(profile);
-        if (profiles.remove(profile)) {
-            this.fireIndexedPropertyChange(PROFILES, index, profile, null);
+        if (index >= 0) {
+            if (profiles.remove(profile)) {
+                this.fireIndexedPropertyChange(PROFILES, index, profile, null);
+            }
+        } else {
+            index = disabledProfiles.indexOf(profile);
+            if (disabledProfiles.remove(profile)) {
+                this.fireIndexedPropertyChange(DISABLED_PROFILES, index, profile, null);
+            }
         }
     }
 
@@ -216,18 +233,29 @@ public class ProfileManager extends Bean {
     }
 
     public File getSearchPaths(int index) {
-        return searchPaths.get(index);
+        if (index >= 0 && index < searchPaths.size()) {
+            return searchPaths.get(index);
+        }
+        return null;
     }
 
     protected void addSearchPath(File path) {
         if (!searchPaths.contains(path)) {
             searchPaths.add(path);
+            if (!this.readingProfiles) {
+                int index = searchPaths.indexOf(path);
+                this.fireIndexedPropertyChange(SEARCH_PATHS, index, null, path);
+            }
             this.findProfiles();
         }
     }
 
     protected void removeSearchPath(File path) {
-        searchPaths.remove(path);
+        if (searchPaths.contains(path)) {
+            int index = searchPaths.indexOf(path);
+            searchPaths.remove(path);
+            this.fireIndexedPropertyChange(SEARCH_PATHS, index, path, null);
+        }
     }
 
     private void readProfiles() throws JDOMException, IOException {
@@ -362,7 +390,7 @@ public class ProfileManager extends Bean {
         this.autoStartActiveProfile = autoStartActiveProfile;
     }
 
-    protected void disableProfile(Profile p) {
+    protected void disableProfile(Profile p) throws IOException {
         this.removeProfile(p);
         if (!p.isDisabled()) {
             p.setDisabled(true);
@@ -370,8 +398,8 @@ public class ProfileManager extends Bean {
         this.addProfile(p);
     }
 
-    protected void enableProfile(Profile p) {
-        disabledProfiles.remove(p);
+    protected void enableProfile(Profile p) throws IOException {
+        this.removeProfile(p);
         if (p.isDisabled()) {
             p.setDisabled(false);
         }
