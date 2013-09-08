@@ -91,13 +91,14 @@ public class Profile {
      * is not equal to the Profile's location. This method also removes the
      * Profile from the ProfileManager's list of available Profiles.
      */
-    public void setDisabled(Boolean disabled) {
+    public void setDisabled(Boolean disabled) throws IOException {
         this.disabled = disabled;
         if (disabled) {
             ProfileManager.getDefaultManager().disableProfile(this);
         } else {
             ProfileManager.getDefaultManager().enableProfile(this);
         }
+        this.save();
     }
 
     public Boolean isDisabled() {
