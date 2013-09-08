@@ -58,9 +58,6 @@ public class ProfileManagerDialog extends JDialog {
                 profiles.repaint();
             }
         });
-        // Hide/disable the delete button since it should not be here,
-        // but I want to have the code available for the preferences later.
-        this.btnDelete.setVisible(false);
     }
 
     /**
@@ -77,7 +74,6 @@ public class ProfileManagerDialog extends JDialog {
         profiles = new JList();
         btnSelect = new JButton();
         btnCreate = new JButton();
-        btnDelete = new JButton();
         btnUseExisting = new JButton();
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -119,13 +115,6 @@ public class ProfileManagerDialog extends JDialog {
             }
         });
 
-        btnDelete.setText(bundle.getString("ProfileManagerDialog.btnDelete.text")); // NOI18N
-        btnDelete.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                btnDeleteActionPerformed(evt);
-            }
-        });
-
         btnUseExisting.setText(bundle.getString("ProfileManagerDialog.btnUseExisting.text")); // NOI18N
         btnUseExisting.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -143,8 +132,7 @@ public class ProfileManagerDialog extends JDialog {
                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnDelete)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnUseExisting)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCreate)
@@ -164,7 +152,6 @@ public class ProfileManagerDialog extends JDialog {
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSelect)
                     .addComponent(btnCreate)
-                    .addComponent(btnDelete)
                     .addComponent(btnUseExisting))
                 .addContainerGap())
         );
@@ -186,20 +173,6 @@ public class ProfileManagerDialog extends JDialog {
         apd.setLocationRelativeTo(this);
         apd.setVisible(true);
     }//GEN-LAST:event_btnCreateActionPerformed
-
-    private void btnDeleteActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // NOTE should only remove item if >1 items in list
-        if (profiles.getModel().getSize() > 1) {
-            int i = profiles.getSelectedIndex();
-            ((Profile) (profiles.getSelectedValue())).setDisabled(true);
-            if (i >= profiles.getModel().getSize()) {
-                profiles.setSelectedIndex(profiles.getModel().getSize() - 1);
-            } else {
-                profiles.setSelectedIndex(i);
-            }
-            profiles.repaint();
-        }
-    }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnUseExistingActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnUseExistingActionPerformed
         timer.stop();
@@ -279,7 +252,6 @@ public class ProfileManagerDialog extends JDialog {
     }//GEN-LAST:event_profilesValueChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton btnCreate;
-    private JButton btnDelete;
     private JButton btnSelect;
     private JButton btnUseExisting;
     private JScrollPane jScrollPane1;
