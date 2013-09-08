@@ -47,7 +47,7 @@ public class ProfileManager extends Bean {
     public static final String PROFILES = "profiles"; // NOI18N
     public static final String DISABLED_PROFILES = "disabledProfiles"; // NOI18N
     private static final String PROFILECONFIG = "profileConfig"; // NOI18N
-    private static final String SEARCHPATHS = "searchPaths"; // NOI18N
+    public static final String SEARCH_PATHS = "searchPaths"; // NOI18N
     private static Logger log = LoggerFactory.getLogger(ProfileManager.class);
 
     public ProfileManager() {
@@ -103,12 +103,16 @@ public class ProfileManager extends Bean {
     }
 
     public void saveActiveProfile() throws IOException {
+        this.saveActiveProfile(this.getActiveProfile(), this.autoStartActiveProfile);
+    }
+
+    protected void saveActiveProfile(Profile profile, boolean autoStart) throws IOException {
         Properties p = new Properties();
         FileOutputStream os = null;
 
-        if (this.getActiveProfile() != null) {
-            p.setProperty(ACTIVE_PROFILE, this.getActiveProfile().getId());
-            p.setProperty(AUTO_START, Boolean.toString(this.isStartWithActiveProfile()));
+        if (profile != null) {
+            p.setProperty(ACTIVE_PROFILE, profile.getId());
+            p.setProperty(AUTO_START, Boolean.toString(autoStart));
         }
         if (!this.configFile.exists() && !this.configFile.createNewFile()) {
             throw new IOException("Unable to create file at " + this.getConfigFile().getAbsolutePath()); // NOI18N
@@ -207,8 +211,12 @@ public class ProfileManager extends Bean {
         }
     }
 
-    public ArrayList<File> getSearchPaths() {
-        return new ArrayList<File>(searchPaths);
+    public File[] getSearchPaths() {
+        return searchPaths.toArray(new File[searchPaths.size()]);
+    }
+
+    public File getSearchPaths(int index) {
+        return searchPaths.get(index);
     }
 
     protected void addSearchPath(File path) {
@@ -242,7 +250,7 @@ public class ProfileManager extends Bean {
                 }
             }
             searchPaths.clear();
-            for (Element e : (List<Element>) doc.getRootElement().getChild(SEARCHPATHS).getChildren()) {
+            for (Element e : (List<Element>) doc.getRootElement().getChild(SEARCH_PATHS).getChildren()) {
                 File path = FileUtil.getFile(FileUtil.getExternalFilename(e.getAttributeValue(Profile.PATH)));
                 if (!searchPaths.contains(path)) {
                     this.addSearchPath(path);
@@ -266,7 +274,7 @@ public class ProfileManager extends Bean {
         Document doc = new Document();
         doc.setRootElement(new Element(PROFILECONFIG));
         Element profilesElement = new Element(PROFILES);
-        Element pathsElement = new Element(SEARCHPATHS);
+        Element pathsElement = new Element(SEARCH_PATHS);
         for (Profile p : this.profiles) {
             Element e = new Element(PROFILE);
             e.setAttribute(Profile.ID, p.getId());
