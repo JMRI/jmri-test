@@ -34,7 +34,6 @@ public class ProfileManager extends Bean {
     private ArrayList<Profile> disabledProfiles = new ArrayList<Profile>();
     private ArrayList<File> searchPaths = new ArrayList<File>();
     private Profile activeProfile = null;
-    private boolean startWithActiveProfile = true;
     private File catalog;
     private File configFile = null;
     private boolean readingProfiles = false;
@@ -328,20 +327,6 @@ public class ProfileManager extends Bean {
             // rethrow the error
             throw ex;
         }
-    }
-
-    /**
-     * @return the startWithActiveProfile
-     */
-    public boolean isStartWithActiveProfile() {
-        return startWithActiveProfile;
-    }
-
-    /**
-     * @param startWithActiveProfile the startWithActiveProfile to set
-     */
-    public void setStartWithActiveProfile(boolean startWithActiveProfile) {
-        this.startWithActiveProfile = startWithActiveProfile;
     }
 
     private void findProfiles() {
