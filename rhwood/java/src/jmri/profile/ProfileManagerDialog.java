@@ -154,7 +154,7 @@ public class ProfileManagerDialog extends JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSelectActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
-        // TODO set selected item as active and close dialog
+        timer.stop();
         if (profiles.getSelectedValue() != null) {
             ProfileManager.getDefaultManager().setActiveProfile((Profile) profiles.getSelectedValue());
             dispose();
@@ -196,6 +196,7 @@ public class ProfileManagerDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
                 ProfileManager.getDefaultManager().setActiveProfile((Profile) profiles.getSelectedValue());
+                log.info("Automatically starting with profile " + ProfileManager.getDefaultManager().getActiveProfile().getId() + " after timeout.");
                 dispose();
             }
         });
