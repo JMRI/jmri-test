@@ -12,13 +12,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 import javax.swing.GroupLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -31,8 +27,6 @@ import javax.swing.Timer;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileView;
 import jmri.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -178,44 +172,8 @@ public class ProfileManagerDialog extends JDialog {
         timer.stop();
         JFileChooser chooser = new JFileChooser(FileUtil.getPreferencesPath());
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        chooser.setFileFilter(new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                return (f.isDirectory());
-            }
-
-            @Override
-            public String getDescription() {
-                return "JMRI Profiles";
-            }
-        });
-        chooser.setFileView(new FileView() {
-            @Override
-            public String getDescription(File f) {
-                if (!this.isTraversable(f)) {
-                    return "JMRI Profile with Id " + f.getName();
-                } else {
-                    return null;
-                }
-            }
-
-            @Override
-            public Boolean isTraversable(File f) {
-                if (f.isDirectory() && Arrays.asList(f.list()).contains(Profile.PROPERTIES)) {
-                    return false;
-                }
-                return null;
-            }
-
-            @Override
-            public Icon getIcon(File f) {
-                if (f.isDirectory() && Arrays.asList(f.list()).contains(Profile.PROPERTIES)) {
-                    return new ImageIcon(FileUtil.getExternalFilename(FileUtil.PROGRAM + "resources/jmri16x16.gif"));
-                } else {
-                    return null;
-                }
-            }
-        });
+        chooser.setFileFilter(new ProfileFileFilter());
+        chooser.setFileView(new ProfileFileView());
         // TODO: Use NetBeans OpenDialog if its availble
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             try {
