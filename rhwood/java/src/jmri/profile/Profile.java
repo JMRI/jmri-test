@@ -44,10 +44,13 @@ public class Profile {
      */
     public Profile(String name, String id, File path) throws IOException, IllegalArgumentException {
         if (!path.getName().equals(id)) {
-            throw new IllegalArgumentException(id + " " + path.getName() + " do not match");
+            throw new IllegalArgumentException(id + " " + path.getName() + " do not match"); // NOI18N
+        }
+        if ((new File(path, PROPERTIES)).canRead()) {
+            throw new IllegalArgumentException("A profile already exists at " + path); // NOI18N
         }
         this.name = name;
-        this.id = id + "." + Integer.toHexString(Float.floatToIntBits((float)Math.random()));
+        this.id = id + "." + Integer.toHexString(Float.floatToIntBits((float) Math.random()));
         this.path = path;
         if (path.mkdirs()) {
             this.save();
