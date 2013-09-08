@@ -20,6 +20,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
@@ -268,8 +269,10 @@ public class AddProfileDialog extends javax.swing.JDialog {
             ProfileManager.getDefaultManager().setActiveProfile(p);
             this.dispose();
         } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error Creating Profile", JOptionPane.ERROR_MESSAGE);
             log.error("Error saving profile", ex);
         } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error Creating Profile", JOptionPane.ERROR_MESSAGE);
             log.error("Error saving profile", ex);
         }
     }//GEN-LAST:event_btnOkActionPerformed
