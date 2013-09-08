@@ -260,16 +260,16 @@ public class ProfileManagerDialog extends JDialog {
     }//GEN-LAST:event_btnUseExistingActionPerformed
 
     private void formWindowOpened(WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        if (profiles.getModel().getSize() <= 0) {
-            timer = new Timer(30000, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    setVisible(false);
-                    ProfileManager.getDefaultManager().setActiveProfile((Profile) profiles.getSelectedValue());
-                    dispose();
-                }
-            });
-            timer.setRepeats(false);
+        timer = new Timer(30000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+                ProfileManager.getDefaultManager().setActiveProfile((Profile) profiles.getSelectedValue());
+                dispose();
+            }
+        });
+        timer.setRepeats(false);
+        if (profiles.getModel().getSize() > 0) {
             timer.start();
         }
     }//GEN-LAST:event_formWindowOpened
@@ -286,6 +286,5 @@ public class ProfileManagerDialog extends JDialog {
     private JLabel listLabel;
     private JList profiles;
     // End of variables declaration//GEN-END:variables
-
     private static final Logger log = LoggerFactory.getLogger(ProfileManagerDialog.class);
 }
