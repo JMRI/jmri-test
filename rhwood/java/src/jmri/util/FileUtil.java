@@ -42,6 +42,10 @@ public class FileUtil {
      */
     static public final String HOME = "home:"; // NOI18N
     /**
+     * Portable reference to the current profile directory.
+     */
+    static public final String PROFILE = "profile:"; // NOI18N
+    /**
      * Replaced with {@link #PROGRAM}.
      *
      * @see #PROGRAM
@@ -98,17 +102,26 @@ public class FileUtil {
     }
 
     /**
-     * Get the resource file corresponding to a name. There are five cases: <UL>
-     * <LI> Starts with "resource:", treat the rest as a pathname relative to
-     * the program directory (deprecated; see "program:" below) <LI> Starts with
-     * "program:", treat the rest as a relative pathname below the program
-     * directory <LI> Starts with "preference:", treat the rest as a relative
-     * path below the preferences directory <LI> Starts with "home:", treat the
-     * rest as a relative path below the user.home directory <LI> Starts with
-     * "file:", treat the rest as a relative path below the resource directory
-     * in the preferences directory (deprecated; see "preference:" above) <LI>
-     * Otherwise, treat the name as a relative path below the program directory
-     * </UL> In any case, absolute pathnames will work.
+     * Get the resource file corresponding to a name. There are five cases:
+     * <ul>
+     * <li>Starts with "resource:", treat the rest as a pathname relative to the
+     * program directory (deprecated; see "program:" below)</li>
+     * <li>Starts with "program:", treat the rest as a relative pathname below
+     * the program directory</li>
+     * <li>Starts with "preference:", treat the rest as a relative path below
+     * the user's files directory</li>
+     * <li>Starts with "home:", treat the rest as a relative path below the
+     * user.home directory</li>
+     * <li>Starts with "file:", treat the rest as a relative path below the
+     * resource directory in the preferences directory (deprecated; see
+     * "preference:" above)</li>
+     * <li>Starts with "profile:", treat the rest as a relative path below the
+     * profile directory as specified in the active
+     * {@link jmri.profile.Profile}</li>
+     * <li>Otherwise, treat the name as a relative path below the program
+     * directory</li>
+     * </ul>
+     * In any case, absolute pathnames will work.
      *
      * @param pName The name string, possibly starting with program:,
      * preference:, home:, file: or resource:
@@ -135,17 +148,24 @@ public class FileUtil {
 
             // Check for absolute path name
             if ((new File(filename)).isAbsolute()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Load from absolute path: " + filename);
-                }
+                log.debug("Load from absolute path: {}", filename);
                 return filename.replace(SEPARATOR, File.separatorChar);
             }
             // assume this is a relative path from the
             // preferences directory
             filename = FileUtil.getUserFilesPath() + filename;
-            if (log.isDebugEnabled()) {
-                log.debug("load from user preferences file: " + filename);
+            log.debug("load from user preferences file: {}", filename);
+            return filename.replace(SEPARATOR, File.separatorChar);
+        } else if (pName.startsWith(PROFILE)) {
+            String filename = pName.substring(PROFILE.length());
+            // Check for absolute path name
+            if ((new File(filename)).isAbsolute()) {
+                log.debug("Load from absolute path: {}", filename);
+                return filename.replace(SEPARATOR, File.separatorChar);
             }
+            // assume this is a relative path from the profile directory
+            filename = FileUtil.getProfilePath() + filename;
+            log.debug("load from profile file: {}", filename);
             return filename.replace(SEPARATOR, File.separatorChar);
         } else if (pName.startsWith(FILE)) {
             String filename = pName.substring(FILE.length());
@@ -211,6 +231,12 @@ public class FileUtil {
             } else {
                 path = path.replaceFirst(PREFERENCES, Matcher.quoteReplacement(FileUtil.getUserFilesPath()));
             }
+        } else if (path.startsWith(PROFILE)) {
+            if (new File(path.substring(PROFILE.length())).isAbsolute()) {
+                path = path.substring(PROFILE.length());
+            } else {
+                path = path.replaceFirst(PROFILE, Matcher.quoteReplacement(FileUtil.getProfilePath()));
+            }
         } else if (path.startsWith(HOME)) {
             if (new File(path.substring(HOME.length())).isAbsolute()) {
                 path = path.substring(HOME.length());
@@ -252,6 +278,11 @@ public class FileUtil {
             return PREFERENCES + filename.substring(getUserFilesPath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
         }
 
+        // compare full path name to see if same as profile
+        if (filename.startsWith(getProfilePath())) {
+            return PROFILE + filename.substring(getUserFilesPath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
+        }
+
         // now check for relative to program dir
         if (filename.startsWith(getProgramPath())) {
             return PROGRAM + filename.substring(getProgramPath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
@@ -281,7 +312,8 @@ public class FileUtil {
                 || filename.startsWith(RESOURCE)
                 || filename.startsWith(PROGRAM)
                 || filename.startsWith(HOME)
-                || filename.startsWith(PREFERENCES)) {
+                || filename.startsWith(PREFERENCES)
+                || filename.startsWith(PROFILE)) {
             return getPortableFilename(getExternalFilename(filename));
         } else {
             // treat as pure filename
@@ -655,7 +687,7 @@ public class FileUtil {
 
     /**
      * Replaces most non-alphanumeric characters in name with an underscore.
-     * 
+     *
      * @param name The filename to be sanitized.
      * @return The sanitized filename.
      */
