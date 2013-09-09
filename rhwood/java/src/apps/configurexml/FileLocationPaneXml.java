@@ -1,11 +1,11 @@
 package apps.configurexml;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import apps.FileLocationPane;
-import org.jdom.Element;
 import java.util.List;
 import jmri.util.FileUtil;
+import org.jdom.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handle XML persistance of directory locations.
@@ -38,7 +38,7 @@ public class FileLocationPaneXml extends jmri.configurexml.AbstractXmlAdapter {
     
     private void storeLocation(Element locations, String attr, String value){
         Element userLocation = new Element("fileLocation");
-        userLocation.setAttribute(attr, value);
+        userLocation.setAttribute(attr, FileUtil.getPortableFilename(value));
         locations.addContent(userLocation);
     }
 
@@ -77,7 +77,7 @@ public class FileLocationPaneXml extends jmri.configurexml.AbstractXmlAdapter {
         List<Element> messageList = messages.getChildren("fileLocation");
         for (int i=0; i<messageList.size();i++){
             if (messageList.get(i).getAttribute(attr)!=null) {
-                return messageList.get(i).getAttribute(attr).getValue();
+                return FileUtil.getExternalFilename(messageList.get(i).getAttribute(attr).getValue());
             }
         }
         return null;
