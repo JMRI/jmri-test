@@ -173,14 +173,14 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         } else {
             profileFile = new File(profileFilename);
         }
-        ProfileManager.getDefaultManager().setConfigFile(profileFile);
+        ProfileManager.defaultManager().setConfigFile(profileFile);
         try {
-            ProfileManager.getDefaultManager().readActiveProfile();
-            if (!ProfileManager.getDefaultManager().isAutoStartActiveProfile()) {
+            ProfileManager.defaultManager().readActiveProfile();
+            if (!ProfileManager.defaultManager().isAutoStartActiveProfile()) {
                 ProfileManagerDialog pmd = new ProfileManagerDialog(sp, true);
                 pmd.setLocationRelativeTo(sp);
                 pmd.setVisible(true);
-                ProfileManager.getDefaultManager().saveActiveProfile();
+                ProfileManager.defaultManager().saveActiveProfile();
             }
             // Manually setting the configFilename property since calling
             // Apps.setConfigFilename() does not reset the system property

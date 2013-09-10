@@ -16,11 +16,11 @@ import javax.swing.AbstractListModel;
 public class DisabledProfileListModel extends AbstractListModel {
 
     public DisabledProfileListModel() {
-        ProfileManager.getDefaultManager().addPropertyChangeListener(ProfileManager.DISABLED_PROFILES, new PropertyChangeListener() {
+        ProfileManager.defaultManager().addPropertyChangeListener(ProfileManager.DISABLED_PROFILES, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if (evt instanceof IndexedPropertyChangeEvent
-                        && evt.getSource().equals(ProfileManager.getDefaultManager())) {
+                        && evt.getSource().equals(ProfileManager.defaultManager())) {
                     if (evt.getOldValue() == null) {
                         fireIntervalAdded(((IndexedPropertyChangeEvent) evt).getIndex(), ((IndexedPropertyChangeEvent) evt).getIndex());
                     } else if (evt.getNewValue() == null) {
@@ -34,12 +34,12 @@ public class DisabledProfileListModel extends AbstractListModel {
 
     @Override
     public int getSize() {
-        return ProfileManager.getDefaultManager().getDisabledProfiles().length;
+        return ProfileManager.defaultManager().getDisabledProfiles().length;
     }
 
     @Override
     public Object getElementAt(int index) {
-        return ProfileManager.getDefaultManager().getDisabledProfiles(index);
+        return ProfileManager.defaultManager().getDisabledProfiles(index);
     }
 
     private void fireContentsChanged(int index0, int index1) {

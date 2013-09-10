@@ -61,7 +61,7 @@ public class ProfileManager extends Bean {
         }
     }
 
-    public static ProfileManager getDefaultManager() {
+    public static ProfileManager defaultManager() {
         if (instance == null) {
             instance = new ProfileManager();
         }
@@ -273,7 +273,8 @@ public class ProfileManager extends Bean {
                 try {
                     this.addProfile(new Profile(pp));
                 } catch (FileNotFoundException ex) {
-                    log.info("Skipping cataloged profile \"{}\" without profile.properties file", e.getAttributeValue(Profile.ID));
+                    log.info("Cataloged profile \"{}\" not in expected location\nSearching for it in {}", e.getAttributeValue(Profile.ID), pp.getParentFile());
+                    this.findProfiles(pp.getParentFile());
                 }
             }
             searchPaths.clear();
@@ -330,19 +331,23 @@ public class ProfileManager extends Bean {
     }
 
     private void findProfiles() {
-        for (File sp : this.searchPaths) {
-            File[] profilePaths = sp.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File pathname) {
-                    return (pathname.isDirectory() && Arrays.asList(pathname.list()).contains(Profile.PROPERTIES));
-                }
-            });
-            for (File pp : profilePaths) {
-                try {
-                    this.addProfile(new Profile(pp));
-                } catch (IOException ex) {
-                    log.error("Error attempting to read Profile at {}", pp, ex);
-                }
+        for (File searchPath : this.searchPaths) {
+            this.findProfiles(searchPath);
+        }
+    }
+
+    private void findProfiles(File searchPath) {
+        File[] profilePaths = searchPath.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return (pathname.isDirectory() && Arrays.asList(pathname.list()).contains(Profile.PROPERTIES));
+            }
+        });
+        for (File pp : profilePaths) {
+            try {
+                this.addProfile(new Profile(pp));
+            } catch (IOException ex) {
+                log.error("Error attempting to read Profile at {}", pp, ex);
             }
         }
     }

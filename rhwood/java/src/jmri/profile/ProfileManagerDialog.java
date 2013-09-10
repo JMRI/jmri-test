@@ -45,10 +45,10 @@ public class ProfileManagerDialog extends JDialog {
     public ProfileManagerDialog(Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        ProfileManager.getDefaultManager().addPropertyChangeListener(ProfileManager.ACTIVE_PROFILE, new PropertyChangeListener() {
+        ProfileManager.defaultManager().addPropertyChangeListener(ProfileManager.ACTIVE_PROFILE, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                profiles.setSelectedValue(ProfileManager.getDefaultManager().getActiveProfile(), true);
+                profiles.setSelectedValue(ProfileManager.defaultManager().getActiveProfile(), true);
                 profiles.repaint();
             }
         });
@@ -83,7 +83,7 @@ public class ProfileManagerDialog extends JDialog {
         listLabel.setText(bundle.getString("ProfileManagerDialog.listLabel.text")); // NOI18N
 
         profiles.setModel(new ProfileListModel());
-        profiles.setSelectedValue(ProfileManager.getDefaultManager().getActiveProfile(), true);
+        profiles.setSelectedValue(ProfileManager.defaultManager().getActiveProfile(), true);
         profiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         profiles.setToolTipText(bundle.getString("ProfileManagerDialog.profiles.toolTipText")); // NOI18N
         profiles.setNextFocusableComponent(btnSelect);
@@ -156,7 +156,7 @@ public class ProfileManagerDialog extends JDialog {
     private void btnSelectActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
         timer.stop();
         if (profiles.getSelectedValue() != null) {
-            ProfileManager.getDefaultManager().setActiveProfile((Profile) profiles.getSelectedValue());
+            ProfileManager.defaultManager().setActiveProfile((Profile) profiles.getSelectedValue());
             dispose();
         }
     }//GEN-LAST:event_btnSelectActionPerformed
@@ -178,7 +178,7 @@ public class ProfileManagerDialog extends JDialog {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             try {
                 Profile p = new Profile(chooser.getSelectedFile());
-                ProfileManager.getDefaultManager().addProfile(p);
+                ProfileManager.defaultManager().addProfile(p);
                 profiles.setSelectedValue(p, true);
                 if (p.isDisabled()) {
                     // TODO: Display dialog asking if profile should be enabled
@@ -195,8 +195,8 @@ public class ProfileManagerDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                ProfileManager.getDefaultManager().setActiveProfile((Profile) profiles.getSelectedValue());
-                log.info("Automatically starting with profile " + ProfileManager.getDefaultManager().getActiveProfile().getId() + " after timeout.");
+                ProfileManager.defaultManager().setActiveProfile((Profile) profiles.getSelectedValue());
+                log.info("Automatically starting with profile " + ProfileManager.defaultManager().getActiveProfile().getId() + " after timeout.");
                 dispose();
             }
         });

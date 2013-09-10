@@ -47,26 +47,26 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
      */
     public ProfilePreferencesPanel() {
         initComponents();
-        ProfileManager.getDefaultManager().addPropertyChangeListener(ProfileManager.PROFILES, new PropertyChangeListener() {
+        ProfileManager.defaultManager().addPropertyChangeListener(ProfileManager.PROFILES, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 profiles.repaint();
             }
         });
-        ProfileManager.getDefaultManager().addPropertyChangeListener(ProfileManager.DISABLED_PROFILES, new PropertyChangeListener() {
+        ProfileManager.defaultManager().addPropertyChangeListener(ProfileManager.DISABLED_PROFILES, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 disabledProfiles.repaint();
             }
         });
-        ProfileManager.getDefaultManager().addPropertyChangeListener(ProfileManager.SEARCH_PATHS, new PropertyChangeListener() {
+        ProfileManager.defaultManager().addPropertyChangeListener(ProfileManager.SEARCH_PATHS, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 searchPaths.repaint();
             }
         });
-        this.chkStartWithActiveProfile.setSelected(ProfileManager.getDefaultManager().isAutoStartActiveProfile());
-        profiles.setSelectedValue(ProfileManager.getDefaultManager().getActiveProfile(), true);
+        this.chkStartWithActiveProfile.setSelected(ProfileManager.defaultManager().isAutoStartActiveProfile());
+        profiles.setSelectedValue(ProfileManager.defaultManager().getActiveProfile(), true);
         this.profilesValueChanged(null);
         // Hide until I can figure out good way to export a profile
         // Should I include items in external user/roster/etc directories?
@@ -120,7 +120,7 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         jLabel1.setText(bundle.getString("ProfilePreferencesPanel.jLabel1.text")); // NOI18N
 
         profiles.setModel(new ProfileListModel());
-        profiles.setSelectedValue(ProfileManager.getDefaultManager().getActiveProfile(), true);
+        profiles.setSelectedValue(ProfileManager.defaultManager().getActiveProfile(), true);
         profiles.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent evt) {
                 profilesValueChanged(evt);
@@ -340,7 +340,7 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 644, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, GroupLayout.Alignment.TRAILING)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -362,7 +362,7 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
 
     private void btnActivateProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnActivateProfileActionPerformed
         try {
-            ProfileManager.getDefaultManager().saveActiveProfile((Profile) profiles.getSelectedValue(), ProfileManager.getDefaultManager().isAutoStartActiveProfile());
+            ProfileManager.defaultManager().saveActiveProfile((Profile) profiles.getSelectedValue(), ProfileManager.defaultManager().isAutoStartActiveProfile());
         } catch (IOException ex) {
             log.error("Unable to save profile preferences", ex);
             JOptionPane.showMessageDialog(this, "Usable to save profile preferences.\n" + ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -378,7 +378,7 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             try {
                 Profile p = new Profile(chooser.getSelectedFile());
-                ProfileManager.getDefaultManager().addProfile(p);
+                ProfileManager.defaultManager().addProfile(p);
                 profiles.setSelectedValue(p, true);
                 if (p.isDisabled()) {
                     // TODO: Display dialog asking if profile should be enabled
@@ -413,13 +413,13 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         chooser.setFileView(new ProfileFileView());
         // TODO: Use NetBeans OpenDialog if its availble
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            ProfileManager.getDefaultManager().addSearchPath(chooser.getSelectedFile());
+            ProfileManager.defaultManager().addSearchPath(chooser.getSelectedFile());
             searchPaths.setSelectedValue(chooser.getSelectedFile(), true);
         }
     }//GEN-LAST:event_btnAddSearchPathActionPerformed
 
     private void btnRemoveSearchPathActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnRemoveSearchPathActionPerformed
-        ProfileManager.getDefaultManager().removeSearchPath((File) searchPaths.getSelectedValue());
+        ProfileManager.defaultManager().removeSearchPath((File) searchPaths.getSelectedValue());
     }//GEN-LAST:event_btnRemoveSearchPathActionPerformed
 
     private void searchPathsValueChanged(ListSelectionEvent evt) {//GEN-FIRST:event_searchPathsValueChanged
@@ -431,7 +431,7 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
     }//GEN-LAST:event_searchPathsValueChanged
 
     private void profilesValueChanged(ListSelectionEvent evt) {//GEN-FIRST:event_profilesValueChanged
-        if (profiles.getSelectedValue().equals(ProfileManager.getDefaultManager().getActiveProfile())) {
+        if (profiles.getSelectedValue().equals(ProfileManager.defaultManager().getActiveProfile())) {
             this.btnDisableProfile.setEnabled(false);
             this.btnActivateProfile.setEnabled(false);
         } else {
@@ -451,9 +451,9 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
     }//GEN-LAST:event_btnExportProfileActionPerformed
 
     private void chkStartWithActiveProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_chkStartWithActiveProfileActionPerformed
-        ProfileManager.getDefaultManager().setAutoStartActiveProfile(this.chkStartWithActiveProfile.isSelected());
+        ProfileManager.defaultManager().setAutoStartActiveProfile(this.chkStartWithActiveProfile.isSelected());
         try {
-            ProfileManager.getDefaultManager().saveActiveProfile();
+            ProfileManager.defaultManager().saveActiveProfile();
         } catch (IOException ex) {
             log.error("Unable to save active profile.", ex);
         }

@@ -16,11 +16,11 @@ import javax.swing.AbstractListModel;
 public class SearchPathsListModel extends AbstractListModel {
 
     public SearchPathsListModel() {
-        ProfileManager.getDefaultManager().addPropertyChangeListener(ProfileManager.SEARCH_PATHS, new PropertyChangeListener() {
+        ProfileManager.defaultManager().addPropertyChangeListener(ProfileManager.SEARCH_PATHS, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if (evt instanceof IndexedPropertyChangeEvent
-                        && evt.getSource().equals(ProfileManager.getDefaultManager())) {
+                        && evt.getSource().equals(ProfileManager.defaultManager())) {
                     if (evt.getOldValue() == null) {
                         fireIntervalAdded(((IndexedPropertyChangeEvent) evt).getIndex(), ((IndexedPropertyChangeEvent) evt).getIndex());
                     } else if (evt.getNewValue() == null) {
@@ -34,12 +34,12 @@ public class SearchPathsListModel extends AbstractListModel {
 
     @Override
     public int getSize() {
-        return ProfileManager.getDefaultManager().getSearchPaths().length;
+        return ProfileManager.defaultManager().getSearchPaths().length;
     }
 
     @Override
     public Object getElementAt(int index) {
-        return ProfileManager.getDefaultManager().getSearchPaths(index);
+        return ProfileManager.defaultManager().getSearchPaths(index);
     }
 
     private void fireContentsChanged(int index0, int index1) {

@@ -16,11 +16,11 @@ import javax.swing.AbstractListModel;
 public class ProfileListModel extends AbstractListModel {
 
     public ProfileListModel() {
-        ProfileManager.getDefaultManager().addPropertyChangeListener(ProfileManager.PROFILES, new PropertyChangeListener() {
+        ProfileManager.defaultManager().addPropertyChangeListener(ProfileManager.PROFILES, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if (evt instanceof IndexedPropertyChangeEvent
-                        && evt.getSource().equals(ProfileManager.getDefaultManager())) {
+                        && evt.getSource().equals(ProfileManager.defaultManager())) {
                     if (evt.getOldValue() == null) {
                         fireIntervalAdded(((IndexedPropertyChangeEvent) evt).getIndex(), ((IndexedPropertyChangeEvent) evt).getIndex());
                     } else if (evt.getNewValue() == null) {
@@ -34,12 +34,12 @@ public class ProfileListModel extends AbstractListModel {
 
     @Override
     public int getSize() {
-        return ProfileManager.getDefaultManager().getProfiles().length;
+        return ProfileManager.defaultManager().getProfiles().length;
     }
 
     @Override
     public Object getElementAt(int index) {
-        return ProfileManager.getDefaultManager().getProfiles(index);
+        return ProfileManager.defaultManager().getProfiles(index);
     }
 
     private void fireContentsChanged(int index0, int index1) {

@@ -94,9 +94,9 @@ public class Profile {
     public void setDisabled(Boolean disabled) throws IOException {
         this.disabled = disabled;
         if (disabled) {
-            ProfileManager.getDefaultManager().disableProfile(this);
+            ProfileManager.defaultManager().disableProfile(this);
         } else {
-            ProfileManager.getDefaultManager().enableProfile(this);
+            ProfileManager.defaultManager().enableProfile(this);
         }
         this.save();
     }
