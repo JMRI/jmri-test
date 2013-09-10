@@ -273,6 +273,11 @@ public class FileUtil {
         // compare full path name to see if same as preferences
         String filename = file.getAbsolutePath();
 
+        // append separator if file is a directory
+        if (file.isDirectory()) {
+            filename = filename + File.separator;
+        }
+
         // compare full path name to see if same as preferences
         if (filename.startsWith(getUserFilesPath())) {
             return PREFERENCES + filename.substring(getUserFilesPath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
