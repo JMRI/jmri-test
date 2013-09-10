@@ -174,34 +174,26 @@ public class FileUtil {
             // in the 'file' format.  Check for those, and
             // accept them if present
             if ((new File(filename)).isAbsolute()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Load from absolute path: " + filename);
-                }
+                log.debug("Load from absolute path: {}", filename);
                 return filename.replace(SEPARATOR, File.separatorChar);
             }
             // assume this is a relative path from the
             // preferences directory
             filename = FileUtil.getUserFilesPath() + "resources" + File.separator + filename; // NOI18N
-            if (log.isDebugEnabled()) {
-                log.debug("load from user preferences file: " + filename);
-            }
+            log.debug("load from user preferences file: {}", filename);
             return filename.replace(SEPARATOR, File.separatorChar);
         } else if (pName.startsWith(HOME)) {
             String filename = pName.substring(HOME.length());
 
             // Check for absolute path name
             if ((new File(filename)).isAbsolute()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Load from absolute path: " + filename);
-                }
+                log.debug("Load from absolute path: {}", filename);
                 return filename.replace(SEPARATOR, File.separatorChar);
             }
             // assume this is a relative path from the
             // user.home directory
             filename = FileUtil.getHomePath() + filename;
-            if (log.isDebugEnabled()) {
-                log.debug("load from user preferences file: " + filename);
-            }
+            log.debug("load from user preferences file: {}", filename);
             return filename.replace(SEPARATOR, File.separatorChar);
         } else {
             // must just be a (hopefully) valid name
@@ -250,12 +242,10 @@ public class FileUtil {
         }
         try {
             // if path cannot be converted into a canonical path, return null
-            if (log.isDebugEnabled()) {
-                log.debug("Using " + path);
-            }
+            log.debug("Using {}", path);
             return new File(path.replace(SEPARATOR, File.separatorChar)).getCanonicalPath();
         } catch (IOException ex) {
-            log.warn("Can not convert " + path + " into a usable filename.", ex);
+            log.warn("Can not convert {} into a usable filename.", path, ex);
             return null;
         }
     }
@@ -419,9 +409,7 @@ public class FileUtil {
                 result = FileUtil.getHomePath() + "JMRI" + File.separator; // NOI18N
                 break;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("preferencesPath defined as \"" + result + "\" based on os.name=\"" + SystemType.getOSName() + "\"");
-        }
+        log.debug("preferencesPath defined as \"{}\" based on os.name=\"{}\"", result, SystemType.getOSName());
         return result;
     }
 
@@ -560,8 +548,8 @@ public class FileUtil {
      * @see #findURL(java.lang.String)
      */
     static public URL findURL(String path, @NonNull String... searchPaths) {
-        if (log.isDebugEnabled()) {
-            log.debug("Attempting to find " + path + " in " + Arrays.toString(searchPaths));
+        if (log.isDebugEnabled()) { // avoid the Arrays.toString call unless debugging
+            log.debug("Attempting to find {} in {}", path, Arrays.toString(searchPaths));
         }
         URL resource;
         for (String searchPath : searchPaths) {
@@ -587,13 +575,13 @@ public class FileUtil {
                 return file.toURI().toURL();
             }
         } catch (MalformedURLException ex) {
-            log.warn("Unable to get URL for " + path, ex);
+            log.warn("Unable to get URL for {}", path, ex);
             return null;
         }
         // return path if in jmri.jar or null
         resource = FileUtil.class.getClassLoader().getResource(path);
         if (resource == null && log.isDebugEnabled()) {
-            log.debug("Unable to to get URL for " + path);
+            log.debug("Unable to to get URL for {}", path);
         }
         return resource;
     }
@@ -646,7 +634,7 @@ public class FileUtil {
                 jarPath = sc.getLocation().toString();
                 // 9 = length of jar:file:
                 jarPath = jarPath.substring(9, jarPath.lastIndexOf("!"));
-                log.debug("jmri.jar path is " + jarPath);
+                log.debug("jmri.jar path is {}", jarPath);
             }
         }
         try {
@@ -658,9 +646,10 @@ public class FileUtil {
     }
 
     static public void logFilePaths() {
-        log.info("File path " + FileUtil.PROGRAM + " is " + FileUtil.getProgramPath());
-        log.info("File path " + FileUtil.PREFERENCES + " is " + FileUtil.getUserFilesPath());
-        log.info("File path " + FileUtil.HOME + " is " + FileUtil.getHomePath());
+        log.info("File path {} is {}", FileUtil.PROGRAM, FileUtil.getProgramPath());
+        log.info("File path {} is {}", FileUtil.PREFERENCES, FileUtil.getUserFilesPath());
+        log.info("File path {} is {}", FileUtil.PROFILE, FileUtil.getProfilePath());
+        log.info("File path {} is {}", FileUtil.HOME, FileUtil.getHomePath());
     }
 
     /**
@@ -716,9 +705,9 @@ public class FileUtil {
     public static void createDirectory(String path) {
         File dir = new File(path);
         if (!dir.exists()) {
-            log.warn("Creating directory: " + path);
+            log.warn("Creating directory: {}", path);
             if (!dir.mkdirs()) {
-                log.error("Failed to create directory: " + path);
+                log.error("Failed to create directory: {}", path);
             }
         }
     }
