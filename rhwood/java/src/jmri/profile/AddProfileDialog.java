@@ -21,10 +21,8 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.LayoutStyle;
 import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
@@ -63,8 +61,6 @@ public class AddProfileDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new JScrollPane();
-        jTextPane1 = new JTextPane();
         lblProfileNameAndLocation = new JLabel();
         jSeparator2 = new JSeparator();
         profileName = new JTextField();
@@ -78,13 +74,11 @@ public class AddProfileDialog extends javax.swing.JDialog {
         btnCancel = new JButton();
         btnOk = new JButton();
 
-        jScrollPane1.setViewportView(jTextPane1);
-
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         ResourceBundle bundle = ResourceBundle.getBundle("jmri/profile/Bundle"); // NOI18N
         setTitle(bundle.getString("AddProfileDialog.title")); // NOI18N
         setMinimumSize(new Dimension(413, 217));
-        setPreferredSize(new Dimension(513, 239));
+        setPreferredSize(new Dimension(517, 239));
         setSize(new Dimension(413, 239));
 
         lblProfileNameAndLocation.setFont(lblProfileNameAndLocation.getFont().deriveFont(lblProfileNameAndLocation.getFont().getStyle() | Font.BOLD));
@@ -127,6 +121,16 @@ public class AddProfileDialog extends javax.swing.JDialog {
         profileLocation.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 profileLocationActionPerformed(evt);
+            }
+        });
+        profileLocation.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent evt) {
+                profileLocationFocusLost(evt);
+            }
+        });
+        profileLocation.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent evt) {
+                profileLocationKeyTyped(evt);
             }
         });
 
@@ -244,6 +248,7 @@ public class AddProfileDialog extends javax.swing.JDialog {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             try {
                 this.profileLocation.setText(chooser.getSelectedFile().getCanonicalPath());
+                this.profileNameActionPerformed(evt);
             } catch (IOException ex) {
                 log.error("Error selecting profile location", ex);
             }
@@ -251,11 +256,11 @@ public class AddProfileDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnBrowseActionPerformed
 
     private void profileFolderActionPerformed(ActionEvent evt) {//GEN-FIRST:event_profileFolderActionPerformed
-        // TODO add your handling code here:
+        this.profileNameActionPerformed(evt);
     }//GEN-LAST:event_profileFolderActionPerformed
 
     private void profileLocationActionPerformed(ActionEvent evt) {//GEN-FIRST:event_profileLocationActionPerformed
-        // TODO add your handling code here:
+        this.profileNameActionPerformed(evt);
     }//GEN-LAST:event_profileLocationActionPerformed
 
     private void btnCancelActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
@@ -285,14 +290,20 @@ public class AddProfileDialog extends javax.swing.JDialog {
         this.profileNameActionPerformed(null);
     }//GEN-LAST:event_profileNameFocusLost
 
+    private void profileLocationKeyTyped(KeyEvent evt) {//GEN-FIRST:event_profileLocationKeyTyped
+        this.profileNameActionPerformed(null);
+    }//GEN-LAST:event_profileLocationKeyTyped
+
+    private void profileLocationFocusLost(FocusEvent evt) {//GEN-FIRST:event_profileLocationFocusLost
+        this.profileNameActionPerformed(null);
+    }//GEN-LAST:event_profileLocationFocusLost
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton btnBrowse;
     private JButton btnCancel;
     private JButton btnOk;
-    private JScrollPane jScrollPane1;
     private JSeparator jSeparator1;
     private JSeparator jSeparator2;
-    private JTextPane jTextPane1;
     private JLabel lblProfileFolder;
     private JLabel lblProfileLocation;
     private JLabel lblProfileName;
@@ -301,6 +312,5 @@ public class AddProfileDialog extends javax.swing.JDialog {
     private JTextField profileLocation;
     private JTextField profileName;
     // End of variables declaration//GEN-END:variables
-
     private static final Logger log = LoggerFactory.getLogger(AddProfileDialog.class);
 }
