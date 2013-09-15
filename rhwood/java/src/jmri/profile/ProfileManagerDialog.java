@@ -103,6 +103,7 @@ public class ProfileManagerDialog extends JDialog {
         });
 
         btnCreate.setText(bundle.getString("ProfileManagerDialog.btnCreate.text")); // NOI18N
+        btnCreate.setToolTipText(bundle.getString("ProfilePreferencesPanel.btnCreateNewProfile.toolTipText")); // NOI18N
         btnCreate.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 btnCreateActionPerformed(evt);
