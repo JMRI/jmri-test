@@ -47,6 +47,7 @@ public class ProfileManager extends Bean {
     public static final String DISABLED_PROFILES = "disabledProfiles"; // NOI18N
     private static final String PROFILECONFIG = "profileConfig"; // NOI18N
     public static final String SEARCH_PATHS = "searchPaths"; // NOI18N
+    public static final String SYSTEM_PROPERTY = "org.jmri.profile"; // NOI18N
     private static Logger log = LoggerFactory.getLogger(ProfileManager.class);
 
     public ProfileManager() {
@@ -86,6 +87,7 @@ public class ProfileManager extends Bean {
                 return;
             }
         }
+        log.warn("Unable to set active profile. No profile with id {} could be found.", id);
     }
 
     public void setActiveProfile(Profile profile) {

@@ -174,20 +174,29 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
             profileFile = new File(profileFilename);
         }
         ProfileManager.defaultManager().setConfigFile(profileFile);
-        try {
-            ProfileManager.defaultManager().readActiveProfile();
-            if (!ProfileManager.defaultManager().isAutoStartActiveProfile()) {
-                ProfileManagerDialog pmd = new ProfileManagerDialog(sp, true);
-                pmd.setLocationRelativeTo(sp);
-                pmd.setVisible(true);
-                ProfileManager.defaultManager().saveActiveProfile();
+        // See if the profile to use has been specified on the command line as
+        // a system property jmri.profile as a profile id.
+        if (System.getProperties().containsKey(ProfileManager.SYSTEM_PROPERTY)) {
+            ProfileManager.defaultManager().setActiveProfile(System.getProperty(ProfileManager.SYSTEM_PROPERTY));
+        }
+        if (ProfileManager.defaultManager().getActiveProfile() == null) {
+            try {
+                ProfileManager.defaultManager().readActiveProfile();
+                if (!ProfileManager.defaultManager().isAutoStartActiveProfile()) {
+                    ProfileManagerDialog pmd = new ProfileManagerDialog(sp, true);
+                    pmd.setLocationRelativeTo(sp);
+                    pmd.setVisible(true);
+                    ProfileManager.defaultManager().saveActiveProfile();
+                }
+                // Manually setting the configFilename property since calling
+                // Apps.setConfigFilename() does not reset the system property
+                configFilename = FileUtil.getProfilePath() + Profile.CONFIG_FILENAME;
+                System.setProperty("org.jmri.Apps.configFilename", Profile.CONFIG_FILENAME);
+            } catch (IOException ex) {
+                log.info("Profiles not configurable. Using fallback per-application configuration.");
             }
-            // Manually setting the configFilename property since calling
-            // Apps.setConfigFilename() does not reset the system property
-            configFilename = FileUtil.getProfilePath() + Profile.CONFIG_FILENAME;
-            System.setProperty("org.jmri.Apps.configFilename", Profile.CONFIG_FILENAME);
-        } catch (IOException ex) {
-            log.info("Profiles not configurable. Using fallback per-application configuration.");
+        } else {
+            log.info("Starting with profile {}", ProfileManager.defaultManager().getActiveProfile().getId());
         }
 
         // Install configuration manager and Swing error handler
