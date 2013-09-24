@@ -68,11 +68,7 @@ public class TrainCommon {
 				newLine(fileOut, pickupEngine(engine).trim(), isManifest);
 			}
 			if (engine.getRouteDestination() == rl) {
-				int lineLength;
-				if (isManifest)
-					lineLength = getLineLength(Setup.getManifestOrientation());
-				else
-					lineLength = getLineLength(Setup.getSwitchListOrientation());
+				int lineLength = getLineLength(isManifest);
 				String s = padString("", lineLength / 2);
 				s = s + " |" + dropEngine(engine);
 				if (s.length() > lineLength)
@@ -97,6 +93,20 @@ public class TrainCommon {
 				pickupEngine(fileOut, engine, orientation);
 		}
 	}
+	
+	private void pickupEngine(PrintWriter file, Engine engine, String orientation) {
+		StringBuffer buf = new StringBuffer(Setup.getPickupEnginePrefix());
+		String[] format = Setup.getPickupEngineMessageFormat();
+		for (int i = 0; i < format.length; i++) {
+			String s = getEngineAttribute(engine, format[i], PICKUP);
+			if (!checkStringLength(buf.toString() + s, orientation, Setup.getFontName(), Setup.getManifestFontSize())) {
+				addLine(file, buf.toString());
+				buf = new StringBuffer(TAB);
+			}
+			buf.append(s);
+		}
+		addLine(file, buf.toString());
+	}
 
 	/**
 	 * Adds a list of locomotive drops for the route location to the output file
@@ -113,13 +123,13 @@ public class TrainCommon {
 				dropEngine(fileOut, engine, orientation);
 		}
 	}
-
-	private void pickupEngine(PrintWriter file, Engine engine, String orientation) {
-		StringBuffer buf = new StringBuffer(Setup.getPickupEnginePrefix());
-		String[] format = Setup.getPickupEngineMessageFormat();
+	
+	private void dropEngine(PrintWriter file, Engine engine, String orientation) {
+		StringBuffer buf = new StringBuffer(Setup.getDropEnginePrefix());
+		String[] format = Setup.getDropEngineMessageFormat();
 		for (int i = 0; i < format.length; i++) {
-			String s = getEngineAttribute(engine, format[i], PICKUP);
-			if (buf.length() + s.length() > getLineLength(orientation)) {
+			String s = getEngineAttribute(engine, format[i], !PICKUP);
+			if (!checkStringLength(buf.toString() + s, orientation, Setup.getFontName(), Setup.getManifestFontSize())) {
 				addLine(file, buf.toString());
 				buf = new StringBuffer(TAB);
 			}
@@ -127,7 +137,7 @@ public class TrainCommon {
 		}
 		addLine(file, buf.toString());
 	}
-	
+
 	/**
 	 * Returns the pick up string for a loco.  Useful for frames like the train conductor and yardmaster.
 	 * @param engine
@@ -143,20 +153,6 @@ public class TrainCommon {
 		return buf.toString();
 	}
 
-	public void dropEngine(PrintWriter file, Engine engine, String orientation) {
-		StringBuffer buf = new StringBuffer(Setup.getDropEnginePrefix());
-		String[] format = Setup.getDropEngineMessageFormat();
-		for (int i = 0; i < format.length; i++) {
-			String s = getEngineAttribute(engine, format[i], !PICKUP);
-			if (buf.length() + s.length() > getLineLength(orientation)) {
-				addLine(file, buf.toString());
-				buf = new StringBuffer(TAB);
-			}
-			buf.append(s);
-		}
-		addLine(file, buf.toString());
-	}
-	
 	/**
 	 * Returns the drop string for a loco.  Useful for frames like the train conductor and yardmaster.
 	 * @param engine
@@ -246,11 +242,7 @@ public class TrainCommon {
 	protected void blockCarsByTrackTwoColumn(PrintWriter fileOut, Train train, List<String> carList,
 			List<String> routeList, RouteLocation rl, int r, boolean isManifest) {
 		index = 0;
-		int lineLength;
-		if (isManifest)
-			lineLength = getLineLength(Setup.getManifestOrientation());
-		else
-			lineLength = getLineLength(Setup.getSwitchListOrientation());
+		int lineLength = getLineLength(isManifest);
 		List<String> trackIds = rl.getLocation().getTrackIdsByNameList(null);
 		List<String> trackNames = new ArrayList<String>();
 		clearUtilityCarTypes(); // list utility cars by quantity
@@ -299,7 +291,7 @@ public class TrainCommon {
 						} else {
 							s = appendSetoutString(s, carList, rl, true, isManifest);
 						}
-						newLine(fileOut, s, isManifest);
+						addLine(fileOut, s);
 					}
 				}
 			}
@@ -311,7 +303,7 @@ public class TrainCommon {
 			s = appendSetoutString(s, carList, rl, false, isManifest);
 			String test = s.trim();
 			if (test.length() > 0)
-				newLine(fileOut, s, isManifest);
+				addLine(fileOut, s);
 		}
 	}
 	
@@ -357,11 +349,7 @@ public class TrainCommon {
 		} else {
 			newS = newS + dropCar(car, isManifest);
 		}
-		int lineLength;
-		if (isManifest)
-			lineLength = getLineLength(Setup.getManifestOrientation());
-		else
-			lineLength = getLineLength(Setup.getSwitchListOrientation());
+		int lineLength = getLineLength(isManifest);
 		if (newS.length() > lineLength)
 			newS = newS.substring(0, lineLength);
 		return newS;
@@ -407,14 +395,14 @@ public class TrainCommon {
 			return; // print nothing local move, see dropCar
 		for (int i = 0; i < format.length; i++) {
 			String s = getCarAttribute(car, format[i], PICKUP, !LOCAL);
-			if (buf.length() + s.length() > getLineLength(orientation)) {
+			if (!checkStringLength(buf.toString() + s, orientation, Setup.getFontName(), Setup.getManifestFontSize())) {
 				addLine(file, buf.toString());
 				buf = new StringBuffer(TAB);
 			}
 			buf.append(s);
 		}
 		String s = buf.toString();
-		if (!s.equals(TAB))
+		if (s.trim().length() != 0)
 			addLine(file, s);
 	}
 
@@ -491,14 +479,14 @@ public class TrainCommon {
 			boolean isLocal, String orientation) {
 		for (int i = 0; i < format.length; i++) {
 			String s = getCarAttribute(car, format[i], !PICKUP, isLocal);
-			if (buf.length() + s.length() > getLineLength(orientation)) {
+			if (!checkStringLength(buf.toString() + s, orientation, Setup.getFontName(), Setup.getManifestFontSize())) {
 				addLine(file, buf.toString());
 				buf = new StringBuffer(TAB);
 			}
 			buf.append(s);
 		}
 		String s = buf.toString();
-		if (!s.equals(TAB))
+		if (s.trim().length() != 0)
 			addLine(file, s);
 	}
 
@@ -576,8 +564,7 @@ public class TrainCommon {
 	 */
 	protected void setoutUtilityCars(PrintWriter fileOut, List<String> carList, Car car, RouteLocation rl,
 			boolean isManifest) {
-		// TODO should we be using isLocal(car)?
-		boolean isLocal = car.getRouteLocation().equals(car.getRouteDestination()) && car.getTrack() != null;
+		boolean isLocal = isLocalMove(car);
 		StringBuffer buf = new StringBuffer(Setup.getDropCarPrefix());
 		String[] messageFormat = Setup.getSetoutUtilityCarMessageFormat();
 		if (isLocal && isManifest) {
@@ -764,9 +751,8 @@ public class TrainCommon {
 	
 	// only used by build report
 	private static void printLine(PrintWriter file, String level, String string) {
-		int lineLengthMax = getLineLength(Setup.PORTRAIT, Setup.getBuildReportFontSize());
+		int lineLengthMax = getLineLength(Setup.PORTRAIT, Setup.getBuildReportFontSize(), Setup.MONOSPACED);
 		if (string.length() > lineLengthMax) {
-//			log.debug("String is too long for " + Setup.PORTRAIT);
 			String[] s = string.split(SPACE);
 			StringBuffer sb = new StringBuffer();
 			for (int i = 0; i < s.length; i++) {
@@ -835,6 +821,12 @@ public class TrainCommon {
 			file.println(string);
 	}
 	
+	/**
+	 * Writes a string to a file. Checks for string length, and will automatically wrap lines.
+	 * @param file
+	 * @param string
+	 * @param isManifest set true for manifest page orientation, false for switch list orientation
+	 */
 	protected void newLine(PrintWriter file, String string, boolean isManifest) {
 		if (isManifest)
 			newLine(file, string, Setup.getManifestOrientation());
@@ -850,28 +842,23 @@ public class TrainCommon {
 	 */
 	protected void newLine(PrintWriter file, String string, String orientation) {
 		String[] s = string.split(NEW_LINE);
-		int lineLengthMax = getLineLength(orientation);
 		for (int i = 0; i < s.length; i++) {
-			newLine(file, s[i], lineLengthMax);
+			makeNewLine(file, s[i], orientation);
 		}
 	}
-
-	private void newLine(PrintWriter file, String string, int lineLengthMax) {
-		if (string.length() > lineLengthMax) {
-			String[] s = string.split(SPACE);
-			StringBuffer sb = new StringBuffer();
-			for (int i = 0; i < s.length; i++) {
-				if (sb.length() + s[i].length() < lineLengthMax) {
-					sb.append(s[i] + SPACE);
-				} else {
-					addLine(file, sb.toString());
-					sb = new StringBuffer(s[i] + SPACE);
-				}
+	
+	private void makeNewLine(PrintWriter file, String string, String orientation) {
+		String[] s = string.split(SPACE);
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < s.length; i++) {
+			if (checkStringLength(sb.toString() + s[i], orientation, Setup.getFontName(), Setup.getManifestFontSize())) {
+				sb.append(s[i] + SPACE);
+			} else {
+				addLine(file, sb.toString());
+				sb = new StringBuffer(s[i] + SPACE);
 			}
-			addLine(file, sb.toString());
-			return;
 		}
-		addLine(file, string);
+		addLine(file, sb.toString());
 	}
 
 	/**
@@ -926,7 +913,7 @@ public class TrainCommon {
 	 */
 	public static boolean isThereWorkAtLocation(Train train, Location location) {
 		CarManager carManager = CarManager.instance();
-		List<String> carList = carManager.getByTrainDestinationList(train);
+		List<String> carList = carManager.getByTrainList(train);
 		for (int i = 0; i < carList.size(); i++) {
 			Car car = carManager.getById(carList.get(i));
 			if ((car.getRouteLocation() != null && car.getTrack() != null && TrainCommon.splitString(
@@ -950,13 +937,13 @@ public class TrainCommon {
 		return false;
 	}
 
-	protected void addCarsLocationUnknown(PrintWriter file) {
+	protected void addCarsLocationUnknown(PrintWriter file, boolean isManifest) {
 		CarManager cManager = CarManager.instance();
 		List<String> cars = cManager.getCarsLocationUnknown();
 		if (cars.size() == 0)
 			return; // no cars to search for!
 		newLine(file);
-		addLine(file, Setup.getMiaComment());
+		newLine(file, Setup.getMiaComment(), isManifest);
 		for (int i = 0; i < cars.size(); i++) {
 			Car car = cManager.getById(cars.get(i));
 			addSearchForCar(file, car);
@@ -1002,7 +989,7 @@ public class TrainCommon {
 			return "";
 		} else if (attribute.equals(Setup.FINAL_DEST)) {
 			if (!car.getFinalDestinationName().equals(""))
-				return " " + Bundle.getMessage("FD") + " " + splitString(car.getFinalDestinationName());
+				return " " + TrainManifestText.getStringFinalDestination() + " " + splitString(car.getFinalDestinationName());
 			return "";
 		}
 		return getRollingStockAttribute(car, attribute, isPickup, isLocal);
@@ -1033,13 +1020,13 @@ public class TrainCommon {
 			return " " + TrainManifestText.getStringFrom() + " " + splitString(rs.getLocationName());
 		else if (attribute.equals(Setup.DESTINATION) && isPickup) {
 			if (Setup.isTabEnabled())
-				return " " + Bundle.getMessage("dest") + " " + splitString(rs.getDestinationName());
+				return " " + TrainManifestText.getStringDest() + " " + splitString(rs.getDestinationName());
 			else
 				return " " + TrainManifestText.getStringDestination() + " " + splitString(rs.getDestinationName());
 		} else if (attribute.equals(Setup.DESTINATION) && !isPickup)
 			return " " + TrainManifestText.getStringTo() + " " + splitString(rs.getDestinationTrackName());
 		else if (attribute.equals(Setup.DEST_TRACK))
-			return " " + Bundle.getMessage("dest") + " " + splitString(rs.getDestinationName()) + ", "
+			return " " + TrainManifestText.getStringDest() + " " + splitString(rs.getDestinationName()) + ", "
 					+ splitString(rs.getDestinationTrackName());
 		else if (attribute.equals(Setup.OWNER))
 			return " " + tabString(rs.getOwner(), CarOwners.instance().getCurMaxNameLength());
@@ -1122,12 +1109,13 @@ public class TrainCommon {
 		return buf.toString();
 	}
 	
-	// used by manifests
-	protected int getLineLength(String orientation) {
-		return getLineLength(orientation, Setup.getManifestFontSize());
+	protected int getLineLength(boolean isManifest) {
+		if (isManifest)
+			return getLineLength(Setup.getManifestOrientation(), Setup.getManifestFontSize(), Setup.getFontName());
+		return getLineLength(Setup.getSwitchListOrientation(), Setup.getManifestFontSize(), Setup.getFontName());
 	}
 	
-	private static int getLineLength(String orientation, int fontSize) {
+	private static int getLineLength(String orientation, int fontSize, String fontName) {
 		// page size has been adjusted to account for margins of .5
 		Dimension pagesize = new Dimension(540, 792); // Portrait
 		if (orientation.equals(Setup.LANDSCAPE))
@@ -1136,13 +1124,35 @@ public class TrainCommon {
 			pagesize = new Dimension(206, 792);
 		// Metrics don't always work for the various font names, so use
 		// Monospaced
-		Font font = new Font("Monospaced", Font.PLAIN, fontSize); // NOI18N
+		Font font = new Font(fontName, Font.PLAIN, fontSize); // NOI18N
 		JLabel label = new JLabel();
 		FontMetrics metrics = label.getFontMetrics(font);
 		int charwidth = metrics.charWidth('m');
 
 		// compute lines and columns within margins
 		return pagesize.width / charwidth;
+	}
+	
+	/**
+	 * Checks to see if the the string fits on the page.
+	 * @param string
+	 * @param orientation
+	 * @param fontName
+	 * @param fontSize
+	 * @return true if string length is longer than page width
+	 */
+	private boolean checkStringLength(String string, String orientation, String fontName, int fontSize) {
+		// page size has been adjusted to account for margins of .5
+		Dimension pagesize = new Dimension(540, 792); // Portrait
+		if (orientation.equals(Setup.LANDSCAPE))
+			pagesize = new Dimension(720, 612);
+		if (orientation.equals(Setup.HANDHELD))
+			pagesize = new Dimension(206, 792);
+		Font font = new Font(fontName, Font.PLAIN, fontSize); // NOI18N
+		JLabel label = new JLabel();
+		FontMetrics metrics = label.getFontMetrics(font);
+		int stringWidth = metrics.stringWidth(string);
+		return stringWidth < pagesize.width;
 	}
 	
 	/**

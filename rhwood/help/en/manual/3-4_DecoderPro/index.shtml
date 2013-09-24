@@ -10,7 +10,6 @@
 <link rel="stylesheet" type="text/css" href="/css/print.css" media="print">
 <link rel="icon" href="/images/jmri.ico" type="image/png">
 <link rel="home" title="Home" href="/"><!-- /Style --></head>
-
 <body>
 <!--#include virtual="/Header" -->
 
@@ -18,8 +17,8 @@
 <div id="mainContent">
 
 <a name="Top"></a>
-<h1>DecoderPro® v3.2 User's Guide</h1>
-<h1>&nbsp;</h1>
+<h1>DecoderPro® v3.4 User's Guide</h1>
+<h1>revised 8/29/2013</h1>
 
 <p>&nbsp;</p>
 <p><strong>JMRI® is a Java-based cross-platform application for model railroaders. JMRI® contains applications for:</strong></p>
@@ -41,7 +40,7 @@ later, whether it is Macintosh, Windows, or Linux based. It does
 require that Java be installed on the computer. You can get Java as a
 free (but very large...) download at:
 <p><a href="http://java.sun.com/getjava/" target="_blank">http://java.sun.com/getjava/</a>
-</p><p>If  this is your first visit to our manual we suggest that you take the Decoder Pro® tour at <a href="http://jmri.sourceforge.net/help/en/html/apps/DecoderPro/Tour.shtml">http://jmri.sourceforge.net/help/en/html/apps/DecoderPro/Tour.shtml</a><br>
+</p><p>If  this is your first visit to our manual we suggest that you take the Decoder Pro® tour at <a target="_blank" href="http://jmri.sourceforge.net/help/en/html/apps/DecoderPro/Tour.shtml">http://jmri.sourceforge.net/help/en/html/apps/DecoderPro/Tour.shtml</a><br>
   to get an overview of what we&#8217;re about to cover..
 </p><p>Note: All screen shots in this manual are from a Windows machine
 using the "Metal" User Interface option . While your screens will
@@ -314,11 +313,11 @@ The Basic Programmer</h4>
   </li>
   <li><a href="Main_Debug.shtml">Debug Menu</a>
     <ul>
-      <li><a href="Main_Debug.shtml#memoryMonitor">Memory Usage Monitor</a></li>
+      <li>Memory Usage Monitor</li>
       <li>Import Decoder File</li>
       <li>Import Decoder URL</li>
       <li>Recreate Decoder Index</li>
-      <li>Recreate Roster Index</li>
+      <li>Recreate Roster Index</li><li>Update Decoder Definitions</li>
       <li>Check XML File</li>
       <li>Validate XML File</li>
       <li>Check Decoder Names</li>
@@ -330,11 +329,8 @@ The Basic Programmer</h4>
       <li><a href="Main_VSD.shtml">Virtual Sound Decoder</a><img src="images/arrow.gif" alt="arrow" height="9" width="20">
       <ul>
 	<li><a href="VSD_Manager.shtml">VSDecoder Manager</a></li>
-	<li><a href="VSD_LocationsMgr.shtml">Manage VSD Locations</a></li>
-      </ul></li>
-      <li>Listed Table Access</li>
-      <li>Listed Table Access-Direct to Routes</li>
-      <li>PRICOM <img src="images/arrow.gif" alt="arrow" height="9" width="20">
+	<li><a href="VSD_LocationsMgr.shtml">Manage VSD Locations</a></li><li>VSDecoder Preferences</li>
+      </ul></li><li>PRICOM <img src="images/arrow.gif" alt="arrow" height="9" width="20">
             <ul>
               <li><a href="Main_PRICOM.shtml">PRICOM Pocket Tester</a><img src="images/arrow.gif" alt="arrow" height="9" width="20">
                 <ul>
@@ -394,22 +390,22 @@ The Basic Programmer</h4>
   <li><a href="Error.shtml">Decoder Programmer Error Messages</a></li>
 </ul>
 <hr>
-<p>The <a href="http://jmri.org/Download/index.html">JMRI download page</a>
+<p>The <a target="_blank" href="http://jmri.org/download/index.shtml">JMRI download page</a>
 is hosted by <a href="http://sourceforge.net">
-<img src="images/sflogo.png" alt="SourceForge Logo" align="middle" border="0" height="31" hspace="10" width="88">sourceforge.net</a>.</p>
+<img src="images/sflogo.png" alt="SourceForge Logo" align="middle" border="0" height="31" hspace="10" width="88"></a><a href="http://sourceforge.net/" target="_blank">sourceforge.net</a><a href="http://sourceforge.net/" target="_blank">.</a></p>
 <p>
 To give feedback on this HTML manual, ask questions about things not
 covered, or make suggestions for improvements to the manual or the software,
-join us on the JMRI Users mailing list at <a href="http://groups.yahoo.com/group/jmriusers/">
+join us on the JMRI Users mailing list at <a target="_blank" href="http://groups.yahoo.com/group/jmriusers/">
 http://groups.yahoo.com/group/jmriusers/</a>
 
 </p><p>
 Suggestions for revisions
 are best submitted to the
-  <a href="http://groups.yahoo.com/group/jmriusers/">JMRI E-mail list</a> in plain text format. This will make it easier to copy into the files, and help prevent "Microsoft Bloat" in the HTML.
+  <a target="_blank" href="http://groups.yahoo.com/group/jmriusers/">JMRI E-mail list</a> in plain text format. This will make it easier to copy into the files, and help prevent "Microsoft Bloat" in the HTML.
 </p><p>Thanks for reading, and Let's Run Trains!
 
-</p><table align="center" border="1" cellpadding="2" cellspacing="1" width="90%">
+</p><table style="width: 90%; text-align: left; margin-left: auto; margin-right: auto;" border="1" cellpadding="2" cellspacing="1">
   <caption>
     Revisions
   </caption>
@@ -481,13 +477,13 @@ are best submitted to the
     <td align="left" valign="top">1/20/2013</td>
     <td align="left" valign="top">Dale A. Tripp</td>
     <td align="left" valign="top">Updated from JMRI® 3.0 and separated Operations to separate User's Guide</td>
-  </tr>
+  </tr><tr><td>3.4</td><td>8/29/2013</td><td>Dale A. Tripp</td><td>Updated &nbsp;from JMRI® 3.2 </td></tr>
 </tbody></table>
 <p>
 </p><hr>
 </div>
 <div align="right">Go to the
-<a href="http://groups.yahoo.com/group/jmriusers/">
+<a target="_blank" href="http://groups.yahoo.com/group/jmriusers/">
 JMRI Users home page on Yahoo Groups</a></div>
 
 <!--#include virtual="/Footer" -->

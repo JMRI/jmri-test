@@ -258,6 +258,7 @@ public class JsonUtil {
         data.put(DESTINATION, engine.getRouteDestinationId());
         data.put(DESTINATION_TRACK, engine.getDestinationTrackName());
         data.put(MODEL, engine.getModel());
+        data.put(LENGTH, engine.getLength());
         data.put(COMMENT, engine.getComment());
         return root;
     }
@@ -961,7 +962,9 @@ public class JsonUtil {
                 data.put(TERMINATES_LOCATION, train.getTrainTerminatesName());
             }
             data.put(LOCATION, train.getCurrentLocationName());
-            data.put(LOCATION_ID, train.getCurrentLocation().getId());
+            if (train.getCurrentLocation()  != null) {
+            	data.put(LOCATION_ID, train.getCurrentLocation().getId());
+            }
             data.put(STATUS, train.getStatus());
             data.put(LENGTH, train.getTrainLength());
             data.put(WEIGHT, train.getTrainWeight());

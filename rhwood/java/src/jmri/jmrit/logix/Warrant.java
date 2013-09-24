@@ -604,7 +604,6 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
                 abortWarrant(msg);
                 return msg;
         }
-        _delayStart = false;	// script should start - no more delay
         log.debug("Throttle at "+address.toString()+" acquired for warrant "+getDisplayName());        	
     	return null;
     }
@@ -612,9 +611,8 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
     void abortWarrant(@NonNull String msg) {
         _delayStart = false;	// script should start - no more delay
         log.error("Abort warrant \""+ getDisplayName()+"\" "+msg);
-        if (_engineer!=null) {
-            _engineer.abort();
-        }
+        setRunMode(Warrant.MODE_NONE, null, null, null, false);
+        firePropertyChange("throttleFail", msg, msg);
     }
     
     /**
@@ -667,7 +665,9 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
     public void notifyThrottleFound(DccThrottle throttle)
     {
     	if (throttle == null) {
-            log.warn("notifyThrottleFound: null throttle(?)!");
+            log.error("notifyThrottleFound: null throttle(?)!");
+            setRunMode(Warrant.MODE_NONE, null, null, null, false);
+            firePropertyChange("throttleFail", null, Bundle.getMessage("noThrottle"));
             return; 
         }
 
@@ -690,6 +690,10 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
             }
             startupWarrant();
             new Thread(_engineer).start();
+            if (_delayStart) {
+            	controlRunTrain(HALT);
+            }
+            _delayStart = false;	// script should start when user resumes - no more delay
         }
     }
     
@@ -710,6 +714,8 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
     public void notifyFailedThrottleRequest(DccLocoAddress address, String reason) {
         log.error("notifyFailedThrottleRequest address= " +address.toString()+" _runMode= "+_runMode+
         		" due to "+reason);
+        setRunMode(Warrant.MODE_NONE, null, null, null, false);
+        firePropertyChange("throttleFail", null, reason);
     }
 
     private String checkInService(List <BlockOrder> orders) {

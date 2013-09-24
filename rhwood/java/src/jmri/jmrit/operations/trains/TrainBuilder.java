@@ -61,7 +61,7 @@ public class TrainBuilder extends TrainCommon {
 	List<String> carList; // list of cars available for this train
 	List<String> routeList; // list of locations from departure to termination served by this train
 	Hashtable<String, Integer> numOfBlocks; // Number of blocks of cars departing staging.
-	int moves; // the number of pick up car moves for a location
+	int completedMoves; // the number of pick up car moves for a location
 	double maxWeight = 0; // the maximum weight of cars in train
 	int reqNumOfMoves; // the requested number of car moves for a location
 	Location departLocation; // train departs this location
@@ -70,7 +70,6 @@ public class TrainBuilder extends TrainCommon {
 	Track terminateStageTrack; // terminate staging track (null if not staging)
 	boolean success; // true when enough cars have been picked up from a location
 	PrintWriter buildReport; // build report for this train
-	boolean noMoreMoves; // when true there aren't any more moves for a location
 
 	// managers
 	CarManager carManager = CarManager.instance();
@@ -208,16 +207,16 @@ public class TrainBuilder extends TrainCommon {
 				// we're going to use this location, so initialize the location
 				rl.setCarMoves(0); // clear the number of moves				
 				// show the type of moves allowed at this location
-				if (!rl.canDrop() && !rl.canPickup()) {
+				if (!rl.isDropAllowed() && !rl.isPickUpAllowed()) {
 					addLine(buildReport, THREE, MessageFormat.format(Bundle
 							.getMessage("buildLocNoDropsOrPickups"), new Object[] { rl.getName() }));
 				} else {
 					requested = requested + rl.getMaxCarMoves(); // add up the total number of car moves requested
-					if (rl.canDrop() && rl.canPickup())
+					if (rl.isDropAllowed() && rl.isPickUpAllowed())
 						addLine(buildReport, THREE, MessageFormat.format(Bundle
 								.getMessage("buildLocRequestMoves"), new Object[] { rl.getName(),
 								rl.getMaxCarMoves() }));
-					else if (!rl.canDrop())
+					else if (!rl.isDropAllowed())
 						addLine(buildReport, THREE, MessageFormat.format(Bundle
 								.getMessage("buildLocRequestPickups"), new Object[] { rl.getName(),
 								rl.getMaxCarMoves() }));
@@ -868,6 +867,7 @@ public class TrainBuilder extends TrainCommon {
 				double grade = rl.getGrade();
 				carDivisor = carDivisor / grade;
 			}
+			log.debug("Maximum train length "+rl.getMaxTrainLength()+" for location "+rl.getName());
 			if (rl.getMaxTrainLength() / (carDivisor * 40) > numberEngines) {
 				numberEngines = rl.getMaxTrainLength() / (carDivisor * (40 + Car.COUPLER));
 				// round up to next whole integer
@@ -1488,7 +1488,7 @@ public class TrainBuilder extends TrainCommon {
 		for (int i = 1; i < routeList.size(); i++) {
 			RouteLocation rl = train.getRoute().getLocationById(routeList.get(i));
 			int possibleMoves = rl.getMaxCarMoves() - rl.getCarMoves();
-			if (rl.canDrop() && possibleMoves > 0) {
+			if (rl.isDropAllowed() && possibleMoves > 0) {
 				addLine(buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("blockLocationHasMoves"),
 						new Object[] { rl.getName(), possibleMoves }));
 			}
@@ -1621,28 +1621,24 @@ public class TrainBuilder extends TrainCommon {
 			addLine(buildReport, SEVEN, BLANK_LINE); // add line when in very detailed report mode
 			addLine(buildReport, THREE, Bundle.getMessage("buildFinalPass"));
 		}
-		noMoreMoves = false; // need to reset this in case noMoreMoves is true on first pass
-		// determine how many locations are serviced by this train
-		int numLocs = routeList.size();
-		if (numLocs > 1) // don't find car destinations for the last location in the route
-			numLocs--;
 		// now go through each location starting at departure and place cars as requested
-		for (int routeIndex = 0; routeIndex < numLocs; routeIndex++) {
+		for (int routeIndex = 0; routeIndex < routeList.size(); routeIndex++) {
 			RouteLocation rl = train.getRoute().getLocationById(routeList.get(routeIndex));
 			if (train.skipsLocation(rl.getId())) {
 				addLine(buildReport, ONE, MessageFormat.format(Bundle.getMessage("buildLocSkipped"),
 						new Object[] { rl.getName(), train.getName() }));
 				continue;
 			}
-			if (!rl.canPickup()) {
+			if (!rl.isPickUpAllowed()) {
 				addLine(buildReport, ONE, MessageFormat.format(Bundle.getMessage("buildLocNoPickups"),
 						new Object[] { train.getRoute().getName(), rl.getName() }));
 				continue;
 			}
+			// the next check provides a build report message if there's an issue with the train direction
 			if (!checkPickUpTrainDirection(rl)) {
 				continue;
 			}
-			moves = 0; // the number of moves for this location
+			completedMoves = 0; // the number of moves completed for this location
 			success = true; // true when done with this location
 			reqNumOfMoves = rl.getMaxCarMoves() - rl.getCarMoves(); // the number of moves requested
 			int saveReqMoves = reqNumOfMoves; // save a copy for status message
@@ -1694,7 +1690,7 @@ public class TrainBuilder extends TrainCommon {
 			
 			addLine(buildReport, ONE, MessageFormat.format(Bundle.getMessage("buildStatusMsg"), new Object[] {
 					(success ? Bundle.getMessage("Success") : Bundle.getMessage("Partial")),
-					Integer.toString(moves), Integer.toString(saveReqMoves), rl.getName(), train.getName() }));
+					Integer.toString(completedMoves), Integer.toString(saveReqMoves), rl.getName(), train.getName() }));
 			
 			reportCarsNotMoved(rl, percent);
 		}
@@ -1729,7 +1725,6 @@ public class TrainBuilder extends TrainCommon {
 			// add message that we're on the second pass for this location
 			if (secondPass && messageFlag) {
 				messageFlag = false;
-				noMoreMoves = false; // we're on a second pass, there might be moves now
 				addLine(buildReport, FIVE, MessageFormat.format(Bundle
 						.getMessage("buildExtraPassForLocation"), new Object[] { rl.getName() }));
 				addLine(buildReport, SEVEN, BLANK_LINE); // add line when in very detailed report mode
@@ -1840,11 +1835,6 @@ public class TrainBuilder extends TrainCommon {
 					car.reset();
 				}
 				addLine(buildReport, SEVEN, BLANK_LINE); // add line when in very detailed report mode
-			}
-		// are there still moves available?
-			if (noMoreMoves) {
-				addLine(buildReport, FIVE, Bundle.getMessage("buildNoAvailableDestinations"));
-				break;
 			}
 		}
 	}
@@ -1964,7 +1954,7 @@ public class TrainBuilder extends TrainCommon {
 		}
 		addLine(buildReport, SEVEN, BLANK_LINE); // add line when in very detailed report mode
 		numberCars++; // bump number of cars moved by this train
-		moves++; // bump number of car pick up moves for the location
+		completedMoves++; // bump number of car pick up moves for the location
 		reqNumOfMoves--; // decrement number of moves left for the location
 		if (reqNumOfMoves <= 0)
 			success = true; // done with this location!
@@ -3023,7 +3013,7 @@ public class TrainBuilder extends TrainCommon {
 			locCount++; // show when this car would be dropped at location
 			log.debug("Car (" + car.toString() + ") found a destination in train's route");
 			// are drops allows at this location?
-			if (!rld.canDrop()) {
+			if (!rld.isDropAllowed()) {
 				addLine(buildReport, THREE, MessageFormat.format(Bundle.getMessage("buildRouteNoDropsStop"),
 						new Object[] { train.getRoute().getName(), rld.getName(), locCount }));
 				continue;
@@ -3238,7 +3228,6 @@ public class TrainBuilder extends TrainCommon {
 		RouteLocation rld = null; // the route location destination being checked for the car
 		RouteLocation rldSave = null; // holds the best route location destination for the car
 		Track trackSave = null; // holds the best track at destination for the car
-		noMoreMoves = true; // false when there are are locations with moves
 		boolean multiplePickup = false; // true when car can be picked up from two or more locations in the route
 
 		// more than one location in this route?
@@ -3256,7 +3245,7 @@ public class TrainBuilder extends TrainCommon {
 			if (checkForLaterPickUp(rl, rld, car)) {
 				multiplePickup = true;
 			}
-			if (rld.canDrop() || car.hasFred() || car.isCaboose()) {
+			if (rld.isDropAllowed() || car.hasFred() || car.isCaboose()) {
 				addLine(buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("buildSearchingLocation"),
 						new Object[] { rld.getName(), }));
 			} else {
@@ -3278,7 +3267,6 @@ public class TrainBuilder extends TrainCommon {
 						.getMessage("buildNoAvailableMovesDest"), new Object[] { rld.getName() }));
 				continue;
 			}
-			noMoreMoves = false;
 			Location destinationTemp = null;
 			Track trackTemp = null;
 			
@@ -3522,7 +3510,7 @@ public class TrainBuilder extends TrainCommon {
 						if (rle == rld)
 							break; // done
 						if (rle.getName().equals(rld.getName())
-								&& (rle.getMaxCarMoves() - rle.getCarMoves() > 0) && rle.canDrop()
+								&& (rle.getMaxCarMoves() - rle.getCarMoves() > 0) && rle.isDropAllowed()
 								&& checkDropTrainDirection(car, rle, trackTemp)) {
 							log.debug("Found an earlier drop for car (" + car.toString() + ") destination ("
 									+ rle.getName() + ")"); // NOI18N
@@ -3585,7 +3573,7 @@ public class TrainBuilder extends TrainCommon {
 						new Object[] { car.toString(), rld.getName(), rld.getId() }));
 				return false;
 			}
-			if (!rld.canPickup()) {
+			if (!rld.isPickUpAllowed()) {
 				addLine(buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("buildPickupLater"),
 						new Object[] { car.toString(), rld.getName(), rld.getId() }));
 				// log.debug("Later pick up for car ("+car.toString()+") from route location ("+rld.getName()+") id "+
@@ -3693,7 +3681,7 @@ public class TrainBuilder extends TrainCommon {
 		if (!Setup.isBuildAggressive())
 			return false;
 		boolean redirected = false;
-		List<String> cars = carManager.getByTrainDestinationList(train);
+		List<String> cars = carManager.getByTrainList(train);
 		for (int i = 0; i < cars.size(); i++) {
 			Car car = carManager.getById(cars.get(i));
 			// does the car have a final destination and the destination is this one?
@@ -3706,13 +3694,15 @@ public class TrainBuilder extends TrainCommon {
 			if (car.testDestination(car.getFinalDestination(), car.getFinalDestinationTrack()).equals(Track.OKAY)) {
 				Track alternate = car.getFinalDestinationTrack().getAlternateTrack();
 				if (alternate != null && alternate.getLocType().equals(Track.YARD)
-						&& car.getDestinationTrack() == alternate) {
+						&& car.getDestinationTrack() == alternate 
+						&& checkDropTrainDirection(car, car.getRouteDestination(), car.getFinalDestinationTrack())
+						&& checkTrainCanDrop(car, car.getFinalDestinationTrack())) {
 					log.debug("Car (" + car.toString() + ") alternate track ("
 							+ car.getDestinationTrackName()
 							+ ") can be redirected to final destination track (" // NOI18N
 							+ car.getFinalDestinationTrackName() + ")");
 					addLine(buildReport, FIVE, MessageFormat.format(Bundle
-							.getMessage("buildRedirectFromAlternate"), new Object[] {
+							.getMessage("buildRedirectFromAlternate"), new Object[] { car.getFinalDestinationName(), 
 							car.getFinalDestinationTrackName(), car.toString(), car.getDestinationTrackName() }));
 					car.setDestination(car.getFinalDestination(), car.getFinalDestinationTrack());
 					redirected = true;
@@ -3724,10 +3714,12 @@ public class TrainBuilder extends TrainCommon {
 	
 	// report any cars left at location
 	private void reportCarsNotMoved(RouteLocation rl, int percent) {
+		// only report if requested moves completed and final pass
 		if (!success || percent != 100)
 			return;
 		if (carIndex < 0)
 			carIndex = 0;
+		// cars up this point have build report messages, only show the cars that aren't in the build report
 		boolean printHeader = true;
 		for (int i = carIndex; i < carList.size(); i++) {
 			Car car = carManager.getById(carList.get(i));

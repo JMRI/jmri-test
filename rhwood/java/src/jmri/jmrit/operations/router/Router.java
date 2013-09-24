@@ -154,6 +154,11 @@ public class Router extends TrainCommon {
 			addLine(buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("RouterCanNotDeliverCar"),
 					new Object[] { car.toString(), clone.getDestinationName(),
 				clone.getDestinationTrackName(), _status }));
+			// TODO should we move a car to the alternate or yard track if already at the final destination?
+			// state that alternative and yard track options are not available if car is at final destination
+			if (car.getLocation() == clone.getDestination())
+				addLine(buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("RouterIgnoreAlternate"),
+						new Object[] { car.toString(), car.getLocationName() }));
 			// check to see if an alternative track was specified
 			if ((_status.startsWith(Track.LENGTH) || _status.startsWith(Track.SCHEDULE)) && car.getLocation() != clone.getDestination()
 					&& clone.getDestinationTrack() != null
@@ -550,7 +555,7 @@ public class Router extends TrainCommon {
 				}
 			}
 		}
-		log.debug("Using 3 trains to route car was unsuccessful");
+		log.debug("Using 3 trains to route car to ("+car.getFinalDestinationName()+") was unsuccessful");
 		log.debug("Try to find route using 4 trains");
 		for (int i = 0; i < firstLocationTracks.size(); i++) {
 			Track fltp = firstLocationTracks.get(i);
@@ -617,7 +622,7 @@ public class Router extends TrainCommon {
 				}
 			}
 		}
-		log.debug("Using 4 trains to route car was unsuccessful");
+		log.debug("Using 4 trains to route car to ("+car.getFinalDestinationName()+") was unsuccessful");
 		log.debug("Try to find route using 5 trains");
 		for (int i = 0; i < firstLocationTracks.size(); i++) {
 			Track fltp = firstLocationTracks.get(i);
@@ -707,7 +712,7 @@ public class Router extends TrainCommon {
 				}
 			}
 		}
-		log.debug("Using 5 trains to route car was unsuccessful");
+		log.debug("Using 5 trains to route car to ("+car.getFinalDestinationName()+") was unsuccessful");
 		return false;
 	}
 

@@ -3,6 +3,7 @@
 
 
 
+
 <title>Decoder Pro Manual: Index</title><!-- Style --><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" type="text/css" href="/css/default.css" media="screen">
 <link rel="stylesheet" type="text/css" href="/css/print.css" media="print">
@@ -86,7 +87,8 @@ Printable Guide (pdf 3.95MB)</a></strong></td>
 <td>&nbsp;</td>
 <td><strong><a href="3-2_JMRI_OPS_UsersGuide/index.shtml">JMRI® Operations
 Program 3.2</a></strong></td>
-<td></td>
+<td><br>
+</td>
 </tr>
 <tr>
 <td>&nbsp;<span style="font-weight: bold;">JMRI®
@@ -96,22 +98,22 @@ Version 3.4</span></td>
 </tr>
 <tr>
 <td>&nbsp;</td>
-<td>&nbsp;DecoderPro® 3.4 &nbsp;</td>
-<td>Coming Soon </td>
+<td><a href="3-4_DecoderPro/index.shtml">&nbsp;</a><a style="font-weight: bold;" href="3-4_DecoderPro/index.shtml">DecoderPro® 3.4 </a><a href="3-4_DecoderPro/index.shtml">&nbsp;</a></td>
+<td style="font-weight: bold;"><a href="pdf/DP3_Man_3-4.pdf">Download Printable Guide (pdf &nbsp;3.94MB 163 pages)</a> </td>
 </tr>
 <tr>
 <td>&nbsp;</td>
 <td><a style="font-weight: bold;" href="3-4_DecoderPro3/index.shtml">&nbsp;DecoderPro3® 3.4 </a>&nbsp;</td>
-<td>(in work 8/18/2013) </td>
+<td>pdf version coming soon </td>
 </tr>
 <tr>
 <td>&nbsp;</td>
-<td>&nbsp;JMRI® Operations Program 3.4 &nbsp;</td>
-<td>Coming Soon </td>
+<td style="font-weight: bold;"><a href="3-4_JMRI_OPS_UsersGuide/index.shtml">&nbsp;JMRI® Operations Program 3.4 &nbsp;</a></td>
+<td>pdf version coming soon </td>
 </tr>
 </tbody>
 </table>
-<h4>Updated 8/19/2013</h4>
+<h4>Updated 9/7/2013</h4>
 <p>&nbsp;
 </p>
 <p><strong>JMRI is a Java-based cross-platform application

@@ -399,37 +399,40 @@ public class EditPortalFrame extends jmri.util.JmriJFrame implements ListSelecti
                 }
             }
         }
-        // check for duplication
-        OBlock toBlock = portal.getToBlock();
-        OBlock fromBlock = portal.getFromBlock();
-        Portal p = null;
-        boolean duplicate = false;
-        java.util.List<Portal> list = toBlock.getPortals();
-        Iterator<Portal> iter = list.iterator();
-        while (iter.hasNext()) {
-        	p = iter.next();
-        	if (toBlock.equals(p.getToBlock())) {
-        		if (fromBlock.equals(p.getFromBlock())) {
-        			duplicate = true;
-        			break;
-        		}      		
-        	} else if (toBlock.equals(p.getFromBlock())) {
-        		if (fromBlock.equals(p.getToBlock())) {
-        			duplicate = true;
-        			break;
-        		}      		      		
-        	}
-        }
-        if (!portal.equals(p) && duplicate) {
-            JOptionPane.showMessageDialog(this, Bundle.getMessage("parallelPortal",
-            		portal.getName(), p.getName(),toBlock.getDisplayName(), fromBlock.getDisplayName()), 
-                    Bundle.getMessage("makePortal"), JOptionPane.INFORMATION_MESSAGE);
-        }        
+        
+        checkForDuplication(portal);
+        
         _parent._editor.highlight(icon);        
         _parent.getPortalIconMap().put(icon.getName(), icon);
         _portalListModel.dataChange();
     }
 
+    private void checkForDuplication(Portal portal) {
+        // check for duplication
+        OBlock toBlock = portal.getToBlock();
+        OBlock fromBlock = portal.getFromBlock();
+        java.util.List<Portal> list = toBlock.getPortals();
+        if (list.size()>0) {
+            Portal p = null;
+            Iterator<Portal> iter = list.iterator();
+            while (iter.hasNext()) {
+            	p = iter.next();
+            	if (       (toBlock.equals(p.getToBlock()) && fromBlock.equals(p.getFromBlock()) )
+            	        || (toBlock.equals(p.getFromBlock()) && fromBlock.equals(p.getToBlock()) ) ) {
+
+            	    notifyDuplicatePortal(portal, p, toBlock, fromBlock);
+            		break;
+            	}
+            }
+        }
+    }
+    
+    private void notifyDuplicatePortal(Portal primary, Portal secondary, OBlock toBlock, OBlock fromBlock) {
+        JOptionPane.showMessageDialog(this, Bundle.getMessage("parallelPortal",
+                primary.getName(), secondary.getName(),toBlock.getDisplayName(), fromBlock.getDisplayName()), 
+                Bundle.getMessage("makePortal"), JOptionPane.INFORMATION_MESSAGE);
+    }
+    
     private boolean changeBlock(OBlock block) {
         if (block.equals(_adjacentBlock)) {
             return false;     // no change
