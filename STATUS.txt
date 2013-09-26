@@ -1,0 +1,44 @@
+Just working on NamedBeans, even when other things are encountered.
+
+jmri.jmrix was already clean.
+apps was already clean
+
+
+
+Issues:
+
+jmri.util.StringUtil has an internal sort that's case-blind (on Object[])
+and one that's not (on String[]) with the same method name.  Ugh.
+
+Perhaps used in:
+% grep -lr StringUtil.sort java/src/
+java/src//apps/AbstractActionModel.java
+java/src//jmri/implementation/DefaultRailCom.java
+java/src//jmri/jmrit/decoderdefn/DecoderIndexFile.java
+java/src//jmri/jmrit/dispatcher/TrainInfoFile.java
+java/src//jmri/jmrit/operations/locations/Location.java
+java/src//jmri/jmrit/operations/locations/LocationManager.java
+java/src//jmri/jmrit/operations/locations/Schedule.java
+java/src//jmri/jmrit/operations/locations/ScheduleManager.java
+java/src//jmri/jmrit/operations/locations/Track.java
+java/src//jmri/jmrit/operations/rollingstock/cars/CarColors.java
+java/src//jmri/jmrit/operations/rollingstock/cars/CarLoads.java
+java/src//jmri/jmrit/operations/rollingstock/cars/CarManager.java
+java/src//jmri/jmrit/operations/rollingstock/cars/CarOwners.java
+java/src//jmri/jmrit/operations/rollingstock/cars/CarRoads.java
+java/src//jmri/jmrit/operations/rollingstock/cars/CarTypes.java
+java/src//jmri/jmrit/operations/rollingstock/engines/EngineManager.java
+java/src//jmri/jmrit/operations/rollingstock/engines/EngineModels.java
+java/src//jmri/jmrit/operations/rollingstock/engines/EngineTypes.java
+java/src//jmri/jmrit/operations/rollingstock/RollingStockManager.java
+java/src//jmri/jmrit/operations/routes/Route.java
+java/src//jmri/jmrit/operations/routes/RouteManager.java
+java/src//jmri/jmrit/operations/setup/BackupBase.java
+java/src//jmri/jmrit/operations/trains/Train.java
+java/src//jmri/jmrit/operations/trains/TrainManager.java
+java/src//jmri/jmrit/operations/trains/TrainScheduleManager.java
+java/src//jmri/jmrit/roster/Roster.java
+java/src//jmri/jmrix/ecos/EcosLocoAddressManager.java
+java/src//jmri/jmrix/ecos/EcosTurnoutManager.java
+java/src//jmri/jmrix/nce/consist/NceConsistRoster.java
+java/src//jmri/managers/AbstractManager.java
