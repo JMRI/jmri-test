@@ -1,8 +1,33 @@
+Contents:  Merged from HEAD 24170, Sept 26, 2013
+
 Just working on NamedBeans, even when other things are encountered.
 
-jmri.jmrix was already clean.
-apps was already clean
+Clean at start:
 
+apps
+jmri.beans
+jmri.jmris
+jmri.jmrix
+jmri.layout
+jmri.plaf
+jmri.progdebugger
+jmri.simpleprog
+jmri.simpleturnoutctrl
+jmri.swing
+jmri.util
+jmri.web
+
+
+Migrated:
+
+jmri
+
+Remaining:
+
+jmri.configurexml
+jmri.implementation
+jmri.jmrit
+jmri.managers
 
 
 Issues:

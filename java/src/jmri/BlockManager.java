@@ -67,8 +67,7 @@ public class BlockManager extends AbstractManager
         r = getBySystemName(systemName);
         if (r!=null) return null;
         // Block does not exist, create a new Block
-		String sName = systemName.toUpperCase();
-        r = new Block(sName,userName);
+        r = new Block(systemName,userName);
         // save in the maps
         register(r);
         /*The following keeps trace of the last created auto system name.  
@@ -124,8 +123,7 @@ public class BlockManager extends AbstractManager
     }
 
     public Block getBySystemName(String name) {
-		String key = name.toUpperCase();
-        return (Block)_tsys.get(key);
+        return (Block)_tsys.get(name);
     }
 
     public Block getByUserName(String key) {

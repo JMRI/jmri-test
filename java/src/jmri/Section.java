@@ -108,11 +108,11 @@ public class Section extends AbstractNamedBean
     implements  java.io.Serializable {
 
     public Section(String systemName, String userName) {
-        super(systemName.toUpperCase(), userName);
+        super(systemName, userName);
     }
 
     public Section(String systemName) {
-        super(systemName.toUpperCase());
+        super(systemName);
     }
  	
 	/**
@@ -343,9 +343,6 @@ public class Section extends AbstractNamedBean
 		// get the sensor corresponding to this name
 		Sensor s = InstanceManager.sensorManagerInstance().getSensor(tempSensorName);
 		if (s==null) return null;
-		if ( !tempSensorName.equals(s.getUserName()) ) {
-			tempSensorName = tempSensorName.toUpperCase();
-		}
 		return s;
 	}
 	

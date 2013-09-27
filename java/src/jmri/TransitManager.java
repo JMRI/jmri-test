@@ -72,7 +72,7 @@ public class TransitManager extends AbstractManager
             z = getByUserName(userName);
             if (z!=null) return null;
         }
-		String sName = sysName.toUpperCase().trim();
+		String sName = sysName.trim();
         z = getBySystemName(sysName);
 		if (z==null) z = getBySystemName(sName);
         if (z!=null) return null;
@@ -122,8 +122,7 @@ public class TransitManager extends AbstractManager
     }
 
     public Transit getBySystemName(String name) {
-		String key = name.toUpperCase();
-        return (Transit)_tsys.get(key);
+        return (Transit)_tsys.get(name);
     }
 
     public Transit getByUserName(String key) {

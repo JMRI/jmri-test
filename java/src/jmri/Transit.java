@@ -66,11 +66,11 @@ public class Transit extends AbstractNamedBean
 					implements java.io.Serializable {
 
     public Transit(String systemName, String userName) {
-        super(systemName.toUpperCase(), userName);
+        super(systemName, userName);
     }
 
     public Transit(String systemName) {
-        super(systemName.toUpperCase());
+        super(systemName);
     }
 
 	/**

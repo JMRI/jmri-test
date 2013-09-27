@@ -75,7 +75,7 @@ public class SectionManager extends AbstractManager
             y = getByUserName(userName);
             if (y!=null) return null;
         }
-		String sName = sysName.toUpperCase().trim();
+		String sName = sysName.trim();
         y = getBySystemName(sysName);
 		if (y==null) y = getBySystemName(sName);
         if (y!=null) return null;
@@ -132,8 +132,7 @@ public class SectionManager extends AbstractManager
     }
 
     public Section getBySystemName(String name) {
-		String key = name.toUpperCase();
-        return (Section)_tsys.get(key);
+        return (Section)_tsys.get(name);
     }
 
     public Section getByUserName(String key) {
