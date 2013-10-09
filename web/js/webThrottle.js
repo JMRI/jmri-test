@@ -4,14 +4,14 @@
 * 
 * This script defines the web throttle behaviour.
 * 
-* >>> This file version: 1.0 - by Oscar Moutinho (oscar.moutinho@gmail.com)
+* >>> This file version: 1.2 - by Oscar Moutinho (oscar.moutinho@gmail.com)
 * 
 * This script relies on 'jquery.jmriConnect.js' (read its header for dependencies).
 * 
 * URL parameters: (roster/panels list if no parameters)
 * - 'loconame' (to open a throttle for a loco)
-* - 'turnouts' (to list turnouts) 
-* - 'routes' (to list routes) 
+* - 'turnouts' (to list turnouts)
+* - 'routes' (to list routes)
 * - 'panelname' (to open a panel)
 * - 'reset' (to remove local configuration - restore defaults)
 * - 'debug' (=true -> turn it ON, =false -> turn it OFF, other values -> nothing change)
@@ -59,10 +59,10 @@ var $fontChanged;
 var $sizeCtrlPercent;
 var $nextBlockTop;
 var $headerHeightRef = 40;													// px
-var $buttonsHeightRef = 40;													// px
+var $buttonsHeightRef = 30;													// px
 var $cellHeightRef = 100;													// px
 var $cellWidthRef = 500;													// px
-var $speedWidthRef = 100;													// px
+var $speedWidthRef = 80;													// px
 var $functionHeightRef = 80;												// px
 var $functionWidthRef = 250;												// px
 var $buttonDelayTimeout = 1000;												// ms
@@ -71,6 +71,8 @@ var $removeDelayTimer = null;
 var $speedTimer = null;
 var $speedInterval = 250;													// ms
 var $speedStep = 0.10;
+var $speedFeedback = true;
+var $speedAux = 0;
 var $hasTouch = ('ontouchstart' in window);
 var $hasMovement = (window.orientation != null) && $hasTouch;
 var $orientation = null;
@@ -102,12 +104,12 @@ window.onerror = function(errMsg, errUrl, errLineNumber) {
 		clearInterval($speedTimer);
 		$speedTimer = null;
 	}
-	document.body.innerHTML = '';
-	if (errMsg.split('�')[0] == 'Uncaught Error: private') alert(errMsg.split('�')[1]);
+	if (errMsg.indexOf('private�') >= 0) alert(errMsg.split('�')[1]);
 	else {
 		if (errMsg == 'Uncaught ReferenceError: stopme is not defined') location.reload(true);	// I don't know what this is !?!?!? Just reload.
-		else alert('Error running javascript:\n' + errMsg + '\n\nURL:\n' + errUrl + '\n\nLine Number: ' + errLineNumber);
+		else alert('\nError running javascript:\n' + errMsg + '\n\nURL:\n' + errUrl + '\n\nLine Number: ' + errLineNumber);
 	}
+	document.body.innerHTML = '';
 	return true;
 };
 
@@ -128,8 +130,19 @@ window.onunload = function() {
 String.prototype.trim = function () {return this.replace(/^\s+|\s+$/g,'');};
 
 //----------------------------------------- Immediate execution
+try {
+	if (jQuery === undefined) throw new Error('private�jQuery not loaded.\nHTML5 and WebSockets needed.\nCheck browser compatibility.');
+} catch(error) {
+	throw new Error('private�jQuery not loaded.\nHTML5 and WebSockets needed.\nCheck browser compatibility.');
+}
 
-if (jQuery === undefined) throw new Error('private�jQuery not loaded.\nCheck browser compatibility.');
+try {
+	localStorage['webThrottle.test'] = '1';
+	localStorage.removeItem('webThrottle.test');
+} catch(error) {
+	if (error.code === DOMException.QUOTA_EXCEEDED_ERR && localStorage.length === 0) throw new Error('private�Turn off Private Browsing.');
+	else throw new Error('private�Local Storage not available.\nHTML5 and WebSockets needed.\nCheck browser compatibility.');
+}
 
 //----------------------------------------- Run at start up
 $(document).ready(function() {
@@ -411,9 +424,10 @@ var jmriReady = function(jsonVersion, jmriVersion, railroadName) {
 	if ($throttleType == 'loco' && !$pageInFrame) {	// Button to select speed control position
 		var speedPosition;
 		speedPosition = $('<div>').addClass('button').attr('id', 'speedPosition');
-		speedPosition.append($('<div>').text($speedPosition ? '::|' : '|::').addClass('buttonText'));
+		speedPosition.append($('<div>').text('xxx').addClass('buttonText'));
 		speedPosition.on('click', function(event) {manageSpeedPosition(event)});
 		header.append(speedPosition);
+		changeSpeedPosition($speedPosition);
 	}
 	if ($throttleType == 'roster' || !$pageInFrame) {	// Is master or isn't in a frame
 		var fontSmaller = $('<div>').addClass('button').attr('id', 'fontSmaller');
@@ -432,7 +446,7 @@ var jmriReady = function(jsonVersion, jmriVersion, railroadName) {
 	switch ($throttleType) {
 		case 'roster':
 			var rg = loadLocalInfo('webThrottle.rosterGroup');
-			if (rg) $rosterGroup = rg; else saveLocalInfo('webThrottle.rosterGroup', $rosterGroup);
+			if (rg || rg == '') $rosterGroup = rg; else saveLocalInfo('webThrottle.rosterGroup', $rosterGroup);
 			$help.push(
 				'Web Throttle for JMRI ' + jmriVersion + ' controlling \'' + railroadName + '\'' +
 				'\n' +
@@ -555,7 +569,7 @@ var jmriReady = function(jsonVersion, jmriVersion, railroadName) {
 				header.append(emergencyStop);
 				if ($hasMovement) {
 					var movementActive = $('<div>').addClass('button').attr('id', 'movementActive');
-					movementActive.append($('<div>').text($movementActive ? 'tilt' : 'normal').addClass('buttonText'));
+					movementActive.append($('<div>').text('xxx').addClass('buttonText'));
 					movementActive.on('click', function(event) {manageMovementActive(event);});
 					header.append(movementActive);
 				}
@@ -569,14 +583,12 @@ var jmriReady = function(jsonVersion, jmriVersion, railroadName) {
 				speedGrid.append($('<div>').attr('id', 'speedBar'));
 				var speedTouch = $('<div>');
 				speedGrid.append(speedTouch.attr('id', 'speedTouch'));
-				if ($movementActive) {
-					speedTouch.on('touchstart', function(event) {speedPressedTiltTouch(event.originalEvent);});
-					speedTouch.on('touchend', function(event) {speedReleasedTiltTouch(event.originalEvent);});
-				} else {
+				if ($hasMovement) changeMovementActive($movementActive);
+				else {
 					if ($hasTouch) {
-						speedTouch.on('touchstart', function(event) {speedPressedTouch(event.originalEvent, $(this));});
-						speedTouch.on('touchmove', function(event) {speedMovingTouch(event.originalEvent, $(this));});
-						speedTouch.on('touchend', function(event) {speedReleasedTouch(event.originalEvent, $(this));});
+						speedTouch.on('touchstart', function(event) {speedPressedTouch(event.originalEvent);});
+						speedTouch.on('touchmove', function(event) {speedMovingTouch(event.originalEvent);});
+						speedTouch.on('touchend', function(event) {speedReleasedTouch(event.originalEvent);});
 					} else {
 						speedTouch.on('mousedown', function(event) {speedPressedMouse(event);});
 						speedTouch.on('mousemove', function(event) {speedMovingMouse(event);});
@@ -709,6 +721,10 @@ var checkLayoutSizeChange = function() {
 	checkSmoothAlertEnd();
 	var h = $(window).height();
 	var w = $(window).width();
+	var speedPosition = loadLocalInfo('webThrottle.speedPosition');
+	if (speedPosition == 'true' || speedPosition == 'false') if ($speedPosition != (speedPosition == 'true')) changeSpeedPosition(!$speedPosition);
+	var movementActive = loadLocalInfo('webThrottle.movementActive');
+	if (movementActive == 'true' || movementActive == 'false') if ($movementActive != (movementActive == 'true')) changeMovementActive(!$movementActive);
 	var fS = loadLocalInfo('webThrottle.fontSize');
 	if ($fontSize != Number(fS)) {
 		$fontChanged = true;
@@ -802,7 +818,7 @@ var resizeHeader = function() {
 	if ($throttleType == 'loco' && !$pageInFrame) {	// Button to select speed control position
 		var speedPosition = $('#speedPosition');
 		setOuterHeight(speedPosition, header.height(), true);
-		setOuterWidth(speedPosition, header.height() * 1.5, true);
+		setOuterWidth(speedPosition, header.height(), true);
 		setTopFromParentContent(speedPosition, 0);
 		setLeftFromParentContent(speedPosition, power.outerWidth(true) + header.height() * 0.2);
 		var speedPositionText = speedPosition.children('.buttonText');
@@ -812,7 +828,7 @@ var resizeHeader = function() {
 	}
 	var help = $('#help');
 	setOuterHeight(help, header.height(), true);
-	setOuterWidth(help, header.height(), true);
+	setOuterWidth(help, header.height() * 0.6, true);
 	setTopFromParentContent(help, 0);
 	setLeftFromParentContent(help, header.width() - help.outerWidth(true));
 	var helpText = help.children('.buttonText');
@@ -822,9 +838,9 @@ var resizeHeader = function() {
 	var fontLarger = $('#fontLarger');
 	if (fontLarger.length) {
 		setOuterHeight(fontLarger, header.height(), true);
-		setOuterWidth(fontLarger, header.height(), true);
+		setOuterWidth(fontLarger, header.height() * 0.6, true);
 		setTopFromParentContent(fontLarger, 0);
-		setLeftFromParentContent(fontLarger, header.width() - fontLarger.outerWidth(true) - header.height() * 0.2 - help.outerWidth(true));
+		setLeftFromParentContent(fontLarger, header.width() - fontLarger.outerWidth(true) - help.outerWidth(true));
 		var fontLargerText = fontLarger.children('.buttonText');
 		fontLargerText.css('top', (fontLarger.outerHeight(true) - fontLargerText.outerHeight(true)) / 2 - fontLargerText.outerHeight(true) * $fontDelta);
 		setLeftFromParentContent(fontLargerText, 0);
@@ -833,9 +849,9 @@ var resizeHeader = function() {
 	var fontSmaller = $('#fontSmaller');
 	if (fontSmaller.length) {
 		setOuterHeight(fontSmaller, header.height(), true);
-		setOuterWidth(fontSmaller, header.height(), true);
+		setOuterWidth(fontSmaller, header.height() * 0.6, true);
 		setTopFromParentContent(fontSmaller, 0);
-		setLeftFromParentContent(fontSmaller, header.width() - fontSmaller.outerWidth(true) - (fontLarger.length ? fontLarger.outerWidth(true) : 0) - header.height() * 0.2 - help.outerWidth(true));
+		setLeftFromParentContent(fontSmaller, header.width() - fontSmaller.outerWidth(true) - (fontLarger.length ? fontLarger.outerWidth(true) : 0) - help.outerWidth(true));
 		var fontSmallerText = fontSmaller.children('.buttonText');
 		fontSmallerText.css('top', (fontSmaller.outerHeight(true) - fontSmallerText.outerHeight(true)) / 2 - fontSmallerText.outerHeight(true) * $fontDelta);
 		setLeftFromParentContent(fontSmallerText, 0);
@@ -892,7 +908,6 @@ var resizeRosterLayout = function() {
 	var l = 0;
 	if ($isRoster) {	// Roster
 		var rosterCell = $('.rosterCell');
-		if (!rosterCell.length) return;
 		var cellWidthCtrl = $sizeCtrlPercent * $cellWidthRef;
 		var horizontalCells = Math.floor(bodyFrameInner.width() / cellWidthCtrl);
 		var cellWidth = (horizontalCells == 0) ? bodyFrameInner.width() : bodyFrameInner.width() / horizontalCells;
@@ -960,7 +975,6 @@ var resizeRosterLayout = function() {
 		});
 	} else {	// Panels
 		var panelCell = $('.panelCell');
-		if (!panelCell.length) return;
 		var cellWidthCtrl = $sizeCtrlPercent * $cellWidthRef * 2;
 		var horizontalCells = Math.floor(bodyFrameInner.width() / cellWidthCtrl) + 1;
 		var cellWidth = bodyFrameInner.width() / horizontalCells;
@@ -1003,17 +1017,29 @@ var resizeRosterLayout = function() {
 
 //----------------------------------------- [from 'checkLayoutSizeChange()'] Throttle layout resize when screen or font changes size
 var resizeThrottleLayout = function() {
-	if ($pageInFrame) $speedPosition = window.parent.$('#' + encodeId(document.URL)).attr('rightSide');
-	if ($speedPosition == 'true' || $speedPosition == 'false') $speedPosition = ($speedPosition == 'true');
 	var h = $(window).height();
 	var w = $(window).width();
+	var bodyFrameOuter = $('#bodyFrameOuter');
+	var bodyFrameInner = $('#bodyFrameInner');
+	bodyFrameOuter.css('top', 0).css('left', 0);
+	setOuterHeight(bodyFrameOuter, h, true);
+	setOuterWidth(bodyFrameOuter, w, true);
+	bodyFrameInner.css('top', 0).css('left', 0);
+	setOuterHeight(bodyFrameInner, bodyFrameOuter.height(), true);
+	setOuterWidth(bodyFrameInner, bodyFrameOuter.width(), true);
+	var emergencyStop = $('#emergencyStop');
+	if (!emergencyStop.length) return;
+	if ($pageInFrame) $speedPosition = window.parent.$('#' + encodeId(document.URL)).attr('rightSide');
+	if ($speedPosition == 'true' || $speedPosition == 'false') $speedPosition = ($speedPosition == 'true');
 	var headerHeight = $sizeCtrlPercent * $headerHeightRef;
 	var header = $('#header');
-	var emergencyStop = $('#emergencyStop');
+	var fontSmaller = $('#fontSmaller');
+	var fontLarger = $('#fontLarger');
+	var help = $('#help');
 	setOuterHeight(emergencyStop, header.height(), true);
 	setOuterWidth(emergencyStop, header.height() * 2, true);
 	setTopFromParentContent(emergencyStop, 0);
-	setLeftFromParentContent(emergencyStop, (header.width() - emergencyStop.outerWidth(true)) / 2);
+	setLeftFromParentContent(emergencyStop, header.width() - emergencyStop.outerWidth(true) - (fontSmaller.length ? fontSmaller.outerWidth(true) : 0) - (fontLarger.length ? fontLarger.outerWidth(true) : 0) - help.outerWidth(true));
 	var emergencyStopText = emergencyStop.children('.buttonText');
 	emergencyStopText.css('top', (emergencyStop.outerHeight(true) - emergencyStopText.outerHeight(true)) / 2 - emergencyStopText.outerHeight(true) * $fontDelta);
 	setLeftFromParentContent(emergencyStopText, 0);
@@ -1029,18 +1055,9 @@ var resizeThrottleLayout = function() {
 		setLeftFromParentContent(movementActiveText, 0);
 		setOuterWidth(movementActiveText, movementActive.width(), true);
 	}
-	var bodyFrameOuter = $('#bodyFrameOuter');
-	var bodyFrameInner = $('#bodyFrameInner');
-	bodyFrameOuter.css('top', 0).css('left', 0);
-	setOuterHeight(bodyFrameOuter, h, true);
-	setOuterWidth(bodyFrameOuter, w, true);
-	bodyFrameInner.css('top', 0).css('left', 0);
-	setOuterHeight(bodyFrameInner, bodyFrameOuter.height(), true);
-	setOuterWidth(bodyFrameInner, bodyFrameOuter.width(), true);
 	var speed = $('.speed');
-	if (!speed.length) return;
 	var speedWidth = $sizeCtrlPercent * $speedWidthRef;
-	if (speedWidth < bodyFrameInner.width() / 6) speedWidth = bodyFrameInner.width() / 6;
+	if (speedWidth < bodyFrameInner.width() / 8) speedWidth = bodyFrameInner.width() / 8;
 	speed.css('top', $nextBlockTop).css('left', $speedPosition ? bodyFrameInner.width() - speedWidth : 0);
 	setOuterHeight(speed, bodyFrameInner.height() - $nextBlockTop, true);
 	setOuterWidth(speed, speedWidth, true);
@@ -1148,7 +1165,6 @@ var resizeTurnoutsRoutesLayout = function() {
 	bodyFrameInner.css('top', 0).css('left', 0);
 	setOuterWidth(bodyFrameInner, bodyFrameOuter.width() - ($showScrollBar ? $vScrollbarWidth : 0), true);
 	var trCell = $('.trCell');
-	if (!trCell.length) return;
 	var cellWidthCtrl = $sizeCtrlPercent * $cellWidthRef * 1.5;
 	var horizontalCells = Math.floor(bodyFrameInner.width() / cellWidthCtrl) + 1;
 	var cellWidth = bodyFrameInner.width() / horizontalCells;
@@ -1190,6 +1206,7 @@ var resizeTurnoutsRoutesLayout = function() {
 //----------------------------------------- [from 'checkLayoutSizeChange()'] Panel layout resize when screen or font changes size
 var resizePanelLayout = function() {
 	if (!$panelLoaded) return;	// If loading not complete, give up ! (onload event will force resize)
+	$nextBlockTop-= $('#header').outerHeight(true);
 	var h = $(window).height();
 	var w = $(window).width();
 	var bodyFrameOuter = $('#bodyFrameOuter');
@@ -1368,6 +1385,7 @@ var saveFrameList = function() {
 
 //----------------------------------------- Add URL to frames list {$frameList[]}
 var addToFrameList = function(url) {
+	loadFrameList();
 	var find = false;
 	for (var i = 0; i < $frameList.length; i++) {
 		if ($frameList[i] == url) {
@@ -1379,11 +1397,13 @@ var addToFrameList = function(url) {
 		$frameList.push(url);
 		saveFrameList();
 	}
+	return !find;
 };
 
 //----------------------------------------- Replace URL in frames list {$frameList[]}
 var replaceInFrameList = function(urlOld, urlNew) {
-	for (var i = 0; i < $frameList.length; i++) if ($frameList[i] == urlNew) return;
+	loadFrameList();
+	for (var i = 0; i < $frameList.length; i++) if ($frameList[i] == urlNew) return false;
 	for (var i = 0; i < $frameList.length; i++) {
 		if ($frameList[i] == urlOld) {
 			$frameList[i] = urlNew;
@@ -1391,10 +1411,12 @@ var replaceInFrameList = function(urlOld, urlNew) {
 		}
 	}
 	saveFrameList();
+	return true;
 };
 
 //----------------------------------------- Remove URL from frames list {$frameList[]}
 var removeFromFrameList = function(url) {
+	loadFrameList();
 	var item = -1;
 	for (var i = 0; i < $frameList.length; i++) {
 		if ($frameList[i] == url) {
@@ -1474,6 +1496,8 @@ var throttleDirection = function(address, forward) {
 //----------------------------------------- [from server] Throttle speed
 var throttleSpeed = function(address, speed) {
 	if (address != $locoAddress) return;
+	$speedAux = speed;
+	if (!$speedFeedback) return;
 	$('.speed').attr('speed', speed);
 	showSpeed();
 };
@@ -1683,10 +1707,11 @@ var chooseGroup = function(e) {
 		$rosterGroups.push('[Panels]');
 	}
 	var f = function(i) {
-        if (i == 0) saveLocalInfo('webThrottle.rosterGroup', '');
-		else saveLocalInfo('webThrottle.rosterGroup', $rosterGroups[i]);
-		window.open(document.URL.split('?')[0], '_self');
-		return;
+		if (($rosterGroups[i] != $rosterGroup && i != 0) ||  (i == 0 && $rosterGroup != '')) {
+			if (i == 0) saveLocalInfo('webThrottle.rosterGroup', '');
+			else saveLocalInfo('webThrottle.rosterGroup', $rosterGroups[i]);
+			window.open(document.URL.split('?')[0], '_self');
+		}
 	};
 	var ai = 0;
 	for (var i = 0; i < $rosterGroups.length; i++) if ($rosterGroups[i] != '' && $rosterGroups[i] == $rosterGroup) ai = i;
@@ -1700,9 +1725,7 @@ var turnoutsShow = function(e) {
 	e.stopImmediatePropagation();
 	var url = document.URL.split('?')[0] + '?turnouts';
 	if ($toFrame) {
-		addToFrameList(url + '&inframe');
-		window.open(document.URL.split('?')[0], $pageInFrame ? '_top' : '_self');
-		return;
+		if (addToFrameList(url + '&inframe')) window.open(document.URL.split('?')[0], $pageInFrame ? '_top' : '_self');
 	} else window.open(url, url);
 };
 
@@ -1713,9 +1736,7 @@ var routesShow = function(e) {
 	e.stopImmediatePropagation();
 	var url = document.URL.split('?')[0] + '?routes';
 	if ($toFrame) {
-		addToFrameList(url + '&inframe');
-		window.open(document.URL.split('?')[0], $pageInFrame ? '_top' : '_self');
-		return;
+		if (addToFrameList(url + '&inframe')) window.open(document.URL.split('?')[0], $pageInFrame ? '_top' : '_self');
 	} else window.open(url, url);
 };
 
@@ -1725,12 +1746,9 @@ var throttleShow = function(e, locoId) {
 	e.preventDefault();
 	e.stopImmediatePropagation();
 	var url = document.URL.split('?')[0] + '?loconame=' + encodeURI(locoId);
-	if (!$toFrame) window.open(url, url);
-	else {
-		addToFrameList(url + '&inframe');
-		window.open(document.URL.split('?')[0], $pageInFrame ? '_top' : '_self');
-		return;
-	}
+	if ($toFrame) {
+		if (addToFrameList(url + '&inframe')) window.open(document.URL.split('?')[0], $pageInFrame ? '_top' : '_self');
+	} else window.open(url, url);
 };
 
 //----------------------------------------- Change turnout or route status - Click (mouse and touch with simulation)
@@ -1764,9 +1782,7 @@ var openPanel = function(e, name, URL) {
 	// URL not used for now
 	var url = document.URL.split('?')[0] + '?panelname=' + encodeURI(name);
 	if ($toFrame) {
-		addToFrameList(url + '&inframe');
-		window.open(document.URL.split('?')[0], $pageInFrame ? '_top' : '_self');
-		return;
+		if (addToFrameList(url + '&inframe')) window.open(document.URL.split('?')[0], $pageInFrame ? '_top' : '_self');
 	} else window.open(url, url);
 };
 
@@ -1889,16 +1905,22 @@ var manageSpeedPosition = function(e) {
 	if (!isLeftButton(e)) return;
 	e.preventDefault();
 	e.stopImmediatePropagation();
+	changeSpeedPosition(!$speedPosition);
+	saveLocalInfo('webThrottle.speedPosition', $speedPosition);
+};
+
+//----------------------------------------- Change speed control position
+var changeSpeedPosition = function(speedPos) {
 	var speedPosition = $('#speedPosition');
+	if (!speedPosition.length) return;
 	var speedPositionText = speedPosition.children('.buttonText');
-	if ($speedPosition) {
+	if (!speedPos) {
 		$speedPosition = false;
 		speedPositionText.text('|::');
 	} else {
 		$speedPosition = true;
 		speedPositionText.text('::|');
 	}
-	saveLocalInfo('webThrottle.speedPosition', $speedPosition);
 	$viewportHeight = 0;	// Force rezise
 };
 
@@ -1919,17 +1941,16 @@ var changeLoco = function(e) {
 	var o = $(e.currentTarget);
 	$locoList = [];
 	var rg = loadLocalInfo('webThrottle.rosterGroup');
-	if (rg) $rosterGroup = rg; else saveLocalInfo('webThrottle.rosterGroup', $rosterGroup);
+	if (rg || rg == '') $rosterGroup = rg; else saveLocalInfo('webThrottle.rosterGroup', $rosterGroup);
+	if ($rosterGroup == '[Panels]') $rosterGroup = '';
 	var roster = $jmri.getRoster($rosterGroup);
 	if (roster.length) roster.forEach(function(loco) {$locoList.push(loco.id + ' (' + loco.dccAddress + ')');});
 	var f = function(i) {
 		var url = document.URL.split('?')[0] + '?loconame=' + encodeURI($locoList[i].substring(0, $locoList[i].lastIndexOf(' ')));
-		if (!$inFrame) window.open(url, url);
-		else {
-			replaceInFrameList(document.URL, url + '&inframe');
-			window.open(document.URL.split('?')[0], '_top');
-			return;
+		if ($inFrame) {
+			if (replaceInFrameList(document.URL, url + '&inframe')) window.parent.$('#' + encodeId(document.URL)).attr('src', url + '&inframe').attr('id', encodeId(url + '&inframe'));
 		}
+		else if (document.URL != url) window.location = url;
 	};
 	var ai = 0;
 	for (var i = 0; i < $locoList.length; i++) if ($locoList[i] == $('#locoName').text()) ai = i;
@@ -1950,7 +1971,14 @@ var manageMovementActive = function(e) {
 	if (!isLeftButton(e)) return;
 	e.preventDefault();
 	e.stopImmediatePropagation();
+	changeMovementActive(!$movementActive);
+	saveLocalInfo('webThrottle.movementActive', $movementActive);
+};
+
+//----------------------------------------- Change tilt to control speed or not
+var changeMovementActive = function(movActive) {
 	var movementActive = $('#movementActive');
+	if (!movementActive.length) return;
 	var movementActiveText = movementActive.children('.buttonText');
 	var speedTouch = $('#speedTouch');
 	speedTouch.off('touchstart');
@@ -1960,13 +1988,13 @@ var manageMovementActive = function(e) {
 	speedTouch.off('mousemove');
 	speedTouch.off('mouseup');
 	speedTouch.off('mouseout');
-	if ($movementActive) {
+	if (!movActive) {
 		$movementActive = false;
 		movementActiveText.text('normal');
 		if ($hasTouch) {
-			speedTouch.on('touchstart', function(event) {speedPressedTouch(event.originalEvent, $(this));});
-			speedTouch.on('touchmove', function(event) {speedMovingTouch(event.originalEvent, $(this));});
-			speedTouch.on('touchend', function(event) {speedReleasedTouch(event.originalEvent, $(this));});
+			speedTouch.on('touchstart', function(event) {speedPressedTouch(event.originalEvent);});
+			speedTouch.on('touchmove', function(event) {speedMovingTouch(event.originalEvent);});
+			speedTouch.on('touchend', function(event) {speedReleasedTouch(event.originalEvent);});
 		} else {
 			speedTouch.on('mousedown', function(event) {speedPressedMouse(event);});
 			speedTouch.on('mousemove', function(event) {speedMovingMouse(event);});
@@ -1979,7 +2007,6 @@ var manageMovementActive = function(e) {
 		speedTouch.on('touchstart', function(event) {speedPressedTiltTouch(event.originalEvent);});
 		speedTouch.on('touchend', function(event) {speedReleasedTiltTouch(event.originalEvent);});
 	}
-	saveLocalInfo('webThrottle.movementActive', $movementActive);
 };
 
 //----------------------------------------- Orientation changed (device)
@@ -2032,6 +2059,7 @@ var speedPressedTiltTouch = function(e) {
 	if ($('body').attr('locoReady') != 'true') return;
 	$movementTilt = null;
 	$movementOn = true;
+	$speedFeedback = false;
 };
 
 //----------------------------------------- Speed zone released - tilt (touch)
@@ -2040,22 +2068,25 @@ var speedReleasedTiltTouch = function(e) {
 	e.stopImmediatePropagation();
 	if ($('body').attr('locoReady') != 'true') return;
 	$movementOn = false;
+	$speedFeedback = true;
+	throttleSpeed($locoAddress, $speedAux);
 };
 
 //----------------------------------------- Speed zone pressed (touch)
-var speedPressedTouch = function(e, o) {speedPressed(e, o, e.targetTouches[0]);};
+var speedPressedTouch = function(e) {speedPressed(e, e.targetTouches[0]);};
 
 //----------------------------------------- Speed zone pressed (mouse)
-var speedPressedMouse = function(e) {if (isLeftButton(e)) speedPressed(e, $(e.currentTarget), e);};
+var speedPressedMouse = function(e) {if (isLeftButton(e)) speedPressed(e, e);};
 
 //----------------------------------------- Speed zone pressed
-var speedPressed = function(e, o, t) {
+var speedPressed = function(e, t) {
 	e.preventDefault();
 	e.stopImmediatePropagation();
 	if ($('body').attr('locoReady') != 'true') return;
 	$movementCtrl = t.pageY;
 	functionForSpeedCtrl();
 	$speedTimer = setInterval(function() {functionForSpeedCtrl();}, $speedInterval);
+	$speedFeedback = false;
 };
 
 //----------------------------------------- Function for speed control
@@ -2079,13 +2110,13 @@ var functionForSpeedCtrl = function() {
 };
 
 //----------------------------------------- Speed zone moving (touch)
-var speedMovingTouch = function(e, o) {speedMoving(e, o, e.targetTouches[0]);};
+var speedMovingTouch = function(e) {speedMoving(e, e.targetTouches[0]);};
 
 //----------------------------------------- Speed zone moving (mouse)
-var speedMovingMouse = function(e) {if (isLeftButton(e)) speedMoving(e, $(e.currentTarget), e);};
+var speedMovingMouse = function(e) {if (isLeftButton(e)) speedMoving(e, e);};
 
 //----------------------------------------- Speed zone moving
-var speedMoving = function(e, o, t) {
+var speedMoving = function(e, t) {
 	e.preventDefault();
 	e.stopImmediatePropagation();
 	if ($('body').attr('locoReady') != 'true') return;
@@ -2093,13 +2124,16 @@ var speedMoving = function(e, o, t) {
 };
 
 //----------------------------------------- Speed zone released (touch)
-var speedReleasedTouch = function(e, o) {speedReleased(e, o, e.targetTouches[0]);};
+var speedReleasedTouch = function(e) {speedReleased(e);};
 
 //----------------------------------------- Speed zone released (mouse)
-var speedReleasedMouse = function(e) {if (isLeftButton(e)) speedReleased(e, $(e.currentTarget), e);};
+var speedReleasedMouse = function(e) {if (isLeftButton(e)) speedReleased(e);};
 
-//----------------------------------------- Speed zone released
-var speedReleased = function(e, o, t) {
+//----------------------------------------- Speed zone canceled (mouse)
+var speedCanceledMouse = function(e) {if (isLeftButton(e)) speedReleased(e);};
+
+//----------------------------------------- Speed zone released or canceled
+var speedReleased = function(e) {
 	e.preventDefault();
 	e.stopImmediatePropagation();
 	if ($('body').attr('locoReady') != 'true') return;
@@ -2107,18 +2141,8 @@ var speedReleased = function(e, o, t) {
 		clearInterval($speedTimer);
 		$speedTimer = null;
 	}
-};
-
-//----------------------------------------- Speed zone released or canceled (mouse)
-var speedCanceledMouse = function(e) {
-	if (!isLeftButton(e)) return;
-	e.preventDefault();
-	e.stopImmediatePropagation();
-	if ($('body').attr('locoReady') != 'true') return;
-	if ($speedTimer) {
-		clearInterval($speedTimer);
-		$speedTimer = null;
-	}
+	$speedFeedback = true;
+	throttleSpeed($locoAddress, $speedAux);
 };
 
 //----------------------------------------- Function button click - Click (mouse and touch with simulation)

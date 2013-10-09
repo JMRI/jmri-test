@@ -82,7 +82,7 @@ public class CircuitBuilder  {
     private EditCircuitPaths _editPathsFrame;
     private EditPortalDirection _editDirectionFrame; 
 
-    // list of icons making a circuit - used by editing frames to indicate block(s) being worked on
+    // list of icons making a circuit (OBlock) - used by editing frames to indicate block(s) being worked on
     private ArrayList<Positionable> _circuitIcons;      // Dark Blue
 
     private JTextField _sysNameBox = new JTextField();
@@ -91,7 +91,6 @@ public class CircuitBuilder  {
     private JDialog _dialog;
     protected ControlPanelEditor _editor;
 
-//    public final static ResourceBundle rbcp = ControlPanelEditor.rbcp;
     public final static Color _editGroupColor = new Color(100, 200, 255);
     public final static Color _pathColor = Color.green;
     public final static Color _highlightColor = new Color(255, 100, 200);
@@ -410,6 +409,11 @@ public class CircuitBuilder  {
         		_currentBlock = portal.getFromBlock();
         	} else {
         		adjacentBlock = portal.getFromBlock();
+        	}
+        	if (adjacentBlock==null) {
+                JOptionPane.showMessageDialog(_editor, Bundle.getMessage("invalidPortal", portalName, _currentBlock), 
+                        Bundle.getMessage("ErrorPortal"), JOptionPane.INFORMATION_MESSAGE);
+        		return;
         	}
             if (_currentBlock!=null) {
                 // checkCircuits();
@@ -984,6 +988,9 @@ public class CircuitBuilder  {
     * Check if the block being edited has all its icons converted to indicator icons
     */
     protected boolean iconsConverted(OBlock block) {
+    	if (block==null) {
+    		return false;
+    	}
     	java.util.List<Positionable> list = _circuitMap.get(block);
         if (list!=null && list.size()>0) {
             for (int i=0; i<list.size(); i++) {
@@ -1283,13 +1290,23 @@ public class CircuitBuilder  {
 
     ArrayList<Positionable> _saveSelectionGroup;
     /**
-    * Keep selections when editing.  Restore what editor nulls
+    * Keep selections when editing.  Editor calls at entry to mousePressed(). CircuitBuilder keeps is own concept
+    * of what is "selected".
     */
-    protected void saveSelectionGroup(ArrayList<Positionable> selectionGroup) {
+    protected boolean saveSelectionGroup(ArrayList<Positionable> selectionGroup) {
     	_saveSelectionGroup = selectionGroup;
+        if (_editCircuitFrame!=null || _editPortalFrame!=null || 
+        			_editPathsFrame!=null || _editDirectionFrame!=null) {
+        	return true;
+        } else {
+        	return false;
+        }
     }
-    
-    protected void doMousePressed(MouseEvent event, Positionable selection) {
+ 
+    /**
+     * If CircuitBuilder is in progress, restore what editor nulls
+     */
+    protected boolean doMousePressed(MouseEvent event, Positionable selection) {
     	if (_editCircuitFrame!=null) {
     		_editCircuitFrame.toFront();
             _editor.setSelectionGroup(_saveSelectionGroup);
@@ -1303,7 +1320,10 @@ public class CircuitBuilder  {
     	} else if (_editDirectionFrame!=null) {
     		_editDirectionFrame.toFront();
             _editor.setSelectionGroup(_saveSelectionGroup);
+    	} else {
+    		return false;
     	}
+    	return true;
     }
    
     public boolean doMouseReleased(Positionable selection, MouseEvent event) {
@@ -1318,27 +1338,35 @@ public class CircuitBuilder  {
         return false;
     }
 
-    protected boolean doMouseClicked(Positionable selection, MouseEvent event) {
-        if (_editCircuitFrame!=null || _editPathsFrame!=null || (_editPortalFrame!=null) || _editDirectionFrame!=null) {
-            if (_editPathsFrame!=null && event.isShiftDown()) {
-            	selection.doMouseClicked(event);
-            }
-            if (!event.isPopupTrigger() && !event.isMetaDown() && !event.isAltDown()) {
-            	handleSelection(selection, event);
-            }
+    protected boolean doMouseClicked(List<Positionable> selections, MouseEvent event) {
+        if (_editCircuitFrame!=null || _editPathsFrame!=null || 
+        			_editPortalFrame!=null || _editDirectionFrame!=null) {
+        	// selection may be under or over an icon CircuitBuilder wants. Filter selection stack.
+        	Iterator<Positionable> it = selections.iterator();
+        	while (it.hasNext()) {
+            	Positionable selection = it.next();
+            	if (isTrack(selection) || selection instanceof PortalIcon)
+                    if (_editPathsFrame!=null && event.isShiftDown()) {
+                    	selection.doMouseClicked(event);
+                    }
+            	if (!event.isPopupTrigger() && !event.isMetaDown() && !event.isAltDown()) {
+                	handleSelection(selection, event);
+                }
+                return true;        		
+        	}
             return true;
         }
         return false;
     }
 
     /**
-    * No dragging when editing
+    * No dragging when CircuitBuilder is in progress, except for PortalIcon
     */
     public boolean doMouseDragged(Positionable selection, MouseEvent event) {
         if (_editCircuitFrame!=null || _editPathsFrame!=null || _editDirectionFrame!=null) {
             return true;     // no dragging when editing
         }
-        if (_editPortalFrame!=null) {
+        if (_editPortalFrame!=null || _editDirectionFrame!=null) {
             if (selection instanceof PortalIcon) {
                 return false;		// OK to drag portal icon
             } else {
@@ -1412,7 +1440,7 @@ public class CircuitBuilder  {
                 block.pseudoPropertyChange("state", Integer.valueOf(0), Integer.valueOf(state));
                 _editPathsFrame.updatePath(true);
             }
-             _editPathsFrame.toFront();
+            _editPathsFrame.toFront();
         } else if (_editPortalFrame!=null) {
             if (log.isDebugEnabled()) log.debug("selection= "+(selection==null?"null":
                                                             selection.getClass().getName()));

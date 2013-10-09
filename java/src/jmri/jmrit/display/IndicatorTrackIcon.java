@@ -224,8 +224,10 @@ public class IndicatorTrackIcon extends PositionableIcon
             _pathUtil.setLocoIcon(block, getLocation(), getSize(), _editor);        	
         }
         repaint();
-        if (_status.equals("DontUseTrack")) {
+        if ((block.getState() & OBlock.OUT_OF_SERVICE)!=0) {
         	setControlling(false);
+        } else {
+        	setControlling(true);
         }
     }
 

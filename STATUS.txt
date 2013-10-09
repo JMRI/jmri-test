@@ -1,4 +1,4 @@
-Contents:  Merged from HEAD 24170, Sept 26, 2013
+Contents:  Merged from HEAD  24209, Oct 8, 2013
 
 Just working on NamedBeans, even when other things are encountered.
 
@@ -6,6 +6,7 @@ Clean at start:
 
 apps
 jmri.beans
+jmri.configurexml
 jmri.jmris
 jmri.jmrix
 jmri.layout
@@ -24,7 +25,6 @@ jmri
 
 Remaining:
 
-jmri.configurexml
 jmri.implementation
 jmri.jmrit
 jmri.managers
@@ -35,7 +35,7 @@ Issues:
 jmri.util.StringUtil has an internal sort that's case-blind (on Object[])
 and one that's not (on String[]) with the same method name.  Ugh.
 
-Perhaps used in:
+_Perhaps_ used in:
 % grep -lr StringUtil.sort java/src/
 java/src//apps/AbstractActionModel.java
 java/src//jmri/implementation/DefaultRailCom.java
