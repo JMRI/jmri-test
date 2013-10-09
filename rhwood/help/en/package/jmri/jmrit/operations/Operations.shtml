@@ -140,7 +140,8 @@
 
    <A NAME="newUserAdvice"></A>
    <H3>New User Advice</H3>
-
+   
+   The program has been designed to create car movements that make sense to you and your operators.
    If you've never used a computer program to generate manifests and switch lists, we recommend that
    you load and use the
    <A HREF="#demo">demo files</A> provided. Please read the <A
@@ -167,8 +168,8 @@
     cars. If you do decide to use schedules, the first thing to understand is that you don't need
     schedules for all of your industries. So again start off small and only do a couple of
     industries and see what the results are. Adding schedules can not increase car movement, and in
-    most cases will reduce car movement! So our advice is please learn to walk before your try to
-    run.
+    most cases will reduce car movement! So our advice is start off using the basic features of the
+    program and later once you get good car movement, try the more advanced features.
    </P>
 
    <A NAME="demo"></A>
@@ -284,8 +285,12 @@
    </P>
 
    <P>
-    You should now be well on your way with regards to JMRI operations. Help is also available at
-    the <A HREF="http://groups.yahoo.com/group/jmriusers/">jmriusers list</A>
+    You should now be well on your way with regards to JMRI operations. Each window in operations
+    has a "Help" item on the menu bar which will direct you to the section in this document that
+    covers that window's capabilities. Help is also available at the
+    <A HREF="http://groups.yahoo.com/group/jmriusers/">jmriusers list.</A> And finally under the
+    "Tools" item on the menu bar, you will find many useful functions, like the ability to print the
+    contents of the window.
    </P>
 
    <A NAME="BritishRailways"></A>
@@ -577,14 +582,16 @@
 
    When car routing is enabled, the program will use multiple trains to deliver a car to it final
    destination. It is recommended that you leave this option enabled. With car routing enabled, you
-   can use a <A HREF="#Schedules">Schedule</A> to deliver a car to a specific location. The car
-   routing algorithm will search for the most efficient route for the car to travel. The algorithm
-   will attempt to use interchanges and then yards to move cars. If you don't want the router to use
+   can use a
+   <A HREF="#Schedules">Schedule</A> to deliver a car to a specific location. The car routing
+   algorithm will search for the most efficient route for the car to travel. The algorithm will
+   attempt to use interchanges and then yards to move cars. If you don't want the router to use
    yards, you can deselect the "Enable Car Routing via Yards" check box. Routing through staging is
    disabled by default. The algorithm will try and find a route using a maximum of five trains to
    complete the car move. Note that the program never gives up trying to route a car. If a car has
-   been assigned a <A HREF="#CarsSet">Final Destination</A> the program will try and route the car
-   after every move. 
+   been assigned a
+   <A HREF="#CarsSet">Final Destination</A> or <A HREF="#EditCarLoads">Custom Load</A> the program
+   will try and route the car after every move. 
    
    <A NAME="LoggingOptions"></A>
    <H3>Logging Options</H3>
@@ -936,7 +943,17 @@
    The program will add the "Hazardous Comment" to the manifests and switch lists when a car has the
    <A HREF="#CabooseFredHazardous">Hazardous</A> checkbox selected in the "Car Edit" window and the
    "Hazardous" message format is selected in your manifest and switch lists print options. You can
-   change the comment if desired, and press "Save" to keep the change. 
+   change the comment if desired, and press "Save" to keep the change.
+
+   <H3>Manifest Print Options Tools</H3>
+
+   The menu bar of the "Manifest Print Options" provides several options listed under "Tools". The
+   first is the ability to control the length of the tab character when using the "Tabular" feature.
+   The other two options "Edit Manifest Text" and "Edit Switch List Text" allow you to modify any of
+   the text found in a manifest or switch list. Each text line used by the program is shown along
+   with a text box with the same message. Edit the text box to change the default message to your
+   liking and press "Save" to complete your change. You can always return the text to the original
+   settings by pressing the "Reset" button followed by "Save". 
    
    <A NAME="BuildReportDetails"></A>
    <H3>Build Report Options</H3>
@@ -968,6 +985,16 @@
     report. For information on the content of the build report please see <A
      HREF="#TroubleShootingBuildingTrains">Problems Building Trains How to Fix</A>.
    </p>
+
+   <P>The build report options window can also control the amount of information provided with
+    regards to routing a car with a custom load or final destination. If you're not using schedules,
+    leave the "Router Detail Level" option set to "Normal". You can change this option from "Normal"
+    to "Detailed" or "Very Detailed" when you want to understand why a certain train or trains won't
+    route a car. This set of radio buttons works differently than the "Detail Level" radio buttons
+    in that it controls the amount of information created during the train build process. You will
+    quickly find that the "Detailed" and "Very Detailed" modes can create many extra lines of text
+    in the build report, and unless you have a routing issue, it is best to keep the "Router Detail
+    Level" set to "Normal".</P>
 
    <A NAME="Locations"></A>
    <H2>Locations</H2>
@@ -1847,9 +1874,15 @@
 
    <H3>Optional Fields</H3>
 
-   Finally you can optionally enter the color, build date, owner and comment for this car. The build
+   Finally you can optionally enter the color, built date, owner and comment for this car. The built
    date can be entered as a four digit year, or in the format of month-year.
    
+   <H3>Moves, Built, Owner, Wait and Last</H3>
+
+   You can edit the number of times a car has been moved by the program, built date, owner, wait
+   count, or last time the car was moved directly from the "Cars" window. Double click on the cell
+   in the Cars window to change.
+
    <H3>Add</H3>
 
    Press the "Add" button to enter a new car into your roster. If you have similar cars, you can
@@ -2031,7 +2064,7 @@
    <H2>Locomotives</H2>
 
    The locomotives window allows you to edit your locomotive roster. You can enter a locomotive's
-   number, road, model, type, and length. You can optionally add the locomotive's build date and
+   number, road, model, type, and length. You can optionally add the locomotive's built date and
    owner. If you want a group of locomotives to be assigned as a unit, you can create a "consist".
    The locomotive type is used by the program to determine where locomotives are picked up and or
    stored at the various locations on your layout. Some of default locomotive types are electric,
@@ -2103,7 +2136,7 @@
    <p>Now set the locomotive's location on the layout. If the locomotive is off the layout, set
     the location to none (blank space). If wish this locomotive to be part of a consist, press
     "Edit" across from "Consist" and enter a consist name. Then select the consist name from the
-    menu box. Finally you can optionally enter the build date, owner and comment for this
+    menu box. Finally you can optionally enter the built date, owner and comment for this
     locomotive.</P>
 
    <A NAME="LocomotiveModels"></A>
@@ -2173,16 +2206,23 @@
    <A NAME="EditRoute"></A>
    <H3>Edit Route</H3>
 
-   Each location has the train's departure direction, number of desired car moves, and whether car
-   pick ups and or car set outs are allowed at that location. A car move can be a car pick up or car
-   set out at that location. For example, 5 moves can be 5 pick ups, or 5 set outs, or any
-   combination of 5 pick ups or set outs. Picking up or dropping off a group of cars or a <A
-    HREF="#Kernel">kernel</A> represents one move. To modify the number of moves for a location,
-   click directly on the cell in the route table. When entering the desired number of car moves,
-   enter reasonable numbers that reflect what you want the program to do for you. For example, if
-   you want your train to depart with 15 cars, then 15 is the correct value for your moves at the
-   start of the route. At the end of the route, if you want 12 cars in the train when it terminates,
-   then 12 is the right value for the move count for the last location in your train's route.
+   You can modify any location in a train's route by selecting an item in one of the menu boxes or by
+   doubling clicking one of the cells and entering a new value. Press "Save Route" to compelete your
+   change.
+
+   <P>
+    Each location has the train's departure direction, number of desired car moves, and whether car
+    pick ups and or car set outs are allowed at that location. A car move can be a car pick up or
+    car set out at that location. For example, 5 moves can be 5 pick ups, or 5 set outs, or any
+    combination of 5 pick ups or set outs. Picking up or dropping off a group of cars or a <A
+     HREF="#Kernel">kernel</A> represents one move. To modify the number of moves for a location,
+    double click directly on the cell in the route table. When entering the desired number of car
+    moves, enter reasonable numbers that reflect what you want the program to do for you. For
+    example, if you want your train to depart with 15 cars, then 15 is the correct value for your
+    moves at the start of the route. At the end of the route, if you want 12 cars in the train when
+    it terminates, then 12 is the right value for the move count for the last location in your
+    train's route.
+   </P>
 
    <P>If you want to delay the departure of the train from a location or increase the train's
     travel time, enter the number of minutes desired in the "Wait" cell. Another choice is to

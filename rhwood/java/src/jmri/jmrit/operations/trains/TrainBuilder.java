@@ -1678,7 +1678,10 @@ public class TrainBuilder extends TrainCommon {
 			// this will perform local moves at this location, services off spot tracks
 			// only in aggressive mode, and at least one car has a new destination
 			if (Setup.isBuildAggressive() && saveReqMoves != reqNumOfMoves) {
-				log.debug("Perform extra pass at location "+rl.getName());
+				log.debug("Perform extra pass at location " + rl.getName());
+				// use up to half of the available moves left for this location
+				if (reqNumOfMoves < (rl.getMaxCarMoves() - rl.getCarMoves()) / 2)
+					reqNumOfMoves = (rl.getMaxCarMoves() - rl.getCarMoves()) / 2;
 				findDestinationsForCarsFromLocation(rl, routeIndex, true);
 			}
 
@@ -1751,11 +1754,10 @@ public class TrainBuilder extends TrainCommon {
 			if (car.getFinalDestination() != null && car.getDestination() == null) {
 				// no local moves for this train?
 				if (!train.isAllowLocalMovesEnabled()
-						&& splitString(car.getLocationName()).equals(
-								splitString(car.getFinalDestinationName()))) {
-					addLine(buildReport, FIVE, MessageFormat.format(Bundle
-							.getMessage("buildCarHasFinalDestNoMove"), new Object[] { car.toString(),
-						car.getFinalDestinationName() }));
+						&& splitString(car.getLocationName()).equals(splitString(car.getFinalDestinationName()))
+						&& car.getTrack() != departStageTrack) {
+					addLine(buildReport, FIVE, MessageFormat.format(Bundle.getMessage("buildCarHasFinalDestNoMove"),
+							new Object[] { car.toString(), car.getFinalDestinationName() }));
 					addLine(buildReport, SEVEN, BLANK_LINE); // add line when in very detailed report mode
 					log.debug("Removing car (" + car.toString() + ") from list");
 					carList.remove(car.getId());
@@ -1777,10 +1779,16 @@ public class TrainBuilder extends TrainCommon {
 					addLine(buildReport, FIVE, MessageFormat.format(Bundle
 							.getMessage("buildThroughTrafficNotAllow"), new Object[] {
 							departLocation.getName(), terminateLocation.getName() }));
+					// don't remove car from list if departing staging
+					if (car.getTrack() == departStageTrack) {
+						addLine(buildReport, ONE, MessageFormat.format(Bundle.getMessage("buildErrorCarStageDest"),
+								new Object[] { car.toString() }));
+					} else {
+						log.debug("Removing car (" + car.toString() + ") from list");
+						carList.remove(car.getId());
+						carIndex--;
+					}
 					addLine(buildReport, SEVEN, BLANK_LINE); // add line when in very detailed report mode
-					log.debug("Removing car (" + car.toString() + ") from list");
-					carList.remove(car.getId());
-					carIndex--;
 					continue;
 				}
 				addLine(buildReport, FIVE, MessageFormat.format(Bundle
@@ -3604,6 +3612,12 @@ public class TrainBuilder extends TrainCommon {
 		if (stageTrack == null || !stageTrack.getLocType().equals(Track.STAGING)
 				|| !stageTrack.acceptsTypeName(car.getTypeName()) || !stageTrack.acceptsRoadName(car.getRoadName()))
 			return false;
+		// Departing and returning to same location in staging?
+		if (!train.isAllowReturnToStagingEnabled() && !car.isCaboose() && !car.hasFred() && !car.isPassenger()
+				&& splitString(car.getLocationName()).equals(splitString(stageTrack.getLocation().getName()))) {
+			log.debug("Returning car to staging not allowed");
+			return false;
+		}
 		// figure out which loads the car can use
 		List<String> loads = CarLoads.instance().getNames(car.getTypeName());
 		// remove the default names

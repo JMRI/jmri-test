@@ -120,6 +120,16 @@ public class Car extends RollingStock {
 	public String getLoadName() {
 		return _load;
 	}
+	
+	@Deprecated // saved for scripts
+	public void setLoad(String load) {
+		setLoadName(load);
+	}
+	
+	@Deprecated // saved for scripts
+	public String getLoad() {
+		return getLoadName();
+	}
 
 	/**
 	 * Gets the car load's priority.
