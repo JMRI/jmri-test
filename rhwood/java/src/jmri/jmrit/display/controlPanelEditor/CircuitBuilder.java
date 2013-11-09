@@ -75,6 +75,7 @@ public class CircuitBuilder  {
     // OBlock list to open edit frames 
     private PickListModel _oblockModel;
     private boolean hasOBlocks = false;
+    private boolean _lock = false;		// attempts to preserve lock state of icons
 
     // "Editing Frames" - Called from menu in Main Frame
     private EditCircuitFrame _editCircuitFrame;
@@ -119,15 +120,7 @@ public class CircuitBuilder  {
             OBlock block = manager.getBySystemName(sysNames[i]);
             _circuitMap.put(block, new ArrayList<Positionable>());
         }
-        // delay error detection until ControlPanelEditor is fully loaded
-        JMenuItem mi = new JMenuItem (Bundle.getMessage("circuitErrorsItem"));
-        mi.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                checkCircuits();
-            }
-        });
        makeCircuitMenu();
-       _circuitMenu.add(mi);
        return _circuitMenu;
     }
         
@@ -144,6 +137,9 @@ public class CircuitBuilder  {
                 icons.add(pos);
             }
             _iconMap.put(pos, block);
+            if (_lock) {
+            	pos.setPositionable(true);
+            }
         }
         _circuitMap.put(block, icons);
         _darkTrack.remove(pos);
@@ -305,7 +301,7 @@ public class CircuitBuilder  {
         JMenuItem editDirectionItem = new JMenuItem(Bundle.getMessage("editDirectionItem"));
         _circuitMenu.add(editDirectionItem);
 
-        if ( _circuitMap.keySet().size()>0) {
+        if ( _circuitMap.size()>0) {
             editCircuitItem.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         editCircuit("editCircuitItem");
@@ -326,6 +322,14 @@ public class CircuitBuilder  {
                 	editPortalDirection("editDirectionItem");
                 }
             });
+            // delay error detection until ControlPanelEditor is fully loaded
+            JMenuItem mi = new JMenuItem (Bundle.getMessage("circuitErrorsItem"));
+            mi.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    checkCircuits();
+                }
+            });
+            _circuitMenu.add(mi);
         } else {
             editCircuitItem.add(new JMenuItem(Bundle.getMessage("noCircuitsItem")));
             editPortalsItem.add(new JMenuItem(Bundle.getMessage("noCircuitsItem")));
@@ -664,6 +668,8 @@ public class CircuitBuilder  {
         if (!retOK) {
             JOptionPane.showMessageDialog(_editor, Bundle.getMessage("createOBlock"), 
                     Bundle.getMessage("NeedDataTitle"), JOptionPane.INFORMATION_MESSAGE);
+        } else if ( _circuitMap.size()<=1) {
+            makeCircuitMenu();        	
         }
         return retOK;
     }
@@ -727,6 +733,9 @@ public class CircuitBuilder  {
                 Positionable pos = selections.get(i);
                 if (pos instanceof IndicatorTrack) {
                     ((IndicatorTrack)pos).setOccBlockHandle(handle);
+                }
+                if (_lock) {
+                	pos.setPositionable(false);
                 }
                 icons.add(pos);
                 _iconMap.put(pos, block);
@@ -1163,11 +1172,16 @@ public class CircuitBuilder  {
     * select block's track icons for editing -***could be _circuitMap.get(block) is sufficient
     */
     private ArrayList<Positionable> makeSelectionGroup(OBlock block, boolean showPortal) {
+    	_lock = false;
     	ArrayList<Positionable> group = new ArrayList<Positionable>();
     	List<Positionable> circuitIcons = _circuitMap.get(block);
     	Iterator<Positionable> iter = circuitIcons.iterator();
         while(iter.hasNext()) {
         	Positionable p = iter.next();
+        	if (!p.isPositionable()) {
+        		_lock = true;
+        	}
+        	p.setPositionable(true);
         	if (p instanceof PortalIcon) {
         		if (showPortal) {
                 	((PortalIcon)p).setStatus(PortalIcon.VISIBLE);

@@ -4,6 +4,7 @@ package jmri.jmrit.operations.locations;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import jmri.jmrit.operations.setup.Control;
 import jmri.jmrit.operations.setup.Setup;
 import jmri.jmrit.operations.rollingstock.cars.CarTypes;
@@ -83,8 +84,6 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 	JTextArea commentTextArea	= new JTextArea(2,60);
 	JScrollPane commentScroller = new JScrollPane(commentTextArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	Dimension minScrollerDim = new Dimension(800,42);
-	
-	// combo boxes
 
 	public static final String NAME = Bundle.getMessage("Name");
 	public static final int MAX_NAME_LENGTH = Control.max_len_string_location_name;
@@ -266,6 +265,7 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 		// build menu
 		JMenuBar menuBar = new JMenuBar();
 		JMenu toolMenu = new JMenu(Bundle.getMessage("Tools"));
+		toolMenu.add(new TrackCopyAction(this));
 		toolMenu.add(new ModifyLocationsAction(Bundle.getMessage("TitleModifyLocation"), _location));	
 		toolMenu.add(new ShowCarsByLocationAction(false, locationName, null));
 		toolMenu.add(new ChangeTracksTypeAction(this));

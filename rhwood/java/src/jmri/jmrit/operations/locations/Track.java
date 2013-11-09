@@ -37,7 +37,7 @@ public class Track {
 
 	protected String _id = "";
 	protected String _name = "";
-	protected String _locType = ""; // yard, spur, interchange or staging
+	protected String _trackType = ""; // yard, spur, interchange or staging
 	protected Location _location; // the location for this track
 	protected String _alternateTrackId = ""; // the alternate track id
 	protected String _roadOption = ALLROADS; // controls which car roads are accepted
@@ -49,7 +49,7 @@ public class Track {
 	protected int _dropRS = 0; // number of set outs by trains
 	protected int _length = 0; // length of track
 	protected int _reserved = 0; // length of track reserved by trains
-	protected int _reservedDrops = 0; // length of track reserved for drops
+	protected int _reservedLengthDrops = 0; // length of track reserved for drops
 	protected int _numberCarsInRoute = 0; // number of cars in route to this track
 	protected int _usedLength = 0; // length of track filled by cars and engines
 	protected int _ignoreUsedLengthPercentage = 0; // value between 0 and 100, 100 = ignore 100%
@@ -143,7 +143,7 @@ public class Track {
 	public static final String TYPE = Bundle.getMessage("type");
 	public static final String ROAD = Bundle.getMessage("road");
 	public static final String LOAD = Bundle.getMessage("load");
-	public static final String CAPACITY = Bundle.getMessage("capacity");
+//	public static final String CAPACITY = Bundle.getMessage("capacity");
 	public static final String SCHEDULE = Bundle.getMessage("schedule");
 	public static final String CUSTOM = Bundle.getMessage("custom");
 	public static final String DESTINATION = Bundle.getMessage("carDestination");
@@ -171,12 +171,61 @@ public class Track {
 	public Track(String id, String name, String type, Location location) {
 		log.debug("New track " + name + " " + id);
 		_location = location;
-		_locType = type;
+		_trackType = type;
 		_name = name;
 		_id = id;
 		// a new track accepts all types
 		setTypeNames(CarTypes.instance().getNames());
 		setTypeNames(EngineTypes.instance().getNames());
+	}
+	
+	/**
+	 * Creates a copy of this track.
+	 * @param newName The name of the new track.
+	 * @param newLocation The location of the new track.
+	 * @return Track
+	 */
+	public Track copyTrack(String newName, Location newLocation) {
+		Track newTrack = newLocation.addTrack(newName, getTrackType());
+		newTrack.setAlternateTrack(getAlternateTrack());
+		newTrack.setBlockCarsEnabled(isBlockCarsEnabled());
+		newTrack.setComment(getComment());
+		newTrack.setCommentBoth(getCommentBoth());
+		newTrack.setCommentPickup(getCommentPickup());
+		newTrack.setCommentSetout(getCommentSetout());
+		
+		newTrack.setDestinationOption(getDestinationOption());
+		newTrack.setDestinationIds(getDestinationIds());
+		
+		newTrack.setDropOption(getDropOption());	// must set option before setting ids
+		newTrack.setDropIds(getDropIds());
+		
+		newTrack.setIgnoreUsedLengthPercentage(getIgnoreUsedLengthPercentage());
+		newTrack.setLength(getLength());
+		newTrack.setLoadEmptyEnabled(isLoadEmptyEnabled());
+		newTrack.setLoadNames(getLoadNames());
+		newTrack.setLoadOption(getLoadOption());
+		newTrack.setLoadSwapEnabled(isLoadSwapEnabled());
+
+		newTrack.setPickupOption(getPickupOption());	// must set option before setting ids
+		newTrack.setPickupIds(getPickupIds());
+		
+		// track pools are only shared within a specific location
+		if (getPool() != null) {
+			newTrack.setPool(newLocation.addPool(getPool().getName()));
+			newTrack.setMinimumLength(getMinimumLength());
+		}
+		newTrack.setRemoveCustomLoadsEnabled(isRemoveCustomLoadsEnabled());
+		newTrack.setReservationFactor(getReservationFactor());
+		newTrack.setRoadNames(getRoadNames());
+		newTrack.setRoadOption(getRoadOption());
+		newTrack.setScheduleId(getScheduleId());
+		newTrack.setScheduleMode(getScheduleMode());
+		newTrack.setServiceOrder(getServiceOrder());
+		newTrack.setShipLoadNames(getShipLoadNames());
+		newTrack.setTrainDirections(getTrainDirections());
+		newTrack.setTypeNames(getTypeNames());
+		return newTrack;
 	}
 
 	// for combo boxes
@@ -204,15 +253,20 @@ public class Track {
 		return _name;
 	}
 
-	public String getLocType() {
-		return _locType;
+	public String getTrackType() {
+		return _trackType;
 	}
-
-	public void setLocType(String type) {
-		String old = _locType;
-		_locType = type;
+	
+	public void setTrackType(String type) {
+		String old = _trackType;
+		_trackType = type;
 		if (!old.equals(type))
 			setDirtyAndFirePropertyChange(TRACK_TYPE_CHANGED_PROPERTY, old, type);
+	}
+
+	@Deprecated // as of 10/27/2013 version 3.5.5
+	public void setLocType(String type) {
+		setTrackType(type);
 	}
 
 	public void setLength(int length) {
@@ -227,6 +281,10 @@ public class Track {
 		return _length;
 	}
 
+	/**
+	 * Sets the minimum length of this track when the track is in a pool.
+	 * @param length minimum 
+	 */
 	public void setMinimumLength(int length) {
 		int old = _minimumLength;
 		_minimumLength = length;
@@ -351,7 +409,7 @@ public class Track {
 		if (car.getKernel() != null)
 			carLength = car.getKernel().getTotalLength();
 		// ignore reservation factor unless car is departing staging
-		if (car.getTrack() != null && car.getTrack().getLocType().equals(STAGING))
+		if (car.getTrack() != null && car.getTrack().getTrackType().equals(STAGING))
 			return (getLength() * getReservationFactor() / 100 - (getReservedInRoute() + carLength) >= 0);
 		// if there's alternate, include that length in the calculation
 		int trackLength = getLength();
@@ -514,7 +572,7 @@ public class Track {
 		_dropRS++;
 		setMoves(getMoves() + 1);
 		setReserved(getReserved() + rs.getTotalLength());
-		_reservedDrops = _reservedDrops + rs.getTotalLength();
+		_reservedLengthDrops = _reservedLengthDrops + rs.getTotalLength();
 		setDirtyAndFirePropertyChange("addDropRS", Integer.toString(old), Integer.toString(_dropRS)); // NOI18N
 	}
 
@@ -522,7 +580,7 @@ public class Track {
 		int old = _dropRS;
 		_dropRS--;
 		setReserved(getReserved() - rs.getTotalLength());
-		_reservedDrops = _reservedDrops - rs.getTotalLength();
+		_reservedLengthDrops = _reservedLengthDrops - rs.getTotalLength();
 		setDirtyAndFirePropertyChange("deleteDropRS", Integer.toString(old), // NOI18N
 				Integer.toString(_dropRS));
 	}
@@ -585,7 +643,8 @@ public class Track {
 			return;
 		jmri.util.StringUtil.sort(types);
 		for (int i = 0; i < types.length; i++)
-			_typeList.add(types[i]);
+			if (!_typeList.contains(types[i]))
+				_typeList.add(types[i]);
 	}
 
 	public void addTypeName(String type) {
@@ -1010,7 +1069,7 @@ public class Track {
 		if (_dropOption.equals(ANY))
 			return true;
 		// yard tracks accept all trains
-		if (getLocType().equals(YARD))
+		if (getTrackType().equals(YARD))
 			return true;
 		if (_dropOption.equals(TRAINS))
 			return containsDropId(train.getId());
@@ -1026,7 +1085,7 @@ public class Track {
 				|| _dropOption.equals(EXCLUDE_TRAINS))
 			return true;
 		// yard tracks accept all routes
-		if (getLocType().equals(YARD))
+		if (getTrackType().equals(YARD))
 			return true;
 		if (_dropOption.equals(EXCLUDE_ROUTES))
 			return !containsDropId(route.getId());
@@ -1083,7 +1142,7 @@ public class Track {
 		if (_pickupOption.equals(ANY))
 			return true;
 		// yard tracks accept all trains
-		if (getLocType().equals(YARD))
+		if (getTrackType().equals(YARD))
 			return true;
 		if (_pickupOption.equals(TRAINS))
 			return containsPickupId(train.getId());
@@ -1099,7 +1158,7 @@ public class Track {
 				|| _pickupOption.equals(EXCLUDE_TRAINS))
 			return true;
 		// yard tracks accept all routes
-		if (getLocType().equals(YARD))
+		if (getTrackType().equals(YARD))
 			return true;
 		if (_pickupOption.equals(EXCLUDE_ROUTES))
 			return !containsPickupId(route.getId());
@@ -1190,31 +1249,39 @@ public class Track {
 			if (getPool() != null && getPool().requestTrackLength(this, length))
 				return OKAY;
 			// ignore used length option?
-			if (getIgnoreUsedLengthPercentage() > 0) {
-				int consumed = getUsedLength() * (100 - getIgnoreUsedLengthPercentage());
-				if (consumed > 0)
-					consumed = consumed / 100; // as a percentage
-				// log.debug("Ignore used length, reservedDrops = "+_reservedDrops +
-				// " rs length= "+length+" track length= "+getLength());
-				// two checks, can not drop more than one track length, and second, can not exceed 100% of track length
-				if (consumed + _reservedDrops + length <= getLength()
-						&& getUsedLength() + _reservedDrops + length < (getLength() + getLength()
-								* getIgnoreUsedLengthPercentage() / 100))
+			if (checkPlannedPickUps(length))
 					return OKAY;
-			}
-			// Note that a lot of the code checks for track length being an issue, therefore it has to be the last check.
-			log.debug("Rolling stock (" + rs.toString() + ") not accepted at location ("
-					+ getLocation().getName() + ", " + getName() + ") no room!"); // NOI18N
-			return LENGTH + " (" + length + ")";
+			// Note that a lot of the code checks for track length being an issue, therefore it has to be the last
+			// check.
+			log.debug("Rolling stock (" + rs.toString() + ") not accepted at location (" + getLocation().getName()
+					+ ", " + getName() + ") no room!"); // NOI18N
+			return LENGTH + " (" + length + ") " + Setup.getLengthUnit().toLowerCase();// NOI18N
 		}
 		// a spur with a schedule can overload in aggressive mode, check track capacity
-		if (Setup.isBuildAggressive() && !getScheduleId().equals("")
-				&& getUsedLength() + getReserved() > getLength()) {
-			log.debug("Can't set (" + rs.toString() + ") due to exceeding maximum capacity for track ("
-					+ getName() + ")"); // NOI18N
-			return CAPACITY;
-		}
+//		if (Setup.isBuildAggressive() && !getScheduleId().equals("") && getUsedLength() + getReserved() > getLength()) {
+//			// ignore used length option?
+//			if (checkPlannedPickUps(length))
+//				return OKAY;
+//			log.debug("Can't set (" + rs.toString() + ") due to exceeding maximum capacity for track (" + getName()
+//					+ ")"); // NOI18N
+//			return CAPACITY;
+//		}
 		return OKAY;
+	}
+	
+	private boolean checkPlannedPickUps(int length) {
+		if (getIgnoreUsedLengthPercentage() > 0) {
+			int consumed = getUsedLength() * (100 - getIgnoreUsedLengthPercentage());
+			if (consumed > 0)
+				consumed = consumed / 100;
+			// two checks, number of inbound cars can't exceed the track length, and the total number of cars can't
+			// exceed track length plus the number of cars to ignore.
+			if (consumed + _reservedLengthDrops + length <= getLength()
+					&& getUsedLength() + getReserved() + length <= getLength()
+							+ (getLength() * getIgnoreUsedLengthPercentage() / 100))
+				return true;
+		}
+		return false;
 	}
 
 	public int getMoves() {
@@ -1233,7 +1300,7 @@ public class Track {
 	 * @return Service order: Track.NORMAL, Track.FIFO, Track.LIFO
 	 */
 	public String getServiceOrder() {
-		if (getLocType().equals(SPUR) || getLocType().equals(STAGING))
+		if (getTrackType().equals(SPUR) || getTrackType().equals(STAGING))
 			return NORMAL;
 		return _order;
 	}
@@ -1273,7 +1340,7 @@ public class Track {
 
 	public String getScheduleId() {
 		// Only spurs can have a schedule
-		if (!getLocType().equals(SPUR))
+		if (!getTrackType().equals(SPUR))
 			return "";
 		// old code only stored schedule name, so create id if needed.
 		if (_scheduleId.equals("") && !_scheduleName.equals("")) {
@@ -1382,6 +1449,10 @@ public class Track {
 		return nextSi;
 	}
 
+	/**
+	 * Returns how many times the current schedule item has been accessed.
+	 * @return count
+	 */
 	public int getScheduleCount() {
 		return _scheduleCount;
 	}
@@ -1506,14 +1577,14 @@ public class Track {
 					|| car.getLoadName().equals(CarLoads.instance().getDefaultLoadName()))
 				return OKAY; // no
 			// can't place a car with a scheduled load at a spur
-			else if (!getLocType().equals(SPUR))
+			else if (!getTrackType().equals(SPUR))
 				return OKAY;
 			else
 				return MessageFormat.format(Bundle.getMessage("carHasA"), new Object[] { CUSTOM, LOAD,
 						car.getLoadName() });
 		}
 		// only spurs can have a schedule
-		if (!getLocType().equals(SPUR))
+		if (!getTrackType().equals(SPUR))
 			return OKAY;
 		log.debug("Track (" + getName() + ") has schedule (" + getScheduleName() + ") mode "
 				+ getScheduleMode());
@@ -1698,7 +1769,7 @@ public class Track {
 	 * @param enable
 	 *            when true, swap generic car load state
 	 */
-	public void setLoadSwapsEnabled(boolean enable) {
+	public void setLoadSwapEnabled(boolean enable) {
 		if (enable)
 			_loadOptions = _loadOptions | SWAP_GENERIC_LOADS;
 		else
@@ -1722,7 +1793,7 @@ public class Track {
 			_loadOptions = _loadOptions & 0xFFFF - EMPTY_GENERIC_LOADS;
 	}
 
-	public boolean isSetLoadEmptyEnabled() {
+	public boolean isLoadEmptyEnabled() {
 		return (0 < (_loadOptions & EMPTY_GENERIC_LOADS));
 	}
 
@@ -1869,6 +1940,27 @@ public class Track {
 			return !_destinationIdList.contains(destination.getId());
 	}
 	
+	public void setDestinationIds(String[] ids) {
+		for (int i = 0; i < ids.length; i++)
+			_destinationIdList.add(ids[i]);
+	}
+	
+	public String[] getDestinationIds() {
+		String[] ids = _destinationIdList.toArray(new String[0]);
+		return ids;
+	}
+	
+	/**
+	 * Sets the destination option for this track. The three options are:
+	 * <P>
+	 * ALL_DESTINATIONS which means this track services all destinations, the default.
+	 * <P>
+	 * INCLUDE_DESTINATIONS which means this track services only certain destinations.
+	 * <P>
+	 * EXCLUDE_DESTINATIONS which means this track does not service certain destinations.
+	 * 
+	 * @param option Track.ALL_DESTINATIONS, Track.INCLUDE_DESTINATIONS, or Track.EXCLUDE_DESTINATIONS
+	 */
 	public void setDestinationOption(String option) {
 		String old = _destinationOption;
 		_destinationOption = option;
@@ -1903,7 +1995,7 @@ public class Track {
 		if ((a = e.getAttribute(Xml.NAME)) != null)
 			_name = a.getValue();
 		if ((a = e.getAttribute(Xml.LOC_TYPE)) != null)
-			_locType = a.getValue();
+			_trackType = a.getValue();
 		if ((a = e.getAttribute(Xml.LENGTH)) != null)
 			_length = Integer.parseInt(a.getValue());
 		if ((a = e.getAttribute(Xml.MOVES)) != null)
@@ -2077,7 +2169,7 @@ public class Track {
 		if ((a = e.getAttribute(Xml.ORDER)) != null)
 			_order = a.getValue();
 		if ((a = e.getAttribute(Xml.POOL)) != null) {
-			setPool(_location.addPool(a.getValue()));
+			setPool(getLocation().addPool(a.getValue()));
 			if ((a = e.getAttribute(Xml.MIN_LENGTH)) != null)
 				_minimumLength = Integer.parseInt(a.getValue());
 		}
@@ -2124,7 +2216,7 @@ public class Track {
 		Element e = new Element(Xml.TRACK);
 		e.setAttribute(Xml.ID, getId());
 		e.setAttribute(Xml.NAME, getName());
-		e.setAttribute(Xml.LOC_TYPE, getLocType());
+		e.setAttribute(Xml.LOC_TYPE, getTrackType());
 		e.setAttribute(Xml.DIR, Integer.toString(getTrainDirections()));
 		e.setAttribute(Xml.LENGTH, Integer.toString(getLength()));
 		e.setAttribute(Xml.MOVES, Integer.toString(getMoves() - getDropRS()));
@@ -2284,10 +2376,11 @@ public class Track {
 		e.setAttribute(Xml.TRACK_DESTINATION_OPTION, getDestinationOption());
 		if (!getDestinationOption().equals(ALL_DESTINATIONS)) {
 			// save destinations if they exist
-			if (_destinationIdList.size() > 0) {
+			String[] destIds = getDestinationIds();
+			if (destIds.length > 0) {
 				Element destinations = new Element(Xml.DESTINATIONS);
-				for (int i = 0; i < _destinationIdList.size(); i++) {
-					String locId = _destinationIdList.get(i);
+				for (int i = 0; i < destIds.length; i++) {
+					String locId = destIds[i];
 					Location loc = LocationManager.instance().getLocationById(locId);
 					if (loc != null) {
 						Element destination = new Element(Xml.DESTINATION);
