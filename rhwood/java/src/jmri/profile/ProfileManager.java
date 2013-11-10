@@ -30,11 +30,11 @@ import org.slf4j.LoggerFactory;
  */
 public class ProfileManager extends Bean {
 
-    private ArrayList<Profile> profiles = new ArrayList<Profile>();
-    private ArrayList<Profile> disabledProfiles = new ArrayList<Profile>();
-    private ArrayList<File> searchPaths = new ArrayList<File>();
+    private final ArrayList<Profile> profiles = new ArrayList<Profile>();
+    private final ArrayList<Profile> disabledProfiles = new ArrayList<Profile>();
+    private final ArrayList<File> searchPaths = new ArrayList<File>();
     private Profile activeProfile = null;
-    private File catalog;
+    private final File catalog;
     private File configFile = null;
     private boolean readingProfiles = false;
     private boolean autoStartActiveProfile = false;
@@ -48,7 +48,7 @@ public class ProfileManager extends Bean {
     private static final String PROFILECONFIG = "profileConfig"; // NOI18N
     public static final String SEARCH_PATHS = "searchPaths"; // NOI18N
     public static final String SYSTEM_PROPERTY = "org.jmri.profile"; // NOI18N
-    private static Logger log = LoggerFactory.getLogger(ProfileManager.class);
+    private static final Logger log = LoggerFactory.getLogger(ProfileManager.class);
 
     public ProfileManager() {
         this.catalog = new File(FileUtil.getPreferencesPath() + CATALOG);
@@ -216,16 +216,22 @@ public class ProfileManager extends Bean {
     }
 
     protected void removeProfile(Profile profile) {
-        int index = profiles.indexOf(profile);
-        if (index >= 0) {
-            if (profiles.remove(profile)) {
-                this.fireIndexedPropertyChange(PROFILES, index, profile, null);
+        try {
+            int index = profiles.indexOf(profile);
+            if (index >= 0) {
+                if (profiles.remove(profile)) {
+                    this.fireIndexedPropertyChange(PROFILES, index, profile, null);
+                    this.writeProfiles();
+                }
+            } else {
+                index = disabledProfiles.indexOf(profile);
+                if (disabledProfiles.remove(profile)) {
+                    this.fireIndexedPropertyChange(DISABLED_PROFILES, index, profile, null);
+                    this.writeProfiles();
+                }
             }
-        } else {
-            index = disabledProfiles.indexOf(profile);
-            if (disabledProfiles.remove(profile)) {
-                this.fireIndexedPropertyChange(DISABLED_PROFILES, index, profile, null);
-            }
+        } catch (IOException ex) {
+            log.warn("Unable to write profiles while removing profile {}.", profile.getId(), ex);
         }
     }
 
