@@ -51,18 +51,27 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 profiles.repaint();
+                profilesValueChanged(null);
             }
         });
         ProfileManager.defaultManager().addPropertyChangeListener(ProfileManager.DISABLED_PROFILES, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 disabledProfiles.repaint();
+                profilesValueChanged(null);
             }
         });
         ProfileManager.defaultManager().addPropertyChangeListener(ProfileManager.SEARCH_PATHS, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 searchPaths.repaint();
+                profilesValueChanged(null);
+            }
+        });
+        ProfileManager.defaultManager().addPropertyChangeListener(ProfileManager.ACTIVE_PROFILE, new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                profilesValueChanged(null);
             }
         });
         this.chkStartWithActiveProfile.setSelected(ProfileManager.defaultManager().isAutoStartActiveProfile());
@@ -224,6 +233,11 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
 
         btnDeleteProfile.setText(bundle.getString("ProfilePreferencesPanel.btnDeleteProfile.text")); // NOI18N
         btnDeleteProfile.setToolTipText(bundle.getString("ProfilePreferencesPanel.btnDeleteProfile.toolTipText")); // NOI18N
+        btnDeleteProfile.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                btnDeleteProfileActionPerformed(evt);
+            }
+        });
 
         btnEnableProfile.setText(bundle.getString("ProfilePreferencesPanel.btnEnableProfile.text")); // NOI18N
         btnEnableProfile.setToolTipText(bundle.getString("ProfilePreferencesPanel.btnEnableProfile.toolTipText")); // NOI18N
@@ -352,6 +366,7 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         if (profiles.getModel().getSize() > 1) {
             try {
                 ((Profile) profiles.getSelectedValue()).setDisabled(true);
+                profiles.clearSelection();
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error disabling profile", JOptionPane.ERROR_MESSAGE);
                 log.error("Unable to disable profile", ex.getLocalizedMessage());
@@ -431,7 +446,7 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
     }//GEN-LAST:event_searchPathsValueChanged
 
     private void profilesValueChanged(ListSelectionEvent evt) {//GEN-FIRST:event_profilesValueChanged
-        if (profiles.getSelectedValue().equals(ProfileManager.defaultManager().getActiveProfile())) {
+        if (profiles.getSelectedValue() != null && profiles.getSelectedValue().equals(ProfileManager.defaultManager().getActiveProfile())) {
             this.btnDisableProfile.setEnabled(false);
             this.btnActivateProfile.setEnabled(false);
         } else {
@@ -458,6 +473,17 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
             log.error("Unable to save active profile.", ex);
         }
     }//GEN-LAST:event_chkStartWithActiveProfileActionPerformed
+
+    private void btnDeleteProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnDeleteProfileActionPerformed
+        Profile deletedProfile = (Profile) disabledProfiles.getSelectedValue();
+        if (!FileUtil.delete(deletedProfile.getPath())) {
+        // TODO: notify user that profile directory could not be deleted
+            log.warn("Unable to delete profile directory {}", deletedProfile.getPath());
+        }
+        ProfileManager.defaultManager().removeProfile(deletedProfile);
+        log.info("Removed profile \"{}\" from {}", deletedProfile.getName(), deletedProfile.getPath());
+        disabledProfiles.repaint();
+    }//GEN-LAST:event_btnDeleteProfileActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton btnActivateProfile;

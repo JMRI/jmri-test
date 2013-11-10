@@ -296,6 +296,9 @@
                   <ResourceString bundle="jmri/profile/Bundle.properties" key="ProfilePreferencesPanel.btnDeleteProfile.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDeleteProfileActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btnEnableProfile">
               <Properties>
