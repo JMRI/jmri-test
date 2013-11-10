@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 public class ProfileManagerDialog extends JDialog {
 
     private Timer timer;
+    private int countDown;
 
     /**
      * Creates new form ProfileManagerDialog
@@ -69,6 +70,7 @@ public class ProfileManagerDialog extends JDialog {
         btnSelect = new JButton();
         btnCreate = new JButton();
         btnUseExisting = new JButton();
+        countDownLbl = new JLabel();
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         ResourceBundle bundle = ResourceBundle.getBundle("jmri/profile/Bundle"); // NOI18N
@@ -117,13 +119,18 @@ public class ProfileManagerDialog extends JDialog {
             }
         });
 
+        countDownLbl.setText(bundle.getString("ProfileManagerDialog.countDownLbl.text")); // NOI18N
+        countDownLbl.setToolTipText(bundle.getString("ProfileManagerDialog.countDownLbl.toolTipText")); // NOI18N
+
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(listLabel)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(listLabel)
+                    .addComponent(countDownLbl))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -147,7 +154,8 @@ public class ProfileManagerDialog extends JDialog {
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSelect)
                     .addComponent(btnCreate)
-                    .addComponent(btnUseExisting))
+                    .addComponent(btnUseExisting)
+                    .addComponent(countDownLbl))
                 .addContainerGap())
         );
 
@@ -156,6 +164,7 @@ public class ProfileManagerDialog extends JDialog {
 
     private void btnSelectActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
         timer.stop();
+        countDownLbl.setVisible(false);
         if (profiles.getSelectedValue() != null) {
             ProfileManager.defaultManager().setActiveProfile((Profile) profiles.getSelectedValue());
             dispose();
@@ -164,6 +173,7 @@ public class ProfileManagerDialog extends JDialog {
 
     private void btnCreateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
         timer.stop();
+        countDownLbl.setVisible(false);
         AddProfileDialog apd = new AddProfileDialog(this, true);
         apd.setLocationRelativeTo(this);
         apd.setVisible(true);
@@ -171,6 +181,7 @@ public class ProfileManagerDialog extends JDialog {
 
     private void btnUseExistingActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnUseExistingActionPerformed
         timer.stop();
+        countDownLbl.setVisible(false);
         JFileChooser chooser = new JFileChooser(FileUtil.getPreferencesPath());
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooser.setFileFilter(new ProfileFileFilter());
@@ -192,28 +203,41 @@ public class ProfileManagerDialog extends JDialog {
     }//GEN-LAST:event_btnUseExistingActionPerformed
 
     private void formWindowOpened(WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        timer = new Timer(30000, new ActionListener() {
+        countDown = 10; // TODO: make this a profileManager property
+        timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-                ProfileManager.defaultManager().setActiveProfile((Profile) profiles.getSelectedValue());
-                log.info("Automatically starting with profile " + ProfileManager.defaultManager().getActiveProfile().getId() + " after timeout.");
-                dispose();
+                if (countDown > 0) {
+                    countDown--;
+                    countDownLbl.setText(Integer.toString(countDown));
+                } else {
+                    setVisible(false);
+                    ProfileManager.defaultManager().setActiveProfile((Profile) profiles.getSelectedValue());
+                    log.info("Automatically starting with profile " + ProfileManager.defaultManager().getActiveProfile().getId() + " after timeout.");
+                    timer.stop();
+                    dispose();
+                }
             }
         });
-        timer.setRepeats(false);
-        if (profiles.getModel().getSize() > 0) {
+        timer.setRepeats(true);
+        if (profiles.getModel().getSize() > 0 && null != ProfileManager.defaultManager().getActiveProfile()) {
             timer.start();
+        } else {
+            countDownLbl.setVisible(false);
+            btnSelect.setEnabled(false);
         }
     }//GEN-LAST:event_formWindowOpened
 
     private void profilesValueChanged(ListSelectionEvent evt) {//GEN-FIRST:event_profilesValueChanged
         timer.stop();
+        countDownLbl.setVisible(false);
+        btnSelect.setEnabled(true);
     }//GEN-LAST:event_profilesValueChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton btnCreate;
     private JButton btnSelect;
     private JButton btnUseExisting;
+    private JLabel countDownLbl;
     private JScrollPane jScrollPane1;
     private JLabel listLabel;
     private JList profiles;
