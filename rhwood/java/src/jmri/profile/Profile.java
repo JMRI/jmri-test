@@ -90,6 +90,8 @@ public class Profile {
      * Append ~ to the directory containing the profile so that the Profile's Id
      * is not equal to the Profile's location. This method also removes the
      * Profile from the ProfileManager's list of available Profiles.
+     * @param disabled
+     * @throws java.io.IOException
      */
     public void setDisabled(Boolean disabled) throws IOException {
         this.disabled = disabled;
@@ -171,9 +173,6 @@ public class Profile {
             return false;
         }
         final Profile other = (Profile) obj;
-        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
-            return false;
-        }
-        return true;
+        return !((this.id == null) ? (other.id != null) : !this.id.equals(other.id));
     }
 }
