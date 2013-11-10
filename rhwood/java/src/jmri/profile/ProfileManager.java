@@ -403,4 +403,18 @@ public class ProfileManager extends Bean {
         }
         this.addProfile(p);
     }
+
+    /**
+     * Create a default profile if no profiles exist.
+     *
+     * @throws IOException
+     */
+    public static void createDefaultProfile() throws IllegalArgumentException, IOException {
+        if (ProfileManager.defaultManager().profiles.isEmpty()) {
+            String pn = "My JMRI Profile";
+            String pid = FileUtil.sanitizeFilename(pn);
+            File pp = new File(FileUtil.getPreferencesPath() + pid);
+            ProfileManager.defaultManager().addProfile(new Profile(pn, pid, pp));
+        }
+    }
 }
