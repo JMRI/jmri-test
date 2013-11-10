@@ -3,13 +3,16 @@ package jmri.util;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.channels.FileChannel;
 import java.security.CodeSource;
 import java.util.Arrays;
 import java.util.jar.JarFile;
@@ -18,10 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Common utility methods for working with Files. <P> We needed a place to
- * refactor common File-processing idioms in JMRI code, so this class was
- * created. It's more of a library of procedures than a real class, as (so far)
- * all of the operations have needed no state information.
+ * Common utility methods for working with Files.
+ * <P>
+ * We needed a place to refactor common File-processing idioms in JMRI code, so
+ * this class was created. It's more of a library of procedures than a real
+ * class, as (so far) all of the operations have needed no state information.
  *
  * @author Bob Jacobsen Copyright 2003, 2005, 2006
  * @author Randall Wood Copyright 2012, 2013
@@ -533,9 +537,11 @@ public class FileUtil {
 
     /**
      * Search for a file or JAR resource by name and return the
-     * {@link java.net.URL} for that file. <p> Search order is:<ol><li>For any
-     * provided searchPaths, iterate over the searchPaths by prepending each
-     * searchPath to the path and following the following search order:</li>
+     * {@link java.net.URL} for that file.
+     * <p>
+     * Search order is:<ol><li>For any provided searchPaths, iterate over the
+     * searchPaths by prepending each searchPath to the path and following the
+     * following search order:</li>
      * <ol><li>As a {@link java.io.File} in the user preferences directory</li>
      * <li>As a File in the current working directory (usually, but not always
      * the JMRI distribution directory)</li> <li>As a File in the JMRI
@@ -728,5 +734,34 @@ public class FileUtil {
             }
         }
         return path.delete();
+    }
+
+    /**
+     * Copy a file. Not needed in Java 1.7.
+     *
+     * @param source
+     * @param dest must be the file, not the destination directory.
+     * @throws IOException
+     */
+    public static void copy(File source, File dest) throws IOException {
+        if (!source.exists()) {
+            return;
+        }
+        if (!dest.exists()) {
+            dest.createNewFile();
+        }
+        FileChannel sourceChannel;
+        FileChannel destination;
+        sourceChannel = new FileInputStream(source).getChannel();
+        destination = new FileOutputStream(dest).getChannel();
+        if (destination != null && sourceChannel != null) {
+            destination.transferFrom(sourceChannel, 0, sourceChannel.size());
+        }
+        if (sourceChannel != null) {
+            sourceChannel.close();
+        }
+        if (destination != null) {
+            destination.close();
+        }
     }
 }
