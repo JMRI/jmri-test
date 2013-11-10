@@ -37,7 +37,7 @@ public class ProfileManager extends Bean {
     private final File catalog;
     private File configFile = null;
     private boolean readingProfiles = false;
-    private boolean autoStartActiveProfile = false;
+    private boolean autoStartActiveProfile = true;
     private static ProfileManager instance = null;
     public static final String ACTIVE_PROFILE = "activeProfile"; // NOI18N
     private static final String AUTO_START = "autoStart"; // NOI18N
