@@ -417,4 +417,21 @@ public class ProfileManager extends Bean {
             ProfileManager.defaultManager().addProfile(new Profile(pn, pid, pp));
         }
     }
+
+    /**
+     * Copy a JMRI configuration not in a profile and its user preferences to a profile.
+     *
+     * @param config
+     * @param name
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
+    public static void migrateConfigToProfile(File config, String name) throws IllegalArgumentException, IOException {
+        String pid = FileUtil.sanitizeFilename(name);
+        File pp = new File(FileUtil.getPreferencesPath(), pid);
+        Profile profile = new Profile(name, pid, pp);
+        FileUtil.copy(config, new File(profile.getPath(), Profile.CONFIG_FILENAME));
+        FileUtil.copy(new File(config.getParentFile(), "UserPrefs" + config.getName()), new File(profile.getPath(), "UserPrefs" + Profile.CONFIG_FILENAME));
+        ProfileManager.defaultManager().addProfile(profile);
+    }
 }
