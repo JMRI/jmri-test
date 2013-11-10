@@ -142,21 +142,21 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         // as a special case, register a ShutDownTask to write out blocks
         InstanceManager.shutDownManagerInstance().
                 register(new AbstractShutDownTask("Writing Blocks") {
-            @Override
-            public boolean execute() {
-                // Save block values prior to exit, if necessary
-                log.debug("Start writing block info");
-                try {
-                    new BlockValueFile().writeBlockValues();
-                } //catch (org.jdom.JDOMException jde) { log.error("Exception writing blocks: {}", jde); }
-                catch (IOException ioe) {
-                    log.error("Exception writing blocks: {}", ioe);
-                }
+                    @Override
+                    public boolean execute() {
+                        // Save block values prior to exit, if necessary
+                        log.debug("Start writing block info");
+                        try {
+                            new BlockValueFile().writeBlockValues();
+                        } //catch (org.jdom.JDOMException jde) { log.error("Exception writing blocks: {}", jde); }
+                        catch (IOException ioe) {
+                            log.error("Exception writing blocks: {}", ioe);
+                        }
 
-                // continue shutdown
-                return true;
-            }
-        });
+                        // continue shutdown
+                        return true;
+                    }
+                });
 
         // Get configuration profile
         // Needs to be done before loading a ConfigManager or UserPreferencesManager
@@ -179,13 +179,51 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         if (System.getProperties().containsKey(ProfileManager.SYSTEM_PROPERTY)) {
             ProfileManager.defaultManager().setActiveProfile(System.getProperty(ProfileManager.SYSTEM_PROPERTY));
         }
+        // Potential situations to test for:
+        // PCat = has profile catalog (test on assumption that catalog will not be empty)
+        // PConf = has profile config for this app
+        // XConf = has xml config for this app
+        // + PCat + PConf + XConf = no prep (upgraded from pre profiles)
+        // + PCat + PConf - XConf = no prep (new install after profiles introduced)
+        // + PCat - PConf + XConf = migrate (app used prior to profiles, other JMRI apps have profiles)
+        // + PCat - PConf - XConf = no prep (prompt user for profile if multiple exist, use default otherwise)
+        // - PCat - PConf - XConf = new use (create default profile and use it)
+        // - PCat - PConf + XConf = migrate (apps used before, no profiles exist)
+        // - PCat + PConf + XConf = no prep (user has deleted catalog)
+        // - PCat + PConf - XConf = no prep (user has deleted catalog)
+        // handle migrate and new use cases (three) without accidentally triggering on a no prep case
+        if (!ProfileManager.defaultManager().getConfigFile().exists()) { // - PConf
+            File configFile;
+            if (!new File(configFilename).isAbsolute()) {
+                configFile = new File(FileUtil.getPreferencesPath() + configFilename);
+            } else {
+                configFile = new File(configFilename);
+            }
+            try {
+                if (ProfileManager.defaultManager().getProfiles().length == 0) { // - PCat - PConf
+                    if (!configFile.exists()) { // - PCat - PConf - XConf = new use
+                        ProfileManager.createDefaultProfile();
+                    } else { // - PCat - PConf + XConf = migrate
+                        ProfileManager.migrateConfigToProfile(configFile, nameString);
+                    }
+                } else if (configFile.exists()) { // + PCat - PConf + XConf = migrate
+                    ProfileManager.migrateConfigToProfile(configFile, nameString);
+                } // all other cases need no prep
+            } catch (IOException ex) {
+                // TODO: notify user of inability to write to profile location
+                log.error(ex.getLocalizedMessage(), ex);
+            } catch (IllegalArgumentException ex) {
+                // TODO: notfiy user of error creating profile
+                log.error(ex.getLocalizedMessage(), ex);
+            }
+        }
         if (ProfileManager.defaultManager().getActiveProfile() == null) {
             try {
                 ProfileManager.defaultManager().readActiveProfile();
                 // Automatically start with only profile if only one profile
                 if (ProfileManager.defaultManager().getProfiles().length == 1) {
                     ProfileManager.defaultManager().setActiveProfile(ProfileManager.defaultManager().getProfiles(0));
-                // Display profile selector if user did not choose to auto start with last used profile
+                    // Display profile selector if user did not choose to auto start with last used profile
                 } else if (!ProfileManager.defaultManager().isAutoStartActiveProfile()) {
                     ProfileManagerDialog pmd = new ProfileManagerDialog(sp, true);
                     pmd.setLocationRelativeTo(sp);
@@ -767,7 +805,6 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
             cs.setText(cf);
         }
 
-
         this.revalidate();
     }
 
@@ -966,29 +1003,28 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
             debugFired = false;
             Toolkit.getDefaultToolkit().addAWTEventListener(
                     debugListener = new AWTEventListener() {
-                @Override
-                public void eventDispatched(AWTEvent e) {
-                    if (!debugFired) {
-                        /*We set the debugmsg flag on the first instance of the user pressing any button
-                         and the if the debugFired hasn't been set, this allows us to ensure that we don't
-                         miss the user pressing F8, while we are checking*/
-                        debugmsg = true;
-                        if (e.getID() == KeyEvent.KEY_PRESSED) {
-                            KeyEvent ky = (KeyEvent) e;
-                            if (ky.getKeyCode() == 119) {
-                                startupDebug();
+                        @Override
+                        public void eventDispatched(AWTEvent e) {
+                            if (!debugFired) {
+                                /*We set the debugmsg flag on the first instance of the user pressing any button
+                                 and the if the debugFired hasn't been set, this allows us to ensure that we don't
+                                 miss the user pressing F8, while we are checking*/
+                                debugmsg = true;
+                                if (e.getID() == KeyEvent.KEY_PRESSED) {
+                                    KeyEvent ky = (KeyEvent) e;
+                                    if (ky.getKeyCode() == 119) {
+                                        startupDebug();
+                                    }
+                                } else {
+                                    debugmsg = false;
+                                }
                             }
-                        } else {
-                            debugmsg = false;
                         }
-                    }
-                }
-            },
+                    },
                     AWTEvent.KEY_EVENT_MASK);
         }
 
         // bring up splash window for startup
-
         if (sp == null) {
             if (debug) {
                 sp = new SplashWindow(splashDebugMsg());
