@@ -67,7 +67,7 @@ public class FileUtil {
     /*
      * User's home directory
      */
-    static private String homePath = System.getProperty("user.home") + File.separator; // NOI18N
+    private static final String homePath = System.getProperty("user.home") + File.separator; // NOI18N
     /*
      * Settable directories
      */
@@ -82,7 +82,7 @@ public class FileUtil {
     /* path to the current profile */
     static private String profilePath = null;
     // initialize logging
-    static private Logger log = LoggerFactory.getLogger(FileUtil.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(FileUtil.class.getName());
 
     /**
      * Get the {@link java.io.File} that path refers to. Throws a
@@ -91,7 +91,7 @@ public class FileUtil {
      *
      * @param path
      * @return {@link java.io.File} at path
-     * @throws {@link java.io.FileNotFoundException}
+     * @throws java.io.FileNotFoundException
      */
     static public File getFile(String path) throws FileNotFoundException {
         try {
@@ -251,12 +251,13 @@ public class FileUtil {
     }
 
     /**
-     * Convert a File object to our preferred storage form.
+     * Convert a File object's path to our preferred storage form.
      *
      * This is the inverse of {@link #getExternalFilename(String pName)}.
      * Deprecated forms are not created.
      *
-     * @param file File to be represented
+     * @param file File at path to be represented
+     * @return Storage format representation
      * @since 2.7.2
      */
     static public String getPortableFilename(File file) {
@@ -299,6 +300,7 @@ public class FileUtil {
      * Deprecated forms are not created.
      *
      * @param filename Filename to be represented
+     * @return Storage format representation
      * @since 2.7.2
      */
     static public String getPortableFilename(String filename) {
@@ -460,6 +462,7 @@ public class FileUtil {
      * {@link #findURL(java.lang.String)}
      *
      * @param path
+     * @return file:// URL or null
      */
     static public URL findExternalFilename(String path) {
         return FileUtil.findURL(FileUtil.getExternalFilename(path));
@@ -710,5 +713,20 @@ public class FileUtil {
                 log.error("Failed to create directory: {}", path);
             }
         }
+    }
+
+    /**
+     * Recursively delete a path. Not needed in Java 1.7.
+     *
+     * @param path
+     * @return true if path was deleted, false otherwise
+     */
+    public static boolean delete(File path) {
+        if (path.isDirectory()) {
+            for (File file : path.listFiles()) {
+                FileUtil.delete(file);
+            }
+        }
+        return path.delete();
     }
 }
