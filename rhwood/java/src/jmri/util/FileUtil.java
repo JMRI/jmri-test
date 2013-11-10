@@ -280,7 +280,7 @@ public class FileUtil {
 
         // compare full path name to see if same as profile
         if (filename.startsWith(getProfilePath())) {
-            return PROFILE + filename.substring(getUserFilesPath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
+            return PROFILE + filename.substring(getProfilePath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
         }
 
         // now check for relative to program dir
