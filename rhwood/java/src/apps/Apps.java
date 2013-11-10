@@ -182,7 +182,11 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         if (ProfileManager.defaultManager().getActiveProfile() == null) {
             try {
                 ProfileManager.defaultManager().readActiveProfile();
-                if (!ProfileManager.defaultManager().isAutoStartActiveProfile()) {
+                // Automatically start with only profile if only one profile
+                if (ProfileManager.defaultManager().getProfiles().length == 1) {
+                    ProfileManager.defaultManager().setActiveProfile(ProfileManager.defaultManager().getProfiles(0));
+                // Display profile selector if user did not choose to auto start with last used profile
+                } else if (!ProfileManager.defaultManager().isAutoStartActiveProfile()) {
                     ProfileManagerDialog pmd = new ProfileManagerDialog(sp, true);
                     pmd.setLocationRelativeTo(sp);
                     pmd.setVisible(true);
