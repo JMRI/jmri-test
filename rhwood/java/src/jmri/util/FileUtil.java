@@ -265,6 +265,28 @@ public class FileUtil {
      * @since 2.7.2
      */
     static public String getPortableFilename(File file) {
+        return FileUtil.getPortableFilename(file, false);
+    }
+
+    /**
+     * Convert a File object's path to our preferred storage form.
+     *
+     * This is the inverse of {@link #getExternalFilename(String pName)}.
+     * Deprecated forms are not created.
+     *
+     * This form supports a specific use case concerning profiles that are
+     * stored within the User files directory, which will cause the
+     * {@link jmri.profile.ProfileManager} to write an incorrect path for the
+     * current profile. In most cases {@link #getPortableFilename(java.io.File)}
+     * is preferable.
+     *
+     * @param file File at path to be represented
+     * @param ignoreUserFilesPath true if paths in the User files path should be
+     * stored as absolute paths, which is often not desirable.
+     * @return Storage format representation
+     * @since 3.5.5
+     */
+    static public String getPortableFilename(File file, boolean ignoreUserFilesPath) {
         // compare full path name to see if same as preferences
         String filename = file.getAbsolutePath();
 
@@ -274,8 +296,10 @@ public class FileUtil {
         }
 
         // compare full path name to see if same as preferences
-        if (filename.startsWith(getUserFilesPath())) {
-            return PREFERENCES + filename.substring(getUserFilesPath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
+        if (!ignoreUserFilesPath) {
+            if (filename.startsWith(getUserFilesPath())) {
+                return PREFERENCES + filename.substring(getUserFilesPath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
+            }
         }
 
         // compare full path name to see if same as profile
@@ -308,6 +332,28 @@ public class FileUtil {
      * @since 2.7.2
      */
     static public String getPortableFilename(String filename) {
+        return FileUtil.getPortableFilename(filename, false);
+    }
+
+    /**
+     * Convert a filename string to our preferred storage form.
+     *
+     * This is the inverse of {@link #getExternalFilename(String pName)}.
+     * Deprecated forms are not created.
+     *
+     * This form supports a specific use case concerning profiles that are
+     * stored within the User files directory, which will cause the
+     * {@link jmri.profile.ProfileManager} to write an incorrect path for the
+     * current profile. In most cases {@link #getPortableFilename(java.io.File)}
+     * is preferable.
+     *
+     * @param filename Filename to be represented
+     * @param ignoreUserFilesPath true if paths in the User files path should be
+     * stored as absolute paths, which is often not desirable.
+     * @return Storage format representation
+     * @since 3.5.5
+     */
+    static public String getPortableFilename(String filename, boolean ignoreUserFilesPath) {
         // if this already contains prefix, run through conversion to normalize
         if (filename.startsWith(FILE)
                 || filename.startsWith(RESOURCE)
@@ -315,10 +361,10 @@ public class FileUtil {
                 || filename.startsWith(HOME)
                 || filename.startsWith(PREFERENCES)
                 || filename.startsWith(PROFILE)) {
-            return getPortableFilename(getExternalFilename(filename));
+            return getPortableFilename(getExternalFilename(filename), ignoreUserFilesPath);
         } else {
             // treat as pure filename
-            return getPortableFilename(new File(filename));
+            return getPortableFilename(new File(filename), ignoreUserFilesPath);
         }
     }
 

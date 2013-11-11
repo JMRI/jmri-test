@@ -267,6 +267,7 @@ public class ProfileManager extends Bean {
 
     private void readProfiles() throws JDOMException, IOException {
         try {
+            boolean reWrite = false;
             if (!catalog.exists()) {
                 this.writeProfiles();
             }
@@ -283,6 +284,7 @@ public class ProfileManager extends Bean {
                 } catch (FileNotFoundException ex) {
                     log.info("Cataloged profile \"{}\" not in expected location\nSearching for it in {}", e.getAttributeValue(Profile.ID), pp.getParentFile());
                     this.findProfiles(pp.getParentFile());
+                    reWrite = true;
                 }
             }
             searchPaths.clear();
@@ -296,6 +298,9 @@ public class ProfileManager extends Bean {
                 this.addSearchPath(FileUtil.getFile(FileUtil.getPreferencesPath()));
             }
             this.readingProfiles = false;
+            if (reWrite) {
+                this.writeProfiles();
+            }
         } catch (JDOMException ex) {
             this.readingProfiles = false;
             throw ex;
@@ -314,12 +319,12 @@ public class ProfileManager extends Bean {
         for (Profile p : this.profiles) {
             Element e = new Element(PROFILE);
             e.setAttribute(Profile.ID, p.getId());
-            e.setAttribute(Profile.PATH, FileUtil.getPortableFilename(p.getPath()));
+            e.setAttribute(Profile.PATH, FileUtil.getPortableFilename(p.getPath(), true));
             profilesElement.addContent(e);
         }
         for (File f : this.searchPaths) {
             Element e = new Element(Profile.PATH);
-            e.setAttribute(Profile.PATH, FileUtil.getPortableFilename(f.getPath()));
+            e.setAttribute(Profile.PATH, FileUtil.getPortableFilename(f.getPath(), true));
             pathsElement.addContent(e);
         }
         doc.getRootElement().addContent(profilesElement);
@@ -419,7 +424,8 @@ public class ProfileManager extends Bean {
     }
 
     /**
-     * Copy a JMRI configuration not in a profile and its user preferences to a profile.
+     * Copy a JMRI configuration not in a profile and its user preferences to a
+     * profile.
      *
      * @param config
      * @param name
