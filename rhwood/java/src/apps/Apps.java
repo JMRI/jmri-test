@@ -217,8 +217,8 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
                 log.error(ex.getLocalizedMessage(), ex);
             }
         }
-        if (ProfileManager.defaultManager().getActiveProfile() == null) {
-            try {
+        try {
+            if (ProfileManager.defaultManager().getActiveProfile() == null) {
                 ProfileManager.defaultManager().readActiveProfile();
                 // Automatically start with only profile if only one profile
                 if (ProfileManager.defaultManager().getProfiles().length == 1) {
@@ -230,15 +230,14 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
                     pmd.setVisible(true);
                     ProfileManager.defaultManager().saveActiveProfile();
                 }
-                // Manually setting the configFilename property since calling
-                // Apps.setConfigFilename() does not reset the system property
-                configFilename = FileUtil.getProfilePath() + Profile.CONFIG_FILENAME;
-                System.setProperty("org.jmri.Apps.configFilename", Profile.CONFIG_FILENAME);
-            } catch (IOException ex) {
-                log.info("Profiles not configurable. Using fallback per-application configuration.");
             }
-        } else {
+            // Manually setting the configFilename property since calling
+            // Apps.setConfigFilename() does not reset the system property
+            configFilename = FileUtil.getProfilePath() + Profile.CONFIG_FILENAME;
+            System.setProperty("org.jmri.Apps.configFilename", Profile.CONFIG_FILENAME);
             log.info("Starting with profile {}", ProfileManager.defaultManager().getActiveProfile().getId());
+        } catch (IOException ex) {
+            log.info("Profiles not configurable. Using fallback per-application configuration.");
         }
 
         // Install configuration manager and Swing error handler
