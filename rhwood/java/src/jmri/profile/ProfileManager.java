@@ -417,7 +417,7 @@ public class ProfileManager extends Bean {
      */
     public static Profile createDefaultProfile() throws IllegalArgumentException, IOException {
         if (ProfileManager.defaultManager().profiles.isEmpty()) {
-            String pn = "My JMRI Profile";
+            String pn = Bundle.getMessage("defaultProfileName");
             String pid = FileUtil.sanitizeFilename(pn);
             File pp = new File(FileUtil.getPreferencesPath() + pid);
             Profile profile = new Profile(pn, pid, pp);

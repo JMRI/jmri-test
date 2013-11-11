@@ -20,6 +20,6 @@ public class ProfileFileFilter extends FileFilter {
 
     @Override
     public String getDescription() {
-        return "JMRI Profiles";
+        return Bundle.getMessage("fileFilterDescription");
     }
 }

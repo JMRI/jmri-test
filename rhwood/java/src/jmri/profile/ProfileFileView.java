@@ -16,7 +16,7 @@ public class ProfileFileView extends FileView {
     @Override
     public String getDescription(File f) {
         if (!this.isTraversable(f)) {
-            return "JMRI Profile with Id " + f.getName();
+            return Bundle.getMessage("FileViewDescription", f.getName());
         } else {
             return null;
         }
@@ -33,7 +33,7 @@ public class ProfileFileView extends FileView {
     @Override
     public Icon getIcon(File f) {
         if (f.isDirectory() && Arrays.asList(f.list()).contains(Profile.PROPERTIES)) {
-            return new ImageIcon(FileUtil.getExternalFilename(FileUtil.PROGRAM + "resources/jmri16x16.gif"));
+            return new ImageIcon(FileUtil.getExternalFilename(FileUtil.PROGRAM + "resources/jmri16x16.gif")); // NOI18N
         } else {
             return null;
         }
