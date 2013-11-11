@@ -412,14 +412,20 @@ public class ProfileManager extends Bean {
     /**
      * Create a default profile if no profiles exist.
      *
+     * @return A new profile or null if profiles already exist.
      * @throws IOException
      */
-    public static void createDefaultProfile() throws IllegalArgumentException, IOException {
+    public static Profile createDefaultProfile() throws IllegalArgumentException, IOException {
         if (ProfileManager.defaultManager().profiles.isEmpty()) {
             String pn = "My JMRI Profile";
             String pid = FileUtil.sanitizeFilename(pn);
             File pp = new File(FileUtil.getPreferencesPath() + pid);
-            ProfileManager.defaultManager().addProfile(new Profile(pn, pid, pp));
+            Profile profile = new Profile(pn, pid, pp);
+            ProfileManager.defaultManager().addProfile(profile);
+            log.info("Created default profile \"{}\"", pn);
+            return profile;
+        } else {
+            return null;
         }
     }
 
@@ -429,15 +435,18 @@ public class ProfileManager extends Bean {
      *
      * @param config
      * @param name
+     * @return The profile with the migrated configuration.
      * @throws IllegalArgumentException
      * @throws IOException
      */
-    public static void migrateConfigToProfile(File config, String name) throws IllegalArgumentException, IOException {
+    public static Profile migrateConfigToProfile(File config, String name) throws IllegalArgumentException, IOException {
         String pid = FileUtil.sanitizeFilename(name);
         File pp = new File(FileUtil.getPreferencesPath(), pid);
         Profile profile = new Profile(name, pid, pp);
         FileUtil.copy(config, new File(profile.getPath(), Profile.CONFIG_FILENAME));
-        FileUtil.copy(new File(config.getParentFile(), "UserPrefs" + config.getName()), new File(profile.getPath(), "UserPrefs" + Profile.CONFIG_FILENAME));
+        FileUtil.copy(new File(config.getParentFile(), "UserPrefs" + config.getName()), new File(profile.getPath(), "UserPrefs" + Profile.CONFIG_FILENAME)); // NOI18N
         ProfileManager.defaultManager().addProfile(profile);
+        log.info("Migrated \"{}\" config to profile \"{}\"", name, name);
+        return profile;
     }
 }

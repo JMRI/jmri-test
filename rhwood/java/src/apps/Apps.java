@@ -202,12 +202,12 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
             try {
                 if (ProfileManager.defaultManager().getProfiles().length == 0) { // - PCat - PConf
                     if (!configFile.exists()) { // - PCat - PConf - XConf = new use
-                        ProfileManager.createDefaultProfile();
+                        ProfileManager.defaultManager().setActiveProfile(ProfileManager.createDefaultProfile());
                     } else { // - PCat - PConf + XConf = migrate
-                        ProfileManager.migrateConfigToProfile(configFile, nameString);
+                        ProfileManager.defaultManager().setActiveProfile(ProfileManager.migrateConfigToProfile(configFile, jmri.Application.getApplicationName()));
                     }
                 } else if (configFile.exists()) { // + PCat - PConf + XConf = migrate
-                    ProfileManager.migrateConfigToProfile(configFile, nameString);
+                    ProfileManager.defaultManager().setActiveProfile(ProfileManager.migrateConfigToProfile(configFile, jmri.Application.getApplicationName()));
                 } // all other cases need no prep
             } catch (IOException ex) {
                 // TODO: notify user of inability to write to profile location
