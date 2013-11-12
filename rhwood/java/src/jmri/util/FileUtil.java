@@ -38,9 +38,13 @@ public class FileUtil {
      */
     static public final String PROGRAM = "program:"; // NOI18N
     /**
-     * Portable reference to items in the JMRI user's preferences directory.
+     * Portable reference to the JMRI user's preferences directory.
      */
     static public final String PREFERENCES = "preference:"; // NOI18N
+    /**
+     * Portable reference to the JMRI applications preferences directory.
+     */
+    static public final String SETTINGS = "settings:"; // NOI18N
     /**
      * Portable reference to the user's home directory.
      */
@@ -114,6 +118,8 @@ public class FileUtil {
      * the program directory</li>
      * <li>Starts with "preference:", treat the rest as a relative path below
      * the user's files directory</li>
+     * <li>Starts with "settings:", treat the rest as a relative path below the
+     * JMRI system preferences directory</li>
      * <li>Starts with "home:", treat the rest as a relative path below the
      * user.home directory</li>
      * <li>Starts with "file:", treat the rest as a relative path below the
@@ -170,6 +176,17 @@ public class FileUtil {
             // assume this is a relative path from the profile directory
             filename = FileUtil.getProfilePath() + filename;
             log.debug("load from profile file: {}", filename);
+            return filename.replace(SEPARATOR, File.separatorChar);
+        } else if (pName.startsWith(SETTINGS)) {
+            String filename = pName.substring(SETTINGS.length());
+            // Check for absolute path name
+            if ((new File(filename)).isAbsolute()) {
+                log.debug("Load from absolute path: {}", filename);
+                return filename.replace(SEPARATOR, File.separatorChar);
+            }
+            // assume this is a relative path from the profile directory
+            filename = FileUtil.getPreferencesPath() + filename;
+            log.debug("load from settings file: {}", filename);
             return filename.replace(SEPARATOR, File.separatorChar);
         } else if (pName.startsWith(FILE)) {
             String filename = pName.substring(FILE.length());
@@ -232,6 +249,12 @@ public class FileUtil {
                 path = path.substring(PROFILE.length());
             } else {
                 path = path.replaceFirst(PROFILE, Matcher.quoteReplacement(FileUtil.getProfilePath()));
+            }
+        } else if (path.startsWith(SETTINGS)) {
+            if (new File(path.substring(SETTINGS.length())).isAbsolute()) {
+                path = path.substring(SETTINGS.length());
+            } else {
+                path = path.replaceFirst(SETTINGS, Matcher.quoteReplacement(FileUtil.getProfilePath()));
             }
         } else if (path.startsWith(HOME)) {
             if (new File(path.substring(HOME.length())).isAbsolute()) {
@@ -311,6 +334,11 @@ public class FileUtil {
             }
         }
 
+        // compare full path name to see if same as settings
+        if (filename.startsWith(getPreferencesPath())) {
+            return SETTINGS + filename.substring(getPreferencesPath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
+        }
+
         // now check for relative to program dir
         if (filename.startsWith(getProgramPath())) {
             return PROGRAM + filename.substring(getProgramPath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
@@ -348,8 +376,8 @@ public class FileUtil {
      * This form supports a specific use case concerning profiles that are
      * stored within the User files directory, which will cause the
      * {@link jmri.profile.ProfileManager} to write an incorrect path for the
-     * current profile. In most cases {@link #getPortableFilename(java.lang.String)}
-     * is preferable.
+     * current profile. In most cases
+     * {@link #getPortableFilename(java.lang.String)} is preferable.
      *
      * @param filename Filename to be represented
      * @param ignoreUserFilesPath true if paths in the User files path should be
@@ -366,7 +394,8 @@ public class FileUtil {
                 || filename.startsWith(PROGRAM)
                 || filename.startsWith(HOME)
                 || filename.startsWith(PREFERENCES)
-                || filename.startsWith(PROFILE)) {
+                || filename.startsWith(PROFILE)
+                || filename.startsWith(SETTINGS)) {
             return getPortableFilename(getExternalFilename(filename), ignoreUserFilesPath, ignoreProfilePath);
         } else {
             // treat as pure filename
