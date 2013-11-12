@@ -7,8 +7,11 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
+ * A JMRI application profile. Profiles allow a JMRI application to load
+ * completely separate set of preferences at each launch without relying on host
+ * OS-specific tricks to ensure this happens.
  *
- * @author rhwood
+ * @author rhwood Copyright (C) 2013
  */
 public class Profile {
 
@@ -90,6 +93,7 @@ public class Profile {
      * Append ~ to the directory containing the profile so that the Profile's Id
      * is not equal to the Profile's location. This method also removes the
      * Profile from the ProfileManager's list of available Profiles.
+     *
      * @param disabled
      * @throws java.io.IOException
      */
@@ -174,5 +178,16 @@ public class Profile {
         }
         final Profile other = (Profile) obj;
         return !((this.id == null) ? (other.id != null) : !this.id.equals(other.id));
+    }
+
+    /**
+     * Test if the profile is complete. A profile is considered complete if it
+     * can be instantiated using {@link #Profile(java.io.File)} and has a
+     * ProfileConfig.xml file within it's private directory.
+     *
+     * @return true if ProfileConfig.xml exists where expected.
+     */
+    public boolean isComplete() {
+        return (new File(this.getPath(), Profile.CONFIG_FILENAME)).exists();
     }
 }
