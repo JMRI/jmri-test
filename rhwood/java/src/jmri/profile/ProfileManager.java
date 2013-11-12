@@ -319,12 +319,12 @@ public class ProfileManager extends Bean {
         for (Profile p : this.profiles) {
             Element e = new Element(PROFILE);
             e.setAttribute(Profile.ID, p.getId());
-            e.setAttribute(Profile.PATH, FileUtil.getPortableFilename(p.getPath(), true));
+            e.setAttribute(Profile.PATH, FileUtil.getPortableFilename(p.getPath(), true, true));
             profilesElement.addContent(e);
         }
         for (File f : this.searchPaths) {
             Element e = new Element(Profile.PATH);
-            e.setAttribute(Profile.PATH, FileUtil.getPortableFilename(f.getPath(), true));
+            e.setAttribute(Profile.PATH, FileUtil.getPortableFilename(f.getPath(), true, true));
             pathsElement.addContent(e);
         }
         doc.getRootElement().addContent(profilesElement);
@@ -407,46 +407,5 @@ public class ProfileManager extends Bean {
             p.setDisabled(false);
         }
         this.addProfile(p);
-    }
-
-    /**
-     * Create a default profile if no profiles exist.
-     *
-     * @return A new profile or null if profiles already exist.
-     * @throws IOException
-     */
-    public static Profile createDefaultProfile() throws IllegalArgumentException, IOException {
-        if (ProfileManager.defaultManager().profiles.isEmpty()) {
-            String pn = Bundle.getMessage("defaultProfileName");
-            String pid = FileUtil.sanitizeFilename(pn);
-            File pp = new File(FileUtil.getPreferencesPath() + pid);
-            Profile profile = new Profile(pn, pid, pp);
-            ProfileManager.defaultManager().addProfile(profile);
-            log.info("Created default profile \"{}\"", pn);
-            return profile;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Copy a JMRI configuration not in a profile and its user preferences to a
-     * profile.
-     *
-     * @param config
-     * @param name
-     * @return The profile with the migrated configuration.
-     * @throws IllegalArgumentException
-     * @throws IOException
-     */
-    public static Profile migrateConfigToProfile(File config, String name) throws IllegalArgumentException, IOException {
-        String pid = FileUtil.sanitizeFilename(name);
-        File pp = new File(FileUtil.getPreferencesPath(), pid);
-        Profile profile = new Profile(name, pid, pp);
-        FileUtil.copy(config, new File(profile.getPath(), Profile.CONFIG_FILENAME));
-        FileUtil.copy(new File(config.getParentFile(), "UserPrefs" + config.getName()), new File(profile.getPath(), "UserPrefs" + Profile.CONFIG_FILENAME)); // NOI18N
-        ProfileManager.defaultManager().addProfile(profile);
-        log.info("Migrated \"{}\" config to profile \"{}\"", name, name);
-        return profile;
     }
 }

@@ -82,7 +82,8 @@ import jmri.plaf.macosx.PreferencesHandler;
 import jmri.plaf.macosx.QuitHandler;
 import jmri.profile.Profile;
 import jmri.profile.ProfileManager;
-import jmri.profile.ProfileManagerDialog;
+import jmri.profile.ProfileManagerSwingUtil;
+import jmri.profile.ProfileManagerUtil;
 import jmri.util.FileUtil;
 import jmri.util.HelpUtil;
 import jmri.util.JmriJFrame;
@@ -193,22 +194,8 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         // - PCat + PConf - XConf = no prep (user has deleted catalog)
         // handle migrate and new use cases (three) without accidentally triggering on a no prep case
         if (!ProfileManager.defaultManager().getConfigFile().exists()) { // - PConf
-            File configFile;
-            if (!new File(configFilename).isAbsolute()) {
-                configFile = new File(FileUtil.getPreferencesPath() + configFilename);
-            } else {
-                configFile = new File(configFilename);
-            }
             try {
-                if (ProfileManager.defaultManager().getProfiles().length == 0) { // - PCat - PConf
-                    if (!configFile.exists()) { // - PCat - PConf - XConf = new use
-                        ProfileManager.defaultManager().setActiveProfile(ProfileManager.createDefaultProfile());
-                    } else { // - PCat - PConf + XConf = migrate
-                        ProfileManager.defaultManager().setActiveProfile(ProfileManager.migrateConfigToProfile(configFile, jmri.Application.getApplicationName()));
-                    }
-                } else if (configFile.exists()) { // + PCat - PConf + XConf = migrate
-                    ProfileManager.defaultManager().setActiveProfile(ProfileManager.migrateConfigToProfile(configFile, jmri.Application.getApplicationName()));
-                } // all other cases need no prep
+                ProfileManagerUtil.migrateToProfiles(configFilename); // migrate and new use cases
             } catch (IOException ex) {
                 // TODO: notify user of inability to write to profile location
                 log.error(ex.getLocalizedMessage(), ex);
@@ -218,19 +205,7 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
             }
         }
         try {
-            if (ProfileManager.defaultManager().getActiveProfile() == null) {
-                ProfileManager.defaultManager().readActiveProfile();
-                // Automatically start with only profile if only one profile
-                if (ProfileManager.defaultManager().getProfiles().length == 1) {
-                    ProfileManager.defaultManager().setActiveProfile(ProfileManager.defaultManager().getProfiles(0));
-                    // Display profile selector if user did not choose to auto start with last used profile
-                } else if (!ProfileManager.defaultManager().isAutoStartActiveProfile()) {
-                    ProfileManagerDialog pmd = new ProfileManagerDialog(sp, true);
-                    pmd.setLocationRelativeTo(sp);
-                    pmd.setVisible(true);
-                    ProfileManager.defaultManager().saveActiveProfile();
-                }
-            }
+            ProfileManagerSwingUtil.promptForProfile(sp);
             // Manually setting the configFilename property since calling
             // Apps.setConfigFilename() does not reset the system property
             configFilename = FileUtil.getProfilePath() + Profile.CONFIG_FILENAME;

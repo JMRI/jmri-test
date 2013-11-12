@@ -265,7 +265,7 @@ public class FileUtil {
      * @since 2.7.2
      */
     static public String getPortableFilename(File file) {
-        return FileUtil.getPortableFilename(file, false);
+        return FileUtil.getPortableFilename(file, false, false);
     }
 
     /**
@@ -283,10 +283,12 @@ public class FileUtil {
      * @param file File at path to be represented
      * @param ignoreUserFilesPath true if paths in the User files path should be
      * stored as absolute paths, which is often not desirable.
+     * @param ignoreProfilePath true if paths in the profile should be stored as
+     * absolute paths, which is often not desirable.
      * @return Storage format representation
      * @since 3.5.5
      */
-    static public String getPortableFilename(File file, boolean ignoreUserFilesPath) {
+    static public String getPortableFilename(File file, boolean ignoreUserFilesPath, boolean ignoreProfilePath) {
         // compare full path name to see if same as preferences
         String filename = file.getAbsolutePath();
 
@@ -302,9 +304,11 @@ public class FileUtil {
             }
         }
 
-        // compare full path name to see if same as profile
-        if (filename.startsWith(getProfilePath())) {
-            return PROFILE + filename.substring(getProfilePath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
+        if (!ignoreProfilePath) {
+            // compare full path name to see if same as profile
+            if (filename.startsWith(getProfilePath())) {
+                return PROFILE + filename.substring(getProfilePath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
+            }
         }
 
         // now check for relative to program dir
@@ -332,7 +336,7 @@ public class FileUtil {
      * @since 2.7.2
      */
     static public String getPortableFilename(String filename) {
-        return FileUtil.getPortableFilename(filename, false);
+        return FileUtil.getPortableFilename(filename, false, false);
     }
 
     /**
@@ -344,16 +348,18 @@ public class FileUtil {
      * This form supports a specific use case concerning profiles that are
      * stored within the User files directory, which will cause the
      * {@link jmri.profile.ProfileManager} to write an incorrect path for the
-     * current profile. In most cases {@link #getPortableFilename(java.io.File)}
+     * current profile. In most cases {@link #getPortableFilename(java.lang.String)}
      * is preferable.
      *
      * @param filename Filename to be represented
      * @param ignoreUserFilesPath true if paths in the User files path should be
      * stored as absolute paths, which is often not desirable.
+     * @param ignoreProfilePath true if paths in the profile path should be
+     * stored as absolute paths, which is often not desirable.
      * @return Storage format representation
      * @since 3.5.5
      */
-    static public String getPortableFilename(String filename, boolean ignoreUserFilesPath) {
+    static public String getPortableFilename(String filename, boolean ignoreUserFilesPath, boolean ignoreProfilePath) {
         // if this already contains prefix, run through conversion to normalize
         if (filename.startsWith(FILE)
                 || filename.startsWith(RESOURCE)
@@ -361,10 +367,10 @@ public class FileUtil {
                 || filename.startsWith(HOME)
                 || filename.startsWith(PREFERENCES)
                 || filename.startsWith(PROFILE)) {
-            return getPortableFilename(getExternalFilename(filename), ignoreUserFilesPath);
+            return getPortableFilename(getExternalFilename(filename), ignoreUserFilesPath, ignoreProfilePath);
         } else {
             // treat as pure filename
-            return getPortableFilename(new File(filename), ignoreUserFilesPath);
+            return getPortableFilename(new File(filename), ignoreUserFilesPath, ignoreProfilePath);
         }
     }
 
