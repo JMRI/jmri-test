@@ -739,6 +739,7 @@ public class FileUtil {
         log.info("File path {} is {}", FileUtil.PROGRAM, FileUtil.getProgramPath());
         log.info("File path {} is {}", FileUtil.PREFERENCES, FileUtil.getUserFilesPath());
         log.info("File path {} is {}", FileUtil.PROFILE, FileUtil.getProfilePath());
+        log.info("File path {} is {}", FileUtil.SETTINGS, FileUtil.getPreferencesPath());
         log.info("File path {} is {}", FileUtil.HOME, FileUtil.getHomePath());
     }
 
@@ -829,20 +830,30 @@ public class FileUtil {
             return;
         }
         if (!dest.exists()) {
-            dest.createNewFile();
+            if (source.isDirectory()) {
+                dest.mkdirs();
+            } else {
+                dest.createNewFile();
+            }
         }
-        FileChannel sourceChannel;
-        FileChannel destination;
-        sourceChannel = new FileInputStream(source).getChannel();
-        destination = new FileOutputStream(dest).getChannel();
-        if (destination != null && sourceChannel != null) {
-            destination.transferFrom(sourceChannel, 0, sourceChannel.size());
-        }
-        if (sourceChannel != null) {
-            sourceChannel.close();
-        }
-        if (destination != null) {
-            destination.close();
+        if (source.isDirectory()) {
+            for (File file : source.listFiles()) {
+                FileUtil.copy(source, new File(dest, file.getName()));
+            }
+        } else {
+            FileChannel sourceChannel;
+            FileChannel destination;
+            sourceChannel = new FileInputStream(source).getChannel();
+            destination = new FileOutputStream(dest).getChannel();
+            if (destination != null && sourceChannel != null) {
+                destination.transferFrom(sourceChannel, 0, sourceChannel.size());
+            }
+            if (sourceChannel != null) {
+                sourceChannel.close();
+            }
+            if (destination != null) {
+                destination.close();
+            }
         }
     }
 }
