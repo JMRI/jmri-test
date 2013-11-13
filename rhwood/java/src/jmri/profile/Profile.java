@@ -27,7 +27,8 @@ public class Profile {
     public static final String CONFIG_FILENAME = "ProfileConfig.xml"; // NOI18N
 
     /**
-     * Create a Profile object given just a path to it.
+     * Create a Profile object given just a path to it. The Profile must exist
+     * in storage on the computer.
      *
      * @param path The Profile's directory
      * @throws IOException
@@ -38,6 +39,13 @@ public class Profile {
     }
 
     /**
+     * Create a Profile object and a profile in storage. A Profile cannot exist
+     * in storage on the computer at the path given. Since this is a new
+     * profile, the id must match the last element in the path.
+     * <p>
+     * This is the only time the id can be set on a Profile, as the id becomes a
+     * read-only property of the Profile. The {@link ProfileManager} will only
+     * load a single profile with a given id.
      *
      * @param name
      * @param id
@@ -90,9 +98,9 @@ public class Profile {
     }
 
     /**
-     * Append ~ to the directory containing the profile so that the Profile's Id
-     * is not equal to the Profile's location. This method also removes the
-     * Profile from the ProfileManager's list of available Profiles.
+     * Mark the Profile as not usable. This method also removes the Profile from
+     * the ProfileManager's list of available Profiles. The Profile will not be
+     * selectable when starting a JMRI application.
      *
      * @param disabled
      * @throws java.io.IOException
