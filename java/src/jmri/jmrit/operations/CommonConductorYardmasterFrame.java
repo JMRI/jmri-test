@@ -186,10 +186,13 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 		textTrainRouteLocationComment.setBackground(null);
 
 		// row 12
-		pWorkPanes.setLayout(new BoxLayout(pWorkPanes, BoxLayout.X_AXIS));
+		if ((getPreferredSize().width > Control.widePanelWidth && Setup.isTabEnabled())
+				|| (getPreferredSize().width > Control.widePanelWidth-200 && !Setup.isTabEnabled()))
+			pWorkPanes.setLayout(new BoxLayout(pWorkPanes, BoxLayout.X_AXIS));
+		else
+			pWorkPanes.setLayout(new BoxLayout(pWorkPanes, BoxLayout.Y_AXIS));
 		pWorkPanes.add(pickupPane);
 		pWorkPanes.add(setoutPane);
-//		pWorkPanes.setPreferredSize(new Dimension(600, 400));
 
 		// row 13
 		pStatus.setLayout(new GridBagLayout());
@@ -479,7 +482,9 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 				setCarButtonActionPerfomed(e);
 			}
 		});
-		JLabel label = new JLabel(car.toString());
+		JLabel label = new JLabel(TrainCommon.padString(car.toString(), Control.max_len_string_attibute
+				+ Control.max_len_string_road_number));
+		setLabelFont(label);
 		addItem(pSet, label, 0, 0);
 		addItemLeft(pSet, carSetButton, 1, 0);
 		return pSet;
@@ -489,6 +494,13 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 		if (Setup.isTabEnabled()) {
 			Font font = new Font(Setup.getFontName(), Font.PLAIN, checkBox.getFont().getSize());
 			checkBox.setFont(font);
+		}
+	}
+	
+	protected void setLabelFont(JLabel label) {
+		if (Setup.isTabEnabled()) {
+			Font font = new Font(Setup.getFontName(), Font.PLAIN, label.getFont().getSize());
+			label.setFont(font);
 		}
 	}
 

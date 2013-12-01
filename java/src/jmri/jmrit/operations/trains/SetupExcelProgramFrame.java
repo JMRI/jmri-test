@@ -72,7 +72,7 @@ public class SetupExcelProgramFrame extends OperationsFrame {
 		addButtonAction(testButton);
 		addButtonAction(saveButton);
 
-		addHelpMenu("package.jmri.jmrit.operations.Operations_TrainScripts", true); // NOI18N
+		addHelpMenu("package.jmri.jmrit.operations.Operations_SetupExcelProgram", true); // NOI18N
 		setTitle(Bundle.getMessage("MenuItemSetupExcelProgram"));
 		
 		setMinimumSize(new Dimension(Control.smallPanelWidth, Control.smallPanelHeight));
@@ -93,7 +93,7 @@ public class SetupExcelProgramFrame extends OperationsFrame {
 						.getMessage("ManifestCreatorFound"), JOptionPane.INFORMATION_MESSAGE);
 			} else {
 				JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle
-						.getMessage("DirectoryNameFileName"), new Object[] {
+						.getMessage("LoadDirectoryNameFileName"), new Object[] {
 						TrainCustomManifest.getDirectoryName(), TrainCustomManifest.getFileName() }), Bundle
 						.getMessage("ManifestCreatorNotFound"), JOptionPane.ERROR_MESSAGE);
 			}

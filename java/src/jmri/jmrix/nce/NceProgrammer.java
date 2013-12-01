@@ -82,6 +82,7 @@ public class NceProgrammer extends AbstractProgrammer implements NceListener {
 
     public int getMode() { return _mode; }
 
+    @Override
     public boolean getCanRead() {
     	if (tc != null && tc.getUsbSystem() != NceTrafficController.USB_SYSTEM_POWERCAB &&
     			tc.getUsbSystem() != NceTrafficController.USB_SYSTEM_NONE)
@@ -90,6 +91,23 @@ public class NceProgrammer extends AbstractProgrammer implements NceListener {
     		return true;
     	}
 
+    public boolean getCanWrite(int mode, String cv) {
+       if ((Integer.parseInt(cv) > 256) &&
+               ((mode == Programmer.PAGEMODE) ||
+                   (mode == Programmer.DIRECTBYTEMODE) ||
+                   (mode == Programmer.REGISTERMODE)
+               ) && ((tc != null) && (
+                       (tc.getCommandOptions() == NceTrafficController.OPTION_1999) |
+                       (tc.getCommandOptions() == NceTrafficController.OPTION_2004) |
+                       (tc.getCommandOptions() == NceTrafficController.OPTION_2006))
+                   )
+               ) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
     // notify property listeners - see AbstractProgrammer for more
 
     @SuppressWarnings("unchecked")
@@ -122,7 +140,7 @@ public class NceProgrammer extends AbstractProgrammer implements NceListener {
         if (log.isDebugEnabled()) log.debug("writeCV "+CV+" listens "+p);
         useProgrammer(p);
         // prevent writing Op mode CV > 255 on PowerHouse 2007C and earlier
-        if ((CV > 255) && 
+        if ((CV > 256) && 
         		((getMode() == Programmer.PAGEMODE) ||
     				(getMode() == Programmer.DIRECTBYTEMODE) ||
     				(getMode() == Programmer.REGISTERMODE)

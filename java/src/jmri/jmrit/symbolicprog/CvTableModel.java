@@ -73,6 +73,19 @@ public class CvTableModel extends javax.swing.table.AbstractTableModel implement
         return mProgrammer;
     }
 
+    public void setProgrammer(Programmer p) { 
+        mProgrammer = p;
+        // tell all variables
+        for (CvValue cv : _cvAllVector) {
+            if (cv!=null) cv.setProgrammer(p);
+        }
+        for (CvValue cv : _cvDisplayVector) {
+            if (cv!=null) cv.setProgrammer(p);
+        }
+        log.debug("Set programmer in "+_cvAllVector.size()+"CVs");
+        
+    }
+
     // basic methods for AbstractTableModel implementation
     public int getRowCount() { return _numRows; }
 

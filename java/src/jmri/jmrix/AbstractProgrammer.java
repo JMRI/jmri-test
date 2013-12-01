@@ -59,11 +59,60 @@ public abstract class AbstractProgrammer implements Programmer {
         }
     }
 
+    public void writeCV(String CV, int val, ProgListener p) throws ProgrammerException {
+        writeCV(Integer.parseInt(CV), val, p);
+    }
+    public void readCV(String CV, ProgListener p) throws ProgrammerException {
+        readCV(Integer.parseInt(CV), p);
+    }
+    public void confirmCV(String CV, int val, ProgListener p) throws ProgrammerException {
+        confirmCV(Integer.parseInt(CV), val, p);
+    }
+    
     /**
-     * By default, the highest CV that can be programmed is 2048.
+     * Basic implementation.  
+     * Override this to turn reading on and off globally.
      */
-    public int getMaxCvAddr() { return 2048; }
+    public boolean getCanRead() { return true; }
+    
+    /**
+     * Unless overridden, checks using the current default programming mode
+     * <p>
+     * Final to avoid implementation issues when somebody 
+     * reimplements this, but not getCanRead(int mode, String addr).
+     */
+    public final boolean getCanRead(String addr) { return getCanRead(getMode(), addr); }
 
+    /**
+     * Most detailed implementation, requires
+     * that the CV be a valid number and that reading is possible
+     */
+    public boolean getCanRead(int mode, String addr) {
+        if (!getCanRead()) return false; // check basic implementation first
+        return Integer.parseInt(addr)<=1024; 
+    }
+    
+    /**
+     * Basic implementation.  
+     * Override this to turn writing on and off globally.
+     */
+    public boolean getCanWrite()  { return true; }
+    /**
+     * Checks using the current default programming mode.
+     * <p>
+     * Final to avoid implementation issues when somebody 
+     * reimplements this, but not getCanWrite(int mode, String addr).
+     */
+    public final boolean getCanWrite(String addr) { return getCanWrite(getMode(), addr);  }
+    /**
+     * Most detailed implementation, requires
+     * that the CV be a valid number and that writing is possible
+     */
+    public boolean getCanWrite(int mode, String addr)  { 
+        if (!getCanWrite()) return false; // check basic implementation first
+        return Integer.parseInt(addr)<=1024; 
+    }
+    
     /**
      * Internal routine to start timer to protect the mode-change.
      */

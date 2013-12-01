@@ -139,9 +139,9 @@ public class IconDialog extends ItemDialog {
        iconPanel.setLayout(gridbag);
 
        int cnt = _iconMap.size();
-       int numCol = 2;
+       int numCol = cnt;
        if (cnt>6) {
-           numCol = 3;
+           numCol = 6;
        }
        GridBagConstraints c = new GridBagConstraints();
        c.fill = GridBagConstraints.NONE;
@@ -173,6 +173,7 @@ public class IconDialog extends ItemDialog {
     		   image.setText(Bundle.getMessage("invisibleIcon"));
     		   image.setForeground(Color.lightGray);
     	   }
+    	   image.setToolTipText(icon.getName());
     	   JPanel iPanel = new JPanel();
     	   iPanel.add(image);
 

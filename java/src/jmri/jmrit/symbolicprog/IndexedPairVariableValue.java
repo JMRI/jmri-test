@@ -40,6 +40,8 @@ public class IndexedPairVariableValue extends VariableValue
                                      int secondCVrow, String pSecondCV, int pFactor, int pOffset, String uppermask,
                                      boolean upperFirst) {
         super(name, comment, cvName, readOnly, infoOnly, writeOnly, opsOnly, cvNum, mask, v, status, stdname);
+        _mask = mask;
+        _uppermask = uppermask;
         _row    = row;
         _secondCVrow = secondCVrow;
         _maxVal = maxVal;
@@ -95,6 +97,8 @@ public class IndexedPairVariableValue extends VariableValue
     int mSecondCVrow;  // passed in from outside
     int mFactor;
     int mOffset;
+    String _mask;
+    String _uppermask;
 
     public int getSecondCvNum() { return mSecondCVrow;}
 
@@ -123,6 +127,17 @@ public class IndexedPairVariableValue extends VariableValue
         return "Split value";
     }
 
+    public String getMask() { return _uppermask+_mask; }
+
+    /** 
+     * Provide a user-readable description of
+     * the CVs accessed by this variable.
+     */
+     
+     public String getCvDescription() {
+        return "CV"+getCvName()+" & CV"+mSecondCVname;
+     }
+     
     String oldContents = "";
 
     void enterField() {
