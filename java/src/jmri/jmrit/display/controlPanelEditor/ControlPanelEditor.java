@@ -1405,7 +1405,6 @@ public class ControlPanelEditor extends Editor implements DropTargetListener, Cl
     }
  
     private HashMap <String, NamedIcon> _portalIconMap;
-    private String _portalIconFamily = "Standard";
 
     private void makePortalIconMap() {
 		_portalIconMap = new HashMap <String, NamedIcon>();
@@ -1432,10 +1431,6 @@ public class ControlPanelEditor extends Editor implements DropTargetListener, Cl
     		makePortalIconMap();
     	}
     	return _portalIconMap;
-    }
-    
-    public String getPortalIconFamily() {
-    	return _portalIconFamily;
     }
     
     public void setDefaultPortalIcons(HashMap <String, NamedIcon> map) {
@@ -1613,10 +1608,10 @@ public class ControlPanelEditor extends Editor implements DropTargetListener, Cl
 
     static protected class PositionableListDnD implements Transferable {
 //        ControlPanelEditor _sourceEditor;
-        List _sourceEditor;
+        List<Positionable> _sourceEditor;
         DataFlavor _dataFlavor;
 
-        PositionableListDnD(List source) {
+        PositionableListDnD(List<Positionable> source) {
             _sourceEditor = source;
             _dataFlavor = new DataFlavor(List.class, "JComponentList");
         }

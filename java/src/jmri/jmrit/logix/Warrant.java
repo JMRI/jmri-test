@@ -3,14 +3,12 @@ package jmri.jmrit.logix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import jmri.DccThrottle;
 import jmri.DccLocoAddress;
 import jmri.InstanceManager;
 import jmri.NamedBean;
 import jmri.ThrottleListener;
-import jmri.jmrit.display.PositionablePopupUtil;
 import jmri.jmrit.roster.Roster;
 import jmri.jmrit.roster.RosterEntry;
 
@@ -48,7 +46,7 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
     protected float _throttleFactor = 1.0f;
     protected List <ThrottleSetting> _commands;   // temp commands used in run mode
     private int   _idxCurrentOrder;       // Index of block at head of train (if running)
-    protected int   _idxLastOrder;       	// Index of block at tail of train just left
+    private int   _idxLastOrder;       	// Index of block at tail of train just left
     protected String _currentSpeed;			// name of last moving speed, i.e. never "Stop"
     protected String _exitSpeed;			// name of speed to exit the "protected" block
 
@@ -390,8 +388,8 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
                 if (getThrottleCommands().size() == 0) {
                     return Bundle.getMessage("NoCommands", getDisplayName());
                 }
-                if (_idxLastOrder==-1) {
-                	_idxLastOrder = 0;
+                if (_idxCurrentOrder!=0 && _idxLastOrder==_idxCurrentOrder) {
+                	//_idxLastOrder = 0;
                 	return Bundle.getMessage("locationUnknown", _trainName);
                 } else {
                     return Bundle.getMessage("Idle");                	
@@ -913,7 +911,7 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
                 _stoppingSignal.removePropertyChangeListener(this);
                 _stoppingSignal = null;
                 if (_engineer!=null) {
-                    _engineer.synchNotify(getBlockAt(_idxCurrentOrder)); // notify engineer of control point
+                    // notify engineer of control point
                     _engineer.rampSpeedTo(getCurrentSpeedAt(_idxCurrentOrder) ,0);
                 }
                 return;
@@ -990,12 +988,12 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
                 	if (_idxCurrentOrder==0) {// in Starting block, no engineer yet
                 		OBlock block = getBlockAt(_idxCurrentOrder);
                 		if ((block.getState() &OBlock.DARK) != 0) {
-                            _engineer.synchNotify(block); // notify engineer of control point
+                            // notify engineer of control point
                             _engineer.rampSpeedTo(getNextSpeed(), 0);          			
                 		}
                 	} else {
                 		if (_engineer!=null) {
-                            _engineer.synchNotify(_stoppingBlock); // notify engineer of control point
+                            // notify engineer of control point
                             _engineer.rampSpeedTo(getNextSpeed(), 0);
                     	} else {
                     		log.error("checkStoppingBlock: No Engineer for warrant "+getDisplayName());
@@ -1031,7 +1029,7 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
 		String msg = _orders.get(_idxCurrentOrder+1).setPath(this);                    	
         if (msg==null) {
     		if (_engineer!=null) {
-                _engineer.synchNotify(getBlockAt(_idxCurrentOrder+1)); // notify engineer of control point
+                // notify engineer of control point
                 _engineer.rampSpeedTo(getNextSpeed(), 0);
         	} else {
         		log.error("checkShareTOBlock: No Engineer for warrant "+getDisplayName());
@@ -1044,7 +1042,7 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
     
     private void retryBlocKWaiting() {
     	if (_stoppingBlock==null && _shareTOBlock==null) {
-            _engineer.synchNotify(getBlockAt(_idxCurrentOrder+1)); // notify engineer of control point
+            // notify engineer of control point
             _engineer.rampSpeedTo(getNextSpeed(), 0);
             return;
     	}
@@ -1154,7 +1152,7 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
         	// End of script will deallocate warrant.
             currentSpeed = getCurrentSpeedAt(_idxCurrentOrder);        	
             if (_engineer!=null) {
-                _engineer.synchNotify(block); // notify engineer of control point
+                // notify engineer of control point
                 _engineer.rampSpeedTo(currentSpeed, 0);
             }
 
@@ -1180,7 +1178,7 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
     			} else {
     				_engineer.setRunOnET(false);
     			}
-    			_engineer.synchNotify(block); // notify engineer of control point
+    			// notify engineer of control point
                 _engineer.rampSpeedTo(currentSpeed, 0);
             }
 
@@ -1254,7 +1252,7 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
                    	}               		
                	} else {
                		// train is lost
-                	_idxLastOrder = -1;
+                	//_idxLastOrder = -1;
                     firePropertyChange("blockChange", block, null);
                     _engineer.setHalt(true);
 //                	setRunMode(Warrant.MODE_NONE, null, null, null, false);
@@ -1267,7 +1265,7 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
             if (_engineer!=null) {
                 block.setValue(_trainName);
                 block.setState(block.getState() | OBlock.RUNNING);
-                _engineer.synchNotify(block); // notify engineer of control point
+                // notify engineer of control point
                 _engineer.rampSpeedTo(getCurrentSpeedAt(_idxCurrentOrder), 0);
             } else if (_runMode!=MODE_LEARN &&_idxCurrentOrder+1 == _orders.size()){
             	// this would be a very weird case
@@ -1278,7 +1276,7 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
             // Since it is the next block ahead of the train, we can move.
             // Presumably we have stopped within the current block.
             if (_engineer!=null && allocateNextBlock(getBlockOrderAt(idx))) {
-                _engineer.synchNotify(block); // notify engineer of control point
+                // notify engineer of control point
                 _engineer.rampSpeedTo(getCurrentSpeedAt(_idxCurrentOrder+1), 0);
             }
         } else {
