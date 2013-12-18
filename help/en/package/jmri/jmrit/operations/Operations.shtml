@@ -401,6 +401,12 @@
    When selected, add the operations menu to the main menu bar. The operations menu will appear the
    next time you restart JMRI.
 
+   <P>
+    You can also automatically open any of the six operations windows when you start JMRI. From the
+    main menu, under "Edit-&gt;Preferences" select <A
+     HREF="../../../apps/TabbedPreferences.shtml#Startup">Start Up</A>, and add an "Action".
+   </P>
+
    <H3>Close on Save</H3>
 
    When selected, close operation windows when the "Save" button is pressed.
@@ -811,6 +817,10 @@
      <td>Parameters</td>
     </tr>
     <tr>
+     <td>SWL</td>
+     <td>Switch List</td>
+    </tr>
+    <tr>
      <td>DL</td>
      <td>Departure Location Name</td>
      <td>Name</td>
@@ -855,6 +865,10 @@
      <td>VN</td>
      <td>Visit Number</td>
      <td>Number</td>
+    </tr>
+    <tr>
+     <td>END</td>
+     <td>End Switch List</td>
     </tr>
    </table>
 

@@ -493,8 +493,7 @@ public class WarrantFrame extends WarrantRoute {
                 try {
                     Float.parseFloat(_throttleFactorBox.getText());
                 } catch (NumberFormatException nfe) {
-                    JOptionPane.showMessageDialog(null, Bundle.getMessage("MustBeFloat"),
-                            Bundle.getMessage("WarningTitle"), JOptionPane.WARNING_MESSAGE);
+                	showWarning("MustBeFloat");
                     _throttleFactorBox.setText("1.0");
                 }
             }
@@ -660,8 +659,7 @@ public class WarrantFrame extends WarrantRoute {
     private void insertRow() {
         int row = _commandTable.getSelectedRow();
         if (row<0) {
-            JOptionPane.showMessageDialog(null, Bundle.getMessage("selectRow"),
-            Bundle.getMessage("WarningTitle"), JOptionPane.WARNING_MESSAGE);
+        	showWarning("selectRow");
             return;
         }
         _throttleCommands.add(row, new ThrottleSetting(0, null, null, null));
@@ -671,16 +669,14 @@ public class WarrantFrame extends WarrantRoute {
     private void deleteRow() {
         int row = _commandTable.getSelectedRow();
         if (row<0) {
-            JOptionPane.showMessageDialog(null, Bundle.getMessage("selectRow"),
-            Bundle.getMessage("WarningTitle"), JOptionPane.WARNING_MESSAGE);
+        	showWarning("selectRow");
             return;
         }
         ThrottleSetting cmd = _throttleCommands.get(row);
         if (cmd!=null) {
         	String c = cmd.getCommand();
             if (c!=null && c.trim().toUpperCase().equals("NOOP")) {
-                JOptionPane.showMessageDialog(null, Bundle.getMessage("cannotDeleteNoop"),
-                Bundle.getMessage("WarningTitle"), JOptionPane.WARNING_MESSAGE);
+            	showWarning("cannotDeleteNoop");
                 return;
             }
             long time = cmd.getTime();
@@ -841,17 +837,15 @@ public class WarrantFrame extends WarrantRoute {
                 _dccNumBox.setText(_train.getDccLocoAddress().toString());
                 _rosterBox.setSelectedItem(_train.getId());
             } else {
-                _trainNameBox.setText("");
-                if (!isAddress) {
-                    _dccNumBox.setText("");
-                    _rosterBox.setSelectedItem(Bundle.getMessage("noSuchAddress"));
-                } else {
-                    _rosterBox.setSelectedItem(" ");
-                }
+                _rosterBox.setSelectedItem(Bundle.getMessage("noSuchAddress"));
                 return false;
             }
         }
-        if (_tabbedPane!=null) {
+        String n = _trainNameBox.getText();
+        if (n==null ||n.length()==0 || _train==null) {
+        	_trainNameBox.setText(_dccNumBox.getText());
+        }
+       if (_tabbedPane!=null) {
             _tabbedPane.invalidate();
         }
         return true;
@@ -1158,7 +1152,7 @@ public class WarrantFrame extends WarrantRoute {
             _warrant.addThrottleCommand(new ThrottleSetting(_throttleCommands.get(i)));
         }
         String name = _trainNameBox.getText();
-        if (name==null ||name.length()==0) {
+        if (name==null ||name.length()==0 || _train==null) {
         	name = _dccNumBox.getText();
         }
         _warrant.setTrainName(name);
@@ -1480,8 +1474,7 @@ public class WarrantFrame extends WarrantRoute {
                     break;
             }
             if (msg != null) {
-                JOptionPane.showMessageDialog(null, msg,
-                        Bundle.getMessage("WarningTitle"), JOptionPane.WARNING_MESSAGE);
+            	showWarning(msg);
             } else {
                 fireTableRowsUpdated(row, row);
             }

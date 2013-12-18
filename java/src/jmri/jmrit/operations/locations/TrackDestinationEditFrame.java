@@ -145,7 +145,7 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
 		// menuBar.add(_toolMenu);
 		// setJMenuBar(menuBar);
 
-		initMinimumSize(new Dimension(Control.panelWidth, Control.panelHeight));
+		initMinimumSize(new Dimension(Control.mediumPanelWidth, Control.panelHeight));
 	}
 
 	// Save, Delete, Add
@@ -198,7 +198,7 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
 			addCheckBoxAction(cb);
 			if (destinationsAll.isSelected()) {
 				cb.setSelected(true);
-			} else if (_track != null && _track.acceptsDestination(loc)) {
+			} else if (_track != null && _track.acceptsDestination(loc) ^ _track.getDestinationOption().equals(Track.EXCLUDE_DESTINATIONS)) {
 				cb.setSelected(true);
 			}
 		}

@@ -70,6 +70,7 @@ public class TrainByCarTypeFrame extends OperationsFrame implements java.beans.P
 		JPanel pCarType = new JPanel();
 		pCarType.setLayout(new GridBagLayout());
 		pCarType.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("Type")));
+		pCarType.setMaximumSize(new Dimension(2000, 50));
 
 		addItem(pCarType, typeComboBox, 0, 0);
 		addItem(pCarType, carsComboBox, 1, 0);
@@ -142,7 +143,7 @@ public class TrainByCarTypeFrame extends OperationsFrame implements java.beans.P
 			loc.setText(locationName);
 			addItemLeft(pLocations, loc, 0, y++);
 			Location location = locationManager.getLocationByName(locationName);
-			if (car != null && car.getTrack() != null && !car.getTrack().acceptsDestination(location)) {
+			if (car != null && car.getTrack() != null && !car.getTrack().acceptsDestination(location) && car.getLocation() != location) {
 				JLabel locText = new JLabel();
 				locText.setText(MessageFormat.format(Bundle.getMessage("CarOnTrackDestinationRestriction"),
 						new Object[] { car.toString(), car.getTrackName() }));
@@ -152,6 +153,11 @@ public class TrainByCarTypeFrame extends OperationsFrame implements java.beans.P
 			List<String> tracks = location.getTrackIdsByNameList(null);
 			for (int j = 0; j < tracks.size(); j++) {
 				Track track = location.getTrackById(tracks.get(j));
+				// show the car's track if there's a track destination restriction
+				if (car != null && car.getTrack() != null && !car.getTrack().acceptsDestination(location)
+						&& car.getTrack() != track) {
+					continue;
+				}
 				JLabel trk = new JLabel();
 				trk.setText(track.getName());
 				addItemLeft(pLocations, trk, 1, y);
@@ -166,7 +172,19 @@ public class TrainByCarTypeFrame extends OperationsFrame implements java.beans.P
 					op.setText(Bundle.getMessage("X(TrainType)"));
 				else if (car != null && !train.acceptsRoadName(car.getRoadName()))
 					op.setText(Bundle.getMessage("X(TrainRoad)"));
-				else if (car != null && !car.isCaboose() && !train.acceptsLoad(car.getLoadName(), car.getTypeName()))
+				// TODO need to do the same tests for caboose changes in the train's route
+				else if (car != null && car.isCaboose() && (train.getRequirements() & Train.CABOOSE) > 0
+						&& location.equals(car.getLocation()) && track.equals(car.getTrack())
+						&& !train.getCabooseRoad().equals("") && !car.getRoadName().equals(train.getCabooseRoad())
+						&& location.getName().equals(train.getTrainDepartsName()))
+					op.setText(Bundle.getMessage("X(TrainRoad)"));
+				else if (car != null && car.hasFred() && (train.getRequirements() & Train.FRED) > 0
+						&& location.equals(car.getLocation()) && track.equals(car.getTrack())
+						&& !train.getCabooseRoad().equals("") && !car.getRoadName().equals(train.getCabooseRoad())
+						&& location.getName().equals(train.getTrainDepartsName()))
+					op.setText(Bundle.getMessage("X(TrainRoad)"));
+				else if (car != null && !car.isCaboose() && !car.isPassenger()
+						&& !train.acceptsLoad(car.getLoadName(), car.getTypeName()))
 					op.setText(Bundle.getMessage("X(TrainLoad)"));
 				else if (car != null && !train.acceptsBuiltDate(car.getBuilt()))
 					op.setText(Bundle.getMessage("X(TrainBuilt)"));
