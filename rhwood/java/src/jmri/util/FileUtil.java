@@ -735,6 +735,9 @@ public class FileUtil {
         }
     }
 
+    /**
+     * Log all paths at the INFO level.
+     */
     static public void logFilePaths() {
         log.info("File path {} is {}", FileUtil.PROGRAM, FileUtil.getProgramPath());
         log.info("File path {} is {}", FileUtil.PREFERENCES, FileUtil.getUserFilesPath());
