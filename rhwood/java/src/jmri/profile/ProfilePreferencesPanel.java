@@ -15,20 +15,28 @@ import java.util.ResourceBundle;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 import jmri.swing.PreferencesPanel;
 import jmri.util.FileUtil;
 import org.slf4j.Logger;
@@ -50,7 +58,7 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         ProfileManager.defaultManager().addPropertyChangeListener(ProfileManager.PROFILES, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                profiles.repaint();
+                profilesTbl.repaint();
                 profilesValueChanged(null);
             }
         });
@@ -75,7 +83,7 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
             }
         });
         this.chkStartWithActiveProfile.setSelected(ProfileManager.defaultManager().isAutoStartActiveProfile());
-        profiles.setSelectedValue(ProfileManager.defaultManager().getActiveProfile(), true);
+        // TODO profilesTbl.setSelectedValue(ProfileManager.defaultManager().getActiveProfile(), true);
         this.profilesValueChanged(null);
         // Hide until I can figure out good way to export a profile
         // Should I include items in external user/roster/etc directories?
@@ -92,32 +100,69 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        profilesPopupMenu = new JPopupMenu();
+        renameMI = new JMenuItem();
+        jSeparator1 = new JPopupMenu.Separator();
+        enabledMI = new JCheckBoxMenuItem();
+        jSeparator2 = new JPopupMenu.Separator();
+        copyMI = new JMenuItem();
+        deleteMI = new JMenuItem();
         jTabbedPane1 = new JTabbedPane();
-        jPanel1 = new JPanel();
+        enabledPanel = new JPanel();
         chkStartWithActiveProfile = new JCheckBox();
         jLabel1 = new JLabel();
         jScrollPane1 = new JScrollPane();
-        profiles = new JList();
+        profilesTbl = new JTable();
         btnDisableProfile = new JButton();
         btnOpenExistingProfile = new JButton();
         btnCreateNewProfile = new JButton();
         btnActivateProfile = new JButton();
         btnExportProfile = new JButton();
-        jPanel3 = new JPanel();
+        disabledPanel = new JPanel();
         jLabel3 = new JLabel();
         jScrollPane3 = new JScrollPane();
         disabledProfiles = new JList();
         btnDeleteProfile = new JButton();
         btnEnableProfile = new JButton();
         btnExportDisabledProfile = new JButton();
-        jPanel2 = new JPanel();
+        searchPathsPanel = new JPanel();
         jLabel2 = new JLabel();
         jScrollPane2 = new JScrollPane();
         searchPaths = new JList();
         btnRemoveSearchPath = new JButton();
         btnAddSearchPath = new JButton();
 
+        profilesPopupMenu.addPopupMenuListener(new PopupMenuListener() {
+            public void popupMenuWillBecomeVisible(PopupMenuEvent evt) {
+                profilesPopupMenuPopupMenuWillBecomeVisible(evt);
+            }
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent evt) {
+            }
+            public void popupMenuCanceled(PopupMenuEvent evt) {
+            }
+        });
+
         ResourceBundle bundle = ResourceBundle.getBundle("jmri/profile/Bundle"); // NOI18N
+        renameMI.setText(bundle.getString("ProfilePreferencesPanel.renameMI.text")); // NOI18N
+        renameMI.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                renameMIActionPerformed(evt);
+            }
+        });
+        profilesPopupMenu.add(renameMI);
+        profilesPopupMenu.add(jSeparator1);
+
+        enabledMI.setSelected(true);
+        enabledMI.setText(bundle.getString("ProfilePreferencesPanel.enabledMI.text")); // NOI18N
+        profilesPopupMenu.add(enabledMI);
+        profilesPopupMenu.add(jSeparator2);
+
+        copyMI.setText(bundle.getString("ProfilePreferencesPanel.copyMI.text")); // NOI18N
+        profilesPopupMenu.add(copyMI);
+
+        deleteMI.setText(bundle.getString("ProfilePreferencesPanel.deleteMI.text")); // NOI18N
+        profilesPopupMenu.add(deleteMI);
+
         chkStartWithActiveProfile.setText(bundle.getString("ProfilePreferencesPanel.chkStartWithActiveProfile.text")); // NOI18N
         chkStartWithActiveProfile.setToolTipText(bundle.getString("ProfilePreferencesPanel.chkStartWithActiveProfile.toolTipText")); // NOI18N
         chkStartWithActiveProfile.addActionListener(new ActionListener() {
@@ -128,14 +173,33 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
 
         jLabel1.setText(bundle.getString("ProfilePreferencesPanel.jLabel1.text")); // NOI18N
 
-        profiles.setModel(new ProfileListModel());
-        profiles.setSelectedValue(ProfileManager.defaultManager().getActiveProfile(), true);
-        profiles.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent evt) {
-                profilesValueChanged(evt);
+        profilesTbl.setModel(new DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2"
+            }
+        ) {
+            Class[] types = new Class [] {
+                Object.class, String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                true, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(profiles);
+        jScrollPane1.setViewportView(profilesTbl);
 
         btnDisableProfile.setText(bundle.getString("ProfilePreferencesPanel.btnDisableProfile.text")); // NOI18N
         btnDisableProfile.setToolTipText(bundle.getString("ProfilePreferencesPanel.btnDisableProfile.toolTipText")); // NOI18N
@@ -177,20 +241,20 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
             }
         });
 
-        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        GroupLayout enabledPanelLayout = new GroupLayout(enabledPanel);
+        enabledPanel.setLayout(enabledPanelLayout);
+        enabledPanelLayout.setHorizontalGroup(
+            enabledPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(enabledPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(enabledPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(enabledPanelLayout.createSequentialGroup()
+                        .addGroup(enabledPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(chkStartWithActiveProfile)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(enabledPanelLayout.createSequentialGroup()
                                 .addComponent(btnActivateProfile)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnOpenExistingProfile)
@@ -203,17 +267,17 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
                         .addGap(0, 19, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        enabledPanelLayout.setVerticalGroup(
+            enabledPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(enabledPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(enabledPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(enabledPanelLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addGroup(enabledPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(btnDisableProfile)
                     .addComponent(btnOpenExistingProfile)
                     .addComponent(btnCreateNewProfile)
@@ -224,7 +288,7 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab(bundle.getString("ProfilePreferencesPanel.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
+        jTabbedPane1.addTab(bundle.getString("ProfilePreferencesPanel.enabledPanel.TabConstraints.tabTitle"), enabledPanel); // NOI18N
 
         jLabel3.setText(bundle.getString("ProfilePreferencesPanel.jLabel3.text")); // NOI18N
 
@@ -250,16 +314,16 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         btnExportDisabledProfile.setText(bundle.getString("ProfilePreferencesPanel.btnExportProfile.text")); // NOI18N
         btnExportDisabledProfile.setToolTipText(bundle.getString("ProfilePreferencesPanel.btnExportProfile.toolTipText")); // NOI18N
 
-        GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        GroupLayout disabledPanelLayout = new GroupLayout(disabledPanel);
+        disabledPanel.setLayout(disabledPanelLayout);
+        disabledPanelLayout.setHorizontalGroup(
+            disabledPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(disabledPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel3)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(disabledPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(disabledPanelLayout.createSequentialGroup()
                         .addComponent(btnEnableProfile)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnDeleteProfile)
@@ -269,24 +333,24 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
                     .addComponent(jScrollPane3, GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        disabledPanelLayout.setVerticalGroup(
+            disabledPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(disabledPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(disabledPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(disabledPanelLayout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane3, GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addGroup(disabledPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(btnDeleteProfile)
                     .addComponent(btnEnableProfile)
                     .addComponent(btnExportDisabledProfile))
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab(bundle.getString("ProfilePreferencesPanel.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
+        jTabbedPane1.addTab(bundle.getString("ProfilePreferencesPanel.disabledPanel.TabConstraints.tabTitle"), disabledPanel); // NOI18N
 
         jLabel2.setText(bundle.getString("ProfilePreferencesPanel.jLabel2.text")); // NOI18N
 
@@ -314,16 +378,16 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
             }
         });
 
-        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        GroupLayout searchPathsPanelLayout = new GroupLayout(searchPathsPanel);
+        searchPathsPanel.setLayout(searchPathsPanelLayout);
+        searchPathsPanelLayout.setHorizontalGroup(
+            searchPathsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(searchPathsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel2)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(searchPathsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(searchPathsPanelLayout.createSequentialGroup()
                         .addComponent(btnAddSearchPath)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRemoveSearchPath)
@@ -331,24 +395,24 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
                     .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        searchPathsPanelLayout.setVerticalGroup(
+            searchPathsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(searchPathsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(searchPathsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(searchPathsPanelLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                    .addGroup(searchPathsPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addGroup(searchPathsPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                             .addComponent(btnAddSearchPath)
                             .addComponent(btnRemoveSearchPath))))
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab(bundle.getString("ProfilePreferencesPanel.jPanel2.TabConstraints.tabTitle"), jPanel2); // NOI18N
+        jTabbedPane1.addTab(bundle.getString("ProfilePreferencesPanel.searchPathsPanel.TabConstraints.tabTitle"), searchPathsPanel); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -363,15 +427,15 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDisableProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnDisableProfileActionPerformed
-        if (profiles.getModel().getSize() > 1) {
+        if (profilesTbl.getModel().getRowCount() > 1) {
             try {
                 ((Profile) profiles.getSelectedValue()).setDisabled(true);
-                profiles.clearSelection();
+                profilesTbl.clearSelection();
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error disabling profile", JOptionPane.ERROR_MESSAGE);
                 log.error("Unable to disable profile", ex.getLocalizedMessage());
             }
-            profiles.repaint();
+            profilesTbl.repaint();
         }
     }//GEN-LAST:event_btnDisableProfileActionPerformed
 
@@ -445,16 +509,6 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         }
     }//GEN-LAST:event_searchPathsValueChanged
 
-    private void profilesValueChanged(ListSelectionEvent evt) {//GEN-FIRST:event_profilesValueChanged
-        if (profiles.getSelectedValue() != null && profiles.getSelectedValue().equals(ProfileManager.defaultManager().getActiveProfile())) {
-            this.btnDisableProfile.setEnabled(false);
-            this.btnActivateProfile.setEnabled(false);
-        } else {
-            this.btnDisableProfile.setEnabled(true);
-            this.btnActivateProfile.setEnabled(true);
-        }
-    }//GEN-LAST:event_profilesValueChanged
-
     private void btnExportProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnExportProfileActionPerformed
         JFileChooser chooser = new JFileChooser();
         chooser.setFileFilter(new FileNameExtensionFilter("ZIP Archives", "zip"));
@@ -485,6 +539,16 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         disabledProfiles.repaint();
     }//GEN-LAST:event_btnDeleteProfileActionPerformed
 
+    private void renameMIActionPerformed(ActionEvent evt) {//GEN-FIRST:event_renameMIActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_renameMIActionPerformed
+
+    private void profilesPopupMenuPopupMenuWillBecomeVisible(PopupMenuEvent evt) {//GEN-FIRST:event_profilesPopupMenuPopupMenuWillBecomeVisible
+        if (profilesTbl.getSelectedRowCount() == 1) {
+            this.renameMI.setEnabled(true);
+        }
+    }//GEN-LAST:event_profilesPopupMenuPopupMenuWillBecomeVisible
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton btnActivateProfile;
     private JButton btnAddSearchPath;
@@ -497,19 +561,26 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
     private JButton btnOpenExistingProfile;
     private JButton btnRemoveSearchPath;
     private JCheckBox chkStartWithActiveProfile;
+    private JMenuItem copyMI;
+    private JMenuItem deleteMI;
+    private JPanel disabledPanel;
     private JList disabledProfiles;
+    private JCheckBoxMenuItem enabledMI;
+    private JPanel enabledPanel;
     private JLabel jLabel1;
     private JLabel jLabel2;
     private JLabel jLabel3;
-    private JPanel jPanel1;
-    private JPanel jPanel2;
-    private JPanel jPanel3;
     private JScrollPane jScrollPane1;
     private JScrollPane jScrollPane2;
     private JScrollPane jScrollPane3;
+    private JSeparator jSeparator1;
+    private JSeparator jSeparator2;
     private JTabbedPane jTabbedPane1;
-    private JList profiles;
+    private JPopupMenu profilesPopupMenu;
+    private JTable profilesTbl;
+    private JMenuItem renameMI;
     private JList searchPaths;
+    private JPanel searchPathsPanel;
     // End of variables declaration//GEN-END:variables
 
     @Override
