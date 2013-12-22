@@ -1939,11 +1939,10 @@ public class PaneProgPane extends javax.swing.JPanel
                 int cvNum = cvList.get(i).intValue();
                 CvValue cv = _cvModel.getCvByRow(cvNum);
 
-                int num = cv.number();
                 int value = cv.getValue();
 
                 //convert and pad numbers as needed
-                String numString = Integer.toString(num);
+                String numString = cv.number();
                 String valueString = Integer.toString(value);
                 String valueStringHex = Integer.toHexString(value).toUpperCase();
                 if (value < 16)

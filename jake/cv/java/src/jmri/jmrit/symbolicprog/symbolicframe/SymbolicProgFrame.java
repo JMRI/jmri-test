@@ -231,7 +231,7 @@ public class SymbolicProgFrame extends jmri.util.JmriJFrame  {
 
     protected void newVarButtonPerformed()  {
         String name = newVarName.getText();
-        int CV = Integer.valueOf(newVarCv.getText()).intValue();
+        String CV = newVarCv.getText();
         String mask = newVarMask.getText();
 
         // ask Table model to do the actuall add

@@ -9,7 +9,7 @@ import java.beans.*;
 
 import javax.swing.*;
 
-import java.util.Vector;
+import java.util.*;
 
 import jmri.*;
 
@@ -29,12 +29,18 @@ public class IndexedCvTableModel extends javax.swing.table.AbstractTableModel im
     static final int MAXCVNUM = 512;
     private Vector<CvValue> _indxCvDisplayVector = new Vector<CvValue>();  // vector of CvValue objects, in display order
     private Vector<CvValue> _indxCvAllVector = new Vector<CvValue>(MAXCVNUM + 1);  // vector of all possible indexed CV objects
-    public  Vector<CvValue> allIndxCvVector() { return _indxCvAllVector; }
+    private HashMap<String, CvValue> _indxCvAllMap = new HashMap<String, CvValue>();  // All existing indexed CV objects
     private Vector<JButton> _indxWriteButtons = new Vector<JButton>();
     private Vector<JButton> _indxReadButtons = new Vector<JButton>();
     private Vector<JButton> _indxCompareButtons = new Vector<JButton>();
 //    private Vector _indxToolTipText = new Vector();
     private Programmer mProgrammer;
+
+    public  Vector<CvValue> allIndxCvVector() { 
+        System.err.println("allIndxCvVector must die!");
+        return _indxCvAllVector;
+     }
+    public  HashMap<String, CvValue> allIndxCvMap() { return _indxCvAllMap; }
 
     // Defines the columns
     private static final int NAMECOLUMN   = 0;
@@ -440,18 +446,22 @@ public class IndexedCvTableModel extends javax.swing.table.AbstractTableModel im
     /**
      * return is the current row or the row of an existing Indexed CV
      */
-    public int addIndxCV(int row, String cvName,
-                         int piCv, int piVal,
-                         int siCv, int siVal,
-                         int iCv,
+    public int addIndxCV(String cvName,
+                         String piCv, int piVal,
+                         String siCv, int siVal,
+                         String iCv,
                          boolean readOnly, boolean infoOnly, boolean writeOnly) {
         int existingRow = getCvByName(cvName);
+        int row;
         if (existingRow == -1) {
-            // we'll be adding a new entry or replacing an existing one; where?
+            // we'll be adding a new entry at the end
             row = _numRows++;
             
             // create new entry
-            CvValue indxCv = new CvValue(row, cvName, piCv, piVal, siCv, siVal, iCv, mProgrammer);
+            //if (log.isDebug()) log.debug("creating new CV with '"+cvName+"' in the 1st argument, which used to be the row variable");
+            CvValue indxCv = new CvValue(cvName, cvName, piCv, piVal, siCv, siVal, iCv, mProgrammer);
+            _indxCvAllMap.put(cvName, indxCv);
+            if (log.isDebugEnabled()) log.debug("created new indexed CV with name "+cvName);
             indxCv.setReadOnly(readOnly);
             indxCv.setInfoOnly(infoOnly);
             _indxCvAllVector.setElementAt(indxCv, row);

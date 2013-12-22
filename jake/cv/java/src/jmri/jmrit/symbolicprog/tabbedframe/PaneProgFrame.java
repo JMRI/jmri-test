@@ -463,10 +463,10 @@ abstract public class PaneProgFrame extends JmriJFrame
         df.loadVariableModel(decoderRoot.getChild("decoder"), variableModel);
         
         // load reset from decoder tree
-        if (variableModel.piCv() >= 0) {
+        if (variableModel.piCv() != "") {
             resetModel.setPiCv(variableModel.piCv());
         }
-        if (variableModel.siCv() >= 0) {
+        if (variableModel.siCv() != "") {
             resetModel.setSiCv(variableModel.siCv());
         }
         df.loadResetModel(decoderRoot.getChild("decoder"), resetModel);
@@ -667,7 +667,7 @@ abstract public class PaneProgFrame extends JmriJFrame
     }
 
     int defaultCvValues[] = null;
-    int defaultCvNumbers[] = null;
+    String defaultCvNumbers[] = null;
     int defaultIndexedCvValues[] = null;
 
     /**
@@ -677,7 +677,7 @@ abstract public class PaneProgFrame extends JmriJFrame
     protected void saveDefaults() {
         int n = cvModel.getRowCount();
         defaultCvValues = new int[n];
-        defaultCvNumbers = new int[n];
+        defaultCvNumbers = new String[n];
 
         for (int i=0; i<n; i++) {
             CvValue cv = cvModel.getCvByRow(i);

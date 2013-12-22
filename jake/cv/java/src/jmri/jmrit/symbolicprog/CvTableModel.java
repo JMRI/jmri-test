@@ -9,7 +9,7 @@ import java.beans.*;
 
 import javax.swing.*;
 
-import java.util.Vector;
+import java.util.*;
 
 import jmri.*;
 
@@ -27,8 +27,19 @@ public class CvTableModel extends javax.swing.table.AbstractTableModel implement
 	private int _numRows = 0;                // must be zero until Vectors are initialized
     static final int MAXCVNUM = 1024;
     private Vector<CvValue> _cvDisplayVector = new Vector<CvValue>();  // vector of CvValue objects, in display order
+    
     private Vector<CvValue> _cvAllVector = new Vector<CvValue>(MAXCVNUM+1);  // vector of all possible CV objects
-    public Vector<CvValue> allCvVector() { return _cvAllVector; }
+    public Vector<CvValue> allCvVector() { 
+        System.err.println("_cvAllVector still lives!!");
+        new Exception("location of reference").printStackTrace();
+        return _cvAllVector;
+    }
+
+    private HashMap<String, CvValue> _cvAllMap = new HashMap<String, CvValue>();
+    public HashMap<String, CvValue> allCvMap() { 
+        return _cvAllMap; 
+    }
+        
     private Vector<JButton> _writeButtons = new Vector<JButton>();
     private Vector<JButton> _readButtons = new Vector<JButton>();
     private Vector<JButton> _compareButtons = new Vector<JButton>();
@@ -147,7 +158,11 @@ public class CvTableModel extends javax.swing.table.AbstractTableModel implement
     }
 
     public CvValue getCvByRow(int row) { return _cvDisplayVector.elementAt(row); }
-    public CvValue getCvByNumber(int row) { return _cvAllVector.elementAt(row); }
+    public CvValue getCvByNumber(int row) { 
+        System.err.println("shouldnt be gettingCvByNumber of int");
+        return _cvAllVector.elementAt(row);
+    }
+    public CvValue getCvByNumber(String number) { return _cvAllMap.get(number); }
 
     public Object getValueAt(int row, int col) {
         switch (col) {
@@ -212,11 +227,10 @@ public class CvTableModel extends javax.swing.table.AbstractTableModel implement
     }
 
     public void addCV(String s, boolean readOnly, boolean infoOnly, boolean writeOnly) {
-        int num = Integer.valueOf(s).intValue();
-        if (_cvAllVector.elementAt(num) == null) {
-            CvValue cv = new CvValue(num, mProgrammer);
+        if (_cvAllMap.get(s) == null) {
+            CvValue cv = new CvValue(s, mProgrammer);
             cv.setReadOnly(readOnly);
-            _cvAllVector.setElementAt(cv, num);
+            _cvAllMap.put(s, cv);
             _cvDisplayVector.addElement(cv);
             // connect to this CV to ensure the table display updates
             cv.addPropertyChangeListener(this);
@@ -265,7 +279,7 @@ public class CvTableModel extends javax.swing.table.AbstractTableModel implement
             fireTableDataChanged();
         }
         // make sure readonly set true if required
-        CvValue cv = _cvAllVector.elementAt(num);
+        CvValue cv = _cvAllMap.get(s);
         if (readOnly) cv.setReadOnly(readOnly);
         if (infoOnly) {
             cv.setReadOnly(infoOnly);
