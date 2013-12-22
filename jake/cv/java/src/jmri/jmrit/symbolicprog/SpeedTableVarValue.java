@@ -115,7 +115,7 @@ public class SpeedTableVarValue extends VariableValue implements PropertyChangeL
         // create the set of models
         for (int i=0; i<nValues; i++) {
             // populate cvList
-            cvList[i] = getCvNum()+i;
+            cvList[i] = Integer.toString(Integer.parseInt(getCvNum())+i);
             // create each model
             DefaultBoundedRangeModel j = new DefaultBoundedRangeModel(_range*i/(nValues-1)+_min, 0, _min, _max);
             models[i] = j;
