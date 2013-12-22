@@ -46,7 +46,7 @@ public class CvTableModel extends javax.swing.table.AbstractTableModel implement
     private Programmer mProgrammer;
 
     // Defines the columns
-    private static final int NUMCOLUMN   = 0;
+    public static final int NUMCOLUMN   = 0;
     private static final int VALCOLUMN   = 1;
     private static final int STATECOLUMN = 2;
     private static final int READCOLUMN  = 3;
