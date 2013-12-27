@@ -82,61 +82,15 @@ public class PaneServiceProgFrame extends PaneProgFrame
                     }
                     if ( (a = programming.getAttribute("register")) != null )
                         if (a.getValue().equals("no")) register = false;
-                        
-                    // iterate over any facades and add them
-                    List<Element> facades = programming.getChildren("capability");
-                    if (log.isDebugEnabled()) log.debug("Found "+facades.size()+" capability elements");
-                    for (Element facade : facades) {
-                        String fname = facade.getChild("name").getText();
-                        if (log.isDebugEnabled()) log.debug("Process capability facade: "+fname);
-
-
-                        List<Element> parameters = facade.getChildren("parameter");
-                        if (log.isDebugEnabled()) log.debug("Found "+facades.size()+" capability parameters");
-                        for (Element parameter : parameters) {
-                            String pval = parameter.getText();
-                            if (log.isDebugEnabled()) log.debug("Process parameter value: "+pval);
-                        }
-
-                        if (fname.equals("High Access via Double Index")) {
-                            // going to create a specific one
-                            String top          = parameters.get(0).getText();
-                            String addrCVhigh   = parameters.get(1).getText();
-                            String addrCVlow    = parameters.get(2).getText();
-                            String valueCV      = parameters.get(3).getText();
-                            String modulo       = parameters.get(4).getText();
-
-                            jmri.implementation.AddressedHighCvProgrammerFacade pf =
-                                new jmri.implementation.AddressedHighCvProgrammerFacade(mProgrammer, top, addrCVhigh, addrCVlow, valueCV, modulo);
-                            
-                            log.debug("new programmer "+pf);
-                            mProgrammer = pf;
-                            cvModel.setProgrammer(pf);
-                            iCvModel.setProgrammer(pf);
-                            resetModel.setProgrammer(pf);
-                            log.debug("Found programmers: "+cvModel.getProgrammer()+" "+iCvModel.getProgrammer());
-                            
-                        } else if (fname.equals("High Access via Partial Index")) {
-                            // going to create a specific one
-                            String top          = parameters.get(0).getText();
-                            String addrCV       = parameters.get(1).getText();
-                            String factor       = parameters.get(2).getText();
-                            String modulo       = parameters.get(3).getText();
-
-                            jmri.implementation.OffsetHighCvProgrammerFacade pf =
-                                new jmri.implementation.OffsetHighCvProgrammerFacade(mProgrammer, top, addrCV, factor, modulo);
-                            
-                            log.debug("new programmer "+pf);
-                            mProgrammer = pf;
-                            cvModel.setProgrammer(pf);
-                            iCvModel.setProgrammer(pf);
-                            resetModel.setProgrammer(pf);
-                            log.debug("Found programmers: "+cvModel.getProgrammer()+" "+iCvModel.getProgrammer());
-                            
-                        } else {
-                            log.error("Cannot create programmer capability named: "+fname);
-                        }
-                    }
+                    
+                    Programmer pf = jmri.implementation.ProgrammerFacadeSelector.loadFacadeElements(programming, mProgrammer);
+                    log.debug("new programmer "+pf);
+                    mProgrammer = pf;
+                    cvModel.setProgrammer(pf);
+                    iCvModel.setProgrammer(pf);
+                    resetModel.setProgrammer(pf);
+                    log.debug("Found programmers: "+cvModel.getProgrammer()+" "+iCvModel.getProgrammer());
+                    
                 }
     
                 // is the current mode OK?
