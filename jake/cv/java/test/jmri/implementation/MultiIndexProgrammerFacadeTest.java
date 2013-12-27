@@ -23,23 +23,6 @@ public class MultiIndexProgrammerFacadeTest extends TestCase {
 
     int readValue = -2;
     boolean replied = false;
-
-    public void testParse() {
-        ProgDebugger dp = new ProgDebugger();
-        dp.setTestReadLimit(256);
-        dp.setTestWriteLimit(256);
-
-        MultiIndexProgrammerFacade p = new MultiIndexProgrammerFacade(dp, 81);
-        
-        p.parseCV("12");
-        Assert.assertEquals("for 12, cv", 12, p._cv);
-        Assert.assertEquals("for 12, indexVal", -1, p._indexVal);
-        
-        p.parseCV("12.34");
-        Assert.assertEquals("for 12.34, cv", 34, p._cv);
-        Assert.assertEquals("for 12.34, indexVal", 12, p._indexVal);
-        
-    }
     
     public void testWriteReadDirect() throws jmri.ProgrammerException, InterruptedException {
 
@@ -47,7 +30,7 @@ public class MultiIndexProgrammerFacadeTest extends TestCase {
         dp.setTestReadLimit(256);
         dp.setTestWriteLimit(256);
 
-        Programmer p = new MultiIndexProgrammerFacade(dp, 81);
+        Programmer p = new MultiIndexProgrammerFacade(dp, "81", null);
         ProgListener l = new ProgListener(){
                 public void programmingOpReply(int value, int status) {
                     log.debug("callback value="+value+" status="+status);
@@ -69,7 +52,7 @@ public class MultiIndexProgrammerFacadeTest extends TestCase {
     public void testWriteReadIndexed() throws jmri.ProgrammerException, InterruptedException {
         
         ProgDebugger dp = new ProgDebugger();
-        Programmer p = new MultiIndexProgrammerFacade(dp, 81);
+        Programmer p = new MultiIndexProgrammerFacade(dp, "81", null);
         ProgListener l = new ProgListener(){
                 public void programmingOpReply(int value, int status) {
                     log.debug("callback value="+value+" status="+status);
@@ -96,7 +79,7 @@ public class MultiIndexProgrammerFacadeTest extends TestCase {
         dp.setTestReadLimit(1024);
         dp.setTestWriteLimit(1024);
 
-        Programmer p = new MultiIndexProgrammerFacade(dp, 81);
+        Programmer p = new MultiIndexProgrammerFacade(dp, "81", null);
 
         Assert.assertTrue("CV limit read OK", p.getCanRead("1024"));  
         Assert.assertTrue("CV limit write OK", p.getCanWrite("1024"));  
