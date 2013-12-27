@@ -240,8 +240,8 @@ public class ProgDebugger implements Programmer  {
         }
     }
 
-    static final boolean IMMEDIATERETURN = true;
-    
+    static final boolean IMMEDIATERETURN = false;
+    static final int DELAY = 10;
     /**
      * Arrange for the return to be invoked on the Swing thread.
      */
@@ -249,7 +249,7 @@ public class ProgDebugger implements Programmer  {
         if (IMMEDIATERETURN) {
             javax.swing.SwingUtilities.invokeLater(run);
         } else {
-            javax.swing.Timer timer = new javax.swing.Timer(2, null);
+            javax.swing.Timer timer = new javax.swing.Timer(DELAY, null);
             java.awt.event.ActionListener l = new java.awt.event.ActionListener(){
                 javax.swing.Timer timer;
                 Runnable run;
