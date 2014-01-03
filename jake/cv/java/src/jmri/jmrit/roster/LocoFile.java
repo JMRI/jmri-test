@@ -81,12 +81,11 @@ class LocoFile extends XmlFile {
                 String value = ((elementList.get(i))).getAttribute("value").getValue();
                 if (log.isDebugEnabled()) log.debug("CV: "+i+"th entry, CV number "+name+" has value: "+value);
 
-                int cv = Integer.valueOf(name).intValue();
-                cvObject = cvModel.allCvMap().get(""+cv);
+                cvObject = cvModel.allCvMap().get(name);
                 if (cvObject == null) {
-                    log.warn("CV "+cv+" was in loco file, but not defined by the decoder definition");
+                    log.warn("CV "+name+" was in loco file, but not defined by the decoder definition");
                     cvModel.addCV(name, false, false, false);
-                    cvObject = cvModel.allCvMap().get(""+cv);
+                    cvObject = cvModel.allCvMap().get(name);
                 }
                 cvObject.setValue(Integer.valueOf(value).intValue());
                 cvObject.setState(CvValue.FROMFILE);
