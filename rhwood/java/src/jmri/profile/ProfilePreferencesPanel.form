@@ -108,9 +108,7 @@
                                       <Component id="btnOpenExistingProfile" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="btnCreateNewProfile" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="btnDisableProfile" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="103" max="-2" attributes="0"/>
                                       <Component id="btnDeleteProfile" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="btnExportProfile" min="-2" max="-2" attributes="0"/>
@@ -136,7 +134,6 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="btnDisableProfile" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnOpenExistingProfile" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnCreateNewProfile" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnActivateProfile" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -193,19 +190,6 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JButton" name="btnDisableProfile">
-              <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="jmri/profile/Bundle.properties" key="ProfilePreferencesPanel.btnDisableProfile.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
-                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="jmri/profile/Bundle.properties" key="ProfilePreferencesPanel.btnDisableProfile.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDisableProfileActionPerformed"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JButton" name="btnOpenExistingProfile">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">

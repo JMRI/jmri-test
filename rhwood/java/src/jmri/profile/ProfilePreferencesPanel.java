@@ -60,13 +60,6 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel,
                 profilesValueChanged(null);
             }
         });
-        ProfileManager.defaultManager().addPropertyChangeListener(ProfileManager.DISABLED_PROFILES, new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                profilesTbl.repaint();
-                profilesValueChanged(null);
-            }
-        });
         ProfileManager.defaultManager().addPropertyChangeListener(ProfileManager.SEARCH_PATHS, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -111,7 +104,6 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel,
         jLabel1 = new JLabel();
         jScrollPane1 = new JScrollPane();
         profilesTbl = new JTable();
-        btnDisableProfile = new JButton();
         btnOpenExistingProfile = new JButton();
         btnDeleteProfile = new JButton();
         btnCreateNewProfile = new JButton();
@@ -169,14 +161,6 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel,
         profilesTbl.getSelectionModel().addListSelectionListener(this);
         profilesTbl.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(profilesTbl);
-
-        btnDisableProfile.setText(bundle.getString("ProfilePreferencesPanel.btnDisableProfile.text")); // NOI18N
-        btnDisableProfile.setToolTipText(bundle.getString("ProfilePreferencesPanel.btnDisableProfile.toolTipText")); // NOI18N
-        btnDisableProfile.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                btnDisableProfileActionPerformed(evt);
-            }
-        });
 
         btnOpenExistingProfile.setText(bundle.getString("ProfilePreferencesPanel.btnOpenExistingProfile.text")); // NOI18N
         btnOpenExistingProfile.setToolTipText(bundle.getString("ProfilePreferencesPanel.btnOpenExistingProfile.toolTipText")); // NOI18N
@@ -237,9 +221,7 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel,
                                 .addComponent(btnOpenExistingProfile)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnCreateNewProfile)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnDisableProfile)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addGap(103, 103, 103)
                                 .addComponent(btnDeleteProfile)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnExportProfile)))
@@ -257,7 +239,6 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel,
                     .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(enabledPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnDisableProfile)
                     .addComponent(btnOpenExistingProfile)
                     .addComponent(btnCreateNewProfile)
                     .addComponent(btnActivateProfile)
@@ -427,28 +408,12 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel,
                 ProfileManager.defaultManager().addProfile(p);
                 int index = ProfileManager.defaultManager().getAllProfiles().indexOf(p);
                 profilesTbl.setRowSelectionInterval(index, index);
-                if (p.isDisabled()) {
-                    // TODO: Display dialog asking if profile should be enabled
-                }
             } catch (IOException ex) {
                 log.warn("{} is not a profile directory", chooser.getSelectedFile());
                 // TODO: Display error dialog - selected file is not a profile directory
             }
         }
     }//GEN-LAST:event_btnOpenExistingProfileActionPerformed
-
-    private void btnDisableProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnDisableProfileActionPerformed
-        if (profilesTbl.getModel().getRowCount() > 1) {
-            try {
-                ProfileManager.defaultManager().getProfiles(profilesTbl.getSelectedRow()).setDisabled(true);
-                profilesTbl.clearSelection();
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error disabling profile", JOptionPane.ERROR_MESSAGE);
-                log.error("Unable to disable profile", ex.getLocalizedMessage());
-            }
-            profilesTbl.repaint();
-        }
-    }//GEN-LAST:event_btnDisableProfileActionPerformed
 
     private void chkStartWithActiveProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_chkStartWithActiveProfileActionPerformed
         ProfileManager.defaultManager().setAutoStartActiveProfile(this.chkStartWithActiveProfile.isSelected());
@@ -464,7 +429,6 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel,
     private JButton btnAddSearchPath;
     private JButton btnCreateNewProfile;
     private JButton btnDeleteProfile;
-    private JButton btnDisableProfile;
     private JButton btnExportProfile;
     private JButton btnOpenExistingProfile;
     private JButton btnRemoveSearchPath;
@@ -491,10 +455,8 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel,
         ProfileManager mgr = ProfileManager.defaultManager();
         if (profilesTbl.getSelectedRow() != -1
                 && mgr.getAllProfiles().get(profilesTbl.getSelectedRow()).equals(mgr.getActiveProfile())) {
-            this.btnDisableProfile.setEnabled(false);
             this.btnActivateProfile.setEnabled(false);
         } else {
-            this.btnDisableProfile.setEnabled(true);
             this.btnActivateProfile.setEnabled(true);
         }
     }

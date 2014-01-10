@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 public class ProfileManager extends Bean {
 
     private final ArrayList<Profile> profiles = new ArrayList<Profile>();
-    private final ArrayList<Profile> disabledProfiles = new ArrayList<Profile>();
     private final ArrayList<File> searchPaths = new ArrayList<File>();
     private Profile activeProfile = null;
     private final File catalog;
@@ -44,7 +43,6 @@ public class ProfileManager extends Bean {
     private static final String CATALOG = "profiles.xml"; // NOI18N
     private static final String PROFILE = "profile"; // NOI18N
     public static final String PROFILES = "profiles"; // NOI18N
-    public static final String DISABLED_PROFILES = "disabledProfiles"; // NOI18N
     private static final String PROFILECONFIG = "profileConfig"; // NOI18N
     public static final String SEARCH_PATHS = "searchPaths"; // NOI18N
     public static final String SYSTEM_PROPERTY = "org.jmri.profile"; // NOI18N
@@ -206,10 +204,13 @@ public class ProfileManager extends Bean {
         return profiles.toArray(new Profile[profiles.size()]);
     }
 
+    /**
+     * Get an ArrayList of {@link Profile} objects.
+     *
+     * @return A list of all Profile objects
+     */
     public ArrayList<Profile> getAllProfiles() {
-        ArrayList<Profile> all = new ArrayList<Profile>(profiles);
-        all.addAll(disabledProfiles);
-        return all;
+        return new ArrayList<Profile>(profiles);
     }
 
     /**
@@ -239,53 +240,7 @@ public class ProfileManager extends Bean {
         }
     }
 
-    /**
-     * Get an array of {@link Profile}s that have been disabled.
-     *
-     * @return The disabled Profile objects.
-     */
-    public Profile[] getDisabledProfiles() {
-        return disabledProfiles.toArray(new Profile[disabledProfiles.size()]);
-    }
-
-    /**
-     * Get the disabled {@link Profile} at index.
-     *
-     * @param index
-     * @return a Profile
-     */
-    public Profile getDisabledProfiles(int index) {
-        if (index >= 0 && index < disabledProfiles.size()) {
-            return disabledProfiles.get(index);
-        }
-        return null;
-    }
-
-    /**
-     * Set the disabled {@link Profile} at index.
-     *
-     * @param profile
-     * @param index
-     */
-    public void setDisabledProfiles(Profile profile, int index) {
-        Profile oldProfile = profiles.get(index);
-        if (!this.readingProfiles) {
-            disabledProfiles.set(index, profile);
-            this.fireIndexedPropertyChange(DISABLED_PROFILES, index, oldProfile, profile);
-        }
-    }
-
     protected void addProfile(Profile profile) {
-        if (profile.isDisabled()) {
-            if (!disabledProfiles.contains(profile)) {
-                disabledProfiles.add(profile);
-                if (!this.readingProfiles) {
-                    int index = disabledProfiles.indexOf(profile);
-                    this.fireIndexedPropertyChange(DISABLED_PROFILES, index, null, profile);
-                }
-            }
-            return;
-        }
         if (!profiles.contains(profile)) {
             profiles.add(profile);
             if (!this.readingProfiles) {
@@ -306,12 +261,6 @@ public class ProfileManager extends Bean {
             if (index >= 0) {
                 if (profiles.remove(profile)) {
                     this.fireIndexedPropertyChange(PROFILES, index, profile, null);
-                    this.writeProfiles();
-                }
-            } else {
-                index = disabledProfiles.indexOf(profile);
-                if (disabledProfiles.remove(profile)) {
-                    this.fireIndexedPropertyChange(DISABLED_PROFILES, index, profile, null);
                     this.writeProfiles();
                 }
             }
@@ -506,21 +455,5 @@ public class ProfileManager extends Bean {
      */
     public void setAutoStartActiveProfile(boolean autoStartActiveProfile) {
         this.autoStartActiveProfile = autoStartActiveProfile;
-    }
-
-    protected void disableProfile(Profile p) throws IOException {
-        this.removeProfile(p);
-        if (!p.isDisabled()) {
-            p.setDisabled(true);
-        }
-        this.addProfile(p);
-    }
-
-    protected void enableProfile(Profile p) throws IOException {
-        this.removeProfile(p);
-        if (p.isDisabled()) {
-            p.setDisabled(false);
-        }
-        this.addProfile(p);
     }
 }

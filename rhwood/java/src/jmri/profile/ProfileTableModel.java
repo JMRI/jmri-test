@@ -38,7 +38,7 @@ public class ProfileTableModel extends AbstractTableModel implements PropertyCha
                 if (p.equals(ProfileManager.defaultManager().getActiveProfile())) {
                     return Bundle.getMessage("ProfileTableModel.isActive"); // NOI18N
                 } else {
-                    return p.isDisabled() ? Bundle.getMessage("ProfileTableModel.isDisabled") : Bundle.getMessage("ProfileTableModel.isEnabled"); // NOI18N
+                    return ""; // NOI18N
                 }
             default:
                 return null;

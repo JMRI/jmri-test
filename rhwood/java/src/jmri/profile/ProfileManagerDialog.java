@@ -42,6 +42,9 @@ public class ProfileManagerDialog extends JDialog {
 
     /**
      * Creates new form ProfileManagerDialog
+     *
+     * @param parent {@inheritDoc}
+     * @param modal {@inheritDoc}
      */
     public ProfileManagerDialog(Frame parent, boolean modal) {
         super(parent, modal);
@@ -192,9 +195,6 @@ public class ProfileManagerDialog extends JDialog {
                 Profile p = new Profile(chooser.getSelectedFile());
                 ProfileManager.defaultManager().addProfile(p);
                 profiles.setSelectedValue(p, true);
-                if (p.isDisabled()) {
-                    // TODO: Display dialog asking if profile should be enabled
-                }
             } catch (IOException ex) {
                 log.warn("{} is not a profile directory", chooser.getSelectedFile());
                 // TODO: Display error dialog - selected file is not a profile directory

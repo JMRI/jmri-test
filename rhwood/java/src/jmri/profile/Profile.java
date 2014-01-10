@@ -18,11 +18,9 @@ public class Profile {
     private String name;
     private String id;
     private File path;
-    private Boolean disabled = false;
     protected static final String ID = "id"; // NOI18N
     protected static final String NAME = "name"; // NOI18N
     protected static final String PATH = "path"; // NOI18N
-    protected static final String DISABLED = "disabled"; // NOI18N
     protected static final String PROPERTIES = "profile.properties"; // NOI18N
     public static final String CONFIG_FILENAME = "ProfileConfig.xml"; // NOI18N
 
@@ -81,7 +79,6 @@ public class Profile {
 
         p.setProperty(NAME, this.name);
         p.setProperty(ID, this.id);
-        p.setProperty(DISABLED, Boolean.toString(this.disabled));
         if (!f.exists() && !f.createNewFile()) {
             throw new IOException("Unable to create file at " + f.getAbsolutePath()); // NOI18N
         }
@@ -95,28 +92,6 @@ public class Profile {
             }
             throw ex;
         }
-    }
-
-    /**
-     * Mark the Profile as not usable. This method also removes the Profile from
-     * the ProfileManager's list of available Profiles. The Profile will not be
-     * selectable when starting a JMRI application.
-     *
-     * @param disabled
-     * @throws java.io.IOException
-     */
-    public void setDisabled(Boolean disabled) throws IOException {
-        this.disabled = disabled;
-        if (disabled) {
-            ProfileManager.defaultManager().disableProfile(this);
-        } else {
-            ProfileManager.defaultManager().enableProfile(this);
-        }
-        this.save();
-    }
-
-    public Boolean isDisabled() {
-        return this.disabled;
     }
 
     /**
@@ -161,7 +136,6 @@ public class Profile {
         }
         this.id = p.getProperty(ID);
         this.name = p.getProperty(NAME);
-        this.disabled = Boolean.getBoolean(p.getProperty(DISABLED, Boolean.toString(false)));
     }
 
     @Override
