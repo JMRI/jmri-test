@@ -206,6 +206,12 @@ public class ProfileManager extends Bean {
         return profiles.toArray(new Profile[profiles.size()]);
     }
 
+    public ArrayList<Profile> getAllProfiles() {
+        ArrayList<Profile> all = new ArrayList<Profile>(profiles);
+        all.addAll(disabledProfiles);
+        return all;
+    }
+
     /**
      * Get the enabled {@link Profile} at index.
      *

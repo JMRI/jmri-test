@@ -25,7 +25,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.LayoutStyle;
@@ -36,7 +35,6 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.DefaultTableModel;
 import jmri.swing.PreferencesPanel;
 import jmri.util.FileUtil;
 import org.slf4j.Logger;
@@ -46,7 +44,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author rhwood
  */
-public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel {
+public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel, ListSelectionListener {
 
     private static final Logger log = LoggerFactory.getLogger(ProfilePreferencesPanel.class);
 
@@ -65,7 +63,7 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         ProfileManager.defaultManager().addPropertyChangeListener(ProfileManager.DISABLED_PROFILES, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                disabledProfiles.repaint();
+                profilesTbl.repaint();
                 profilesValueChanged(null);
             }
         });
@@ -83,11 +81,11 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
             }
         });
         this.chkStartWithActiveProfile.setSelected(ProfileManager.defaultManager().isAutoStartActiveProfile());
-        // TODO profilesTbl.setSelectedValue(ProfileManager.defaultManager().getActiveProfile(), true);
         this.profilesValueChanged(null);
+        int index = ProfileManager.defaultManager().getAllProfiles().indexOf(ProfileManager.defaultManager().getActiveProfile());
+        this.profilesTbl.setRowSelectionInterval(index, index);
         // Hide until I can figure out good way to export a profile
         // Should I include items in external user/roster/etc directories?
-        this.btnExportDisabledProfile.setVisible(false);
         this.btnExportProfile.setVisible(false);
     }
 
@@ -115,16 +113,10 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         profilesTbl = new JTable();
         btnDisableProfile = new JButton();
         btnOpenExistingProfile = new JButton();
+        btnDeleteProfile = new JButton();
         btnCreateNewProfile = new JButton();
         btnActivateProfile = new JButton();
         btnExportProfile = new JButton();
-        disabledPanel = new JPanel();
-        jLabel3 = new JLabel();
-        jScrollPane3 = new JScrollPane();
-        disabledProfiles = new JList();
-        btnDeleteProfile = new JButton();
-        btnEnableProfile = new JButton();
-        btnExportDisabledProfile = new JButton();
         searchPathsPanel = new JPanel();
         jLabel2 = new JLabel();
         jScrollPane2 = new JScrollPane();
@@ -173,32 +165,9 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
 
         jLabel1.setText(bundle.getString("ProfilePreferencesPanel.jLabel1.text")); // NOI18N
 
-        profilesTbl.setModel(new DefaultTableModel(
-            new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2"
-            }
-        ) {
-            Class[] types = new Class [] {
-                Object.class, String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                true, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+        profilesTbl.setModel(new ProfileTableModel());
+        profilesTbl.getSelectionModel().addListSelectionListener(this);
+        profilesTbl.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(profilesTbl);
 
         btnDisableProfile.setText(bundle.getString("ProfilePreferencesPanel.btnDisableProfile.text")); // NOI18N
@@ -214,6 +183,14 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         btnOpenExistingProfile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 btnOpenExistingProfileActionPerformed(evt);
+            }
+        });
+
+        btnDeleteProfile.setText(bundle.getString("ProfilePreferencesPanel.btnDeleteProfile.text")); // NOI18N
+        btnDeleteProfile.setToolTipText(bundle.getString("ProfilePreferencesPanel.btnDeleteProfile.toolTipText")); // NOI18N
+        btnDeleteProfile.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                btnDeleteProfileActionPerformed(evt);
             }
         });
 
@@ -263,8 +240,10 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnDisableProfile)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnDeleteProfile)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnExportProfile)))
-                        .addGap(0, 19, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         enabledPanelLayout.setVerticalGroup(
@@ -282,75 +261,14 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
                     .addComponent(btnOpenExistingProfile)
                     .addComponent(btnCreateNewProfile)
                     .addComponent(btnActivateProfile)
-                    .addComponent(btnExportProfile))
+                    .addComponent(btnExportProfile)
+                    .addComponent(btnDeleteProfile))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(chkStartWithActiveProfile)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab(bundle.getString("ProfilePreferencesPanel.enabledPanel.TabConstraints.tabTitle"), enabledPanel); // NOI18N
-
-        jLabel3.setText(bundle.getString("ProfilePreferencesPanel.jLabel3.text")); // NOI18N
-
-        disabledProfiles.setModel(new DisabledProfileListModel());
-        jScrollPane3.setViewportView(disabledProfiles);
-
-        btnDeleteProfile.setText(bundle.getString("ProfilePreferencesPanel.btnDeleteProfile.text")); // NOI18N
-        btnDeleteProfile.setToolTipText(bundle.getString("ProfilePreferencesPanel.btnDeleteProfile.toolTipText")); // NOI18N
-        btnDeleteProfile.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                btnDeleteProfileActionPerformed(evt);
-            }
-        });
-
-        btnEnableProfile.setText(bundle.getString("ProfilePreferencesPanel.btnEnableProfile.text")); // NOI18N
-        btnEnableProfile.setToolTipText(bundle.getString("ProfilePreferencesPanel.btnEnableProfile.toolTipText")); // NOI18N
-        btnEnableProfile.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                btnEnableProfileActionPerformed(evt);
-            }
-        });
-
-        btnExportDisabledProfile.setText(bundle.getString("ProfilePreferencesPanel.btnExportProfile.text")); // NOI18N
-        btnExportDisabledProfile.setToolTipText(bundle.getString("ProfilePreferencesPanel.btnExportProfile.toolTipText")); // NOI18N
-
-        GroupLayout disabledPanelLayout = new GroupLayout(disabledPanel);
-        disabledPanel.setLayout(disabledPanelLayout);
-        disabledPanelLayout.setHorizontalGroup(
-            disabledPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(disabledPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(disabledPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(disabledPanelLayout.createSequentialGroup()
-                        .addComponent(btnEnableProfile)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnDeleteProfile)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnExportDisabledProfile)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane3, GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        disabledPanelLayout.setVerticalGroup(
-            disabledPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(disabledPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(disabledPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(disabledPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane3, GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(disabledPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnDeleteProfile)
-                    .addComponent(btnEnableProfile)
-                    .addComponent(btnExportDisabledProfile))
-                .addContainerGap())
-        );
-
-        jTabbedPane1.addTab(bundle.getString("ProfilePreferencesPanel.disabledPanel.TabConstraints.tabTitle"), disabledPanel); // NOI18N
+        jTabbedPane1.addTab(bundle.getString("ProfilePreferencesPanel.enabledPanel.TabConstraints.tabTitle_1"), enabledPanel); // NOI18N
 
         jLabel2.setText(bundle.getString("ProfilePreferencesPanel.jLabel2.text")); // NOI18N
 
@@ -392,7 +310,7 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRemoveSearchPath)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE))
                 .addContainerGap())
         );
         searchPathsPanelLayout.setVerticalGroup(
@@ -412,7 +330,7 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab(bundle.getString("ProfilePreferencesPanel.searchPathsPanel.TabConstraints.tabTitle"), searchPathsPanel); // NOI18N
+        jTabbedPane1.addTab(bundle.getString("ProfilePreferencesPanel.searchPathsPanel.TabConstraints.tabTitle_1"), searchPathsPanel); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -426,64 +344,15 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnDisableProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnDisableProfileActionPerformed
-        if (profilesTbl.getModel().getRowCount() > 1) {
-            try {
-                ((Profile) profiles.getSelectedValue()).setDisabled(true);
-                profilesTbl.clearSelection();
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error disabling profile", JOptionPane.ERROR_MESSAGE);
-                log.error("Unable to disable profile", ex.getLocalizedMessage());
-            }
-            profilesTbl.repaint();
-        }
-    }//GEN-LAST:event_btnDisableProfileActionPerformed
+    private void renameMIActionPerformed(ActionEvent evt) {//GEN-FIRST:event_renameMIActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_renameMIActionPerformed
 
-    private void btnActivateProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnActivateProfileActionPerformed
-        try {
-            ProfileManager.defaultManager().saveActiveProfile((Profile) profiles.getSelectedValue(), ProfileManager.defaultManager().isAutoStartActiveProfile());
-        } catch (IOException ex) {
-            log.error("Unable to save profile preferences", ex);
-            JOptionPane.showMessageDialog(this, "Usable to save profile preferences.\n" + ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    private void profilesPopupMenuPopupMenuWillBecomeVisible(PopupMenuEvent evt) {//GEN-FIRST:event_profilesPopupMenuPopupMenuWillBecomeVisible
+        if (profilesTbl.getSelectedRowCount() == 1) {
+            this.renameMI.setEnabled(true);
         }
-    }//GEN-LAST:event_btnActivateProfileActionPerformed
-
-    private void btnOpenExistingProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnOpenExistingProfileActionPerformed
-        JFileChooser chooser = new JFileChooser(FileUtil.getPreferencesPath());
-        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        chooser.setFileFilter(new ProfileFileFilter());
-        chooser.setFileView(new ProfileFileView());
-        // TODO: Use NetBeans OpenDialog if its availble
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            try {
-                Profile p = new Profile(chooser.getSelectedFile());
-                ProfileManager.defaultManager().addProfile(p);
-                profiles.setSelectedValue(p, true);
-                if (p.isDisabled()) {
-                    // TODO: Display dialog asking if profile should be enabled
-                }
-            } catch (IOException ex) {
-                log.warn("{} is not a profile directory", chooser.getSelectedFile());
-                // TODO: Display error dialog - selected file is not a profile directory
-            }
-        }
-    }//GEN-LAST:event_btnOpenExistingProfileActionPerformed
-
-    private void btnCreateNewProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnCreateNewProfileActionPerformed
-        AddProfileDialog apd = new AddProfileDialog((Frame) SwingUtilities.getWindowAncestor(this), true);
-        apd.setLocationRelativeTo(this);
-        apd.setVisible(true);
-    }//GEN-LAST:event_btnCreateNewProfileActionPerformed
-
-    private void btnEnableProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnEnableProfileActionPerformed
-        try {
-            ((Profile) disabledProfiles.getSelectedValue()).setDisabled(false);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error enabling profile", JOptionPane.ERROR_MESSAGE);
-            log.error("Unable to enable profile", ex.getLocalizedMessage());
-        }
-        disabledProfiles.repaint();
-    }//GEN-LAST:event_btnEnableProfileActionPerformed
+    }//GEN-LAST:event_profilesPopupMenuPopupMenuWillBecomeVisible
 
     private void btnAddSearchPathActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnAddSearchPathActionPerformed
         JFileChooser chooser = new JFileChooser(FileUtil.getPreferencesPath());
@@ -519,6 +388,68 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         }
     }//GEN-LAST:event_btnExportProfileActionPerformed
 
+    private void btnActivateProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnActivateProfileActionPerformed
+        try {
+            ProfileManager.defaultManager().saveActiveProfile(ProfileManager.defaultManager().getProfiles(profilesTbl.getSelectedRow()), ProfileManager.defaultManager().isAutoStartActiveProfile());
+        } catch (IOException ex) {
+            log.error("Unable to save profile preferences", ex);
+            JOptionPane.showMessageDialog(this, "Usable to save profile preferences.\n" + ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnActivateProfileActionPerformed
+
+    private void btnCreateNewProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnCreateNewProfileActionPerformed
+        AddProfileDialog apd = new AddProfileDialog((Frame) SwingUtilities.getWindowAncestor(this), true);
+        apd.setLocationRelativeTo(this);
+        apd.setVisible(true);
+    }//GEN-LAST:event_btnCreateNewProfileActionPerformed
+
+    private void btnDeleteProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnDeleteProfileActionPerformed
+        Profile deletedProfile = ProfileManager.defaultManager().getAllProfiles().get(profilesTbl.getSelectedRow());
+        // TODO: confirm desire to delete profile
+        if (!FileUtil.delete(deletedProfile.getPath())) {
+            // TODO: notify user that profile directory could not be deleted
+            log.warn("Unable to delete profile directory {}", deletedProfile.getPath());
+        }
+        ProfileManager.defaultManager().removeProfile(deletedProfile);
+        log.info("Removed profile \"{}\" from {}", deletedProfile.getName(), deletedProfile.getPath());
+        profilesTbl.repaint();
+    }//GEN-LAST:event_btnDeleteProfileActionPerformed
+
+    private void btnOpenExistingProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnOpenExistingProfileActionPerformed
+        JFileChooser chooser = new JFileChooser(FileUtil.getPreferencesPath());
+        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooser.setFileFilter(new ProfileFileFilter());
+        chooser.setFileView(new ProfileFileView());
+        // TODO: Use NetBeans OpenDialog if its availble
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try {
+                Profile p = new Profile(chooser.getSelectedFile());
+                ProfileManager.defaultManager().addProfile(p);
+                int index = ProfileManager.defaultManager().getAllProfiles().indexOf(p);
+                profilesTbl.setRowSelectionInterval(index, index);
+                if (p.isDisabled()) {
+                    // TODO: Display dialog asking if profile should be enabled
+                }
+            } catch (IOException ex) {
+                log.warn("{} is not a profile directory", chooser.getSelectedFile());
+                // TODO: Display error dialog - selected file is not a profile directory
+            }
+        }
+    }//GEN-LAST:event_btnOpenExistingProfileActionPerformed
+
+    private void btnDisableProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnDisableProfileActionPerformed
+        if (profilesTbl.getModel().getRowCount() > 1) {
+            try {
+                ProfileManager.defaultManager().getProfiles(profilesTbl.getSelectedRow()).setDisabled(true);
+                profilesTbl.clearSelection();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error disabling profile", JOptionPane.ERROR_MESSAGE);
+                log.error("Unable to disable profile", ex.getLocalizedMessage());
+            }
+            profilesTbl.repaint();
+        }
+    }//GEN-LAST:event_btnDisableProfileActionPerformed
+
     private void chkStartWithActiveProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_chkStartWithActiveProfileActionPerformed
         ProfileManager.defaultManager().setAutoStartActiveProfile(this.chkStartWithActiveProfile.isSelected());
         try {
@@ -528,53 +459,26 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
         }
     }//GEN-LAST:event_chkStartWithActiveProfileActionPerformed
 
-    private void btnDeleteProfileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnDeleteProfileActionPerformed
-        Profile deletedProfile = (Profile) disabledProfiles.getSelectedValue();
-        if (!FileUtil.delete(deletedProfile.getPath())) {
-        // TODO: notify user that profile directory could not be deleted
-            log.warn("Unable to delete profile directory {}", deletedProfile.getPath());
-        }
-        ProfileManager.defaultManager().removeProfile(deletedProfile);
-        log.info("Removed profile \"{}\" from {}", deletedProfile.getName(), deletedProfile.getPath());
-        disabledProfiles.repaint();
-    }//GEN-LAST:event_btnDeleteProfileActionPerformed
-
-    private void renameMIActionPerformed(ActionEvent evt) {//GEN-FIRST:event_renameMIActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_renameMIActionPerformed
-
-    private void profilesPopupMenuPopupMenuWillBecomeVisible(PopupMenuEvent evt) {//GEN-FIRST:event_profilesPopupMenuPopupMenuWillBecomeVisible
-        if (profilesTbl.getSelectedRowCount() == 1) {
-            this.renameMI.setEnabled(true);
-        }
-    }//GEN-LAST:event_profilesPopupMenuPopupMenuWillBecomeVisible
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton btnActivateProfile;
     private JButton btnAddSearchPath;
     private JButton btnCreateNewProfile;
     private JButton btnDeleteProfile;
     private JButton btnDisableProfile;
-    private JButton btnEnableProfile;
-    private JButton btnExportDisabledProfile;
     private JButton btnExportProfile;
     private JButton btnOpenExistingProfile;
     private JButton btnRemoveSearchPath;
     private JCheckBox chkStartWithActiveProfile;
     private JMenuItem copyMI;
     private JMenuItem deleteMI;
-    private JPanel disabledPanel;
-    private JList disabledProfiles;
     private JCheckBoxMenuItem enabledMI;
     private JPanel enabledPanel;
     private JLabel jLabel1;
     private JLabel jLabel2;
-    private JLabel jLabel3;
     private JScrollPane jScrollPane1;
     private JScrollPane jScrollPane2;
-    private JScrollPane jScrollPane3;
-    private JSeparator jSeparator1;
-    private JSeparator jSeparator2;
+    private JPopupMenu.Separator jSeparator1;
+    private JPopupMenu.Separator jSeparator2;
     private JTabbedPane jTabbedPane1;
     private JPopupMenu profilesPopupMenu;
     private JTable profilesTbl;
@@ -582,6 +486,18 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
     private JList searchPaths;
     private JPanel searchPathsPanel;
     // End of variables declaration//GEN-END:variables
+
+    private void profilesValueChanged(ListSelectionEvent evt) {//GEN-FIRST:event_profilesValueChanged
+        ProfileManager mgr = ProfileManager.defaultManager();
+        if (profilesTbl.getSelectedRow() != -1
+                && mgr.getAllProfiles().get(profilesTbl.getSelectedRow()).equals(mgr.getActiveProfile())) {
+            this.btnDisableProfile.setEnabled(false);
+            this.btnActivateProfile.setEnabled(false);
+        } else {
+            this.btnDisableProfile.setEnabled(true);
+            this.btnActivateProfile.setEnabled(true);
+        }
+    }
 
     @Override
     public String getPreferencesItem() {
@@ -621,6 +537,29 @@ public class ProfilePreferencesPanel extends JPanel implements PreferencesPanel 
     @Override
     public void savePreferences() {
         // Nothing to do since ProfileManager preferences are saved immediately
+    }
+
+    public void dispose() {
+        ProfileManager.defaultManager().removePropertyChangeListener((ProfileTableModel) profilesTbl.getModel());
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        if (profilesTbl.getSelectedRow() != -1) {
+            Profile p = ProfileManager.defaultManager().getAllProfiles().get(profilesTbl.getSelectedRow());
+            if (p.equals(ProfileManager.defaultManager().getActiveProfile())) {
+                this.btnDeleteProfile.setEnabled(false);
+                this.btnActivateProfile.setEnabled(false);
+            } else {
+                this.btnDeleteProfile.setEnabled(true);
+                this.btnActivateProfile.setEnabled(true);
+            }
+            this.btnExportProfile.setEnabled(true);
+        } else {
+            this.btnDeleteProfile.setEnabled(false);
+            this.btnExportProfile.setEnabled(false);
+            this.btnActivateProfile.setEnabled(false);
+        }
     }
 
     private static class ZipFileFilter extends FileFilter {
