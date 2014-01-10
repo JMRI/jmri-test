@@ -19,8 +19,7 @@ import jmri.jmrit.operations.setup.Control;
  * @author Daniel Boudreau Copyright (C) 2010, 2012
  * @version $Revision$
  */
-public class TrainsScheduleTableModel extends javax.swing.table.AbstractTableModel implements
-		PropertyChangeListener {
+public class TrainsScheduleTableModel extends javax.swing.table.AbstractTableModel implements PropertyChangeListener {
 
 	TrainManager trainManager = TrainManager.instance();
 	TrainScheduleManager scheduleManager = TrainScheduleManager.instance();
@@ -79,11 +78,11 @@ public class TrainsScheduleTableModel extends javax.swing.table.AbstractTableMod
 		addPropertyChangeTrains();
 	}
 
-	public synchronized List<String> getSelectedTrainList() {
+	public synchronized List<Train> getSelectedTrainList() {
 		return sysList;
 	}
 
-	List<String> sysList = null;
+	List<Train> sysList = null;
 	JTable _table = null;
 	TrainsScheduleTableFrame _frame = null;
 
@@ -94,6 +93,8 @@ public class TrainsScheduleTableModel extends javax.swing.table.AbstractTableMod
 	}
 
 	void initTable() {
+		if (_table == null)
+			return;
 		// Install the button handlers
 		TableColumnModel tcm = _table.getColumnModel();
 		_table.setDefaultRenderer(Boolean.class, new EnablingCheckboxRenderer());
@@ -169,7 +170,7 @@ public class TrainsScheduleTableModel extends javax.swing.table.AbstractTableMod
 	public synchronized Object getValueAt(int row, int col) {
 		if (row >= sysList.size())
 			return "ERROR row " + row; // NOI18N
-		Train train = trainManager.getTrainById(sysList.get(row));
+		Train train = sysList.get(row);
 		if (train == null)
 			return "ERROR train unknown " + row; // NOI18N
 		switch (col) {
@@ -194,7 +195,7 @@ public class TrainsScheduleTableModel extends javax.swing.table.AbstractTableMod
 	public synchronized void setValueAt(Object value, int row, int col) {
 		TrainSchedule ts = getSchedule(col);
 		if (ts != null) {
-			Train train = trainManager.getTrainById(sysList.get(row));
+			Train train = sysList.get(row);
 			if (train == null) {
 				log.error("train not found");
 				return;
@@ -208,9 +209,9 @@ public class TrainsScheduleTableModel extends javax.swing.table.AbstractTableMod
 	}
 
 	public void propertyChange(PropertyChangeEvent e) {
-		if (Control.showProperty && log.isDebugEnabled())
-			log.debug("Property change " + e.getPropertyName() + " old: " + e.getOldValue()
-					+ " new: " + e.getNewValue()); // NOI18N
+//		if (Control.showProperty && log.isDebugEnabled())
+			log.debug("Property change " + e.getPropertyName() + " old: " + e.getOldValue() + " new: "
+					+ e.getNewValue()); // NOI18N
 		if (e.getPropertyName().equals(TrainManager.LISTLENGTH_CHANGED_PROPERTY)
 				|| e.getPropertyName().equals(TrainManager.TRAIN_ACTION_CHANGED_PROPERTY)) {
 			updateList();
@@ -225,11 +226,11 @@ public class TrainsScheduleTableModel extends javax.swing.table.AbstractTableMod
 		} else if (e.getPropertyName().equals(TrainSchedule.SCHEDULE_CHANGED_PROPERTY)) {
 			fireTableDataChanged();
 		} else if (e.getSource().getClass().equals(Train.class)) {
-			String trainId = ((Train) e.getSource()).getId();
+			Train train = (Train) e.getSource();
 			synchronized (this) {
-				int row = sysList.indexOf(trainId);
+				int row = sysList.indexOf(train);
 				if (Control.showProperty && log.isDebugEnabled())
-					log.debug("Update train table row: " + row + " id: " + trainId);
+					log.debug("Update train table row: " + row + " id: " + train.getId());
 				if (row >= 0)
 					fireTableRowsUpdated(row, row);
 			}
@@ -238,27 +239,26 @@ public class TrainsScheduleTableModel extends javax.swing.table.AbstractTableMod
 
 	private TrainSchedule getSchedule(int col) {
 		if (col >= FIXEDCOLUMN && col < getColumnCount()) {
-			List<String> l = scheduleManager.getSchedulesByIdList();
-			TrainSchedule schedule = scheduleManager.getScheduleById(l.get(col - FIXEDCOLUMN));
-			return schedule;
-		} else {
-			return null;
+			List<TrainSchedule> trainSchedules = scheduleManager.getSchedulesByIdList();
+			TrainSchedule ts = trainSchedules.get(col - FIXEDCOLUMN);
+			return ts;
 		}
+		return null;
 	}
 
 	private void removePropertyChangeTrainSchedules() {
-		List<String> l = scheduleManager.getSchedulesByIdList();
-		for (int i = 0; i < l.size(); i++) {
-			TrainSchedule ts = scheduleManager.getScheduleById(l.get(i));
+		List<TrainSchedule> trainSchedules = scheduleManager.getSchedulesByIdList();
+		for (int i = 0; i < trainSchedules.size(); i++) {
+			TrainSchedule ts = trainSchedules.get(i);
 			if (ts != null)
 				ts.removePropertyChangeListener(this);
 		}
 	}
 
 	private void addPropertyChangeTrainSchedules() {
-		List<String> l = scheduleManager.getSchedulesByIdList();
-		for (int i = 0; i < l.size(); i++) {
-			TrainSchedule ts = scheduleManager.getScheduleById(l.get(i));
+		List<TrainSchedule> trainSchedules = scheduleManager.getSchedulesByIdList();
+		for (int i = 0; i < trainSchedules.size(); i++) {
+			TrainSchedule ts = trainSchedules.get(i);
 			if (ts != null)
 				ts.addPropertyChangeListener(this);
 		}
@@ -268,9 +268,9 @@ public class TrainsScheduleTableModel extends javax.swing.table.AbstractTableMod
 		if (sysList != null) {
 			for (int i = 0; i < sysList.size(); i++) {
 				// if object has been deleted, it's not here; ignore it
-				Train t = trainManager.getTrainById(sysList.get(i));
-				if (t != null)
-					t.removePropertyChangeListener(this);
+				Train train = sysList.get(i);
+				if (train != null)
+					train.removePropertyChangeListener(this);
 			}
 		}
 	}
@@ -279,9 +279,9 @@ public class TrainsScheduleTableModel extends javax.swing.table.AbstractTableMod
 		if (sysList != null) {
 			for (int i = 0; i < sysList.size(); i++) {
 				// if object has been deleted, it's not here; ignore it
-				Train t = trainManager.getTrainById(sysList.get(i));
-				if (t != null)
-					t.addPropertyChangeListener(this);
+				Train train = sysList.get(i);
+				if (train != null)
+					train.addPropertyChangeListener(this);
 			}
 		}
 	}
@@ -295,6 +295,5 @@ public class TrainsScheduleTableModel extends javax.swing.table.AbstractTableMod
 		removePropertyChangeTrainSchedules();
 	}
 
-	static Logger log = LoggerFactory
-			.getLogger(TrainsScheduleTableModel.class.getName());
+	static Logger log = LoggerFactory.getLogger(TrainsScheduleTableModel.class.getName());
 }

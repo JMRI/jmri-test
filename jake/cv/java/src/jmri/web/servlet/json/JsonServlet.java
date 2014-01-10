@@ -15,7 +15,50 @@ import javax.servlet.http.HttpServletResponse;
 import jmri.InstanceManager;
 import jmri.implementation.QuietShutDownTask;
 import jmri.jmris.JmriConnection;
-import static jmri.jmris.json.JSON.*;
+import static jmri.jmris.json.JSON.CAR;
+import static jmri.jmris.json.JSON.CARS;
+import static jmri.jmris.json.JSON.CODE;
+import static jmri.jmris.json.JSON.CONSIST;
+import static jmri.jmris.json.JSON.CONSISTS;
+import static jmri.jmris.json.JSON.DATA;
+import static jmri.jmris.json.JSON.ENGINE;
+import static jmri.jmris.json.JSON.ENGINES;
+import static jmri.jmris.json.JSON.FORMAT;
+import static jmri.jmris.json.JSON.GOODBYE;
+import static jmri.jmris.json.JSON.HELLO;
+import static jmri.jmris.json.JSON.LIGHT;
+import static jmri.jmris.json.JSON.LIGHTS;
+import static jmri.jmris.json.JSON.LOCATION;
+import static jmri.jmris.json.JSON.LOCATIONS;
+import static jmri.jmris.json.JSON.MEMORIES;
+import static jmri.jmris.json.JSON.MEMORY;
+import static jmri.jmris.json.JSON.METADATA;
+import static jmri.jmris.json.JSON.NAME;
+import static jmri.jmris.json.JSON.NETWORK_SERVICES;
+import static jmri.jmris.json.JSON.NODE;
+import static jmri.jmris.json.JSON.PANELS;
+import static jmri.jmris.json.JSON.POWER;
+import static jmri.jmris.json.JSON.RAILROAD;
+import static jmri.jmris.json.JSON.REPORTER;
+import static jmri.jmris.json.JSON.REPORTERS;
+import static jmri.jmris.json.JSON.ROSTER;
+import static jmri.jmris.json.JSON.ROSTER_ENTRY;
+import static jmri.jmris.json.JSON.ROUTE;
+import static jmri.jmris.json.JSON.ROUTES;
+import static jmri.jmris.json.JSON.SENSOR;
+import static jmri.jmris.json.JSON.SENSORS;
+import static jmri.jmris.json.JSON.SIGNAL_HEAD;
+import static jmri.jmris.json.JSON.SIGNAL_HEADS;
+import static jmri.jmris.json.JSON.SIGNAL_MAST;
+import static jmri.jmris.json.JSON.SIGNAL_MASTS;
+import static jmri.jmris.json.JSON.STATE;
+import static jmri.jmris.json.JSON.TRAIN;
+import static jmri.jmris.json.JSON.TRAINS;
+import static jmri.jmris.json.JSON.TURNOUT;
+import static jmri.jmris.json.JSON.TURNOUTS;
+import static jmri.jmris.json.JSON.TYPE;
+import static jmri.jmris.json.JSON.VALUE;
+import static jmri.jmris.json.JSON.XML;
 import jmri.jmris.json.JsonClientHandler;
 import jmri.jmris.json.JsonException;
 import jmri.jmris.json.JsonServerManager;
@@ -51,7 +94,7 @@ public class JsonServlet extends WebSocketServlet {
     private static final long serialVersionUID = -671593634343578915L;
     private ObjectMapper mapper;
     private final Set<JsonWebSocket> sockets = new CopyOnWriteArraySet<JsonWebSocket>();
-    private static Logger log = LoggerFactory.getLogger(JsonServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(JsonServlet.class);
 
     public JsonServlet() {
         super();
@@ -68,7 +111,7 @@ public class JsonServlet extends WebSocketServlet {
                 for (JsonWebSocket socket : sockets) {
                     try {
                         socket.wsConnection.sendMessage(socket.mapper.writeValueAsString(socket.mapper.createObjectNode().put(TYPE, GOODBYE)));
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         log.warn("Unable to send goodbye while closing socket.\nError was {}", e.getMessage());
                     }
                     socket.wsConnection.close();
@@ -97,6 +140,9 @@ public class JsonServlet extends WebSocketServlet {
      * <li>[{"type":"sensor","data":{"name":"IS22","userName":"FarEast","comment":null,"inverted":false,"state":4}}]</li>
      * </ul>
      * note that data will vary for each type
+     * @param request an HttpServletRequest object that contains the request the client has made of the servlet
+     * @param response an HttpServletResponse object that contains the response the servlet sends to the client
+     * @throws java.io.IOException if an input or output error is detected when the servlet handles the GET request
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -155,6 +201,8 @@ public class JsonServlet extends WebSocketServlet {
                         reply = JsonUtil.getHello(JsonServerManager.getJsonServerPreferences().getHeartbeatInterval());
                     } else if (type.equals(NETWORK_SERVICES)) {
                         reply = JsonUtil.getNetworkServices();
+                    } else if (type.equals(NODE)) {
+                        reply = JsonUtil.getNode();
                     } else {
                         log.warn("Type {} unknown.", type);
                         reply = JsonUtil.getUnknown(type);
@@ -453,7 +501,7 @@ public class JsonServlet extends WebSocketServlet {
             try {
                 log.debug("Sending hello");
                 this.handler.sendHello(this.wsConnection.getMaxIdleTime());
-            } catch (Exception e) {
+            } catch (IOException e) {
                 log.warn("Error openning WebSocket:\n{}", e.getMessage(), e);
                 this.wsConnection.close();
                 sockets.remove(this);
@@ -471,7 +519,7 @@ public class JsonServlet extends WebSocketServlet {
         public void onMessage(String string) {
             try {
                 this.handler.onMessage(string);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 log.error("Error on WebSocket message:\n{}", e.getMessage(), e);
                 this.wsConnection.close();
                 sockets.remove(this);

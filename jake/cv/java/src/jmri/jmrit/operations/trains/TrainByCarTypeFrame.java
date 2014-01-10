@@ -5,6 +5,7 @@ package jmri.jmrit.operations.trains;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jmri.jmrit.operations.rollingstock.RollingStock;
 import jmri.jmrit.operations.rollingstock.cars.CarTypes;
 import jmri.jmrit.operations.rollingstock.cars.CarManager;
 import jmri.jmrit.operations.rollingstock.cars.Car;
@@ -135,10 +136,10 @@ public class TrainByCarTypeFrame extends OperationsFrame implements java.beans.P
 		Route route = train.getRoute();
 		if (route == null)
 			return;
-		List<String> routeIds = route.getLocationsBySequenceList();
-		for (int i = 0; i < routeIds.size(); i++) {
+		List<RouteLocation> routeList = route.getLocationsBySequenceList();
+		for (int i = 0; i < routeList.size(); i++) {
 			JLabel loc = new JLabel();
-			RouteLocation rl = route.getLocationById(routeIds.get(i));
+			RouteLocation rl = routeList.get(i);
 			String locationName = rl.getName();
 			loc.setText(locationName);
 			addItemLeft(pLocations, loc, 0, y++);
@@ -264,9 +265,9 @@ public class TrainByCarTypeFrame extends OperationsFrame implements java.beans.P
 		// if car is already placed at track, don't check car type and load
 		if (car != null && car.getTrack() == track)
 			return true;
-		List<String> scheduleItems = schedule.getItemsBySequenceList();
+		List<ScheduleItem> scheduleItems = schedule.getItemsBySequenceList();
 		for (int i = 0; i < scheduleItems.size(); i++) {
-			ScheduleItem si = schedule.getItemById(scheduleItems.get(i));
+			ScheduleItem si = scheduleItems.get(i);
 			// check to see if schedule services car type
 			if (attribute.equals(TYPE) && si.getTypeName().equals(carType))
 				return true;
@@ -310,17 +311,17 @@ public class TrainByCarTypeFrame extends OperationsFrame implements java.beans.P
 		String carType = (String) typeComboBox.getSelectedItem();
 		// load car combobox
 		carsComboBox.addItem(blank);
-		List<String> cars = CarManager.instance().getByTypeList(carType);
+		List<RollingStock> cars = CarManager.instance().getByTypeList(carType);
 		for (int i = 0; i < cars.size(); i++) {
-			Car car = CarManager.instance().getById(cars.get(i));
+			Car car = (Car) cars.get(i);
 			carsComboBox.addItem(car);
 		}
 	}
 
 	private void adjustCarsComboBoxSize() {
-		List<String> cars = CarManager.instance().getList();
+		List<RollingStock> cars = CarManager.instance().getList();
 		for (int i = 0; i < cars.size(); i++) {
-			Car car = CarManager.instance().getById(cars.get(i));
+			Car car = (Car) cars.get(i);
 			carsComboBox.addItem(car);
 		}
 		Dimension boxsize = carsComboBox.getMinimumSize();
@@ -335,9 +336,9 @@ public class TrainByCarTypeFrame extends OperationsFrame implements java.beans.P
 	 * Add property listeners for locations and tracks
 	 */
 	private void addLocationAndTrackPropertyChange() {
-		List<String> locations = locationManager.getLocationsByIdList();
+		List<Location> locations = locationManager.getLocationsByIdList();
 		for (int i = 0; i < locations.size(); i++) {
-			Location loc = locationManager.getLocationById(locations.get(i));
+			Location loc = locations.get(i);
 			loc.addPropertyChangeListener(this);
 			List<String> tracks = loc.getTrackIdsByNameList(null);
 			for (int j = 0; j < tracks.size(); j++) {
@@ -354,9 +355,9 @@ public class TrainByCarTypeFrame extends OperationsFrame implements java.beans.P
 	 * Remove property listeners for locations and tracks
 	 */
 	private void removeLocationAndTrackPropertyChange() {
-		List<String> locations = locationManager.getLocationsByIdList();
+		List<Location> locations = locationManager.getLocationsByIdList();
 		for (int i = 0; i < locations.size(); i++) {
-			Location loc = locationManager.getLocationById(locations.get(i));
+			Location loc = locations.get(i);
 			if (loc != null) {
 				loc.removePropertyChangeListener(this);
 				List<String> tracks = loc.getTrackIdsByNameList(null);

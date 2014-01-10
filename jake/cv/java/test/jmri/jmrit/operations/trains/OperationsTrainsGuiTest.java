@@ -556,11 +556,11 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		f.initComponents();
 
 		LocationManager lmanager = LocationManager.instance();
-		List<String> locations = lmanager.getLocationsByNameList();
+		List<Location> locations = lmanager.getLocationsByNameList();
 
 		// default switch list will print all locations
 		for (int i = 0; i < locations.size(); i++) {
-			Location l = lmanager.getLocationById(locations.get(i));
+			Location l = locations.get(i);
 			Assert.assertTrue("print switchlist 1", l.isSwitchListEnabled());
 		}
 		// now clear all locations
@@ -568,7 +568,7 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.saveButton));
 		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
 		for (int i = 0; i < locations.size(); i++) {
-			Location l = lmanager.getLocationById(locations.get(i));
+			Location l = locations.get(i);
 			Assert.assertFalse("print switchlist 2", l.isSwitchListEnabled());
 		}
 		// now set all locations
@@ -576,7 +576,7 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.saveButton));
 		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
 		for (int i = 0; i < locations.size(); i++) {
-			Location l = lmanager.getLocationById(locations.get(i));
+			Location l = locations.get(i);
 			Assert.assertTrue("print switchlist 3", l.isSwitchListEnabled());
 		}
 
@@ -655,11 +655,11 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 	public void testTrainsScheduleEditFrame() {
 		TrainsScheduleEditFrame f = new TrainsScheduleEditFrame();
 		Assert.assertNotNull("frame exists", f);
-
+		
 		f.addTextBox.setText("A New Day");
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.addButton));
 		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
-
+		
 		TrainScheduleManager tsm = TrainScheduleManager.instance();
 		Assert.assertNotNull("Train schedule manager exists", tsm);
 		Assert.assertNotNull("A new Day schedule exists", tsm.getScheduleByName("A New Day"));

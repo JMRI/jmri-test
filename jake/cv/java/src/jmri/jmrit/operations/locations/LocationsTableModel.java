@@ -64,18 +64,17 @@ public class LocationsTableModel extends javax.swing.table.AbstractTableModel im
     	removePropertyChangeLocations();
     	
 		if (_sort == SORTBYID)
-			sysList = manager.getLocationsByIdList();
+			locationsList = manager.getLocationsByIdList();
 		else
-			sysList = manager.getLocationsByNameList();
+			locationsList = manager.getLocationsByNameList();
 		// and add them back in
-		for (int i = 0; i < sysList.size(); i++){
+		for (int i = 0; i < locationsList.size(); i++){
 //			log.debug("location ids: " + (String) sysList.get(i));
-			manager.getLocationById(sysList.get(i))
-					.addPropertyChangeListener(this);
+			locationsList.get(i).addPropertyChangeListener(this);
 		}
 	}
 
-	List<String> sysList = null;
+	List<Location> locationsList = null;
     
 	void initTable(JTable table) {
 		// Install the button handlers
@@ -101,7 +100,7 @@ public class LocationsTableModel extends javax.swing.table.AbstractTableModel im
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 	}
     
-    public synchronized int getRowCount() { return sysList.size(); }
+    public synchronized int getRowCount() { return locationsList.size(); }
 
     public int getColumnCount( ){ return HIGHESTCOLUMN;}
 
@@ -152,9 +151,10 @@ public class LocationsTableModel extends javax.swing.table.AbstractTableModel im
 		// The button editor for the table does a repaint of the button cells after the setValueAt code
 		// is called which then returns the focus back onto the table. We need the edit frame
 		// in focus.
-		if (focusLef) {
-			focusLef = false;
+
+		if (lef != null) {
 			lef.requestFocus();
+			lef = null;
 		}
 		if (ymf != null) {
 			ymf.requestFocus();
@@ -162,8 +162,7 @@ public class LocationsTableModel extends javax.swing.table.AbstractTableModel im
 		}
 		if (row >= getRowCount())
 			return "ERROR row " + row; // NOI18N
-		String locId = sysList.get(row);
-		Location l = manager.getLocationById(locId);
+		Location l = locationsList.get(row);
 		if (l == null)
 			return "ERROR location unknown " + row; // NOI18N
 		switch (col) {
@@ -231,24 +230,33 @@ public class LocationsTableModel extends javax.swing.table.AbstractTableModel im
     	}
     }
     
-    boolean focusLef = false;
     LocationEditFrame lef = null;
-    private synchronized void editLocation (int row){
-    	log.debug("Edit location");
-    	if (lef != null)
-    		lef.dispose();
-    	lef = new LocationEditFrame();
-    	Location loc = manager.getLocationById(sysList.get(row));
-     	lef.setTitle(Bundle.getMessage("TitleLocationEdit"));
-    	lef.initComponents(loc);
-    	focusLef = true;
-   }
+    LocationEditFrame lef1 = null;
+    LocationEditFrame lef2 = null;
+
+	private synchronized void editLocation(int row) {
+		log.debug("Edit location");
+		Location loc = locationsList.get(row);
+		if (lef1 != null && (lef2 == null || !lef2.isVisible())) {
+			if (lef2 != null)
+				lef2.dispose();
+			lef2 = new LocationEditFrame();
+			lef2.initComponents(loc);
+			lef = lef2;
+		} else {
+			if (lef1 != null)
+				lef1.dispose();
+			lef1 = new LocationEditFrame();
+			lef1.initComponents(loc);
+			lef = lef1;
+		}
+	}
    
     YardmasterFrame ymf = null;
     private synchronized void launchYardmaster (int row){
     	log.debug("Yardmaster");
     	ymf = new YardmasterFrame();
-    	Location loc = manager.getLocationById(sysList.get(row));
+    	Location loc = locationsList.get(row);
     	ymf.initComponents(loc);
    }
 
@@ -259,19 +267,19 @@ public class LocationsTableModel extends javax.swing.table.AbstractTableModel im
              fireTableDataChanged();
     	 }
     	 else if (e.getSource().getClass().equals(Location.class)){
-    		 String locId = ((Location) e.getSource()).getId();
-    		 int row = sysList.indexOf(locId);
-    		 if (Control.showProperty && log.isDebugEnabled()) log.debug("Update location table row: "+row + " id: " + locId);
+    		 Location loc = (Location) e.getSource();
+    		 int row = locationsList.indexOf(loc);
+    		 if (Control.showProperty && log.isDebugEnabled()) log.debug("Update location table row: "+row + " id: " + loc.getId());
     		 if (row >= 0)
     			 fireTableRowsUpdated(row, row);
     	 }
     }
     
     private synchronized void removePropertyChangeLocations() {
-    	if (sysList != null) {
-    		for (int i = 0; i < sysList.size(); i++) {
+    	if (locationsList != null) {
+    		for (int i = 0; i < locationsList.size(); i++) {
     			// if object has been deleted, it's not here; ignore it
-    			Location l = manager.getLocationById(sysList.get(i));
+    			Location l = locationsList.get(i);
     			if (l != null)
     				l.removePropertyChangeListener(this);
     		}
@@ -280,8 +288,10 @@ public class LocationsTableModel extends javax.swing.table.AbstractTableModel im
 
     public void dispose() {
         if (log.isDebugEnabled()) log.debug("dispose");
-       	if (lef != null)
-    		lef.dispose();
+       	if (lef1 != null)
+    		lef1.dispose();
+       	if (lef2 != null)
+    		lef2.dispose();
         manager.removePropertyChangeListener(this);
         removePropertyChangeLocations();
     }

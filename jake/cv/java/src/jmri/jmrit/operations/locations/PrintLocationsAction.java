@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jmri.jmrit.operations.OperationsFrame;
+import jmri.jmrit.operations.rollingstock.RollingStock;
 import jmri.jmrit.operations.rollingstock.cars.Car;
 import jmri.jmrit.operations.rollingstock.cars.CarManager;
 import jmri.jmrit.operations.rollingstock.cars.CarTypes;
@@ -99,7 +100,7 @@ public class PrintLocationsAction extends AbstractAction {
 
 	// Loop through the Roster, printing as needed
 	private void printLocationsSelected() throws IOException {
-		List<String> locations = manager.getLocationsByNameList();
+		List<Location> locations = manager.getLocationsByNameList();
 		int totalLength = 0;
 		int usedLength = 0;
 		int numberRS = 0;
@@ -112,7 +113,7 @@ public class PrintLocationsAction extends AbstractAction {
 				+ Bundle.getMessage("Drop") + NEW_LINE;
 		writer.write(s);
 		for (int i = 0; i < locations.size(); i++) {
-			Location location = manager.getLocationById(locations.get(i));
+			Location location = locations.get(i);
 			// location name, track length, used, number of RS, scheduled pick ups and drops
 			s = padOutString(location.getName(), Control.max_len_string_location_name) + TAB + "  "
 					+ Integer.toString(location.getLength()) + TAB
@@ -198,16 +199,16 @@ public class PrintLocationsAction extends AbstractAction {
 	}
 
 	private void printSchedulesSelected() throws IOException {
-		List<String> locations = manager.getLocationsByNameList();
+		List<Location> locations = manager.getLocationsByNameList();
 		String s = padOutString(Bundle.getMessage("Schedules"), MAX_NAME_LENGTH) + " " + Bundle.getMessage("Location") + " - "
 				+ Bundle.getMessage("SpurName") + NEW_LINE;
 		writer.write(s);
 		ScheduleManager sm = ScheduleManager.instance();
-		List<String> schedules = sm.getSchedulesByNameList();
+		List<Schedule> schedules = sm.getSchedulesByNameList();
 		for (int i = 0; i < schedules.size(); i++) {
-			Schedule schedule = sm.getScheduleById(schedules.get(i));
+			Schedule schedule = schedules.get(i);
 			for (int j = 0; j < locations.size(); j++) {
-				Location location = manager.getLocationById(locations.get(j));
+				Location location = locations.get(j);
 				List<String> spurs = location.getTrackIdsByNameList(Track.SPUR);
 				for (int k = 0; k < spurs.size(); k++) {
 					Track spur = location.getTrackById(spurs.get(k));
@@ -257,11 +258,11 @@ public class PrintLocationsAction extends AbstractAction {
 	}
 
 	private void printDetailsSelected() throws IOException {
-		List<String> locations = manager.getLocationsByNameList();
+		List<Location> locations = manager.getLocationsByNameList();
 		String s = Bundle.getMessage("DetailedReport") + NEW_LINE;
 		writer.write(s);
 		for (int i = 0; i < locations.size(); i++) {
-			Location location = manager.getLocationById(locations.get(i));
+			Location location = locations.get(i);
 			String name = location.getName();
 			// services train direction
 			int dir = location.getTrainDirections();
@@ -307,8 +308,8 @@ public class PrintLocationsAction extends AbstractAction {
 
 	private void printAnalysisSelected() throws IOException {
 		CarManager carManager = CarManager.instance();
-		List<String> locations = manager.getLocationsByNameList();
-		List<String> cars = carManager.getByLocationList();
+		List<Location> locations = manager.getLocationsByNameList();
+		List<RollingStock> cars = carManager.getByLocationList();
 		String[] carTypes = CarTypes.instance().getNames();
 
 		String s = Bundle.getMessage("TrackAnalysis") + NEW_LINE;
@@ -321,7 +322,7 @@ public class PrintLocationsAction extends AbstractAction {
 			int numberOfCars = 0;
 			int totalTrackLength = 0;
 			for (int j = 0; j < cars.size(); j++) {
-				Car car = carManager.getById(cars.get(j));
+				Car car = (Car) cars.get(j);
 				if (car.getTypeName().equals(type) && car.getLocation() != null) {
 					numberOfCars++;
 					totalTrackLength = totalTrackLength + car.getTotalLength();
@@ -382,11 +383,11 @@ public class PrintLocationsAction extends AbstractAction {
 		}
 	}
 
-	private int getTrackLengthAcceptType(List<String> locations, String carType, String trackType)
+	private int getTrackLengthAcceptType(List<Location> locations, String carType, String trackType)
 			throws IOException {
 		int trackLength = 0;
 		for (int j = 0; j < locations.size(); j++) {
-			Location location = manager.getLocationById(locations.get(j));
+			Location location = locations.get(j);
 			// get a list of spur tracks at this location
 			List<String> tracks = location.getTrackIdsByNameList(trackType);
 			for (int k = 0; k < tracks.size(); k++) {

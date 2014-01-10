@@ -169,6 +169,7 @@ public class Track {
 	public static final String DESTINATION_OPTIONS_CHANGED_PROPERTY = "trackDestinationOptions"; // NOI18N
 	public static final String SCHEDULE_MODE_CHANGED_PROPERTY = "trackScheduleMode"; // NOI18N
 	public static final String SCHEDULE_ID_CHANGED_PROPERTY = "trackScheduleId"; // NOI18N
+	public static final String SERVICE_ORDER_CHANGED_PROPERTY = "trackServiceOrder";
 
 	public Track(String id, String name, String type, Location location) {
 		log.debug("New track " + name + " " + id);
@@ -189,6 +190,12 @@ public class Track {
 	 */
 	public Track copyTrack(String newName, Location newLocation) {
 		Track newTrack = newLocation.addTrack(newName, getTrackType());
+		newTrack.clearTypeNames();		// all types are accepted by a new track
+		
+		newTrack.setAddCustomLoadsAnySpurEnabled(isAddCustomLoadsAnySpurEnabled());
+		newTrack.setAddCustomLoadsAnyStagingTrackEnabled(isAddCustomLoadsAnyStagingTrackEnabled());
+		newTrack.setAddCustomLoadsEnabled(isAddCustomLoadsEnabled());
+
 		newTrack.setAlternateTrack(getAlternateTrack());
 		newTrack.setBlockCarsEnabled(isBlockCarsEnabled());
 		newTrack.setComment(getComment());
@@ -225,6 +232,7 @@ public class Track {
 		newTrack.setScheduleMode(getScheduleMode());
 		newTrack.setServiceOrder(getServiceOrder());
 		newTrack.setShipLoadNames(getShipLoadNames());
+		newTrack.setShipLoadOption(getShipLoadOption());
 		newTrack.setTrainDirections(getTrainDirections());
 		newTrack.setTypeNames(getTypeNames());
 		return newTrack;
@@ -647,6 +655,10 @@ public class Track {
 		for (int i = 0; i < types.length; i++)
 			if (!_typeList.contains(types[i]))
 				_typeList.add(types[i]);
+	}
+	
+	private void clearTypeNames() {
+		_typeList.clear();
 	}
 
 	public void addTypeName(String type) {
@@ -1310,7 +1322,7 @@ public class Track {
 	public void setServiceOrder(String order) {
 		String old = _order;
 		_order = order;
-		setDirtyAndFirePropertyChange("trackServiceOrder", old, order); // NOI18N
+		setDirtyAndFirePropertyChange(SERVICE_ORDER_CHANGED_PROPERTY, old, order); // NOI18N
 	}
 
 	/**
@@ -1366,7 +1378,7 @@ public class Track {
 			} else {
 				// set the id to the first item in the list
 				if (schedule.getItemsBySequenceList().size() > 0)
-					setScheduleItemId(schedule.getItemsBySequenceList().get(0));
+					setScheduleItemId(schedule.getItemsBySequenceList().get(0).getId());
 				setScheduleCount(0);
 			}
 			setDirtyAndFirePropertyChange(SCHEDULE_ID_CHANGED_PROPERTY, old, id);
@@ -1406,7 +1418,7 @@ public class Track {
 			log.debug("Can not find schedule item (" + getScheduleItemId() + ") for schedule ("
 					+ getScheduleName() + ")");
 			// reset schedule
-			setScheduleItemId((sch.getItemById(sch.getItemsBySequenceList().get(0)).getId()));
+			setScheduleItemId((sch.getItemsBySequenceList().get(0)).getId());
 			currentSi = sch.getItemById(getScheduleItemId());
 		}
 		return currentSi;
@@ -1434,15 +1446,15 @@ public class Track {
 					+ getName() + ")");
 			return null;
 		}
-		List<String> l = sch.getItemsBySequenceList();
+		List<ScheduleItem> items = sch.getItemsBySequenceList();
 		ScheduleItem nextSi = null;
-		for (int i = 0; i < l.size(); i++) {
-			nextSi = sch.getItemById(l.get(i));
+		for (int i = 0; i < items.size(); i++) {
+			nextSi = items.get(i);
 			if (getCurrentScheduleItem() == nextSi) {
-				if (++i < l.size()) {
-					nextSi = sch.getItemById(l.get(i));
+				if (++i < items.size()) {
+					nextSi = items.get(i);
 				} else {
-					nextSi = sch.getItemById(l.get(0));
+					nextSi = items.get(0);
 				}
 				setScheduleItemId(nextSi.getId());
 				break;
@@ -1478,12 +1490,12 @@ public class Track {
 		if (schedule == null)
 			return MessageFormat.format(Bundle.getMessage("CanNotFindSchedule"),
 					new Object[] { getScheduleId() });
-		List<String> scheduleItems = schedule.getItemsBySequenceList();
+		List<ScheduleItem> scheduleItems = schedule.getItemsBySequenceList();
 		if (scheduleItems.size() == 0) {
 			return Bundle.getMessage("empty");
 		}
 		for (int i = 0; i < scheduleItems.size(); i++) {
-			ScheduleItem si = schedule.getItemById(scheduleItems.get(i));
+			ScheduleItem si = scheduleItems.get(i);
 			// check train schedule
 			if (!si.getTrainScheduleId().equals("")
 					&& TrainScheduleManager.instance().getScheduleById(si.getTrainScheduleId()) == null) {

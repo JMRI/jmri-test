@@ -63,12 +63,12 @@ public class LocationManager implements java.beans.PropertyChangeListener {
 	 */
 
 	public Location getLocationByName(String name) {
-		Location l;
+		Location location;
 		Enumeration<Location> en = _locationHashTable.elements();
 		while (en.hasMoreElements()) {
-			l = en.nextElement();
-			if (l.getName().equals(name))
-				return l;
+			location = en.nextElement();
+			if (location.getName().equals(name))
+				return location;
 		}
 		return null;
 	}
@@ -128,31 +128,21 @@ public class LocationManager implements java.beans.PropertyChangeListener {
 	/**
 	 * Sort by location name
 	 * 
-	 * @return list of location ids ordered by name
+	 * @return list of locations ordered by name
 	 */
-	public List<String> getLocationsByNameList() {
+	public List<Location> getLocationsByNameList() {
 		// first get id list
-		List<String> sortList = getList();
+		List<Location> sortList = getList();
 		// now re-sort
-		List<String> out = new ArrayList<String>();
-		String locName = "";
-		boolean locAdded = false;
-		Location l;
-
+		List<Location> out = new ArrayList<Location>();
 		for (int i = 0; i < sortList.size(); i++) {
-			locAdded = false;
-			l = getLocationById(sortList.get(i));
-			locName = l.getName();
 			for (int j = 0; j < out.size(); j++) {
-				l = getLocationById(out.get(j));
-				String outLocName = l.getName();
-				if (locName.compareToIgnoreCase(outLocName) < 0) {
+				if (sortList.get(i).getName().compareToIgnoreCase(out.get(j).getName()) < 0) {
 					out.add(j, sortList.get(i));
-					locAdded = true;
 					break;
 				}
 			}
-			if (!locAdded) {
+			if (!out.contains(sortList.get(i))) {
 				out.add(sortList.get(i));
 			}
 		}
@@ -163,80 +153,72 @@ public class LocationManager implements java.beans.PropertyChangeListener {
 	/**
 	 * Sort by location number, number can alpha numeric
 	 * 
-	 * @return list of location ids ordered by number
+	 * @return list of locations ordered by id numbers
 	 */
-	public List<String> getLocationsByIdList() {
-		// first get id list
-		List<String> sortList = getList();
+	public List<Location> getLocationsByIdList() {
+		List<Location> sortList = getList();
 		// now re-sort
-		List<String> out = new ArrayList<String>();
-		int locationNumber = 0;
-		boolean locationAdded = false;
-		Location l;
-
+		List<Location> out = new ArrayList<Location>();
 		for (int i = 0; i < sortList.size(); i++) {
-			locationAdded = false;
-			l = getLocationById(sortList.get(i));
-			try {
-				locationNumber = Integer.parseInt(l.getId());
-			} catch (NumberFormatException e) {
-				log.debug("location id number isn't a number");
-			}
 			for (int j = 0; j < out.size(); j++) {
-				l = getLocationById(out.get(j));
 				try {
-					int outLocationNumber = Integer.parseInt(l.getId());
-					if (locationNumber < outLocationNumber) {
+					if (Integer.parseInt(sortList.get(i).getId()) < Integer.parseInt(out.get(j).getId())) {
 						out.add(j, sortList.get(i));
-						locationAdded = true;
 						break;
 					}
 				} catch (NumberFormatException e) {
-					log.debug("list out id number isn't a number");
+					log.debug("list id number isn't a number");
 				}
 			}
-			if (!locationAdded) {
+			if (!out.contains(sortList.get(i))) {
 				out.add(sortList.get(i));
 			}
 		}
 		return out;
 	}
 
-	private List<String> getList() {
-		List<String> out = new ArrayList<String>();
-		Enumeration<String> en = _locationHashTable.keys();
-		String[] arr = new String[_locationHashTable.size()];
-		int i = 0;
+	private List<Location> getList() {
+		List<Location> out = new ArrayList<Location>();
+		Enumeration<Location> en = _locationHashTable.elements();
 		while (en.hasMoreElements()) {
-			arr[i] = en.nextElement();
-			i++;
+			out.add(en.nextElement());
 		}
-		jmri.util.StringUtil.sort(arr);
-		for (i = 0; i < arr.length; i++)
-			out.add(arr[i]);
 		return out;
 	}
-
+	
 	/**
 	 * Returns all tracks of type
 	 * 
 	 * @param type
 	 *            Spur (Track.SPUR), Yard (Track.YARD), Interchange (Track.INTERCHANGE), Staging (Track.STAGING), or
 	 *            null (returns all track types)
-	 * @return List of tracks ordered by use
+	 * @return List of tracks
 	 */
 	public List<Track> getTracks(String type) {
-		List<String> sortList = getList();
+		List<Location> sortList = getList();
 		List<Track> trackList = new ArrayList<Track>();
-		Location l;
+		Location location;
 		for (int i = 0; i < sortList.size(); i++) {
-			l = getLocationById(sortList.get(i));
-			List<String> tracks = l.getTrackIdsByNameList(type);
+			location = sortList.get(i);
+			List<String> tracks = location.getTrackIdsByNameList(type);
 			for (int j = 0; j < tracks.size(); j++) {
-				Track track = l.getTrackById(tracks.get(j));
+				Track track = location.getTrackById(tracks.get(j));
 				trackList.add(track);
 			}
 		}
+		return trackList;
+	}
+
+	/**
+	 * Returns all tracks of type sorted by use
+	 * 
+	 * @param type
+	 *            Spur (Track.SPUR), Yard (Track.YARD), Interchange (Track.INTERCHANGE), Staging (Track.STAGING), or
+	 *            null (returns all track types)
+	 * @return List of tracks ordered by use
+	 */
+	public List<Track> getTracksByMoves(String type) {
+		List<Track> trackList = getTracks(type);
 		// now re-sort
 		List<Track> moveList = new ArrayList<Track>();
 		boolean locAdded = false;
@@ -261,9 +243,9 @@ public class LocationManager implements java.beans.PropertyChangeListener {
 	}
 	
 	public void resetMoves() {
-		List<String> sortList = getList();
+		List<Location> sortList = getList();
 		for (int i = 0; i < sortList.size(); i++) {
-			Location loc = getLocationById(sortList.get(i));
+			Location loc = sortList.get(i);
 			loc.resetMoves();
 		}
 	}
@@ -271,11 +253,9 @@ public class LocationManager implements java.beans.PropertyChangeListener {
 	public JComboBox getComboBox() {
 		JComboBox box = new JComboBox();
 		box.addItem("");
-		List<String> locs = getLocationsByNameList();
+		List<Location> locs = getLocationsByNameList();
 		for (int i = 0; i < locs.size(); i++) {
-			String locId = locs.get(i);
-			Location l = getLocationById(locId);
-			box.addItem(l);
+			box.addItem(locs.get(i));
 		}
 		return box;
 	}
@@ -283,19 +263,17 @@ public class LocationManager implements java.beans.PropertyChangeListener {
 	public void updateComboBox(JComboBox box) {
 		box.removeAllItems();
 		box.addItem("");
-		List<String> locs = getLocationsByNameList();
+		List<Location> locs = getLocationsByNameList();
 		for (int i = 0; i < locs.size(); i++) {
-			String locId = locs.get(i);
-			Location l = getLocationById(locId);
-			box.addItem(l);
+			box.addItem(locs.get(i));
 		}
 	}
 
 
 	public void replaceLoad(String type, String oldLoadName, String newLoadName) {
-		List<String> locs = getLocationsByIdList();
+		List<Location> locs = getLocationsByIdList();
 		for (int i = 0; i < locs.size(); i++) {
-			Location loc = getLocationById(locs.get(i));
+			Location loc = locs.get(i);
 			// now adjust tracks
 			List<String> tracks = loc.getTrackIdsByNameList(null);
 			for (int j = 0; j < tracks.size(); j++) {
@@ -357,10 +335,9 @@ public class LocationManager implements java.beans.PropertyChangeListener {
 		Element values;
 		root.addContent(values = new Element(Xml.LOCATIONS));
 		// add entries
-		List<String> locationList = getLocationsByIdList();
+		List<Location> locationList = getLocationsByIdList();
 		for (int i = 0; i < locationList.size(); i++) {
-			String locationId = locationList.get(i);
-			Location loc = getLocationById(locationId);
+			Location loc = locationList.get(i);
 			values.addContent(loc.store());
 		}
 	}

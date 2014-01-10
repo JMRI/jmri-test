@@ -47,8 +47,6 @@ The available definitions include:
 
 <dt><a href="BN-1989/index.shtml">BN-1989</a>
     <dd>1989 October Burlington Northern
-    <br>
-    <i>Partial aspect mapping, not finished.</i>
 
 <dt><a href="BR-2003/index.shtml">BR-2003</a>
     <dd>2003 BR rule book
@@ -69,10 +67,16 @@ The available definitions include:
 <dt><a href="InfraBel-2013/index.shtml">InfraBel-2013</a>
     <dd>Current info for Belgium in 2013 taken from Wikipedia
 
+<dt><a href="LMS-1932/index.shtml">LMS-1932</a>
+    <dd>Complete LMS speed signalling from 1932-1988
+
 <dt><a href="NYCS-1937/index.shtml">NYCS-1937</a>
     <dd>New York Central System 1937 rule book
     <br>
     <i>Missing aspect mapping, not finished.</i>
+   
+<dt><a href="NYC-1956/index.shtml">NYC-1956</a>
+    <dd>From the New York Central System publication "Rules of the Operating Department, Effective October 28, 1956."
 
 <dt><a href="NS-2008/index.shtml">NS-2008</a>
     <dd>Norfolk Southern Corporation Operating rules book (NORAC)

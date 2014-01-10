@@ -4,17 +4,21 @@ package jmri.jmrit.operations.trains;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -29,6 +33,7 @@ import jmri.jmrit.operations.setup.OperationsSetupXml;
 import jmri.jmrit.operations.setup.Setup;
 
 import java.beans.PropertyChangeEvent;
+import java.io.File;
 
 /**
  * Frame for user selection of switch lists
@@ -59,6 +64,7 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements
 	JButton printButton = new JButton(Bundle.getMessage("PrintSwitchLists"));
 	JButton previewButton = new JButton(Bundle.getMessage("PreviewSwitchLists"));
 	JButton changeButton = new JButton(Bundle.getMessage("PrintChanges"));
+	JButton runButton = new JButton(Bundle.getMessage("RunFile"));
 	JButton csvGenerateButton = new JButton(Bundle.getMessage("CsvGenerate"));
 	JButton csvChangeButton = new JButton(Bundle.getMessage("CsvChanges"));
 	JButton updateButton = new JButton(Bundle.getMessage("Update"));
@@ -127,9 +133,9 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements
 		addItem(controlpanel, resetButton, 2, 3);
 		// row 5
 		if (Setup.isGenerateCsvSwitchListEnabled()) {
+			addItem(controlpanel, runButton, 0, 4);
 			addItem(controlpanel, csvGenerateButton, 1, 4);
 			addItem(controlpanel, csvChangeButton, 2, 4);
-
 		}
 
 		getContentPane().add(switchPane);
@@ -152,6 +158,7 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements
 		addButtonAction(printButton);
 		addButtonAction(previewButton);
 		addButtonAction(changeButton);
+		addButtonAction(runButton);
 		addButtonAction(csvGenerateButton);
 		addButtonAction(csvChangeButton);
 		addButtonAction(updateButton);
@@ -194,6 +201,9 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements
 		}
 		if (ae.getSource() == updateButton) {
 			buildSwitchList(true, false, false, true);
+		}
+		if (ae.getSource() == runButton) {
+			runCustomSwitchLists();
 		}
 		if (ae.getSource() == resetButton) {
 			reset();
@@ -297,11 +307,10 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements
 
 	// name change or number of locations has changed
 	private void updateLocationCheckboxes() {
-		List<String> locations = locationManager.getLocationsByNameList();
+		List<Location> locations = locationManager.getLocationsByNameList();
 		synchronized (this) {
 			for (int i = 0; i < locations.size(); i++) {
-				Location l = locationManager.getLocationById(locations.get(i));
-				l.removePropertyChangeListener(this);
+				locations.get(i).removePropertyChangeListener(this);
 			}
 		}
 
@@ -323,7 +332,7 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements
 		Location previousLocation = null;
 
 		for (int i = 0; i < locations.size(); i++) {
-			Location l = locationManager.getLocationById(locations.get(i));
+			Location l = locations.get(i);
 			if (l.getStatus().equals(Location.MODIFIED) && l.isSwitchListEnabled()) {
 				changeButton.setEnabled(true);
 				csvChangeButton.setEnabled(true);
@@ -370,14 +379,46 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements
 		// restore listeners
 		synchronized (this) {
 			for (int i = 0; i < locations.size(); i++) {
-				Location l = locationManager.getLocationById(locations.get(i));
-				l.addPropertyChangeListener(this);
+				locations.get(i).addPropertyChangeListener(this);
 			}
 		}
 
 		locationPanelCheckBoxes.revalidate();
 		pack();
 		repaint();
+	}
+	
+	private void runCustomSwitchLists() {
+		if (!Setup.isGenerateCsvSwitchListEnabled())
+			return;
+		log.debug("run custom switch lists");
+		TrainCsvSwitchLists tCSVs = new TrainCsvSwitchLists();
+		for (int i = 0; i < locationCheckBoxes.size(); i++) {
+			String locationName = locationCheckBoxes.get(i).getName();
+			Location location = locationManager.getLocationByName(locationName);
+			if (location.isSwitchListEnabled()) {
+				File csvFile = tCSVs.buildSwitchList(location);
+				location.setStatus(Location.CSV_GENERATED);
+				if (csvFile == null || !csvFile.exists()) {
+					log.warn("CSV switch list file was not created for location " + locationName);
+					return;
+				}
+				if (TrainCustomSwitchList.manifestCreatorFileExists())
+					TrainCustomSwitchList.addCVSFile(csvFile);
+			}
+		}
+		// Processes the CSV Manifest files using an external custom program.
+		if (!TrainCustomSwitchList.manifestCreatorFileExists()) {
+			log.warn("Manifest creator file not found!, directory name: " + TrainCustomSwitchList.getDirectoryName()
+					+ ", file name: " + TrainCustomSwitchList.getFileName()); // NOI18N
+			JOptionPane.showMessageDialog(this, MessageFormat.format(
+					Bundle.getMessage("LoadDirectoryNameFileName"), new Object[] {
+						TrainCustomSwitchList.getDirectoryName(), TrainCustomSwitchList.getFileName() }), Bundle
+					.getMessage("ManifestCreatorNotFound"), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		// Now run the user specified custom Switch List processor program
+		TrainCustomSwitchList.process();
 	}
 
 	private void enableSaveButton(boolean enable) {
@@ -392,9 +433,9 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements
 	private void enableChangeButtons() {
 		changeButton.setEnabled(false);
 		csvChangeButton.setEnabled(false);
-		List<String> locations = locationManager.getLocationsByNameList();
+		List<Location> locations = locationManager.getLocationsByNameList();
 		for (int i = 0; i < locations.size(); i++) {
-			Location l = locationManager.getLocationById(locations.get(i));
+			Location l = locations.get(i);
 			if (l.getStatus().equals(Location.MODIFIED) && l.isSwitchListEnabled()) {
 				changeButton.setEnabled(true);
 				csvChangeButton.setEnabled(true);
@@ -453,10 +494,9 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements
 
 	public void dispose() {
 		locationManager.removePropertyChangeListener(this);
-		List<String> locations = locationManager.getLocationsByNameList();
+		List<Location> locations = locationManager.getLocationsByNameList();
 		for (int i = 0; i < locations.size(); i++) {
-			Location l = locationManager.getLocationById(locations.get(i));
-			l.removePropertyChangeListener(this);
+			locations.get(i).removePropertyChangeListener(this);
 		}
 		super.dispose();
 	}

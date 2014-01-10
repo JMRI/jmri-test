@@ -201,10 +201,10 @@ public class OperationsLocationsTest extends TestCase {
 		Assert.assertEquals("1 First schedule name", "new schedule", s1.getName());
 		Assert.assertEquals("1 First schedule name", "newer schedule", s2.getName());
 		
-		List<String> names = sm.getSchedulesByNameList();
+		List<Schedule> names = sm.getSchedulesByNameList();
 		Assert.assertEquals("There should be 2 schedules", 2, names.size());
-		Schedule sch1 = sm.getScheduleById(names.get(0));
-		Schedule sch2 = sm.getScheduleById(names.get(1));
+		Schedule sch1 = names.get(0);
+		Schedule sch2 = names.get(1);
 		Assert.assertEquals("2 First schedule name", "new schedule", sch1.getName());
 		Assert.assertEquals("2 First schedule name", "newer schedule", sch2.getName());
 		Assert.assertEquals("Schedule 1", sch1, sm.getScheduleByName("new schedule"));
@@ -1309,7 +1309,7 @@ public class OperationsLocationsTest extends TestCase {
 		manager = LocationManager.instance();
 		
 		// now load locations
-		List<String> locationList = manager.getLocationsByIdList();
+		List<Location> locationList = manager.getLocationsByIdList();
 		Assert.assertEquals("Starting Number of Locations", 0, locationList.size());
 		Location l1 = manager.newLocation("Test Location 2");
 		Location l2 = manager.newLocation("Test Location 1");
@@ -1381,9 +1381,9 @@ public class OperationsLocationsTest extends TestCase {
 		t2.setScheduleCount(2);
 
 		locationList = manager.getLocationsByIdList();
-		Assert.assertEquals("New Location by Id 1", "Test Location 2", manager.getLocationById(locationList.get(0)).getName());
-		Assert.assertEquals("New Location by Id 2", "Test Location 1", manager.getLocationById(locationList.get(1)).getName());
-		Assert.assertEquals("New Location by Id 3", "Test Location 3", manager.getLocationById(locationList.get(2)).getName());
+		Assert.assertEquals("New Location by Id 1", "Test Location 2", locationList.get(0).getName());
+		Assert.assertEquals("New Location by Id 2", "Test Location 1", locationList.get(1).getName());
+		Assert.assertEquals("New Location by Id 3", "Test Location 3", locationList.get(2).getName());
 
 		Assert.assertEquals("New Location by Name 1", "Test Location 1", manager.getLocationByName("Test Location 1").getName());
 		Assert.assertEquals("New Location by Name 2", "Test Location 2", manager.getLocationByName("Test Location 2").getName());
@@ -1426,8 +1426,7 @@ public class OperationsLocationsTest extends TestCase {
 		Assert.assertEquals("New Number of Locations", 3, locationList.size());
 
 		for (int i = 0; i < locationList.size(); i++) {
-			String locationId = locationList.get(i);
-			Location loc = manager.getLocationById(locationId);
+			Location loc = locationList.get(i);
 			String locname = loc.getName();
 			if (i == 0) {
 				Assert.assertEquals("New Location by Id List 1", "Test Location 2", locname);
@@ -1440,12 +1439,11 @@ public class OperationsLocationsTest extends TestCase {
 			}
 		}
 
-		locationList = manager.getLocationsByNameList();
+		List<Location> locationListByName = manager.getLocationsByNameList();
 		Assert.assertEquals("New Number of Locations", 3, locationList.size());
 
-		for (int i = 0; i < locationList.size(); i++) {
-			String locationId = locationList.get(i);
-			Location loc = manager.getLocationById(locationId);
+		for (int i = 0; i < locationListByName.size(); i++) {
+			Location loc = locationListByName.get(i);
 			String locname = loc.getName();
 			if (i == 0) {
 				Assert.assertEquals("New Location by Name List 1", "Test Location 1", locname);
@@ -1486,19 +1484,18 @@ public class OperationsLocationsTest extends TestCase {
 
 		// The dispose has removed all locations from the Manager.
 		manager = LocationManager.instance();
-		locationList = manager.getLocationsByNameList();
-		Assert.assertEquals("Starting Number of Locations", 0, locationList.size());
+		locationListByName = manager.getLocationsByNameList();
+		Assert.assertEquals("Starting Number of Locations", 0, locationListByName.size());
 
 		// Need to force a re-read of the xml file.
 		LocationManagerXml.instance().readFile(FileUtil.getUserFilesPath()+OperationsSetupXml.getOperationsDirectoryName()+File.separator+LocationManagerXml.instance().getOperationsFileName());
 		
 		// check locations
-		locationList = manager.getLocationsByNameList();
-		Assert.assertEquals("Starting Number of Locations", 3, locationList.size());
+		locationListByName = manager.getLocationsByNameList();
+		Assert.assertEquals("Starting Number of Locations", 3, locationListByName.size());
 
-		for (int i = 0; i < locationList.size(); i++) {
-			String locationId = locationList.get(i);
-			Location loc = manager.getLocationById(locationId);
+		for (int i = 0; i < locationListByName.size(); i++) {
+			Location loc = locationListByName.get(i);
 
 			if (i == 0) {
 				Assert.assertEquals("New Location by Name List 1", "Test Location 1", loc.getName());
@@ -1587,20 +1584,20 @@ public class OperationsLocationsTest extends TestCase {
 		// check Schedules
 		
 		sm = ScheduleManager.instance();
-		List <String>list = sm.getSchedulesByNameList();
+		List <Schedule>list = sm.getSchedulesByNameList();
 		
 		Assert.assertEquals("There should be 2 schedules", 2, list.size());
-		s1 = sm.getScheduleById(list.get(0));
-		s2 = sm.getScheduleById(list.get(1));
+		s1 = list.get(0);
+		s2 = list.get(1);
 		
 		Assert.assertEquals("Schedule 1 name", "Schedule 1 Name", s1.getName());
 		Assert.assertEquals("Schedule 2 name", "Schedule 2 Name", s2.getName());
 		Assert.assertEquals("Schedule 1 comment", "Schedule 1 Comment", s1.getComment());
 		Assert.assertEquals("Schedule 2 comment", "Schedule 2 Comment", s2.getComment());
 		
-		List <String> s1items = s1.getItemsBySequenceList(); 
+		List <ScheduleItem> s1items = s1.getItemsBySequenceList(); 
 		Assert.assertEquals("There should be 2 items", 2, s1items.size());
-		ScheduleItem si1 = s1.getItemById(s1items.get(0));
+		ScheduleItem si1 = s1items.get(0);
 		Assert.assertEquals("Item 1 type", "Boxcar", si1.getTypeName());
 		Assert.assertEquals("Item 1 load", "Schedule 1 Item 1 Load", si1.getReceiveLoadName());
 		Assert.assertEquals("Item 1 ship", "Schedule 1 Item 1 Ship", si1.getShipLoadName());
@@ -1611,7 +1608,7 @@ public class OperationsLocationsTest extends TestCase {
 		Assert.assertEquals("Item 1 track", "A Siding", si1.getDestinationTrackName());
 
 		
-		ScheduleItem si2 = s1.getItemById(s1items.get(1));
+		ScheduleItem si2 = s1items.get(1);
 		Assert.assertEquals("Item 2 type", "boxcar", si2.getTypeName());
 		Assert.assertEquals("Item 2 load", "Schedule 1 Item 2 Load", si2.getReceiveLoadName());
 		Assert.assertEquals("Item 2 ship", "Schedule 1 Item 2 Ship", si2.getShipLoadName());
@@ -1621,9 +1618,9 @@ public class OperationsLocationsTest extends TestCase {
 		Assert.assertEquals("Item 2 destination", "Test Location 1", si2.getDestinationName());
 		Assert.assertEquals("Item 2 track", "An Interchange", si2.getDestinationTrackName());
 	
-		List <String> s2items = s2.getItemsBySequenceList(); 
+		List <ScheduleItem> s2items = s2.getItemsBySequenceList(); 
 		Assert.assertEquals("There should be 1 items", 1, s2items.size());
-		ScheduleItem si3 = s2.getItemById(s2items.get(0));
+		ScheduleItem si3 = s2items.get(0);
 		Assert.assertEquals("Item 3 type", "BoxCar", si3.getTypeName());
 		Assert.assertEquals("Item 3 load", "Schedule 2 Item 1 Load", si3.getReceiveLoadName());
 		Assert.assertEquals("Item 3 ship", "Schedule 2 Item 1 Ship", si3.getShipLoadName());

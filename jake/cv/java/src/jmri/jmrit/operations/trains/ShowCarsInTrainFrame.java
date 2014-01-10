@@ -4,10 +4,12 @@ package jmri.jmrit.operations.trains;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.text.MessageFormat;
 import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
@@ -163,8 +165,8 @@ public class ShowCarsInTrainFrame extends OperationsFrame implements java.beans.
 				textNextLocationName.setText(_train.getNextLocationName());
 
 				// now update the car pick ups and set outs
-				List<String> carList = carManager.getByTrainDestinationList(_train);
-				List<String> routeList = _train.getRoute().getLocationsBySequenceList();
+				List<Car> carList = carManager.getByTrainDestinationList(_train);
+				List<RouteLocation> routeList = _train.getRoute().getLocationsBySequenceList();
 				// add header
 				int i = 0;
 				addItemLeft(pCars, textPickUp, 0, 0);
@@ -172,9 +174,9 @@ public class ShowCarsInTrainFrame extends OperationsFrame implements java.beans.
 				addItemLeft(pCars, textSetOut, 2, i++);
 				// block cars by destination
 				for (int j = 0; j < routeList.size(); j++) {
-					RouteLocation rld = _train.getRoute().getLocationById(routeList.get(j));
+					RouteLocation rld = routeList.get(j);
 					for (int k = 0; k < carList.size(); k++) {
-						Car car = carManager.getById(carList.get(k));
+						Car car = carList.get(k);
 						log.debug("car " + car.toString() + " track " + car.getTrackName()
 								+ " routelocation " + car.getRouteLocation().getName()); // NOI18N
 						if ((car.getTrack() == null || car.getRouteLocation() == rl)

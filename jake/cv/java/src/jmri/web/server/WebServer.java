@@ -2,8 +2,6 @@ package jmri.web.server;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -93,6 +91,8 @@ public final class WebServer implements LifeCycle.Listener {
                     ServletHolder holder = context.addServlet(DefaultServlet.class, "/*"); // NOI18N
                     holder.setInitParameter("resourceBase", FileUtil.getAbsoluteFilename(filePaths.getProperty(path))); // NOI18N
                     holder.setInitParameter("stylesheet", FileUtil.getAbsoluteFilename(filePaths.getProperty("/css")) + "/miniServer.css"); // NOI18N
+                } else if (services.getProperty(path).equals("redirectHandler")) { // NOI18N
+                    context.addServlet("jmri.web.servlet.RedirectionServlet", ""); // NOI18N
                 } else {
                     context.addServlet(services.getProperty(path), "/*"); // NOI18N
                 }
@@ -103,6 +103,7 @@ public final class WebServer implements LifeCycle.Listener {
             server.addLifeCycleListener(this);
 
             Thread serverThread = new ServerThread(server);
+            serverThread.setName("WebServer"); // NOI18N
             serverThread.start();
 
         }
@@ -111,22 +112,6 @@ public final class WebServer implements LifeCycle.Listener {
 
     public void stop() throws Exception {
         server.stop();
-    }
-
-    public static String getLocalAddress() {
-        InetAddress hostAddress = null;
-        try {
-            hostAddress = Inet4Address.getLocalHost();
-        } catch (java.net.UnknownHostException e) {
-        }
-        if (hostAddress == null || hostAddress.isLoopbackAddress()) {
-            hostAddress = ZeroConfService.hostAddress();  //lookup from interfaces
-        }
-        if (hostAddress == null) {
-            return WebServer.getString("MessageAddressNotFound");
-        } else {
-            return hostAddress.getHostAddress().toString();
-        }
     }
 
     /**
@@ -200,7 +185,7 @@ public final class WebServer implements LifeCycle.Listener {
 
     static private class ServerThread extends Thread {
 
-        private Server server;
+        private final Server server;
 
         public ServerThread(Server server) {
             this.server = server;

@@ -103,7 +103,7 @@ public class TrainEditFrame extends OperationsFrame implements java.beans.Proper
 	ButtonGroup group = new ButtonGroup();
 
 	// text field
-	JTextField trainNameTextField = new JTextField(Control.max_len_string_train_name);
+	JTextField trainNameTextField = new JTextField(Control.max_len_string_train_name - 5);	// make slightly smaller
 	JTextField trainDescriptionTextField = new JTextField(30);
 
 	// text area
@@ -157,20 +157,22 @@ public class TrainEditFrame extends OperationsFrame implements java.beans.Proper
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
 		// Set up the panels
-		JPanel p1 = new JPanel();
-		p1.setLayout(new BoxLayout(p1, BoxLayout.X_AXIS));
-		JScrollPane p1Pane = new JScrollPane(p1);
-		p1Pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-		p1Pane.setMinimumSize(new Dimension(300, 3 * trainNameTextField.getPreferredSize().height));
-		p1Pane.setBorder(BorderFactory.createTitledBorder(""));
+		JPanel p = new JPanel();
+		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+		JScrollPane pPane = new JScrollPane(p);
+//		pPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+		pPane.setMinimumSize(new Dimension(300, 5 * trainNameTextField.getPreferredSize().height));
+		pPane.setBorder(BorderFactory.createTitledBorder(""));
 
 		// Layout the panel by rows
+		// row 1
+		JPanel p1 = new JPanel();
+		p1.setLayout(new BoxLayout(p1, BoxLayout.X_AXIS));
 		// row 1a
 		JPanel pName = new JPanel();
 		pName.setLayout(new GridBagLayout());
 		pName.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("Name")));
 		addItem(pName, trainNameTextField, 0, 0);
-
 		// row 1b
 		JPanel pDesc = new JPanel();
 		pDesc.setLayout(new GridBagLayout());
@@ -180,10 +182,10 @@ public class TrainEditFrame extends OperationsFrame implements java.beans.Proper
 		p1.add(pName);
 		p1.add(pDesc);
 
-		// row 2a
+		// row 2
 		JPanel p2 = new JPanel();
 		p2.setLayout(new BoxLayout(p2, BoxLayout.X_AXIS));
-		// row 3 right
+		// row 2a
 		JPanel pdt = new JPanel();
 		pdt.setLayout(new GridBagLayout());
 		pdt.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("DepartTime")));
@@ -207,7 +209,6 @@ public class TrainEditFrame extends OperationsFrame implements java.beans.Proper
 		addItem(pdt, space2, 2, 5);
 		addItem(pdt, minuteBox, 3, 5);
 		addItem(pdt, space3, 4, 5);
-
 		// row 2b
 		// BUG! routeBox needs its own panel when resizing frame!
 		JPanel pr = new JPanel();
@@ -221,6 +222,9 @@ public class TrainEditFrame extends OperationsFrame implements java.beans.Proper
 
 		p2.add(pdt);
 		p2.add(pr);
+		
+		p.add(p1);
+		p.add(p2);
 
 		// row 5
 		locationPanelCheckBoxes.setLayout(new GridBagLayout());
@@ -249,11 +253,11 @@ public class TrainEditFrame extends OperationsFrame implements java.beans.Proper
 		trainReq.setLayout(new GridBagLayout());
 		trainReq.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("TrainRequires")));
 
-		for (int i = 0; i < Setup.getEngineSize() + 1; i++) {
+		for (int i = 0; i < Setup.getMaxNumberEngines() + 1; i++) {
 			numEnginesBox.addItem(Integer.toString(i));
 		}
 		numEnginesBox.addItem(Train.AUTO);
-		numEnginesBox.setMinimumSize(new Dimension(50, 20));
+		numEnginesBox.setMinimumSize(new Dimension(65, 20));
 		numEnginesBox.setToolTipText(Bundle.getMessage("TipNumberOfLocos"));
 		addItem(trainReq, textEngine, 1, 1);
 		addItem(trainReq, numEnginesBox, 2, 1);
@@ -300,8 +304,7 @@ public class TrainEditFrame extends OperationsFrame implements java.beans.Proper
 		addItem(pB, addTrainButton, 2, 0);
 		addItem(pB, saveTrainButton, 3, 0);
 
-		getContentPane().add(p1Pane);
-		getContentPane().add(p2);
+		getContentPane().add(pPane);
 		getContentPane().add(locationsPane);
 		getContentPane().add(typeCarPane);
 		getContentPane().add(typeEnginePane);
@@ -843,9 +846,9 @@ public class TrainEditFrame extends OperationsFrame implements java.beans.Proper
 		if (route != null) {
 			if (!route.getStatus().equals(Route.OKAY))
 				textRouteStatus.setText(route.getStatus());
-			List<String> locations = route.getLocationsBySequenceList();
-			for (int i = 0; i < locations.size(); i++) {
-				RouteLocation rl = route.getLocationById(locations.get(i));
+			List<RouteLocation> routeList = route.getLocationsBySequenceList();
+			for (int i = 0; i < routeList.size(); i++) {
+				RouteLocation rl = routeList.get(i);
 				JCheckBox checkBox = new javax.swing.JCheckBox();
 				locationCheckBoxes.add(checkBox);
 				checkBox.setText(rl.toString());
@@ -862,7 +865,7 @@ public class TrainEditFrame extends OperationsFrame implements java.beans.Proper
 					if ((rl.getTrainDirection() & loc.getTrainDirections()) > 0)
 						services = true;
 					// train must service last location or single location
-					else if (i == locations.size() - 1)
+					else if (i == routeList.size() - 1)
 						services = true;
 					// check can drop and pick up, and moves > 0
 					if (services && (rl.isDropAllowed() || rl.isPickUpAllowed()) && rl.getMaxCarMoves() > 0)
@@ -969,10 +972,9 @@ public class TrainEditFrame extends OperationsFrame implements java.beans.Proper
 			Route route = _train.getRoute();
 			if (route != null) {
 				route.removePropertyChangeListener(this);
-				List<String> locations = route.getLocationsBySequenceList();
-				for (int i = 0; i < locations.size(); i++) {
-					RouteLocation rl = route.getLocationById(locations.get(i));
-					Location loc = LocationManager.instance().getLocationByName(rl.getName());
+				List<RouteLocation> routeList = route.getLocationsBySequenceList();
+				for (int i = 0; i < routeList.size(); i++) {
+					Location loc = LocationManager.instance().getLocationByName(routeList.get(i).getName());
 					if (loc != null)
 						loc.removePropertyChangeListener(this);
 				}
