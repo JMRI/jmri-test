@@ -83,7 +83,6 @@ import jmri.plaf.macosx.QuitHandler;
 import jmri.profile.Profile;
 import jmri.profile.ProfileManager;
 import jmri.profile.ProfileManagerSwingUtil;
-import jmri.profile.ProfileManagerUtil;
 import jmri.util.FileUtil;
 import jmri.util.HelpUtil;
 import jmri.util.JmriJFrame;
@@ -195,7 +194,7 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         // handle migrate and new use cases (three) without accidentally triggering on a no prep case
         if (!ProfileManager.defaultManager().getConfigFile().exists()) { // - PConf
             try {
-                ProfileManagerUtil.migrateToProfiles(configFilename); // migrate and new use cases
+                ProfileManager.migrateToProfiles(configFilename); // migrate and new use cases
             } catch (IOException ex) {
                 // TODO: notify user of inability to write to profile location
                 log.error(ex.getLocalizedMessage(), ex);
