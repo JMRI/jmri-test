@@ -14,7 +14,8 @@ import jmri.jmrix.AbstractProgrammerFacade;
  * Used through the String write/read/confirm interface.  Accepts address formats:
  *<ul>
  *<li> 123 Do write/read/confirm to 123
- *<li> 13.123 Writes 13 to the index CV, then does write/read/confirm to 123
+ *<li> 123.11 Writes 11 to the first index CV, then does write/read/confirm to 123
+ *<li> 123.11.12 Writes 11 to the first index CV, then 12 to the second index CV, then does write/read/confirm to 123
  *</ul>
  *
  * @author      Bob Jacobsen  Copyright (C) 2013
@@ -47,17 +48,17 @@ public class MultiIndexProgrammerFacade extends AbstractProgrammerFacade impleme
         if (cv.contains(".")) {
             String[] splits = cv.split("\\.");
             if (splits.length == 2) {
-                valuePI = Integer.parseInt(splits[0]);
-                _cv = splits[1];
+                valuePI = Integer.parseInt(splits[1]);
+                _cv = splits[0];
             } else if (splits.length == 3) {
-                valuePI = Integer.parseInt(splits[0]);
-                valueSI = Integer.parseInt(splits[1]);
-                _cv = splits[2];
+                valuePI = Integer.parseInt(splits[1]);
+                valueSI = Integer.parseInt(splits[2]);
+                _cv = splits[0];
             } else {
                 log.error("Too many parts in CV name "+cv);
-                valuePI = Integer.parseInt(splits[0]);
-                valueSI = Integer.parseInt(splits[1]);
-                _cv = splits[2];
+                valuePI = Integer.parseInt(splits[1]);
+                valueSI = Integer.parseInt(splits[2]);
+                _cv = splits[0];
             }
         } else {
             _cv = cv;

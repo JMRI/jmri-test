@@ -110,10 +110,21 @@
             <parameter name="Access Register CV">99</parameter>
             <parameter name="Modulo">100</parameter>
         </capability>
+         <capability>
+            <name>Indexed CV access</name>
+            <parameter name="PI">31</parameter>
+            <parameter name="SI">32</parameter>
+        </capability>
     </programming>
     <variables>
       <xi:include href="http://jmri.org/xml/decoders/esu/v4standardCVs.xml"/>
       <variable label="Language selection" CV="48" mask="XXXXVVVV" item="ESU V4 Extra Miscellaneous Option 5" default="0">
+        <decVal max="15"/>
+      </variable>
+      <variable label="Test write to 348" CV="348" mask="XXXXVVVV" item="ESU V4 Extra Miscellaneous Option 6" default="0">
+        <decVal max="15"/>
+      </variable>
+      <variable label="Test write to 345.11.12" CV="345.11.12" mask="XXXXVVVV" item="ESU V4 Extra Miscellaneous Option 7" default="0">
         <decVal max="15"/>
       </variable>
       <xi:include href="http://jmri.org/xml/decoders/esu/v4soundCVs.xml"/>
