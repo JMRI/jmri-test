@@ -228,6 +228,24 @@ public class ProfileManagerDialog extends JDialog {
         }
     }//GEN-LAST:event_formWindowOpened
 
+    /**
+     * Get the active profile or display a dialog to prompt the user for it.
+     *
+     * @param f - The {@link java.awt.Frame} to display the dialog over.
+     * @return the active or selected {@link Profile}
+     * @throws IOException
+     * @see ProfileManager#getStartingProfile()
+     */
+    public static Profile getStartingProfile(Frame f) throws IOException {
+        if (ProfileManager.getStartingProfile() == null || !ProfileManager.defaultManager().isAutoStartActiveProfile()) {
+            ProfileManagerDialog pmd = new ProfileManagerDialog(f, true);
+            pmd.setLocationRelativeTo(f);
+            pmd.setVisible(true);
+            ProfileManager.defaultManager().saveActiveProfile();
+        }
+        return ProfileManager.defaultManager().getActiveProfile();
+    }
+
     private void profilesValueChanged(ListSelectionEvent evt) {//GEN-FIRST:event_profilesValueChanged
         timer.stop();
         countDownLbl.setVisible(false);

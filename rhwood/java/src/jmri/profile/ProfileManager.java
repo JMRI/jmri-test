@@ -25,6 +25,32 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Manage JMRI configuration profiles.
+ * <p>
+ * When a JMRI application is starting there are eight potential Profile-related
+ * states requiring preparation to use profiles:
+ * <table>
+ * <tr><th>Profile Catalog</th><th>Profile Config</th><th>App
+ * Config</th><th>Action</th></tr>
+ * <tr><td>YES</td><td>YES</td><td>YES</td><td>No preparation required -
+ * migration from earlier JMRI complete</td></tr>
+ * <tr><td>YES</td><td>YES</td><td>NO</td><td>No preparation required - JMRI
+ * installed after profiles feature introduced</td></tr>
+ * <tr><td>YES</td><td>NO</td><td>YES</td><td>Migration required - other JMRI
+ * applications migrated to profiles by this user, but not this one</td></tr>
+ * <tr><td>YES</td><td>NO</td><td>NO</td><td>No preparation required - prompt
+ * user for desired profile if multiple profiles exist, use default
+ * otherwise</td></tr>
+ * <tr><td>NO</td><td>NO</td><td>NO</td><td>New user - create and use default
+ * profile</td></tr>
+ * <tr><td>NO</td><td>NO</td><td>YES</td><td>Migration required - need to create
+ * first profile</td></tr>
+ * <tr><td>NO</td><td>YES</td><td>YES</td><td>No preparation required - catalog
+ * will be automatically regenerated</td></tr>
+ * <tr><td>NO</td><td>YES</td><td>NO</td><td>No preparation required - catalog
+ * will be automatically regenerated</td></tr>
+ * </table>
+ * The {@link apps.Apps}, {@link apps.AppsBase} and {@link apps.gui3.Apps3}
+ * classes contain code that helps handle these situations.
  *
  * @author rhwood
  */
@@ -421,7 +447,7 @@ public class ProfileManager extends Bean {
     /**
      * Get the file used to configure the ProfileManager.
      *
-     * @return the configFile
+     * @return the appConfigFile
      */
     public File getConfigFile() {
         return configFile;
@@ -431,7 +457,7 @@ public class ProfileManager extends Bean {
      * Set the file used to configure the ProfileManager. This is set on a
      * per-application basis.
      *
-     * @param configFile the configFile to set
+     * @param configFile the appConfigFile to set
      */
     public void setConfigFile(File configFile) {
         this.configFile = configFile;
@@ -463,13 +489,13 @@ public class ProfileManager extends Bean {
      * @return A new profile or null if profiles already exist.
      * @throws IOException
      */
-    public static Profile createDefaultProfile() throws IllegalArgumentException, IOException {
-        if (ProfileManager.defaultManager().getProfiles().length == 0) {
+    public Profile createDefaultProfile() throws IllegalArgumentException, IOException {
+        if (this.getAllProfiles().isEmpty()) {
             String pn = Bundle.getMessage("defaultProfileName");
             String pid = FileUtil.sanitizeFilename(pn);
             File pp = new File(FileUtil.getPreferencesPath() + pid);
             Profile profile = new Profile(pn, pid, pp);
-            ProfileManager.defaultManager().addProfile(profile);
+            this.addProfile(profile);
             log.info("Created default profile \"{}\"", pn);
             return profile;
         } else {
@@ -487,33 +513,66 @@ public class ProfileManager extends Bean {
      * @throws IllegalArgumentException
      * @throws IOException
      */
-    public static Profile migrateConfigToProfile(File config, String name) throws IllegalArgumentException, IOException {
+    public Profile migrateConfigToProfile(File config, String name) throws IllegalArgumentException, IOException {
         String pid = FileUtil.sanitizeFilename(name);
         File pp = new File(FileUtil.getPreferencesPath(), pid);
         Profile profile = new Profile(name, pid, pp);
         FileUtil.copy(config, new File(profile.getPath(), Profile.CONFIG_FILENAME));
         FileUtil.copy(new File(config.getParentFile(), "UserPrefs" + config.getName()), new File(profile.getPath(), "UserPrefs" + Profile.CONFIG_FILENAME)); // NOI18N
-        ProfileManager.defaultManager().addProfile(profile);
+        this.addProfile(profile);
         log.info("Migrated \"{}\" config to profile \"{}\"", name, name);
         return profile;
     }
 
-    public static void migrateToProfiles(String configFilename) throws IllegalArgumentException, IOException {
-        File configFile;
-        if (!new File(configFilename).isAbsolute()) {
-            configFile = new File(FileUtil.getPreferencesPath() + configFilename);
-        } else {
-            configFile = new File(configFilename);
+    /**
+     * Migrate a JMRI application to using {@link Profile}s.
+     *
+     * Migration occurs when no profile configuration exists, but an application
+     * configuration exists. This method also handles the situation where an
+     * entirely new user is first starting JMRI, or where a user has deleted all
+     * their profiles.
+     *
+     * @param configFilename
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
+    public void migrateToProfiles(String configFilename) throws IllegalArgumentException, IOException {
+        File appConfigFile = new File(configFilename);
+        if (!appConfigFile.isAbsolute()) {
+            appConfigFile = new File(FileUtil.getPreferencesPath() + configFilename);
         }
-        if (ProfileManager.defaultManager().getProfiles().length == 0) { // - PCat - PConf
-            if (!configFile.exists()) { // - PCat - PConf - XConf = new use
-                ProfileManager.defaultManager().setActiveProfile(ProfileManager.createDefaultProfile());
-            } else { // - PCat - PConf + XConf = migrate
-                ProfileManager.defaultManager().setActiveProfile(ProfileManager.migrateConfigToProfile(configFile, jmri.Application.getApplicationName()));
+        if (this.getAllProfiles().isEmpty()) { // no catalog and no profile config
+            if (!appConfigFile.exists()) { // no catalog and no profile config and no app config: new user
+                this.setActiveProfile(this.createDefaultProfile());
+            } else { // no catalog and no profile config, but an existing app config: migrate user who never used profiles before
+                this.setActiveProfile(this.migrateConfigToProfile(appConfigFile, jmri.Application.getApplicationName()));
             }
-        } else if (configFile.exists()) { // + PCat - PConf + XConf = migrate
-            ProfileManager.defaultManager().setActiveProfile(ProfileManager.migrateConfigToProfile(configFile, jmri.Application.getApplicationName()));
+        } else if (appConfigFile.exists()) { // catalog and existing app config, but no profile config: migrate user who used profile with other JMRI app
+            this.setActiveProfile(this.migrateConfigToProfile(appConfigFile, jmri.Application.getApplicationName()));
         } // all other cases need no prep
     }
 
+    /**
+     * Get the active profile.
+     *
+     * This method initiates the process of setting the active profile when a
+     * headless app launches.
+     *
+     * @return The active {@link Profile}
+     * @throws IOException
+     * @see ProfileManagerDialog#getStartingProfile(java.awt.Frame)
+     */
+    public static Profile getStartingProfile() throws IOException {
+        if (ProfileManager.defaultManager().getActiveProfile() == null) {
+            ProfileManager.defaultManager().readActiveProfile();
+            // Automatically start with only profile if only one profile
+            if (ProfileManager.defaultManager().getProfiles().length == 1) {
+                ProfileManager.defaultManager().setActiveProfile(ProfileManager.defaultManager().getProfiles(0));
+                // Display profile selector if user did not choose to auto start with last used profile
+            } else if (!ProfileManager.defaultManager().isAutoStartActiveProfile()) {
+                return null;
+            }
+        }
+        return ProfileManager.defaultManager().getActiveProfile();
+    }
 }

@@ -82,7 +82,7 @@ import jmri.plaf.macosx.PreferencesHandler;
 import jmri.plaf.macosx.QuitHandler;
 import jmri.profile.Profile;
 import jmri.profile.ProfileManager;
-import jmri.profile.ProfileManagerSwingUtil;
+import jmri.profile.ProfileManagerDialog;
 import jmri.util.FileUtil;
 import jmri.util.HelpUtil;
 import jmri.util.JmriJFrame;
@@ -179,32 +179,27 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         if (System.getProperties().containsKey(ProfileManager.SYSTEM_PROPERTY)) {
             ProfileManager.defaultManager().setActiveProfile(System.getProperty(ProfileManager.SYSTEM_PROPERTY));
         }
-        // Potential situations to test for:
-        // PCat = has profile catalog (test on assumption that catalog will not be empty)
-        // PConf = has profile config for this app
-        // XConf = has xml config for this app
-        // + PCat + PConf + XConf = no prep (upgraded from pre profiles)
-        // + PCat + PConf - XConf = no prep (new install after profiles introduced)
-        // + PCat - PConf + XConf = migrate (app used prior to profiles, other JMRI apps have profiles)
-        // + PCat - PConf - XConf = no prep (prompt user for profile if multiple exist, use default otherwise)
-        // - PCat - PConf - XConf = new use (create default profile and use it)
-        // - PCat - PConf + XConf = migrate (apps used before, no profiles exist)
-        // - PCat + PConf + XConf = no prep (user has deleted catalog)
-        // - PCat + PConf - XConf = no prep (user has deleted catalog)
-        // handle migrate and new use cases (three) without accidentally triggering on a no prep case
-        if (!ProfileManager.defaultManager().getConfigFile().exists()) { // - PConf
+        // @see jmri.profile.ProfileManager JavaDoc for explaination of this if statement
+        if (!ProfileManager.defaultManager().getConfigFile().exists()) { // no profile config for this app
             try {
-                ProfileManager.migrateToProfiles(configFilename); // migrate and new use cases
+                ProfileManager.defaultManager().migrateToProfiles(configFilename); // migrate and new use cases
+                // TODO: notify user of change
             } catch (IOException ex) {
-                // TODO: notify user of inability to write to profile location
-                log.error(ex.getLocalizedMessage(), ex);
+                JOptionPane.showMessageDialog(sp,
+                        ex.getLocalizedMessage(),
+                        Bundle.getMessage("ErrorDialogTitle"),
+                        JOptionPane.ERROR_MESSAGE);
+                log.error(ex.getMessage(), ex);
             } catch (IllegalArgumentException ex) {
-                // TODO: notfiy user of error creating profile
-                log.error(ex.getLocalizedMessage(), ex);
+                JOptionPane.showMessageDialog(sp,
+                        ex.getLocalizedMessage(),
+                        Bundle.getMessage("ErrorDialogTitle"),
+                        JOptionPane.ERROR_MESSAGE);
+                log.error(ex.getMessage(), ex);
             }
         }
         try {
-            ProfileManagerSwingUtil.promptForProfile(sp);
+            ProfileManagerDialog.getStartingProfile(sp);
             // Manually setting the configFilename property since calling
             // Apps.setConfigFilename() does not reset the system property
             configFilename = FileUtil.getProfilePath() + Profile.CONFIG_FILENAME;
