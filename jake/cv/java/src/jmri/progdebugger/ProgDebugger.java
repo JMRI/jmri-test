@@ -194,19 +194,39 @@ public class ProgDebugger implements Programmer  {
      * By default, the highest test CV is 256 so that
      * we can test composite operations
      */
-    int writeLimit = 256;
-    int readLimit = 256;
+    int writeLimit = 512;
+    int readLimit = 512;
     
     public void setTestReadLimit(int lim) { readLimit = lim; }
     public void setTestWriteLimit(int lim) { writeLimit = lim; }
     
-    public boolean getCanRead() { return true; }
-    public boolean getCanRead(String addr) { return Integer.parseInt(addr)<=readLimit; }
-    public boolean getCanRead(int mode, String addr) { return getCanRead(addr); }
+    public boolean getCanRead() { 
+        log.debug("getCanRead() returns true");
+        return true;
+    }
+    public boolean getCanRead(String addr) { 
+        log.debug("getCanRead("+addr+") returns "+(Integer.parseInt(addr)<=readLimit));
+        return Integer.parseInt(addr)<=readLimit; 
+    }
+    public boolean getCanRead(int mode, String addr) { 
+        boolean retval = getCanRead(addr);
+        log.debug("getCanRead("+mode+","+addr+") returns "+retval);
+        return retval;
+    }
     
-    public boolean getCanWrite()  { return true; }
-    public boolean getCanWrite(String addr) { return Integer.parseInt(addr)<=writeLimit; }
-    public boolean getCanWrite(int mode, String addr)  { return getCanWrite(addr); }
+    public boolean getCanWrite()  { 
+        log.debug("getCanWrite() returns true");
+        return true;
+    }
+    public boolean getCanWrite(String addr) {
+        log.debug("getCanWrite("+addr+") returns "+(Integer.parseInt(addr)<=writeLimit));
+        return Integer.parseInt(addr)<=writeLimit;
+    }
+    public boolean getCanWrite(int mode, String addr)  { 
+        boolean retval = getCanWrite(addr);
+        log.debug("getCanWrite("+mode+","+addr+") returns "+retval);
+        return retval;
+    }
 
     // data members to hold contact with the property listeners
     private Vector<PropertyChangeListener> propListeners = new Vector<PropertyChangeListener>();
