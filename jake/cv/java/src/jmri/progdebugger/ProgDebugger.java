@@ -194,8 +194,8 @@ public class ProgDebugger implements Programmer  {
      * By default, the highest test CV is 256 so that
      * we can test composite operations
      */
-    int writeLimit = 512;
-    int readLimit = 512;
+    int writeLimit = 256;
+    int readLimit = 256;
     
     public void setTestReadLimit(int lim) { readLimit = lim; }
     public void setTestWriteLimit(int lim) { writeLimit = lim; }
