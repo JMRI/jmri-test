@@ -327,8 +327,7 @@ public class SymbolicProgFrame extends jmri.util.JmriJFrame  {
                 String value = ((varList.get(i))).getAttribute("value").getValue();
                 if (log.isDebugEnabled()) log.debug("CV: "+i+"th entry, CV number "+name+" has value: "+value);
 
-                int cv = Integer.valueOf(name).intValue();
-                CvValue cvObject = cvModel.allCvVector().elementAt(cv);
+                CvValue cvObject = cvModel.allCvMap().get(name);
                 cvObject.setValue(Integer.valueOf(value).intValue());
                 cvObject.setState(CvValue.FROMFILE);
             }
