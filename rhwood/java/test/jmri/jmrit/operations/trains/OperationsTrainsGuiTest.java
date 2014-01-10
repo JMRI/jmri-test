@@ -120,7 +120,7 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		Assert.assertEquals("train depart time", "00:00", t.getDepartureTime());
 		Assert.assertEquals("train route", null, t.getRoute());
 		Assert.assertTrue("train accepts car type Boxcar", t.acceptsTypeName("Boxcar"));
-		Assert.assertEquals("train roads", Train.ALLROADS, t.getRoadOption());
+		Assert.assertEquals("train roads", Train.ALL_ROADS, t.getRoadOption());
 		Assert.assertEquals("train requirements", Train.NONE, t.getRequirements());
 
 		// test departure time fields
@@ -327,13 +327,13 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		// test car owner options
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.ownerNameExclude));
 		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
-		Assert.assertEquals("train car owner exclude", Train.EXCLUDEOWNERS, t.getOwnerOption());
+		Assert.assertEquals("train car owner exclude", Train.EXCLUDE_OWNERS, t.getOwnerOption());
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.ownerNameInclude));
 		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
-		Assert.assertEquals("train car owner include", Train.INCLUDEOWNERS, t.getOwnerOption());
+		Assert.assertEquals("train car owner include", Train.INCLUDE_OWNERS, t.getOwnerOption());
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.ownerNameAll));
 		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
-		Assert.assertEquals("train car owner all", Train.ALLOWNERS, t.getOwnerOption());
+		Assert.assertEquals("train car owner all", Train.ALL_OWNERS, t.getOwnerOption());
 
 		// test car date options
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.builtDateAfter));
@@ -556,11 +556,11 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		f.initComponents();
 
 		LocationManager lmanager = LocationManager.instance();
-		List<String> locations = lmanager.getLocationsByNameList();
+		List<Location> locations = lmanager.getLocationsByNameList();
 
 		// default switch list will print all locations
 		for (int i = 0; i < locations.size(); i++) {
-			Location l = lmanager.getLocationById(locations.get(i));
+			Location l = locations.get(i);
 			Assert.assertTrue("print switchlist 1", l.isSwitchListEnabled());
 		}
 		// now clear all locations
@@ -568,7 +568,7 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.saveButton));
 		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
 		for (int i = 0; i < locations.size(); i++) {
-			Location l = lmanager.getLocationById(locations.get(i));
+			Location l = locations.get(i);
 			Assert.assertFalse("print switchlist 2", l.isSwitchListEnabled());
 		}
 		// now set all locations
@@ -576,7 +576,7 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.saveButton));
 		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
 		for (int i = 0; i < locations.size(); i++) {
-			Location l = lmanager.getLocationById(locations.get(i));
+			Location l = locations.get(i);
 			Assert.assertTrue("print switchlist 3", l.isSwitchListEnabled());
 		}
 
@@ -655,11 +655,11 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 	public void testTrainsScheduleEditFrame() {
 		TrainsScheduleEditFrame f = new TrainsScheduleEditFrame();
 		Assert.assertNotNull("frame exists", f);
-
+		
 		f.addTextBox.setText("A New Day");
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.addButton));
 		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
-
+		
 		TrainScheduleManager tsm = TrainScheduleManager.instance();
 		Assert.assertNotNull("Train schedule manager exists", tsm);
 		Assert.assertNotNull("A new Day schedule exists", tsm.getScheduleByName("A New Day"));
@@ -775,7 +775,7 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		Assert.assertEquals("Location 1s1 LocType", "Staging", l1s1.getTrackType());
 		Assert.assertEquals("Location 1s1 Length", 300, l1s1.getLength());
 		l1s1.setTrainDirections(DIRECTION_ALL);
-		l1s1.setRoadOption(Track.ALLROADS);
+		l1s1.setRoadOption(Track.ALL_ROADS);
 		l1s1.setDropOption(Track.ANY);
 		l1s1.setPickupOption(Track.ANY);
 
@@ -786,7 +786,7 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		Assert.assertEquals("Location 1s2 LocType", "Staging", l1s2.getTrackType());
 		Assert.assertEquals("Location 1s2 Length", 400, l1s2.getLength());
 		l1s2.setTrainDirections(DIRECTION_ALL);
-		l1s2.setRoadOption(Track.ALLROADS);
+		l1s2.setRoadOption(Track.ALL_ROADS);
 		l1s2.setDropOption(Track.ANY);
 		l1s2.setPickupOption(Track.ANY);
 
@@ -842,7 +842,7 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		Assert.assertEquals("Location 3s1 LocType", "Staging", l3s1.getTrackType());
 		Assert.assertEquals("Location 3s1 Length", 300, l3s1.getLength());
 		l3s1.setTrainDirections(DIRECTION_ALL);
-		l3s1.setRoadOption(Track.ALLROADS);
+		l3s1.setRoadOption(Track.ALL_ROADS);
 		l3s1.setDropOption(Track.ANY);
 		l3s1.setPickupOption(Track.ANY);
 
@@ -853,7 +853,7 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		Assert.assertEquals("Location 3s2 LocType", "Staging", l3s2.getTrackType());
 		Assert.assertEquals("Location 3s2 Length", 401, l3s2.getLength());
 		l3s2.setTrainDirections(DIRECTION_ALL);
-		l3s2.setRoadOption(Track.ALLROADS);
+		l3s2.setRoadOption(Track.ALL_ROADS);
 		l3s2.setDropOption(Track.ANY);
 		l3s2.setPickupOption(Track.ANY);
 

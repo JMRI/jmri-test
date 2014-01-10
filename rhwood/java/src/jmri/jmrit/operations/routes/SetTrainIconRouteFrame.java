@@ -66,7 +66,7 @@ public class SetTrainIconRouteFrame extends OperationsFrame implements PropertyC
 	Route _route;
 	RouteLocation _rl;
 	int _routeIndex = 0;
-	List<String> _locIds;
+	List<RouteLocation> _routeList;
 
 	// test train icon
 	TrainIcon _tIon;
@@ -190,7 +190,7 @@ public class SetTrainIconRouteFrame extends OperationsFrame implements PropertyC
 	private void placeTestIcons() {
 		Editor editor = PanelMenu.instance().getEditorByName(Setup.getPanelName());
 		if (editor == null) {
-			JOptionPane.showMessageDialog(null, MessageFormat.format(Bundle.getMessage("LoadPanel"),
+			JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle.getMessage("LoadPanel"),
 					new Object[] { Setup.getPanelName() }), Bundle.getMessage("PanelNotFound"),
 					JOptionPane.ERROR_MESSAGE);
 		} else {
@@ -223,7 +223,7 @@ public class SetTrainIconRouteFrame extends OperationsFrame implements PropertyC
 
 	private void updateRoute() {
 		log.debug("Updating route");
-		_locIds = _route.getLocationsBySequenceList();
+		_routeList = _route.getLocationsBySequenceList();
 		updateRouteLocation(NONE);
 	}
 
@@ -239,15 +239,15 @@ public class SetTrainIconRouteFrame extends OperationsFrame implements PropertyC
 			_routeIndex--;
 		}
 		// Confirm that index is in range
-		if (_routeIndex > _locIds.size() - 1)
-			_routeIndex = _locIds.size() - 1;
+		if (_routeIndex > _routeList.size() - 1)
+			_routeIndex = _routeList.size() - 1;
 		if (_routeIndex < 0)
 			_routeIndex = 0;
 
 		if (_rl != null)
 			_rl.removePropertyChangeListener(this);
-		if (_locIds.size() > 0)
-			_rl = _route.getLocationById(_locIds.get(_routeIndex));
+		if (_routeList.size() > 0)
+			_rl = _routeList.get(_routeIndex);
 		if (_rl != null) {
 			_rl.addPropertyChangeListener(this);
 			loadSpinners(_rl);

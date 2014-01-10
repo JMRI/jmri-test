@@ -119,6 +119,8 @@ public class TrainEditBuildOptionsFrame extends OperationsFrame implements java.
 	JCheckBox returnStagingCheckBox = new JCheckBox(Bundle.getMessage("AllowCarsToReturn"));
 	JCheckBox allowLocalMovesCheckBox = new JCheckBox(Bundle.getMessage("AllowLocalMoves"));
 	JCheckBox allowThroughCarsCheckBox = new JCheckBox(Bundle.getMessage("AllowThroughCars"));
+	JCheckBox serviceAllCarsCheckBox = new JCheckBox(Bundle.getMessage("ServiceAllCars"));
+	JCheckBox buildConsistCheckBox = new JCheckBox(Bundle.getMessage("BuildConsist"));
 
 	// text field
 	JTextField builtAfterTextField = new JTextField(10);
@@ -202,6 +204,8 @@ public class TrainEditBuildOptionsFrame extends OperationsFrame implements java.
 		addItemLeft(pOption, returnStagingCheckBox, 0, 1);
 		addItemLeft(pOption, allowLocalMovesCheckBox, 1, 1);
 		addItemLeft(pOption, allowThroughCarsCheckBox, 0, 2);
+		addItemLeft(pOption, serviceAllCarsCheckBox, 1, 2);
+		addItemLeft(pOption, buildConsistCheckBox, 0, 3);
 		pOption.setMaximumSize(new Dimension(2000, 250));
 
 		returnStagingCheckBox.setEnabled(false); // only enable if train departs and returns to same staging loc
@@ -247,7 +251,7 @@ public class TrainEditBuildOptionsFrame extends OperationsFrame implements java.
 		// engine options
 		engine1Option.setLayout(new GridBagLayout());
 
-		for (int i = 0; i < Setup.getEngineSize() + 1; i++) {
+		for (int i = 0; i < Setup.getMaxNumberEngines() + 1; i++) {
 			numEngines1Box.addItem(Integer.toString(i));
 		}
 		numEngines1Box.setMinimumSize(new Dimension(50, 20));
@@ -295,7 +299,7 @@ public class TrainEditBuildOptionsFrame extends OperationsFrame implements java.
 		// engine options
 		engine2Option.setLayout(new GridBagLayout());
 
-		for (int i = 0; i < Setup.getEngineSize() + 1; i++) {
+		for (int i = 0; i < Setup.getMaxNumberEngines() + 1; i++) {
 			numEngines2Box.addItem(Integer.toString(i));
 		}
 		numEngines2Box.setMinimumSize(new Dimension(50, 20));
@@ -383,12 +387,19 @@ public class TrainEditBuildOptionsFrame extends OperationsFrame implements java.
 			returnStagingCheckBox.setSelected(_train.isAllowReturnToStagingEnabled());
 			allowLocalMovesCheckBox.setSelected(_train.isAllowLocalMovesEnabled());
 			allowThroughCarsCheckBox.setSelected(_train.isAllowThroughCarsEnabled());
+			serviceAllCarsCheckBox.setSelected(_train.isServiceAllCarsWithFinalDestinationsEnabled());
+			buildConsistCheckBox.setSelected(_train.isBuildConsistEnabled());
 			sendToTerminalCheckBox.setText(MessageFormat.format(Bundle.getMessage("SendToTerminal"),
 					new Object[] { _train.getTrainTerminatesName() }));
 			builtAfterTextField.setText(_train.getBuiltStartYear());
 			builtBeforeTextField.setText(_train.getBuiltEndYear());
 			setBuiltRadioButton();
 			enableButtons(true);
+			// does this train depart staging?
+			if (_train.getTrainDepartsRouteLocation() != null
+					&& _train.getTrainDepartsRouteLocation().getLocation().getLocationOps() == (Location.STAGING)) {
+				buildConsistCheckBox.setEnabled(false);	// can't build a consist out of staging
+			}
 			// does train depart and return to same staging location?
 			if (_train.getTrainDepartsRouteLocation() != null
 					&& _train.getTrainTerminatesRouteLocation() != null
@@ -446,15 +457,15 @@ public class TrainEditBuildOptionsFrame extends OperationsFrame implements java.
 		log.debug("radio button activated");
 		if (_train != null) {
 			if (ae.getSource() == ownerNameAll) {
-				_train.setOwnerOption(Train.ALLOWNERS);
+				_train.setOwnerOption(Train.ALL_OWNERS);
 				updateOwnerNames();
 			}
 			if (ae.getSource() == ownerNameInclude) {
-				_train.setOwnerOption(Train.INCLUDEOWNERS);
+				_train.setOwnerOption(Train.INCLUDE_OWNERS);
 				updateOwnerNames();
 			}
 			if (ae.getSource() == ownerNameExclude) {
-				_train.setOwnerOption(Train.EXCLUDEOWNERS);
+				_train.setOwnerOption(Train.EXCLUDE_OWNERS);
 				updateOwnerNames();
 			}
 			if (ae.getSource() == builtDateAll || ae.getSource() == builtDateAfter
@@ -546,9 +557,9 @@ public class TrainEditBuildOptionsFrame extends OperationsFrame implements java.
 
 		if (_train != null) {
 			// set radio button
-			ownerNameAll.setSelected(_train.getOwnerOption().equals(Train.ALLOWNERS));
-			ownerNameInclude.setSelected(_train.getOwnerOption().equals(Train.INCLUDEOWNERS));
-			ownerNameExclude.setSelected(_train.getOwnerOption().equals(Train.EXCLUDEOWNERS));
+			ownerNameAll.setSelected(_train.getOwnerOption().equals(Train.ALL_OWNERS));
+			ownerNameInclude.setSelected(_train.getOwnerOption().equals(Train.INCLUDE_OWNERS));
+			ownerNameExclude.setSelected(_train.getOwnerOption().equals(Train.EXCLUDE_OWNERS));
 
 			if (!ownerNameAll.isSelected()) {
 				p = new JPanel();
@@ -721,6 +732,8 @@ public class TrainEditBuildOptionsFrame extends OperationsFrame implements java.
 				&& returnStagingCheckBox.isEnabled());
 		_train.setAllowLocalMovesEnabled(allowLocalMovesCheckBox.isSelected());
 		_train.setAllowThroughCarsEnabled(allowThroughCarsCheckBox.isSelected());
+		_train.setServiceAllCarsWithFinalDestinationsEnabled(serviceAllCarsCheckBox.isSelected());
+		_train.setBuildConsistEnabled(buildConsistCheckBox.isSelected());
 		_train.setBuiltStartYear(builtAfterTextField.getText().trim());
 		_train.setBuiltEndYear(builtBeforeTextField.getText().trim());
 

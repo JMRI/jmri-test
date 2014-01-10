@@ -26,7 +26,7 @@ import jmri.*;
 public class IndexedCvTableModel extends javax.swing.table.AbstractTableModel implements ActionListener, PropertyChangeListener {
 
     private int _numRows = 0;                // must be zero until Vectors are initialized
-    static final int MAXCVNUM = 512;
+    static final int MAXCVNUM = 1200;
     private Vector<CvValue> _indxCvDisplayVector = new Vector<CvValue>();  // vector of CvValue objects, in display order
     private Vector<CvValue> _indxCvAllVector = new Vector<CvValue>(MAXCVNUM + 1);  // vector of all possible indexed CV objects
     public  Vector<CvValue> allIndxCvVector() { return _indxCvAllVector; }
@@ -90,7 +90,19 @@ public class IndexedCvTableModel extends javax.swing.table.AbstractTableModel im
         return mProgrammer;
     }
     
-    public void setProgrammer(Programmer p) { mProgrammer = p; }
+    public void setProgrammer(Programmer p) { 
+        mProgrammer = p;
+
+        // tell all existing
+        for (CvValue cv : _indxCvDisplayVector) {
+            if (cv!=null) cv.setProgrammer(p);
+        }
+        for (CvValue cv : _indxCvAllVector) {
+            if (cv!=null) cv.setProgrammer(p);
+        }
+        
+        log.debug("Set programmer in "+_indxCvAllVector.size()+"CVs");
+    }
 
 
     // basic methods for AbstractTableModel implementation

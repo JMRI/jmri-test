@@ -21,29 +21,25 @@ package jmri.jmrit.beantable.oblock;
  * @version     $Revision$
  */
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
 import java.util.ResourceBundle;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
-
 import jmri.Block;
 import jmri.InstanceManager;
 import jmri.Manager;
 import jmri.NamedBean;
 import jmri.Reporter;
 import jmri.Sensor;
-
 import jmri.jmrit.beantable.AbstractTableAction;
-
 import jmri.jmrit.logix.OBlock;
 import jmri.jmrit.logix.OBlockManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
     /**
      * Duplicates the JTable model for BlockTableAction and adds a column
@@ -79,14 +75,17 @@ public class OBlockTableModel extends jmri.jmrit.picker.PickListModel {
     java.text.DecimalFormat twoDigit = new java.text.DecimalFormat("0.00");
 
     OBlockManager manager;
-    private String[] tempRow= new String[NUMCOLS];
+    private final String[] tempRow= new String[NUMCOLS];
     TableFrames _parent;
 
     public OBlockTableModel(TableFrames parent) {
         super();
         _parent = parent;
-        manager = InstanceManager.oBlockManagerInstance();
         initTempRow();
+    }
+    
+    void addHeaderListener(JTable table) {
+    	addMouseListenerToHeader(table);
     }
 
     void initTempRow() {
@@ -102,34 +101,44 @@ public class OBlockTableModel extends jmri.jmrit.picker.PickListModel {
         tempRow[DELETE_COL] = rbo.getString("ButtonClear");
     }
 
+    @Override
     public Manager getManager() {
+        manager = InstanceManager.oBlockManagerInstance();
         return manager;
     }
+    @Override
     public NamedBean getBySystemName(String name) {
         return manager.getBySystemName(name);
     }
     // Method name not appropriate (initial use was for Icon Editors)
+    @Override
     public NamedBean addBean(String name) {
         return manager.getOBlock(name);
     }
+    @Override
     public NamedBean addBean(String sysName, String userName) {
         return manager.createNewOBlock(sysName, userName);
     }
+    @Override
     public boolean canAddBean() {
         return true;
     }
 
+    @Override
     public int getColumnCount () {
         return NUMCOLS;
     }
+    @Override
     public int getRowCount () {
         return super.getRowCount() + 1;
     }
     
-    /** override
-     * @see jmri.jmrit.picker.PickListModel#getBeanAt(int)
-     * TableSorter uses this call
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
      */
+    @Override
     public NamedBean getBeanAt(int index) {
     	if (index >=_pickList.size()) {
     		return null;
@@ -137,6 +146,7 @@ public class OBlockTableModel extends jmri.jmrit.picker.PickListModel {
        return _pickList.get(index);
     }
 
+    @Override
      public Object getValueAt(int row, int col) 
     {
         OBlock b = (OBlock)getBeanAt(row);
@@ -251,6 +261,7 @@ public class OBlockTableModel extends jmri.jmrit.picker.PickListModel {
         return super.getValueAt(row, col);
     }    		
 
+    @Override
     public void setValueAt(Object value, int row, int col) {
         if (log.isDebugEnabled()) log.debug("setValueAt: row= "+row+", col= "+col+", value= "+(String)value);
         if (super.getRowCount() == row) 
@@ -269,17 +280,7 @@ public class OBlockTableModel extends jmri.jmrit.picker.PickListModel {
                     return;
                 }
                 if (tempRow[SENSORCOL] != null) {
-                    Sensor sensor = null;
-                    boolean err1 = false;
-                    try {
-                        sensor = InstanceManager.sensorManagerInstance().getSensor(tempRow[SENSORCOL]);
-                        if (sensor!=null) {
-                            err1 = block.setSensor(tempRow[SENSORCOL]);
-                        }
-                    } catch (Exception ex) {
-                        log.error("No Sensor named \""+tempRow[SENSORCOL]+"\" found. threw exception: "+ ex);
-                    }
-                    if (err1) {
+                    if (!sensorExists(tempRow[SENSORCOL])) {
                         JOptionPane.showMessageDialog(null, java.text.MessageFormat.format(
                             rbo.getString("NoSuchSensorErr"), tempRow[SENSORCOL]),
                             AbstractTableAction.rb.getString("ErrorTitle"), JOptionPane.WARNING_MESSAGE);
@@ -311,18 +312,8 @@ public class OBlockTableModel extends jmri.jmrit.picker.PickListModel {
                     return;
                 }
                 if (tempRow[ERR_SENSORCOL] != null) {
-                    Sensor sensor = null;
-                    boolean err = false;
                     if (tempRow[ERR_SENSORCOL].trim().length()>0) {
-                        try {
-                            sensor = InstanceManager.sensorManagerInstance().getSensor(tempRow[ERR_SENSORCOL]);
-                            if (sensor!=null) {
-                                err = block.setErrorSensor(tempRow[ERR_SENSORCOL]);
-                            }
-                        } catch (Exception ex) {
-                            log.error("No Sensor named \""+tempRow[ERR_SENSORCOL]+"\" found. threw exception: "+ ex);
-                        }
-                        if (err) {
+                        if (!sensorExists(tempRow[ERR_SENSORCOL])) {
                             JOptionPane.showMessageDialog(null, java.text.MessageFormat.format(
                                 rbo.getString("NoSuchSensorErr"), tempRow[ERR_SENSORCOL]),
                                 AbstractTableAction.rb.getString("ErrorTitle"), JOptionPane.WARNING_MESSAGE);
@@ -401,21 +392,7 @@ public class OBlockTableModel extends jmri.jmrit.picker.PickListModel {
                 fireTableRowsUpdated(row,row);
                 return;
             case SENSORCOL:
-            	boolean err1 = false;
-                try {
-                    if (((String)value).trim().length()==0) {
-                        block.setSensor(null);
-                        block.setState(OBlock.DARK);
-                        err1 = true;
-                    } else {
-                        err1 = block.setSensor((String)value);
-                        fireTableRowsUpdated(row,row);
-                    }
-                    return;
-                } catch (Exception ex) {
-                    log.error("getSensor("+(String)value+") threw exception: "+ ex);
-                }
-                if (err1) {
+                if (!block.setSensor((String)value)) {
                     JOptionPane.showMessageDialog(null, java.text.MessageFormat.format(
                             rbo.getString("NoSuchSensorErr"), (String)value),
                             AbstractTableAction.rb.getString("ErrorTitle"), JOptionPane.WARNING_MESSAGE);                	
@@ -516,7 +493,15 @@ public class OBlockTableModel extends jmri.jmrit.picker.PickListModel {
         }
         super.setValueAt(value, row, col);					
     }
-
+    
+    private boolean sensorExists(String name) {
+        Sensor sensor = InstanceManager.sensorManagerInstance().getByUserName(name);
+        if (sensor==null) {
+        	sensor = InstanceManager.sensorManagerInstance().getBySystemName(name);
+        }
+        return (sensor!=null);   	
+    }
+    
     public String getColumnName(int col) {
         switch (col) {
             case COMMENTCOL: return AbstractTableAction.rb.getString("Comment");

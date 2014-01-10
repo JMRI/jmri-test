@@ -38,4 +38,34 @@ public interface NetworkPortAdapter extends PortAdapter {
     public void setHostName(String hostname);
     
     public String getHostName();
+
+    /*
+     * Set whether or not this adapter should be
+     * configured automatically via MDNS.
+     */
+    public void setMdnsConfigure(boolean autoconfig);
+
+    /*
+     * Get whether or not this adapter is configured
+     * to use autoconfiguration via MDNS
+     */
+    public boolean getMdnsConfigure();
+
+    /*
+     * perform the automatic configuration
+     */
+   public void autoConfigure();
+
+   /*
+    * Get and set the ZeroConf/mDNS advertisement name.
+    */
+   public void setAdvertisementName(String AdName);
+   public String getAdvertisementName();
+
+   /*
+    * Get and set the ZeroConf/mDNS service type.
+    */
+   public void setServiceType(String ServiceType);
+   public String getServiceType();
+
 }

@@ -30,8 +30,7 @@ public class TrainLogger extends XmlFile implements java.beans.PropertyChangeLis
 	File _fileLogger;
 	private boolean _trainLog = false; // when true logging train movements
 	static final String DEL = ","; // delimiter
-	static final String ESC = "\"";  // NOI18N escape
-	
+	static final String ESC = "\""; // NOI18N escape
 
 	public TrainLogger() {
 	}
@@ -94,9 +93,8 @@ public class TrainLogger extends XmlFile implements java.beans.PropertyChangeLis
 		createFile();
 		// Note that train status can contain a comma
 		String line = ESC + train.getName() + ESC + DEL + ESC + train.getDescription() + ESC + DEL + ESC
-				+ train.getCurrentLocationName() + ESC + DEL + ESC + train.getNextLocationName() + ESC + DEL
-				+ ESC + train.getStatus() + ESC + DEL + ESC + train.getBuildFailedMessage() + ESC + DEL
-				+ getTime();
+				+ train.getCurrentLocationName() + ESC + DEL + ESC + train.getNextLocationName() + ESC + DEL + ESC
+				+ train.getStatus() + ESC + DEL + ESC + train.getBuildFailedMessage() + ESC + DEL + getTime();
 		fileOut(line);
 	}
 
@@ -117,12 +115,12 @@ public class TrainLogger extends XmlFile implements java.beans.PropertyChangeLis
 			return;
 		}
 
-		PrintWriter fileOut;
+		PrintWriter fileOut = null;
 
 		try {
 			// FileOutputStream is set to append
-			fileOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-					_fileLogger, true), "UTF-8")), true);	// NOI18N
+			fileOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(_fileLogger, true), "UTF-8")), true); // NOI18N
 		} catch (IOException e) {
 			log.error("Exception while opening log file: " + e.getLocalizedMessage());
 			return;
@@ -139,9 +137,9 @@ public class TrainLogger extends XmlFile implements java.beans.PropertyChangeLis
 		if (Setup.isTrainLoggerEnabled() && !_trainLog) {
 			log.debug("Train Logger adding train listerners");
 			_trainLog = true;
-			List<String> trains = TrainManager.instance().getTrainsByIdList();
+			List<Train> trains = TrainManager.instance().getTrainsByIdList();
 			for (int i = 0; i < trains.size(); i++) {
-				Train train = TrainManager.instance().getTrainById(trains.get(i));
+				Train train = trains.get(i);
 				if (train != null)
 					train.addPropertyChangeListener(this);
 			}
@@ -153,9 +151,9 @@ public class TrainLogger extends XmlFile implements java.beans.PropertyChangeLis
 	private void removeTrainListeners() {
 		log.debug("Train Logger removing train listerners");
 		if (_trainLog) {
-			List<String> trains = TrainManager.instance().getTrainsByIdList();
+			List<Train> trains = TrainManager.instance().getTrainsByIdList();
 			for (int i = 0; i < trains.size(); i++) {
-				Train train = TrainManager.instance().getTrainById(trains.get(i));
+				Train train = trains.get(i);
 				if (train != null)
 					train.removePropertyChangeListener(this);
 			}
@@ -204,7 +202,7 @@ public class TrainLogger extends XmlFile implements java.beans.PropertyChangeLis
 
 	public String getFileName() {
 		if (fileName == null)
-			fileName = Bundle.getMessage("Trains")+ "_" + getDate() + ".csv"; // NOI18N
+			fileName = Bundle.getMessage("Trains") + "_" + getDate() + ".csv"; // NOI18N
 		return fileName;
 	}
 
@@ -228,6 +226,5 @@ public class TrainLogger extends XmlFile implements java.beans.PropertyChangeLis
 		return Calendar.getInstance().getTime().toString();
 	}
 
-	static Logger log = LoggerFactory.getLogger(TrainLogger.class
-			.getName());
+	static Logger log = LoggerFactory.getLogger(TrainLogger.class.getName());
 }

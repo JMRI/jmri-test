@@ -185,7 +185,7 @@ public class SetTrainIconPositionFrame extends OperationsFrame {
     public void buttonActionPerformed(java.awt.event.ActionEvent ae) {
     	// check to see if a location has been selected 
     	if (locationBox.getSelectedItem() == null || locationBox.getSelectedItem().equals("")){
-    		JOptionPane.showMessageDialog(null, Bundle.getMessage("SelectLocationToEdit"), Bundle.getMessage("NoLocationSelected"), JOptionPane.ERROR_MESSAGE);
+    		JOptionPane.showMessageDialog(this, Bundle.getMessage("SelectLocationToEdit"), Bundle.getMessage("NoLocationSelected"), JOptionPane.ERROR_MESSAGE);
     		return;
     	}
     	Location l = (Location)locationBox.getSelectedItem();
@@ -308,7 +308,7 @@ public class SetTrainIconPositionFrame extends OperationsFrame {
 			return;
 		Editor editor = PanelMenu.instance().getEditorByName(Setup.getPanelName());
 		if (editor == null) {
-			JOptionPane.showMessageDialog(null, MessageFormat.format(Bundle.getMessage("LoadPanel"), new Object[]{Setup.getPanelName()}),
+			JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle.getMessage("LoadPanel"), new Object[]{Setup.getPanelName()}),
 					Bundle.getMessage("PanelNotFound"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -354,12 +354,12 @@ public class SetTrainIconPositionFrame extends OperationsFrame {
 	}
 	
 	public void updateTrainIconCoordinates(Location l){
-		List<String> routes = RouteManager.instance().getRoutesByIdList();
+		List<Route> routes = RouteManager.instance().getRoutesByIdList();
 		for (int i=0; i<routes.size(); i++){
-			Route route = RouteManager.instance().getRouteById(routes.get(i));
-			List<String> routeLocs = route.getLocationsBySequenceList();
+			Route route = routes.get(i);
+			List<RouteLocation> routeLocs = route.getLocationsBySequenceList();
 			for (int j=0; j<routeLocs.size(); j++){
-				RouteLocation rl = route.getLocationById(routeLocs.get(j));
+				RouteLocation rl = routeLocs.get(j);
 				if (rl.getName().equals(l.getName())){
 					log.debug("Updating train icon for route location "+rl.getName()+" in route "+route.getName());
 					rl.setTrainIconCoordinates();

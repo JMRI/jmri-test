@@ -106,7 +106,7 @@ nmraWarrant="yes" nmraWarrantStart="200604"
     </family>
     <programming direct="yes" paged="yes" register="yes" ops="yes"/>
     <variables>
-      <xi:include href="http://jmri.org/xml/decoders/lenz/shortAndLongAddress.xml"/>
+      <xi:include href="http://jmri.org/xml/decoders/nmra/shortAndLongAddress.xml"/>
       <xi:include href="http://jmri.org/xml/decoders/lenz/vStartHighMid.xml"/>
       <xi:include href="http://jmri.org/xml/decoders/lenz/accelDecel.xml"/>
       <variable label="Version Number (CV7, read only)" CV="7" readOnly="yes" item="Decoder Version">
@@ -152,12 +152,6 @@ nmraWarrant="yes" nmraWarrantStart="200604"
           <enumChoice choice="Use the Speed Table"/>
         </enumVal>
       </variable>
-      <variable label="Addressing Mode" CV="29" mask="XXVXXXXX" item="Address Format">
-        <enumVal>
-          <enumChoice choice="2 digit addressing"/>
-          <enumChoice choice="4 digit addressing"/>
-        </enumVal>
-      </variable>
 
       <xi:include href="http://jmri.org/xml/decoders/lenz/protection_cv30.xml"/>
       <xi:include href="http://jmri.org/xml/decoders/lenz/functionmap_plus.xml"/>
@@ -195,10 +189,10 @@ nmraWarrant="yes" nmraWarrantStart="200604"
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-disabledEnabled.xml"/>
       </variable>
 
-      <variable label="Dimming Intensity, Output A (0-255)" CV="55" item="Global lighting option 1" default="255" tooltip="CV55 - Sets intensity of output A (larger number = brighter light)">
+      <variable label="Dimming Intensity, Output A (0-255)" CV="55" item="Global lighting option 1" default="255" tooltip="Sets intensity of output A (larger number = brighter light)">
         <decVal min="0" max="255"/>
       </variable>
-      <variable label="Dimming Intensity, Output B (0-255)" CV="56" item="Global lighting option 2" default="255" tooltip="CV56 - Sets intensity of output B (larger number = brighter light)">
+      <variable label="Dimming Intensity, Output B (0-255)" CV="56" item="Global lighting option 2" default="255" tooltip="Sets intensity of output B (larger number = brighter light)">
         <decVal min="0" max="255"/>
       </variable>
 
@@ -222,13 +216,13 @@ nmraWarrant="yes" nmraWarrantStart="200604"
         <decVal min="0" max="255"/>
       </variable>
 <!-- CV115 not listed in Plus manual -->
-      <variable label="Dimming Intensity, Output C (0-255)" CV="116" item="Global lighting option 3" default="255" minOut="3" tooltip="CV116 - Sets intensity of output C (larger number = brighter light)">
+      <variable label="Dimming Intensity, Output C (0-255)" CV="116" item="Global lighting option 3" default="255" minOut="3" tooltip="Sets intensity of output C (larger number = brighter light)">
         <decVal min="0" max="255"/>
       </variable>
-      <variable label="Dimming Intensity, Output D (0-255)" CV="117" item="Global lighting option 4" default="255" minOut="4" tooltip="CV117 - Sets intensity of output D (larger number = brighter light)">
+      <variable label="Dimming Intensity, Output D (0-255)" CV="117" item="Global lighting option 4" default="255" minOut="4" tooltip="Sets intensity of output D (larger number = brighter light)">
         <decVal min="0" max="255"/>
       </variable>
-      <variable label="Dimming Intensity, Output E (0-255)" CV="118" item="Global lighting option 5" default="255" minOut="5" tooltip="CV118 - Sets intensity of output E (larger number = brighter light)">
+      <variable label="Dimming Intensity, Output E (0-255)" CV="118" item="Global lighting option 5" default="255" minOut="5" tooltip="Sets intensity of output E (larger number = brighter light)">
         <decVal min="0" max="255"/>
       </variable>
       <variable label="CV indicator for SUSI, offset 800 (Certain models only)" CV="126" item="SUSI Indicator" default="102" comment="Range 0-255">
@@ -283,10 +277,10 @@ nmraWarrant="yes" nmraWarrantStart="200604"
 <variable label="Enable backward coupling with F8" CV="146" mask="VXXXXXXX">
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-NoYes.xml"/>      </variable>
 
-      <variable label="    Coupler kick duration" CV="147" item="CKICK" default="30" tooltip="cv147, Range 0-255">
+      <variable label="    Coupler kick duration" CV="147" item="CKICK" default="30" tooltip="Range 0-255">
         <decVal min="0" max="255"/>
       </variable>
-      <variable label="    Decoupling movement" CV="148" item="CMOVE" default="80" tooltip="cv148, Range 0-255">
+      <variable label="    Decoupling movement" CV="148" item="CMOVE" default="80" tooltip="Range 0-255">
         <decVal min="0" max="255"/>
       </variable>
     </variables>

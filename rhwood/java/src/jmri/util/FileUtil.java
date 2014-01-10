@@ -285,6 +285,7 @@ public class FileUtil {
      *
      * @param file File at path to be represented
      * @return Storage format representation
+     * @return Filename for storage in a portable manner
      * @since 2.7.2
      */
     static public String getPortableFilename(File file) {
@@ -360,7 +361,7 @@ public class FileUtil {
      * Deprecated forms are not created.
      *
      * @param filename Filename to be represented
-     * @return Storage format representation
+     * @return Filename for storage in a portable manner
      * @since 2.7.2
      */
     static public String getPortableFilename(String filename) {
@@ -547,7 +548,7 @@ public class FileUtil {
      * {@link #findURL(java.lang.String)}
      *
      * @param path
-     * @return file:// URL or null
+     * @return URL of portable or absolute path
      */
     static public URL findExternalFilename(String path) {
         return FileUtil.findURL(FileUtil.getExternalFilename(path));
@@ -620,13 +621,14 @@ public class FileUtil {
      * Search for a file or JAR resource by name and return the
      * {@link java.net.URL} for that file.
      * <p>
-     * Search order is:<ol><li>For any provided searchPaths, iterate over the
-     * searchPaths by prepending each searchPath to the path and following the
-     * following search order:</li>
+     * Search order is:
+     * <ol><li>For any provided searchPaths, iterate over the searchPaths by
+     * prepending each searchPath to the path and following the following search
+     * order:
      * <ol><li>As a {@link java.io.File} in the user preferences directory</li>
      * <li>As a File in the current working directory (usually, but not always
      * the JMRI distribution directory)</li> <li>As a File in the JMRI
-     * distribution directory</li> <li>As a resource in jmri.jar</li></ol>
+     * distribution directory</li> <li>As a resource in jmri.jar</li></ol></li>
      * <li>If the file or resource has not been found in the searchPaths, search
      * in the four locations listed without prepending any path</li></ol>
      *

@@ -130,6 +130,7 @@ public class TrackCopyFrame extends OperationsFrame implements java.beans.Proper
 		addButtonAction(copyButton);
 		addButtonAction(saveButton);
 		
+		addCheckBoxAction(sameNameCheckBox);
 		addCheckBoxAction(moveRollingStockCheckBox);
 	}
 
@@ -215,6 +216,9 @@ public class TrackCopyFrame extends OperationsFrame implements java.beans.Proper
 	}
 	
 	protected void checkBoxActionPerformed(java.awt.event.ActionEvent ae) {
+		if (ae.getSource() == sameNameCheckBox) {
+			updateTrackName();
+		}
 		if (ae.getSource() == moveRollingStockCheckBox) {
 			deleteTrackCheckBox.setEnabled(moveRollingStockCheckBox.isSelected());
 			deleteTrackCheckBox.setSelected(false);
@@ -260,9 +264,9 @@ public class TrackCopyFrame extends OperationsFrame implements java.beans.Proper
 	}
 	
 	private void moveRollingStock(Track fromTrack, Track toTrack, RollingStockManager manager) {
-		List<String> list = manager.getByIdList();
+		List<RollingStock> list = manager.getByIdList();
 		for (int i=0; i<list.size(); i++) {
-			RollingStock rs = manager.getById(list.get(i));
+			RollingStock rs = list.get(i);
 			if (rs.getTrack() == fromTrack) {
 				rs.setLocation(toTrack.getLocation(), toTrack, true);
 			}

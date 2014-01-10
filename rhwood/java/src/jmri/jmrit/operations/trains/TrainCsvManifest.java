@@ -12,6 +12,7 @@ import java.util.List;
 
 import jmri.jmrit.operations.locations.Location;
 import jmri.jmrit.operations.locations.LocationManager;
+import jmri.jmrit.operations.rollingstock.RollingStock;
 import jmri.jmrit.operations.rollingstock.cars.Car;
 import jmri.jmrit.operations.rollingstock.cars.CarLoad;
 import jmri.jmrit.operations.rollingstock.cars.CarLoads;
@@ -22,25 +23,26 @@ import jmri.jmrit.operations.routes.RouteLocation;
 import jmri.jmrit.operations.setup.Setup;
 
 /**
- * Builds a train's manifest using Comma Separated Values (csv). 
+ * Builds a train's manifest using Comma Separated Values (csv).
  * 
- * @author Daniel Boudreau  Copyright (C) 2011
- * @version             $Revision: 1 $
+ * @author Daniel Boudreau Copyright (C) 2011
+ * @version $Revision: 1 $
  */
 public class TrainCsvManifest extends TrainCsvCommon {
-	
+
 	EngineManager engineManager = EngineManager.instance();
 	CarManager carManager = CarManager.instance();
 	LocationManager locationManager = LocationManager.instance();
-	
+
 	public TrainCsvManifest(Train train) {
 		// create comma separated value manifest file
 		File file = TrainManagerXml.instance().createTrainCsvManifestFile(train.getName());
-		PrintWriter fileOut;
+
+		PrintWriter fileOut = null;
 
 		try {
-			fileOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(file), "UTF-8")), true);	// NOI18N
+			fileOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")),
+					true); // NOI18N
 		} catch (IOException e) {
 			log.error("can not open train csv manifest file");
 			return;
@@ -50,7 +52,8 @@ public class TrainCsvManifest extends TrainCsvCommon {
 		addLine(fileOut, RN + ESC + Setup.getRailroadName() + ESC);
 		addLine(fileOut, TN + train.getName());
 		addLine(fileOut, TM + ESC + train.getDescription() + ESC);
-		addLine(fileOut, PRNTR + ESC + locationManager.getLocationByName(train.getTrainDepartsName()).getDefaultPrinterName() + ESC);
+		addLine(fileOut, PRNTR + ESC
+				+ locationManager.getLocationByName(train.getTrainDepartsName()).getDefaultPrinterName() + ESC);
 		// add logo
 		String logoURL = Setup.getManifestLogoURL();
 		if (!train.getManifestLogoURL().equals(""))
@@ -68,16 +71,16 @@ public class TrainCsvManifest extends TrainCsvCommon {
 			addLine(fileOut, RC + ESC + train.getRoute().getComment() + ESC);
 
 		// get engine and car lists
-		List<String> engineList = engineManager.getByTrainList(train);
-		List<String> carList = carManager.getByTrainDestinationList(train);
+		List<RollingStock> engineList = engineManager.getByTrainList(train);
+		List<Car> carList = carManager.getByTrainDestinationList(train);
 
 		int cars = 0;
 		int emptyCars = 0;
 		boolean newWork = false;
 		String previousRouteLocationName = null;
-		List<String> routeList = train.getRoute().getLocationsBySequenceList();
+		List<RouteLocation> routeList = train.getRoute().getLocationsBySequenceList();
 		for (int r = 0; r < routeList.size(); r++) {
-			RouteLocation rl = train.getRoute().getLocationById(routeList.get(r));
+			RouteLocation rl = routeList.get(r);
 			// print info only if new location
 			String routeLocationName = splitString(rl.getName());
 			String locationName = routeLocationName;
@@ -128,21 +131,21 @@ public class TrainCsvManifest extends TrainCsvCommon {
 			}
 
 			for (int i = 0; i < engineList.size(); i++) {
-				Engine engine = engineManager.getById(engineList.get(i));
+				Engine engine = (Engine) engineList.get(i);
 				if (engine.getRouteLocation() == rl)
 					fileOutCsvEngine(fileOut, engine, PL);
 			}
 			for (int i = 0; i < engineList.size(); i++) {
-				Engine engine = engineManager.getById(engineList.get(i));
+				Engine engine = (Engine) engineList.get(i);
 				if (engine.getRouteDestination() == rl)
 					fileOutCsvEngine(fileOut, engine, SL);
 			}
 
 			// block cars by destination
 			for (int j = r; j < routeList.size(); j++) {
-				RouteLocation rld = train.getRoute().getLocationById(routeList.get(j));
+				RouteLocation rld = routeList.get(j);
 				for (int k = 0; k < carList.size(); k++) {
-					Car car = carManager.getById(carList.get(k));
+					Car car = carList.get(k);
 					if (car.getRouteLocation() == rl && car.getRouteDestination() == rld) {
 						fileOutCsvCar(fileOut, car, PC);
 						cars++;
@@ -155,7 +158,7 @@ public class TrainCsvManifest extends TrainCsvCommon {
 			}
 			// car set outs
 			for (int j = 0; j < carList.size(); j++) {
-				Car car = carManager.getById(carList.get(j));
+				Car car = carList.get(j);
 				if (car.getRouteDestination() == rl) {
 					fileOutCsvCar(fileOut, car, SC);
 					cars--;
@@ -167,7 +170,7 @@ public class TrainCsvManifest extends TrainCsvCommon {
 			}
 			if (r != routeList.size() - 1) {
 				// Is the next location the same as the previous?
-				RouteLocation rlNext = train.getRoute().getLocationById(routeList.get(r + 1));
+				RouteLocation rlNext = routeList.get(r + 1);
 				String nextRouteLocationName = splitString(rlNext.getName());
 				if (!routeLocationName.equals(nextRouteLocationName)) {
 					if (newWork) {
@@ -191,4 +194,3 @@ public class TrainCsvManifest extends TrainCsvCommon {
 		fileOut.close();
 	}
 }
-

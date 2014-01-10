@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import jmri.JmriException;
-import jmri.PowerManager;
 import jmri.jmris.AbstractPowerServer;
 import jmri.jmris.JmriConnection;
 
@@ -23,8 +22,8 @@ import jmri.jmris.JmriConnection;
  */
 public class JsonPowerServer extends AbstractPowerServer {
 
-    private JmriConnection connection;
-    private ObjectMapper mapper;
+    private final JmriConnection connection;
+    private final ObjectMapper mapper;
 
     public JsonPowerServer(JmriConnection connection) {
         this.connection = connection;

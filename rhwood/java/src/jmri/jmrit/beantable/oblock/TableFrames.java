@@ -41,8 +41,6 @@ import javax.swing.event.InternalFrameListener;
 
 import javax.swing.Action;
 import javax.swing.ActionMap;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -60,6 +58,7 @@ import javax.swing.TransferHandler;
 
 import jmri.util.com.sun.TableSorter;
 import jmri.util.com.sun.TransferActionListener;
+import jmri.util.swing.XTableColumnModel;
 import jmri.util.table.ButtonEditor;
 import jmri.util.table.ButtonRenderer;
 
@@ -367,7 +366,16 @@ public class TableFrames extends jmri.util.JmriJFrame implements InternalFrameLi
         JTable blockTable = new DnDJTable(_oBlockModel, new int[] {OBlockTableModel.EDIT_COL, 
                                                                 OBlockTableModel.DELETE_COL,
                                                                 OBlockTableModel.UNITSCOL});
+        
+		// Use XTableColumnModel so we can control which columns are visible
+		XTableColumnModel tcm = new XTableColumnModel();
+		blockTable.setColumnModel(tcm);
+		blockTable.getTableHeader().setReorderingAllowed(true);
+		blockTable.createDefaultColumnsFromModel();
         _oBlockModel.makeSorter(blockTable);
+        _oBlockModel.addHeaderListener(blockTable);
+       
+        
         blockTable.setDefaultEditor(JComboBox.class, new jmri.jmrit.symbolicprog.ValueEditor());
         blockTable.getColumnModel().getColumn(OBlockTableModel.EDIT_COL).setCellEditor(new ButtonEditor(new JButton()));
         blockTable.getColumnModel().getColumn(OBlockTableModel.EDIT_COL).setCellRenderer(new ButtonRenderer());
@@ -387,15 +395,22 @@ public class TableFrames extends jmri.util.JmriJFrame implements InternalFrameLi
             int width = _oBlockModel.getPreferredWidth(i);
             blockTable.getColumnModel().getColumn(i).setPreferredWidth(width);
         }
-        blockTable.sizeColumnsToFit(-1);
+        blockTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         blockTable.setDragEnabled(true);
         //blockTable.setDropMode(DropMode.USE_SELECTION);
         setActionMappings(blockTable);
         ROW_HEIGHT = blockTable.getRowHeight();
-        int tableWidth = blockTable.getPreferredSize().width;
+//        int tableWidth = blockTable.getPreferredSize().width;
+        int tableWidth = _desktop.getPreferredSize().width;
         blockTable.setPreferredScrollableViewportSize( new java.awt.Dimension(tableWidth, ROW_HEIGHT*10));
-//			blockTable.setPreferredScrollableViewportSize( new java.awt.Dimension(875, ROW_HEIGHT*10));
         _blockTablePane = new JScrollPane(blockTable);
+
+        tcm.setColumnVisible(tcm.getColumnByModelIndex(OBlockTableModel.REPORTERCOL), false);
+        tcm.setColumnVisible(tcm.getColumnByModelIndex(OBlockTableModel.REPORT_CURRENTCOL), false);
+        tcm.setColumnVisible(tcm.getColumnByModelIndex(OBlockTableModel.PERMISSIONCOL), false);
+        tcm.setColumnVisible(tcm.getColumnByModelIndex(OBlockTableModel.SPEEDCOL), false);
+        tcm.setColumnVisible(tcm.getColumnByModelIndex(OBlockTableModel.ERR_SENSORCOL), false);
+        tcm.setColumnVisible(tcm.getColumnByModelIndex(OBlockTableModel.CURVECOL), false);
 
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout(5,5));
@@ -403,11 +418,6 @@ public class TableFrames extends jmri.util.JmriJFrame implements InternalFrameLi
         contentPane.add(prompt, BorderLayout.NORTH);
         contentPane.add(_blockTablePane, BorderLayout.CENTER);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.add(Box.createVerticalStrut(STRUT_SIZE));
-
-        contentPane.add(panel, BorderLayout.SOUTH);
         frame.setContentPane(contentPane);
         frame.pack();
         return frame;

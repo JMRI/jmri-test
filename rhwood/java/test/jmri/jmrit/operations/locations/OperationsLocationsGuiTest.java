@@ -149,7 +149,7 @@ public class OperationsLocationsGuiTest extends jmri.util.SwingTestCase {
 		Assert.assertEquals("interchange track length", 321, t.getLength());
 		// check that the defaults are correct
 		Assert.assertEquals("all directions", ALL, t.getTrainDirections());
-		Assert.assertEquals("all roads", Track.ALLROADS, t.getRoadOption());
+		Assert.assertEquals("all roads", Track.ALL_ROADS, t.getRoadOption());
 				
 		t = l.getTrackByName("2nd interchange track", Track.INTERCHANGE);	
 		Assert.assertNotNull("2nd interchange track", t);
@@ -220,14 +220,14 @@ public class OperationsLocationsGuiTest extends jmri.util.SwingTestCase {
 		Assert.assertEquals("siding track length", 1223, t.getLength());
 		// check that the defaults are correct
 		Assert.assertEquals("all directions", ALL, t.getTrainDirections());
-		Assert.assertEquals("all roads", Track.ALLROADS, t.getRoadOption());
+		Assert.assertEquals("all roads", Track.ALL_ROADS, t.getRoadOption());
 				
 		t = l.getTrackByName("2nd siding track", null);	
 		Assert.assertNotNull("2nd siding track", t);
 		Assert.assertEquals("2nd siding track length", 9999, t.getLength());
 		// check that the defaults are correct
 		Assert.assertEquals("all directions", ALL, t.getTrainDirections());
-		Assert.assertEquals("all roads", Track.ALLROADS, t.getRoadOption());
+		Assert.assertEquals("all roads", Track.ALL_ROADS, t.getRoadOption());
 		
 		t = l.getTrackByName("3rd siding track", null);	
 		Assert.assertNotNull("3rd siding track", t);
@@ -306,21 +306,21 @@ public class OperationsLocationsGuiTest extends jmri.util.SwingTestCase {
 		Assert.assertEquals("staging track length", 34, t.getLength());
 		// check that the defaults are correct
 		Assert.assertEquals("all directions", ALL, t.getTrainDirections());
-		Assert.assertEquals("all roads", Track.ALLROADS, t.getRoadOption());
+		Assert.assertEquals("all roads", Track.ALL_ROADS, t.getRoadOption());
 				
 		t = l.getTrackByName("2nd staging track", null);	
 		Assert.assertNotNull("2nd staging track", t);
 		Assert.assertEquals("2nd staging track length", 3456, t.getLength());
 		// check that the defaults are correct
 		Assert.assertEquals("all directions", ALL, t.getTrainDirections());
-		Assert.assertEquals("all roads", Track.ALLROADS, t.getRoadOption());
+		Assert.assertEquals("all roads", Track.ALL_ROADS, t.getRoadOption());
 		
 		t = l.getTrackByName("3rd staging track", null);	
 		Assert.assertNotNull("3rd staging track", t);
 		Assert.assertEquals("3rd staging track length", 1, t.getLength());
 		// check that the defaults are correct
 		Assert.assertEquals("all directions", ALL, t.getTrainDirections());
-		Assert.assertEquals("all roads", Track.ALLROADS, t.getRoadOption());
+		Assert.assertEquals("all roads", Track.ALL_ROADS, t.getRoadOption());
 
 		t = l.getTrackByName("4th staging track", null);	
 		Assert.assertNotNull("4th staging track", t);
@@ -386,21 +386,21 @@ public class OperationsLocationsGuiTest extends jmri.util.SwingTestCase {
 		Assert.assertEquals("yard track length", 43, t.getLength());
 		// check that the defaults are correct
 		Assert.assertEquals("all directions", ALL, t.getTrainDirections());
-		Assert.assertEquals("all roads", Track.ALLROADS, t.getRoadOption());
+		Assert.assertEquals("all roads", Track.ALL_ROADS, t.getRoadOption());
 				
 		t = l.getTrackByName("2nd yard track", null);	
 		Assert.assertNotNull("2nd yard track", t);
 		Assert.assertEquals("2nd yard track length", 6543, t.getLength());
 		// check that the defaults are correct
 		Assert.assertEquals("all directions", ALL, t.getTrainDirections());
-		Assert.assertEquals("all roads", Track.ALLROADS, t.getRoadOption());
+		Assert.assertEquals("all roads", Track.ALL_ROADS, t.getRoadOption());
 		
 		t = l.getTrackByName("3rd yard track", null);	
 		Assert.assertNotNull("3rd yard track", t);
 		Assert.assertEquals("3rd yard track length", 1, t.getLength());
 		// check that the defaults are correct
 		Assert.assertEquals("all directions", ALL, t.getTrainDirections());
-		Assert.assertEquals("all roads", Track.ALLROADS, t.getRoadOption());
+		Assert.assertEquals("all roads", Track.ALL_ROADS, t.getRoadOption());
 
 		t = l.getTrackByName("4th yard track", null);	
 		Assert.assertNotNull("4th yard track", t);
@@ -461,16 +461,16 @@ public class OperationsLocationsGuiTest extends jmri.util.SwingTestCase {
 		getHelper().enterClickAndLeave( new MouseEventData( this, f.addTypeButton ) );
 		getHelper().enterClickAndLeave( new MouseEventData( this, f.saveScheduleButton ) );
 		
-		List<String> list = s.getItemsBySequenceList();
+		List<ScheduleItem> list = s.getItemsBySequenceList();
 		Assert.assertEquals("number of items", 4, list.size());
 		
-		ScheduleItem si = s.getItemById(list.get(0));		
+		ScheduleItem si = list.get(0);		
 		Assert.assertEquals("1st type", "Tank Food", si.getTypeName());
-		si = s.getItemById(list.get(1));		
+		si = list.get(1);		
 		Assert.assertEquals("2nd type", "Boxcar", si.getTypeName());
-		si = s.getItemById(list.get(2));		
+		si = list.get(2);		
 		Assert.assertEquals("3rd type", "Flatcar", si.getTypeName());
-		si = s.getItemById(list.get(3));		
+		si = list.get(3);		
 		Assert.assertEquals("3rd type", "Coilcar", si.getTypeName());
 		
 		getHelper().enterClickAndLeave( new MouseEventData( this, f.deleteScheduleButton ) );
@@ -507,10 +507,10 @@ public class OperationsLocationsGuiTest extends jmri.util.SwingTestCase {
 		Assert.assertEquals("1 First schedule name", "new schedule", s1.getName());
 		Assert.assertEquals("1 First schedule name", "newer schedule", s2.getName());
 		
-		List<String> names = sm.getSchedulesByNameList();
+		List<Schedule> names = sm.getSchedulesByNameList();
 		Assert.assertEquals("There should be 2 schedules", 2, names.size());
-		Schedule sch1 = sm.getScheduleById(names.get(0));
-		Schedule sch2 = sm.getScheduleById(names.get(1));
+		Schedule sch1 = names.get(0);
+		Schedule sch2 = names.get(1);
 		Assert.assertEquals("2 First schedule name", "new schedule", sch1.getName());
 		Assert.assertEquals("2 First schedule name", "newer schedule", sch2.getName());
 		Assert.assertEquals("Schedule 1", sch1, sm.getScheduleByName("new schedule"));

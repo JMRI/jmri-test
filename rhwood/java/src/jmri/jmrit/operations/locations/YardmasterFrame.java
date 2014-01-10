@@ -242,14 +242,13 @@ public class YardmasterFrame extends CommonConductorYardmasterFrame {
 			// determine how many times this train visits this location and if it is the last stop
 			RouteLocation rl = null;
 			boolean lastLocation = false;
-			List<String> routeList = route.getLocationsBySequenceList();
+			List<RouteLocation> routeList = route.getLocationsBySequenceList();
 			int visitNumber = 0;
 			for (int i = 0; i < routeList.size(); i++) {
-				RouteLocation l = route.getLocationById(routeList.get(i));
-				if (TrainCommon.splitString(l.getName()).equals(TrainCommon.splitString(_location.getName()))) {
+				if (TrainCommon.splitString(routeList.get(i).getName()).equals(TrainCommon.splitString(_location.getName()))) {
 					visitNumber++;
 					if (visitNumber == _visitNumber) {
-						rl = l;
+						rl = routeList.get(i);
 						if (i == routeList.size() - 1)
 							lastLocation = true;
 					}
@@ -309,9 +308,9 @@ public class YardmasterFrame extends CommonConductorYardmasterFrame {
 	
 	private void addTrainListeners() {
 		log.debug("Adding train listerners");
-		List<String> trains = TrainManager.instance().getTrainsByIdList();
+		List<Train> trains = TrainManager.instance().getTrainsByIdList();
 		for (int i = 0; i < trains.size(); i++) {
-			Train train = TrainManager.instance().getTrainById(trains.get(i));
+			Train train = trains.get(i);
 			if (train != null)
 				train.addPropertyChangeListener(this);
 		}
@@ -321,9 +320,9 @@ public class YardmasterFrame extends CommonConductorYardmasterFrame {
 
 	private void removeTrainListeners() {
 		log.debug("Removing train listerners");
-		List<String> trains = TrainManager.instance().getTrainsByIdList();
+		List<Train> trains = TrainManager.instance().getTrainsByIdList();
 		for (int i = 0; i < trains.size(); i++) {
-			Train train = TrainManager.instance().getTrainById(trains.get(i));
+			Train train = trains.get(i);
 			if (train != null)
 				train.removePropertyChangeListener(this);
 		}

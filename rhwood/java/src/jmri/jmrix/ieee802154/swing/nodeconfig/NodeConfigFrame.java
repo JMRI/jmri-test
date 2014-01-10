@@ -9,7 +9,6 @@ import java.awt.*;
 import java.util.ResourceBundle;
 
 import javax.swing.*;
-import javax.swing.table.*;
 import javax.swing.border.Border;
 
 import jmri.jmrix.ieee802154.IEEE802154TrafficController;
@@ -403,7 +402,7 @@ public class NodeConfigFrame extends jmri.util.JmriJFrame {
      * Method to set node parameters
      *    The node must exist, and be in 'curNode'
      */
-    void setNodeParameters() {
+    protected void setNodeParameters() {
     }
     
     /**

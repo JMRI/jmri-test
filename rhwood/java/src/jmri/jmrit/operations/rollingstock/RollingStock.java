@@ -54,7 +54,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 	protected String _lastLocationId = LOCATION_UNKNOWN; // the rollingstock's last location id
 	public static final String LOCATION_UNKNOWN = "0";
 
-	public int number = 0; // used by managers for sort by number
+	protected int number = 0; // used by rolling stock manager for sort by number
 
 	public static final String ERROR_TRACK = "ERROR wrong track for location";  // NOI18N checks for coding error
 
@@ -744,10 +744,20 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 			firePropertyChange("rolling stock rfid", old, id); // NOI18N
 	}
 	
+	/**
+	 * Provides the last date when this rolling stock was moved, or was reset from a built train.
+	 * 
+	 * @return date
+	 */
 	public String getLastDate() {
 		return _last;
 	}
 	
+	/**
+	 * Sets the last date when this rolling stock was moved, or was reset from a built train.
+	 * 
+	 * @param date
+	 */
 	public void setLastDate(String date) {
 		String old = _last;
 		_last = date;
@@ -1016,14 +1026,13 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 			e.setAttribute(Xml.DES_TRACK, getDestinationTrackName());
 		}
 		e.setAttribute(Xml.MOVES, Integer.toString(getMoves()));
+		e.setAttribute(Xml.DATE, getLastDate());
 		if (!getLastLocationId().equals(LOCATION_UNKNOWN))
 			e.setAttribute(Xml.LAST_LOCATION_ID, getLastLocationId());
 		if (!getTrainName().equals(""))
 			e.setAttribute(Xml.TRAIN, getTrainName());
 		if (!getOwner().equals(""))
 			e.setAttribute(Xml.OWNER, getOwner());
-		if (!getComment().equals(""))
-			e.setAttribute(Xml.COMMENT, getComment());
 		if (!getValue().equals(""))
 			e.setAttribute(Xml.VALUE, getValue());
 		if (!getRfid().equals(""))
@@ -1032,7 +1041,8 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 			e.setAttribute(Xml.LOC_UNKNOWN, isLocationUnknown() ? Xml.TRUE : Xml.FALSE);
 		if (isOutOfService())
 			e.setAttribute(Xml.OUT_OF_SERVICE, isOutOfService() ? Xml.TRUE : Xml.FALSE);
-		e.setAttribute(Xml.DATE, getLastDate());
+		if (!getComment().equals(""))
+			e.setAttribute(Xml.COMMENT, getComment());
 		return e;
 	}
 
@@ -1091,7 +1101,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 			moveRollingStock((RouteLocation) e.getOldValue(), (RouteLocation) e.getNewValue());
 		}
 		if (e.getPropertyName().equals(Train.STATUS_CHANGED_PROPERTY)
-				&& e.getNewValue().equals(Train.TRAINRESET) && e.getSource() == _train) {
+				&& e.getNewValue().equals(Train.TRAIN_RESET) && e.getSource() == _train) {
 			if (log.isDebugEnabled())
 				log.debug("Rolling stock (" + toString() + ") is removed from train ("
 						+ _train.getName() + ") by reset"); // NOI18N

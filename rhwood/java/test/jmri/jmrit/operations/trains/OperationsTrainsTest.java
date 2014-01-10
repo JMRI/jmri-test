@@ -128,9 +128,9 @@ public class OperationsTrainsTest extends TestCase {
 		Assert.assertEquals("Train Constant CABOOSE", 1, Train.CABOOSE);
 		Assert.assertEquals("Train Constant FRED", 2, Train.FRED);
 
-		Assert.assertEquals("Train Constant ALLROADS", "All", Train.ALLROADS);
-		Assert.assertEquals("Train Constant INCLUDEROADS", "Include", Train.INCLUDEROADS);
-		Assert.assertEquals("Train Constant EXCLUDEROADS", "Exclude", Train.EXCLUDEROADS);
+		Assert.assertEquals("Train Constant ALLROADS", "All", Train.ALL_ROADS);
+		Assert.assertEquals("Train Constant INCLUDEROADS", "Include", Train.INCLUDE_ROADS);
+		Assert.assertEquals("Train Constant EXCLUDEROADS", "Exclude", Train.EXCLUDE_ROADS);
 
 		Assert.assertEquals("Train Constant DISPOSE_CHANGED_PROPERTY", "TrainDispose",
 				Train.DISPOSE_CHANGED_PROPERTY);
@@ -286,11 +286,11 @@ public class OperationsTrainsTest extends TestCase {
 		Assert.assertEquals("Train Id", "TESTTRAINID", train1.getId());
 		Assert.assertEquals("Train Name", "TESTTRAINNAME", train1.getName());
 
-		train1.setRoadOption(Train.ALLROADS);
+		train1.setRoadOption(Train.ALL_ROADS);
 		Assert.assertTrue("Train accepts (ALLROADS) Road name CP", train1.acceptsRoadName("CP"));
 		Assert.assertTrue("Train accepts (ALLROADS) Road name VIA", train1.acceptsRoadName("VIA"));
 
-		train1.setRoadOption(Train.INCLUDEROADS);
+		train1.setRoadOption(Train.INCLUDE_ROADS);
 		train1.addRoadName("CP");
 		Assert.assertTrue("Train accepts (INCLUDEROADS) Road name CP", train1.acceptsRoadName("CP"));
 		Assert.assertFalse("Train does not accept (INCLUDEROADS) Road name VIA", train1
@@ -305,7 +305,7 @@ public class OperationsTrainsTest extends TestCase {
 				.acceptsRoadName("CP"));
 		Assert.assertTrue("Train still accepts (INCLUDEROADS) Road name VIA", train1.acceptsRoadName("VIA"));
 
-		train1.setRoadOption(Train.EXCLUDEROADS);
+		train1.setRoadOption(Train.EXCLUDE_ROADS);
 		Assert.assertTrue("Train does accept (EXCLUDEROADS) Road name CP", train1.acceptsRoadName("CP"));
 		Assert.assertFalse("Train does not accept (EXCLUDEROADS) Road name VIA", train1
 				.acceptsRoadName("VIA"));
@@ -328,11 +328,11 @@ public class OperationsTrainsTest extends TestCase {
 		Assert.assertEquals("Train Id", "TESTTRAINID", train1.getId());
 		Assert.assertEquals("Train Name", "TESTTRAINNAME", train1.getName());
 
-		train1.setLoadOption(Train.ALLLOADS);
+		train1.setLoadOption(Train.ALL_LOADS);
 		Assert.assertTrue("Train accepts (ALLLOADS) Load name BOXES", train1.acceptsLoadName("BOXES"));
 		Assert.assertTrue("Train accepts (ALLLOADS) Load name WOOD", train1.acceptsLoadName("WOOD"));
 
-		train1.setLoadOption(Train.INCLUDELOADS);
+		train1.setLoadOption(Train.INCLUDE_LOADS);
 		train1.addLoadName("BOXES");
 		Assert.assertTrue("Train accepts (INCLUDELOADS) Load name BOXES", train1.acceptsLoadName("BOXES"));
 		Assert.assertFalse("Train does not accept (INCLUDELOADS) Load name WOOD", train1
@@ -358,7 +358,7 @@ public class OperationsTrainsTest extends TestCase {
 				.acceptsLoadName("BOXES"));
 		Assert.assertTrue("Train still accepts (INCLUDELOADS) Load name WOOD", train1.acceptsLoadName("WOOD"));
 
-		train1.setLoadOption(Train.EXCLUDELOADS);
+		train1.setLoadOption(Train.EXCLUDE_LOADS);
 		Assert.assertTrue("Train does accept (EXCLUDELOADS) Load name BOXES", train1.acceptsLoadName("BOXES"));
 		Assert.assertFalse("Train does not accept (EXCLUDELOADS) Load name WOOD", train1
 				.acceptsLoadName("WOOD"));
@@ -486,7 +486,7 @@ public class OperationsTrainsTest extends TestCase {
 		// disable build reports
 		tmanager.setBuildReportEnabled(false);
 		// This test uses the maximum length of a train in route
-		Setup.setTrainLength(1000);
+		Setup.setMaxTrainLength(1000);
 
 		Train train = tmanager.newTrain("AutoEngineTest");
 		train.setNumberEngines(Train.AUTO);
@@ -566,7 +566,7 @@ public class OperationsTrainsTest extends TestCase {
 		train.build();
 		Assert.assertTrue("Train should build, four engines available", train.isBuilt());
 
-		Setup.setEngineSize(3); // limit the maximum to three engines
+		Setup.setMaxNumberEngines(3); // limit the maximum to three engines
 		train.build();
 		Assert.assertFalse("Train should not build, needs four engines, three is the maximum allowed", train
 				.isBuilt());
@@ -1319,7 +1319,7 @@ public class OperationsTrainsTest extends TestCase {
 		Assert.assertEquals("Location 1s1 LocType", "Staging", l1s1.getTrackType());
 		Assert.assertEquals("Location 1s1 Length", 300, l1s1.getLength());
 		l1s1.setTrainDirections(DIRECTION_ALL);
-		l1s1.setRoadOption(Track.ALLROADS);
+		l1s1.setRoadOption(Track.ALL_ROADS);
 		l1s1.setDropOption(Track.ANY);
 		l1s1.setPickupOption(Track.ANY);
 
@@ -1330,7 +1330,7 @@ public class OperationsTrainsTest extends TestCase {
 		Assert.assertEquals("Location 1s2 LocType", "Staging", l1s2.getTrackType());
 		Assert.assertEquals("Location 1s2 Length", 400, l1s2.getLength());
 		l1s2.setTrainDirections(DIRECTION_ALL);
-		l1s2.setRoadOption(Track.ALLROADS);
+		l1s2.setRoadOption(Track.ALL_ROADS);
 		l1s2.setDropOption(Track.ANY);
 		l1s2.setPickupOption(Track.ANY);
 
@@ -1386,7 +1386,7 @@ public class OperationsTrainsTest extends TestCase {
 		Assert.assertEquals("Location 3s1 LocType", "Staging", l3s1.getTrackType());
 		Assert.assertEquals("Location 3s1 Length", 300, l3s1.getLength());
 		l3s1.setTrainDirections(DIRECTION_ALL);
-		l3s1.setRoadOption(Track.ALLROADS);
+		l3s1.setRoadOption(Track.ALL_ROADS);
 		l3s1.setDropOption(Track.ANY);
 		l3s1.setPickupOption(Track.ANY);
 
@@ -1397,7 +1397,7 @@ public class OperationsTrainsTest extends TestCase {
 		Assert.assertEquals("Location 3s2 LocType", "Staging", l3s2.getTrackType());
 		Assert.assertEquals("Location 3s2 Length", 401, l3s2.getLength());
 		l3s2.setTrainDirections(DIRECTION_ALL);
-		l3s2.setRoadOption(Track.ALLROADS);
+		l3s2.setRoadOption(Track.ALL_ROADS);
 		l3s2.setDropOption(Track.ANY);
 		l3s2.setPickupOption(Track.ANY);
 
@@ -1509,7 +1509,7 @@ public class OperationsTrainsTest extends TestCase {
 		train1.setRequirements(Train.CABOOSE);
 		train1.setCabooseRoad("CP");
 		train1.deleteTypeName("Flat");
-		train1.setRoadOption(Train.ALLROADS);
+		train1.setRoadOption(Train.ALL_ROADS);
 		train1.setRoute(r1);
 		train1.setDepartureTime("6", "5");
 		tmanager.register(train1);
@@ -1558,13 +1558,13 @@ public class OperationsTrainsTest extends TestCase {
 		// now allow train 2 to service Boxcars
 		train2.addTypeName("Boxcar");
 		// Try again, but exclude road name CP
-		train2.setRoadOption(Train.EXCLUDEROADS);
+		train2.setRoadOption(Train.EXCLUDE_ROADS);
 		train2.addRoadName("CP");
 		Assert.assertEquals("Number of road names for train", 1, train2.getRoadNames().length);
 		
 		train2.build();
 		Assert.assertEquals("Train 2 After Build but exclude road CP", false, train2.isBuilt());
-		train2.setRoadOption(Train.ALLROADS);
+		train2.setRoadOption(Train.ALL_ROADS);
 
 		train2.build();
 		Assert.assertEquals("Train 2 After Build include Boxcar", true, train2.isBuilt());
@@ -1759,13 +1759,13 @@ public class OperationsTrainsTest extends TestCase {
 		train1.addTypeName("Caboose");
 
 		// Try again, but exclude road name CP
-		train1.setRoadOption(Train.EXCLUDEROADS);
+		train1.setRoadOption(Train.EXCLUDE_ROADS);
 		train1.addRoadName("CP");
 		Assert.assertEquals("Number of road names for train", 1, train1.getRoadNames().length);
 		
 		train1.build();
 		Assert.assertEquals("Train 1 After Build with engines but exclude road CP", false, train1.isBuilt());
-		train1.setRoadOption(Train.ALLROADS);
+		train1.setRoadOption(Train.ALL_ROADS);
 
 		// try again, but set the caboose destination to NI yard
 		c1.setDestination(l2, null);
@@ -1814,25 +1814,25 @@ public class OperationsTrainsTest extends TestCase {
 
 		// Try again, but now restrict owner
 		train1.addOwnerName("DAB");
-		train1.setOwnerOption(Train.INCLUDEOWNERS);
+		train1.setOwnerOption(Train.INCLUDE_OWNERS);
 		train1.build();
 		Assert.assertEquals("Train 1 After 1st Build owner DAB", false, train1.isBuilt());
 		train1.addOwnerName("AT");
 		train1.build();
 		Assert.assertEquals("Train 1 After 2nd Build owners DAB and AT", true, train1.isBuilt());
-		train1.setOwnerOption(Train.EXCLUDEOWNERS);
+		train1.setOwnerOption(Train.EXCLUDE_OWNERS);
 		train1.build();
 		Assert.assertEquals("Train 1 After 3rd Build exclude owners DAB and AT", false, train1.isBuilt());
 		train1.deleteOwnerName("AT");
 		train1.build();
 		Assert.assertEquals("Train 1 After 4th Build exclude owner DAB", false, train1.isBuilt());
-		train1.setOwnerOption(Train.ALLOWNERS);
+		train1.setOwnerOption(Train.ALL_OWNERS);
 		train1.build();
 		Assert.assertEquals("Train 1 After 5th Build all owners", true, train1.isBuilt());
 
 		// Try again, but now restrict load
 		train1.addLoadName("L");
-		train1.setLoadOption(Train.INCLUDELOADS);
+		train1.setLoadOption(Train.INCLUDE_LOADS);
 		train1.build();
 		// build should fail, cars in staging have E loads
 		Assert.assertEquals("Train 1 After include load L", false, train1.isBuilt());
@@ -1859,7 +1859,7 @@ public class OperationsTrainsTest extends TestCase {
 
 		Assert.assertEquals("car 888 at siding has load L, now included", train1, c8.getTrain());
 
-		train1.setLoadOption(Train.EXCLUDELOADS);
+		train1.setLoadOption(Train.EXCLUDE_LOADS);
 		// cars in staging have E loads, so build should fail
 		train1.build();
 		Assert.assertEquals("Train 1 After exclude loads", false, train1.isBuilt());
@@ -1876,7 +1876,7 @@ public class OperationsTrainsTest extends TestCase {
 		Assert.assertEquals("car 888 at siding has load L, now excluded", null, c8.getTrain());
 
 		// done
-		train1.setLoadOption(Train.ALLLOADS);
+		train1.setLoadOption(Train.ALL_LOADS);
 
 		// Try again, but now set staging track service direction NORTH, train departs to the south
 		l1s1.setTrainDirections(Location.NORTH);
@@ -2313,12 +2313,12 @@ public class OperationsTrainsTest extends TestCase {
 		train2.deleteTypeName("BOXCAR");
 		c3.setTypeName("Boxcar");
 		// control which road will go into staging
-		l3s3.setRoadOption(Track.INCLUDEROADS);
+		l3s3.setRoadOption(Track.INCLUDE_ROADS);
 
 		train2.build();
 		Assert.assertFalse("Train 2 will NOT build road restriction", train2.isBuilt());
 
-		train2.setRoadOption(Train.INCLUDEROADS);
+		train2.setRoadOption(Train.INCLUDE_ROADS);
 		Assert.assertEquals("Number of road names for train", 1, train2.getRoadNames().length);
 		
 		train2.build();
@@ -2330,7 +2330,7 @@ public class OperationsTrainsTest extends TestCase {
 		train2.build();
 		Assert.assertTrue("Train 2 will build road restriction CP removed", train2.isBuilt());
 
-		train2.setRoadOption(Train.EXCLUDEROADS);
+		train2.setRoadOption(Train.EXCLUDE_ROADS);
 		train2.deleteRoadName("CP");
 		Assert.assertEquals("Number of road names for train", 0, train2.getRoadNames().length);
 		
@@ -2338,7 +2338,7 @@ public class OperationsTrainsTest extends TestCase {
 		Assert.assertFalse("Train 2 will NOT build road restriction exclude road CP", train2.isBuilt());
 
 		// now allow road into staging
-		l3s3.setRoadOption(Track.EXCLUDEROADS);
+		l3s3.setRoadOption(Track.EXCLUDE_ROADS);
 		l3s3.deleteRoadName("CP");
 		Assert.assertEquals("Number of road names", 0, l3s3.getRoadNames().length);
 
@@ -3439,7 +3439,7 @@ public class OperationsTrainsTest extends TestCase {
 		loc2trk1.setScheduleId(sch1.getId());
 		loc2trk1.setScheduleMode(Track.SEQUENTIAL);
 		// start the schedule with 2nd item Flat Car
-		loc2trk1.setScheduleItemId(sch1.getItemsBySequenceList().get(1));
+		loc2trk1.setScheduleItemId(sch1.getItemsBySequenceList().get(1).getId());
 
 		Track loc2trk2;
 		loc2trk2 = loc2.addTrack("Chelmsford Freight 2", Track.SPUR);
@@ -3449,7 +3449,7 @@ public class OperationsTrainsTest extends TestCase {
 		loc2trk2.setScheduleId(sch1.getId());
 		loc2trk2.setScheduleMode(Track.SEQUENTIAL);
 		// start the schedule with 3rd item Gon
-		loc2trk2.setScheduleItemId(sch1.getItemsBySequenceList().get(2));
+		loc2trk2.setScheduleItemId(sch1.getItemsBySequenceList().get(2).getId());
 
 		Track loc2trk3;
 		loc2trk3 = loc2.addTrack("Chelmsford Yard 3", Track.YARD);
@@ -3795,7 +3795,7 @@ public class OperationsTrainsTest extends TestCase {
 		CarManager cmanager = CarManager.instance();
 		CarTypes ct = CarTypes.instance();
 
-		Setup.setTrainLength(500);
+		Setup.setMaxTrainLength(500);
 		ct.addName("Gon");
 		ct.addName("Coil Car");
 		ct.addName("Flat Car");
@@ -4391,10 +4391,10 @@ public class OperationsTrainsTest extends TestCase {
 		CarRoads cr = CarRoads.instance();
 		cr.addName("CP");
 
-		loc1trk1.setRoadOption(Track.INCLUDEROADS);
+		loc1trk1.setRoadOption(Track.INCLUDE_ROADS);
 		loc1trk1.addRoadName("CP");
 		loc1trk1.addRoadName("PC");
-		train1.setRoadOption(Train.INCLUDEROADS);
+		train1.setRoadOption(Train.INCLUDE_ROADS);
 		train1.addRoadName("CP");
 		train1.addRoadName("PC");
 		train1.setCabooseRoad("CP");
@@ -4740,7 +4740,7 @@ public class OperationsTrainsTest extends TestCase {
 
 		// now exclude road NH, engine road is NH and should be rejected
 		train1.addRoadName("NH");
-		train1.setRoadOption(Train.EXCLUDEROADS);
+		train1.setRoadOption(Train.EXCLUDE_ROADS);
 		train1.build();
 		Assert.assertEquals("Train 1 After Build 7a", false, train1.isBuilt());
 		// now override by setting a road for the engine
@@ -4766,7 +4766,7 @@ public class OperationsTrainsTest extends TestCase {
 		Assert.assertEquals("e2 destination 8", "Boston Engine Yard", e2.getDestinationTrackName());
 
 		// now only include NH
-		train1.setRoadOption(Train.INCLUDEROADS);
+		train1.setRoadOption(Train.INCLUDE_ROADS);
 		train1.build();
 		Assert.assertEquals("Train 1 After Build 9", true, train1.isBuilt());
 		// check destinations
@@ -4821,7 +4821,7 @@ public class OperationsTrainsTest extends TestCase {
 		// train only accepted engine and cars with NH road therefore build should fail
 		Assert.assertEquals("Train 1 After Build from staging", false, train1.isBuilt());
 		// try again but now accept all roads
-		train1.setRoadOption(Train.ALLROADS);
+		train1.setRoadOption(Train.ALL_ROADS);
 		train1.build();
 		Assert.assertEquals("Train 1 After Build 10", true, train1.isBuilt());
 		// check destinations
@@ -4843,14 +4843,14 @@ public class OperationsTrainsTest extends TestCase {
 		Assert.assertEquals("e2 destination 10", "Boston Engine Yard", e2.getDestinationTrackName());
 
 		// exclude road NH
-		train1.setRoadOption(Train.EXCLUDEROADS);
+		train1.setRoadOption(Train.EXCLUDE_ROADS);
 		train1.build();
 		// should fail since there are NH roads in staging
 		Assert.assertEquals("Train 1 After Build 11", false, train1.isBuilt());
 
 		// reduce Boston moves to 6, to force non caboose and FRED cars to Arlington
 		rl3.setMaxCarMoves(6);
-		train1.setRoadOption(Train.ALLROADS);
+		train1.setRoadOption(Train.ALL_ROADS);
 		train1.build();
 		Assert.assertEquals("Train 1 After Build 12", true, train1.isBuilt());
 		// check destinations
@@ -4927,11 +4927,11 @@ public class OperationsTrainsTest extends TestCase {
 		loc3trk1.addRoadName("NH");
 		loc3trk1.addRoadName("SP");
 		loc3trk1.addRoadName("UP");
-		loc3trk1.setRoadOption(Track.INCLUDEROADS);
+		loc3trk1.setRoadOption(Track.INCLUDE_ROADS);
 		loc3trk2.addRoadName("NH");
 		loc3trk2.addRoadName("SP");
 		loc3trk2.addRoadName("UP");
-		loc3trk2.setRoadOption(Track.INCLUDEROADS);
+		loc3trk2.setRoadOption(Track.INCLUDE_ROADS);
 		train1.build();
 		Assert.assertEquals("Train 1 After Build 18", true, train1.isBuilt());
 
@@ -5290,7 +5290,7 @@ public class OperationsTrainsTest extends TestCase {
 
 		train1.setRequirements(Train.CABOOSE);
 		train1.setNumberEngines("2");
-		train1.setOwnerOption(Train.ALLOWNERS);
+		train1.setOwnerOption(Train.ALL_OWNERS);
 		train1.build();
 		Assert.assertEquals("Train 1 After Build 1", true, train1.isBuilt());
 
@@ -5355,7 +5355,7 @@ public class OperationsTrainsTest extends TestCase {
 		loc1trk2.setTrainDirections(Location.NORTH);
 
 		train1.addOwnerName("DAB");
-		train1.setOwnerOption(Train.INCLUDEOWNERS);
+		train1.setOwnerOption(Train.INCLUDE_OWNERS);
 
 		train1.build();
 		Assert.assertEquals("Train 1 After Build 2", true, train1.isBuilt());
@@ -5391,7 +5391,7 @@ public class OperationsTrainsTest extends TestCase {
 
 		// restore type Diesel and allow all owners
 		train1.addTypeName("Diesel");
-		train1.setOwnerOption(Train.ALLOWNERS);
+		train1.setOwnerOption(Train.ALL_OWNERS);
 		train1.build();
 		Assert.assertEquals("Train 1 After Build 4", true, train1.isBuilt());
 
@@ -5664,7 +5664,7 @@ public class OperationsTrainsTest extends TestCase {
 
 		train1.setRequirements(Train.CABOOSE);
 		train1.setNumberEngines("3");
-		train1.setOwnerOption(Train.ALLOWNERS);
+		train1.setOwnerOption(Train.ALL_OWNERS);
 		train1.build();
 		Assert.assertEquals("Train 1 After Build 1", true, train1.isBuilt());
 
@@ -5910,7 +5910,7 @@ public class OperationsTrainsTest extends TestCase {
 		RouteLocation endC = C.addLocation(Westford);
 
 		TrainManager manager = TrainManager.instance();
-		List<String> temptrainList = manager.getTrainsByIdList();
+		List<Train> temptrainList = manager.getTrainsByIdList();
 
 		Assert.assertEquals("Starting Number of Trains", 0, temptrainList.size());
 		Train t1 = manager.newTrain("Test Number 1");
@@ -6295,7 +6295,7 @@ public class OperationsTrainsTest extends TestCase {
 		
 		Setup.setBuildAggressive(false);
 		Setup.setTrainIntoStagingCheckEnabled(true);
-		Setup.setTrainLength(1000);
+		Setup.setMaxTrainLength(1000);
 		Setup.setRouterBuildReportLevel(Setup.BUILD_REPORT_VERY_DETAILED);
 	}
 

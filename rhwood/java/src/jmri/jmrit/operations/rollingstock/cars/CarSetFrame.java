@@ -194,8 +194,13 @@ public class CarSetFrame extends RollingStockSetFrame implements java.beans.Prop
 		kernelComboBox.setEnabled(!ignoreKernelCheckBox.isSelected() & enabled);
 		editKernelButton.setEnabled(!ignoreKernelCheckBox.isSelected() & enabled & _car != null);
 		
+		enableDestinationFields(enabled);
+	}
+	
+	private void enableDestinationFields(boolean enabled) {
 		// if car in a built train, enable destination fields
 		boolean enableDest = enableDestination
+				|| (destinationBox.getSelectedItem() != null && !destinationBox.getSelectedItem().equals(""))
 				|| (_car != null && _car.getTrain() != null && _car.getTrain().isBuilt());
 
 		destinationBox.setEnabled(!ignoreDestinationCheckBox.isSelected() & enableDest & enabled);
@@ -379,6 +384,13 @@ public class CarSetFrame extends RollingStockSetFrame implements java.beans.Prop
 					if (car.getNextWait() > 0) {
 						car.setWait(car.getNextWait());
 						car.setNextWait(0);
+					}
+					// check for RWE
+					if (car.getLoadName().equals(CarLoads.instance().getDefaultEmptyName())
+							&& car.getFinalDestination() == null
+							&& car.getReturnWhenEmptyDestination() != null) {
+						car.setFinalDestination(car.getReturnWhenEmptyDestination());
+						car.setFinalDestinationTrack(car.getReturnWhenEmptyDestTrack());
 					}
 				}
 			}
@@ -568,7 +580,7 @@ public class CarSetFrame extends RollingStockSetFrame implements java.beans.Prop
 	@edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
 	public void setDestinationEnabled(boolean enable) {
 		enableDestination = !enableDestination;
-		enableComponents(!locationUnknownCheckBox.isSelected());
+		enableDestinationFields(!locationUnknownCheckBox.isSelected());
 	}
 
 	public void dispose() {
@@ -597,6 +609,9 @@ public class CarSetFrame extends RollingStockSetFrame implements java.beans.Prop
 		if (e.getPropertyName().equals(CarManager.KERNEL_LISTLENGTH_CHANGED_PROPERTY)
 				|| e.getPropertyName().equals(Car.KERNEL_NAME_CHANGED_PROPERTY)) {
 			updateKernelComboBox();
+		}
+		if (e.getPropertyName().equals(Car.TRAIN_CHANGED_PROPERTY)) {
+			enableDestinationFields(!locationUnknownCheckBox.isSelected());
 		}
 		if (e.getPropertyName().equals(CarAttributeEditFrame.DISPOSE)) {
 			editActive = false;

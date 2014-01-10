@@ -14,51 +14,35 @@ public class TrainCustomManifest {
 
 	// To start, all files will be created inside of
 	// ../JMRI/operations/csvManifests
-	
-	private static String directoryName = "csvManifests";	// NOI18N
-	private static String mcAppName = "MC4JMRI.xls";	// NOI18N
-	private static final String mcAppArg = "";		// NOI18N
-	
-	private static String csvNamesFileName = "CSVFilesFile.txt";	// NOI18N
 
+	private static String directoryName = "csvManifests"; // NOI18N
+	private static String mcAppName = "MC4JMRI.xls"; // NOI18N
+	private static final String mcAppArg = ""; // NOI18N
+
+	private static String csvNamesFileName = "CSVFilesFile.txt"; // NOI18N
 
 	private static int fileCount = 0;
 
-
-//	public CustomManifest() {
-//		// First get our working directory, normally
-//		// ../Users/User/JMRI/operations/csvManifests
-//		workingDir = FileHelper.getOperationsFile("csvManifests");
-//
-//		csvNamesFile = new File(workingDir, csvNamesFileName);
-//
-//		// Delete it if it exists
-//		if (csvNamesFile.exists())
-//			if (!csvNamesFile.delete())
-//				log.warn("Not able to delete csv file!");
-//	}
-	
 	public static String getFileName() {
 		return mcAppName;
 	}
-	
+
 	public static void setFileName(String name) {
 		mcAppName = name;
 	}
-	
+
 	public static String getCommonFileName() {
 		return csvNamesFileName;
 	}
-	
+
 	public static void setCommonFileName(String name) {
 		csvNamesFileName = name;
 	}
 
-	
 	public static String getDirectoryName() {
 		return directoryName;
 	}
-	
+
 	public static void setDirectoryName(String name) {
 		directoryName = name;
 	}
@@ -72,7 +56,7 @@ public class TrainCustomManifest {
 		// Ignore null files...
 		if (csvFile == null)
 			return;
-		
+
 		File workingDir = FileHelper.getOperationsFile(getDirectoryName());
 		File csvNamesFile = new File(workingDir, csvNamesFileName);
 
@@ -85,8 +69,7 @@ public class TrainCustomManifest {
 	}
 
 	/**
-	 * Processes the CSV files using a Custom external program that reads the
-	 * file of file names.
+	 * Processes the CSV files using a Custom external program that reads the file of file names.
 	 */
 	public static boolean process() {
 
@@ -105,16 +88,16 @@ public class TrainCustomManifest {
 		// Not sure how to do this on Mac and Linux....
 		// For now, just complain if we are not on Windows...
 
-//		if (!SystemType.isWindows()) {
-//			JOptionPane
-//					.showMessageDialog(
-//							null,
-//							"Custom processing of manifest csv files is only supported on Windows at the moment.",
-//							"Custom manifests not supported",
-//							JOptionPane.ERROR_MESSAGE);
-//			return false;
-//		}
-		
+		// if (!SystemType.isWindows()) {
+		// JOptionPane
+		// .showMessageDialog(
+		// null,
+		// "Custom processing of manifest csv files is only supported on Windows at the moment.",
+		// "Custom manifests not supported",
+		// JOptionPane.ERROR_MESSAGE);
+		// return false;
+		// }
+
 		if (!manifestCreatorFileExists())
 			return false;
 
@@ -136,14 +119,12 @@ public class TrainCustomManifest {
 		return true;
 
 	}
-	
+
 	public static boolean manifestCreatorFileExists() {
 		File file = new File(FileHelper.getOperationsFile(getDirectoryName()), getFileName());
 		return file.exists();
 	}
-	
-	
-	
+
 	public static void load(Element options) {
 		Element mc = options.getChild(Xml.MANIFEST_CREATOR);
 		if (mc != null) {
@@ -159,7 +140,7 @@ public class TrainCustomManifest {
 				csvNamesFileName = a.getValue();
 		}
 	}
-	
+
 	public static void store(Element options) {
 		Element mc = new Element(Xml.MANIFEST_CREATOR);
 		Element file = new Element(Xml.RUN_FILE);
@@ -173,7 +154,6 @@ public class TrainCustomManifest {
 		mc.addContent(common);
 		options.addContent(mc);
 	}
-	
-	static Logger log = LoggerFactory.getLogger(TrainCustomManifest.class
-			.getName());
+
+	static Logger log = LoggerFactory.getLogger(TrainCustomManifest.class.getName());
 }

@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jmri.jmrix.AbstractMRMessage;
-import jmri.jmrix.AbstractNode;
 import jmri.jmrix.AbstractMRListener;
 import jmri.jmrix.ieee802154.IEEE802154Node;
 
@@ -37,6 +36,8 @@ public class SerialNode extends IEEE802154Node{
 
     public SerialNode(byte pan[],byte user[], byte global[]) {
         super(pan,user,global);
+        if(log.isDebugEnabled()) log.debug("Created new node with panId: " +
+                                pan + " userId: " + user + " and GUID: " + global);
     }
    
     /**

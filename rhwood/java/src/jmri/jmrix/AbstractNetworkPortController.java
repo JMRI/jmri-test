@@ -24,6 +24,8 @@ abstract public class AbstractNetworkPortController extends AbstractPortControll
     // the host name and port number identify what we are 
     // talking to.
     protected String m_HostName=null;
+    private String m_HostAddress=null;  // Internal IP address for  ZeroConf 
+                                        // configured clients.
     protected int m_port=0;
     // keep the socket provides our connection.
     protected Socket socketConn = null;
@@ -40,12 +42,12 @@ abstract public class AbstractNetworkPortController extends AbstractPortControll
     
     public void connect() throws Exception {
         opened=false;
-        if (m_HostName==null || m_port==0){
+        if (getHostAddress()==null || m_port==0){
             log.error("No host name or port set :" + m_HostName + ":" + m_port);
             return;
         }
         try {
-            socketConn = new Socket(m_HostName,  m_port);
+            socketConn = new Socket(getHostAddress(),  m_port);
             socketConn.setKeepAlive(true);
             opened = true;
         } catch (Exception e) {
@@ -78,11 +80,27 @@ abstract public class AbstractNetworkPortController extends AbstractPortControll
      */
     public void setHostName(String s){
         m_HostName=s;
-        if (s.equals("")) m_HostName = JmrixConfigPane.NONE;
+        if (s.equals("") && !getMdnsConfigure()) m_HostName = JmrixConfigPane.NONE;
     }
 
     public String getHostName(){
         return m_HostName;
+    }
+
+    /**
+     * Remember the associated IP Address
+     * This is used internally for mDNS configuration.  Public
+     * access to the IP address is through the hostname field.
+     * @param s
+     */
+    protected void setHostAddress(String s){
+        m_HostAddress=s;
+        if (s.equals("")) m_HostAddress = m_HostName;
+    }
+
+    protected String getHostAddress(){
+        if(m_HostAddress==null) return m_HostName;
+        return m_HostAddress;
     }
 
      /**
@@ -116,6 +134,46 @@ abstract public class AbstractNetworkPortController extends AbstractPortControll
         }
         else return JmrixConfigPane.NONE;
     }
+
+    /*
+     * Set whether or not this adapter should be
+     * configured automatically via MDNS.
+     * Note: Default implementation ignores the parameter.
+     * @param autoconfig boolean value.
+     */
+    public void setMdnsConfigure(boolean autoconfig){
+    }
+
+    /*
+     * Get whether or not this adapter is configured
+     * to use autoconfiguration via MDNS
+     * Default implemntation always returns false.
+     * @return true if configured using MDNS.
+     */
+    public boolean getMdnsConfigure() { return false; }
+
+    /*
+     * set the server's host name and port
+     * using mdns autoconfiguration.
+     * Default implementation does nothing.
+     */
+    public void autoConfigure() { 
+    }
+
+   /*
+    * Get and set the ZeroConf/mDNS advertisement name.
+    * Default implementation does nothing.
+    */
+   public void setAdvertisementName(String AdName) {}
+   public String getAdvertisementName() { return null; }
+
+   /* 
+    * Get and set the ZeroConf/mDNS service type.
+    * Default implementation does nothing.
+    */
+   public void setServiceType(String ServiceType) {}
+   public String getServiceType(){ return null; }
+
     
     public DataInputStream getInputStream() {
         if (!opened) {
@@ -236,6 +294,10 @@ abstract public class AbstractNetworkPortController extends AbstractPortControll
                 safeSleep(reconnectinterval, "Waiting");
                 count++;
                 try {
+                    // if the device allows autoConfiguration,
+                    // we need to run the autoConfigure() call
+                    // before we try to reconnect.
+                    if(getMdnsConfigure()) autoConfigure();
                     connect();
                 } catch (Exception e) {
                 }

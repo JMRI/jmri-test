@@ -73,13 +73,12 @@ public class SchedulesTableModel extends javax.swing.table.AbstractTableModel im
 			sysList = scheduleManager.getSchedulesByNameList();
 		// and add them back in
 		for (int i = 0; i < sysList.size(); i++) {
-			// log.debug("schedule ids: " + (String) sysList.get(i));
-			scheduleManager.getScheduleById(sysList.get(i)).addPropertyChangeListener(this);
+			sysList.get(i).addPropertyChangeListener(this);
 		}
 		addPropertyChangeTracks();
 	}
 
-	List<String> sysList = null;
+	List<Schedule> sysList = null;
 
 	void initTable(SchedulesTableFrame frame, JTable table) {
 		// Install the button handlers
@@ -197,8 +196,7 @@ public class SchedulesTableModel extends javax.swing.table.AbstractTableModel im
 		}
 		if (row >= sysList.size())
 			return "ERROR row " + row; // NOI18N
-		String id = sysList.get(row);
-		Schedule s = scheduleManager.getScheduleById(id);
+		Schedule s = sysList.get(row);
 		if (s == null)
 			return "ERROR schedule unknown " + row; // NOI18N
 		switch (col) {
@@ -254,7 +252,7 @@ public class SchedulesTableModel extends javax.swing.table.AbstractTableModel im
 		log.debug("Edit schedule");
 		if (sef != null)
 			sef.dispose();
-		Schedule s = scheduleManager.getScheduleById(sysList.get(row));
+		Schedule s = sysList.get(row);
 		LocationTrackPair ltp = getLocationTrackPair(row);
 		if (ltp == null) {
 			log.debug("Need location track pair");
@@ -272,7 +270,7 @@ public class SchedulesTableModel extends javax.swing.table.AbstractTableModel im
 
 	private void deleteSchedule(int row) {
 		log.debug("Delete schedule");
-		Schedule s = scheduleManager.getScheduleById(sysList.get(row));
+		Schedule s = sysList.get(row);
 		if (JOptionPane.showConfirmDialog(null, MessageFormat.format(Bundle
 				.getMessage("DoYouWantToDeleteSchedule"), new Object[] { s.getName() }), Bundle
 				.getMessage("DeleteSchedule?"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
@@ -284,14 +282,14 @@ public class SchedulesTableModel extends javax.swing.table.AbstractTableModel im
 	protected Hashtable<String, String> comboSelect = new Hashtable<String, String>();
 
 	private void selectJComboBox(Object value, int row) {
-		String id = sysList.get(row);
+		Schedule schedule = sysList.get(row);
 		JComboBox box = (JComboBox) value;
-		comboSelect.put(id, Integer.toString(box.getSelectedIndex()));
+		comboSelect.put(schedule.getId(), Integer.toString(box.getSelectedIndex()));
 		fireTableRowsUpdated(row, row);
 	}
 
 	private LocationTrackPair getLocationTrackPair(int row) {
-		Schedule s = scheduleManager.getScheduleById(sysList.get(row));
+		Schedule s = sysList.get(row);
 		JComboBox box = scheduleManager.getSpursByScheduleComboBox(s);
 		String index = comboSelect.get(sysList.get(row));
 		LocationTrackPair ltp;
@@ -304,7 +302,7 @@ public class SchedulesTableModel extends javax.swing.table.AbstractTableModel im
 	}
 
 	private String getScheduleStatus(int row) {
-		Schedule sch = scheduleManager.getScheduleById(sysList.get(row));
+		Schedule sch = sysList.get(row);
 		JComboBox box = scheduleManager.getSpursByScheduleComboBox(sch);
 		for (int i = 0; i < box.getItemCount(); i++) {
 			LocationTrackPair ltp = (LocationTrackPair) box.getItemAt(i);
@@ -339,7 +337,7 @@ public class SchedulesTableModel extends javax.swing.table.AbstractTableModel im
 		if (sysList != null) {
 			for (int i = 0; i < sysList.size(); i++) {
 				// if object has been deleted, it's not here; ignore it
-				Schedule sch = scheduleManager.getScheduleById(sysList.get(i));
+				Schedule sch = sysList.get(i);
 				if (sch != null)
 					sch.removePropertyChangeListener(this);
 			}
@@ -382,15 +380,14 @@ public class SchedulesTableModel extends javax.swing.table.AbstractTableModel im
 			updateList();
 			fireTableDataChanged();
 		} else if (e.getSource().getClass().equals(Schedule.class)) {
-			String id = ((Schedule) e.getSource()).getId();
-			int row = sysList.indexOf(id);
+			Schedule schedule = (Schedule) e.getSource();
+			int row = sysList.indexOf(schedule);
 			if (Control.showProperty && log.isDebugEnabled())
-				log.debug("Update schedule table row: " + row + " id: " + id);
+				log.debug("Update schedule table row: " + row + " id: " + schedule.getId());
 			if (row >= 0)
 				fireTableRowsUpdated(row, row);
 		}
-		if (e.getPropertyName().equals(Track.SCHEDULE_MODE_CHANGED_PROPERTY)
-				|| e.getPropertyName().equals(Track.SCHEDULE_CHANGED_PROPERTY)) {
+		if (e.getPropertyName().equals(Track.SCHEDULE_MODE_CHANGED_PROPERTY)) {
 			Track track = (Track) e.getSource();
 			String id = track.getScheduleId();
 			int row = sysList.indexOf(id);
@@ -398,6 +395,10 @@ public class SchedulesTableModel extends javax.swing.table.AbstractTableModel im
 				fireTableRowsUpdated(row, row);
 			else
 				fireTableDataChanged();
+		}
+		
+		if (e.getPropertyName().equals(Track.SCHEDULE_ID_CHANGED_PROPERTY)) {
+			fireTableDataChanged();
 		}
 	}
 

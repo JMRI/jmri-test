@@ -53,24 +53,11 @@
         <output name="Brakes"/>
         <output name="Grade" label="Xing"/>
       </model>
-      <model model="F9B" numOuts="4" numFns="14" connector="9pin" productID="103" comment="CP_CN">
-        <versionCV lowVersionID="64"/>
-        <output name="Air Horn"/>
-        <output name="Bell"/>
-        <output name="3" label="STR8-2-8"/>
-        <output name="Dynamics"/>
-        <output name="Mute"/>
-        <output name="Brakes"/>
-        <output name="Grade" label="Xing"/>
-      </model>      
     </family>
     <programming direct="yes" paged="yes" register="yes" ops="yes"/>
     <!-- Configuration Variable (CV) information follows -->
     <variables>
-      <variable label="Primary Address (1-127)" CV="1" item="Short Address" default="3" tooltip="Sets the Primary (short, 2 digit) address">
-        <shortAddressVal/>
-        <label>Primary Address (1-127)</label>
-      </variable>
+      <xi:include href="http://jmri.org/xml/decoders/nmra/shortAndLongAddress.xml"/>
       <variable label="Start Voltage (0-255)" CV="2" item="Vstart" default="0" tooltip="Sets the starting voltage at throttle speed step 1">
         <decVal/>
         <label>Start Voltage (0-255)</label>
@@ -136,10 +123,6 @@
         <decVal/>
         <label>CV Lock ID Code (0-7)</label>
       </variable>
-      <variable label="Extended Address (0001-9999)" CV="17" item="Long Address" tooltip="Sets the Extended (long, 4 digit) address">
-        <longAddressVal/>
-        <label>Extended Address (0001-9999)</label>
-      </variable>
       <!-- Consisting Information follows -->
       <variable label="Consist Address (0-127)" CV="19" mask="XVVVVVVV" item="Consist Address" default="0" comment="Stores consist address. Range 0-127 (direction set in bit 7)">
         <decVal max="127"/>
@@ -151,7 +134,7 @@
         <label>Loco Direction In Consist</label>
         <comment>A consist address over 127 will also set this bit</comment>
       </variable>
-      <variable label="Consist Address Activation for F1" CV="21" mask="XXXXXXXV" item="Consist Address Active For F1" default="0" minFn="1" include="101,103">
+      <variable label="Consist Address Activation for F1" CV="21" mask="XXXXXXXV" item="Consist Address Active For F1" default="0" minFn="1" include="101">
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
         <label>Consist Address Activation for F1</label>
       </variable>
@@ -159,7 +142,7 @@
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
         <label>Consist Address Activation for F1</label>
       </variable>
-      <variable label="Consist Address Activation for F2" CV="21" mask="XXXXXXVX" item="Consist Address Active For F2" default="0" minFn="2" include="101,103">
+      <variable label="Consist Address Activation for F2" CV="21" mask="XXXXXXVX" item="Consist Address Active For F2" default="0" minFn="2" include="101">
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
         <label>Consist Address Activation for F2</label>
       </variable>
@@ -168,7 +151,7 @@
         <label>Consist Address Activation for F2</label>
       </variable>
 
-      <variable label="Consist Address Activation for F3" CV="21" mask="XXXXXVXX" item="Consist Address Active For F3" default="0" minFn="3" include="101,103">
+      <variable label="Consist Address Activation for F3" CV="21" mask="XXXXXVXX" item="Consist Address Active For F3" default="0" minFn="3" include="101">
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
         <label>Consist Address Activation for F3</label>
       </variable>
@@ -177,7 +160,7 @@
         <label>Consist Address Activation for F3</label>
       </variable>
 
-      <variable label="Consist Address Activation for F4" CV="21" mask="XXXXVXXX" item="Consist Address Active For F4" default="0" minFn="4" include="101,103">
+      <variable label="Consist Address Activation for F4" CV="21" mask="XXXXVXXX" item="Consist Address Active For F4" default="0" minFn="4" include="101">
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
         <label>Consist Address Activation for F4</label>
       </variable>
@@ -186,7 +169,7 @@
         <label>Consist Address Activation for F4</label>
       </variable>
 
-      <variable label="Consist Address Activation for F5" CV="21" mask="XXXVXXXX" item="Consist Address Active For F5" default="0" minFn="5" include="101,103">
+      <variable label="Consist Address Activation for F5" CV="21" mask="XXXVXXXX" item="Consist Address Active For F5" default="0" minFn="5" include="101">
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
         <label>Consist Address Activation for F5</label>
       </variable>
@@ -195,7 +178,7 @@
         <label>Consist Address Activation for F5</label>
       </variable>
 
-      <variable label="Consist Address Activation for F6" CV="21" mask="XXVXXXXX" item="Consist Address Active For F6" default="0" minFn="6" include="101,103">
+      <variable label="Consist Address Activation for F6" CV="21" mask="XXVXXXXX" item="Consist Address Active For F6" default="0" minFn="6" include="101">
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
         <label>Consist Address Activation for F6</label>
       </variable>
@@ -204,7 +187,7 @@
         <label>Consist Address Activation for F6</label>
       </variable>
 
-      <variable label="Consist Address Activation for F7" CV="21" mask="XVXXXXXX" item="Consist Address Active For F7" default="0" minFn="7" include="101,103">
+      <variable label="Consist Address Activation for F7" CV="21" mask="XVXXXXXX" item="Consist Address Active For F7" default="0" minFn="7" include="101">
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
         <label>Consist Address Activation for F7</label>
       </variable>
@@ -221,7 +204,7 @@
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
         <label>Consist Address Activation for F0(f) in Forward</label>
       </variable>
-      <variable label="Consist Address Activation for F0(r) in Reverse" CV="22" mask="XXXXXXVX" item="Consist Address Active For FL in Reverse" default="0" include="101,103">
+      <variable label="Consist Address Activation for F0(r) in Reverse" CV="22" mask="XXXXXXVX" item="Consist Address Active For FL in Reverse" default="0" include="101">
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
         <label>Consist Address Activation for F0(r) in Reverse</label>
       </variable>
@@ -238,7 +221,7 @@
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
         <label>Consist Address Active for F10</label>
       </variable>
-      <variable label="Consist Address Active for F11" CV="22" mask="XXXVXXXX" item="Consist Address Active For F11" default="0" minFn="11" include="101,103">
+      <variable label="Consist Address Active for F11" CV="22" mask="XXXVXXXX" item="Consist Address Active For F11" default="0" minFn="11" include="101">
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
         <label>Consist Address Active for F11</label>
       </variable>
@@ -247,7 +230,7 @@
         <label>Consist Address Active for F11</label>
       </variable>
 
-      <variable label="Consist Address Active for F12" CV="22" mask="XXVXXXXX" item="Consist Address Active For F12" default="0" minFn="12" include="101,103">
+      <variable label="Consist Address Active for F12" CV="22" mask="XXVXXXXX" item="Consist Address Active For F12" default="0" minFn="12" include="101">
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
         <label>Consist Address Active for F12</label>
       </variable>
@@ -257,7 +240,7 @@
       </variable>
 
       <xi:include href="http://jmri.org/xml/decoders/nmra/consistAccelDecelSigned.xml"/>
-      <variable label="Speed Table Selection" CV="25" mask="XXXVVVVV" default="0" tooltip="Select a manufacturers speed curve, or use a curve you define yourself.">
+      <variable label="Speed Table Selection" CV="25" mask="XXXVVVVV" default="0" tooltip="Select a manufacturers speed curve, or use a curve you define yourself">
         <xi:include href="http://jmri.org/xml/decoders/soundtraxx/TSUenumCurve.xml"/>
         <label>Speed Table Selection</label>
       </variable>
@@ -1123,7 +1106,7 @@
       </label>
       <label label="  ">
       </label>
-      <label label="Roof Lighting Effects: CN=5,  CP=3. (FP9A only)">        
+      <label label="Roof Lighting Effects: CN=5,  CP=3.">        
       </label>
       <label label="  ">	
       </label>
@@ -1133,9 +1116,9 @@
       </label>
       <label label="Definitions for the Tsunami Lighting Pane:">        
       </label>
-      <label label="   FX5 effects control white class lights. (FP9A only)">        
+      <label label="   FX5 effects control white class lights.">        
       </label>
-      <label label="   FX6 effects control ditch lights. (FP9A only)">        
+      <label label="   FX6 effects control ditch lights.">        
       </label>
       <label label="  ">	
       </label>

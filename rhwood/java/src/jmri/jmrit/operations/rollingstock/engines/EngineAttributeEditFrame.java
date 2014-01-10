@@ -9,9 +9,11 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.text.MessageFormat;
 import java.util.List;
+
 import javax.swing.JOptionPane;
 
 import jmri.jmrit.operations.OperationsFrame;
+import jmri.jmrit.operations.rollingstock.RollingStock;
 import jmri.jmrit.operations.rollingstock.cars.CarOwners;
 import jmri.jmrit.operations.rollingstock.cars.CarRoads;
 import jmri.jmrit.operations.setup.Control;
@@ -99,7 +101,7 @@ public class EngineAttributeEditFrame extends OperationsFrame implements
 		addButtonAction(replaceButton);
 
 		// add help menu to window
-		addHelpMenu("package.jmri.jmrit.operations.Operations_Engines", true); // NOI18N
+		addHelpMenu("package.jmri.jmrit.operations.Operations_Locomotives", true); // NOI18N
 
 		pack();
 		setMinimumSize(new Dimension(Control.smallPanelWidth, Control.smallPanelHeight));
@@ -243,9 +245,9 @@ public class EngineAttributeEditFrame extends OperationsFrame implements
 	}
 
 	private void replaceItem(String oldItem, String newItem) {
-		List<String> engines = manager.getList();
+		List<RollingStock> engines = manager.getList();
 		for (int i = 0; i < engines.size(); i++) {
-			Engine engine = manager.getById(engines.get(i));
+			Engine engine = (Engine) engines.get(i);
 			if (_comboboxName == EngineEditFrame.MODEL) {
 				// we need to copy the old model attributes, so find an engine.
 				if (engine.getModel().equals(oldItem)) {

@@ -2,6 +2,7 @@ package jmri.jmrit.operations.locations;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +15,10 @@ import jmri.jmrit.operations.trains.Train;
 import jmri.jmrit.operations.trains.TrainManager;
 import jmri.jmrit.operations.trains.TrainSchedule;
 import jmri.jmrit.operations.trains.TrainScheduleManager;
-
 import jmri.jmrit.operations.rollingstock.RollingStock;
 import jmri.jmrit.operations.rollingstock.cars.Car;
 import jmri.jmrit.operations.rollingstock.cars.CarLoad;
+import jmri.jmrit.operations.rollingstock.cars.CarManager;
 import jmri.jmrit.operations.rollingstock.cars.CarRoads;
 import jmri.jmrit.operations.rollingstock.cars.CarTypes;
 import jmri.jmrit.operations.rollingstock.cars.CarLoads;
@@ -40,7 +41,7 @@ public class Track {
 	protected String _trackType = ""; // yard, spur, interchange or staging
 	protected Location _location; // the location for this track
 	protected String _alternateTrackId = ""; // the alternate track id
-	protected String _roadOption = ALLROADS; // controls which car roads are accepted
+	protected String _roadOption = ALL_ROADS; // controls which car roads are accepted
 	protected int _trainDir = EAST + WEST + NORTH + SOUTH; // train direction served by this track
 	protected int _numberRS = 0; // number of cars and engines
 	protected int _numberCars = 0; // number of cars
@@ -60,8 +61,8 @@ public class Track {
 	protected String _commentSetout = "";
 	protected String _commentBoth = "";
 
-	protected String _loadOption = ALLLOADS; // receive track load restrictions
-	protected String _shipLoadOption = ALLLOADS; // ship track load restrictions
+	protected String _loadOption = ALL_LOADS; // receive track load restrictions
+	protected String _shipLoadOption = ALL_LOADS; // ship track load restrictions
 	
 	protected String _destinationOption = ALL_DESTINATIONS; // track destination restriction
 
@@ -115,14 +116,14 @@ public class Track {
 	public static final int SOUTH = 8;
 
 	// how roads are serviced by this track
-	public static final String ALLROADS = Bundle.getMessage("All"); // track accepts all roads
-	public static final String INCLUDEROADS = Bundle.getMessage("Include"); // track accepts only certain roads
-	public static final String EXCLUDEROADS = Bundle.getMessage("Exclude"); // track does not accept certain roads
+	public static final String ALL_ROADS = Bundle.getMessage("All"); // track accepts all roads
+	public static final String INCLUDE_ROADS = Bundle.getMessage("Include"); // track accepts only certain roads
+	public static final String EXCLUDE_ROADS = Bundle.getMessage("Exclude"); // track does not accept certain roads
 
 	// load options
-	public static final String ALLLOADS = Bundle.getMessage("All"); // track services all loads
-	public static final String INCLUDELOADS = Bundle.getMessage("Include");
-	public static final String EXCLUDELOADS = Bundle.getMessage("Exclude");
+	public static final String ALL_LOADS = Bundle.getMessage("All"); // track services all loads
+	public static final String INCLUDE_LOADS = Bundle.getMessage("Include");
+	public static final String EXCLUDE_LOADS = Bundle.getMessage("Exclude");
 	
 	// destination options
 	public static final String ALL_DESTINATIONS = Bundle.getMessage("All"); // track services all loads
@@ -167,6 +168,8 @@ public class Track {
 	public static final String DESTINATIONS_CHANGED_PROPERTY = "trackDestinations"; // NOI18N
 	public static final String DESTINATION_OPTIONS_CHANGED_PROPERTY = "trackDestinationOptions"; // NOI18N
 	public static final String SCHEDULE_MODE_CHANGED_PROPERTY = "trackScheduleMode"; // NOI18N
+	public static final String SCHEDULE_ID_CHANGED_PROPERTY = "trackScheduleId"; // NOI18N
+	public static final String SERVICE_ORDER_CHANGED_PROPERTY = "trackServiceOrder";
 
 	public Track(String id, String name, String type, Location location) {
 		log.debug("New track " + name + " " + id);
@@ -187,6 +190,12 @@ public class Track {
 	 */
 	public Track copyTrack(String newName, Location newLocation) {
 		Track newTrack = newLocation.addTrack(newName, getTrackType());
+		newTrack.clearTypeNames();		// all types are accepted by a new track
+		
+		newTrack.setAddCustomLoadsAnySpurEnabled(isAddCustomLoadsAnySpurEnabled());
+		newTrack.setAddCustomLoadsAnyStagingTrackEnabled(isAddCustomLoadsAnyStagingTrackEnabled());
+		newTrack.setAddCustomLoadsEnabled(isAddCustomLoadsEnabled());
+
 		newTrack.setAlternateTrack(getAlternateTrack());
 		newTrack.setBlockCarsEnabled(isBlockCarsEnabled());
 		newTrack.setComment(getComment());
@@ -223,6 +232,7 @@ public class Track {
 		newTrack.setScheduleMode(getScheduleMode());
 		newTrack.setServiceOrder(getServiceOrder());
 		newTrack.setShipLoadNames(getShipLoadNames());
+		newTrack.setShipLoadOption(getShipLoadOption());
 		newTrack.setTrainDirections(getTrainDirections());
 		newTrack.setTypeNames(getTypeNames());
 		return newTrack;
@@ -646,6 +656,10 @@ public class Track {
 			if (!_typeList.contains(types[i]))
 				_typeList.add(types[i]);
 	}
+	
+	private void clearTypeNames() {
+		_typeList.clear();
+	}
 
 	public void addTypeName(String type) {
 		// insert at start of list, sort later
@@ -672,22 +686,6 @@ public class Track {
 		return _typeList.contains(type);
 	}
 
-	public String getRoadOption() {
-		return _roadOption;
-	}
-
-	/**
-	 * Set the road option for this track.
-	 * 
-	 * @param option
-	 *            ALLROADS, INCLUDEROADS, or EXCLUDEROADS
-	 */
-	public void setRoadOption(String option) {
-		String old = _roadOption;
-		_roadOption = option;
-		setDirtyAndFirePropertyChange(ROADS_CHANGED_PROPERTY, old, option);
-	}
-
 	/**
 	 * Sets the train directions that can service this track
 	 * 
@@ -706,6 +704,21 @@ public class Track {
 		return _trainDir;
 	}
 
+	public String getRoadOption() {
+		return _roadOption;
+	}
+
+	/**
+	 * Set the road option for this track.
+	 * 
+	 * @param option
+	 *            ALLROADS, INCLUDEROADS, or EXCLUDEROADS
+	 */
+	public void setRoadOption(String option) {
+		String old = _roadOption;
+		_roadOption = option;
+		setDirtyAndFirePropertyChange(ROADS_CHANGED_PROPERTY, old, option);
+	}
 	List<String> _roadList = new ArrayList<String>();
 
 	public String[] getRoadNames() {
@@ -745,10 +758,10 @@ public class Track {
 	}
 
 	public boolean acceptsRoadName(String road) {
-		if (_roadOption.equals(ALLROADS)) {
+		if (_roadOption.equals(ALL_ROADS)) {
 			return true;
 		}
-		if (_roadOption.equals(INCLUDEROADS)) {
+		if (_roadOption.equals(INCLUDE_ROADS)) {
 			return _roadList.contains(road);
 		}
 		// exclude!
@@ -762,7 +775,7 @@ public class Track {
 	/**
 	 * Gets the car receive load option for this track.
 	 * 
-	 * @return ALLLOADS INCLUDELOADS EXCLUDELOADS
+	 * @return ALL_LOADS INCLUDE_LOADS EXCLUDE_LOADS
 	 */
 	public String getLoadOption() {
 		return _loadOption;
@@ -772,7 +785,7 @@ public class Track {
 	 * Set how this track deals with receiving car loads
 	 * 
 	 * @param option
-	 *            ALLLOADS INCLUDELOADS EXCLUDELOADS
+	 *            ALL_LOADS INCLUDE_LOADS EXCLUDE_LOADS
 	 */
 	public void setLoadOption(String option) {
 		String old = _loadOption;
@@ -845,10 +858,10 @@ public class Track {
 	 * @return true if track will service this load.
 	 */
 	public boolean acceptsLoadName(String load) {
-		if (_loadOption.equals(ALLLOADS)) {
+		if (_loadOption.equals(ALL_LOADS)) {
 			return true;
 		}
-		if (_loadOption.equals(INCLUDELOADS)) {
+		if (_loadOption.equals(INCLUDE_LOADS)) {
 			return _loadList.contains(load);
 		}
 		// exclude!
@@ -865,10 +878,10 @@ public class Track {
 	 * @return true if track will service this load.
 	 */
 	public boolean acceptsLoad(String load, String type) {
-		if (_loadOption.equals(ALLLOADS)) {
+		if (_loadOption.equals(ALL_LOADS)) {
 			return true;
 		}
-		if (_loadOption.equals(INCLUDELOADS)) {
+		if (_loadOption.equals(INCLUDE_LOADS)) {
 			return _loadList.contains(load) || _loadList.contains(type + CarLoad.SPLIT_CHAR + load);
 		}
 		// exclude!
@@ -878,7 +891,7 @@ public class Track {
 	/**
 	 * Gets the car ship load option for this track.
 	 * 
-	 * @return ALLLOADS INCLUDELOADS EXCLUDELOADS
+	 * @return ALL_LOADS INCLUDE_LOADS EXCLUDE_LOADS
 	 */
 	public String getShipLoadOption() {
 		return _shipLoadOption;
@@ -888,7 +901,7 @@ public class Track {
 	 * Set how this track deals with shipping car loads
 	 * 
 	 * @param option
-	 *            ALLLOADS INCLUDELOADS EXCLUDELOADS
+	 *            ALL_LOADS INCLUDE_LOADS EXCLUDE_LOADS
 	 */
 	public void setShipLoadOption(String option) {
 		String old = _shipLoadOption;
@@ -961,10 +974,10 @@ public class Track {
 	 * @return true if track will service this load.
 	 */
 	public boolean shipsLoadName(String load) {
-		if (_shipLoadOption.equals(ALLLOADS)) {
+		if (_shipLoadOption.equals(ALL_LOADS)) {
 			return true;
 		}
-		if (_shipLoadOption.equals(INCLUDELOADS)) {
+		if (_shipLoadOption.equals(INCLUDE_LOADS)) {
 			return _shipLoadList.contains(load);
 		}
 		// exclude!
@@ -981,10 +994,10 @@ public class Track {
 	 * @return true if track will service this load.
 	 */
 	public boolean shipsLoad(String load, String type) {
-		if (_shipLoadOption.equals(ALLLOADS)) {
+		if (_shipLoadOption.equals(ALL_LOADS)) {
 			return true;
 		}
-		if (_shipLoadOption.equals(INCLUDELOADS)) {
+		if (_shipLoadOption.equals(INCLUDE_LOADS)) {
 			return _shipLoadList.contains(load) || _shipLoadList.contains(type + CarLoad.SPLIT_CHAR + load);
 		}
 		// exclude!
@@ -1200,9 +1213,10 @@ public class Track {
 		if (Car.class.isInstance(rs)) {
 			Car car = (Car) rs;
 			// does this track service the car's final destination?
-			if (!acceptsDestination(car.getFinalDestination())) {
+			if (!acceptsDestination(car.getFinalDestination())
+					&& getLocation() != car.getFinalDestination()) {
 				return DESTINATION + " (" + car.getFinalDestinationName() + ") "
-						+ Bundle.getMessage("carIsNotAllowed"); // no
+						+ MessageFormat.format(Bundle.getMessage("carIsNotAllowed"), new Object[] { getName() }); // no
 			}
 		// check for car in kernel
 			if (car.getKernel() != null && car.getKernel().isLead(car)) {
@@ -1308,7 +1322,7 @@ public class Track {
 	public void setServiceOrder(String order) {
 		String old = _order;
 		_order = order;
-		setDirtyAndFirePropertyChange("trackServiceOrder", old, order); // NOI18N
+		setDirtyAndFirePropertyChange(SERVICE_ORDER_CHANGED_PROPERTY, old, order); // NOI18N
 	}
 
 	/**
@@ -1364,10 +1378,10 @@ public class Track {
 			} else {
 				// set the id to the first item in the list
 				if (schedule.getItemsBySequenceList().size() > 0)
-					setScheduleItemId(schedule.getItemsBySequenceList().get(0));
+					setScheduleItemId(schedule.getItemsBySequenceList().get(0).getId());
 				setScheduleCount(0);
 			}
-			setDirtyAndFirePropertyChange(SCHEDULE_CHANGED_PROPERTY, old, id);
+			setDirtyAndFirePropertyChange(SCHEDULE_ID_CHANGED_PROPERTY, old, id);
 		}
 	}
 
@@ -1404,7 +1418,7 @@ public class Track {
 			log.debug("Can not find schedule item (" + getScheduleItemId() + ") for schedule ("
 					+ getScheduleName() + ")");
 			// reset schedule
-			setScheduleItemId((sch.getItemById(sch.getItemsBySequenceList().get(0)).getId()));
+			setScheduleItemId((sch.getItemsBySequenceList().get(0)).getId());
 			currentSi = sch.getItemById(getScheduleItemId());
 		}
 		return currentSi;
@@ -1432,15 +1446,15 @@ public class Track {
 					+ getName() + ")");
 			return null;
 		}
-		List<String> l = sch.getItemsBySequenceList();
+		List<ScheduleItem> items = sch.getItemsBySequenceList();
 		ScheduleItem nextSi = null;
-		for (int i = 0; i < l.size(); i++) {
-			nextSi = sch.getItemById(l.get(i));
+		for (int i = 0; i < items.size(); i++) {
+			nextSi = items.get(i);
 			if (getCurrentScheduleItem() == nextSi) {
-				if (++i < l.size()) {
-					nextSi = sch.getItemById(l.get(i));
+				if (++i < items.size()) {
+					nextSi = items.get(i);
 				} else {
-					nextSi = sch.getItemById(l.get(0));
+					nextSi = items.get(0);
 				}
 				setScheduleItemId(nextSi.getId());
 				break;
@@ -1476,12 +1490,12 @@ public class Track {
 		if (schedule == null)
 			return MessageFormat.format(Bundle.getMessage("CanNotFindSchedule"),
 					new Object[] { getScheduleId() });
-		List<String> scheduleItems = schedule.getItemsBySequenceList();
+		List<ScheduleItem> scheduleItems = schedule.getItemsBySequenceList();
 		if (scheduleItems.size() == 0) {
 			return Bundle.getMessage("empty");
 		}
 		for (int i = 0; i < scheduleItems.size(); i++) {
-			ScheduleItem si = schedule.getItemById(scheduleItems.get(i));
+			ScheduleItem si = scheduleItems.get(i);
 			// check train schedule
 			if (!si.getTrainScheduleId().equals("")
 					&& TrainScheduleManager.instance().getScheduleById(si.getTrainScheduleId()) == null) {
@@ -1499,26 +1513,19 @@ public class Track {
 						new Object[] { si.getTypeName() });
 				break;
 			}
-			if (!si.getRoadName().equals("") && !acceptsRoadName(si.getRoadName())) {
-				status = MessageFormat.format(Bundle.getMessage("NotValid"),
-						new Object[] { si.getRoadName() });
-				break;
-			}
-			if (!si.getRoadName().equals("") && !CarRoads.instance().containsName(si.getRoadName())) {
-				status = MessageFormat.format(Bundle.getMessage("NotValid"),
-						new Object[] { si.getRoadName() });
+			// check roads, accepted by track, valid road, and there's at least one car with that road
+			if (!si.getRoadName().equals("")
+					&& (!acceptsRoadName(si.getRoadName()) || !CarRoads.instance().containsName(si.getRoadName()) || CarManager
+							.instance().getByTypeAndRoad(si.getTypeName(), si.getRoadName()) == null)) {
+				status = MessageFormat.format(Bundle.getMessage("NotValid"), new Object[] { si.getRoadName() });
 				break;
 			}
 			// check loads
-			if (!si.getReceiveLoadName().equals("") && !acceptsLoad(si.getReceiveLoadName(), si.getTypeName())) {
-				status = MessageFormat.format(Bundle.getMessage("NotValid"),
-						new Object[] { si.getReceiveLoadName() });
-				break;
-			}
 			List<String> loads = CarLoads.instance().getNames(si.getTypeName());
-			if (!si.getReceiveLoadName().equals("") && !loads.contains(si.getReceiveLoadName())) {
-				status = MessageFormat.format(Bundle.getMessage("NotValid"),
-						new Object[] { si.getReceiveLoadName() });
+			if (!si.getReceiveLoadName().equals("")
+					&& (!acceptsLoad(si.getReceiveLoadName(), si.getTypeName()) || !loads.contains(si
+							.getReceiveLoadName()))) {
+				status = MessageFormat.format(Bundle.getMessage("NotValid"), new Object[] { si.getReceiveLoadName() });
 				break;
 			}
 			if (!si.getShipLoadName().equals("") && !loads.contains(si.getShipLoadName())) {
@@ -1931,13 +1938,15 @@ public class Track {
 		return;
 	}
 	
+	/**
+	 * Returns true if destination is valid from this track.
+	 * @param destination
+	 * @return true if track services the destination
+	 */
 	public boolean acceptsDestination(Location destination) {
-		if (_destinationOption.equals(ALL_DESTINATIONS) || destination == null)
+		if (getDestinationOption().equals(ALL_DESTINATIONS) || destination == null)
 			return true;
-		if (_destinationOption.equals(INCLUDE_DESTINATIONS))
-			return _destinationIdList.contains(destination.getId());
-		else
-			return !_destinationIdList.contains(destination.getId());
+		return _destinationIdList.contains(destination.getId());
 	}
 	
 	public void setDestinationIds(String[] ids) {
@@ -1969,7 +1978,9 @@ public class Track {
 	}
 	
 	public String getDestinationOption() {
-		return _destinationOption;
+		if (getTrackType().equals(INTERCHANGE))
+			return _destinationOption;
+		return ALL_DESTINATIONS;
 	}
 
 	public void dispose() {
@@ -2002,6 +2013,7 @@ public class Track {
 			_moves = Integer.parseInt(a.getValue());
 		if ((a = e.getAttribute(Xml.DIR)) != null)
 			_trainDir = Integer.parseInt(a.getValue());
+		// old way of reading track comment, see comments below for new format
 		if ((a = e.getAttribute(Xml.COMMENT)) != null)
 			_comment = OperationsXml.convertFromXmlComment(a.getValue());
 		// new way of reading car types using elements added in 3.3.1
@@ -2191,6 +2203,10 @@ public class Track {
 		}
 		
 		if (e.getChild(Xml.COMMENTS) != null) {
+			if (e.getChild(Xml.COMMENTS).getChild(Xml.TRACK) != null &&
+					( a = e.getChild(Xml.COMMENTS).getChild(Xml.TRACK).getAttribute(Xml.COMMENT)) != null) {
+				_comment = a.getValue();
+			}
 			if (e.getChild(Xml.COMMENTS).getChild(Xml.BOTH) != null &&
 					( a = e.getChild(Xml.COMMENTS).getChild(Xml.BOTH).getAttribute(Xml.COMMENT)) != null) {
 				_commentBoth = a.getValue();
@@ -2250,10 +2266,11 @@ public class Track {
 		e.addContent(eTypes);
  
 		if (Control.backwardCompatible)
-			e.setAttribute(Xml.CAR_ROAD_OPERATION, getRoadOption());
-		e.setAttribute(Xml.CAR_ROAD_OPTION, getRoadOption());
+			e.setAttribute(Xml.CAR_ROAD_OPERATION, getRoadOption());	// early versions had a misspelling
+
 		// build list of car roads for this track
-		if (!getRoadOption().equals(ALLROADS)) {
+		if (!getRoadOption().equals(ALL_ROADS)) {
+			e.setAttribute(Xml.CAR_ROAD_OPTION, getRoadOption());
 			String[] roads = getRoadNames();
 			if (Control.backwardCompatible) {
 				StringBuffer buf = new StringBuffer();
@@ -2272,9 +2289,9 @@ public class Track {
 			e.addContent(eRoads);
 		}
 		
-		e.setAttribute(Xml.CAR_LOAD_OPTION, getLoadOption());
 		// save list of car loads for this track
-		if (!getLoadOption().equals(ALLLOADS)) {
+		if (!getLoadOption().equals(ALL_LOADS)) {
+			e.setAttribute(Xml.CAR_LOAD_OPTION, getLoadOption());
 			String[] loads = getLoadNames();
 			if (Control.backwardCompatible) {
 				StringBuffer buf = new StringBuffer();
@@ -2293,9 +2310,9 @@ public class Track {
 			e.addContent(eLoads);
 		}
 		
-		e.setAttribute(Xml.CAR_SHIP_LOAD_OPTION, getShipLoadOption());
 		// save list of car loads for this track
-		if (!getShipLoadOption().equals(ALLLOADS)) {
+		if (!getShipLoadOption().equals(ALL_LOADS)) {
+			e.setAttribute(Xml.CAR_SHIP_LOAD_OPTION, getShipLoadOption());
 			String[] loads = getShipLoadNames();
 			// new way of saving car loads using elements
 			Element eLoads = new Element(Xml.CAR_SHIP_LOADS);
@@ -2307,8 +2324,8 @@ public class Track {
 			e.addContent(eLoads);
 		}
 		
-		e.setAttribute(Xml.DROP_OPTION, getDropOption());
 		if (!getDropOption().equals(ANY)) {
+			e.setAttribute(Xml.DROP_OPTION, getDropOption());
 			// build list of drop ids for this track
 			String[] dropIds = getDropIds();		
 			if (Control.backwardCompatible) {
@@ -2328,8 +2345,8 @@ public class Track {
 			e.addContent(eDropIds);
 		}
 		
-		e.setAttribute(Xml.PICKUP_OPTION, getPickupOption());
 		if (!getPickupOption().equals(ANY)) {
+			e.setAttribute(Xml.PICKUP_OPTION, getPickupOption());
 			// build list of pickup ids for this track
 			String[] pickupIds = getPickupIds();
 			if (Control.backwardCompatible) {
@@ -2365,7 +2382,6 @@ public class Track {
 			e.setAttribute(Xml.BLOCK_OPTIONS, Integer.toString(_blockOptions));
 		if (!getServiceOrder().equals(NORMAL))
 			e.setAttribute(Xml.ORDER, getServiceOrder());
-		e.setAttribute(Xml.COMMENT, getComment());
 		if (getPool() != null) {
 			e.setAttribute(Xml.POOL, getPool().getName());
 			e.setAttribute(Xml.MIN_LENGTH, Integer.toString(getMinimumLength()));
@@ -2373,8 +2389,9 @@ public class Track {
 		if (getIgnoreUsedLengthPercentage() > 0)
 			e.setAttribute(Xml.IGNORE_USED_PERCENTAGE,
 					Integer.toString(getIgnoreUsedLengthPercentage()));
-		e.setAttribute(Xml.TRACK_DESTINATION_OPTION, getDestinationOption());
+
 		if (!getDestinationOption().equals(ALL_DESTINATIONS)) {
+			e.setAttribute(Xml.TRACK_DESTINATION_OPTION, getDestinationOption());
 			// save destinations if they exist
 			String[] destIds = getDestinationIds();
 			if (destIds.length > 0) {
@@ -2392,15 +2409,20 @@ public class Track {
 				e.addContent(destinations);
 			}
 		}
+		if (Control.backwardCompatible)
+			e.setAttribute(Xml.COMMENT, getComment());
 		// save manifest track comments if they exist
-		if (!getCommentBoth().equals("") || !getCommentPickup().equals("") || !getCommentSetout().equals("")) {
+		if (!getComment().equals("") || !getCommentBoth().equals("") || !getCommentPickup().equals("") || !getCommentSetout().equals("")) {
 			Element comments = new Element(Xml.COMMENTS);
+			Element track = new Element(Xml.TRACK);
 			Element both = new Element(Xml.BOTH);
 			Element pickup = new Element(Xml.PICKUP);
 			Element setout = new Element(Xml.SETOUT);
+			comments.addContent(track);
 			comments.addContent(both);
 			comments.addContent(pickup);
 			comments.addContent(setout);
+			track.setAttribute(Xml.COMMENT, getComment());
 			both.setAttribute(Xml.COMMENT, getCommentBoth());
 			pickup.setAttribute(Xml.COMMENT, getCommentPickup());
 			setout.setAttribute(Xml.COMMENT, getCommentSetout());
