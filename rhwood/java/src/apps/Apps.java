@@ -179,21 +179,27 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         if (System.getProperties().containsKey(ProfileManager.SYSTEM_PROPERTY)) {
             ProfileManager.defaultManager().setActiveProfile(System.getProperty(ProfileManager.SYSTEM_PROPERTY));
         }
-        // @see jmri.profile.ProfileManager JavaDoc for explaination of this if statement
+        // @see jmri.profile.ProfileManager#migrateToProfiles JavaDoc for conditions handled here
         if (!ProfileManager.defaultManager().getConfigFile().exists()) { // no profile config for this app
             try {
-                ProfileManager.defaultManager().migrateToProfiles(configFilename); // migrate and new use cases
-                // TODO: notify user of change
+                if (ProfileManager.defaultManager().migrateToProfiles(configFilename)) { // migration or first use
+                    // notify user of change only if migration occured
+                    // TODO: a real migration message
+                    JOptionPane.showMessageDialog(sp,
+                            Bundle.getMessage("ConfigMigratedToProfile"),
+                            jmri.Application.getApplicationName(),
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(sp,
                         ex.getLocalizedMessage(),
-                        Bundle.getMessage("ErrorDialogTitle"),
+                        jmri.Application.getApplicationName(),
                         JOptionPane.ERROR_MESSAGE);
                 log.error(ex.getMessage(), ex);
             } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(sp,
                         ex.getLocalizedMessage(),
-                        Bundle.getMessage("ErrorDialogTitle"),
+                        jmri.Application.getApplicationName(),
                         JOptionPane.ERROR_MESSAGE);
                 log.error(ex.getMessage(), ex);
             }
@@ -206,7 +212,7 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
             System.setProperty("org.jmri.Apps.configFilename", Profile.CONFIG_FILENAME);
             log.info("Starting with profile {}", ProfileManager.defaultManager().getActiveProfile().getId());
         } catch (IOException ex) {
-            log.info("Profiles not configurable. Using fallback per-application configuration.");
+            log.info("Profiles not configurable. Using fallback per-application configuration. Error: {}", ex.getMessage());
         }
 
         // Install configuration manager and Swing error handler
