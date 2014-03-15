@@ -2,13 +2,19 @@
 package jmri.util;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.channels.FileChannel;
 import java.security.CodeSource;
 import java.util.Arrays;
 import java.util.jar.JarFile;
@@ -17,10 +23,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Common utility methods for working with Files. <P> We needed a place to
- * refactor common File-processing idioms in JMRI code, so this class was
- * created. It's more of a library of procedures than a real class, as (so far)
- * all of the operations have needed no state information.
+ * Common utility methods for working with Files.
+ * <P>
+ * We needed a place to refactor common File-processing idioms in JMRI code, so
+ * this class was created. It's more of a library of procedures than a real
+ * class, as (so far) all of the operations have needed no state information.
  *
  * @author Bob Jacobsen Copyright 2003, 2005, 2006
  * @author Randall Wood Copyright 2012, 2013
@@ -33,13 +40,21 @@ public class FileUtil {
      */
     static public final String PROGRAM = "program:"; // NOI18N
     /**
-     * Portable reference to items in the JMRI user's preferences directory.
+     * Portable reference to the JMRI user's preferences directory.
      */
     static public final String PREFERENCES = "preference:"; // NOI18N
+    /**
+     * Portable reference to the JMRI applications preferences directory.
+     */
+    static public final String SETTINGS = "settings:"; // NOI18N
     /**
      * Portable reference to the user's home directory.
      */
     static public final String HOME = "home:"; // NOI18N
+    /**
+     * Portable reference to the current profile directory.
+     */
+    static public final String PROFILE = "profile:"; // NOI18N
     /**
      * Replaced with {@link #PROGRAM}.
      *
@@ -62,7 +77,7 @@ public class FileUtil {
     /*
      * User's home directory
      */
-    static private String homePath = System.getProperty("user.home") + File.separator; // NOI18N
+    private static final String homePath = System.getProperty("user.home") + File.separator; // NOI18N
     /*
      * Settable directories
      */
@@ -74,21 +89,51 @@ public class FileUtil {
     static private String scriptsPath = null;
     /* path to the user's files directory */
     static private String userFilesPath = null;
+    /* path to the current profile */
+    static private String profilePath = null;
     // initialize logging
-    static private Logger log = LoggerFactory.getLogger(FileUtil.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(FileUtil.class.getName());
 
     /**
-     * Get the resource file corresponding to a name. There are five cases: <UL>
-     * <LI> Starts with "resource:", treat the rest as a pathname relative to
-     * the program directory (deprecated; see "program:" below) <LI> Starts with
-     * "program:", treat the rest as a relative pathname below the program
-     * directory <LI> Starts with "preference:", treat the rest as a relative
-     * path below the preferences directory <LI> Starts with "home:", treat the
-     * rest as a relative path below the user.home directory <LI> Starts with
-     * "file:", treat the rest as a relative path below the resource directory
-     * in the preferences directory (deprecated; see "preference:" above) <LI>
-     * Otherwise, treat the name as a relative path below the program directory
-     * </UL> In any case, absolute pathnames will work.
+     * Get the {@link java.io.File} that path refers to. Throws a
+     * {@link java.io.FileNotFoundException} if the file cannot be found instead
+     * of returning null (as File would).
+     *
+     * @param path
+     * @return {@link java.io.File} at path
+     * @throws java.io.FileNotFoundException
+     */
+    static public File getFile(String path) throws FileNotFoundException {
+        try {
+            return new File(FileUtil.getAbsoluteFilename(path));
+        } catch (NullPointerException ex) {
+            throw new FileNotFoundException("Cannot find file at " + path);
+        }
+    }
+
+    /**
+     * Get the resource file corresponding to a name. There are five cases:
+     * <ul>
+     * <li>Starts with "resource:", treat the rest as a pathname relative to the
+     * program directory (deprecated; see "program:" below)</li>
+     * <li>Starts with "program:", treat the rest as a relative pathname below
+     * the program directory</li>
+     * <li>Starts with "preference:", treat the rest as a relative path below
+     * the user's files directory</li>
+     * <li>Starts with "settings:", treat the rest as a relative path below the
+     * JMRI system preferences directory</li>
+     * <li>Starts with "home:", treat the rest as a relative path below the
+     * user.home directory</li>
+     * <li>Starts with "file:", treat the rest as a relative path below the
+     * resource directory in the preferences directory (deprecated; see
+     * "preference:" above)</li>
+     * <li>Starts with "profile:", treat the rest as a relative path below the
+     * profile directory as specified in the active
+     * {@link jmri.profile.Profile}</li>
+     * <li>Otherwise, treat the name as a relative path below the program
+     * directory</li>
+     * </ul>
+     * In any case, absolute pathnames will work.
      *
      * @param pName The name string, possibly starting with program:,
      * preference:, home:, file: or resource:
@@ -115,17 +160,35 @@ public class FileUtil {
 
             // Check for absolute path name
             if ((new File(filename)).isAbsolute()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Load from absolute path: " + filename);
-                }
+                log.debug("Load from absolute path: {}", filename);
                 return filename.replace(SEPARATOR, File.separatorChar);
             }
             // assume this is a relative path from the
             // preferences directory
             filename = FileUtil.getUserFilesPath() + filename;
-            if (log.isDebugEnabled()) {
-                log.debug("load from user preferences file: " + filename);
+            log.debug("load from user preferences file: {}", filename);
+            return filename.replace(SEPARATOR, File.separatorChar);
+        } else if (pName.startsWith(PROFILE)) {
+            String filename = pName.substring(PROFILE.length());
+            // Check for absolute path name
+            if ((new File(filename)).isAbsolute()) {
+                log.debug("Load from absolute path: {}", filename);
+                return filename.replace(SEPARATOR, File.separatorChar);
             }
+            // assume this is a relative path from the profile directory
+            filename = FileUtil.getProfilePath() + filename;
+            log.debug("load from profile file: {}", filename);
+            return filename.replace(SEPARATOR, File.separatorChar);
+        } else if (pName.startsWith(SETTINGS)) {
+            String filename = pName.substring(SETTINGS.length());
+            // Check for absolute path name
+            if ((new File(filename)).isAbsolute()) {
+                log.debug("Load from absolute path: {}", filename);
+                return filename.replace(SEPARATOR, File.separatorChar);
+            }
+            // assume this is a relative path from the profile directory
+            filename = FileUtil.getPreferencesPath() + filename;
+            log.debug("load from settings file: {}", filename);
             return filename.replace(SEPARATOR, File.separatorChar);
         } else if (pName.startsWith(FILE)) {
             String filename = pName.substring(FILE.length());
@@ -134,34 +197,26 @@ public class FileUtil {
             // in the 'file' format.  Check for those, and
             // accept them if present
             if ((new File(filename)).isAbsolute()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Load from absolute path: " + filename);
-                }
+                log.debug("Load from absolute path: {}", filename);
                 return filename.replace(SEPARATOR, File.separatorChar);
             }
             // assume this is a relative path from the
             // preferences directory
             filename = FileUtil.getUserFilesPath() + "resources" + File.separator + filename; // NOI18N
-            if (log.isDebugEnabled()) {
-                log.debug("load from user preferences file: " + filename);
-            }
+            log.debug("load from user preferences file: {}", filename);
             return filename.replace(SEPARATOR, File.separatorChar);
         } else if (pName.startsWith(HOME)) {
             String filename = pName.substring(HOME.length());
 
             // Check for absolute path name
             if ((new File(filename)).isAbsolute()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Load from absolute path: " + filename);
-                }
+                log.debug("Load from absolute path: {}", filename);
                 return filename.replace(SEPARATOR, File.separatorChar);
             }
             // assume this is a relative path from the
             // user.home directory
             filename = FileUtil.getHomePath() + filename;
-            if (log.isDebugEnabled()) {
-                log.debug("load from user preferences file: " + filename);
-            }
+            log.debug("load from user preferences file: {}", filename);
             return filename.replace(SEPARATOR, File.separatorChar);
         } else {
             // must just be a (hopefully) valid name
@@ -191,6 +246,18 @@ public class FileUtil {
             } else {
                 path = path.replaceFirst(PREFERENCES, Matcher.quoteReplacement(FileUtil.getUserFilesPath()));
             }
+        } else if (path.startsWith(PROFILE)) {
+            if (new File(path.substring(PROFILE.length())).isAbsolute()) {
+                path = path.substring(PROFILE.length());
+            } else {
+                path = path.replaceFirst(PROFILE, Matcher.quoteReplacement(FileUtil.getProfilePath()));
+            }
+        } else if (path.startsWith(SETTINGS)) {
+            if (new File(path.substring(SETTINGS.length())).isAbsolute()) {
+                path = path.substring(SETTINGS.length());
+            } else {
+                path = path.replaceFirst(SETTINGS, Matcher.quoteReplacement(FileUtil.getPreferencesPath()));
+            }
         } else if (path.startsWith(HOME)) {
             if (new File(path.substring(HOME.length())).isAbsolute()) {
                 path = path.substring(HOME.length());
@@ -204,32 +271,74 @@ public class FileUtil {
         }
         try {
             // if path cannot be converted into a canonical path, return null
-            if (log.isDebugEnabled()) {
-                log.debug("Using " + path);
-            }
+            log.debug("Using {}", path);
             return new File(path.replace(SEPARATOR, File.separatorChar)).getCanonicalPath();
         } catch (IOException ex) {
-            log.warn("Can not convert " + path + " into a usable filename.", ex);
+            log.warn("Can not convert {} into a usable filename.", path, ex);
             return null;
         }
     }
 
     /**
-     * Convert a File object to our preferred storage form.
+     * Convert a File object's path to our preferred storage form.
      *
      * This is the inverse of {@link #getExternalFilename(String pName)}.
      * Deprecated forms are not created.
      *
-     * @param file File to be represented
+     * @param file File at path to be represented
+     * @return Filename for storage in a portable manner
      * @since 2.7.2
      */
     static public String getPortableFilename(File file) {
+        return FileUtil.getPortableFilename(file, false, false);
+    }
+
+    /**
+     * Convert a File object's path to our preferred storage form.
+     *
+     * This is the inverse of {@link #getExternalFilename(String pName)}.
+     * Deprecated forms are not created.
+     *
+     * This form supports a specific use case concerning profiles that are
+     * stored within the User files directory, which will cause the
+     * {@link jmri.profile.ProfileManager} to write an incorrect path for the
+     * current profile. In most cases {@link #getPortableFilename(java.io.File)}
+     * is preferable.
+     *
+     * @param file File at path to be represented
+     * @param ignoreUserFilesPath true if paths in the User files path should be
+     * stored as absolute paths, which is often not desirable.
+     * @param ignoreProfilePath true if paths in the profile should be stored as
+     * absolute paths, which is often not desirable.
+     * @return Storage format representation
+     * @since 3.5.5
+     */
+    static public String getPortableFilename(File file, boolean ignoreUserFilesPath, boolean ignoreProfilePath) {
         // compare full path name to see if same as preferences
         String filename = file.getAbsolutePath();
 
+        // append separator if file is a directory
+        if (file.isDirectory()) {
+            filename = filename + File.separator;
+        }
+
         // compare full path name to see if same as preferences
-        if (filename.startsWith(getUserFilesPath())) {
-            return PREFERENCES + filename.substring(getUserFilesPath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
+        if (!ignoreUserFilesPath) {
+            if (filename.startsWith(getUserFilesPath())) {
+                return PREFERENCES + filename.substring(getUserFilesPath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
+            }
+        }
+
+        if (!ignoreProfilePath) {
+            // compare full path name to see if same as profile
+            if (filename.startsWith(getProfilePath())) {
+                return PROFILE + filename.substring(getProfilePath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
+            }
+        }
+
+        // compare full path name to see if same as settings
+        if (filename.startsWith(getPreferencesPath())) {
+            return SETTINGS + filename.substring(getPreferencesPath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
         }
 
         // now check for relative to program dir
@@ -253,19 +362,46 @@ public class FileUtil {
      * Deprecated forms are not created.
      *
      * @param filename Filename to be represented
+     * @return Filename for storage in a portable manner
      * @since 2.7.2
      */
     static public String getPortableFilename(String filename) {
+        return FileUtil.getPortableFilename(filename, false, false);
+    }
+
+    /**
+     * Convert a filename string to our preferred storage form.
+     *
+     * This is the inverse of {@link #getExternalFilename(String pName)}.
+     * Deprecated forms are not created.
+     *
+     * This form supports a specific use case concerning profiles that are
+     * stored within the User files directory, which will cause the
+     * {@link jmri.profile.ProfileManager} to write an incorrect path for the
+     * current profile. In most cases
+     * {@link #getPortableFilename(java.lang.String)} is preferable.
+     *
+     * @param filename Filename to be represented
+     * @param ignoreUserFilesPath true if paths in the User files path should be
+     * stored as absolute paths, which is often not desirable.
+     * @param ignoreProfilePath true if paths in the profile path should be
+     * stored as absolute paths, which is often not desirable.
+     * @return Storage format representation
+     * @since 3.5.5
+     */
+    static public String getPortableFilename(String filename, boolean ignoreUserFilesPath, boolean ignoreProfilePath) {
         // if this already contains prefix, run through conversion to normalize
         if (filename.startsWith(FILE)
                 || filename.startsWith(RESOURCE)
                 || filename.startsWith(PROGRAM)
                 || filename.startsWith(HOME)
-                || filename.startsWith(PREFERENCES)) {
-            return getPortableFilename(getExternalFilename(filename));
+                || filename.startsWith(PREFERENCES)
+                || filename.startsWith(PROFILE)
+                || filename.startsWith(SETTINGS)) {
+            return getPortableFilename(getExternalFilename(filename), ignoreUserFilesPath, ignoreProfilePath);
         } else {
             // treat as pure filename
-            return getPortableFilename(new File(filename));
+            return getPortableFilename(new File(filename), ignoreUserFilesPath, ignoreProfilePath);
         }
     }
 
@@ -280,13 +416,13 @@ public class FileUtil {
 
     /**
      * Get the user's files directory. If not set by the user, this is the same
-     * as the preferences path.
+     * as the profile path.
      *
-     * @see #getPreferencesPath()
+     * @see #getProfilePath()
      * @return User's files directory as a String
      */
     static public String getUserFilesPath() {
-        return (FileUtil.userFilesPath != null) ? FileUtil.userFilesPath : FileUtil.getPreferencesPath();
+        return (FileUtil.userFilesPath != null) ? FileUtil.userFilesPath : FileUtil.getProfilePath();
     }
 
     /**
@@ -300,6 +436,30 @@ public class FileUtil {
             path = path + File.separator;
         }
         FileUtil.userFilesPath = path;
+    }
+
+    /**
+     * Get the profile directory. If not set, this is the same as the
+     * preferences path.
+     *
+     * @see #getPreferencesPath()
+     * @return Profile directory as a String
+     */
+    static public String getProfilePath() {
+        return (FileUtil.profilePath != null) ? FileUtil.profilePath : FileUtil.getPreferencesPath();
+    }
+
+    /**
+     * Set the profile directory.
+     *
+     * @see #getProfilePath()
+     * @param path The path to the profile directory
+     */
+    static public void setProfilePath(String path) {
+        if (path != null && !path.endsWith(File.separator)) {
+            path = path + File.separator;
+        }
+        FileUtil.profilePath = path;
     }
 
     /**
@@ -338,9 +498,9 @@ public class FileUtil {
                 result = FileUtil.getHomePath() + "JMRI" + File.separator; // NOI18N
                 break;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("preferencesPath defined as \"" + result + "\" based on os.name=\"" + SystemType.getOSName() + "\"");
-        }
+        // logging here merely throws warnings since we call this method to setup logging
+        // uncomment below to print OS default to console
+        // System.out.println("preferencesPath defined as \"" + result + "\" based on os.name=\"" + SystemType.getOSName() + "\"");
         return result;
     }
 
@@ -391,6 +551,7 @@ public class FileUtil {
      * {@link #findURL(java.lang.String)}
      *
      * @param path
+     * @return URL of portable or absolute path
      */
     static public URL findExternalFilename(String path) {
         return FileUtil.findURL(FileUtil.getExternalFilename(path));
@@ -437,7 +598,7 @@ public class FileUtil {
 
     /**
      * Get the resources directory within the user's files directory.
-     * 
+     *
      * @return path to [user's file]/resources/
      */
     static public String getUserResourcePath() {
@@ -461,13 +622,16 @@ public class FileUtil {
 
     /**
      * Search for a file or JAR resource by name and return the
-     * {@link java.net.URL} for that file. <p> Search order is:<ol><li>For any
-     * provided searchPaths, iterate over the searchPaths by prepending each
-     * searchPath to the path and following the following search order:</li>
+     * {@link java.net.URL} for that file.
+     * <p>
+     * Search order is:
+     * <ol><li>For any provided searchPaths, iterate over the searchPaths by
+     * prepending each searchPath to the path and following the following search
+     * order:
      * <ol><li>As a {@link java.io.File} in the user preferences directory</li>
      * <li>As a File in the current working directory (usually, but not always
      * the JMRI distribution directory)</li> <li>As a File in the JMRI
-     * distribution directory</li> <li>As a resource in jmri.jar</li></ol>
+     * distribution directory</li> <li>As a resource in jmri.jar</li></ol></li>
      * <li>If the file or resource has not been found in the searchPaths, search
      * in the four locations listed without prepending any path</li></ol>
      *
@@ -479,16 +643,14 @@ public class FileUtil {
      * @see #findURL(java.lang.String)
      */
     static public URL findURL(String path, @NonNull String... searchPaths) {
-        if (log.isDebugEnabled()) {
-            log.debug("Attempting to find " + path + " in " + Arrays.toString(searchPaths));
+        if (log.isDebugEnabled()) { // avoid the Arrays.toString call unless debugging
+            log.debug("Attempting to find {} in {}", path, Arrays.toString(searchPaths));
         }
         URL resource;
-        if (searchPaths != null) {
-            for (String searchPath : searchPaths) {
-                resource = FileUtil.findURL(searchPath + File.separator + path);
-                if (resource != null) {
-                    return resource;
-                }
+        for (String searchPath : searchPaths) {
+            resource = FileUtil.findURL(searchPath + File.separator + path);
+            if (resource != null) {
+                return resource;
             }
         }
         try {
@@ -508,13 +670,13 @@ public class FileUtil {
                 return file.toURI().toURL();
             }
         } catch (MalformedURLException ex) {
-            log.warn("Unable to get URL for " + path, ex);
+            log.warn("Unable to get URL for {}", path, ex);
             return null;
         }
         // return path if in jmri.jar or null
         resource = FileUtil.class.getClassLoader().getResource(path);
-        if (resource == null && log.isDebugEnabled()) {
-            log.debug("Unable to to get URL for " + path);
+        if (resource == null) {
+            log.debug("Unable to to get URL for {}", path);
         }
         return resource;
     }
@@ -567,7 +729,11 @@ public class FileUtil {
                 jarPath = sc.getLocation().toString();
                 // 9 = length of jar:file:
                 jarPath = jarPath.substring(9, jarPath.lastIndexOf("!"));
-                log.debug("jmri.jar path is " + jarPath);
+                log.debug("jmri.jar path is {}", jarPath);
+            } 
+            if (jarPath == null) {
+                log.error("Unable to locate jmri.jar");
+                return null;
             }
         }
         try {
@@ -578,10 +744,15 @@ public class FileUtil {
         }
     }
 
+    /**
+     * Log all paths at the INFO level.
+     */
     static public void logFilePaths() {
-        log.info("File path " + FileUtil.PROGRAM + " is " + FileUtil.getProgramPath());
-        log.info("File path " + FileUtil.PREFERENCES + " is " + FileUtil.getUserFilesPath());
-        log.info("File path " + FileUtil.HOME + " is " + FileUtil.getHomePath());
+        log.info("File path {} is {}", FileUtil.PROGRAM, FileUtil.getProgramPath());
+        log.info("File path {} is {}", FileUtil.PREFERENCES, FileUtil.getUserFilesPath());
+        log.info("File path {} is {}", FileUtil.PROFILE, FileUtil.getProfilePath());
+        log.info("File path {} is {}", FileUtil.SETTINGS, FileUtil.getPreferencesPath());
+        log.info("File path {} is {}", FileUtil.HOME, FileUtil.getHomePath());
     }
 
     /**
@@ -612,6 +783,61 @@ public class FileUtil {
     }
 
     /**
+     * Read a text file into a String.
+     *
+     * @param file The text file.
+     * @return The contents of the file.
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static String readFile(File file) throws IOException {
+        return FileUtil.readURL(FileUtil.fileToURL(file));
+    }
+
+    /**
+     * Read a text URL into a String. Would be significantly simpler with Java
+     * 7.
+     *
+     * @param url The text URL.
+     * @return The contents of the file.
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static String readURL(URL url) throws IOException {
+        try {
+            InputStreamReader in = new InputStreamReader(url.openStream());
+            BufferedReader reader = new BufferedReader(in);
+            StringBuilder builder = new StringBuilder();
+            String aux;
+            while ((aux = reader.readLine()) != null) {
+                builder.append(aux);
+            }
+            reader.close();
+            in.close();
+            return builder.toString();
+        } catch (NullPointerException ex) {
+            return null;
+        }
+    }
+
+    /**
+     * Replaces most non-alphanumeric characters in name with an underscore.
+     *
+     * @param name The filename to be sanitized.
+     * @return The sanitized filename.
+     */
+    public static String sanitizeFilename(String name) {
+        name = name.trim().replaceAll(" ", "_").replaceAll("[.]+", ".");
+        StringBuilder filename = new StringBuilder();
+        for (char c : name.toCharArray()) {
+            if (c == '.' || Character.isJavaIdentifierPart(c)) {
+                filename.append(c);
+            }
+        }
+        return filename.toString();
+    }
+
+    /**
      * Create a directory if required. Any parent directories will also be
      * created.
      *
@@ -620,9 +846,88 @@ public class FileUtil {
     public static void createDirectory(String path) {
         File dir = new File(path);
         if (!dir.exists()) {
-            log.warn("Creating directory: " + path);
+            log.warn("Creating directory: {}", path);
             if (!dir.mkdirs()) {
-                log.error("Failed to create directory: " + path);
+                log.error("Failed to create directory: {}", path);
+            }
+        }
+    }
+
+    /**
+     * Recursively delete a path. Not needed in Java 1.7.
+     *
+     * @param path
+     * @return true if path was deleted, false otherwise
+     */
+    public static boolean delete(File path) {
+        if (path.isDirectory()) {
+            for (File file : path.listFiles()) {
+                FileUtil.delete(file);
+            }
+        }
+        return path.delete();
+    }
+
+    /**
+     * Copy a file. Not needed in Java 1.7.
+     *
+     * @param source
+     * @param dest must be the file, not the destination directory.
+     * @throws IOException
+     */
+    public static void copy(File source, File dest) throws IOException {
+        if (!source.exists()) {
+            return;
+        }
+        if (!dest.exists()) {
+            if (source.isDirectory()) {
+                boolean ok = dest.mkdirs();
+                if (!ok) {
+                    throw new IOException("Could not use mkdirs to create destination directory");
+                }
+            } else {
+                boolean ok = dest.createNewFile();
+                if (!ok) {
+                    throw new IOException("Could not create destination file");
+                }
+            }
+        }
+        if (source.isDirectory()) {
+            for (File file : source.listFiles()) {
+                FileUtil.copy(file, new File(dest, file.getName()));
+            }
+        } else {
+            FileInputStream sourceIS = null;
+            FileChannel sourceChannel = null;
+            FileOutputStream destIS = null;
+            FileChannel destChannel = null;
+            try {
+                sourceIS = new FileInputStream(source);
+                sourceChannel = sourceIS.getChannel();
+                destIS = new FileOutputStream(dest);
+                destChannel = destIS.getChannel();
+                if (destChannel != null && sourceChannel != null) {
+                    destChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
+                }
+            } catch (IOException ex) {
+                throw ex;
+            } finally {
+                try {
+                    if (sourceChannel != null) {
+                        sourceChannel.close();
+                    }
+                    if (destChannel != null) {
+                        destChannel.close();
+                    }
+                    if (sourceIS != null) {
+                        sourceIS.close();
+                    }
+                    if (destIS != null) {
+                        destIS.close();
+                    }
+                } catch (IOException ex) {
+                    throw ex;
+                }
             }
         }
     }

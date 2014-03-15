@@ -16,6 +16,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import jmri.jmrit.roster.Roster;
 import jmri.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to display the JMRI directory locations. <P> Although this has
@@ -37,14 +39,17 @@ public class XmlFileLocationAction extends AbstractAction {
 
         final String user = FileUtil.getUserFilesPath();
         final String roster = Roster.getFileLocation();
-        final String config = FileUtil.getPreferencesPath();
+        final String profile = FileUtil.getProfilePath();
+        final String settings = FileUtil.getPreferencesPath();
         final String scripts = FileUtil.getScriptsPath();
         final String prog = System.getProperty("user.dir");
+        final String log = System.getProperty("jmri.log.path");
+
         String configName = System.getProperty("org.jmri.Apps.configFilename");
         if (!new File(configName).isAbsolute()) {
             // must be relative, but we want it to 
             // be relative to the preferences directory
-            configName = config+configName;
+            configName = profile+configName;
         }
 
 
@@ -65,6 +70,9 @@ public class XmlFileLocationAction extends AbstractAction {
                 try {
                     Desktop.getDesktop().open(new File(user));
                 } catch (IOException e) {
+                    XmlFileLocationAction.log.error("Error when opening user files location: " + e);
+                } catch (UnsupportedOperationException e) {
+                    XmlFileLocationAction.log.error("Error when opening user files location: " + e);
                 }
             }
         });
@@ -76,17 +84,37 @@ public class XmlFileLocationAction extends AbstractAction {
                 try {
                     Desktop.getDesktop().open(new java.io.File(roster));
                 } catch (java.io.IOException e) {
+                    XmlFileLocationAction.log.error("Error when opening roster location: " + e);
+                } catch (UnsupportedOperationException e) {
+                    XmlFileLocationAction.log.error("Error when opening roster location: " + e);
                 }
             }
         });
-        b = new JButton("Open Default Location");
+        b = new JButton("Open Profile Location");
         buttons.add(b);
         b.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 try {
-                    Desktop.getDesktop().open(new java.io.File(config));
+                    Desktop.getDesktop().open(new java.io.File(profile));
                 } catch (java.io.IOException e) {
+                    XmlFileLocationAction.log.error("Error when opening profile location: " + e);
+                } catch (UnsupportedOperationException e) {
+                    XmlFileLocationAction.log.error("Error when opening profile location: " + e);
+                }
+            }
+        });
+        b = new JButton("Open Settings Location");
+        buttons.add(b);
+        b.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                try {
+                    Desktop.getDesktop().open(new java.io.File(settings));
+                } catch (java.io.IOException e) {
+                    XmlFileLocationAction.log.error("Error when opening settings location: " + e);
+                } catch (UnsupportedOperationException e) {
+                    XmlFileLocationAction.log.error("Error when opening settings location: " + e);
                 }
             }
         });
@@ -98,6 +126,9 @@ public class XmlFileLocationAction extends AbstractAction {
                 try {
                     Desktop.getDesktop().open(new java.io.File(scripts));
                 } catch (java.io.IOException e) {
+                    XmlFileLocationAction.log.error("Error when opening scripts location: " + e);
+                } catch (UnsupportedOperationException e) {
+                    XmlFileLocationAction.log.error("Error when opening scripts location: " + e);
                 }
             }
         });
@@ -109,6 +140,24 @@ public class XmlFileLocationAction extends AbstractAction {
                 try {
                     Desktop.getDesktop().open(new java.io.File(prog));
                 } catch (java.io.IOException e) {
+                    XmlFileLocationAction.log.error("Error when opening program location: " + e);
+                } catch (UnsupportedOperationException e) {
+                    XmlFileLocationAction.log.error("Error when opening program location: " + e);
+                }
+            }
+        });
+
+        b = new JButton("Open Log Files Location");
+        buttons.add(b);
+        b.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                try {
+                    Desktop.getDesktop().open(new java.io.File(log));
+                } catch (java.io.IOException e) {
+                    XmlFileLocationAction.log.error("Error when opening log files location: " + e);
+                } catch (UnsupportedOperationException e) {
+                    XmlFileLocationAction.log.error("Error when opening log files location: " + e);
                 }
             }
         });
@@ -124,36 +173,35 @@ public class XmlFileLocationAction extends AbstractAction {
 
         textPane.append("Roster Location: " + roster + "\n");
 
-        textPane.append("Default Location: " + config + "\n");
+        textPane.append("Profile Location: " + profile + "\n");
+
+        textPane.append("Settings Location: " + settings + "\n");
+
+        textPane.append("Current Config file: " + configName + "\n");
 
         textPane.append("Scripts Location: " + scripts + "\n");
 
         textPane.append("Program Location: " + prog + "\n");
 
-        textPane.append("Config file: " + configName + "\n");
+        textPane.append("Log Files Location: "+ log + "\n");
 
-        addLogFiles(textPane);
+        addLogFiles(textPane, log);
 
         frame.pack();
         frame.setVisible(true);
     }
 
-    void addLogFile(JTextArea pane, String filename) {
-        File file = new File(filename);
-        if (file.exists()) {
-            pane.append("Log file: " + file.getAbsolutePath() + "\n");
-        }
-    }
-
-    void addLogFiles(JTextArea pane) {
-        File dir = new File(System.getProperty("user.dir"));
+    void addLogFiles(JTextArea pane, String logDir) {
+        File dir = new File(logDir);
         String[] files = dir.list();
         for (int i = 0; i < files.length; i++) {
             if (files[i].indexOf(".log") != -1) {
-                addLogFile(pane, files[i]);
+                pane.append(logDir + files[i] + "\n");
             }
         }
     }
+
+    private static final Logger log = LoggerFactory.getLogger(XmlFileLocationAction.class.getName());
 }
 
 /* @(#)XmlFileLocationAction.java */

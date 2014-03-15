@@ -4,6 +4,7 @@ package jmri.jmrit.operations.rollingstock.cars;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.awt.GridBagLayout;
 import java.text.MessageFormat;
 import java.util.List;
@@ -193,8 +194,13 @@ public class CarSetFrame extends RollingStockSetFrame implements java.beans.Prop
 		kernelComboBox.setEnabled(!ignoreKernelCheckBox.isSelected() & enabled);
 		editKernelButton.setEnabled(!ignoreKernelCheckBox.isSelected() & enabled & _car != null);
 		
+		enableDestinationFields(enabled);
+	}
+	
+	private void enableDestinationFields(boolean enabled) {
 		// if car in a built train, enable destination fields
 		boolean enableDest = enableDestination
+				|| (destinationBox.getSelectedItem() != null && !destinationBox.getSelectedItem().equals(""))
 				|| (_car != null && _car.getTrain() != null && _car.getTrain().isBuilt());
 
 		destinationBox.setEnabled(!ignoreDestinationCheckBox.isSelected() & enableDest & enabled);
@@ -281,7 +287,7 @@ public class CarSetFrame extends RollingStockSetFrame implements java.beans.Prop
 						&& !finalDestTrackBox.getSelectedItem().equals(""))
 					finalDestTrack = (Track) finalDestTrackBox.getSelectedItem();
 				if (finalDestTrack != null && car.getFinalDestinationTrack() != finalDestTrack
-						&& finalDestTrack.getLocType().equals(Track.STAGING)) {
+						&& finalDestTrack.getTrackType().equals(Track.STAGING)) {
 					log.debug("Destination track (" + finalDestTrack.getName() + ") is staging");
 					JOptionPane.showMessageDialog(this, Bundle.getMessage("rsDoNotSelectStaging"), Bundle
 							.getMessage("rsCanNotFinal"), JOptionPane.ERROR_MESSAGE);
@@ -302,11 +308,12 @@ public class CarSetFrame extends RollingStockSetFrame implements java.beans.Prop
 		if (!ignoreKernelCheckBox.isSelected() && kernelComboBox.getSelectedItem() != null) {
 			if (kernelComboBox.getSelectedItem().equals("")) {
 				car.setKernel(null);
-			} else {
+			} else if (!car.getKernelName().equals(kernelComboBox.getSelectedItem())) {
 				car.setKernel(carManager.getKernelByName((String) kernelComboBox.getSelectedItem()));
-				// if car has FRED make lead
-				if (car.hasFred())
+				// if car has FRED or is caboose make lead
+				if (car.hasFred() || car.isCaboose())
 					car.getKernel().setLead(car);
+				car.setBlocking(car.getKernel().getSize());
 			}
 		}		
 		// save car's track
@@ -325,7 +332,7 @@ public class CarSetFrame extends RollingStockSetFrame implements java.beans.Prop
 						&& !trackReturnWhenEmptyBox.getSelectedItem().equals("")) {
 					Track trackRWE = (Track) trackReturnWhenEmptyBox.getSelectedItem();
 					// warn user if they selected a staging track
-					if (trackRWE != null && trackRWE.getLocType().equals(Track.STAGING)) {
+					if (trackRWE != null && trackRWE.getTrackType().equals(Track.STAGING)) {
 						log.debug("Return when empty track (" + trackRWE.getName() + ") is staging");
 						JOptionPane.showMessageDialog(this, Bundle.getMessage("rsDoNotSelectStaging"), Bundle
 								.getMessage("rsCanNotRWE"), JOptionPane.ERROR_MESSAGE);
@@ -379,6 +386,13 @@ public class CarSetFrame extends RollingStockSetFrame implements java.beans.Prop
 						car.setWait(car.getNextWait());
 						car.setNextWait(0);
 					}
+					// check for RWE
+					if (car.getLoadName().equals(CarLoads.instance().getDefaultEmptyName())
+							&& car.getFinalDestination() == null
+							&& car.getReturnWhenEmptyDestination() != null) {
+						car.setFinalDestination(car.getReturnWhenEmptyDestination());
+						car.setFinalDestinationTrack(car.getReturnWhenEmptyDestTrack());
+					}
 				}
 			}
 		}
@@ -409,6 +423,8 @@ public class CarSetFrame extends RollingStockSetFrame implements java.beans.Prop
 						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					if (!updateGroup(list))
 						return false;
+				} else if (outOfServiceCheckBox.isSelected()) {
+					car.setKernel(null);	// don't leave car in kernel if out of service
 				}
 			}
 		}
@@ -565,7 +581,7 @@ public class CarSetFrame extends RollingStockSetFrame implements java.beans.Prop
 	@edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
 	public void setDestinationEnabled(boolean enable) {
 		enableDestination = !enableDestination;
-		enableComponents(!locationUnknownCheckBox.isSelected());
+		enableDestinationFields(!locationUnknownCheckBox.isSelected());
 	}
 
 	public void dispose() {
@@ -594,6 +610,9 @@ public class CarSetFrame extends RollingStockSetFrame implements java.beans.Prop
 		if (e.getPropertyName().equals(CarManager.KERNEL_LISTLENGTH_CHANGED_PROPERTY)
 				|| e.getPropertyName().equals(Car.KERNEL_NAME_CHANGED_PROPERTY)) {
 			updateKernelComboBox();
+		}
+		if (e.getPropertyName().equals(Car.TRAIN_CHANGED_PROPERTY)) {
+			enableDestinationFields(!locationUnknownCheckBox.isSelected());
 		}
 		if (e.getPropertyName().equals(CarAttributeEditFrame.DISPOSE)) {
 			editActive = false;

@@ -6,6 +6,7 @@ import jmri.jmrit.operations.locations.LocationManager;
 import jmri.jmrit.operations.locations.LocationManagerXml;
 import jmri.jmrit.operations.locations.Location;
 import jmri.jmrit.operations.locations.Track;
+import jmri.jmrit.operations.rollingstock.RollingStock;
 import jmri.jmrit.operations.rollingstock.engines.EngineManagerXml;
 import jmri.jmrit.operations.rollingstock.cars.*;
 import jmri.jmrit.operations.routes.RouteManagerXml;
@@ -31,172 +32,167 @@ import java.util.Locale;
 public class OperationsEnginesGuiTest extends jmri.util.SwingTestCase {
 
 	public void testenginesTableFrame() throws Exception {
-		// remove previous Engines
-		EngineManager.instance().dispose();
-		CarRoads.instance().dispose();
-		EngineModels.instance().dispose();
 
-		// add Owner1 and Owner2
-		CarOwners co = CarOwners.instance();
-		co.addName("Owner1");
-		co.addName("Owner2");
-		// add road names
-		CarRoads cr = CarRoads.instance();
-		cr.addName("NH");
-		cr.addName("UP");
-		cr.addName("AA");
-		cr.addName("SP");
+//		// add Owner1 and Owner2
+//		CarOwners co = CarOwners.instance();
+//		co.addName("Owner1");
+//		co.addName("Owner2");
+//		// add road names
+//		CarRoads cr = CarRoads.instance();
+//		cr.addName("NH");
+//		cr.addName("UP");
+//		cr.addName("AA");
+//		cr.addName("SP");
 		// add locations
-		LocationManager lManager = LocationManager.instance();
-		Location westford = lManager.newLocation("Westford");
-		Track westfordYard = westford.addTrack("Yard", Track.YARD);
-		westfordYard.setLength(300);
-		Track westfordSiding = westford.addTrack("Siding", Track.SPUR);
-		westfordSiding.setLength(300);
-		Track westfordAble = westford.addTrack("Able", Track.SPUR);
-		westfordAble.setLength(300);
-		Location boxford = lManager.newLocation("Boxford");
-		Track boxfordYard = boxford.addTrack("Yard", Track.YARD);
-		boxfordYard.setLength(300);
-		Track boxfordJacobson = boxford.addTrack("Jacobson", Track.SPUR);
-		boxfordJacobson.setLength(300);
-		Track boxfordHood = boxford.addTrack("Hood", Track.SPUR);
-		boxfordHood.setLength(300);
+//		LocationManager lManager = LocationManager.instance();
+//		Location westford = lManager.newLocation("Westford");
+//		Track westfordYard = westford.addTrack("Yard", Track.YARD);
+//		westfordYard.setLength(300);
+//		Track westfordSiding = westford.addTrack("Siding", Track.SPUR);
+//		westfordSiding.setLength(300);
+//		Track westfordAble = westford.addTrack("Able", Track.SPUR);
+//		westfordAble.setLength(300);
+//		Location boxford = lManager.newLocation("Boxford");
+//		Track boxfordYard = boxford.addTrack("Yard", Track.YARD);
+//		boxfordYard.setLength(300);
+//		Track boxfordJacobson = boxford.addTrack("Jacobson", Track.SPUR);
+//		boxfordJacobson.setLength(300);
+//		Track boxfordHood = boxford.addTrack("Hood", Track.SPUR);
+//		boxfordHood.setLength(300);
 		
 		// enable rfid field
 		Setup.setRfidEnabled(true);
 		
 		EnginesTableFrame etf = new EnginesTableFrame();	
-		// table should be empty
-		Assert.assertEquals("number of Engines 1", "0", etf.numEngines.getText());
+		Assert.assertEquals("number of Engines 1", "5", etf.numEngines.getText());
 		
 		EngineManager cManager = EngineManager.instance();
-		// add 5 Engines to table
-		Engine e1 = cManager.newEngine("NH", "1");
-		e1.setModel("RS1");
-		e1.setBuilt("2009");
-		e1.setMoves(55);
-		e1.setOwner("Owner2");
-		e1.setRfid("RFID 3");
-		e1.setWeightTons("Tons of Weight");
-		e1.setComment("Test Engine NH 1 Comment");
-		Assert.assertEquals("e1 location", Track.OKAY, e1.setLocation(westford, westfordYard));
-		Assert.assertEquals("e1 destination", Track.OKAY, e1.setDestination(boxford, boxfordJacobson));
+		// 5 Engines to check
+		Engine e1 = cManager.getByRoadAndNumber("NH", "1");
+//		e1.setModel("RS1");
+//		e1.setBuilt("2009");
+//		e1.setMoves(55);
+//		e1.setOwner("Owner2");
+//		e1.setRfid("RFID 3");
+//		e1.setWeightTons("Tons of Weight");
+//		e1.setComment("Test Engine NH 1 Comment");
+//		Assert.assertEquals("e1 location", Track.OKAY, e1.setLocation(westford, westfordYard));
+//		Assert.assertEquals("e1 destination", Track.OKAY, e1.setDestination(boxford, boxfordJacobson));
 
-		Engine e2 = cManager.newEngine("UP", "2");
-		e2.setModel("FT");
-		e2.setBuilt("2004");
-		e2.setMoves(50);
-		e2.setOwner("AT");
-		e2.setRfid("RFID 2");
+		Engine e2 = cManager.getByRoadAndNumber("UP", "2");
+//		e2.setModel("FT");
+//		e2.setBuilt("2004");
+//		e2.setMoves(50);
+//		e2.setOwner("AT");
+//		e2.setRfid("RFID 2");
 		
-		Engine e3 = cManager.newEngine("AA", "3");
-		e3.setModel("SW8");
-		e3.setBuilt("2006");
-		e3.setMoves(40);
-		e3.setOwner("AB");
-		e3.setRfid("RFID 5");
-		Assert.assertEquals("e3 location", Track.OKAY, e3.setLocation(boxford, boxfordHood));
-		Assert.assertEquals("e3 destination", Track.OKAY, e3.setDestination(boxford, boxfordYard));
+		Engine e3 = cManager.getByRoadAndNumber("AA", "3");
+//		e3.setModel("SW8");
+//		e3.setBuilt("2006");
+//		e3.setMoves(40);
+//		e3.setOwner("AB");
+//		e3.setRfid("RFID 5");
+//		Assert.assertEquals("e3 location", Track.OKAY, e3.setLocation(boxford, boxfordHood));
+//		Assert.assertEquals("e3 destination", Track.OKAY, e3.setDestination(boxford, boxfordYard));
 		
-		Engine e4 = cManager.newEngine("SP", "2");
-		e4.setModel("GP35");
-		e4.setBuilt("1990");
-		e4.setMoves(30);
-		e4.setOwner("AAA");
-		e4.setRfid("RFID 4");
-		Assert.assertEquals("e4 location", Track.OKAY, e4.setLocation(westford, westfordSiding));
-		Assert.assertEquals("e4 destination", Track.OKAY, e4.setDestination(boxford, boxfordHood));
+		Engine e4 = cManager.getByRoadAndNumber("SP", "2");
+//		e4.setModel("GP35");
+//		e4.setBuilt("1990");
+//		e4.setMoves(30);
+//		e4.setOwner("AAA");
+//		e4.setRfid("RFID 4");
+//		Assert.assertEquals("e4 location", Track.OKAY, e4.setLocation(westford, westfordSiding));
+//		Assert.assertEquals("e4 destination", Track.OKAY, e4.setDestination(boxford, boxfordHood));
 		
-		Engine e5 = cManager.newEngine("NH", "5");
-		e5.setModel("SW1200");
-		e5.setBuilt("1956");
-		e5.setMoves(25);
-		e5.setOwner("DAB");
-		e5.setRfid("RFID 1");
-		Assert.assertEquals("e5 location", Track.OKAY, e5.setLocation(westford, westfordAble));
-		Assert.assertEquals("e5 destination", Track.OKAY, e5.setDestination(westford, westfordAble));
+		Engine e5 = cManager.getByRoadAndNumber("NH", "5");
+//		e5.setModel("SW1200");
+//		e5.setBuilt("1956");
+//		e5.setMoves(25);
+//		e5.setOwner("DAB");
+//		e5.setRfid("RFID 1");
+//		Assert.assertEquals("e5 location", Track.OKAY, e5.setLocation(westford, westfordAble));
+//		Assert.assertEquals("e5 destination", Track.OKAY, e5.setDestination(westford, westfordAble));
 		
-		Assert.assertEquals("number of Engines", "5", etf.numEngines.getText());
+//		Assert.assertEquals("number of Engines", "5", etf.numEngines.getText());
 	
 		// default is sort by number
-		List<String> Engines = etf.enginesModel.getSelectedEngineList();
-		Assert.assertEquals("1st Engine in sort by number list", e1.getId(), Engines.get(0));
-		Assert.assertEquals("2nd Engine in sort by number list", e4.getId(), Engines.get(1));
-		Assert.assertEquals("3rd Engine in sort by number list", e2.getId(), Engines.get(2));
-		Assert.assertEquals("4th Engine in sort by number list", e3.getId(), Engines.get(3));
-		Assert.assertEquals("5th Engine in sort by number list", e5.getId(), Engines.get(4));
+		List<RollingStock> Engines = etf.enginesModel.getSelectedEngineList();
+		Assert.assertEquals("1st Engine in sort by number list", e1.getId(), Engines.get(0).getId());
+		Assert.assertEquals("2nd Engine in sort by number list", e4.getId(), Engines.get(1).getId());
+		Assert.assertEquals("3rd Engine in sort by number list", e2.getId(), Engines.get(2).getId());
+		Assert.assertEquals("4th Engine in sort by number list", e3.getId(), Engines.get(3).getId());
+		Assert.assertEquals("5th Engine in sort by number list", e5.getId(), Engines.get(4).getId());
 		
 		// now sort by built date
         getHelper().enterClickAndLeave( new MouseEventData( this, etf.sortByBuilt ) );
 		Engines = etf.enginesModel.getSelectedEngineList();
-		Assert.assertEquals("1st Engine in sort by built list", e5.getId(), Engines.get(0));
-		Assert.assertEquals("2nd Engine in sort by built list", e4.getId(), Engines.get(1));
-		Assert.assertEquals("3rd Engine in sort by built list", e2.getId(), Engines.get(2));
-		Assert.assertEquals("4th Engine in sort by built list", e3.getId(), Engines.get(3));
-		Assert.assertEquals("5th Engine in sort by built list", e1.getId(), Engines.get(4));
+		Assert.assertEquals("1st Engine in sort by built list", e5, Engines.get(0));
+		Assert.assertEquals("2nd Engine in sort by built list", e4, Engines.get(1));
+		Assert.assertEquals("3rd Engine in sort by built list", e2, Engines.get(2));
+		Assert.assertEquals("4th Engine in sort by built list", e3, Engines.get(3));
+		Assert.assertEquals("5th Engine in sort by built list", e1, Engines.get(4));
 		
       getHelper().enterClickAndLeave( new MouseEventData( this, etf.sortByDestination ) );
 		Engines = etf.enginesModel.getSelectedEngineList();
-		Assert.assertEquals("1st Engine in sort by destination list", e2.getId(), Engines.get(0));
-		Assert.assertEquals("2nd Engine in sort by destination list", e4.getId(), Engines.get(1));
-		Assert.assertEquals("3rd Engine in sort by destination list", e1.getId(), Engines.get(2));
-		Assert.assertEquals("4th Engine in sort by destination list", e3.getId(), Engines.get(3));
-		Assert.assertEquals("5th Engine in sort by destination list", e5.getId(), Engines.get(4));
+		Assert.assertEquals("1st Engine in sort by destination list", e2, Engines.get(0));
+		Assert.assertEquals("2nd Engine in sort by destination list", e4, Engines.get(1));
+		Assert.assertEquals("3rd Engine in sort by destination list", e1, Engines.get(2));
+		Assert.assertEquals("4th Engine in sort by destination list", e3, Engines.get(3));
+		Assert.assertEquals("5th Engine in sort by destination list", e5, Engines.get(4));
 				
 		// now sort by location
         getHelper().enterClickAndLeave( new MouseEventData( this, etf.sortByLocation ) );
         Engines = etf.enginesModel.getSelectedEngineList();
-        Assert.assertEquals("1st Engine in sort by location list", e2.getId(), Engines.get(0));
-		Assert.assertEquals("2nd Engine in sort by location list", e3.getId(), Engines.get(1));
-		Assert.assertEquals("3rd Engine in sort by location list", e5.getId(), Engines.get(2));
-		Assert.assertEquals("4th Engine in sort by location list", e4.getId(), Engines.get(3));
-		Assert.assertEquals("5th Engine in sort by location list", e1.getId(), Engines.get(4));
+        Assert.assertEquals("1st Engine in sort by location list", e2, Engines.get(0));
+		Assert.assertEquals("2nd Engine in sort by location list", e3, Engines.get(1));
+		Assert.assertEquals("3rd Engine in sort by location list", e5, Engines.get(2));
+		Assert.assertEquals("4th Engine in sort by location list", e4, Engines.get(3));
+		Assert.assertEquals("5th Engine in sort by location list", e1, Engines.get(4));
 	
 		// now sort by moves
         getHelper().enterClickAndLeave( new MouseEventData( this, etf.sortByMoves ) );
 		Engines = etf.enginesModel.getSelectedEngineList();
-		Assert.assertEquals("1st Engine in sort by move list", e5.getId(), Engines.get(0));
-		Assert.assertEquals("2nd Engine in sort by move list", e4.getId(), Engines.get(1));
-		Assert.assertEquals("3rd Engine in sort by move list", e3.getId(), Engines.get(2));
-		Assert.assertEquals("4th Engine in sort by move list", e2.getId(), Engines.get(3));
-		Assert.assertEquals("5th Engine in sort by move list", e1.getId(), Engines.get(4));
+		Assert.assertEquals("1st Engine in sort by move list", e5, Engines.get(0));
+		Assert.assertEquals("2nd Engine in sort by move list", e4, Engines.get(1));
+		Assert.assertEquals("3rd Engine in sort by move list", e3, Engines.get(2));
+		Assert.assertEquals("4th Engine in sort by move list", e2, Engines.get(3));
+		Assert.assertEquals("5th Engine in sort by move list", e1, Engines.get(4));
 
 		// test sort by number again
         getHelper().enterClickAndLeave( new MouseEventData( this, etf.sortByNumber ) );
 		Engines = etf.enginesModel.getSelectedEngineList();
-		Assert.assertEquals("1st Engine in sort by number list 2", e1.getId(), Engines.get(0));
-		Assert.assertEquals("2nd Engine in sort by number list 2", e4.getId(), Engines.get(1));
-		Assert.assertEquals("3rd Engine in sort by number list 2", e2.getId(), Engines.get(2));
-		Assert.assertEquals("4th Engine in sort by number list 2", e3.getId(), Engines.get(3));
-		Assert.assertEquals("5th Engine in sort by number list 2", e5.getId(), Engines.get(4));
+		Assert.assertEquals("1st Engine in sort by number list 2", e1, Engines.get(0));
+		Assert.assertEquals("2nd Engine in sort by number list 2", e4, Engines.get(1));
+		Assert.assertEquals("3rd Engine in sort by number list 2", e2, Engines.get(2));
+		Assert.assertEquals("4th Engine in sort by number list 2", e3, Engines.get(3));
+		Assert.assertEquals("5th Engine in sort by number list 2", e5, Engines.get(4));
 
 		// test sort by owner
         getHelper().enterClickAndLeave( new MouseEventData( this, etf.sortByOwner ) );
 		Engines = etf.enginesModel.getSelectedEngineList();
-		Assert.assertEquals("1st Engine in sort by owner list", e4.getId(), Engines.get(0));
-		Assert.assertEquals("2nd Engine in sort by owner list", e3.getId(), Engines.get(1));
-		Assert.assertEquals("3rd Engine in sort by owner list", e2.getId(), Engines.get(2));
-		Assert.assertEquals("4th Engine in sort by owner list", e5.getId(), Engines.get(3));
-		Assert.assertEquals("5th Engine in sort by owner list", e1.getId(), Engines.get(4));
+		Assert.assertEquals("1st Engine in sort by owner list", e4, Engines.get(0));
+		Assert.assertEquals("2nd Engine in sort by owner list", e3, Engines.get(1));
+		Assert.assertEquals("3rd Engine in sort by owner list", e2, Engines.get(2));
+		Assert.assertEquals("4th Engine in sort by owner list", e5, Engines.get(3));
+		Assert.assertEquals("5th Engine in sort by owner list", e1, Engines.get(4));
 
 		// test sort by rfid
         getHelper().enterClickAndLeave( new MouseEventData( this, etf.sortByRfid ) );
 		Engines = etf.enginesModel.getSelectedEngineList();
-		Assert.assertEquals("1st Engine in sort by rfid list", e5.getId(), Engines.get(0));
-		Assert.assertEquals("2nd Engine in sort by rfid list", e2.getId(), Engines.get(1));
-		Assert.assertEquals("3rd Engine in sort by rfid list", e1.getId(), Engines.get(2));
-		Assert.assertEquals("4th Engine in sort by rfid list", e4.getId(), Engines.get(3));
-		Assert.assertEquals("5th Engine in sort by rfid list", e3.getId(), Engines.get(4));
+		Assert.assertEquals("1st Engine in sort by rfid list", e5, Engines.get(0));
+		Assert.assertEquals("2nd Engine in sort by rfid list", e2, Engines.get(1));
+		Assert.assertEquals("3rd Engine in sort by rfid list", e1, Engines.get(2));
+		Assert.assertEquals("4th Engine in sort by rfid list", e4, Engines.get(3));
+		Assert.assertEquals("5th Engine in sort by rfid list", e3, Engines.get(4));
 
 		// test sort by road
         getHelper().enterClickAndLeave( new MouseEventData( this, etf.sortByRoad ) );
 		Engines = etf.enginesModel.getSelectedEngineList();
-		Assert.assertEquals("1st Engine in sort by road list", e3.getId(), Engines.get(0));
-		Assert.assertEquals("2nd Engine in sort by road list", e1.getId(), Engines.get(1));
-		Assert.assertEquals("3rd Engine in sort by road list", e5.getId(), Engines.get(2));
-		Assert.assertEquals("4th Engine in sort by road list", e4.getId(), Engines.get(3));
-		Assert.assertEquals("5th Engine in sort by road list", e2.getId(), Engines.get(4));
+		Assert.assertEquals("1st Engine in sort by road list", e3, Engines.get(0));
+		Assert.assertEquals("2nd Engine in sort by road list", e1, Engines.get(1));
+		Assert.assertEquals("3rd Engine in sort by road list", e5, Engines.get(2));
+		Assert.assertEquals("4th Engine in sort by road list", e4, Engines.get(3));
+		Assert.assertEquals("5th Engine in sort by road list", e2, Engines.get(4));
 
         getHelper().enterClickAndLeave( new MouseEventData( this, etf.sortByTrain ) );
 		//TODO add trains
@@ -207,11 +203,11 @@ public class OperationsEnginesGuiTest extends jmri.util.SwingTestCase {
 		// test sort by model
         getHelper().enterClickAndLeave( new MouseEventData( this, etf.sortByModel ) );
 		Engines = etf.enginesModel.getSelectedEngineList();
-		Assert.assertEquals("1st Engine in sort by model list", e2.getId(), Engines.get(0));
-		Assert.assertEquals("2nd Engine in sort by model list", e4.getId(), Engines.get(1));
-		Assert.assertEquals("3rd Engine in sort by model list", e1.getId(), Engines.get(2));
-		Assert.assertEquals("4th Engine in sort by model list", e5.getId(), Engines.get(3));
-		Assert.assertEquals("5th Engine in sort by model list", e3.getId(), Engines.get(4));
+		Assert.assertEquals("1st Engine in sort by model list", e2, Engines.get(0));
+		Assert.assertEquals("2nd Engine in sort by model list", e4, Engines.get(1));
+		Assert.assertEquals("3rd Engine in sort by model list", e1, Engines.get(2));
+		Assert.assertEquals("4th Engine in sort by model list", e5, Engines.get(3));
+		Assert.assertEquals("5th Engine in sort by model list", e3, Engines.get(4));
 
 		// test find text field
 		etf.findEngineTextBox.setText("2");
@@ -229,7 +225,8 @@ public class OperationsEnginesGuiTest extends jmri.util.SwingTestCase {
 
 	List<String> tempEngines;
 	
-	public void testEngineEditFrame(){	
+	public void testEngineEditFrame(){
+		
 		EngineEditFrame f = new EngineEditFrame();
 		f.setTitle("Test Add Engine Frame");
 		f.initComponents();
@@ -244,6 +241,9 @@ public class OperationsEnginesGuiTest extends jmri.util.SwingTestCase {
         getHelper().enterClickAndLeave( new MouseEventData( this, f.saveButton ) );
 		
 		EngineManager cManager = EngineManager.instance();
+		// should have 6 Engines
+		Assert.assertEquals("number of Engines", 6, cManager.getNumEntries());
+		
 		Engine c6 = cManager.getByRoadAndNumber("SP", "6");
 		
 		Assert.assertNotNull("Engine did not create", c6);
@@ -283,18 +283,21 @@ public class OperationsEnginesGuiTest extends jmri.util.SwingTestCase {
         getHelper().enterClickAndLeave( new MouseEventData( this, f.deleteButton ) );
 		
 		// should have 5 Engines now
-		Assert.assertEquals("number of Engines", 5, cManager.getNumEntries());
+		Assert.assertEquals("number of Engines", 4, cManager.getNumEntries());
 		
 		f.dispose();
 	}
 	
 	public void testEngineAttributeEditFrameModel(){
 		EngineAttributeEditFrame f = new EngineAttributeEditFrame();
-		f.initComponents(EngineEditFrame.MODEL);		
+		f.initComponents(EngineEditFrame.MODEL);
+		// confirm that the right number of models were loaded
+		Assert.assertEquals(27, f.comboBox.getItemCount());
+		// now add a new model name
 		f.addTextBox.setText("New Model");
         getHelper().enterClickAndLeave( new MouseEventData( this, f.addButton ) );
 		// new model should appear at start of list
-		Assert.assertEquals("new model","New Model",f.comboBox.getItemAt(0));
+		Assert.assertEquals("new model name","New Model",f.comboBox.getItemAt(0));
 		 
 		// test replace
 		f.comboBox.setSelectedItem("SD45");
@@ -370,7 +373,91 @@ public class OperationsEnginesGuiTest extends jmri.util.SwingTestCase {
 		CarManagerXml.instance().setOperationsFileName("OperationsJUnitTestCarRoster.xml");
 		LocationManagerXml.instance().setOperationsFileName("OperationsJUnitTestLocationRoster.xml");
 		TrainManagerXml.instance().setOperationsFileName("OperationsJUnitTestTrainRoster.xml");
+		
+		// remove previous Engines
+		EngineManager.instance().dispose();
+		CarRoads.instance().dispose();
+		EngineModels.instance().dispose();
+		
+		loadEngines();
 
+	}
+	
+	private void loadEngines() {
+		
+		// add Owner1 and Owner2
+		CarOwners co = CarOwners.instance();
+		co.addName("Owner1");
+		co.addName("Owner2");
+		// add road names
+		CarRoads cr = CarRoads.instance();
+		cr.addName("NH");
+		cr.addName("UP");
+		cr.addName("AA");
+		cr.addName("SP");
+		// add locations
+		LocationManager lManager = LocationManager.instance();
+		Location westford = lManager.newLocation("Westford");
+		Track westfordYard = westford.addTrack("Yard", Track.YARD);
+		westfordYard.setLength(300);
+		Track westfordSiding = westford.addTrack("Siding", Track.SPUR);
+		westfordSiding.setLength(300);
+		Track westfordAble = westford.addTrack("Able", Track.SPUR);
+		westfordAble.setLength(300);
+		Location boxford = lManager.newLocation("Boxford");
+		Track boxfordYard = boxford.addTrack("Yard", Track.YARD);
+		boxfordYard.setLength(300);
+		Track boxfordJacobson = boxford.addTrack("Jacobson", Track.SPUR);
+		boxfordJacobson.setLength(300);
+		Track boxfordHood = boxford.addTrack("Hood", Track.SPUR);
+		boxfordHood.setLength(300);
+
+		EngineManager cManager = EngineManager.instance();
+		// add 5 Engines to table
+		Engine e1 = cManager.newEngine("NH", "1");
+		e1.setModel("RS1");
+		e1.setBuilt("2009");
+		e1.setMoves(55);
+		e1.setOwner("Owner2");
+		e1.setRfid("RFID 3");
+		e1.setWeightTons("Tons of Weight");
+		e1.setComment("Test Engine NH 1 Comment");
+		Assert.assertEquals("e1 location", Track.OKAY, e1.setLocation(westford, westfordYard));
+		Assert.assertEquals("e1 destination", Track.OKAY, e1.setDestination(boxford, boxfordJacobson));
+
+		Engine e2 = cManager.newEngine("UP", "2");
+		e2.setModel("FT");
+		e2.setBuilt("2004");
+		e2.setMoves(50);
+		e2.setOwner("AT");
+		e2.setRfid("RFID 2");
+		
+		Engine e3 = cManager.newEngine("AA", "3");
+		e3.setModel("SW8");
+		e3.setBuilt("2006");
+		e3.setMoves(40);
+		e3.setOwner("AB");
+		e3.setRfid("RFID 5");
+		Assert.assertEquals("e3 location", Track.OKAY, e3.setLocation(boxford, boxfordHood));
+		Assert.assertEquals("e3 destination", Track.OKAY, e3.setDestination(boxford, boxfordYard));
+		
+		Engine e4 = cManager.newEngine("SP", "2");
+		e4.setModel("GP35");
+		e4.setBuilt("1990");
+		e4.setMoves(30);
+		e4.setOwner("AAA");
+		e4.setRfid("RFID 4");
+		Assert.assertEquals("e4 location", Track.OKAY, e4.setLocation(westford, westfordSiding));
+		Assert.assertEquals("e4 destination", Track.OKAY, e4.setDestination(boxford, boxfordHood));
+		
+		Engine e5 = cManager.newEngine("NH", "5");
+		e5.setModel("SW1200");
+		e5.setBuilt("1956");
+		e5.setMoves(25);
+		e5.setOwner("DAB");
+		e5.setRfid("RFID 1");
+		Assert.assertEquals("e5 location", Track.OKAY, e5.setLocation(westford, westfordAble));
+		Assert.assertEquals("e5 destination", Track.OKAY, e5.setDestination(westford, westfordAble));
 	}
 
 	public OperationsEnginesGuiTest(String s) {

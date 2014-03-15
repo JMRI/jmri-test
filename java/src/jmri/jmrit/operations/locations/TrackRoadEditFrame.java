@@ -4,6 +4,7 @@ package jmri.jmrit.operations.locations;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import jmri.jmrit.operations.OperationsFrame;
 import jmri.jmrit.operations.OperationsXml;
 import jmri.jmrit.operations.rollingstock.cars.CarRoads;
@@ -167,7 +168,7 @@ public class TrackRoadEditFrame extends OperationsFrame implements java.beans.Pr
 		updateRoadComboBox();
 		updateRoadNames();
 		
-		initMinimumSize();
+		initMinimumSize(new Dimension(Control.panelWidth, Control.mediumPanelHeight));
 	}
 
 	// Save, Delete, Add
@@ -203,13 +204,13 @@ public class TrackRoadEditFrame extends OperationsFrame implements java.beans.Pr
 	public void radioButtonActionPerformed(java.awt.event.ActionEvent ae) {
 		log.debug("radio button activated");
 		if (ae.getSource() == roadNameAll) {
-			_track.setRoadOption(Track.ALLROADS);
+			_track.setRoadOption(Track.ALL_ROADS);
 		}
 		if (ae.getSource() == roadNameInclude) {
-			_track.setRoadOption(Track.INCLUDEROADS);
+			_track.setRoadOption(Track.INCLUDE_ROADS);
 		}
 		if (ae.getSource() == roadNameExclude) {
-			_track.setRoadOption(Track.EXCLUDEROADS);
+			_track.setRoadOption(Track.EXCLUDE_ROADS);
 		}
 	}
 
@@ -222,9 +223,9 @@ public class TrackRoadEditFrame extends OperationsFrame implements java.beans.Pr
 		panelRoads.removeAll();
 		if (_track != null) {
 			// set radio button
-			roadNameAll.setSelected(_track.getRoadOption().equals(Track.ALLROADS));
-			roadNameInclude.setSelected(_track.getRoadOption().equals(Track.INCLUDEROADS));
-			roadNameExclude.setSelected(_track.getRoadOption().equals(Track.EXCLUDEROADS));
+			roadNameAll.setSelected(_track.getRoadOption().equals(Track.ALL_ROADS));
+			roadNameInclude.setSelected(_track.getRoadOption().equals(Track.INCLUDE_ROADS));
+			roadNameExclude.setSelected(_track.getRoadOption().equals(Track.EXCLUDE_ROADS));
 			
 			pRoadControls.setVisible(!roadNameAll.isSelected());
 

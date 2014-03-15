@@ -2,14 +2,10 @@
 
 package apps.SoundPro;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import apps.AppConfigPanel;
 import apps.Apps;
-
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
@@ -17,8 +13,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import jmri.util.JmriJFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The JMRI application for controlling audio.
@@ -68,7 +65,7 @@ public class SoundPro extends Apps {
 
     @Override
     protected String line1() {
-        return MessageFormat.format(rb.getString("SoundProVersionCredit"),
+        return MessageFormat.format(Bundle.getMessage("SoundProVersionCredit"),
                                 new Object[]{jmri.Version.name()});
     }
 
@@ -85,25 +82,25 @@ public class SoundPro extends Apps {
 
        // Buttons
 
-        Action audioTable = new jmri.jmrit.beantable.AudioTableAction(rb.getString("SpButtonAudioTable"));
-        Action quit = new AbstractAction(rb.getString("MenuItemQuit")){
+        Action audioTable = new jmri.jmrit.beantable.AudioTableAction(Bundle.getMessage("SpButtonAudioTable"));
+        Action quit = new AbstractAction(Bundle.getMessage("MenuItemQuit")){
                 public void actionPerformed(ActionEvent e) {
 					Apps.handleQuit();
                 }
             };
 
-        JButton b1 = new JButton(rb.getString("SpButtonAudioTable"));
+        JButton b1 = new JButton(Bundle.getMessage("SpButtonAudioTable"));
         b1.addActionListener(audioTable);
         b1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         j.add(b1);
 
         JPanel p3 = new JPanel();
         p3.setLayout(new java.awt.FlowLayout());
-        JButton h1 = new JButton(rb.getString("ButtonHelp"));
+        JButton h1 = new JButton(Bundle.getMessage("ButtonHelp"));
         jmri.util.HelpUtil.addHelpToComponent(h1, "html.apps.SoundPro.SoundPro");
         h1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         p3.add(h1);
-        JButton q1 = new JButton(rb.getString("ButtonQuit"));
+        JButton q1 = new JButton(Bundle.getMessage("ButtonQuit"));
         q1.addActionListener(quit);
         q1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         p3.add(q1);
@@ -118,7 +115,7 @@ public class SoundPro extends Apps {
         // show splash screen early
         splash(true);
 
-        log.info(apps.Apps.startupInfo("SoundPro"));
+        Apps.setStartupInfo("SoundPro");
 
         setConfigFilename("SoundProConfig2.xml", args);
         JmriJFrame f = new JmriJFrame("SoundPro");

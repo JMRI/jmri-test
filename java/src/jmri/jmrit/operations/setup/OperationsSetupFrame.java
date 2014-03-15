@@ -2,26 +2,24 @@
 
 package jmri.jmrit.operations.setup;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.text.MessageFormat;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.JComboBox;
-import javax.swing.JCheckBox;
 import javax.swing.JButton;
-import javax.swing.JRadioButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-
 import jmri.jmrit.display.LocoIcon;
 import jmri.jmrit.operations.ExceptionDisplayFrame;
 import jmri.jmrit.operations.OperationsFrame;
@@ -32,6 +30,9 @@ import jmri.jmrit.operations.routes.Route;
 import jmri.jmrit.operations.routes.RouteLocation;
 import jmri.jmrit.operations.routes.RouteManager;
 import jmri.jmrit.operations.routes.RouteManagerXml;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import jmri.web.server.WebServerManager;
 
 /**
  * Frame for user edit of operation parameters
@@ -90,13 +91,13 @@ public class OperationsSetupFrame extends OperationsFrame implements
 
 	// text field
 	// JTextField ownerTextField = new JTextField(10);
-	JTextField panelTextField = new JTextField(35);
+	JTextField panelTextField = new JTextField(30);
 	JTextField railroadNameTextField = new JTextField(35);
 	JTextField maxLengthTextField = new JTextField(5);
 	JTextField maxEngineSizeTextField = new JTextField(3);
+	JTextField hptTextField = new JTextField(3);
 	JTextField switchTimeTextField = new JTextField(3);
 	JTextField travelTimeTextField = new JTextField(3);
-	JTextField commentTextField = new JTextField(35);
 	JTextField yearTextField = new JTextField(4);
 
 	// combo boxes
@@ -121,9 +122,9 @@ public class OperationsSetupFrame extends OperationsFrame implements
 		OperationsSetupXml.instance();
 
 		// load fields
-		railroadNameTextField.setText(Setup.getRailroadName());
-		maxLengthTextField.setText(Integer.toString(Setup.getTrainLength()));
-		maxEngineSizeTextField.setText(Integer.toString(Setup.getEngineSize()));
+		maxLengthTextField.setText(Integer.toString(Setup.getMaxTrainLength()));
+		maxEngineSizeTextField.setText(Integer.toString(Setup.getMaxNumberEngines()));
+		hptTextField.setText(Integer.toString(Setup.getHorsePowerPerTon()));
 		switchTimeTextField.setText(Integer.toString(Setup.getSwitchTime()));
 		travelTimeTextField.setText(Integer.toString(Setup.getTravelTime()));
 		panelTextField.setText(Setup.getPanelName());
@@ -147,6 +148,11 @@ public class OperationsSetupFrame extends OperationsFrame implements
 		autoSaveCheckBox.setToolTipText(Bundle.getMessage("AutoSaveTip"));
 		autoBackupCheckBox.setToolTipText(Bundle.getMessage("AutoBackUpTip"));
 		maxLengthTextField.setToolTipText(Bundle.getMessage("MaxLengthTip"));
+		maxEngineSizeTextField.setToolTipText(Bundle.getMessage("MaxEngineTip"));
+		hptTextField.setToolTipText(Bundle.getMessage("HPperTonTip"));
+		switchTimeTextField.setToolTipText(Bundle.getMessage("SwitchTimeTip"));
+		travelTimeTextField.setToolTipText(Bundle.getMessage("TravelTimeTip"));
+		railroadNameTextField.setToolTipText(Bundle.getMessage("RailroadNameTip"));
 
 		// Layout the panel by rows
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -191,8 +197,10 @@ public class OperationsSetupFrame extends OperationsFrame implements
 		p3.add(pMaxEngine);
 
 		// row 3c
-		JPanel p5 = new JPanel();
-		p5.setLayout(new BoxLayout(p5, BoxLayout.X_AXIS));
+		JPanel pHPT = new JPanel();
+		pHPT.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("HPT")));
+		addItem(pHPT, hptTextField, 0, 0);
+		p3.add(pHPT);
 
 		JPanel pSwitchTime = new JPanel();
 		pSwitchTime.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("MoveTime")));
@@ -283,7 +291,6 @@ public class OperationsSetupFrame extends OperationsFrame implements
 		panel.add(p1);
 		panel.add(pScale);
 		panel.add(p3);
-		panel.add(p5);
 		panel.add(p9);
 
 		// Icon panel
@@ -384,7 +391,24 @@ public class OperationsSetupFrame extends OperationsFrame implements
 		setJMenuBar(menuBar);
 		addHelpMenu("package.jmri.jmrit.operations.Operations_Settings", true); // NOI18N
 
-		initMinimumSize();
+		initMinimumSize(new Dimension(Control.tablePanelWidth, Control.panelHeight));
+		
+		// now provide the railroad name
+		railroadNameTextField.setText(Setup.getRailroadName()); // default
+		if (Setup.getRailroadName().equals(WebServerManager.getWebServerPreferences().getRailRoadName())) {
+			railroadNameTextField.setEnabled(false);
+// not a good idea to have a pop during initialization
+//		} else if (!WebServerManager.getWebServerPreferences().isDefaultRailroadName()) {
+//			int results = JOptionPane.showConfirmDialog(this, MessageFormat.format(Bundle
+//					.getMessage("ChangeRailroadName"), new Object[] { Setup.getRailroadName(),
+//					WebServerManager.getWebServerPreferences().getRailRoadName() }), Bundle
+//					.getMessage("ChangeOperationsRailroadName"), JOptionPane.YES_NO_OPTION);
+//			if (results == JOptionPane.OK_OPTION) {
+//				railroadNameTextField.setText(WebServerManager.getWebServerPreferences().getRailRoadName());
+//				railroadNameTextField.setEnabled(false);
+//			}
+		}
+		createShutDownTask();
 	}
 
 	// Save, Delete, Add buttons
@@ -498,8 +522,8 @@ public class OperationsSetupFrame extends OperationsFrame implements
 		if (northCheckBox.isSelected())
 			direction += Setup.NORTH + Setup.SOUTH;
 		Setup.setTrainDirection(direction);
-		// set max engine length
-		Setup.setEngineSize(Integer.parseInt(maxEngineSizeTextField.getText()));
+		Setup.setMaxNumberEngines(Integer.parseInt(maxEngineSizeTextField.getText()));
+		Setup.setHorsePowerPerTon(Integer.parseInt(hptTextField.getText()));
 		// set switch time
 		Setup.setSwitchTime(Integer.parseInt(switchTimeTextField.getText()));
 		// set travel time
@@ -528,6 +552,16 @@ public class OperationsSetupFrame extends OperationsFrame implements
 		if (scaleG.isSelected())
 			Setup.setScale(Setup.G_SCALE);
 		Setup.setRailroadName(railroadNameTextField.getText());
+		if (!Setup.getRailroadName().equals(WebServerManager.getWebServerPreferences().getRailRoadName())) {
+			int results = JOptionPane.showConfirmDialog(this, MessageFormat.format(Bundle.getMessage("ChangeRailroadName"),
+					new Object[] { WebServerManager.getWebServerPreferences().getRailRoadName(),
+							Setup.getRailroadName() }), Bundle.getMessage("ChangeJMRIRailroadName"),
+					JOptionPane.YES_NO_OPTION);
+			if (results == JOptionPane.OK_OPTION) {
+				WebServerManager.getWebServerPreferences().setRailRoadName(Setup.getRailroadName());
+				WebServerManager.getWebServerPreferences().save();
+			}
+		}
 		// Set Unit of Length
 		if (feetUnit.isSelected())
 			Setup.setLengthUnit(Setup.FEET);
@@ -535,7 +569,7 @@ public class OperationsSetupFrame extends OperationsFrame implements
 			Setup.setLengthUnit(Setup.METER);
 		Setup.setYearModeled(yearTextField.getText());
 		// warn about train length being too short
-		if (maxTrainLength != Setup.getTrainLength()) {
+		if (maxTrainLength != Setup.getMaxTrainLength()) {
 			if (maxTrainLength < 500 && Setup.getLengthUnit().equals(Setup.FEET) || maxTrainLength < 160
 					&& Setup.getLengthUnit().equals(Setup.METER)) {
 				JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle
@@ -545,7 +579,7 @@ public class OperationsSetupFrame extends OperationsFrame implements
 			}
 		}
 		// set max train length
-		Setup.setTrainLength(Integer.parseInt(maxLengthTextField.getText()));
+		Setup.setMaxTrainLength(Integer.parseInt(maxLengthTextField.getText()));
 		OperationsSetupXml.instance().writeOperationsFile();
 		if (Setup.isCloseWindowOnSaveEnabled())
 			dispose();
@@ -554,16 +588,21 @@ public class OperationsSetupFrame extends OperationsFrame implements
 	// if max train length has changed, check routes
 	private void checkRoutes() {
 		int maxLength = Integer.parseInt(maxLengthTextField.getText());
-		if (maxLength < Setup.getTrainLength()) {
+		if (maxLength > Setup.getMaxTrainLength()) {
+			JOptionPane.showMessageDialog(this, Bundle.getMessage("RouteLengthNotModified"), MessageFormat.format(
+					Bundle.getMessage("MaxTrainLengthIncreased"), new Object[] { maxLength, Setup.getLengthUnit().toLowerCase() }),
+					JOptionPane.INFORMATION_MESSAGE);
+		}
+		if (maxLength < Setup.getMaxTrainLength()) {
 			StringBuffer sb = new StringBuffer();
 			RouteManager rm = RouteManager.instance();
-			List<String> routes = rm.getRoutesByNameList();
+			List<Route> routes = rm.getRoutesByNameList();
 			int count = 0;
 			for (int i = 0; i < routes.size(); i++) {
-				Route r = rm.getRouteById(routes.get(i));
-				List<String> locations = r.getLocationsBySequenceList();
-				for (int j = 0; j < locations.size(); j++) {
-					RouteLocation rl = r.getLocationById(locations.get(j));
+				Route r = routes.get(i);
+				List<RouteLocation> routeList = r.getLocationsBySequenceList();
+				for (int j = 0; j < routeList.size(); j++) {
+					RouteLocation rl = routeList.get(j);
 					if (rl.getMaxTrainLength() > maxLength) {
 						String s = MessageFormat.format(Bundle.getMessage("RouteMaxLengthExceeds"),
 								new Object[] { r.getName(), rl.getName(), rl.getMaxTrainLength(),
@@ -581,15 +620,15 @@ public class OperationsSetupFrame extends OperationsFrame implements
 				}
 			}
 			if (sb.length() > 0) {
-				JOptionPane.showMessageDialog(null, sb.toString(),
+				JOptionPane.showMessageDialog(this, sb.toString(),
 						Bundle.getMessage("YouNeedToAdjustRoutes"), JOptionPane.WARNING_MESSAGE);
 				if (JOptionPane.showConfirmDialog(null, MessageFormat.format(Bundle.getMessage("ChangeMaximumTrainDepartureLength"),
 						new Object[] { maxLength }), Bundle.getMessage("ModifyAllRoutes"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					for (int i = 0; i < routes.size(); i++) {
-						Route r = rm.getRouteById(routes.get(i));
-						List<String> locations = r.getLocationsBySequenceList();
-						for (int j = 0; j < locations.size(); j++) {
-							RouteLocation rl = r.getLocationById(locations.get(j));
+						Route r = routes.get(i);
+						List<RouteLocation> routeList = r.getLocationsBySequenceList();
+						for (int j = 0; j < routeList.size(); j++) {
+							RouteLocation rl = routeList.get(j);
 							if (rl.getMaxTrainLength() > maxLength) {
 								log.debug("Setting route (" + r.getName() + ") routeLocation ("
 										+ rl.getName() + ") max traim length to " + maxLength); // NOI18N

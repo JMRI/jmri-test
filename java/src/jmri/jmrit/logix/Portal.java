@@ -45,10 +45,10 @@ public class Portal extends jmri.implementation.AbstractNamedBean {
     public static final int ENTER_FROM_BLOCK = 0x04;
     
     public Portal(String sName, String uName) {
-        super(sName.toUpperCase(), uName);
+        super(sName, uName);
     }
     
-    public Portal(OBlock fromBlock, String portalName, OBlock toBlock) {
+/*    public Portal(OBlock fromBlock, String portalName, OBlock toBlock) {
     	super(portalName, portalName);
         _fromBlock = fromBlock;
  //       _portalName = portalName;
@@ -57,7 +57,7 @@ public class Portal extends jmri.implementation.AbstractNamedBean {
         if (_toBlock!=null) _toBlock.addPortal(this);
         //if (log.isDebugEnabled()) log.debug("Ctor: name= "+_portalName+", fromBlock= "+
         //           getFromBlockName()+", toBlock= "+getToBlockName()); 
-    }
+    }*/
 
     /**
     * Determine which list the Path belongs to and add it to the list
@@ -74,15 +74,12 @@ public class Portal extends jmri.implementation.AbstractNamedBean {
             return false;
         }
         if (_fromBlock != null && _fromBlock.equals(block)) {
-            if (!_fromPaths.contains(path))  {
-                return addPath(_fromPaths, path);
-            }
+            return addPath(_fromPaths, path);
         } else if (_toBlock != null && _toBlock.equals(block)) {
-            if (!_toPaths.contains(path))  {
-                return addPath(_toPaths, path);
-            }
+            return addPath(_toPaths, path);
         }
-        // path already in one of the path lists
+        // portal is incomplete or path block not in this portal
+        // to do!!! fix this so it may return false.  Need true for bogus load
         return true;
     }
 
@@ -90,14 +87,16 @@ public class Portal extends jmri.implementation.AbstractNamedBean {
     *  Utility for both path lists
     */
     private boolean addPath(List <OPath> list, OPath path) {
-        String pName =path.getName();
-        for (int i=0; i<list.size(); i++) {
-            if (pName.equals(list.get(i).getName())) { log.error("Path \""+path.getName()+
-                "\" is duplicate name for another path in Portal \""+getUserName()+"\".");
-                return false; 
+        if (!list.contains(path))  {
+            String pName =path.getName();
+            for (int i=0; i<list.size(); i++) {
+                if (pName.equals(list.get(i).getName())) { log.error("Path \""+path.getName()+
+                    "\" is duplicate name for another path in Portal \""+getUserName()+"\".");
+                    return false; 
+                }
             }
+            list.add(path);
         }
-        list.add(path);
         return true;
     }
 
@@ -518,6 +517,8 @@ public class Portal extends jmri.implementation.AbstractNamedBean {
     public void dispose() {
         if (_fromBlock!=null) _fromBlock.removePortal(this);
         if (_toBlock!=null) _toBlock.removePortal(this);
+        jmri.InstanceManager.getDefault(PortalManager.class).deregister(this);
+        super.dispose();
     }
 
     public String getDescription() {

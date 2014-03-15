@@ -29,7 +29,7 @@ public class Car extends RollingStock {
 	protected Kernel _kernel = null;
 	protected String _load = carLoads.getDefaultEmptyName();
 	protected int _wait = 0;
-	protected int _order = 0; // interchange service ordering
+//	protected int _order = 0; // track service ordering
 
 	protected Location _rweDestination = null; // return when empty destination
 	protected Track _rweDestTrack = null; // return when empty track
@@ -118,6 +118,16 @@ public class Car extends RollingStock {
 
 	public String getLoadName() {
 		return _load;
+	}
+	
+	@Deprecated // saved for scripts
+	public void setLoad(String load) {
+		setLoadName(load);
+	}
+	
+	@Deprecated // saved for scripts
+	public String getLoad() {
+		return getLoadName();
 	}
 
 	/**
@@ -210,25 +220,25 @@ public class Car extends RollingStock {
 		return _wait;
 	}
 
-	/**
-	 * This car's service order when placed at a track that considers car order. There are two track orders, FIFO and
-	 * LIFO. Car's with the lowest numbers are serviced first when placed at a track in FIFO mode. Car's with the
-	 * highest numbers are serviced first when place at a track in LIFO mode.
-	 * 
-	 * @param number
-	 *            The assigned service order for this car.
-	 */
-	public void setOrder(int number) {
-		int old = _order;
-		_order = number;
-		if (old != number)
-			firePropertyChange("car order changed", old, number); // NOI18N
-	}
-
-	public int getOrder() {
-		return _order;
-	}
-
+//	/**
+//	 * This car's service order when placed at a track that considers car order. There are two track orders, FIFO and
+//	 * LIFO. Car's with the lowest numbers are serviced first when placed on a track in FIFO mode. Car's with the
+//	 * highest numbers are serviced first when placed on a track in LIFO mode.
+//	 * 
+//	 * @param number
+//	 *            The assigned service order for this car.
+//	 */
+//	public void setOrder(int number) {
+//		int old = _order;
+//		_order = number;
+//		if (old != number)
+//			firePropertyChange("car order changed", old, number); // NOI18N
+//	}
+//
+//	public int getOrder() {
+//		return _order;
+//	}
+	
 	public void setNextWait(int count) {
 		int old = _nextWait;
 		_nextWait = count;
@@ -257,6 +267,11 @@ public class Car extends RollingStock {
 		if ((old != null && !old.equals(destination)) || (destination != null && !destination.equals(old)))
 			firePropertyChange(FINAL_DESTINATION_CHANGED_PROPERTY, old, destination);
 	}
+	
+	@Deprecated // available for old scripts
+	public void setNextDestination(Location destination) {
+		setFinalDestination(destination);
+	}
 
 	public Location getFinalDestination() {
 		return _finalDestination;
@@ -284,6 +299,11 @@ public class Car extends RollingStock {
 			}
 			firePropertyChange(FINAL_DESTINATION_TRACK_CHANGED_PROPERTY, old, track);
 		}
+	}
+	
+	@Deprecated // available for old scripts
+	public void setNextDestinationTrack(Track track) {
+		setFinalDestinationTrack(track);
 	}
 
 	public Track getFinalDestinationTrack() {
@@ -487,13 +507,13 @@ public class Car extends RollingStock {
 	public String setDestination(Location destination, Track track, boolean force) {
 		// save destination name and track in case car has reached its destination
 		String destinationName = getDestinationName();
-		Track oldDestTrack = getDestinationTrack();
+		Track destinationTrack = getDestinationTrack();
 		String status = super.setDestination(destination, track, force);
 		// return if not Okay
 		if (!status.equals(Track.OKAY))
 			return status;
 		// now check to see if the track has a schedule
-		if (track != null && oldDestTrack != track && !loading) {
+		if (track != null && destinationTrack != track && !loading) {
 			status = track.scheduleNext(this);
 			if (!status.equals(Track.OKAY))
 				return status;
@@ -502,10 +522,12 @@ public class Car extends RollingStock {
 		if (destinationName.equals("") || (destination != null) || getTrain() == null)
 			return status;
 		// set service order for LIFO and FIFO tracks
-		if (oldDestTrack != null)
-			setOrder(oldDestTrack.getMoves());
+//		if (destinationTrack != null && !destinationTrack.getServiceOrder().equals(Track.NORMAL))
+//			setOrder(destinationTrack.getMoves());
+//		else
+//			setOrder(0);
 		// update load when car reaches a spur
-		loadNext(oldDestTrack);
+		loadNext(destinationTrack);
 		return status;
 	}
 
@@ -514,7 +536,7 @@ public class Car extends RollingStock {
 		// update wait count
 		setWait(getNextWait());
 		setNextWait(0);
-		if (destTrack != null && destTrack.getLocType().equals(Track.SPUR)) {
+		if (destTrack != null && destTrack.getTrackType().equals(Track.SPUR)) {
 			if (!getNextLoadName().equals("")) {
 				setLoadName(getNextLoadName());
 				setNextLoadName("");
@@ -530,7 +552,7 @@ public class Car extends RollingStock {
 				setLoadEmpty();
 		}
 		// update load optionally when car reaches staging
-		if (destTrack != null && destTrack.getLocType().equals(Track.STAGING)) {
+		if (destTrack != null && destTrack.getTrackType().equals(Track.STAGING)) {
 			if (destTrack.isLoadSwapEnabled()) {
 				if (getLoadName().equals(carLoads.getDefaultEmptyName())) {
 					setLoadName(carLoads.getDefaultLoadName());
@@ -538,7 +560,7 @@ public class Car extends RollingStock {
 					setLoadEmpty();
 				}
 			}
-			if (destTrack.isSetLoadEmptyEnabled() && getLoadName().equals(carLoads.getDefaultLoadName())) {
+			if (destTrack.isLoadEmptyEnabled() && getLoadName().equals(carLoads.getDefaultLoadName())) {
 				setLoadEmpty();
 			}
 			// empty car if it has a custom load
@@ -665,9 +687,9 @@ public class Car extends RollingStock {
 		if (_rweDestination != null && (a = e.getAttribute(Xml.RWE_DEST_TRACK_ID)) != null) {
 			_rweDestTrack = _rweDestination.getTrackById(a.getValue());
 		}
-		if ((a = e.getAttribute(Xml.ORDER)) != null) {
-			_order = Integer.parseInt(a.getValue());
-		}
+//		if ((a = e.getAttribute(Xml.ORDER)) != null) {
+//			_order = Integer.parseInt(a.getValue());
+//		}
 		addPropertyChangeListeners();
 	}
 
@@ -735,8 +757,9 @@ public class Car extends RollingStock {
 			if (getReturnWhenEmptyDestTrack() != null)
 				e.setAttribute(Xml.RWE_DEST_TRACK_ID, getReturnWhenEmptyDestTrack().getId());
 		}
-
-		e.setAttribute(Xml.ORDER, Integer.toString(getOrder()));
+//		if (getOrder() != 0) {
+//			e.setAttribute(Xml.ORDER, Integer.toString(getOrder()));
+//		}
 
 		return e;
 	}

@@ -48,7 +48,7 @@ public class XBeeMessage extends jmri.jmrix.ieee802154.IEEE802154Message {
      * XBeeRequest message.
      * This is the message form that will generally be used by
      * the implementation.
-     * @param an XBeeRequest of bytes to send
+     * @param request an XBeeRequest of bytes to send
      */
     public  XBeeMessage(XBeeRequest request) {
         _nDataChars = request.getFrameData().length;
@@ -98,6 +98,19 @@ public class XBeeMessage extends jmri.jmrix.ieee802154.IEEE802154Message {
           }
           setElement(len-1, chksum&0xFF);
        }
+
+      // a few canned messages
+      public static XBeeMessage getHardwareVersionRequest(){
+          return new XBeeMessage(new com.rapplogic.xbee.api.AtCommand("HV"));
+      }
+
+      public static XBeeMessage getRemoteDoutMessage(com.rapplogic.xbee.api.XBeeAddress16 address, int pin, boolean on) {
+          int onValue[]={0x5};
+          int offValue[]={0x4};
+          return new XBeeMessage( new com.rapplogic.xbee.api.RemoteAtRequest(address,"D" + pin, on?onValue:offValue));
+      }
+
+
    }
 
 /* @(#)XBeeMessage.java */

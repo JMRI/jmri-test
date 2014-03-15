@@ -5,19 +5,20 @@ package jmri.jmrit.display.controlPanelEditor;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
+import javax.swing.AbstractAction;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jmri.jmrit.display.CoordinateEdit;
 import jmri.jmrit.display.Editor;
 import jmri.jmrit.display.Positionable;
 import jmri.jmrit.display.ToolTip;
-import jmri.jmrit.display.palette.PortalItemPanel;
+import jmri.jmrit.display.PositionableIcon;
 import jmri.jmrit.catalog.NamedIcon;
 import jmri.jmrit.logix.Portal;
 
@@ -26,7 +27,7 @@ import jmri.jmrit.logix.Portal;
  * @version $Revision$
  */
 
-public class PortalIcon extends jmri.jmrit.display.PositionableIcon implements java.beans.PropertyChangeListener  {
+public class PortalIcon extends PositionableIcon implements java.beans.PropertyChangeListener  {
 
     public static final String HIDDEN = "hidden";
     public static final String VISIBLE = "block";
@@ -35,8 +36,9 @@ public class PortalIcon extends jmri.jmrit.display.PositionableIcon implements j
     public static final String FROM_ARROW = "fromArrow";
 
     private Portal _portal;
-    private PortalItemPanel _portalPanel;
     private String _status;
+    private boolean _regular = true;	// true when TO_ARROW shows entry into ToBlock
+    private boolean _hide = false;	// true when arrow should NOT show entry into ToBlock
 
     public PortalIcon(Editor editor) {
         // super ctor call to make sure this is an icon label
@@ -50,15 +52,19 @@ public class PortalIcon extends jmri.jmrit.display.PositionableIcon implements j
         setPortal(portal);
     }
 
-    private void initMap() {
-        _iconMap = new java.util.HashMap<String, NamedIcon>();
+    public void initMap() {
         ControlPanelEditor ed = (ControlPanelEditor)_editor;
-        _iconMap.put(VISIBLE, ed.getPortalIcon(VISIBLE));
-        _iconMap.put(PATH, ed.getPortalIcon(PATH));
-        _iconMap.put(HIDDEN,ed.getPortalIcon(HIDDEN));
-        _iconMap.put(TO_ARROW, ed.getPortalIcon(TO_ARROW));
-        _iconMap.put(FROM_ARROW, ed.getPortalIcon(FROM_ARROW));
-        setFamily((ed.getPortalIconFamily()));
+        int deg = getDegrees();
+    	_iconMap = PositionableIcon.cloneMap(ed.getPortalIconMap(), this);
+    	if (!_regular) {
+    		NamedIcon a = _iconMap.get(TO_ARROW);
+    		NamedIcon b = _iconMap.get(FROM_ARROW);
+            _iconMap.put(FROM_ARROW, a);
+            _iconMap.put(TO_ARROW, b);
+    	}
+    	setScale(getScale());
+    	rotate(deg);
+        setIcon(_iconMap.get(HIDDEN));
     }
     
     public Positionable deepClone() {
@@ -69,16 +75,43 @@ public class PortalIcon extends jmri.jmrit.display.PositionableIcon implements j
     public Positionable finishClone(Positionable p) {
     	PortalIcon pos = (PortalIcon)p;
         pos._iconMap = cloneMap(_iconMap, pos);
+        pos._regular = _regular;
+        pos._hide = _hide;
+        pos._status = _status;
         return super.finishClone(p);
     }
     
     /**
-    * Place icon by its bean state name
-    */
-    public void setIcon(String name, NamedIcon icon) {
-        if (log.isDebugEnabled()) log.debug("\""+getName()+"\" put icon key= \""+name+"\" icon= "+icon);
+     * Called from EditPortalDirection frame in CircuitBuilder
+     */
+    protected void setIcon(String name, NamedIcon ic) {
+        if (log.isDebugEnabled()) log.debug(_portal.getName()+"/ put icon key= \""+name+"\" icon= "+ic);
+        NamedIcon icon = cloneIcon(ic, this);
+        icon.scale(getScale(), this);
+        icon.rotate(getDegrees(), this);
         _iconMap.put(name, icon);
-    }    
+    }
+    /**
+     * Called from EditPortalDirection frame in CircuitBuilder
+     */
+    public void setArrowOrientatuon(boolean set) {
+        if (log.isDebugEnabled()) log.debug(_portal.getName()+"/ setArrowOrientatuon regular="+set+" from "+_regular);
+    	_regular = set;
+    }
+    /**
+     * Called from EditPortalDirection frame in CircuitBuilder
+     */
+    public void setHideArrows(boolean set) {
+        if (log.isDebugEnabled()) log.debug(_portal.getName()+"/ setHideArrows hide="+set+" from "+_hide);
+    	_hide = set;
+    }
+    
+    public boolean getArrowSwitch() {
+    	return _regular;
+    }
+    public boolean getArrowHide() {
+    	return _hide;
+    }
 
     public Portal getPortal() {
         return _portal;
@@ -103,7 +136,7 @@ public class PortalIcon extends jmri.jmrit.display.PositionableIcon implements j
    }
 
     public void setStatus(String status) {
-        if (log.isDebugEnabled()) log.debug("\""+getName()+"\" setStatus("+status+") icon= "+_iconMap.get(status));
+        if (log.isDebugEnabled()) log.debug(_portal.getName()+"/ setStatus("+status+") regular="+_regular+" icon= "+_iconMap.get(status));
         setIcon(_iconMap.get(status));
         _status = status;
         updateSize();
@@ -122,10 +155,18 @@ public class PortalIcon extends jmri.jmrit.display.PositionableIcon implements j
     public void displayState(int state) {
     	switch (state) {
     		case 0x02:
-    	    	setStatus(TO_ARROW);
+    			if (_hide) {
+    				setStatus(HIDDEN);
+    			} else {
+        	    	setStatus(TO_ARROW);    				
+    			}
     			break;
     		case 0x04:
-    	    	setStatus(TO_ARROW);
+    			if (_hide) {
+    				setStatus(HIDDEN);
+    			} else {
+        	    	setStatus(FROM_ARROW);    				
+    			}
     			break;
     		case 0x10:
     	    	setStatus(VISIBLE);
@@ -142,85 +183,100 @@ public class PortalIcon extends jmri.jmrit.display.PositionableIcon implements j
     public void propertyChange(java.beans.PropertyChangeEvent e) {
         Object source = e.getSource();
         if (source instanceof Portal && "Direction".equals(e.getPropertyName())) {
-        	switch (((Integer)e.getNewValue()).intValue()) {
-        	case Portal.UNKNOWN:
+            if (_hide) {
         		setStatus(HIDDEN);
-        		break;
-    		case Portal.ENTER_TO_BLOCK:
-    			setStatus(TO_ARROW);
-    			break;
-    		case Portal.ENTER_FROM_BLOCK:
-    			setStatus(FROM_ARROW);
-    			break;
-    		}
-       	
+        		return;
+            }
+        	switch (((Integer)e.getNewValue()).intValue()) {
+        		case Portal.UNKNOWN:
+        			setStatus(HIDDEN);
+        			break;
+        		case Portal.ENTER_TO_BLOCK:
+        			setStatus(TO_ARROW);
+        			break;
+        		case Portal.ENTER_FROM_BLOCK:
+        			setStatus(FROM_ARROW);
+        			break;
+    		}      	
         }
     }
     
     public String getNameString() {
         return _portal.getDescription();
     }
-
-    public boolean setEditItemMenu(JPopupMenu popup) {
-        String txt = java.text.MessageFormat.format(Bundle.getMessage("EditItem"), Bundle.getMessage("portal"));
-        popup.add(new javax.swing.AbstractAction(txt) {
-                public void actionPerformed(ActionEvent e) {
-                    editItem();
-                }
-            });
+    
+    /*
+     * Disable popup items that apply to whole selection Group
+     * @see jmri.jmrit.display.PositionableLabel#doViemMenu()
+     */
+    public boolean doViemMenu() {
+        return false;
+    }    
+    private void setPositionableMenu(JPopupMenu popup) {
+        JCheckBoxMenuItem lockItem = new JCheckBoxMenuItem(Bundle.getMessage("LockPosition"));
+        lockItem.setSelected(!isPositionable());
+        lockItem.addActionListener(new ActionListener(){
+            Positionable comp;
+            JCheckBoxMenuItem checkBox;
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                comp.setPositionable(!checkBox.isSelected());
+            }
+            ActionListener init(Positionable pos, JCheckBoxMenuItem cb) {
+                comp = pos;
+                checkBox = cb; 
+                return this;
+            }
+        }.init(this, lockItem));
+        popup.add(lockItem);    	
+    }
+    private void setShowCoordinatesMenu(JPopupMenu popup) {
+    	JMenu edit = new JMenu(Bundle.getMessage("EditLocation"));
+        edit.add("x= " + getX());
+        edit.add("y= " + getY());
+        edit.add(CoordinateEdit.getCoordinateEditAction(this));
+        popup.add(edit);
+    }
+    private void setDisplayLevelMenu(JPopupMenu popup) {
+    	JMenu edit = new JMenu(Bundle.getMessage("EditLevel"));
+    	edit.add("level= " + getDisplayLevel());
+        edit.add(CoordinateEdit.getLevelEditAction(this));
+        popup.add(edit);
+    }
+    private void setRemoveMenu(JPopupMenu popup) {
+    	popup.add(new AbstractAction(Bundle.getMessage("Remove")) {
+            public void actionPerformed(ActionEvent e) { 
+                remove();
+             }
+    	});    	
+    }
+    
+    /*
+     * Use this call to set actions that will not effect whole selection Group
+     * @see jmri.jmrit.display.PositionableLabel#setEditItemMenu(javax.swing.JPopupMenu)
+     */
+    public boolean showPopUp(JPopupMenu popup) {
+        popup.add(getNameString());
+        setPositionableMenu(popup);
+        if (isPositionable()) {
+            setShowCoordinatesMenu(popup);
+        }
+        setDisplayLevelMenu(popup);
+        popup.addSeparator();
+        popup.add(CoordinateEdit.getScaleEditAction(this));
+        popup.add(CoordinateEdit.getRotateEditAction(this));
+        popup.addSeparator();
+        setRemoveMenu(popup);
         return true;
     }
-
-    protected void editItem() {
-        makePalettteFrame(java.text.MessageFormat.format(Bundle.getMessage("EditItem"), Bundle.getMessage("portal")));
-        _portalPanel = new PortalItemPanel(_paletteFrame, "Portal", _iconFamily, _editor);
-
-        ActionListener updateAction = new ActionListener() {
-            public void actionPerformed(ActionEvent a) {
-                updateItem();
-            }
-        };
-        // duplicate _iconMap map with unscaled and unrotated icons
-        HashMap<String, NamedIcon> map = new HashMap<String, NamedIcon>();
-        Iterator<Entry<String, NamedIcon>> it = _iconMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<String, NamedIcon> entry = it.next();
-            NamedIcon oldIcon = entry.getValue();
-            NamedIcon newIcon = cloneIcon(oldIcon, this);
-            newIcon.rotate(0, this);
-            newIcon.scale(1.0, this);
-            newIcon.setRotation(4, this);
-            map.put(entry.getKey(), newIcon);
-        }
-        _portalPanel.init(updateAction, map);
-        _paletteFrame.add(_portalPanel);
-        _paletteFrame.setLocationRelativeTo(this);
-        _paletteFrame.toFront();
-        _paletteFrame.pack();
-        _paletteFrame.setVisible(true);
+    public boolean setRotateMenu(JPopupMenu popup) {
+    	return false;
     }
-
-    void updateItem() {
-        HashMap<String, NamedIcon> iconMap = _portalPanel.getIconMap();
-        if (iconMap!=null) {
-        	HashMap<String, NamedIcon> oldMap = cloneMap(_iconMap, this);
-            Iterator<Entry<String, NamedIcon>> it = iconMap.entrySet().iterator();
-            while (it.hasNext()) {
-                Entry<String, NamedIcon> entry = it.next();
-                if (log.isDebugEnabled()) log.debug("key= "+entry.getKey());
-                NamedIcon newIcon = entry.getValue();
-                NamedIcon oldIcon = oldMap.get(entry.getKey());
-                newIcon.setLoad(oldIcon.getDegrees(), oldIcon.getScale(), this);
-                newIcon.setRotation(oldIcon.getRotation(), this);
-                setIcon(entry.getKey(), newIcon);
-            }
-        }   // otherwise retain current map
-//        jmri.jmrit.catalog.ImageIndexEditor.checkImageIndex();
-        _paletteFrame.dispose();
-        _paletteFrame = null;
-        _portalPanel.dispose();
-        _portalPanel = null;
-        setStatus(_status);
+    public boolean setScaleMenu(JPopupMenu popup) {
+    	return false;   	
     }
+    public boolean setEditItemMenu(JPopupMenu popup) {
+    	return false;
+    }
+    
     static Logger log = LoggerFactory.getLogger(PortalIcon.class.getName());
 }

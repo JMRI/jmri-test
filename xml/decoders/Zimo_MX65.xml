@@ -84,11 +84,7 @@
     </family>
     <programming direct="yes" paged="yes" register="yes" ops="yes"/>
     <variables>
-      <variable label="Primary Address" CV="1" comment="Short address" item="Short Address" default="03">
-        <shortAddressVal/>
-        <label>Primary Address</label>
-        <comment>Short address</comment>
-      </variable>
+      <xi:include href="http://jmri.org/xml/decoders/nmra/shortAndLongAddress.xml"/>
       <variable label="Vstart" CV="2" default="7" comment="Range 0-252">
         <decVal max="252"/>
         <label>Vstart</label>
@@ -126,11 +122,6 @@
         <decVal/>
         <label>Total PWM Period</label>
         <comment>Range 0/1-100/176-255</comment>
-      </variable>
-      <variable label="Long Address" CV="17" item="Extended Address" comment="4 digit address (Range 0001-9999)">
-        <longAddressVal/>
-        <label>Long Address</label>
-        <comment>4 digit address (Range 0001-9999)</comment>
       </variable>
       <variable label="Consist Address" CV="19" default="0" item="Consist Address" comment="Allows permanent storage of consist address. Range 0-127">
         <decVal/>
@@ -180,17 +171,6 @@
           </enumChoice>
         </enumVal>
         <label>Use Speed Table</label>
-      </variable>
-      <variable label="Addressing Mode" CV="29" mask="XXVXXXXX" item="Address Format">
-        <enumVal>
-          <enumChoice choice="2 digit addressing">
-            <choice>2 digit addressing</choice>
-          </enumChoice>
-          <enumChoice choice="4 digit addressing">
-            <choice>4 digit addressing</choice>
-          </enumChoice>
-        </enumVal>
-        <label>Addressing Mode</label>
       </variable>
       <variable label="FL(f) controls output 1" CV="33" default="1" mask="XXXXXXXV" minOut="1">
         <enumVal>
@@ -1313,7 +1293,7 @@
       <label label=" ">
         <label> </label>
       </label>
-      <display item="Sound Dependency" tooltip="CV 112, bit 0"/>
+      <display item="Sound Dependency"/>
     </column>
     <column>
       <label label="V model only">
@@ -1329,18 +1309,18 @@
       <label label=" ">
         <label> </label>
       </label>
-      <display item="Sound Loco Stopped" tooltip="CV 62"/>
-      <display item="Sound Lowest Speed" tooltip="CV 63"/>
-      <display item="Sound Maximum Speed" tooltip="CV 64"/>
+      <display item="Sound Loco Stopped"/>
+      <display item="Sound Lowest Speed"/>
+      <display item="Sound Maximum Speed"/>
     </column>
     <column>
-      <display item="Pulse Chain LGB-Sound" tooltip="CV 112, bit 7"/>
+      <display item="Pulse Chain LGB-Sound"/>
     </column>
     <name>Sound</name>
   </pane>
   <pane name="Motor II">
     <column>
-      <display item="Motor overload protection" tooltip="CV 112, bit 4"/>
+      <display item="Motor overload protection"/>
     </column>
     <name>Motor II</name>
   </pane>

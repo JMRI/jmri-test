@@ -7,6 +7,7 @@ import java.awt.event.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -46,6 +47,7 @@ public class EditPortalFrame extends jmri.util.JmriJFrame implements ListSelecti
     static Point _loc = null;
     static Dimension _dim = null;
 
+    /* Ctor for fix a portal error  */
     public EditPortalFrame(String title, CircuitBuilder parent, OBlock block, Portal portal, OBlock adjacent) {
     	this(title, parent, block, true);
     	_adjacentBlock = adjacent;
@@ -149,6 +151,7 @@ public class EditPortalFrame extends jmri.util.JmriJFrame implements ListSelecti
         _portalList.setCellRenderer(new PortalCellRenderer());
         _portalList.addListSelectionListener(this);
         portalPanel.add(new JScrollPane(_portalList));
+        _portalList.setPreferredSize(new Dimension(300,150));
 
         JButton clearButton = new JButton(Bundle.getMessage("buttonClearSelection"));
         clearButton.addActionListener(new ActionListener() {
@@ -335,6 +338,7 @@ public class EditPortalFrame extends jmri.util.JmriJFrame implements ListSelecti
         }
 
         ok = false;
+        ArrayList<OBlock> neighbors = new ArrayList<OBlock>();
         OBlockManager manager = InstanceManager.getDefault(jmri.jmrit.logix.OBlockManager.class);
         String[] sysNames = manager.getSystemNameArray();
         for (int j = 0; j < sysNames.length; j++) {
@@ -347,8 +351,7 @@ public class EditPortalFrame extends jmri.util.JmriJFrame implements ListSelecti
                         adjRect = comp.getBounds(adjRect);
                         if (iconIntersectsRect(icon, adjRect)) {
                             ok = true;
-                            _adjacentBlock = block;
-                            break;
+                            neighbors.add(block);
                         }
                     }
                 }
@@ -358,6 +361,29 @@ public class EditPortalFrame extends jmri.util.JmriJFrame implements ListSelecti
             msg = Bundle.getMessage("iconNotOnAdjacent", 
                        icon.getNameString(), _homeBlock.getDisplayName());
             return msg;
+        }
+        _adjacentBlock = neighbors.get(0);
+        if (neighbors.size()>1) {
+        	// show list
+        	String[] selects = new String[neighbors.size()];
+        	Iterator<OBlock> iter = neighbors.iterator();
+        	int i = 0;
+        	while (iter.hasNext()) {
+        		selects[i++] =  iter.next().getDisplayName();                			
+        	}
+        	Object select = JOptionPane.showInputDialog(this,Bundle.getMessage("multipleSelections", portal.getName()),
+        					Bundle.getMessage("questionTitle"), JOptionPane.QUESTION_MESSAGE, 
+        					null, selects, null);
+        	if (select !=null) {
+            	iter = neighbors.iterator();
+            	while (iter.hasNext()) {
+            		OBlock block = iter.next();
+            		if (((String)select).equals(block.getDisplayName())) {
+                        _adjacentBlock = block;
+                		break;
+            		}
+            	}
+        	}        	
         }
         if (portal.getToBlock()!=null && !_adjacentBlock.equals(portal.getToBlock())
                          && !_adjacentBlock.equals(portal.getFromBlock()) ) {
@@ -372,10 +398,29 @@ public class EditPortalFrame extends jmri.util.JmriJFrame implements ListSelecti
     * Called after click on portal icon
     */
     protected void checkPortalIconForUpdate(PortalIcon icon) {
-        if (!checkPortalIcon(icon)) {
-            return;
-        }
         Portal portal = icon.getPortal();
+        if (!checkPortalIcon(icon)) {
+        	if (_adjacentBlock==null) {
+                return;        		
+        	}
+        	String name = portal.getName();
+            int result = JOptionPane.showConfirmDialog(this, Bundle.getMessage("repositionPortal",
+            		name, _homeBlock.getDisplayName(), _adjacentBlock.getDisplayName()), Bundle.getMessage("makePortal"), JOptionPane.YES_NO_OPTION, 
+                            JOptionPane.QUESTION_MESSAGE);
+            if (result==JOptionPane.NO_OPTION) {
+            	return;
+            }
+        	// Change portal position to join different pair of blocks
+            portal.dispose();
+            PortalManager portalMgr = InstanceManager.getDefault(PortalManager.class);
+        	portal = portalMgr.createNewPortal(null, name);
+        	if (portal==null) {
+            	portal = portalMgr.providePortal(name);
+        	}
+            portal.setToBlock(_homeBlock, false);
+            portal.setFromBlock(_adjacentBlock, false);
+            icon.setPortal(portal);
+        }
         OBlock block = portal.getToBlock();
         if (block==null) {
             portal.setToBlock(_adjacentBlock, false);
@@ -399,37 +444,43 @@ public class EditPortalFrame extends jmri.util.JmriJFrame implements ListSelecti
                 }
             }
         }
-        // check for duplication
-        OBlock toBlock = portal.getToBlock();
-        OBlock fromBlock = portal.getFromBlock();
-        Portal p = null;
-        boolean duplicate = false;
-        java.util.List<Portal> list = toBlock.getPortals();
-        Iterator<Portal> iter = list.iterator();
-        while (iter.hasNext()) {
-        	p = iter.next();
-        	if (toBlock.equals(p.getToBlock())) {
-        		if (fromBlock.equals(p.getFromBlock())) {
-        			duplicate = true;
-        			break;
-        		}      		
-        	} else if (toBlock.equals(p.getFromBlock())) {
-        		if (fromBlock.equals(p.getToBlock())) {
-        			duplicate = true;
-        			break;
-        		}      		      		
-        	}
-        }
-        if (!portal.equals(p) && duplicate) {
-            JOptionPane.showMessageDialog(this, Bundle.getMessage("parallelPortal",
-            		portal.getName(), p.getName(),toBlock.getDisplayName(), fromBlock.getDisplayName()), 
-                    Bundle.getMessage("makePortal"), JOptionPane.INFORMATION_MESSAGE);
-        }        
+        
+        checkForDuplication(portal);
+        
         _parent._editor.highlight(icon);        
         _parent.getPortalIconMap().put(icon.getName(), icon);
+        clearListSelection();
         _portalListModel.dataChange();
     }
 
+    private void checkForDuplication(Portal portal) {
+        // check for duplication
+        OBlock toBlock = portal.getToBlock();
+        OBlock fromBlock = portal.getFromBlock();
+        java.util.List<Portal> list = toBlock.getPortals();
+        if (list.size()>0) {
+            Iterator<Portal> iter = list.iterator();
+            while (iter.hasNext()) {
+            	Portal p = iter.next();
+            	if (p.equals(portal)) {
+            		continue;
+            	}
+            	if ((toBlock.equals(p.getToBlock()) && fromBlock.equals(p.getFromBlock()) )
+            	        || (toBlock.equals(p.getFromBlock()) && fromBlock.equals(p.getToBlock()) ) ) {
+
+            	    notifyDuplicatePortal(portal, p, toBlock, fromBlock);
+            		break;
+            	}
+            }
+        }
+    }
+    
+    private void notifyDuplicatePortal(Portal primary, Portal secondary, OBlock toBlock, OBlock fromBlock) {
+        JOptionPane.showMessageDialog(this, Bundle.getMessage("parallelPortal",
+                primary.getName(), secondary.getName(),toBlock.getDisplayName(), fromBlock.getDisplayName()), 
+                Bundle.getMessage("makePortal"), JOptionPane.INFORMATION_MESSAGE);
+    }
+    
     private boolean changeBlock(OBlock block) {
         if (block.equals(_adjacentBlock)) {
             return false;     // no change
@@ -452,7 +503,6 @@ public class EditPortalFrame extends jmri.util.JmriJFrame implements ListSelecti
         if (log.isDebugEnabled()) log.debug("checkPortalIcons: "+_homeBlock.getDisplayName()+
                                             " has "+portals.size()+" portals, iconMap has "+
                                             iconMap.size()+" icons");
-        boolean close = true;
         for (int i=0; i<portals.size(); i++) {
         	PortalIcon icon = iconMap.get(portals.get(i).getName());
             if (icon==null) {
@@ -464,7 +514,7 @@ public class EditPortalFrame extends jmri.util.JmriJFrame implements ListSelecti
                 }
             }
         }
-        return close;
+        return true;
     }
     
     /**
@@ -522,16 +572,19 @@ public class EditPortalFrame extends jmri.util.JmriJFrame implements ListSelecti
 
     private void changePortalName() {
         Portal portal = (Portal)_portalList.getSelectedValue();
-        String oldName = portal.getName();
+        String oldName = null;
+        if (portal!=null) {
+            oldName = portal.getName();        	
+        }
         String name = _portalName.getText();
-        if (name==null || name.trim().length()==0 ) {
+        if (portal==null || name==null || name.trim().length()==0 ) {
             JOptionPane.showMessageDialog(this, Bundle.getMessage("changePortalName"), 
                             Bundle.getMessage("makePortal"), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        _parent.changePortalName(oldName, name);		// update maps
         String msg = portal.setName(name);
         if (msg==null) {
+            _parent.changePortalName(oldName, name);		// update maps
             _portalListModel.dataChange();
         } else {
             JOptionPane.showMessageDialog(this, msg, 
@@ -565,6 +618,7 @@ public class EditPortalFrame extends jmri.util.JmriJFrame implements ListSelecti
         _parent.removePortal(icon.getName());
         _parent.getCircuitIcons(_homeBlock).remove(icon);
         icon.remove();
+        _parent._editor.getSelectionGroup().remove(icon);
         _parent._editor.repaint();
     }
 
@@ -633,7 +687,9 @@ public class EditPortalFrame extends jmri.util.JmriJFrame implements ListSelecti
                 } else {
                     Portal portal = _homeBlock.getPortalByName(name);
                     if (portal==null) {
-                        portal = new Portal(_homeBlock, name, null);
+                    	PortalManager portalMgr = InstanceManager.getDefault(PortalManager.class);
+                    	portal = portalMgr.createNewPortal(null, name);
+                        portal.setToBlock(_homeBlock, false);
                         _portalListModel.dataChange();
                     }
                 	pi = new PortalIcon(_parent._editor, portal);

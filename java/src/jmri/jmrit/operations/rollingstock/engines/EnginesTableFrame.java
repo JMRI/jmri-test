@@ -4,11 +4,13 @@ package jmri.jmrit.operations.rollingstock.engines;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -27,6 +29,7 @@ import javax.swing.table.TableColumnModel;
 
 import jmri.jmrit.operations.OperationsFrame;
 import jmri.jmrit.operations.OperationsXml;
+import jmri.jmrit.operations.rollingstock.RollingStock;
 import jmri.jmrit.operations.rollingstock.cars.CarManagerXml;
 import jmri.jmrit.operations.setup.Control;
 import jmri.jmrit.operations.setup.Setup;
@@ -122,17 +125,28 @@ public class EnginesTableFrame extends OperationsFrame implements PropertyChange
 
 		// row 2
 		JPanel cp2 = new JPanel();
-		cp2.setBorder(BorderFactory.createTitledBorder(""));
+		cp2.setLayout(new BoxLayout(cp2, BoxLayout.X_AXIS));
+		
+		JPanel cp2Add = new JPanel();
+		cp2Add.setBorder(BorderFactory.createTitledBorder(""));
+		cp2Add.add(numEngines);
+		cp2Add.add(textEngines);
+		cp2Add.add(textSep1);
+		cp2Add.add(addButton);
+		cp2.add(cp2Add);
+		
+		JPanel cp2Find = new JPanel();
+		cp2Find.setBorder(BorderFactory.createTitledBorder(""));
 		findButton.setToolTipText(Bundle.getMessage("findEngine"));
 		findEngineTextBox.setToolTipText(Bundle.getMessage("findEngine"));
+		cp2Find.add(findButton);
+		cp2Find.add(findEngineTextBox);
+		cp2.add(cp2Find);
 
-		cp2.add(numEngines);
-		cp2.add(textEngines);
-		cp2.add(textSep1);
-		cp2.add(addButton);
-		cp2.add(saveButton);
-		cp2.add(findButton);
-		cp2.add(findEngineTextBox);
+		JPanel cp2Save = new JPanel();
+		cp2Save.setBorder(BorderFactory.createTitledBorder(""));
+		cp2Save.add(saveButton);
+		cp2.add(cp2Save);
 
 		// place controls in scroll pane
 		JPanel controlPanel = new JPanel();
@@ -249,7 +263,7 @@ public class EnginesTableFrame extends OperationsFrame implements PropertyChange
 		clearTableSort(enginesTable);
 	}
 
-	public List<String> getSortByList() {
+	public List<RollingStock> getSortByList() {
 		return enginesModel.getSelectedEngineList();
 	}
 

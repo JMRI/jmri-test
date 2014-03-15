@@ -46,10 +46,8 @@ public class JsonServer extends JmriServer {
                 try {
                     JsonServerManager.getJsonServer().stop();
                 } catch (Exception ex) {
-                    log.warn("ERROR shutting down JSON Server: " + ex.getLocalizedMessage());
-                    if (log.isDebugEnabled()) {
-                        log.debug("Details follow: ", ex);
-                    }
+                    log.warn("ERROR shutting down JSON Server: {}" + ex.getMessage());
+                    log.debug("Details follow: ", ex);
                 }
                 return true;
             }
@@ -90,7 +88,7 @@ public class JsonServer extends JmriServer {
                 // Read the command from the client
             } catch (IOException e) {
                 // attempt to close the connection and throw the exception
-                handler.onClose();
+                handler.dispose();
                 throw e;
             } catch (NoSuchElementException nse) {
                 // we get an NSE when we are finished with this client
@@ -98,7 +96,7 @@ public class JsonServer extends JmriServer {
                 break;
             }
         }
-        handler.onClose();
+        handler.dispose();
     }
 
     @Override

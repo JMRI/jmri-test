@@ -5,12 +5,22 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.util.Locale;
 import jmri.InstanceManager;
 import jmri.JmriException;
 import jmri.SignalMast;
 import jmri.jmris.AbstractSignalMastServer;
 import jmri.jmris.JmriConnection;
-import static jmri.jmris.json.JSON.*;
+import static jmri.jmris.json.JSON.ASPECT_DARK;
+import static jmri.jmris.json.JSON.ASPECT_HELD;
+import static jmri.jmris.json.JSON.CODE;
+import static jmri.jmris.json.JSON.DATA;
+import static jmri.jmris.json.JSON.ERROR;
+import static jmri.jmris.json.JSON.MESSAGE;
+import static jmri.jmris.json.JSON.NAME;
+import static jmri.jmris.json.JSON.SIGNAL_MAST;
+import static jmri.jmris.json.JSON.STATE;
+import static jmri.jmris.json.JSON.TYPE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,8 +33,8 @@ import org.slf4j.LoggerFactory;
  */
 public class JsonSignalMastServer extends AbstractSignalMastServer {
 
-    private JmriConnection connection;
-    private ObjectMapper mapper;
+    private final JmriConnection connection;
+    private final ObjectMapper mapper;
     static Logger log = LoggerFactory.getLogger(JsonSignalMastServer.class);
 
     public JsonSignalMastServer(JmriConnection connection) {
@@ -59,10 +69,10 @@ public class JsonSignalMastServer extends AbstractSignalMastServer {
 
     @Override
     public void parseStatus(String statusString) throws JmriException, IOException {
-        this.parseRequest(this.mapper.readTree(statusString).path(DATA));
+        this.parseRequest(Locale.getDefault(), this.mapper.readTree(statusString).path(DATA));
     }
 
-    public void parseRequest(JsonNode data) throws JmriException, IOException {
+    public void parseRequest(Locale locale, JsonNode data) throws JmriException, IOException {
         String name = data.path(NAME).asText();
         String state = data.path(STATE).asText();
         if ("".equals(state)) {  //if not passed, retrieve current and respond
@@ -75,7 +85,7 @@ public class JsonSignalMastServer extends AbstractSignalMastServer {
                     state = ASPECT_DARK;
                 }
                 this.sendStatus(name, state);
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 this.sendErrorStatus(name);
             }
         } else { //else set the aspect to the state passed in

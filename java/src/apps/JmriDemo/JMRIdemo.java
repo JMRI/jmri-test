@@ -2,15 +2,14 @@
 
 package apps.JmriDemo;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import apps.Apps;
-
 import java.text.MessageFormat;
-
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 import jmri.util.JmriJFrame;
 import jmri.util.swing.WindowInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The JMRI demo program.
@@ -43,7 +42,7 @@ public class JMRIdemo extends Apps {
     }
 
     protected String line1() {
-        return MessageFormat.format(rb.getString("JmriDemoVersionCredit"),
+        return MessageFormat.format(Bundle.getMessage("JmriDemoVersionCredit"),
                                 new Object[]{jmri.Version.name()});
     }
 
@@ -73,7 +72,7 @@ public class JMRIdemo extends Apps {
         // show splash screen early
         splash(true);
 
-        log.info(apps.Apps.startupInfo("JMRIdemo"));
+        Apps.setStartupInfo("JMRIdemo");
 
         setConfigFilename("JmriDemoConfig2.xml", args);
         JmriJFrame f = new JmriJFrame("JmriDemo");

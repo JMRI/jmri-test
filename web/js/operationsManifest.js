@@ -1,9 +1,15 @@
 //request data for specified trainId and display it as a manifest
+//expects url of form operationsManifest.html?trainid=3
+//if no trainid passed in, redirects to operationsTrains.html page to list available trains 
 var $getTrainData = function($trainId){
 	$.ajax({
 		url:  '/json/train/' + $trainId, //request proper url for train data
 		success: function($r, $s, $x) {
 			$buildManifest($r, $s, $x);  //handle returned data
+		},
+		error: function($r, $s, $x){
+		    $err = JSON && JSON.parse($r.responseText) || $.parseJSON($r.responseText);  //extract JMRI error message from responseText
+			$('div#displayArea').html("ERROR retrieving train data: " + $err.data.message).hide().show(); //put output on page (hide+show needed on Android to force redraw)
 		},
 		dataType: 'json' //<--dataType
 	});
@@ -18,6 +24,11 @@ var $buildManifest = function($r, $s, $x){
 	$train = $r.data;  //everything of interest is in the data element
 	$('#trainName').text($train.name+ " " + $train.description);
 	$('title').html('Train Manifest - ' + $('#trainName').text() + " - " + $('#railRoad').text());
+	
+	//insert a link to the Conductor window "frame"  Note: the Conductor window must already be opened on the server
+	$("div#operationsFooter").append(" <a href='/frame/Train%20Conductor%20(" + $train.name + ").html'>[Conductor]</td>");
+	$("div#operationsFooter").append(" <a href='#' onclick='location.reload(true);return false;'>[Refresh]</td>");
+
 	$h += "<ul class='manifest'>" + $train.name + " " + $train.description;
 	if ($train.comment !== "") {
 		$h += "<span class='comment'> - " + $train.comment+"</span>";
@@ -69,6 +80,13 @@ var $buildManifest = function($r, $s, $x){
 					"<span class='load hideable'>"+escapeHtml($c.load)+"</span> from "+
 					"<span class='trackName'>"+$c.locationTrack+ "</span></li>";
 					$pickups++;
+				} else if ($rl.id == $c.destination) { //setout
+					$hl += "  <li class='car setout'><span class='action'>Set out</span> "+
+					"<span class='roadNumber'>"+$c.road+" "+$c.number+"</span> "+
+					"<span class='description hideable'>"+$c.type+" "+$c.length+"' "+$c.color+" "+"</span> "+
+					"<span class='load hideable'>"+escapeHtml($c.load)+"</span> to "+
+					"<span class='trackName'>"+$c.destinationTrack+ "</span></li>";
+					$setouts++;
 				}
 			}
 		});

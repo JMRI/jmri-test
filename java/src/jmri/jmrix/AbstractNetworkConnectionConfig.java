@@ -22,7 +22,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JCheckBox;
 import java.util.Hashtable;
+
+import java.util.ResourceBundle;
 
 /**
  * Abstract base class for common implementation of the ConnectionConfig
@@ -31,6 +34,9 @@ import java.util.Hashtable;
  * @version	$Revision$
  */
 abstract public class AbstractNetworkConnectionConfig extends AbstractConnectionConfig implements jmri.jmrix.ConnectionConfig {
+
+    private final static ResourceBundle rb =  ResourceBundle.getBundle("jmri.jmrix.JmrixBundle");
+
 
     /**
      * Ctor for an object being created during load process
@@ -82,11 +88,43 @@ abstract public class AbstractNetworkConnectionConfig extends AbstractConnection
             public void keyPressed(KeyEvent keyEvent) {
             }
             public void keyReleased(KeyEvent keyEvent) {
-               try{
+                try{
                     adapter.setPort(Integer.parseInt(portField.getText()));
                 } catch (java.lang.NumberFormatException ex) {
                     log.warn("Could not parse port attribute");
                 }
+            }
+            public void keyTyped(KeyEvent keyEvent) {
+            }
+        });
+
+        adNameField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                adapter.setAdvertisementName(adNameField.getText());
+            }
+        });
+
+        adNameField.addKeyListener( new KeyListener() {
+            public void keyPressed(KeyEvent keyEvent) {
+            }
+            public void keyReleased(KeyEvent keyEvent) {
+                adapter.setAdvertisementName(adNameField.getText());
+            }
+            public void keyTyped(KeyEvent keyEvent) {
+            }
+        });
+
+        serviceTypeField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                adapter.setServiceType(serviceTypeField.getText());
+            }
+        });
+
+        serviceTypeField.addKeyListener( new KeyListener() {
+            public void keyPressed(KeyEvent keyEvent) {
+            }
+            public void keyReleased(KeyEvent keyEvent) {
+                adapter.setServiceType(serviceTypeField.getText());
             }
             public void keyTyped(KeyEvent keyEvent) {
             }
@@ -134,7 +172,7 @@ abstract public class AbstractNetworkConnectionConfig extends AbstractConnection
                     if(!adapter.getSystemConnectionMemo().setUserName(connectionNameField.getText())){
                         JOptionPane.showMessageDialog(null, "Connection Name " + connectionNameField.getText() + " is already assigned");
                         connectionNameField.setText(adapter.getSystemConnectionMemo().getUserName());
-                    }
+                    } 
                 }
                 public void focusGained(FocusEvent e){ }
             });
@@ -142,8 +180,23 @@ abstract public class AbstractNetworkConnectionConfig extends AbstractConnection
     }
 
     public void updateAdapter(){
-        adapter.setHostName(hostNameField.getText());
-        adapter.setPort(Integer.parseInt(portField.getText()));
+        if(adapter.getMdnsConfigure()) {
+           // set the hostname if it is not blank.
+           if(!(hostNameField.getText().equals("")))
+              adapter.setHostName(hostNameField.getText());
+           // set the advertisement name if it is not blank.
+           if(!(adNameField.getText().equals("")))
+              adapter.setAdvertisementName(adNameField.getText());
+           // set the Service Type if it is not blank.
+           if(!(serviceTypeField.getText().equals("")))
+              adapter.setServiceType(serviceTypeField.getText());
+           // and get the host IP and port number
+           // via mdns
+           adapter.autoConfigure();
+        } else {
+           adapter.setHostName(hostNameField.getText());
+           adapter.setPort(Integer.parseInt(portField.getText()));
+        }
         for(String i:options.keySet()){
             adapter.setOptionState(i, options.get(i).getItem());
         }
@@ -158,6 +211,13 @@ abstract public class AbstractNetworkConnectionConfig extends AbstractConnection
     protected JLabel hostNameFieldLabel;
     protected JTextField portField = new JTextField(10);
     protected JLabel portFieldLabel;
+
+    protected JCheckBox showAutoConfig = new JCheckBox(rb.getString("AutoConfigLabel"));
+    protected JTextField adNameField = new JTextField(15);
+    protected JLabel adNameFieldLabel;
+    protected JTextField serviceTypeField = new JTextField(15);
+    protected JLabel serviceTypeFieldLabel;
+
     protected jmri.jmrix.NetworkPortAdapter adapter = null;
 
     public jmri.jmrix.NetworkPortAdapter getAdapter() { return adapter; }
@@ -181,11 +241,12 @@ abstract public class AbstractNetworkConnectionConfig extends AbstractConnection
             String[] optionsAvailable = adapter.getOptions();
             options = new Hashtable<String, Option>();
             for(String i:optionsAvailable){
-                JComboBox opt = new JComboBox(adapter.getOptionChoices(i));
+		JComboBox opt = new JComboBox(adapter.getOptionChoices(i));
                 opt.setSelectedItem(adapter.getOptionState(i));
                 options.put(i, new Option(adapter.getOptionDisplayName(i), opt, adapter.isOptionAdvanced(i)));
             }
         }
+ 
 
         if(hostNameField.getActionListeners().length >0)
         	hostNameField.removeActionListener(hostNameField.getActionListeners()[0]);
@@ -197,18 +258,42 @@ abstract public class AbstractNetworkConnectionConfig extends AbstractConnection
         }
         NUMOPTIONS = NUMOPTIONS+options.size();
 
-        portField.setToolTipText("Port address setting of the TCP Connection");
-        portField.setEnabled(true);
-        
         hostNameField.setText(adapter.getHostName());
-        hostNameFieldLabel = new JLabel("IP Address: ");
+        hostNameFieldLabel = new JLabel(rb.getString("HostFieldLabel"));
+        hostNameField.setToolTipText(rb.getString("HostFieldToolTip"));
         if(adapter.getHostName()==null || adapter.getHostName().equals("") ){
             hostNameField.setText(p.getComboBoxLastSelection(adapter.getClass().getName()+".hostname"));
             adapter.setHostName(hostNameField.getText());
         }
-        portField.setText(""+adapter.getPort());
-        
-        portFieldLabel = new JLabel("TCP/UDP Port:");
+
+        portField.setToolTipText(rb.getString("PortFieldToolTip"));
+        portField.setEnabled(true);
+        portField.setText(""+adapter.getPort());        
+        portFieldLabel = new JLabel(rb.getString("PortFieldLabel"));
+
+        adNameField.setToolTipText(rb.getString("AdNameFieldToolTip"));
+        adNameField.setEnabled(false);
+        adNameField.setText(""+adapter.getAdvertisementName());        
+        adNameFieldLabel = new JLabel(rb.getString("AdNameFieldLabel"));
+        adNameFieldLabel.setEnabled(false);
+
+        serviceTypeField.setToolTipText(rb.getString("ServiceTypeFieldToolTip"));
+        serviceTypeField.setEnabled(false);
+        serviceTypeField.setText(""+adapter.getServiceType());        
+        serviceTypeFieldLabel = new JLabel(rb.getString("ServiceTypeFieldLabel"));
+        serviceTypeFieldLabel.setEnabled(false);
+
+        showAutoConfig.setFont(showAutoConfig.getFont().deriveFont(9f));
+        showAutoConfig.setForeground(Color.blue);
+        showAutoConfig.addItemListener(
+            new ItemListener() {
+                public void itemStateChanged(ItemEvent e){
+                    setAutoNetworkConfig();
+                }
+            });
+        showAutoConfig.setSelected(adapter.getMdnsConfigure());
+        setAutoNetworkConfig();
+
         showAdvanced.setFont(showAdvanced.getFont().deriveFont(9f));
         showAdvanced.setForeground(Color.blue);
         showAdvanced.addItemListener(
@@ -266,7 +351,25 @@ abstract public class AbstractNetworkConnectionConfig extends AbstractConnection
                 _details.add(portField);
                 i++;
             }
-            for(String item:options.keySet()){
+ 
+            if(showAutoConfig.isSelected()){
+                cR.gridy = i;
+                cL.gridy = i;
+                gbLayout.setConstraints(adNameFieldLabel, cL);
+                gbLayout.setConstraints(adNameField, cR);
+                _details.add(adNameFieldLabel);
+                _details.add(adNameField);
+                i++;
+                cR.gridy = i;
+                cL.gridy = i;
+                gbLayout.setConstraints(serviceTypeFieldLabel, cL);
+                gbLayout.setConstraints(serviceTypeField, cR);
+                _details.add(serviceTypeFieldLabel);
+                _details.add(serviceTypeField);
+                i++;
+            }
+ 
+           for(String item:options.keySet()){
                 if(options.get(item).isAdvanced()){
                     cR.gridy = i;
                     cL.gridy = i;
@@ -294,6 +397,16 @@ abstract public class AbstractNetworkConnectionConfig extends AbstractConnection
     }
     
     protected int addStandardDetails(boolean incAdvanced, int i){
+
+        if(isAutoConfigPossible()) {
+            cR.gridy = i;
+            cL.gridy = i;
+            gbLayout.setConstraints(showAutoConfig, cR);
+            _details.add(showAutoConfig);
+            _details.add(showAutoConfig);
+            i++;
+        }
+
         if(!isHostNameAdvanced()){
             cR.gridy = i;
             cL.gridy = i;
@@ -319,6 +432,19 @@ abstract public class AbstractNetworkConnectionConfig extends AbstractConnection
     public boolean isHostNameAdvanced() { return false; }
     public boolean isPortAdvanced() { return true; }
 
+    public boolean isAutoConfigPossible() { return false; }
+
+    public void setAutoNetworkConfig(){
+       if(showAutoConfig.isSelected()) {
+          portField.setEnabled(false);
+          portFieldLabel.setEnabled(false);
+          adapter.setMdnsConfigure(true);
+       } else { 
+          portField.setEnabled(true);
+          portFieldLabel.setEnabled(true);
+          adapter.setMdnsConfigure(false);
+       }
+    }
     
     public String getManufacturer() { return adapter.getManufacturer(); }
     public void setManufacturer(String manufacturer) { adapter.setManufacturer(manufacturer); }

@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="../XSLT/decoder.xsl"?>
 <!-- Copyright (C) JMRI 2003, 2004, 2005 All rights reserved -->
 <!-- See the COPYING file for more information on licensing and appropriate use -->
@@ -11,9 +11,7 @@
     </family>
     <programming direct="byteOnly" paged="yes" register="yes" ops="no"/>
     <variables>
-      <variable label="Primary Address" CV="1" comment="Short address" item="Short Address" default="03">
-        <shortAddressVal/>
-      </variable>
+      <xi:include href="http://jmri.org/xml/decoders/nmra/shortAddressOnly.xml"/>
       <variable label="Version ID" CV="7" readOnly="yes" item="Decoder Version" default="0">
         <decVal/>
       </variable>

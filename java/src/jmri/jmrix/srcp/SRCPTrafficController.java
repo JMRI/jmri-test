@@ -33,12 +33,17 @@ import jmri.jmrix.srcp.parser.SRCPClientVisitor;
  * @version $Revision$
  */
 public class SRCPTrafficController extends AbstractMRTrafficController
-	implements SRCPInterface {
+	implements SRCPInterface,jmri.ShutDownTask {
 
     protected SRCPSystemConnectionMemo _memo = null;
 
     public SRCPTrafficController() {
         super();
+        try {
+           jmri.InstanceManager.shutDownManagerInstance().register(this);
+        } catch(java.lang.NullPointerException npe) {
+           if(log.isDebugEnabled()) log.debug("attempted to register shutdown task, but shutdown manager is null");
+        }
     }
 
     // The methods to implement the SRCPInterface
@@ -80,139 +85,110 @@ public class SRCPTrafficController extends AbstractMRTrafficController
 	if(log.isDebugEnabled()) log.debug("SRCP receiveLoop starts");
 	SRCPClientParser parser = new SRCPClientParser(istream);
         while(true){
-              try {
-                  SimpleNode e;
-                  if(mode==HANDSHAKEMODE)
-			e=parser.handshakeresponse();
-		  else
-			e=parser.inforesponse();
+           try {
+               SimpleNode e;
+               if(mode==HANDSHAKEMODE)
+                  e=parser.handshakeresponse();
+               else
+                  e=parser.commandresponse();
 		  
-                  // forward the message to the registered recipients,
-                  // which includes the communications monitor
-                  // return a notification via the Swing event queue to ensure proper thread
-                  Runnable r = new SRCPRcvNotifier(e, mLastSender, this);
-                  try {
-                     javax.swing.SwingUtilities.invokeAndWait(r);
-                  } catch (Exception ex) {
-                     log.error("Unexpected exception in invokeAndWait:" +ex);
-                     ex.printStackTrace();
-                  }
-                  if (log.isDebugEnabled()) log.debug("dispatch thread invoked");
-		  
-                  if (e.toString().equals("GO")) mode=RUNMODE;
+               // forward the message to the registered recipients,
+               // which includes the communications monitor
+               // return a notification via the Swing event queue to ensure proper thread
+               Runnable r = new SRCPRcvNotifier(e, mLastSender, this);
+               try {
+                  javax.swing.SwingUtilities.invokeAndWait(r);
+               } catch (Exception ex) {
+                  log.error("Unexpected exception in invokeAndWait:" +ex);
+                  ex.printStackTrace();
+               }
+               if (log.isDebugEnabled()) log.debug("dispatch thread invoked");
+	
+               log.debug("Mode " + mode + " child contains " + 
+                          ((SimpleNode)e.jjtGetChild(1)).jjtGetValue());	  
+               if (mode==HANDSHAKEMODE && ((String)((SimpleNode)e.jjtGetChild(1)).jjtGetValue()).contains("GO")) mode=RUNMODE;
 
-                  SRCPClientVisitor v = new SRCPClientVisitor();
-                  e.jjtAccept(v,_memo);
+               SRCPClientVisitor v = new SRCPClientVisitor();
+               e.jjtAccept(v,_memo);
           
-          // we need to re-write the switch below so that it uses the 
-          // SimpleNode values instead of the reply message.            
-          SRCPReply msg=new SRCPReply(e);
+               // we need to re-write the switch below so that it uses the 
+               // SimpleNode values instead of the reply message.            
+               //SRCPReply msg = new SRCPReply((SimpleNode)e.jjtGetChild(1));
 
-          if (!msg.isUnsolicited()) {
-            // effect on transmit:
-            switch (mCurrentState) {
-            case WAITMSGREPLYSTATE: {
-                // check to see if the response was an error message we want
-                // to automatically handle by re-queueing the last sent
-                // message, otherwise go on to the next message
-                if(msg.isRetransmittableErrorMsg()){
-                  if(log.isDebugEnabled())
-                        log.debug("Automatic Recovery from Error Message: +msg.toString()");
-                   synchronized (xmtRunnable) {
-                       mCurrentState = AUTORETRYSTATE;
-                       replyInDispatch = false;
-                       xmtRunnable.notify();
-                   }
-                } else {
-                   // update state, and notify to continue
-                   synchronized (xmtRunnable) {
-                       mCurrentState = NOTIFIEDSTATE;
-                       replyInDispatch = false;
-                       xmtRunnable.notify();
-                   }
-                }
-                break;
-            }
-
-            case WAITREPLYINPROGMODESTATE: {
-                // entering programming mode
-                mCurrentMode = PROGRAMINGMODE;
-                replyInDispatch = false;
-
-                // check to see if we need to delay to allow decoders to become
-                // responsive
-                int warmUpDelay = enterProgModeDelayTime();
-                if (warmUpDelay != 0) {
-                    try {
-                        synchronized (xmtRunnable) {
-                            xmtRunnable.wait(warmUpDelay);
-                        }
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt(); // retain if needed later
-                    }
-                }
-                // update state, and notify to continue
-                synchronized (xmtRunnable) {
-                    mCurrentState = OKSENDMSGSTATE;
-                    xmtRunnable.notify();
-                }
-                break;
-            }
-            case WAITREPLYINNORMMODESTATE: {
-                // entering normal mode
-                mCurrentMode = NORMALMODE;
-                replyInDispatch = false;
-                // update state, and notify to continue
-                synchronized (xmtRunnable) {
-                    mCurrentState = OKSENDMSGSTATE;
-                    xmtRunnable.notify();
-                }
-                break;
-            }
-            default: {
-                replyInDispatch = false;
-                if (allowUnexpectedReply == true) {
-                    if (log.isDebugEnabled())
-                        log.debug("Allowed unexpected reply received in state: "
-                                  + mCurrentState   + " was " + msg.toString());
-                   synchronized (xmtRunnable) {
-                       // The transmit thread sometimes gets stuck
-                       // when unexpected replies are received.  Notify
-                       // it to clear the block without a timeout.
-                       // (do not change the current state)
-                       //if(mCurrentState!=IDLESTATE)
+               switch (mCurrentState) {
+                  case WAITMSGREPLYSTATE: {
+                      // update state, and notify to continue
+                      synchronized (xmtRunnable) {
+                          mCurrentState = NOTIFIEDSTATE;
+                          replyInDispatch = false;
                           xmtRunnable.notify();
-                   }
-                } else {
-                    log.error("reply complete in unexpected state: "
-                              + mCurrentState + " was " + msg.toString());
-                }
-            }
-            }
-            // Unsolicited message
-        } else {
-            if(log.isDebugEnabled()) log.debug("Unsolicited Message Received "
-                                               + msg.toString());
+                      }
+                      break;
+                  }
 
-            replyInDispatch = false;
-        }
+                  case WAITREPLYINPROGMODESTATE: {
+                     // entering programming mode
+                     mCurrentMode = PROGRAMINGMODE;
+                     replyInDispatch = false;
+
+                     // check to see if we need to delay to allow decoders 
+                     // to become responsive
+                     int warmUpDelay = enterProgModeDelayTime();
+                     if (warmUpDelay != 0) {
+                         try {
+                             synchronized (xmtRunnable) {
+                                 xmtRunnable.wait(warmUpDelay);
+                             }
+                         } catch (InterruptedException ex) {
+                             Thread.currentThread().interrupt(); // retain if needed later
+                         }
+                      }
+                      // update state, and notify to continue
+                      synchronized (xmtRunnable) {
+                         mCurrentState = OKSENDMSGSTATE;
+                         xmtRunnable.notify();
+                      }
+                      break;
+                  }
+                  case WAITREPLYINNORMMODESTATE: {
+                     // entering normal mode
+                     mCurrentMode = NORMALMODE;
+                     replyInDispatch = false;
+                     // update state, and notify to continue
+                     synchronized (xmtRunnable) {
+                         mCurrentState = OKSENDMSGSTATE;
+                         xmtRunnable.notify();
+                     }
+                     break;
+                  }
+                  default: {
+                     replyInDispatch = false;
+                     if (allowUnexpectedReply == true) {
+                         if (log.isDebugEnabled())
+                             log.debug("Allowed unexpected reply received in state: " + 
+                                       mCurrentState   + " was " + 
+                                       e.toString());
+                                    
+                          synchronized (xmtRunnable) {
+                             // The transmit thread sometimes gets stuck
+                             // when unexpected replies are received.  Notify
+                             // it to clear the block without a timeout.
+                             // (do not change the current state)
+                             xmtRunnable.notify();
+                         }
+                     } else {
+                         log.error("reply complete in unexpected state: "
+                                   + mCurrentState + " was " + e.toString());
+                     }
+                  }
+               }
  
-
-
-
-              } catch (ParseException pe){
-              /*     if(log.isDebugEnabled())
-                   {
-		      log.debug("Parse Exception");
-                      pe.printStackTrace();
-                   }
-                   outstream.writeBytes("425 ERROR not supported\n");
-              } catch (java.io.IOException e) {*/
+            } catch (ParseException pe){
                 rcvException = true;
                 reportReceiveLoopException(pe);
                 break;
-              } catch (Exception e1) {
-                log.error("Exception in receive loop: "+e1);
+            } catch (Exception e1) {
+                   log.error("Exception in receive loop: "+e1);
                 e1.printStackTrace();
             }
         }
@@ -326,6 +302,28 @@ public class SRCPTrafficController extends AbstractMRTrafficController
         }
     }
 
+
+    /**
+     * Take the necessary action.
+     * @return true if the shutdown should continue, false
+     * to abort.
+     */
+    public boolean execute(){
+       // notify the server we are exiting.
+       sendSRCPMessage(new SRCPMessage("TERM 0 SESSION"),null);
+       // the server will send a reply of "101 INFO 0 SESSION <id>.
+       // but we aren't going to wait for the reply.
+       return true;
+    }
+
+    /**
+     * Name to be provided to the user
+     * when information about this task is presented.
+     */
+    public String name(){
+       return SRCPTrafficController.class.getName();
+    }
+
     /**
      * Internal class to remember the Reply object and destination
      * listener with a reply is received.
@@ -336,7 +334,9 @@ public class SRCPTrafficController extends AbstractMRTrafficController
         SRCPTrafficController mTC;
         SRCPRcvNotifier(SimpleNode n, AbstractMRListener pDest,
                     AbstractMRTrafficController pTC) {
-            e=n;
+            // the first child of n in the parse tree is
+            // the response, without the timestamp
+            e=(SimpleNode)n.jjtGetChild(1);
             mDest = (SRCPListener) pDest;
             mTC = (SRCPTrafficController) pTC;
         }
@@ -345,7 +345,6 @@ public class SRCPTrafficController extends AbstractMRTrafficController
             mTC.notifyReply(e, mDest);
         }
     } // SRCPRcvNotifier
-
 
     static Logger log = LoggerFactory.getLogger(SRCPTrafficController.class.getName());
 }

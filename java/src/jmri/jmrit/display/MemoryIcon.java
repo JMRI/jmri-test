@@ -217,7 +217,7 @@ public class MemoryIcon extends PositionableLabel implements java.beans.Property
             return true;
         }  // end of selectable
         if(re!=null){
-            popup.add(new AbstractAction("Open Throttle") {
+            popup.add(new AbstractAction(Bundle.getMessage("OpenThrottle")) {
                 public void actionPerformed(ActionEvent e) {
                     ThrottleFrame tf = ThrottleFrameManager.instance().createThrottleFrame();
                     tf.toFront();
@@ -243,7 +243,7 @@ public class MemoryIcon extends PositionableLabel implements java.beans.Property
                             }
                         });
                         if(at.getStatus()==jmri.jmrit.dispatcher.ActiveTrain.DONE){
-                            popup.add(new AbstractAction("Restart") {
+                            popup.add(new AbstractAction(Bundle.getMessage("MenuRestartTrain")) {
                                 public void actionPerformed(ActionEvent e) {
                                     at.allocateAFresh();
                                 }
@@ -303,20 +303,26 @@ public class MemoryIcon extends PositionableLabel implements java.beans.Property
             re=null;
         }
 		Object key = getMemory().getValue();
+        displayState(key);
+    }
+    protected void displayState(Object key){
 		if (key != null) {
 		    if (map == null) {
                 Object val = key;
 		        // no map, attempt to show object directly
                 if (val instanceof jmri.jmrit.roster.RosterEntry){
                     jmri.jmrit.roster.RosterEntry roster = (jmri.jmrit.roster.RosterEntry) val;
-                    val = updateMemoryFromRosterVal(roster);
+                    val = updateIconFromRosterVal(roster);
                     flipRosterIcon = false;
                     if(val == null)
                         return;
                 }
                 if (val instanceof String) {
                     String str = (String)val;
+                    _icon = false;
+                    _text = true;
                     setText(str);
+                    setIcon(null);
                     if (log.isDebugEnabled()) log.debug("String str= \""+str+"\" str.trim().length()= "+str.trim().length()+
                                                         ", maxWidth()= "+maxWidth()+", maxHeight()= "+maxHeight());
                     /*  MemoryIconTest says empty strings should show blank */
@@ -336,19 +342,17 @@ public class MemoryIcon extends PositionableLabel implements java.beans.Property
                         }
                     }
                     _editor.setAttributes(getPopupUtility(), this, false);
-                    _icon = false;
-                    _text = true;
                 } else if (val instanceof javax.swing.ImageIcon) {
-                    setIcon((javax.swing.ImageIcon) val);
-                    setText(null);
                     _icon = true;
                     _text = false;
+                    setIcon((javax.swing.ImageIcon) val);
+                    setText(null);
                 } else if (val instanceof Number) {
-                    setText(val.toString());
-                    setIcon(null);
                     _icon = false;
                     _text = true;
-                } else log.warn("can't display current value of "+namedMemory.getName()+
+                    setText(val.toString());
+                    setIcon(null);
+                } else log.warn("can't display current value of "+getNameString()+
                                 ", val= "+val+" of Class "+val.getClass().getName());
 		    } else {
 		        // map exists, use it
@@ -359,23 +363,23 @@ public class MemoryIcon extends PositionableLabel implements java.beans.Property
 				    super.setIcon(newicon);
 			    } else {
 			        // no match, use default
-		            setIcon(defaultIcon);
-                    setText(null);
                     _icon = true;
                     _text = false;
+		            setIcon(defaultIcon);
+                    setText(null);
 			    }
 		    }
 		} else {
-            if (log.isDebugEnabled()) log.debug("memory null");
-            setIcon(defaultIcon);
-            setText(null);
+            if (log.isDebugEnabled()) log.debug("object null");
             _icon = true;
             _text = false;
+            setIcon(defaultIcon);
+            setText(null);
         }
         updateSize();
     }
     
-    protected Object updateMemoryFromRosterVal(RosterEntry roster){
+    protected Object updateIconFromRosterVal(RosterEntry roster){
         re=roster;
         javax.swing.ImageIcon icon = jmri.InstanceManager.rosterIconFactoryInstance().getIcon(roster);
         if(icon.getIconWidth()==-1 || icon.getIconHeight()==-1){
@@ -487,7 +491,8 @@ public class MemoryIcon extends PositionableLabel implements java.beans.Property
     }
 
     public void dispose() {
-        getMemory().removePropertyChangeListener(this);
+        if(getMemory()!=null)
+            getMemory().removePropertyChangeListener(this);
         namedMemory = null;
         if(re!=null){
             jmri.InstanceManager.throttleManagerInstance().removeListener(re.getDccLocoAddress(), this);
@@ -530,8 +535,7 @@ public class MemoryIcon extends PositionableLabel implements java.beans.Property
     
     protected boolean flipRosterIcon = false;
     
-    protected void addRosterToMemory(RosterEntry roster){
-        
+    protected void addRosterToIcon(RosterEntry roster){
         Object[] options = {"Facing West",
                     "Facing East",
                     "Do Not Add"};
@@ -550,12 +554,18 @@ public class MemoryIcon extends PositionableLabel implements java.beans.Property
         if(n==0) {
             flipRosterIcon = true;
         }
-        if(getMemory().getValue()==roster){
+        if(getValue()==roster){
             //No change in the loco but a change in direction facing might have occured
-             updateMemoryFromRosterVal(roster);
+             updateIconFromRosterVal(roster);
         } else {
             setValue(roster);
         }
+    }
+    
+    protected Object getValue(){
+        if(getMemory()==null)
+            return null;
+        return getMemory().getValue();
     }
     
     protected void setValue(Object val){
@@ -579,7 +589,7 @@ public class MemoryIcon extends PositionableLabel implements java.beans.Property
             try {
                 ArrayList<RosterEntry> REs = RosterEntrySelection.getRosterEntries(t);
                 for (RosterEntry roster : REs) {
-                    addRosterToMemory(roster);
+                    addRosterToIcon(roster);
                 }
             } catch(java.awt.datatransfer.UnsupportedFlavorException e){
                 log.error(e.getLocalizedMessage(), e);

@@ -13,7 +13,9 @@ import java.beans.PropertyChangeListener;
  *
  * @author    Howard G. Penny   Copyright (C) 2005
  * @version   $Revision$
+ * @deprecated since 3.7.1
  */
+@Deprecated // since 3.7.1
 public class IndexedComboCheckBox extends JCheckBox {
 
     IndexedComboCheckBox(JComboBox box, IndexedEnumVariableValue var) {
@@ -21,6 +23,7 @@ public class IndexedComboCheckBox extends JCheckBox {
         _var = var;
         _box = box;
         setBackground(_var._value.getBackground());
+        setOpaque(true);
         // listen for changes to ourself
         addActionListener(l1 = new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {

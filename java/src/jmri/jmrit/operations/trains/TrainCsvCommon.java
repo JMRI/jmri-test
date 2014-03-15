@@ -3,10 +3,11 @@
 package jmri.jmrit.operations.trains;
 
 import java.io.PrintWriter;
-
 import jmri.jmrit.operations.rollingstock.cars.Car;
 import jmri.jmrit.operations.rollingstock.engines.Engine;
 import jmri.jmrit.operations.routes.RouteLocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Contains the csv operators for manifests and switch lists
@@ -54,17 +55,22 @@ public class TrainCsvCommon extends TrainCommon {
 	
 	// switch list specific operators
 	protected final static String DL = "DL"+DEL+Bundle.getMessage("csvDepartureLocationName")+DEL; // NOI18N
+	protected final static String END = "END"+DEL+Bundle.getMessage("csvEnd")+DEL; // NOI18N
 	protected final static String ETA = "ETA"+DEL+Bundle.getMessage("csvExpectedTimeArrival")+DEL; // NOI18N
 	protected final static String ETE = "ETE"+DEL+Bundle.getMessage("csvEstimatedTimeEnroute")+DEL; // NOI18N
 	protected final static String NCPU = "NCPU"+DEL+Bundle.getMessage("csvNoCarPickUp"); // NOI18N
 	protected final static String NCSO = "NCSO"+DEL+Bundle.getMessage("csvNoCarSetOut"); // NOI18N
+	protected final static String SWL = "SWL"+DEL+Bundle.getMessage("csvSwitchList")+DEL; // NOI18N
+	protected final static String SWLC = "SWLC"+DEL+Bundle.getMessage("csvSwitchListComment")+DEL; // NOI18N
 	protected final static String TA = "TA"+DEL+Bundle.getMessage("csvTrainArrives")+DEL; // NOI18N
 	protected final static String TDC = "TDC"+DEL+Bundle.getMessage("csvTrainChangesDirection")+DEL; // NOI18N
 	protected final static String TIR = "TIR"+DEL+Bundle.getMessage("csvTrainInRoute"); // NOI18N
 	protected final static String TDONE = "TDONE"+DEL+Bundle.getMessage("csvTrainHasAlreadyServiced"); // NOI18N	
 	protected final static String VN = "VN"+DEL+Bundle.getMessage("csvVisitNumber")+DEL; // NOI18N
-	
-	protected void fileOutCsvCar(PrintWriter fileOut, Car car, String operation){
+
+        private final static Logger log = LoggerFactory.getLogger(TrainCsvCommon.class);
+
+	protected void fileOutCsvCar(PrintWriter fileOut, Car car, String operation, int count){
 		// check for delimiter in names
       	String carRoad = car.getRoadName();
     	if (carRoad.contains(DEL)){
@@ -126,6 +132,16 @@ public class TrainCsvCommon extends TrainCommon {
     		log.debug("Car ("+car.toString()+") has delimiter in RWE destination track field: "+carRWETrackName);
     		carRWETrackName = ESC+carRWETrackName+ESC;
     	}
+      	String carFinalDestinationName = car.getFinalDestinationName();
+      	if (carFinalDestinationName.contains(DEL)){
+    		log.debug("Car ("+car.toString()+") has delimiter in final destination field: "+carFinalDestinationName);
+    		carFinalDestinationName = ESC+carFinalDestinationName+ESC;
+    	}
+     	String carFinalDestinationTrackName = car.getFinalDestinationTrackName();
+      	if (carFinalDestinationTrackName.contains(DEL)){
+    		log.debug("Car ("+car.toString()+") has delimiter in final destination track field: "+carFinalDestinationTrackName);
+    		carFinalDestinationTrackName = ESC+carFinalDestinationTrackName+ESC;
+    	}
 
 		addLine(fileOut, operation 
 				+DEL+carRoad
@@ -148,7 +164,11 @@ public class TrainCsvCommon extends TrainCommon {
 				+DEL+(car.isHazardous()?"H":"")
 				+DEL+ESC+car.getRfid()+ESC
 				+DEL+carRWEDestName
-				+DEL+carRWETrackName);
+				+DEL+carRWETrackName
+				+DEL+(car.isUtility()?"U":"")
+				+DEL+count
+				+DEL+carFinalDestinationName
+				+DEL+carFinalDestinationTrackName);
 	}
 	
 	protected void fileOutCsvEngine(PrintWriter fileOut, Engine engine, String operation){	

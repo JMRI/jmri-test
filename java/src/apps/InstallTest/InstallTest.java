@@ -2,14 +2,10 @@
 
 package apps.InstallTest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import apps.AppConfigPanel;
 import apps.Apps;
-
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
@@ -17,8 +13,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import jmri.util.JmriJFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The JMRI application for testing JMRI installation.
@@ -64,7 +61,7 @@ public class InstallTest extends Apps {
     }
 
     protected String line1() {
-        return MessageFormat.format(rb.getString("InstallTestVersionCredit"),
+        return MessageFormat.format(Bundle.getMessage("InstallTestVersionCredit"),
                                 new Object[]{jmri.Version.name()});
     }
 
@@ -77,35 +74,35 @@ public class InstallTest extends Apps {
         j.setLayout(new BoxLayout(j, BoxLayout.Y_AXIS));
         j.add(super.statusPanel());
 
-        Action serviceprog = new jmri.jmrit.symbolicprog.tabbedframe.PaneProgAction(rb.getString("DpButtonUseProgrammingTrack"));
-        Action opsprog = new jmri.jmrit.symbolicprog.tabbedframe.PaneOpsProgAction(rb.getString("DpButtonProgramOnMainTrack"));
-        Action quit = new AbstractAction(rb.getString("MenuItemQuit")){
+        Action serviceprog = new jmri.jmrit.symbolicprog.tabbedframe.PaneProgAction(Bundle.getMessage("DpButtonUseProgrammingTrack"));
+        Action opsprog = new jmri.jmrit.symbolicprog.tabbedframe.PaneOpsProgAction(Bundle.getMessage("DpButtonProgramOnMainTrack"));
+        Action quit = new AbstractAction(Bundle.getMessage("MenuItemQuit")){
                 public void actionPerformed(ActionEvent e) {
 					Apps.handleQuit();
                 }
             };
 
         // Buttons
-        JButton b1 = new JButton(rb.getString("DpButtonUseProgrammingTrack"));
+        JButton b1 = new JButton(Bundle.getMessage("DpButtonUseProgrammingTrack"));
         b1.addActionListener(serviceprog);
         b1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         j.add(b1);
         if (jmri.InstanceManager.programmerManagerInstance()==null ||
             !jmri.InstanceManager.programmerManagerInstance().isGlobalProgrammerAvailable()) {
             b1.setEnabled(false);
-            b1.setToolTipText(rb.getString("MsgServiceButtonDisabled"));
+            b1.setToolTipText(Bundle.getMessage("MsgServiceButtonDisabled"));
         }
-        JButton m1 = new JButton(rb.getString("DpButtonProgramOnMainTrack"));
+        JButton m1 = new JButton(Bundle.getMessage("DpButtonProgramOnMainTrack"));
         m1.addActionListener(opsprog);
         m1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         j.add(m1);
         if (jmri.InstanceManager.programmerManagerInstance()==null ||
             !jmri.InstanceManager.programmerManagerInstance().isAddressedModePossible()) {
             m1.setEnabled(false);
-            m1.setToolTipText(rb.getString("MsgOpsButtonDisabled"));
+            m1.setToolTipText(Bundle.getMessage("MsgOpsButtonDisabled"));
         }
 
-        JButton q1 = new JButton(rb.getString("ButtonQuit"));
+        JButton q1 = new JButton(Bundle.getMessage("ButtonQuit"));
         q1.addActionListener(quit);
         q1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         j.add(q1);
@@ -118,7 +115,7 @@ public class InstallTest extends Apps {
         // show splash screen early
         splash(true);
 
-        log.info(apps.Apps.startupInfo("InstallTest"));
+        Apps.setStartupInfo("InstallTest");
 
         setConfigFilename("InstallTestConfig2.xml", args);
         JmriJFrame f = new JmriJFrame("InstallTest");

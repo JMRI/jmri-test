@@ -6,8 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jmri.*;
 import jmri.implementation.*;
-import jmri.jmrit.logix.OBlock;
-import jmri.jmrit.logix.Warrant;
+import jmri.jmrit.logix.*;
 import jmri.jmrit.sensorgroup.SensorGroupFrame;
 
 import java.awt.FlowLayout;
@@ -2917,7 +2916,7 @@ public class LogixTableAction extends AbstractTableAction {
                                 Conditional.ITEM_TO_CLOCK_ACTION, actionType)+1);
                 if (actionType==Conditional.ACTION_SET_FAST_CLOCK_TIME) {
                     int time = _curAction.getActionData();
-                    _shortActionString.setText(formatTime(time / 60, time - ((time / 60) * 60)));
+                    _longActionString.setText(formatTime(time / 60, time - ((time / 60) * 60)));
                     _actionNameField.setText("");
                 }
                 break;
@@ -3060,7 +3059,7 @@ public class LogixTableAction extends AbstractTableAction {
         if (retVal == JFileChooser.APPROVE_OPTION) {
         // set selected file location in data string
             try {
-                _longActionString.setText(currentChooser.getSelectedFile().getCanonicalPath());
+                _longActionString.setText(FileUtil.getPortableFilename(currentChooser.getSelectedFile().getCanonicalPath()));
             } catch (java.io.IOException ex) {
                 if (log.isDebugEnabled()) log.error("exception setting file location: " + ex);
                 _longActionString.setText("");
@@ -4122,7 +4121,7 @@ public class LogixTableAction extends AbstractTableAction {
             case Conditional.ITEM_TYPE_CLOCK:
                 actionType = Conditional.ITEM_TO_CLOCK_ACTION[selection-1];
                 if (actionType==Conditional.ACTION_SET_FAST_CLOCK_TIME) {
-                    int time = parseTime(actionString);
+                    int time = parseTime(_longActionString.getText().trim());
                     if ( time<0 ) {
                         return (false);
                     }
@@ -4444,12 +4443,12 @@ public class LogixTableAction extends AbstractTableAction {
         if (name != null) {
             name = name.trim();
         	if (name.length()>0) {
-            	w = InstanceManager.warrantManagerInstance().getByUserName(name);
+            	w = InstanceManager.getDefault(WarrantManager.class).getByUserName(name);
             	if (w != null) {
             		return name;
             	}
         	}
-            w = InstanceManager.warrantManagerInstance().getBySystemName(name);
+            w = InstanceManager.getDefault(WarrantManager.class).getBySystemName(name);
         }
         if (w == null) {
             messageInvalidActionItemName(name, "Warrant");
@@ -4654,7 +4653,7 @@ public class LogixTableAction extends AbstractTableAction {
             if (index > 0)
             {
                 hour = s.substring(0, index);
-                if (index > 1)
+                if (index >= 1)
 
                     minute = s.substring(index+1);
                 else

@@ -31,9 +31,11 @@ import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import jmri.util.FileUtil;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 /**
  * Frame providing a command station programmer from decoder definition files.
- * @author    Bob Jacobsen Copyright (C) 2001, 2004, 2005, 2008
+ * @author    Bob Jacobsen Copyright (C) 2001, 2004, 2005, 2008, 2014
  * @author    D Miller Copyright 2003, 2005
  * @author    Howard G. Penny   Copyright (C) 2005
  * @version   $Revision$
@@ -156,6 +158,7 @@ abstract public class PaneProgFrame extends JmriJFrame
         JMenu importSubMenu = new JMenu(SymbolicProgBundle.getMessage("MenuImport"));
         fileMenu.add(importSubMenu);
         importSubMenu.add(new Pr1ImportAction(SymbolicProgBundle.getMessage("MenuImportPr1"), cvModel, this));
+        importSubMenu.add(new LokProgImportAction(SymbolicProgBundle.getMessage("MenuImportLokProg"), cvModel, this));
 
         // add "Export" submenu; this is heirarchical because
         // some of the names are so long, and we expect more formats
@@ -406,7 +409,36 @@ abstract public class PaneProgFrame extends JmriJFrame
                 }
             }
         }
-
+        
+        // set the programming mode
+        if (pProg != null) {
+            if (jmri.InstanceManager.programmerManagerInstance() != null) {
+                // go through in preference order, trying to find a mode
+                // that exists in both the programmer and decoder.
+                // First, get attributes. If not present, assume that
+                // all modes are usable
+                Element programming = null;
+                if (decoderRoot != null
+                    && (programming = decoderRoot.getChild("decoder").getChild("programming"))!= null) {
+                    
+                    // add any needed facades
+                    Programmer pf = jmri.implementation.ProgrammerFacadeSelector.loadFacadeElements(programming, mProgrammer);
+                    log.debug("new programmer "+pf);
+                    mProgrammer = pf;
+                    cvModel.setProgrammer(pf);
+                    iCvModel.setProgrammer(pf);
+                    resetModel.setProgrammer(pf);
+                    log.debug("Found programmers: "+cvModel.getProgrammer()+" "+iCvModel.getProgrammer());
+                    
+                }
+    
+                pickProgrammerMode(programming);
+                
+            } else {
+                log.error("Can't set programming mode, no programmer instance");
+            }
+        }
+        
         pack();
 
         if (log.isDebugEnabled()) log.debug("PaneProgFrame \""+pFrameTitle
@@ -415,6 +447,46 @@ abstract public class PaneProgFrame extends JmriJFrame
                                             +", constrained to "+getPreferredSize());
     }
 
+    protected void pickProgrammerMode(@NonNull Element programming) {
+        boolean paged = true;
+        boolean directbit= true;
+        boolean directbyte= true;
+        boolean register= true;
+    
+        Attribute a;
+        
+        // set the programming attributes for DCC
+        if ( (a = programming.getAttribute("paged")) != null )
+            if (a.getValue().equals("no")) paged = false;
+        if ( (a = programming.getAttribute("direct")) != null ) {
+            if (a.getValue().equals("no")) { directbit = false; directbyte = false; }
+            else if (a.getValue().equals("bitOnly")) { directbit = true; directbyte = false; }
+            else if (a.getValue().equals("byteOnly")) { directbit = false; directbyte = true; }
+        }
+        if ( (a = programming.getAttribute("register")) != null )
+            if (a.getValue().equals("no")) register = false;
+ 
+        // is the current mode OK?
+        int currentMode = mProgrammer.getMode();
+        log.debug("XML specifies modes: P "+paged+" DBi "+directbit+" Dby "+directbyte+" R "+register+" now "+currentMode);
+
+        // find a mode to set it to
+        if (mProgrammer.hasMode(Programmer.DIRECTBITMODE)&&directbit) {
+            mProgrammer.setMode(jmri.Programmer.DIRECTBITMODE);
+            log.debug("Set to DIRECTBITMODE");
+        } else if (mProgrammer.hasMode(Programmer.DIRECTBYTEMODE)&&directbyte) {
+            mProgrammer.setMode(jmri.Programmer.DIRECTBYTEMODE);
+            log.debug("Set to DIRECTBYTEMODE");
+        } else if (mProgrammer.hasMode(Programmer.PAGEMODE)&&paged) {
+            mProgrammer.setMode(jmri.Programmer.PAGEMODE);
+            log.debug("Set to PAGEMODE");
+        } else if (mProgrammer.hasMode(Programmer.REGISTERMODE)&&register) {
+            mProgrammer.setMode(jmri.Programmer.REGISTERMODE);
+            log.debug("Set to REGISTERMODE");
+        } else log.warn("No acceptable mode found, leave as found");
+
+    }
+    
     /**
      * Data element holding the 'model' element representing the decoder type
      */
@@ -463,10 +535,10 @@ abstract public class PaneProgFrame extends JmriJFrame
         df.loadVariableModel(decoderRoot.getChild("decoder"), variableModel);
         
         // load reset from decoder tree
-        if (variableModel.piCv() >= 0) {
+        if (variableModel.piCv() != "") {
             resetModel.setPiCv(variableModel.piCv());
         }
-        if (variableModel.siCv() >= 0) {
+        if (variableModel.siCv() != "") {
             resetModel.setSiCv(variableModel.siCv());
         }
         df.loadResetModel(decoderRoot.getChild("decoder"), resetModel);
@@ -667,7 +739,7 @@ abstract public class PaneProgFrame extends JmriJFrame
     }
 
     int defaultCvValues[] = null;
-    int defaultCvNumbers[] = null;
+    String defaultCvNumbers[] = null;
     int defaultIndexedCvValues[] = null;
 
     /**
@@ -677,7 +749,7 @@ abstract public class PaneProgFrame extends JmriJFrame
     protected void saveDefaults() {
         int n = cvModel.getRowCount();
         defaultCvValues = new int[n];
-        defaultCvNumbers = new int[n];
+        defaultCvNumbers = new String[n];
 
         for (int i=0; i<n; i++) {
             CvValue cv = cvModel.getCvByRow(i);
@@ -720,15 +792,19 @@ abstract public class PaneProgFrame extends JmriJFrame
         // add the reset button
         JButton reset = new JButton(SymbolicProgBundle.getMessage("ButtonResetDefaults"));
         reset.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        store.setPreferredSize(reset.getPreferredSize());
         reset.addActionListener( new ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                     resetToDefaults();
                 }
             });
 
-        store.setPreferredSize(reset.getPreferredSize());
-
+        int sizeX = Math.max(reset.getPreferredSize().width, store.getPreferredSize().width);
+        int sizeY = Math.max(reset.getPreferredSize().height, store.getPreferredSize().height);
+        store.setPreferredSize(new Dimension(sizeX,sizeY));
+        reset.setPreferredSize(new Dimension(sizeX,sizeY));
+        
+        store.setToolTipText(_rosterEntry.getFileName());
+        
         JPanel buttons = new JPanel();
         buttons.setLayout(new BoxLayout(buttons, BoxLayout.X_AXIS));
         
@@ -748,7 +824,7 @@ abstract public class PaneProgFrame extends JmriJFrame
         extendAddr = variableModel.findVar("Long Address");
         if (extendAddr==null) log.debug("DCC Address monitor didnt find an Long Address variable");
         else extendAddr.addPropertyChangeListener(dccNews);
-        addMode = variableModel.findVar("Address Format");
+        addMode = (EnumVariableValue)variableModel.findVar("Address Format");
         if (addMode==null) log.debug("DCC Address monitor didnt find an Address Format variable");
         else addMode.addPropertyChangeListener(dccNews);
 
@@ -783,6 +859,8 @@ abstract public class PaneProgFrame extends JmriJFrame
                     storeFile();
                 }
             });
+
+        store.setToolTipText(_rosterEntry.getFileName());
 
         JPanel buttons = new JPanel();
         buttons.setLayout(new BoxLayout(buttons, BoxLayout.X_AXIS));
@@ -837,27 +915,33 @@ abstract public class PaneProgFrame extends JmriJFrame
     // hold refs to variables to check dccAddress
     VariableValue primaryAddr = null;
     VariableValue extendAddr = null;
-    VariableValue addMode = null;
+    EnumVariableValue addMode = null;
 
+    boolean longMode = false;
+    String newAddr = null;
     void updateDccAddress() {
-        boolean longMode = false;
+
         if (log.isDebugEnabled())
             log.debug("updateDccAddress: short "+(primaryAddr==null?"<null>":primaryAddr.getValueString())+
                       " long "+(extendAddr==null?"<null>":extendAddr.getValueString())+
                       " mode "+(addMode==null?"<null>":addMode.getValueString()));
-        String newAddr = null;
-        if (addMode == null || extendAddr == null || !addMode.getValueString().equals("1")) {
-            // short address mode
-            longMode = false;
-            if (primaryAddr != null && !primaryAddr.getValueString().equals(""))
-                newAddr = primaryAddr.getValueString();
-        }
-        else {
-            // long address
-            if (extendAddr != null && !extendAddr.getValueString().equals(""))
-                longMode = true;
-                newAddr = extendAddr.getValueString();
-        }
+
+        new DccAddressVarHandler(primaryAddr, extendAddr, addMode){
+            protected void doPrimary() {
+                // short address mode
+                longMode = false;
+                if (primaryAddr != null && !primaryAddr.getValueString().equals("")) {
+                    newAddr = primaryAddr.getValueString();
+                }
+            }
+            protected void doExtended() {
+                // long address
+                if (extendAddr != null && !extendAddr.getValueString().equals("")) {
+                    longMode = true;
+                    newAddr = extendAddr.getValueString();
+                }
+            }
+        };
         // update if needed
         if (newAddr!=null) {
             // store DCC address, type
@@ -872,21 +956,44 @@ abstract public class PaneProgFrame extends JmriJFrame
         PaneProgPane p = new PaneProgPane(this, name, pane, cvModel, iCvModel, variableModel, modelElem);
         p.setOpaque(true);
         // how to handle the tab depends on whether it has contents and option setting
+        int index;
         if ( enableEmpty || (p.cvList.size()!=0) || (p.varList.size()!=0 || (p.indexedCvList.size()!=0)) ) {
             tabPane.addTab(name, p);  // always add if not empty
+            index = tabPane.indexOfTab(name);
+            tabPane.setToolTipTextAt(index, p.getToolTipText());
         } else if (getShowEmptyPanes()) {
             // here empty, but showing anyway as disabled
             tabPane.addTab(name, p);
-            int index = tabPane.indexOfTab(name);
+            index = tabPane.indexOfTab(name);
             tabPane.setEnabledAt(index, false);
             tabPane.setToolTipTextAt(index, 
                 SymbolicProgBundle.getMessage("TipTabDisabledNoCategory"));
         } else {
             // here not showing tab at all
+            index = -1;
         }
 
-        // and remember it for programming
+        // remember it for programming
         paneList.add(p);
+        
+        // if visible, set qualications
+        if (index >= 0) processModifierElements(pane, p, variableModel, tabPane, index);
+    }
+
+    /**
+     * If there are any modifier elements, process them
+     */
+    protected void processModifierElements(Element e, final PaneProgPane pane, VariableTableModel model, final JTabbedPane tabPane, final int index) {
+        QualifierAdder qa = new QualifierAdder() {
+            protected Qualifier createQualifier(VariableValue var, String relation, String value) {
+                return new PaneQualifier(pane, var, Integer.parseInt(value), relation, tabPane, index);
+            }
+            protected void addListener(java.beans.PropertyChangeListener qc) {
+                pane.addPropertyChangeListener(qc);
+            }
+        };
+        
+        qa.processModifierElements(e, model);
     }
 
     public BusyGlassPane getBusyGlassPane() { return glassPane; }
@@ -1318,6 +1425,17 @@ abstract public class PaneProgFrame extends JmriJFrame
         return showEmptyPanes;
     }
     static boolean showEmptyPanes = true;
+
+    /**
+     * Option to control appearance of CV numbers in tool tips
+     */
+    public static void setShowCvNumbers(boolean yes) {
+        showCvNumbers = yes;
+    }
+    public static boolean getShowCvNumbers() {
+        return showCvNumbers;
+    }
+    static boolean showCvNumbers = false;
 
     public RosterEntry getRosterEntry() { return _rosterEntry; }
 

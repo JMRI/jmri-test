@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 public class OperationsFrame extends jmri.util.JmriJFrame {
 	
 	@edu.umd.cs.findbugs.annotations.SuppressWarnings(value="MS_CANNOT_BE_FINAL")
-	public static SwingShutDownTask trainDirtyTask;
 
 	public OperationsFrame(String s) {
 		super(s);
@@ -239,24 +238,18 @@ public class OperationsFrame extends jmri.util.JmriJFrame {
 			log.debug("table "+tableref+" doesn't use sorter");
 		} 
 		
-		// is the table using XTableColumnModel?  If so, there can be hidden columns.
+		// is the table using XTableColumnModel?
 		if (sorter != null && sorter.getColumnCount() != table.getColumnCount()) {
 			log.debug("Sort column count: "+sorter.getColumnCount()+" table column count: "+table.getColumnCount()+" XTableColumnModel in use");
 			XTableColumnModel tcm = (XTableColumnModel) table.getColumnModel();
-			int j=0;
 			for (int i = 0; i <sorter.getColumnCount(); i++) {
 				int sortStatus = sorter.getSortingStatus(i);
 				int width = tcm.getColumnByModelIndex(i).getPreferredWidth();
 				boolean visible = tcm.isColumnVisible(tcm.getColumnByModelIndex(i));
 				p.setTableColumnPreferences(tableref, sorter.getColumnName(i), i, width, sortStatus, !visible);
-				log.debug("Column "+i+" table name: "+table.getColumnName(j)+", sorter name: "+sorter.getColumnName(i));
-				//if (!table.getColumnName(j).equals(sorter.getColumnName(i)))
-					//log.debug("Column "+i+" table name: "+table.getColumnName(j)+" sorter name: "+sorter.getColumnName(i));
-				if (visible)
-					j++;
 			}
 		} 
-
+		// standard table
 		else for (int i = 0; i <table.getColumnCount(); i++) {
 			int sortStatus = 0;
 			if (sorter != null)
@@ -315,7 +308,7 @@ public class OperationsFrame extends jmri.util.JmriJFrame {
 			//log.debug("Column number " + i + " name " +columnName+" order "+order);
 			if (order == -1){
 				log.debug("Column name "+columnName+" not found in user preference file");
-				continue;
+				break;	// table structure has changed quit sort
 			}
 			if (i != order && order < table.getColumnCount()) {
 				table.moveColumn(i, order);
@@ -341,29 +334,28 @@ public class OperationsFrame extends jmri.util.JmriJFrame {
 	}
 	
 	protected synchronized void createShutDownTask(){
-		if (jmri.InstanceManager.shutDownManagerInstance() != null && trainDirtyTask == null) {
-			trainDirtyTask = new SwingShutDownTask(
-					"Operations Train Window Check", Bundle.getMessage("PromptQuitWindowNotWritten"),	// NOI18N
-					Bundle.getMessage("PromptSaveQuit"), this) {
-                                @Override
-				public boolean checkPromptNeeded() {
-					return !OperationsXml.areFilesDirty();
-				}
+            OperationsManager.getInstance().setShutDownTask(
+                    new SwingShutDownTask("Operations Train Window Check", // NOI18N
+                            Bundle.getMessage("PromptQuitWindowNotWritten"), // NOI18N
+                            Bundle.getMessage("PromptSaveQuit"), // NOI18N
+                            this) {
+                        @Override
+                        public boolean checkPromptNeeded() {
+                            return !OperationsXml.areFilesDirty();
+                        }
 
-                                @Override
-				public boolean doPrompt() {
-					storeValues();
-					return true;
-				}
-				
-                                @Override
-				public boolean doClose() {
-					storeValues();
-					return true;
-				}
-			};
-			jmri.InstanceManager.shutDownManagerInstance().register(trainDirtyTask);        
-		}
+                        @Override
+                        public boolean doPrompt() {
+                            storeValues();
+                            return true;
+                        }
+
+                        @Override
+                        public boolean doClose() {
+                            storeValues();
+                            return true;
+                        }
+                    });
 	}
 	
         @Override
@@ -380,19 +372,20 @@ public class OperationsFrame extends jmri.util.JmriJFrame {
 			JLabel X = new JLabel("X");
 			numberChar = size.width / X.getPreferredSize().width;
 		}
-		
+
 		String[] sa = s.split(NEW_LINE);
 		StringBuilder so = new StringBuilder();
-		
-		for (int i = 0; i<sa.length; i++) {
+
+		for (int i = 0; i < sa.length; i++) {
 			if (i > 0)
-                            so.append(NEW_LINE);
+				so.append(NEW_LINE);
 			StringBuilder sb = new StringBuilder(sa[i]);
 			int j = 0;
-			while (j + numberChar < sb.length() && (j = sb.lastIndexOf(" ", j + numberChar)) != -1) {
+			while (j + numberChar < sb.length()
+					&& (j = sb.lastIndexOf(" ", j + numberChar)) != -1) {
 				sb.replace(j, j + 1, NEW_LINE);
 			}
-                        so.append(sb);
+			so.append(sb);
 		}
 		return so.toString();
 	}

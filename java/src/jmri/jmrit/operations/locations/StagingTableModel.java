@@ -26,7 +26,7 @@ public class StagingTableModel extends TrackTableModel {
 
 	public String getColumnName(int col) {
 		switch (col) {
-		case NAMECOLUMN:
+		case NAME_COLUMN:
 			return Bundle.getMessage("StagingName");
 		}
 		return super.getColumnName(col);
@@ -38,8 +38,7 @@ public class StagingTableModel extends TrackTableModel {
 			tef.dispose();
 		}
 		tef = new StagingEditFrame();
-		String stagingId = tracksList.get(row);
-		Track staging = _location.getTrackById(stagingId);
+		Track staging = tracksList.get(row);
 		tef.initComponents(_location, staging);
 		tef.setTitle(Bundle.getMessage("EditStaging"));
 		focusEditFrame = true;
@@ -48,22 +47,20 @@ public class StagingTableModel extends TrackTableModel {
 	// this table listens for changes to a location and it's staging tracks
 	public void propertyChange(PropertyChangeEvent e) {
 		if (Control.showProperty && log.isDebugEnabled())
-			log.debug("Property change " + e.getPropertyName() + " old: " + e.getOldValue()
-					+ " new: " + e.getNewValue());	// NOI18N
+			log.debug("Property change " + e.getPropertyName() + " old: " + e.getOldValue() + " new: "
+					+ e.getNewValue()); // NOI18N
 		super.propertyChange(e);
 		if (e.getSource().getClass().equals(Track.class)) {
-			String type = ((Track) e.getSource()).getLocType();
-			if (type.equals(Track.STAGING)) {
-				String stagingId = ((Track) e.getSource()).getId();
-				int row = tracksList.indexOf(stagingId);
+			Track track = ((Track) e.getSource());
+			if (track.getTrackType().equals(Track.STAGING)) {
+				int row = tracksList.indexOf(track);
 				if (Control.showProperty && log.isDebugEnabled())
-					log.debug("Update staging table row: " + row + " id: " + stagingId);
+					log.debug("Update staging table row: " + row + " track: " + track.getName());
 				if (row >= 0)
 					fireTableRowsUpdated(row, row);
 			}
 		}
 	}
 
-	static Logger log = LoggerFactory.getLogger(StagingTableModel.class
-			.getName());
+	static Logger log = LoggerFactory.getLogger(StagingTableModel.class.getName());
 }

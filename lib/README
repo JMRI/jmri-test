@@ -69,7 +69,7 @@ jdom.jar
  from <jdom.org>
  
 jython.jar
- version 2.1
+ version 2.5.3 from jython.org (was jython-2.5.3.jar)
  
 junit.jar
  version 3.8.2
@@ -159,6 +159,11 @@ xAPlib.jar
     xAP automation protocol support
     From http://patrick.lidstone.net/html/dev_tools.html
     See license http://patrick.lidstone.net/html/xap.html
+
+xbee-api-0.9.jar
+    PBender 03-Mar-2014 This version comes from the XBee library source repository 
+    (we needed some of the functionality, but the pre-compiled library has not been updated).
+
 
 Older, no longer present:
 

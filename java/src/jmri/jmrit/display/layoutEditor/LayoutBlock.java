@@ -1521,7 +1521,7 @@ public class LayoutBlock extends AbstractNamedBean implements java.beans.Propert
                 }
                 else {
                     if (enableAddRouteLogging)
-                        log.info("From " + this.getDisplayName() + " neighbour working direction is not valid " + addBlock.getDisplayName());
+                        log.info("From " + this.getDisplayName() + " neighbour " + addBlock.getDisplayName() + " working direction is not valid " );
                     return;
                 }
                 adj.setMutual(mutual);
@@ -1637,6 +1637,8 @@ public class LayoutBlock extends AbstractNamedBean implements java.beans.Propert
             addThroughPath(adj);
             //As we are now mutual we will send our neigh a list of valid routes.
             if (newPacketFlow==RXTX || newPacketFlow==TXONLY){
+				if(enableAddRouteLogging)
+                	log.info("From " + this.getDisplayName() + " inform neighbour of valid routes");
                 informNeighbourOfValidRoutes(block);
             }
         }
@@ -2246,7 +2248,7 @@ public class LayoutBlock extends AbstractNamedBean implements java.beans.Propert
         
         try{
             MDC.put("loggingDisabled", connection.getClass().getCanonicalName());
-            stod = connection.getTurnoutList(block, srcBlock, dstBlock);
+            stod = connection.getTurnoutList(block, srcBlock, dstBlock, true);
             stodSet = connection.getTurnoutSettingList();
             MDC.remove("loggingDisabled");
         } catch (java.lang.NullPointerException ex){
@@ -2264,7 +2266,7 @@ public class LayoutBlock extends AbstractNamedBean implements java.beans.Propert
         
         try{
             MDC.put("loggingDisabled", connection.getClass().getName());
-            tmpdtos = connection.getTurnoutList(block, dstBlock, srcBlock);
+            tmpdtos = connection.getTurnoutList(block, dstBlock, srcBlock, true);
             tmpdtosSet = connection.getTurnoutSettingList();
             MDC.remove("loggingDisabled");
         } catch (java.lang.NullPointerException ex){
@@ -3469,7 +3471,6 @@ public class LayoutBlock extends AbstractNamedBean implements java.beans.Propert
                 packetFlow=flow;
                 firePropertyChange("neighbourpacketflow", oldFlow, packetFlow); 
             }
-            
         }
         
         
@@ -3522,10 +3523,14 @@ public class LayoutBlock extends AbstractNamedBean implements java.beans.Propert
         }
         
         boolean advertiseRouteToNeighbour(Routes routeToAdd){
+            if(!isMutual()){
+                log.debug("neighbour is not mutual so will not advertise it");
+                return false;
+            }
         //Just wonder if this should forward on the new packet to the neighbour?
             Block dest = routeToAdd.getDestBlock();
             if(!adjDestRoutes.containsKey(dest)){
-                //log.info("We are not currently advertising a route to the destination to this neighbour");
+                log.debug("We are not currently advertising a route to the destination to this neighbour");
                 return true;
             }
             if (routeToAdd.getHopCount()>255){

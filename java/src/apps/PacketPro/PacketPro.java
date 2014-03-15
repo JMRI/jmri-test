@@ -4,13 +4,11 @@
 
 package apps.PacketPro;
 
+import apps.Apps;
+import java.text.MessageFormat;
+import javax.swing.JFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import apps.Apps;
-
-import java.text.MessageFormat;
-
-import javax.swing.JFrame;
 
 /**
  * Main program for the PacketProprogram based on JMRI.
@@ -47,7 +45,7 @@ public class PacketPro extends Apps {
     }
 
     protected String line1() {
-        return MessageFormat.format(rb.getString("PacketProVersionCredit"),
+        return MessageFormat.format(Bundle.getMessage("PacketProVersionCredit"),
                                 new Object[]{jmri.Version.name()});
     }
 
@@ -57,7 +55,7 @@ public class PacketPro extends Apps {
         // show splash screen early
         splash(true);
 
-        log.info(apps.Apps.startupInfo("PacketPro"));
+        Apps.setStartupInfo("PacketPro");
 
         setConfigFilename("PacketProConfig2.xml", args);
         JFrame f = new JFrame("PacketPro");

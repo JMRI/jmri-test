@@ -2,10 +2,12 @@ package jmri.web.servlet.panel;
 
 import java.awt.Color;
 import java.util.List;
+import javax.swing.JComponent;
 import jmri.InstanceManager;
 import jmri.Sensor;
 import jmri.SensorManager;
 import jmri.configurexml.ConfigXmlManager;
+import jmri.jmris.json.JSON;
 import jmri.jmrit.display.Positionable;
 import jmri.jmrit.display.layoutEditor.LayoutBlock;
 import jmri.jmrit.display.layoutEditor.LayoutBlockManager;
@@ -74,6 +76,18 @@ public class LayoutPanelServlet extends AbstractPanelServlet {
                     try {
                         Element e = ConfigXmlManager.elementFromObject(sub);
                         if (e != null) {
+                            if ("signalmasticon".equals(e.getName())) {  //insert icon details into signalmast
+                                e.addContent(getSignalMastIconsElement(e.getAttributeValue("signalmast")));
+                            }
+                            try {
+                                e.setAttribute(JSON.ID, sub.getNamedBean().getSystemName());
+                            } catch (NullPointerException ex) {
+                                if (sub.getNamedBean() == null) {
+                                    log.debug("{} {} does not have an associated NamedBean", e.getName(), e.getAttribute(JSON.NAME));
+                                } else {
+                                    log.debug("{} {} does not have a SystemName", e.getName(), e.getAttribute(JSON.NAME));
+                                }
+                            }
                             parsePortableURIs(e);
                             panel.addContent(e);
                         }
@@ -103,7 +117,7 @@ public class LayoutPanelServlet extends AbstractPanelServlet {
             }
 
             // include LayoutBlocks
-            LayoutBlockManager tm = InstanceManager.layoutBlockManagerInstance();
+            LayoutBlockManager tm = InstanceManager.getDefault(LayoutBlockManager.class);
             java.util.Iterator<String> iter = tm.getSystemNameList().iterator();
             SensorManager sm = InstanceManager.sensorManagerInstance();
             num = 0;
@@ -123,7 +137,7 @@ public class LayoutPanelServlet extends AbstractPanelServlet {
                     if (!b.getOccupancySensorName().isEmpty()) {
                         Sensor s = sm.getSensor(b.getOccupancySensorName());
                         if (s != null) {
-                            elem.setAttribute("occupancysensor", s.getDisplayName()); //send username if set, systemname otherwise
+                            elem.setAttribute("occupancysensor", s.getSystemName()); //send systemname
                         }
                     }
                     elem.setAttribute("occupiedsense", Integer.toString(b.getOccupiedSense()));
@@ -144,7 +158,6 @@ public class LayoutPanelServlet extends AbstractPanelServlet {
             if (log.isDebugEnabled()) {
                 log.debug("N layoutblock elements: " + num);
             }
-
 
             // include LevelXings
             num = editor.xingList.size();
@@ -253,5 +266,10 @@ public class LayoutPanelServlet extends AbstractPanelServlet {
     protected String getJsonPanel(String name) {
         // TODO Auto-generated method stub
         return "ERROR JSON support not implemented";
+    }
+
+    @Override
+    protected JComponent getPanel(String name) {
+        return ((LayoutEditor) getEditor(name)).getTargetPanel();
     }
 }

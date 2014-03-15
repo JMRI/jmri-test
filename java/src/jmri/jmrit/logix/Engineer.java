@@ -204,20 +204,7 @@ public class Engineer extends Thread implements Runnable, java.beans.PropertyCha
     * If waiting to sync entrance to a block boundary with recorded wait time,
     * or waiting for clearance ahead for rogue occupancy, stop aspect or sharing
     *  of turnouts, this call will free the wait.
-    * @param  block train has just entered.
-    */
-    protected void synchNotify(OBlock block) {
-    	synchronized(this) {
-        	if (_ramp!=null) {
-        		_ramp.stop();
-        		_ramp = null;
-        	}    		
-    	}
-    	checkHalt();
-        if (log.isDebugEnabled()) log.debug("synchNotify from block "+block.getDisplayName()+
-    				" _waitForClear= "+_waitForClear+" for warrant "+_warrant.getDisplayName());
-    }
-
+    */  
     synchronized private void checkHalt() {
         if (!_halt && !_waitForSensor) {
             if (_syncIdx <= _warrant.getCurrentOrderIndex()) { 
@@ -231,9 +218,12 @@ public class Engineer extends Thread implements Runnable, java.beans.PropertyCha
     * Ramp speed change.
     */
     synchronized protected void rampSpeedTo(String endSpeedType, long waitTime) {
+    	checkHalt();
         if (_speedType.equals(endSpeedType)) {
             return;
         }
+        if (log.isDebugEnabled()) log.debug("rampSpeedTo ="+endSpeedType+
+    				" for warrant "+_warrant.getDisplayName());
     	if (_ramp!=null) {
     		_ramp.stop();
     		_ramp = null;
@@ -315,6 +305,8 @@ public class Engineer extends Thread implements Runnable, java.beans.PropertyCha
             return Warrant.WAIT_FOR_SENSOR;
         } else if (!_speedType.equals("Normal")) {
             return Warrant.SPEED_RESTRICTED;
+        } else if (_idxCurrentCommand<0) {
+        	return 0;
         }
         return Warrant.RUNNING;
     }
@@ -355,9 +347,6 @@ public class Engineer extends Thread implements Runnable, java.beans.PropertyCha
         if (log.isDebugEnabled()) log.debug("setHalt("+halt+"): throttle speed= "+_throttle.getSpeedSetting()+
                 					" _waitForClear= "+_waitForClear+" warrant "+_warrant.getDisplayName());
     }
-/*    public boolean isHalted() {
-    	return _halt;
-    }*/
 
     /**
     * Flag from user to end run
@@ -377,7 +366,7 @@ public class Engineer extends Thread implements Runnable, java.beans.PropertyCha
                 log.warn("Throttle release and cancel threw: "+e);
             }
         }
-        _warrant.setRunMode(Warrant.MODE_NONE, null, null, null, false);
+        _warrant.stopWarrant();
         if (log.isDebugEnabled()) log.debug("Engineer shut down. warrant "+_warrant.getDisplayName());
     }
 
@@ -573,16 +562,13 @@ public class Engineer extends Thread implements Runnable, java.beans.PropertyCha
         	num--;
             ts.setValue(Integer.toString(num));    		
     	}
-        String msg = null;
         if (_warrant.equals(w)) {
             _idxCurrentCommand = -1;
         	w.startupWarrant();
         } else {
-            msg = w.setRunMode(Warrant.MODE_RUN, null, null, null, false);        	
+            w.stopWarrant();        	
         }
-        if (msg!=null) {
-        	log.error("Continuing warrant lanch from \""+_warrant.getDisplayName()+"\": "+msg);        	
-        }
+        if (log.isDebugEnabled())log.debug("Continuing warrant lanch from \""+_warrant.getDisplayName()+"\"");        	
     }
     
     class ThrottleRamp implements Runnable {
@@ -606,14 +592,16 @@ public class Engineer extends Thread implements Runnable, java.beans.PropertyCha
         @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="NN_NAKED_NOTIFY", justification="Shared variable 'stop' not being seen by FindBugs for some reason") 
         synchronized void stop() {
         	stop = true;
+        	if (log.isDebugEnabled()) log.debug("stop= "+stop);
     		notify();
         }
 
         public void run() {
             _lock.lock();
+            String old = _speedType;
+            _speedType = endSpeedType;   // transition
+            _warrant.fireRunStatus("SpeedRestriction", old, _speedType);
             try {
-                String old = _speedType;
-                _speedType = endSpeedType;   // transition
                 
                 synchronized(this) {
                     if (!_speedType.equals("Stop") && !_speedType.equals("EStop")) {
@@ -630,8 +618,8 @@ public class Engineer extends Thread implements Runnable, java.beans.PropertyCha
                     float endSpeed = getLastSpeedCommand(_idxCurrentCommand);
                     endSpeed = modifySpeed(endSpeed, endSpeedType);
                     float speed = _throttle.getSpeedSetting();
-                    _warrant.fireRunStatus("SpeedRestriction", old, 
-                                       (endSpeed > speed ? "increasing" : "decreasing"));
+//                    _warrant.fireRunStatus("SpeedRestriction", old, 
+//                                       (endSpeed > speed ? "increasing" : "decreasing"));
 
                     float incr = Math.max(_throttle.getSpeedIncrement(), _minSpeed);
                     switch (_throttle.getSpeedStepMode()) {
@@ -651,7 +639,7 @@ public class Engineer extends Thread implements Runnable, java.beans.PropertyCha
                     
                     if (log.isDebugEnabled()) log.debug("rampSpeed from \""+old+"\" to \""+endSpeedType+
         					"\" step increment= "+incr+" time interval= "+delay+
-        					" on warrant "+_warrant.getDisplayName());
+        					" Ramp "+speed+" to "+endSpeed+" on warrant "+_warrant.getDisplayName());
 
                     if (endSpeed > speed) {
                         synchronized(this) {
@@ -687,7 +675,6 @@ public class Engineer extends Thread implements Runnable, java.beans.PropertyCha
                         }
                     }                	
                 }
-                _warrant.fireRunStatus("SpeedRestriction", old, _speedType);
             } finally {
                 _speedOverride = false;
                 _lock.unlock();

@@ -5,7 +5,7 @@ package jmri.jmrit.symbolicprog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.Component;
-import java.util.Vector;
+import java.util.*;
 import javax.swing.*;
 import java.awt.Color;
 
@@ -24,14 +24,14 @@ public class ConstantValue extends VariableValue {
 
     public ConstantValue(String name, String comment, String cvName,
                          boolean readOnly, boolean infoOnly, boolean writeOnly,  boolean opsOnly,
-                         int cvNum, String mask, int minVal, int maxVal,
-                         Vector<CvValue> v, JLabel status, String stdname) {
+                         String cvNum, String mask, int minVal, int maxVal,
+                         HashMap<String, CvValue> v, JLabel status, String stdname) {
         super(name, comment, cvName, readOnly, infoOnly, writeOnly, opsOnly, cvNum, mask, v, status, stdname);
         _maxVal = maxVal;
         _minVal = minVal;
         _value = new JComboBox();
         for (int i=0; i<=maxVal; i++) {
-            _value.addItem(""+0);
+            _value.addItem(i);
         }
     }
 
@@ -44,6 +44,15 @@ public class ConstantValue extends VariableValue {
         return new CvValue[]{};
     }
 
+    /** 
+     * Provide a user-readable description of
+     * the CVs accessed by this variable.
+     */
+     
+     public String getCvDescription() {
+        return null;
+     }
+     
     // stored value
     JComboBox _value = null;
 
@@ -94,7 +103,7 @@ public class ConstantValue extends VariableValue {
             // this only makes sense if there are exactly two options
             JCheckBox b = new JCheckBox();
             b.setEnabled(false);
-            b.setSelected(true);
+            b.setSelected((getIntValue() == 1));
             comboCBs.add(b);
             updateRepresentation(b);
             return b;

@@ -4,6 +4,7 @@ package jmri.jmrit.operations.rollingstock.cars;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,7 +17,9 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import jmri.jmrit.XmlFile;
+import jmri.jmrit.operations.rollingstock.RollingStock;
 import jmri.jmrit.operations.setup.OperationsSetupXml;
+import jmri.jmrit.operations.setup.Setup;
 
 /**
  * Exports the car roster into a comma delimitated file (CSV).
@@ -57,8 +60,7 @@ public class ExportCars extends XmlFile {
 			}
 			writeFile(defaultOperationsFilename());
 		} catch (Exception e) {
-			log.error("Exception while writing the new CSV operations file, may not be complete: "
-					+ e);
+			log.error("Exception while writing the new CSV operations file, may not be complete: " + e);
 		}
 	}
 
@@ -71,18 +73,18 @@ public class ExportCars extends XmlFile {
 			file = new File(name);
 		}
 
-		PrintWriter fileOut;
+		PrintWriter fileOut = null;
 
 		try {
-			fileOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),
-					"UTF-8")), true); // NOI18N
+			fileOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")), // NOI18N
+					true); // NOI18N
 		} catch (IOException e) {
-			log.error("can not open car roster CSV file");
+			log.error("Can not open export cars CSV file: "+file.getName());
 			return;
 		}
 
 		CarManager manager = CarManager.instance();
-		List<String> carList = manager.getByNumberList();
+		List<RollingStock> carList = manager.getByNumberList();
 		String line = "";
 		// check for delimiter in the following car fields
 		String carType;
@@ -90,26 +92,32 @@ public class ExportCars extends XmlFile {
 		String carTrackName;
 		// assume delimiter in the value field
 		String value;
+		// create header
+		String header = Bundle.getMessage("Number") + del + Bundle.getMessage("Road") + del + Bundle.getMessage("Type") +
+				del + Bundle.getMessage("Length") + del + Bundle.getMessage("Weight") + del + Bundle.getMessage("Color") +
+				del + Bundle.getMessage("Owner") + del + Bundle.getMessage("Built") + del + Bundle.getMessage("Location") +
+				del + "-" + del + Bundle.getMessage("Track") + del + Setup.getValueLabel();
+		fileOut.println(header);
 
+		// store car number, road, type, length, weight, color, owner, built date, location and track
 		for (int i = 0; i < carList.size(); i++) {
-			// store car number, road, type, length, weight, color, owner, built date, location and track
-			Car car = manager.getById(carList.get(i));
+			Car car = (Car) carList.get(i);
 			carType = car.getTypeName();
 			if (carType.contains(del)) {
-				log.debug("Car (" + car.getRoadName() + " " + car.getNumber()
-						+ ") has delimiter in type field: " + carType); // NOI18N
+				log.debug("Car (" + car.getRoadName() + " " + car.getNumber() + ") has delimiter in type field: "
+						+ carType); // NOI18N
 				carType = ESC + car.getTypeName() + ESC;
 			}
 			carLocationName = car.getLocationName();
 			if (carLocationName.contains(del)) {
-				log.debug("Car (" + car.getRoadName() + " " + car.getNumber()
-						+ ") has delimiter in location field: " + carLocationName); // NOI18N
+				log.debug("Car (" + car.getRoadName() + " " + car.getNumber() + ") has delimiter in location field: "
+						+ carLocationName); // NOI18N
 				carLocationName = ESC + car.getLocationName() + ESC;
 			}
 			carTrackName = car.getTrackName();
 			if (carTrackName.contains(del)) {
-				log.debug("Car (" + car.getRoadName() + " " + car.getNumber()
-						+ ") has delimiter in track field: " + carTrackName); // NOI18N
+				log.debug("Car (" + car.getRoadName() + " " + car.getNumber() + ") has delimiter in track field: "
+						+ carTrackName); // NOI18N
 				carTrackName = ESC + car.getTrackName() + ESC;
 			}
 			// only export value field if value has been set.
@@ -117,22 +125,22 @@ public class ExportCars extends XmlFile {
 			if (!car.getValue().equals("")) {
 				value = del + ESC + car.getValue() + ESC;
 			}
-			line = car.getNumber() + del + car.getRoadName() + del + carType + del + car.getLength()
-					+ del + car.getWeight() + del + car.getColor() + del + car.getOwner() + del
-					+ car.getBuilt() + del + carLocationName + ",-," + carTrackName + value; // NOI18N
+			line = car.getNumber() + del + car.getRoadName() + del + carType + del + car.getLength() + del
+					+ car.getWeight() + del + car.getColor() + del + car.getOwner() + del + car.getBuilt() + del
+					+ carLocationName + ",-," + carTrackName + value; // NOI18N
 			fileOut.println(line);
 		}
 		fileOut.flush();
 		fileOut.close();
 		log.info("Exported " + carList.size() + " cars to file " + defaultOperationsFilename());
-		JOptionPane.showMessageDialog(null, MessageFormat.format(Bundle.getMessage("ExportedCarsToFile"), new Object[] {carList.size(),
-				defaultOperationsFilename()}), Bundle.getMessage("ExportComplete"), JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, MessageFormat.format(Bundle.getMessage("ExportedCarsToFile"), new Object[] {
+				carList.size(), defaultOperationsFilename() }), Bundle.getMessage("ExportComplete"),
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	// Operation files always use the same directory
 	public static String defaultOperationsFilename() {
-		return OperationsSetupXml.getFileLocation()
-				+ OperationsSetupXml.getOperationsDirectoryName() + File.separator
+		return OperationsSetupXml.getFileLocation() + OperationsSetupXml.getOperationsDirectoryName() + File.separator
 				+ getOperationsFileName();
 	}
 
@@ -146,7 +154,6 @@ public class ExportCars extends XmlFile {
 
 	private static String OperationsFileName = "ExportOperationsCarRoster.csv"; // NOI18N
 
-	static Logger log = LoggerFactory.getLogger(ExportCars.class
-			.getName());
+	static Logger log = LoggerFactory.getLogger(ExportCars.class.getName());
 
 }

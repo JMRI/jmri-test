@@ -126,12 +126,13 @@ def writeDetails(csvFile):
         # function defined earlier.
         # These examples are all in decimal - if you require
         # hex, change "%d" to "0x%x" or "0x%X"
-        csvFile.write(writeCvValue(cvTable.getCvByNumber(19), "%d"))
-        csvFile.write(writeCvValue(cvTable.getCvByNumber(7), "%d"))
-        csvFile.write(writeCvValue(cvTable.getCvByNumber(8), "%d"))
+        csvFile.write(writeCvValue(cvTable.getCvByNumber("19"), "%d"))
+        csvFile.write(writeCvValue(cvTable.getCvByNumber("7"), "%d"))
+        csvFile.write(writeCvValue(cvTable.getCvByNumber("8"), "%d"))
 
         # Notify the writer of the end of this detail record
         csvFile.endRecord()
+        csvFile.flush()
         print "Entry", entry.getId(), "written"
 
 # Now do the actual work here
@@ -147,7 +148,7 @@ if ret == JFileChooser.APPROVE_OPTION:
     # We've got a valid filename
     outFile = fc.getSelectedFile().toString()
     print "Output file:", outFile
-    csvFile = com.csvreader.CsvWriter(outFile)
+    csvFile = com.csvreader.CsvWriter(java.io.BufferedOutputStream(java.io.FileOutputStream(outFile)),',',java.nio.charset.Charset.defaultCharset())
 
     # Output the header if required
     if outputHeader==True:

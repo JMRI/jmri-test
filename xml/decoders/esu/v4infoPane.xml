@@ -1,0 +1,112 @@
+  <pane name="Read Me - IMPORTANT">
+    <column>
+      <label label=" "/>
+      <label label="&lt;html&gt;&lt;strong&gt;JMRI 3.7.3 or later is required to use this definition.&lt;/strong&gt;&lt;/html&gt;"/>
+      <label label=" "/>
+      <label label="&lt;html&gt;&lt;h1&gt;ESU V4/Select Decoders Important Information&lt;/h1&gt;&lt;/html&gt;"/>
+      <label label=" "/>
+      <separator/>
+      <separator/>
+      <label label="&lt;html&gt;&lt;h2&gt;Factory Reset Warning&lt;/h2&gt;&lt;/html&gt;"/>
+      <label label=" "/>
+      <label label="&lt;html&gt;&lt;em&gt;Performing a Factory Reset on any ESU sound decoder may render the sound project inoperable!&lt;/em&gt;&lt;/html&gt;"/>
+      <label label=" "/>
+      <label label="ESU sound decoders are manufactured blank and the sound project is loaded, often"/>
+      <label label="by a dealer or other party. If the project installer forgets to select the"/>
+      <label label="optional step to write new 'factory' defaults suited to the project, a"/>
+      <label label="subsequent reset will most likely render the sounds inoperable due to incorrect"/>
+      <label label="CV defaults. If in doubt, consult your dealer before resetting."/>
+      <label label=" "/>
+      <separator/>
+      <label label="&lt;html&gt;&lt;h2&gt;News and Warnings&lt;/h2&gt;&lt;/html&gt;"/>
+      <label label=" "/>
+      <label label="LokPilot Fx V4.0 and LokPilot XL V4.0 decoder definitions have been added. Also"/>
+      <label label="many corrections and improvements since JMRI 3.7.2."/>
+      <label label=" "/>
+      <label label="There is now an option to import CV value list files created by LokProgrammer."/>
+      <label label="(File menu when a roster entry is open.)"/>
+      <label label=" "/>
+      <label label="These decoders are probably the most complex (and versatile) DCC decoders"/>
+      <label label="manufactured to date. Each decoder implements ~1,200 CVs and this poses"/>
+      <label label="extra challenges for JMRI coding. These defintions are a work in progress."/>
+      <label label=" "/>
+      <label label="If you have an NCE Power Pro system, there is now a workaround in JMRI for the"/>
+      <label label="firmware issue that prevents the Power Pro from correctly writing Indexed CVs on"/>
+      <label label="the Programming Track. You can now safely use the the Programming Track to read"/>
+      <label label="or write any CVs in this definition."/>
+      <label label=" "/>
+      <label label="The naming convention for Indexed CVs has been changed for these decoders to"/>
+      <label label="conform to the MNRA/ESU concept of Indexed CVs and hence they will appear in the"/>
+      <label label="CVs list in the same order as in the ESU documentation and LokProgrammer software."/>
+      <label label="The new order is 'PI.SI.CV', that is '(value in CV31).(value in CV32).(CV number)'."/>
+      <label label=" "/>
+      <separator/>
+      <label label="&lt;html&gt;&lt;h2&gt;Acceleration and Deceleration Rate&lt;/h2&gt;&lt;/html&gt;"/>
+      <label label=" "/>
+      <label label="The ESU V4/Select decoders use a multiplier factor of 0.25 rather than the NMRA standard"/>
+      <label label="factor of 0.896 for the values of Acceleration (CV 3) and Deceleration (CV 4) rates."/>
+      <label label=" "/>
+      <label label="This means that you will need to enter a value nearly 4 times as great (3.6) in"/>
+      <label label="the Acceleration and Deceleration CVs to achieve the same rate as in a LokSound"/>
+      <label label="V3.5 or almost any other brand of decoder. This can be a particular problem"/>
+      <label label="if have V4/Select and other model decoders in the same consist."/>
+      <label label=" "/>
+      <separator/>
+      <label label="&lt;html&gt;&lt;h2&gt;The Function Map&lt;/h2&gt;&lt;/html&gt;"/>
+      <label label=" "/>
+      <label label="The ESU Function Map has 40 lines and these lines are not sequentially mapped to"/>
+      <label label="functions. Instead, any line can be set to be activated by any one or"/>
+      <label label="combination of function buttons. There are 640 CVs involved and 5,120 checkboxes."/>
+      <label label=" "/>
+      <label label="Function mapping is explained in the ESU LokSound V4 manual (pages 51 onwards)."/>
+      <label label="The information in the ESU LokSound Select manual is oversimplified and may not give."/>
+      <label label="satisfactory results. Use the V4 manual for Select decoders as well, or ask for asistance"/>
+      <label label="on the LokSound Yahoo&#174; group."/>
+      <label label=" "/>
+      <label label="You may experience very slow scrolling of the Function Map table with some Mac OS X computers."/>
+      <label label="If affected, change the JMRI GUI setting in Decoder Pro > Preferences > Display > GUI to any"/>
+      <label label="setting other than Mac OS X."/>
+      <label label=" "/>
+      <separator/>
+      <label label="&lt;html&gt;&lt;h2&gt;The Speed Table&lt;/h2&gt;&lt;/html&gt;"/>
+      <label label=" "/>
+      <label label="The ESU V4/Select Decoders implement the mfx&#174; style speed table rather than"/>
+      <label label="the NMRA version. This style can do everything the NMRA stlye does and is every"/>
+      <label label="bit as versatile and easy to use."/>
+      <label label=" "/>
+      <label label=" The difference is that Vstart (CV 2) and Vhigh (CV 5) are ALWAYS used as well"/>
+      <label label=" as the speed table CVs. The curve shape defined in the speed table CVs is"/>
+      <label label=" squeezed to fit between Vstart and Vhigh."/>
+      <label label=" "/>
+      <label label="The procedure to set up a speed curve is to pick the curve shape you desire on"/>
+      <label label="the speed table AND use Vstart (CV 2) and Vhigh (CV 5) to set the Minimum and"/>
+      <label label="Maximum speeds."/>
+      <label label=" "/>
+      <label label="When speed matching to a loco the Minimum and Maximum speeds MUST be matched"/>
+      <label label="first using CVs 2 and 5 ONLY on the LokSound decoder. Then use CVs 68 to 93"/>
+      <label label="to match the remaining 26 speed steps. CVs 2 and 5 MUST be set first when speed"/>
+      <label label="matching to another loco."/>
+      <label label=" "/>
+      <label label="The Minimum and Maximum speeds cannot be set by using the speed table steps 1"/>
+      <label label="and 28 (CVs 67 and 94). The values of these two CVs are fixed in the decoder at"/>
+      <label label="1 and 255 respectively."/>
+      <label label=" "/>
+      <separator/>
+      <label label="&lt;html&gt;&lt;h2&gt;Further Assistance&lt;/h2&gt;&lt;/html&gt;"/>
+      <label label=" "/>
+      <label label="For help with programming these decoders, the LokSound Yahoo&#174; group is recommended."/>
+      <label label=" "/>
+      <label label="If you think there is a problem with this decoder definition, please report back to us by"/>
+      <label label="posting to either the JMRI or LokSound Yahoo&#174; groups or by logging a bug report on"/>
+      <label label="the JMRI SourceForge page at http//sourceforge.net/p/jmri/bugs/"/>
+      <label label=" "/>
+      <separator/>
+      <label label="&lt;html&gt;&lt;h2&gt;Decoder Information&lt;/h2&gt;&lt;/html&gt;"/>
+      <label label=" "/>
+            <display item="Firmware Major Version"/>
+            <display item="Firmware Minor Version"/>
+            <display item="Firmware Build Number"/>
+      <label label=" "/>
+      <separator/>
+    </column>
+  </pane>

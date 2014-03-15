@@ -9,11 +9,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import javax.swing.Icon;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import jmri.util.swing.JmriAbstractAction;
 import jmri.util.swing.WindowInterface;
-import javax.swing.Icon;
-
-import javax.swing.JFileChooser;
 
 /**
  * Offer an easy mechanism to save the entire roster contents from one
@@ -56,14 +56,12 @@ public class FullBackupExportAction
         ZipOutputStream zipper = null;
 
         try {
-            String roster_filename_extension = ".roster";
+            String roster_filename_extension = "roster";
 
             JFileChooser chooser = new JFileChooser();
-            /* restore this when Java 1.6 is acceptable
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "JMRI Roster files", roster_filename_extension);
+            "JMRI full roster files", roster_filename_extension);
             chooser.setFileFilter(filter);
-             */
 
             int returnVal = chooser.showSaveDialog(_parent);
             if (returnVal != JFileChooser.APPROVE_OPTION) {

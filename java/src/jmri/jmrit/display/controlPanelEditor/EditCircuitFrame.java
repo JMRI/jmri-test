@@ -239,7 +239,7 @@ public class EditCircuitFrame extends jmri.util.JmriJFrame {
         JButton convertButton = new JButton(Bundle.getMessage("ButtonConvertIcon"));
         convertButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent a) {
-                    _parent.convertIcons();
+                	convertIcons();
                 }
         });
         convertButton.setToolTipText(Bundle.getMessage("ToolTipConvertIcon"));
@@ -255,6 +255,11 @@ public class EditCircuitFrame extends jmri.util.JmriJFrame {
         buttonPanel.add(panel);
 
         return buttonPanel;
+    }
+    
+    private void convertIcons() {
+        _parent.convertIcons();
+        this.toFront();
     }
 
     /************************* end setup **************************/
@@ -345,48 +350,40 @@ public class EditCircuitFrame extends jmri.util.JmriJFrame {
         _blockState.setText(stateText.toString());
     }
 
-    private Sensor getSensor(String sensorName) {
-        try {
-            if (sensorName!=null && sensorName.trim().length()>0) {
-                return InstanceManager.sensorManagerInstance().provideSensor(sensorName);
-            }
-        } catch (Throwable t) { 
-            JOptionPane.showMessageDialog(this, java.text.MessageFormat.format(
-                            Bundle.getMessage("sensorFail"), sensorName, t.toString()),
-                            Bundle.getMessage("noSensor"), JOptionPane.INFORMATION_MESSAGE);
-        }
-        return null;
-    }
-
     protected void closingEvent() {
         // check Sensors
-        String sensorName = _detectorSensorName.getText();
-        Sensor sensor = getSensor(sensorName);
-        if (sensor==null) {
+        String name = _detectorSensorName.getText();
+        if (name==null ||name.trim().length()==0) {
             JOptionPane.showMessageDialog(this, Bundle.getMessage("noDetecterSensor"), 
                             Bundle.getMessage("noSensor"), JOptionPane.INFORMATION_MESSAGE);
-        } else {
-        	try {
-                _block.setSensor(sensorName);        	        		
-        	} catch (Throwable t) {
-                JOptionPane.showMessageDialog(this, java.text.MessageFormat.format(Bundle.getMessage("badSensorName"),
-                		sensorName, t.toString()),
-                        Bundle.getMessage("noSensor"), JOptionPane.INFORMATION_MESSAGE);        		
-        	}
         }
-
-        String errorName = _errorSensorName.getText();
-        Sensor errSensor = getSensor(errorName);
-        _block.setErrorSensor(errorName);
-        if (errSensor!=null && sensor==null) {
-            int result = JOptionPane.showConfirmDialog(this, Bundle.getMessage("mixedSensors"), 
-                            Bundle.getMessage("noSensor"), JOptionPane.YES_NO_OPTION, 
-                            JOptionPane.QUESTION_MESSAGE);
-            if (result==JOptionPane.YES_OPTION) {
-                _block.setSensor(errorName);
-                _block.setErrorSensor(null);
-                _detectorSensorName.setText(errSensor.getDisplayName());
+        if (!_block.setSensor(name)) {
+            JOptionPane.showMessageDialog(this, java.text.MessageFormat.format(Bundle.getMessage("badSensorName"),name),
+            		Bundle.getMessage("noSensor"), JOptionPane.INFORMATION_MESSAGE);        		
+        }
+        name = _errorSensorName.getText();
+        if (name!=null && name.trim().length()>0) {
+            if (_block.getSensor()==null) {
+                int result = JOptionPane.showConfirmDialog(this, Bundle.getMessage("mixedSensors"), 
+                                Bundle.getMessage("noSensor"), JOptionPane.YES_NO_OPTION, 
+                                JOptionPane.QUESTION_MESSAGE);
+                if (result==JOptionPane.YES_OPTION) {
+                	if (!_block.setSensor(name)) {
+                        JOptionPane.showMessageDialog(this, java.text.MessageFormat.format(Bundle.getMessage("badSensorName"),name),
+                        		Bundle.getMessage("noSensor"), JOptionPane.INFORMATION_MESSAGE);        		                		
+                	} else {
+                        _block.setErrorSensor(null);
+                        _detectorSensorName.setText(_block.getSensor().getDisplayName());                		
+                	}
+                }
+            } else {
+            	if (!_block.setErrorSensor(name)) {
+                    JOptionPane.showMessageDialog(this, java.text.MessageFormat.format(Bundle.getMessage("badSensorName"),name),
+                    		Bundle.getMessage("noSensor"), JOptionPane.INFORMATION_MESSAGE);
+            	}
             }
+        } else {
+        	_block.setErrorSensor(null);
         }
         closePickList();
         

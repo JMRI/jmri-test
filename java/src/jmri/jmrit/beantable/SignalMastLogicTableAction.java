@@ -10,6 +10,7 @@ import jmri.NamedBean;
 import jmri.SignalMast;
 import jmri.SignalMastLogic;
 import jmri.SignalMastLogicManager;
+import jmri.jmrit.display.layoutEditor.LayoutBlockManager;
 import jmri.InstanceManager;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -27,12 +28,8 @@ import javax.swing.JLabel;
 import javax.swing.JCheckBox;
 //import javax.swing.JComponent;
 import javax.swing.JTextField;
-import javax.swing.BoxLayout;
-import javax.swing.JDialog;
-import javax.swing.BorderFactory;
 import jmri.util.com.sun.TableSorter;
 import java.awt.event.MouseEvent;
-import java.awt.Component;
 
 public class SignalMastLogicTableAction extends AbstractTableAction{
 
@@ -440,10 +437,10 @@ public class SignalMastLogicTableAction extends AbstractTableAction{
     JLabel sourceLabel = new JLabel();
     
     void autoCreatePairs(jmri.util.JmriJFrame f) {
-        if (!InstanceManager.layoutBlockManagerInstance().isAdvancedRoutingEnabled()){
+        if (!InstanceManager.getDefault(LayoutBlockManager.class).isAdvancedRoutingEnabled()){
             int response = JOptionPane.showConfirmDialog(null, Bundle.getMessage("EnableLayoutBlockRouting"));
             if (response == 0){
-                InstanceManager.layoutBlockManagerInstance().enableAdvancedRouting(true);
+                InstanceManager.getDefault(LayoutBlockManager.class).enableAdvancedRouting(true);
                 JOptionPane.showMessageDialog(null, Bundle.getMessage("LayoutBlockRoutingEnabled"));
             } else {
                 return;

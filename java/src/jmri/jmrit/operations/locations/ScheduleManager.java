@@ -130,31 +130,20 @@ public class ScheduleManager implements java.beans.PropertyChangeListener {
 	/**
 	 * Sort by schedule name
 	 * 
-	 * @return list of schedule ids ordered by name
+	 * @return list of schedules ordered by name
 	 */
-	public List<String> getSchedulesByNameList() {
-		// first get id list
-		List<String> sortList = getList();
+	public List<Schedule> getSchedulesByNameList() {
+		List<Schedule> sortList = getList();
 		// now re-sort
-		List<String> out = new ArrayList<String>();
-		String schName = "";
-		boolean schAdded = false;
-		Schedule s;
-
+		List<Schedule> out = new ArrayList<Schedule>();
 		for (int i = 0; i < sortList.size(); i++) {
-			schAdded = false;
-			s = getScheduleById(sortList.get(i));
-			schName = s.getName();
 			for (int j = 0; j < out.size(); j++) {
-				s = getScheduleById(out.get(j));
-				String outLocName = s.getName();
-				if (schName.compareToIgnoreCase(outLocName) < 0) {
+				if (sortList.get(i).getName().compareToIgnoreCase(out.get(j).getName()) < 0) {
 					out.add(j, sortList.get(i));
-					schAdded = true;
 					break;
 				}
 			}
-			if (!schAdded) {
+			if (!out.contains(sortList.get(i))) {
 				out.add(sortList.get(i));
 			}
 		}
@@ -165,57 +154,36 @@ public class ScheduleManager implements java.beans.PropertyChangeListener {
 	/**
 	 * Sort by schedule number
 	 * 
-	 * @return list of schedule ids ordered by number
+	 * @return list of schedules ordered by number
 	 */
-	public List<String> getSchedulesByIdList() {
-		// first get id list
-		List<String> sortList = getList();
+	public List<Schedule> getSchedulesByIdList() {
+		List<Schedule> sortList = getList();
 		// now re-sort
-		List<String> out = new ArrayList<String>();
-		int scheduleNumber = 0;
-		boolean scheduleAdded = false;
-		Schedule s;
-
+		List<Schedule> out = new ArrayList<Schedule>();
 		for (int i = 0; i < sortList.size(); i++) {
-			scheduleAdded = false;
-			s = getScheduleById(sortList.get(i));
-			try {
-				scheduleNumber = Integer.parseInt(s.getId());
-			} catch (NumberFormatException e) {
-				log.debug("schedule id number isn't a number");
-			}
 			for (int j = 0; j < out.size(); j++) {
-				s = getScheduleById(out.get(j));
 				try {
-					int outScheduleNumber = Integer.parseInt(s.getId());
-					if (scheduleNumber < outScheduleNumber) {
+					if (Integer.parseInt(sortList.get(i).getId()) < Integer.parseInt(out.get(j).getId())) {
 						out.add(j, sortList.get(i));
-						scheduleAdded = true;
 						break;
 					}
 				} catch (NumberFormatException e) {
-					log.debug("list out id number isn't a number");
+					log.debug("list id number isn't a number");
 				}
 			}
-			if (!scheduleAdded) {
+			if (!out.contains(sortList.get(i))) {
 				out.add(sortList.get(i));
 			}
 		}
 		return out;
 	}
 
-	private List<String> getList() {
-		String[] arr = new String[_scheduleHashTable.size()];
-		List<String> out = new ArrayList<String>();
-		Enumeration<String> en = _scheduleHashTable.keys();
-		int i = 0;
+	private List<Schedule> getList() {
+		List<Schedule> out = new ArrayList<Schedule>();
+		Enumeration<Schedule> en = _scheduleHashTable.elements();
 		while (en.hasMoreElements()) {
-			arr[i] = en.nextElement();
-			i++;
+			out.add(en.nextElement());
 		}
-		jmri.util.StringUtil.sort(arr);
-		for (i = 0; i < arr.length; i++)
-			out.add(arr[i]);
 		return out;
 	}
 
@@ -227,10 +195,9 @@ public class ScheduleManager implements java.beans.PropertyChangeListener {
 	public JComboBox getComboBox() {
 		JComboBox box = new JComboBox();
 		box.addItem("");
-		List<String> schs = getSchedulesByNameList();
+		List<Schedule> schs = getSchedulesByNameList();
 		for (int i = 0; i < schs.size(); i++) {
-			String id = schs.get(i);
-			box.addItem(getScheduleById(id));
+			box.addItem(schs.get(i));
 		}
 		return box;
 	}
@@ -244,10 +211,9 @@ public class ScheduleManager implements java.beans.PropertyChangeListener {
 	public void updateComboBox(JComboBox box) {
 		box.removeAllItems();
 		box.addItem("");
-		List<String> schs = getSchedulesByNameList();
+		List<Schedule> schs = getSchedulesByNameList();
 		for (int i = 0; i < schs.size(); i++) {
-			String id = schs.get(i);
-			box.addItem(getScheduleById(id));
+			box.addItem(schs.get(i));
 		}
 	}
 
@@ -260,12 +226,12 @@ public class ScheduleManager implements java.beans.PropertyChangeListener {
 	 *            replacement car type.
 	 */
 	public void replaceType(String oldType, String newType) {
-		List<String> schs = getSchedulesByIdList();
+		List<Schedule> schs = getSchedulesByIdList();
 		for (int i = 0; i < schs.size(); i++) {
-			Schedule sch = getScheduleById(schs.get(i));
-			List<String> items = sch.getItemsBySequenceList();
+			Schedule sch = schs.get(i);
+			List<ScheduleItem> items = sch.getItemsBySequenceList();
 			for (int j = 0; j < items.size(); j++) {
-				ScheduleItem si = sch.getItemById(items.get(j));
+				ScheduleItem si = items.get(j);
 				if (si.getTypeName().equals(oldType)) {
 					si.setTypeName(newType);
 				}
@@ -284,12 +250,12 @@ public class ScheduleManager implements java.beans.PropertyChangeListener {
 	public void replaceRoad(String oldRoad, String newRoad) {
 		if (newRoad == null)
 			return;
-		List<String> schs = getSchedulesByIdList();
+		List<Schedule> schs = getSchedulesByIdList();
 		for (int i = 0; i < schs.size(); i++) {
-			Schedule sch = getScheduleById(schs.get(i));
-			List<String> items = sch.getItemsBySequenceList();
+			Schedule sch = schs.get(i);
+			List<ScheduleItem> items = sch.getItemsBySequenceList();
 			for (int j = 0; j < items.size(); j++) {
-				ScheduleItem si = sch.getItemById(items.get(j));
+				ScheduleItem si = items.get(j);
 				if (si.getRoadName().equals(oldRoad)) {
 					si.setRoadName(newRoad);
 				}
@@ -308,12 +274,12 @@ public class ScheduleManager implements java.beans.PropertyChangeListener {
 	 *            replacement car load.
 	 */
 	public void replaceLoad(String type, String oldLoad, String newLoad) {
-		List<String> schs = getSchedulesByIdList();
+		List<Schedule> schs = getSchedulesByIdList();
 		for (int i = 0; i < schs.size(); i++) {
-			Schedule sch = getScheduleById(schs.get(i));
-			List<String> items = sch.getItemsBySequenceList();
+			Schedule sch = schs.get(i);
+			List<ScheduleItem> items = sch.getItemsBySequenceList();
 			for (int j = 0; j < items.size(); j++) {
-				ScheduleItem si = sch.getItemById(items.get(j));
+				ScheduleItem si = items.get(j);
 				if (si.getTypeName().equals(type) && si.getReceiveLoadName().equals(oldLoad)) {
 					if (newLoad != null)
 						si.setReceiveLoadName(newLoad);
@@ -341,12 +307,11 @@ public class ScheduleManager implements java.beans.PropertyChangeListener {
 		JComboBox box = new JComboBox();
 		// search all spurs for that use schedule
 		LocationManager manager = LocationManager.instance();
-		List<String> locations = manager.getLocationsByNameList();
+		List<Location> locations = manager.getLocationsByNameList();
 		for (int j = 0; j < locations.size(); j++) {
-			Location location = manager.getLocationById(locations.get(j));
-			List<String> spurs = location.getTrackIdsByNameList(Track.SPUR);
-			for (int k = 0; k < spurs.size(); k++) {
-				Track spur = location.getTrackById(spurs.get(k));
+			Location location = locations.get(j);
+			List<Track> spurs = location.getTrackByNameList(Track.SPUR);
+			for (Track spur : spurs) {
 				if (spur.getScheduleId().equals(schedule.getId())) {
 					LocationTrackPair ltp = new LocationTrackPair(location, spur);
 					box.addItem(ltp);
@@ -372,11 +337,9 @@ public class ScheduleManager implements java.beans.PropertyChangeListener {
 		Element values;
 		root.addContent(values = new Element(Xml.SCHEDULES));
 		// add entries
-		List<String> scheduleList = getSchedulesByIdList();
+		List<Schedule> scheduleList = getSchedulesByIdList();
 		for (int i = 0; i < scheduleList.size(); i++) {
-			String scheduleId = scheduleList.get(i);
-			Schedule sch = getScheduleById(scheduleId);
-			values.addContent(sch.store());
+			values.addContent(scheduleList.get(i).store());
 		}
 	}
 

@@ -44,7 +44,7 @@ public class NcePacketMonitorPanel extends jmri.jmrix.AbstractMonPane implements
     SerialPort activeSerialPort = null;
     NceSystemConnectionMemo memo = null;
     
-    JButton checkButton = new JButton("Init");
+    JToggleButton checkButton = new JToggleButton("Info");
     JRadioButton locoSpeedButton = new JRadioButton("Hide loco packets");
     JCheckBox truncateCheckBox = new JCheckBox("+ on");
 
@@ -82,7 +82,7 @@ public class NcePacketMonitorPanel extends jmri.jmrix.AbstractMonPane implements
     	this.memo = m;
         
         // populate the GUI, invoked as part of startup
-    	
+
         // load the port selection part
         portBox.setToolTipText("Select the port to use");
         portBox.setAlignmentX(JLabel.LEFT_ALIGNMENT);
@@ -103,16 +103,25 @@ public class NcePacketMonitorPanel extends jmri.jmrix.AbstractMonPane implements
                     }
                 }
             });
-        add(new JSeparator());
+        {
+            JSeparator js = new JSeparator();
+            js.setMaximumSize( new Dimension(10000,10) );
+            add(js);
+        }
         JPanel p1 = new JPanel();
         p1.setLayout(new FlowLayout());
         p1.add(new JLabel("Serial port: "));
         p1.add(portBox);
         p1.add(openPortButton);
+        p1.setMaximumSize( p1.getPreferredSize() );
         add(p1);
 
         // add user part of GUI
-        add(new JSeparator());
+        {
+            JSeparator js = new JSeparator();
+            js.setMaximumSize( new Dimension(10000,10) );
+            add(js);
+        }
         JPanel p2 = new JPanel();
         {
         JPanel p = new JPanel();
@@ -122,7 +131,15 @@ public class NcePacketMonitorPanel extends jmri.jmrix.AbstractMonPane implements
 			p.add(checkButton);
 			checkButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					sendBytes(new byte[] { (byte) '?'});
+					if ( checkButton.isSelected() ) { 
+						sendBytes(new byte[] { (byte) '?'});
+						checkButton.setText("Res.");
+						checkButton.setToolTipText("Resume packet monitoring");
+					} else {
+						sendBytes(new byte[] { (byte) ' '});
+						checkButton.setText("Info");
+						checkButton.setToolTipText("?");
+					}
 				}
 			});
 			truncateCheckBox
@@ -155,6 +172,16 @@ public class NcePacketMonitorPanel extends jmri.jmrix.AbstractMonPane implements
                 }
             });
             p2.add(p);
+            b= new JRadioButton("(as above with spaces)");
+            b.setToolTipText("H1");
+            g.add(b);
+            p.add(b);
+            b.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    sendBytes(new byte[]{(byte)'H',(byte)'1'});
+                }
+            });
+            p2.add(p);
             b= new JRadioButton("Hex without preamble symbol");
             b.setToolTipText("H2");
             g.add(b);
@@ -165,13 +192,33 @@ public class NcePacketMonitorPanel extends jmri.jmrix.AbstractMonPane implements
                 }
             });
             p2.add(p);
-            b= new JRadioButton("Hex with preamble in hex");
+            b= new JRadioButton("(as above with spaces)");
+            b.setToolTipText("H3");
+            g.add(b);
+            p.add(b);
+            b.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    sendBytes(new byte[]{(byte)'H',(byte)'3'});
+                }
+            });
+            p2.add(p);
+            b= new JRadioButton("Hex with preamble count in hex");
             b.setToolTipText("H4");
             g.add(b);
             p.add(b);
             b.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     sendBytes(new byte[]{(byte)'H',(byte)'4'});
+                }
+            });
+            p2.add(p);
+            b= new JRadioButton("(as above with spaces)");
+            b.setToolTipText("H5");
+            g.add(b);
+            p.add(b);
+            b.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    sendBytes(new byte[]{(byte)'H',(byte)'5'});
                 }
             });
             p2.add(p);
@@ -334,8 +381,11 @@ public class NcePacketMonitorPanel extends jmri.jmrix.AbstractMonPane implements
             p2.add(p);
         }  // end acc single/double
 
-
-        add(p2);
+        p2.setMaximumSize( p2.getPreferredSize() );       
+        JScrollPane ps = new JScrollPane(p2);
+        ps.setMaximumSize( ps.getPreferredSize() );
+        ps.setVisible(true);
+        add(ps);
     }
 
     /**
@@ -592,4 +642,18 @@ public class NcePacketMonitorPanel extends jmri.jmrix.AbstractMonPane implements
 
      } // end class Reader
 
+    /**
+     * Nested class to create one of these using old-style defaults
+     */
+    static public class Default extends jmri.jmrix.nce.swing.NceNamedPaneAction {
+
+        private static final long serialVersionUID = -8552495867322154829L;
+
+        public Default() {
+            super("Open NCE DCC Packet Analyzer", 
+                new jmri.util.swing.sdi.JmriJFrameInterface(), 
+                NcePacketMonitorPanel.class.getName(), 
+                jmri.InstanceManager.getDefault(NceSystemConnectionMemo.class));
+        }
+    }
 }

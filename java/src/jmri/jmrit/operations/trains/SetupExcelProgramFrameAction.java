@@ -1,4 +1,4 @@
-// RunExcelProgramFrameAction.java
+// SetupExcelProgramFrameAction.java
 
 package jmri.jmrit.operations.trains;
 
@@ -30,4 +30,4 @@ public class SetupExcelProgramFrameAction extends AbstractAction {
     }
 }
 
-/* @(#)TrainScriptAction.java */
+/* @(#)SetupExcelProgramFrameAction.java */

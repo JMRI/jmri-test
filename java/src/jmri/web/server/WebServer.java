@@ -2,11 +2,8 @@ package jmri.web.server;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import jmri.InstanceManager;
 import jmri.ShutDownTask;
 import jmri.implementation.QuietShutDownTask;
@@ -15,8 +12,13 @@ import static jmri.jmris.json.JSON.JSON_PROTOCOL_VERSION;
 import jmri.util.FileUtil;
 import jmri.util.zeroconf.ZeroConfService;
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -87,22 +89,46 @@ public final class WebServer implements LifeCycle.Listener {
                 log.error(e.getMessage());
             }
             for (String path : services.stringPropertyNames()) {
-                ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SECURITY);
-                context.setContextPath(path);
+                ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.NO_SECURITY);
+                servletContext.setContextPath(path);
                 if (services.getProperty(path).equals("fileHandler")) { // NOI18N
-                    ServletHolder holder = context.addServlet(DefaultServlet.class, "/*"); // NOI18N
+                    if (filePaths.getProperty(path).startsWith("program:web")) { // NOI18N
+                        log.debug("Setting up handler chain for {}", path);
+                        // make it possible to override anything under program:web/ with an identical path under preference:web/
+                        ResourceHandler preferenceHandler = new ResourceHandler();
+                        preferenceHandler.setDirectoriesListed(true);
+                        preferenceHandler.setWelcomeFiles(new String[]{"index.html"}); // NOI18N
+                        preferenceHandler.setResourceBase(FileUtil.getAbsoluteFilename(filePaths.getProperty(path).replace("program:", "preference:"))); // NOI18N
+                        preferenceHandler.setStylesheet(FileUtil.getAbsoluteFilename(filePaths.getProperty("/css")) + "/miniServer.css"); // NOI18N
+                        ResourceHandler programHandler = new ResourceHandler();
+                        programHandler.setDirectoriesListed(true);
+                        programHandler.setWelcomeFiles(new String[]{"index.html"}); // NOI18N
+                        programHandler.setResourceBase(FileUtil.getAbsoluteFilename(filePaths.getProperty(path)));
+                        programHandler.setStylesheet(FileUtil.getAbsoluteFilename(filePaths.getProperty("/css")) + "/miniServer.css"); // NOI18N
+                        HandlerList handlers = new HandlerList();
+                        handlers.setHandlers(new Handler[]{preferenceHandler, programHandler, new DefaultHandler()});
+                        ContextHandler handlerContext = new ContextHandler();
+                        handlerContext.setContextPath(path);
+                        handlerContext.setHandler(handlers);
+                        contexts.addHandler(handlerContext);
+                        continue;
+                    }
+                    ServletHolder holder = servletContext.addServlet(DefaultServlet.class, "/*"); // NOI18N
                     holder.setInitParameter("resourceBase", FileUtil.getAbsoluteFilename(filePaths.getProperty(path))); // NOI18N
                     holder.setInitParameter("stylesheet", FileUtil.getAbsoluteFilename(filePaths.getProperty("/css")) + "/miniServer.css"); // NOI18N
+                } else if (services.getProperty(path).equals("redirectHandler")) { // NOI18N
+                    servletContext.addServlet("jmri.web.servlet.RedirectionServlet", ""); // NOI18N
                 } else {
-                    context.addServlet(services.getProperty(path), "/*"); // NOI18N
+                    servletContext.addServlet(services.getProperty(path), "/*"); // NOI18N
                 }
-                contexts.addHandler(context);
+                contexts.addHandler(servletContext);
             }
             server.setHandler(contexts);
 
             server.addLifeCycleListener(this);
 
             Thread serverThread = new ServerThread(server);
+            serverThread.setName("WebServer"); // NOI18N
             serverThread.start();
 
         }
@@ -111,22 +137,6 @@ public final class WebServer implements LifeCycle.Listener {
 
     public void stop() throws Exception {
         server.stop();
-    }
-
-    public static String getLocalAddress() {
-        InetAddress hostAddress = null;
-        try {
-            hostAddress = Inet4Address.getLocalHost();
-        } catch (java.net.UnknownHostException e) {
-        }
-        if (hostAddress == null || hostAddress.isLoopbackAddress()) {
-            hostAddress = ZeroConfService.hostAddress();  //lookup from interfaces
-        }
-        if (hostAddress == null) {
-            return WebServer.getString("MessageAddressNotFound");
-        } else {
-            return hostAddress.getHostAddress().toString();
-        }
     }
 
     /**
@@ -149,11 +159,6 @@ public final class WebServer implements LifeCycle.Listener {
         }
     }
 
-    @SuppressWarnings("FinalStaticMethod")
-    public static final String getString(String message) {
-        return ResourceBundle.getBundle("jmri.web.server.Bundle").getString(message);
-    }
-
     public int getPort() {
         return preferences.getPort();
     }
@@ -169,11 +174,11 @@ public final class WebServer implements LifeCycle.Listener {
     @Override
     public void lifeCycleStarted(LifeCycle lc) {
         HashMap<String, String> properties = new HashMap<String, String>();
-        properties.put("path", "/index.html"); // NOI18N
+        properties.put("path", "/"); // NOI18N
         properties.put(JSON, JSON_PROTOCOL_VERSION);
+        log.info("Starting ZeroConfService _http._tcp.local for Web Server");
         zeroConfService = ZeroConfService.create("_http._tcp.local.", preferences.getPort(), properties); // NOI18N
         zeroConfService.publish();
-        log.info("Starting ZeroConfService _http._tcp.local for Web Server");
         log.debug("Web Server finished starting");
     }
 
@@ -200,7 +205,7 @@ public final class WebServer implements LifeCycle.Listener {
 
     static private class ServerThread extends Thread {
 
-        private Server server;
+        private final Server server;
 
         public ServerThread(Server server) {
             this.server = server;

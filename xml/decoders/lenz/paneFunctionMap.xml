@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="../XSLT/decoder.xsl"?>
 <!-- Copyright (C) JMRI 2001, 2005, 2007, 2009, 2010, 2012 All rights reserved -->
 <!-- $Id: accelDecel.xml 22090 2012-12-29 02:30:04Z jacobsen $ -->
@@ -39,6 +39,9 @@
       <revremark>Revision in original Lenz_Gold.xml file</revremark>
     </revision>
   </revhistory>
+
+    <name>Lenz Function Map</name>
+    <name xml:lang="it">Mappatura Funzioni Lenz</name>
 
     <column>
       <row>
@@ -202,6 +205,5 @@
         </column>
       </row>
     </column>
-    <name>Lenz Function Map</name>
-    <name xml:lang="it">Mappatura Funzioni Lenz</name>
+
 </pane>

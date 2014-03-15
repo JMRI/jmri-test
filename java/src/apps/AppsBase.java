@@ -3,7 +3,7 @@ package apps;
 
 import apps.gui3.TabbedPreferences;
 import java.io.File;
-import java.util.Enumeration;
+import java.io.IOException;
 import javax.swing.SwingUtilities;
 import jmri.Application;
 import jmri.IdTagManager;
@@ -20,27 +20,26 @@ import jmri.jmrit.signalling.EntryExitPairs;
 import jmri.managers.DefaultIdTagManager;
 import jmri.managers.DefaultShutDownManager;
 import jmri.managers.DefaultUserMessagePreferences;
+import jmri.profile.Profile;
+import jmri.profile.ProfileManager;
 import jmri.util.FileUtil;
 import jmri.util.Log4JUtil;
 import jmri.util.PythonInterp;
-import jmri.util.exceptionhandler.AwtHandler;
-import jmri.util.exceptionhandler.UncaughtExceptionHandler;
-import org.apache.log4j.Appender;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.RollingFileAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for the core of JMRI applications. <p> This provides a non-GUI
- * base for applications. Below this is the {@link apps.gui3.Apps3} class which
- * provides basic Swing GUI support. <p> For an example of using this, see
- * {@link apps.FacelessApp} and comments therein. <p> There are a series of
- * steps in the configuration: <dl> <dt>preInit<dd>Initialize log4j, invoked
- * from the main() <dt>ctor<dd> </dl> <P>
+ * Base class for the core of JMRI applications.
+ * <p>
+ * This provides a non-GUI base for applications. Below this is the
+ * {@link apps.gui3.Apps3} subclass which provides basic Swing GUI support.
+ * <p>
+ * There are a series of steps in the configuration:
+ * <dl>
+ * <dt>preInit<dd>Initialize log4j, invoked from the main()
+ * <dt>ctor<dd>
+ * </dl>
+ * <P>
  *
  * @author	Bob Jacobsen Copyright 2009, 2010
  * @version $Revision$
@@ -48,12 +47,11 @@ import org.slf4j.LoggerFactory;
 public abstract class AppsBase {
 
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "MS_PKGPROTECT",
-    justification = "not a library pattern")
+            justification = "not a library pattern")
     private final static String configFilename = "/JmriConfig3.xml";
     protected boolean configOK;
     protected boolean configDeferredLoadOK;
     protected boolean preferenceFileExists;
-    static boolean log4JSetUp = false;
     static boolean preInit = false;
     static Logger log = LoggerFactory.getLogger(AppsBase.class.getName());
 
@@ -62,9 +60,7 @@ public abstract class AppsBase {
      * main() routine.
      */
     static public void preInit(String applicationName) {
-        if (!log4JSetUp) {
-            initLog4J();
-        }
+        Log4JUtil.initLog4J();
 
         try {
             Application.setApplicationName(applicationName);
@@ -74,7 +70,6 @@ public abstract class AppsBase {
             log.error("Unable to set application name");
         }
 
-        //jmri.util.Log4JUtil.initLog4J();
         log.info(Log4JUtil.startupInfo(applicationName));
 
         preInit = true;
@@ -84,17 +79,17 @@ public abstract class AppsBase {
      * Create and initialize the application object.
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "SC_START_IN_CTOR",
-    justification = "The thread is only called to help improve user experiance when opening the preferences, it is not critical for it to be run at this stage")
+            justification = "The thread is only called to help improve user experiance when opening the preferences, it is not critical for it to be run at this stage")
     public AppsBase(String applicationName, String configFileDef, String[] args) {
 
         if (!preInit) {
             preInit(applicationName);
             setConfigFilename(configFileDef, args);
         }
+
+        Log4JUtil.initLog4J();
         
-        if (!log4JSetUp) {
-            initLog4J();
-        }
+        configureProfile();
 
         installConfigurationManager();
 
@@ -107,7 +102,7 @@ public abstract class AppsBase {
         setAndLoadPreferenceFile();
 
         FileUtil.logFilePaths();
-        
+
         Runnable r;
         /*
          * Once all the preferences have been loaded we can initial the
@@ -144,6 +139,65 @@ public abstract class AppsBase {
         thr2.start();
     }
 
+    /**
+     * Configure the {@link jmri.profile.Profile} to use for this application.
+     * <p>
+     * Note that GUI-based applications must override this method, since this
+     * method does not provide user feedback.
+     */
+    protected void configureProfile() {
+        String profileFilename;
+        FileUtil.createDirectory(FileUtil.getPreferencesPath());
+        // Needs to be declared final as we might need to
+        // refer to this on the Swing thread
+        File profileFile;
+        profileFilename = getConfigFileName().replaceFirst(".xml", ".properties");
+        // decide whether name is absolute or relative
+        if (!new File(profileFilename).isAbsolute()) {
+            // must be relative, but we want it to
+            // be relative to the preferences directory
+            profileFile = new File(FileUtil.getPreferencesPath() + profileFilename);
+        } else {
+            profileFile = new File(profileFilename);
+        }
+        ProfileManager.defaultManager().setConfigFile(profileFile);
+        // See if the profile to use has been specified on the command line as
+        // a system property jmri.profile as a profile id.
+        if (System.getProperties().containsKey(ProfileManager.SYSTEM_PROPERTY)) {
+            ProfileManager.defaultManager().setActiveProfile(System.getProperty(ProfileManager.SYSTEM_PROPERTY));
+        }
+        // @see jmri.profile.ProfileManager#migrateToProfiles JavaDoc for conditions handled here
+        if (!ProfileManager.defaultManager().getConfigFile().exists()) { // no profile config for this app
+            try {
+                if (ProfileManager.defaultManager().migrateToProfiles(getConfigFileName())) { // migration or first use
+                    // GUI should show message here
+                    log.info(Bundle.getMessage("ConfigMigratedToProfile"));
+                }
+            } catch (IOException ex) {
+                // GUI should show message here
+                log.error("Profiles not configurable. Using fallback per-application configuration. Error: {}", ex.getMessage());
+            } catch (IllegalArgumentException ex) {
+                // GUI should show message here
+                log.error("Profiles not configurable. Using fallback per-application configuration. Error: {}", ex.getMessage());
+            }
+        }
+        try {
+            // GUI should use ProfileManagerDialog.getStartingProfile here
+            if (ProfileManager.getStartingProfile() != null) {
+                // Manually setting the configFilename property since calling
+                // Apps.setConfigFilename() does not reset the system property
+                System.setProperty("org.jmri.Apps.configFilename", Profile.CONFIG_FILENAME);
+                log.info("Starting with profile {}", ProfileManager.defaultManager().getActiveProfile().getId());
+            } else {
+                log.error("Specify profile to use as command line argument.");
+                log.error("If starting with saved profile configuration, ensure the autoStart property is set to \"true\"");
+                log.error("Profiles not configurable. Using fallback per-application configuration.");
+            }
+        } catch (IOException ex) {
+            log.info("Profiles not configurable. Using fallback per-application configuration. Error: {}", ex.getMessage());
+        }
+    }
+
     protected void installConfigurationManager() {
         ConfigXmlManager cm = new ConfigXmlManager();
         FileUtil.createDirectory(FileUtil.getUserFilesPath());
@@ -169,7 +223,7 @@ public abstract class AppsBase {
 
         // install preference manager
         InstanceManager.setTabbedPreferences(new TabbedPreferences());
-        
+
         // install the named bean handler
         InstanceManager.store(new NamedBeanHandleManager(), NamedBeanHandleManager.class);
 
@@ -204,7 +258,9 @@ public abstract class AppsBase {
         try {
             ((ConfigXmlManager) InstanceManager.configureManagerInstance()).setPrefsLocation(file);
             configOK = InstanceManager.configureManagerInstance().load(file);
-            if (log.isDebugEnabled()) log.debug("end load config file "+ file.getName() +", OK=" + configOK);
+            if (log.isDebugEnabled()) {
+                log.debug("end load config file " + file.getName() + ", OK=" + configOK);
+            }
         } catch (Exception e) {
             configOK = false;
         }
@@ -232,20 +288,42 @@ public abstract class AppsBase {
     //abstract protected void addToActionModel();
     private boolean doDeferredLoad(File file) {
         boolean result;
-        if (log.isDebugEnabled()) log.debug("start deferred load from config file " + file.getName());
+        if (log.isDebugEnabled()) {
+            log.debug("start deferred load from config file " + file.getName());
+        }
         try {
             result = InstanceManager.configureManagerInstance().loadDeferred(file);
         } catch (JmriException e) {
             log.error("Unhandled problem loading deferred configuration: " + e);
             result = false;
         }
-        if (log.isDebugEnabled()) log.debug("end deferred load from config file "+ file.getName() +", OK=" + result);
+        if (log.isDebugEnabled()) {
+            log.debug("end deferred load from config file " + file.getName() + ", OK=" + result);
+        }
         return result;
     }
 
     protected void installShutDownManager() {
         InstanceManager.setShutDownManager(
                 new DefaultShutDownManager());
+
+        // configure the shutdown manager as a shutdown hook
+        // when it is installed.  This allows a clean shutdown
+        // when the shutdown hook is triggered via the POSIX signals
+        // HUP (Signal 1), INT (Signal 2), or TERM (Signal 15).  Note 
+        // SIGHUP, SIGINT, and SIGTERM cause the program to go through
+        // the shutdown actions, but the Java process still remains until
+        // it receives a KILL (Signal 9).  A completely orderly shutdown
+        // can be forced by the two step process:
+        // `kill -s 15 pid`
+        // `kill -s 9 pid`
+        jmri.util.RuntimeUtil.addShutdownHook( new Thread(new Runnable(){
+               public void run() {
+                  if(log.isDebugEnabled()) 
+                     log.debug("Shutdown hook called");
+                  handleQuit();
+               }
+        }));
     }
 
     protected void addDefaultShutDownTasks() {
@@ -254,20 +332,20 @@ public abstract class AppsBase {
         InstanceManager.shutDownManagerInstance().
                 register(new AbstractShutDownTask("Writing Blocks") {
 
-            public boolean execute() {
-                // Save block values prior to exit, if necessary
-                log.debug("Start writing block info");
-                try {
-                    new BlockValueFile().writeBlockValues();
-                } //catch (org.jdom.JDOMException jde) { log.error("Exception writing blocks: "+jde); }
-                catch (java.io.IOException ioe) {
-                    log.error("Exception writing blocks: " + ioe);
-                }
+                    public boolean execute() {
+                        // Save block values prior to exit, if necessary
+                        log.debug("Start writing block info");
+                        try {
+                            new BlockValueFile().writeBlockValues();
+                        } //catch (org.jdom.JDOMException jde) { log.error("Exception writing blocks: "+jde); }
+                        catch (java.io.IOException ioe) {
+                            log.error("Exception writing blocks: " + ioe);
+                        }
 
-                // continue shutdown
-                return true;
-            }
-        });
+                        // continue shutdown
+                        return true;
+                    }
+                });
     }
 
     /**
@@ -279,13 +357,15 @@ public abstract class AppsBase {
     }
 
     /**
-     * Set up the configuration file name at startup. <P> The Configuration File
-     * name variable holds the name used to load the configuration file during
-     * later startup processing. Applications invoke this method to handle the
-     * usual startup hierarchy: <UL> <LI>If an absolute filename was provided on
-     * the command line, use it <LI>If a filename was provided that's not
-     * absolute, consider it to be in the preferences directory <LI>If no
-     * filename provided, use a default name (that's application specific) </UL>
+     * Set up the configuration file name at startup.
+     * <P>
+     * The Configuration File name variable holds the name used to load the
+     * configuration file during later startup processing. Applications invoke
+     * this method to handle the usual startup hierarchy: <UL> <LI>If an
+     * absolute filename was provided on the command line, use it <LI>If a
+     * filename was provided that's not absolute, consider it to be in the
+     * preferences directory <LI>If no filename provided, use a default name
+     * (that's application specific) </UL>
      * This name will be used for reading and writing the preferences. It need
      * not exist when the program first starts up. This name may be proceeded
      * with <em>config=</em>.
@@ -313,7 +393,8 @@ public abstract class AppsBase {
         }
     }
 
-    // We will use the value stored in the system property 
+    // We will use the value stored in the system property
+    // TODO: change to return profile-name/profile.xml
     static public String getConfigFileName() {
         if (System.getProperty("org.jmri.Apps.configFilename") != null) {
             return System.getProperty("org.jmri.Apps.configFilename");
@@ -333,55 +414,6 @@ public abstract class AppsBase {
         } catch (Exception e) {
             log.error("Unable to set JMRI property " + key + " to " + value
                     + "due to exception: " + e);
-        }
-    }
-
-    static protected void initLog4J() {
-        if (log4JSetUp) {
-            log.debug("initLog4J already initialized!");
-            return;
-        }
-        // Initialise JMRI System Console
-        // Need to do this before initialising log4j so that the new
-        // stdout and stderr streams are set-up and usable by the ConsoleAppender
-        SystemConsole.create();
-
-        log4JSetUp = true;
-        // initialize log4j - from logging control file (lcf) only
-        // if it can be found:
-        // first look in program launch directory
-        // second look in JMRI distribution directory
-        String logFile = "default.lcf"; // NOI18N
-        try {
-            if (new File(logFile).canRead()) {
-                PropertyConfigurator.configure(logFile);
-            } else if (new File(FileUtil.getProgramPath() + logFile).canRead()) {
-                PropertyConfigurator.configure(FileUtil.getProgramPath() + logFile);
-            } else {
-                BasicConfigurator.configure();
-                org.apache.log4j.Logger.getRootLogger().setLevel(Level.WARN);
-            }
-        } catch (java.lang.NoSuchMethodError e) {
-            log.error("Exception starting logging: " + e);
-        }
-        // install default exception handlers
-        System.setProperty("sun.awt.exception.handler", AwtHandler.class.getName()); // NOI18N
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
-
-        // first log entry
-        //log.info(jmriLog);
-
-        // now indicate logging locations
-        @SuppressWarnings("unchecked")
-        Enumeration<Logger> e = org.apache.log4j.Logger.getRootLogger().getAllAppenders();
-
-        while (e.hasMoreElements()) {
-            Appender a = (Appender) e.nextElement();
-            if (a instanceof RollingFileAppender) {
-                log.info("This log is stored in file: " + ((RollingFileAppender) a).getFile());
-            } else if (a instanceof FileAppender) {
-                log.info("This log is stored in file: " + ((FileAppender) a).getFile());
-            }
         }
     }
 

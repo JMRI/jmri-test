@@ -9,10 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
 import javax.swing.Icon;
-
-import jmri.util.FileUtil;
 
 import org.jdom.Element;
 
@@ -32,6 +29,10 @@ public class RecreateRosterAction extends JmriAbstractAction {
      
  	public RecreateRosterAction(String s, Icon i, WindowInterface wi) {
     	super(s, i, wi);
+    }
+
+    public RecreateRosterAction() {
+        this("Rebuild Roster");
     }
 
     public RecreateRosterAction(String s) {
@@ -86,6 +87,7 @@ public class RecreateRosterAction extends JmriAbstractAction {
         // use the new one
         Roster.resetInstance();
         Roster.instance();
+        log.info("Roster rebuilt, stored in "+Roster.defaultRosterFilename());
 
     }
     

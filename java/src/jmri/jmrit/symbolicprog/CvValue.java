@@ -23,13 +23,13 @@ import javax.swing.JTextField;
  * operation, Value changes before State, so you can assume that Value is stable
  * if notified of a State change.
  *
- * @author    Bob Jacobsen   Copyright (C) 2001, 2003, 2004
+ * @author    Bob Jacobsen   Copyright (C) 2001, 2003, 2004, 2013
  * @author    Howard G. Penny   Copyright (C) 2005
  * @version   $Revision$
  */
 public class CvValue extends AbstractValue implements ProgListener {
 
-    public CvValue(int num, Programmer pProgrammer) {
+    public CvValue(String num, Programmer pProgrammer) {
         _num = num;
         mProgrammer = pProgrammer;
         _tableEntry = new JTextField("0", 3);
@@ -37,7 +37,7 @@ public class CvValue extends AbstractValue implements ProgListener {
         _tableEntry.setBackground(COLOR_UNKNOWN);
     }
 
-    public CvValue(int num, String cvName, int piCv, int piVal, int siCv, int siVal, int iCv, Programmer pProgrammer) {
+    public CvValue(String num, String cvName, String piCv, int piVal, String siCv, int siVal, String iCv, Programmer pProgrammer) {
         _num   = num;
         _cvName  = cvName;
         if (cvName == null) log.error("cvName == null in ctor num: "+num);
@@ -57,26 +57,38 @@ public class CvValue extends AbstractValue implements ProgListener {
                 +" _iCv="+_iCv;
     }
     
-    public int number() { return _num; }
-    private int _num;
+    void setProgrammer(Programmer p) { mProgrammer = p; }
+    
+    public String number() { return _num; }
+    private String _num;
 
     public String cvName() { return _cvName; }
     private String _cvName = "";
 
-    public int piCv() { return _piCv; }
-    private int _piCv;
+    @Deprecated // since 3.7.1
+    public String piCv() { return _piCv; }
+    @Deprecated // since 3.7.1
+    private String _piCv;
 
+    @Deprecated // since 3.7.1
     public int piVal() { return _piVal; }
+    @Deprecated // since 3.7.1
     private int _piVal;
 
-    public int siCv() { return _siCv; }
-    private int _siCv;
+    @Deprecated // since 3.7.1
+    public String siCv() { return _siCv; }
+    @Deprecated // since 3.7.1
+    private String _siCv;
 
+    @Deprecated // since 3.7.1
     public int siVal() { return _siVal; }
+    @Deprecated // since 3.7.1
     private int _siVal;
 
-    public int iCv() { return _iCv; }
-    private int _iCv;
+    @Deprecated // since 3.7.1
+    public String iCv() { return _iCv; }
+    @Deprecated // since 3.7.1
+    private String _iCv;
 
     private JLabel _status = null;
 
@@ -84,6 +96,7 @@ public class CvValue extends AbstractValue implements ProgListener {
 
     public int getValue()  { return _value; }
 
+    Color getDefaultColor() { return _defaultColor; }
     Color getColor() { return _tableEntry.getBackground(); }
 
     protected void notifyValueChange(int value) {
@@ -118,7 +131,7 @@ public class CvValue extends AbstractValue implements ProgListener {
      * Set state value and send notification.  Also sets GUI color as needed.
      */
     public void setState(int state) {
-        if (log.isDebugEnabled()) log.debug("cv "+number()+" set state from "+_state+" to "+state);
+        if (log.isDebugEnabled()) log.debug("cv "+number()+" set state from "+stateToString(_state)+" to "+stateToString(state));
         int oldstate = _state;
         _state = state;
         switch (state) {
@@ -134,6 +147,22 @@ public class CvValue extends AbstractValue implements ProgListener {
         if (oldstate != state) prop.firePropertyChange("State", Integer.valueOf(oldstate), Integer.valueOf(state));
     }
 
+    /** 
+     * Intended for debugging only, don't translate
+     */
+    String stateToString(int state) {
+        switch (state) {
+        case UNKNOWN : return "UNKNOWN";
+        case EDITED  : return "EDITED";
+        case READ    : return "READ";
+        case STORED  : return "STORED";
+        case FROMFILE: return "FROMFILE";
+        case SAME:     return "SAME";
+        case DIFF:     return "DIFF";
+        default:       log.error("Inconsistent state: "+_state); return "ERROR!!";
+        }
+    }
+    
     private int _state = 0;
 
     // read, write operations
@@ -249,7 +278,7 @@ public class CvValue extends AbstractValue implements ProgListener {
     private boolean _confirm = false;
 
     public void read(JLabel status) {
-        if (log.isDebugEnabled()) log.debug("read call with Cv number "+_num);
+        if (log.isDebugEnabled()) log.debug("read call with Cv number "+_num+" and programmer "+mProgrammer);
         setToRead(false);
         // get a programmer reference and write
         _status = status;
@@ -280,6 +309,7 @@ public class CvValue extends AbstractValue implements ProgListener {
         }
     }
 
+    @Deprecated // since 3.7.1
     public void readIcV(JLabel status) {
         setToRead(false);
         // get a programmer reference and write an indexed CV
@@ -313,6 +343,7 @@ public class CvValue extends AbstractValue implements ProgListener {
         }
     }
     
+    @Deprecated // since 3.7.1
     public void confirmIcV(JLabel status) {
         setToRead(false);
         // get a programmer reference and write an indexed CV
@@ -400,7 +431,7 @@ public class CvValue extends AbstractValue implements ProgListener {
                                 java.text.MessageFormat.format(
                                     Bundle.getMessage("StateExceptionDuringWrite"),
                                     new Object[]{e.toString()}));
-                log.warn("Exception during CV write: "+e);
+                log.warn("Exception during CV write of '"+_num+"' to '"+_value+"'",e);
                 setBusy(false);
             }
         } else {
@@ -409,6 +440,7 @@ public class CvValue extends AbstractValue implements ProgListener {
         }
     }
 
+    @Deprecated // since 3.7.1
     public void writePI(JLabel status) {
         if (log.isDebugEnabled()) log.debug("write call with PI number "+_piVal);
         // get a programmer reference and write to the primary index
@@ -430,7 +462,7 @@ public class CvValue extends AbstractValue implements ProgListener {
                                 java.text.MessageFormat.format(
                                     Bundle.getMessage("StateExceptionDuringWrite"),
                                     new Object[]{e.toString()}));
-                log.warn("Exception during CV write: "+e);
+                log.warn("Exception during CV write of '"+_piCv+"' to '"+_piVal+"'",e);
                 setBusy(false);
             }
         } else {
@@ -439,6 +471,7 @@ public class CvValue extends AbstractValue implements ProgListener {
         }
     }
 
+    @Deprecated // since 3.7.1
     public void writeSI(JLabel status) {
         if (log.isDebugEnabled()) log.debug("write call with SI number " +_siVal);
         // get a programmer reference and write to the secondary index
@@ -475,6 +508,7 @@ public class CvValue extends AbstractValue implements ProgListener {
         }
     }
 
+    @Deprecated // since 3.7.1
     public void writeIcV(JLabel status) {
         if (log.isDebugEnabled()) log.debug("write call with IndexedCv number "+_iCv);
         setToWrite(false);

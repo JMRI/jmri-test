@@ -47,7 +47,7 @@ public class LIUSBServerXNetPacketizer extends XNetPacketizer {
             if (ostream != null) {
                 while(m.getRetries()>=0) {
                     if(portReadyToSend(controller)) {
-                        ostream.write((m+"\n\r").getBytes());
+                        ostream.write((m+"\n\r").getBytes(java.nio.charset.Charset.forName("UTF-8")));
                         log.debug("written");
                         break;
                     } else if(m.getRetries()>=0) {
@@ -68,10 +68,9 @@ public class LIUSBServerXNetPacketizer extends XNetPacketizer {
                 connectionWarn();
             }
         } catch (Exception e) {
-                // TODO Currently there's no port recovery if an exception occurs
-                // must restart JMRI to clear xmtException.
-                xmtException = true;
-            portWarn(e);
+                // start the recovery process if an exception occurs.
+                portWarn(e);
+                controller.recover();
         }
      }
 

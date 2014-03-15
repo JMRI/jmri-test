@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="../XSLT/decoder.xsl"?>
 <!-- Copyright (C) JMRI 2005, 2011 All rights reserved -->
 <!--                                                                        -->
@@ -18,6 +18,14 @@
   <enumChoice choice="Long Pulse"/>
   <enumChoice choice="Short Blink"/>
   <enumChoice choice="Long Blink"/>
+  <enumChoice choice="Reserved"/>
+  <enumChoice choice="Reserved"/>
+  <enumChoice choice="Reserved"/>
+  <enumChoice choice="Reserved"/>
+  <enumChoice choice="Short Inv Pulse"/>
+  <enumChoice choice="Long Inv Pulse"/>
+  <enumChoice choice="Short Inv Blink"/>
+  <enumChoice choice="Long Inv Blink"/>
   <enumChoice choice="Reserved"/>
   <enumChoice choice="Reserved"/>
   <enumChoice choice="Reserved"/>

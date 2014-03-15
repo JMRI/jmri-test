@@ -5,17 +5,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import jmri.JmriException;
 import jmri.jmris.JmriConnection;
-import static jmri.jmris.json.JSON.*;
+import static jmri.jmris.json.JSON.CODE;
+import static jmri.jmris.json.JSON.DATA;
+import static jmri.jmris.json.JSON.ERROR;
+import static jmri.jmris.json.JSON.MESSAGE;
+import static jmri.jmris.json.JSON.THROTTLE;
+import static jmri.jmris.json.JSON.TYPE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JsonThrottleServer {
 
-    private ObjectMapper mapper;
-    protected JmriConnection connection;
-    private HashMap<String, JsonThrottle> throttles;
+    private final ObjectMapper mapper;
+    protected final JmriConnection connection;
+    private final HashMap<String, JsonThrottle> throttles;
     static final Logger log = LoggerFactory.getLogger(JsonThrottleServer.class.getName());
 
     public JsonThrottleServer(JmriConnection connection) {
@@ -24,11 +30,16 @@ public class JsonThrottleServer {
         this.throttles = new HashMap<String, JsonThrottle>(0);
     }
 
-    public void onClose() {
+    public void dispose() {
         for (String throttleId : this.throttles.keySet()) {
             this.throttles.get(throttleId).close();
             this.throttles.remove(throttleId);
         }
+    }
+
+    protected void release(String throttleId) {
+        this.throttles.get(throttleId).release();
+        this.throttles.remove(throttleId);
     }
 
     public void sendMessage(String throttleId, ObjectNode data) throws IOException {
@@ -47,10 +58,10 @@ public class JsonThrottleServer {
         this.connection.sendMessage(this.mapper.writeValueAsString(root));
     }
 
-    public void parseRequest(JsonNode data) throws JmriException, IOException {
+    public void parseRequest(Locale locale, JsonNode data) throws JmriException, IOException {
         String id = data.path(THROTTLE).asText();
         if ("".equals(id)) {
-            this.sendErrorMessage(-1, Bundle.getMessage("ErrorThrottleId"));
+            this.sendErrorMessage(-1, Bundle.getMessage(locale, "ErrorThrottleId"));
             return;
         }
         JsonThrottle throttle = this.throttles.get(id);
@@ -63,6 +74,6 @@ public class JsonThrottleServer {
                 return;
             }
         }
-        throttle.parseRequest(data);
+        throttle.parseRequest(locale, data);
     }
 }

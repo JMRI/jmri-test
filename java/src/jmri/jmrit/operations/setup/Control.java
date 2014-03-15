@@ -20,12 +20,14 @@ public class Control {
 	// Default panel width
 	public static final int widePanelWidth = 1025;
 	public static final int tablePanelWidth = 700;
+	public static final int greaterPanelWidth = 600;
 	public static final int panelWidth = 500;
 	public static final int mediumPanelWidth = 400;
 	public static final int smallPanelWidth = 300;
 	
 	// Default panel height
 	public static final int panelHeight = 500;
+	public static final int mediumPanelHeight = 400;
 	public static final int minPanelHeight = 250;
 	public static final int smallPanelHeight = 200;
 	public static final int tinyPanelHeight = 100;
@@ -76,21 +78,17 @@ public class Control {
 	public static int max_len_string_route_name = 25;
 	
 	// Backward compatibility for xml saves (pre 2013 releases)
-	// TODO turn backward compatibility to false in 2014
-	public static boolean backwardCompatible = true;
+	// backward compatibility to false in 2014
+	public static boolean backwardCompatible = false;
 	
     // must synchronize changes with operation-config.dtd
     public static Element store(){
     	Element values;
     	Element length;
     	Element e = new Element(Xml.CONTROL);
-    	// backward compatibility
+    	// backward compatibility default set to false as of 3.7.1 (early 2014)
     	e.addContent(values = new Element(Xml.BACKWARD_COMPATIBILITY));
-    	// TODO Enable saving the compatibility attribute in 2014
-    	//values.setAttribute(Xml.SAVE_USING_PRE_2013_FORMAT, backwardCompatible?Xml.TRUE:Xml.FALSE);
-    	// for now we'll only store false if user overrode
-    	if (!backwardCompatible)
-    		values.setAttribute(Xml.SAVE_USING_PRE_2013_FORMAT, Xml.FALSE);
+    	values.setAttribute(Xml.SAVE_USING_PRE_2013_FORMAT, backwardCompatible?Xml.TRUE:Xml.FALSE);
     	// maximum string lengths
     	e.addContent(values = new Element(Xml.MAXIMUM_STRING_LENGTHS));
     	values.addContent(length = new Element(Xml.MAX_LEN_STRING_ATTRIBUTE));

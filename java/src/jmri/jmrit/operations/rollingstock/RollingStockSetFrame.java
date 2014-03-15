@@ -4,6 +4,7 @@ package jmri.jmrit.operations.rollingstock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.awt.GridBagLayout;
 import java.awt.Dimension;
 import java.text.MessageFormat;
@@ -311,12 +312,12 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 			rs.setLocationUnknown(locationUnknownCheckBox.isSelected());
 			rs.setOutOfService(outOfServiceCheckBox.isSelected());
 		}
-		// update location and destination
+		// update location
 		if (!changeLocation(rs))
 			return false;
 		// check to see if rolling stock is in staging and out of service (also location unknown)
 		if (outOfServiceCheckBox.isSelected() && rs.getTrack() != null
-				&& rs.getTrack().getLocType().equals(Track.STAGING)) {
+				&& rs.getTrack().getTrackType().equals(Track.STAGING)) {
 			JOptionPane.showMessageDialog(this, getRb().getString("rsNeedToRemoveStaging"), getRb()
 					.getString("rsInStaging"), JOptionPane.WARNING_MESSAGE);
 			// clear the rolling stock's location
@@ -326,6 +327,7 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 
 		loadTrain(rs);
 
+		// update destination
 		if (!changeDestination(rs))
 			return false;
 
@@ -383,11 +385,11 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 					}
 					if (rd != null && route != null) {
 						// now determine if destination is after location
-						List<String> routeSequence = route.getLocationsBySequenceList();
+						List<RouteLocation> routeSequence = route.getLocationsBySequenceList();
 						boolean foundLoc = false; // when true, found the rs's location in the route
 						boolean foundDes = false;
 						for (int i = 0; i < routeSequence.size(); i++) {
-							RouteLocation rlocation = route.getLocationById(routeSequence.get(i));
+							RouteLocation rlocation = routeSequence.get(i);
 							if (rs.getLocationName().equals(rlocation.getName())) {
 								rl = rlocation;
 								foundLoc = true;
@@ -482,7 +484,7 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 					destTrack = (Track) trackDestinationBox.getSelectedItem();
 				}
 				if (destTrack != null && rs.getDestinationTrack() != destTrack
-						&& destTrack.getLocType().equals(Track.STAGING)
+						&& destTrack.getTrackType().equals(Track.STAGING)
 						&& (rs.getTrain() == null || !rs.getTrain().isBuilt())) {
 					log.debug("Destination track (" + destTrack.getName() + ") is staging");
 					JOptionPane.showMessageDialog(this, getRb().getString("rsDoNotSelectStaging"), getRb()
@@ -525,13 +527,19 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 				}
 			} else if (rl != null && rd != null && rs.getDestinationTrack() != null
 					&& !train.isTrainInRoute()) {
-				if (JOptionPane.showConfirmDialog(this, MessageFormat.format(getRb().getString(
-						"rsAddRsToTrain"), new Object[] { rs.toString(), train.getName() }), getRb()
+				if (rs.getDestinationTrack().getLocation().getLocationOps() == Location.STAGING
+						&& !rs.getDestinationTrack().equals(train.getTerminationTrack())) {
+					log.debug("Rolling stock destination track is staging and not the same as train");
+					JOptionPane.showMessageDialog(this, MessageFormat.format(
+							Bundle.getMessage("rsMustSelectSameTrack"), new Object[] { train.getTerminationTrack()
+									.getName() }), Bundle.getMessage("rsStagingTrackError"), JOptionPane.ERROR_MESSAGE);
+				} else if (JOptionPane.showConfirmDialog(this, MessageFormat.format(
+						getRb().getString("rsAddRsToTrain"), new Object[] { rs.toString(), train.getName() }), getRb()
 						.getString("rsAddManuallyToTrain"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					// set new pick up and set out locations
 					setRouteLocationAndDestination(rs, train, rl, rd);
 					log.debug("Add rolling stock (" + rs.toString() + ") to train " + train.getName()
-							+ " route pick up " + rl.getId() + " drop " + rd.getId());	// NOI18N
+							+ " route pick up " + rl.getId() + " drop " + rd.getId()); // NOI18N
 				}
 			}
 		}
@@ -692,6 +700,9 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 		} else {
 			log.debug("RollingStockFrame sees destination: " + destinationBox.getSelectedItem());
 			Location loc = (Location) destinationBox.getSelectedItem();
+			Track track = null;
+			if (trackDestinationBox.getSelectedItem() != null && !trackDestinationBox.getSelectedItem().equals(""))
+				track = (Track)trackDestinationBox.getSelectedItem();
 			loc.updateComboBox(trackDestinationBox, _rs, autoDestinationTrackCheckBox.isSelected(), true);
 			// check for staging, add track if train is built and terminates into staging
 			if (autoDestinationTrackCheckBox.isSelected() && trainBox.getSelectedItem() != null
@@ -702,9 +713,11 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 					trackDestinationBox.addItem(train.getTerminationTrack());
 				}
 			}
-			if (_rs != null && _rs.getDestination() != null && _rs.getDestination().equals(loc)
-					&& _rs.getDestinationTrack() != null)
-				trackDestinationBox.setSelectedItem(_rs.getDestinationTrack());
+			if (_rs != null && _rs.getDestination() != null && _rs.getDestination().equals(loc))
+				if (_rs.getDestinationTrack() != null)
+					trackDestinationBox.setSelectedItem(_rs.getDestinationTrack());
+				else if (track != null)
+					trackDestinationBox.setSelectedItem(track);
 		}
 	}
 	

@@ -186,10 +186,13 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 		textTrainRouteLocationComment.setBackground(null);
 
 		// row 12
-		pWorkPanes.setLayout(new BoxLayout(pWorkPanes, BoxLayout.X_AXIS));
+		if ((getPreferredSize().width > Control.widePanelWidth && Setup.isTabEnabled())
+				|| (getPreferredSize().width > Control.widePanelWidth-200 && !Setup.isTabEnabled()))
+			pWorkPanes.setLayout(new BoxLayout(pWorkPanes, BoxLayout.X_AXIS));
+		else
+			pWorkPanes.setLayout(new BoxLayout(pWorkPanes, BoxLayout.Y_AXIS));
 		pWorkPanes.add(pickupPane);
 		pWorkPanes.add(setoutPane);
-//		pWorkPanes.setPreferredSize(new Dimension(600, 400));
 
 		// row 13
 		pStatus.setLayout(new GridBagLayout());
@@ -314,9 +317,9 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 	
 	protected void updateLocoPanes(RouteLocation rl) {
 		// check for locos
-		List<String> engList = engManager.getByTrainList(_train);
+		List<RollingStock> engList = engManager.getByTrainList(_train);
 		for (int k = 0; k < engList.size(); k++) {
-			Engine engine = engManager.getById(engList.get(k));
+			Engine engine = (Engine) engList.get(k);
 			if (engine.getRouteLocation() == rl && !engine.getTrackName().equals("")) {
 				locoPane.setVisible(true);
 				rollingStock.add(engine);
@@ -345,16 +348,15 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 	 * "rollingStock" with the prefix "p", "s" or "m" and the car's unique id.
 	 */
 	protected void blockCars(RouteLocation rl, boolean isManifest) {
-		List<String> trackIds = rl.getLocation().getTrackIdsByNameList(null);
-		for (int i = 0; i < trackIds.size(); i++) {
-			Track track = rl.getLocation().getTrackById(trackIds.get(i));
-			List<String> routeList = _train.getRoute().getLocationsBySequenceList();
-			List<String> carList = carManager.getByTrainDestinationList(_train);
+		List<Track> tracks = rl.getLocation().getTrackByNameList(null);
+		for (Track track : tracks) {
+			List<RouteLocation> routeList = _train.getRoute().getLocationsBySequenceList();
+			List<Car> carList = carManager.getByTrainDestinationList(_train);
 			// block pick ups by destination
 			for (int j = 0; j < routeList.size(); j++) {
-				RouteLocation rld = _train.getRoute().getLocationById(routeList.get(j));
+				RouteLocation rld = routeList.get(j);
 				for (int k = 0; k < carList.size(); k++) {
-					Car car = carManager.getById(carList.get(k));
+					Car car = carList.get(k);
 					// determine if car is a pick up from the right track
 					if (car.getTrack() != null
 							&& (!Setup.isSortByTrackEnabled() || car.getTrackName().equals(track.getName()))
@@ -394,7 +396,7 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 			}
 			// set outs
 			for (int j = 0; j < carList.size(); j++) {
-				Car car = carManager.getById(carList.get(j));
+				Car car = carList.get(j);
 				if (!car.getTrackName().equals("")
 						&& car.getDestinationTrack() != null
 						&& (!Setup.isSortByTrackEnabled() || car.getDestinationTrack().getName().equals(track.getName()))
@@ -479,7 +481,9 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 				setCarButtonActionPerfomed(e);
 			}
 		});
-		JLabel label = new JLabel(car.toString());
+		JLabel label = new JLabel(TrainCommon.padString(car.toString(), Control.max_len_string_attibute
+				+ Control.max_len_string_road_number));
+		setLabelFont(label);
 		addItem(pSet, label, 0, 0);
 		addItemLeft(pSet, carSetButton, 1, 0);
 		return pSet;
@@ -489,6 +493,13 @@ public class CommonConductorYardmasterFrame extends OperationsFrame implements j
 		if (Setup.isTabEnabled()) {
 			Font font = new Font(Setup.getFontName(), Font.PLAIN, checkBox.getFont().getSize());
 			checkBox.setFont(font);
+		}
+	}
+	
+	protected void setLabelFont(JLabel label) {
+		if (Setup.isTabEnabled()) {
+			Font font = new Font(Setup.getFontName(), Font.PLAIN, label.getFont().getSize());
+			label.setFont(font);
 		}
 	}
 

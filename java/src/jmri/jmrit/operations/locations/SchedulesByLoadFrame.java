@@ -123,25 +123,24 @@ public class SchedulesByLoadFrame extends OperationsFrame implements
 		addItemLeft(locationsPanel, new JLabel(Bundle.getMessage("receiveTypeLoad")), 2, x);
 		addItemLeft(locationsPanel, new JLabel(Bundle.getMessage("shipLoad")), 3, x);
 		addItemLeft(locationsPanel, new JLabel(Bundle.getMessage("destinationTrack")), 4, x++);
-		List<String> locations = locationManager.getLocationsByNameList();
+		List<Location> locations = locationManager.getLocationsByNameList();
 		for (int i = 0; i < locations.size(); i++) {
-			Location l = locationManager.getLocationById(locations.get(i));
+			Location l = locations.get(i);
 			// don't show staging
 			if (l.getLocationOps() == Location.NORMAL) {
 				addItemLeft(locationsPanel, new JLabel(l.getName()), 0, x++);
 				// now look for a spur with a schedule
-				List<String> spurs = l.getTrackIdsByNameList(Track.SPUR);
-				for (int j = 0; j < spurs.size(); j++) {
-					Track spur = l.getTrackById(spurs.get(j));
+				List<Track> spurs = l.getTrackByNameList(Track.SPUR);
+				for (Track spur : spurs) {
 					Schedule sch = spur.getSchedule();
 					if (sch != null) {
 						// listen for changes
 						sch.removePropertyChangeListener(this);
 						sch.addPropertyChangeListener(this);
-						List<String> items = sch.getItemsBySequenceList();
+						List<ScheduleItem> items = sch.getItemsBySequenceList();
 						// determine if schedule is requesting car type and load
 						for (int k = 0; k < items.size(); k++) {
-							ScheduleItem item = sch.getItemById(items.get(k));
+							ScheduleItem item = items.get(k);
 							if (item.getTypeName().equals(type) && item.getReceiveLoadName().equals(load)
 									|| item.getTypeName().equals(type) && item.getReceiveLoadName().equals("")
 									|| item.getTypeName().equals(type) && item.getShipLoadName().equals(load)

@@ -11,13 +11,15 @@ import java.util.Scanner;
 import jmri.InstanceManager;
 import jmri.JmriException;
 import jmri.jmris.JmriServer;
+import jmri.util.node.NodeIdentity;
+import jmri.web.server.WebServerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is an implementation of a simple server for JMRI.
- * There is currently no handshaking in this server.  You may just start 
- * sending commands.
+ * This is an implementation of a simple server for JMRI. There is currently no
+ * handshaking in this server. You may just start sending commands.
+ *
  * @author Paul Bender Copyright (C) 2010
  * @version $Revision$
  *
@@ -41,15 +43,19 @@ public class SimpleServer extends JmriServer {
     }
 
     public SimpleServer(int port) {
-    	super(port);
+        super(port);
         log.info("JMRI SimpleServer started on port " + port);
+    }
+
+    @Override
+    protected void advertise() {
+        this.advertise("_jmri-simple._tcp.local.");
     }
 
     // Handle communication to a client through inStream and outStream
     @Override
     public void handleClient(DataInputStream inStream, DataOutputStream outStream) throws IOException {
-        Scanner inputScanner = new Scanner(new InputStreamReader(inStream));
-
+        Scanner inputScanner = new Scanner(new InputStreamReader(inStream, "UTF-8"));
         // Listen for commands from the client until the connection closes
         String cmd;
 
@@ -64,6 +70,8 @@ public class SimpleServer extends JmriServer {
 
         // Start by sending a welcome message
         outStream.writeBytes("JMRI " + jmri.Version.name() + " \n");
+        outStream.writeBytes("RAILROAD " + WebServerManager.getWebServerPreferences().getRailRoadName() + " \n");
+        outStream.writeBytes("NODE " + NodeIdentity.identity() + " \n");
 
         while (true) {
             inputScanner.skip("[\r\n]*");// skip any stray end of line characters.

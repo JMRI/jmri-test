@@ -9,8 +9,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.List;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import jmri.configurexml.ConfigXmlManager;
+import jmri.jmris.json.JSON;
 import jmri.jmrit.display.Positionable;
 import jmri.jmrit.display.panelEditor.PanelEditor;
 import org.jdom.Document;
@@ -33,22 +35,19 @@ public class PanelServlet extends AbstractPanelServlet {
 
     @Override
     protected String getXmlPanel(String name) {
-        if (log.isDebugEnabled()) {
-            log.debug("Getting " + getPanelType() + " for " + name);
-        }
+        log.debug("Getting {} for {}", getPanelType(), name);
         try {
             PanelEditor editor = (PanelEditor) getEditor(name);
 
             Element panel = new Element("panel");
 
             JFrame frame = editor.getTargetFrame();
-            log.info("Target Frame [" + frame.getTitle() + "]");
 
             panel.setAttribute("name", name);
             panel.setAttribute("height", Integer.toString(frame.getContentPane().getHeight()));
             panel.setAttribute("width", Integer.toString(frame.getContentPane().getWidth()));
-            panel.setAttribute("panelheight", Integer.toString(frame.getContentPane().getHeight()));
-            panel.setAttribute("panelwidth", Integer.toString(frame.getContentPane().getWidth()));
+            panel.setAttribute("panelheight", Integer.toString(editor.getTargetPanel().getHeight()));
+            panel.setAttribute("panelwidth", Integer.toString(editor.getTargetPanel().getWidth()));
 
             panel.setAttribute("showtooltips", (editor.showTooltip()) ? "yes" : "no");
             panel.setAttribute("controlling", (editor.allControlling()) ? "yes" : "no");
@@ -62,9 +61,7 @@ public class PanelServlet extends AbstractPanelServlet {
 
             // include contents
             List<Positionable> contents = editor.getContents();
-            if (log.isDebugEnabled()) {
-                log.debug("N elements: " + contents.size());
-            }
+            log.debug("N elements: {}", contents.size());
             for (Positionable sub : contents) {
                 if (sub != null) {
                     try {
@@ -72,6 +69,15 @@ public class PanelServlet extends AbstractPanelServlet {
                         if (e != null) {
                             if ("signalmasticon".equals(e.getName())) {  //insert icon details into signalmast
                                 e.addContent(getSignalMastIconsElement(e.getAttributeValue("signalmast")));
+                            }
+                            try {
+                                e.setAttribute(JSON.ID, sub.getNamedBean().getSystemName());
+                            } catch (NullPointerException ex) {
+                                if (sub.getNamedBean() == null) {
+                                    log.debug("{} {} does not have an associated NamedBean", e.getName(), e.getAttribute(JSON.NAME));
+                                } else {
+                                    log.debug("{} {} does not have a SystemName", e.getName(), e.getAttribute(JSON.NAME));
+                                }
                             }
                             parsePortableURIs(e);
                             panel.addContent(e);
@@ -94,9 +100,7 @@ public class PanelServlet extends AbstractPanelServlet {
 
     @Override
     protected String getJsonPanel(String name) {
-        if (log.isDebugEnabled()) {
-            log.debug("Getting " + getPanelType() + " for " + name);
-        }
+        log.debug("Getting {} for {}", getPanelType(), name);
         try {
             PanelEditor editor = (PanelEditor) getEditor(name);
 
@@ -104,7 +108,6 @@ public class PanelServlet extends AbstractPanelServlet {
             ObjectNode panel = root.putObject("panel");
 
             JFrame frame = editor.getTargetFrame();
-            log.info("Target Frame [" + frame.getTitle() + "]");
 
             panel.put("name", name);
             panel.put("height", frame.getContentPane().getHeight());
@@ -122,9 +125,7 @@ public class PanelServlet extends AbstractPanelServlet {
             }
 
             // include contents
-            if (log.isDebugEnabled()) {
-                log.debug("N elements: " + editor.getContents().size());
-            }
+            log.debug("N elements: {}", editor.getContents().size());
             for (Positionable sub : editor.getContents()) {
                 if (sub != null) {
                     try {
@@ -152,5 +153,10 @@ public class PanelServlet extends AbstractPanelServlet {
             log.error("IOException", e);
             return "ERROR " + e.getLocalizedMessage();
         }
+    }
+
+    @Override
+    protected JComponent getPanel(String name) {
+        return ((PanelEditor) getEditor(name)).getTargetPanel();
     }
 }

@@ -75,6 +75,7 @@ public class CircuitBuilder  {
     // OBlock list to open edit frames 
     private PickListModel _oblockModel;
     private boolean hasOBlocks = false;
+    private boolean _lock = false;		// attempts to preserve lock state of icons
 
     // "Editing Frames" - Called from menu in Main Frame
     private EditCircuitFrame _editCircuitFrame;
@@ -82,7 +83,7 @@ public class CircuitBuilder  {
     private EditCircuitPaths _editPathsFrame;
     private EditPortalDirection _editDirectionFrame; 
 
-    // list of icons making a circuit - used by editing frames to indicate block(s) being worked on
+    // list of icons making a circuit (OBlock) - used by editing frames to indicate block(s) being worked on
     private ArrayList<Positionable> _circuitIcons;      // Dark Blue
 
     private JTextField _sysNameBox = new JTextField();
@@ -91,8 +92,7 @@ public class CircuitBuilder  {
     private JDialog _dialog;
     protected ControlPanelEditor _editor;
 
-//    public final static ResourceBundle rbcp = ControlPanelEditor.rbcp;
-    public final static Color _editGroupColor = new Color(100, 100, 255);
+    public final static Color _editGroupColor = new Color(100, 200, 255);
     public final static Color _pathColor = Color.green;
     public final static Color _highlightColor = new Color(255, 100, 200);
     
@@ -110,7 +110,6 @@ public class CircuitBuilder  {
     /**
      * Makes menu for ControlPanelEditor
      * Called by ControlPanelEditor at init before contents have been loaded
-     * @return
      */
     protected JMenu makeMenu() {
         _circuitMenu = new JMenu(Bundle.getMessage("CircuitBuilder"));
@@ -121,15 +120,7 @@ public class CircuitBuilder  {
             OBlock block = manager.getBySystemName(sysNames[i]);
             _circuitMap.put(block, new ArrayList<Positionable>());
         }
-        // delay error detection until ControlPanelEditor is fully loaded
-        JMenuItem mi = new JMenuItem (Bundle.getMessage("circuitErrorsItem"));
-        mi.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                checkCircuits();
-            }
-        });
        makeCircuitMenu();
-       _circuitMenu.add(mi);
        return _circuitMenu;
     }
         
@@ -146,6 +137,9 @@ public class CircuitBuilder  {
                 icons.add(pos);
             }
             _iconMap.put(pos, block);
+            if (_lock) {
+            	pos.setPositionable(true);
+            }
         }
         _circuitMap.put(block, icons);
         _darkTrack.remove(pos);
@@ -307,7 +301,7 @@ public class CircuitBuilder  {
         JMenuItem editDirectionItem = new JMenuItem(Bundle.getMessage("editDirectionItem"));
         _circuitMenu.add(editDirectionItem);
 
-        if ( _circuitMap.keySet().size()>0) {
+        if ( _circuitMap.size()>0) {
             editCircuitItem.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         editCircuit("editCircuitItem");
@@ -328,6 +322,14 @@ public class CircuitBuilder  {
                 	editPortalDirection("editDirectionItem");
                 }
             });
+            // delay error detection until ControlPanelEditor is fully loaded
+            JMenuItem mi = new JMenuItem (Bundle.getMessage("circuitErrorsItem"));
+            mi.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    checkCircuits();
+                }
+            });
+            _circuitMenu.add(mi);
         } else {
             editCircuitItem.add(new JMenuItem(Bundle.getMessage("noCircuitsItem")));
             editPortalsItem.add(new JMenuItem(Bundle.getMessage("noCircuitsItem")));
@@ -412,11 +414,15 @@ public class CircuitBuilder  {
         	} else {
         		adjacentBlock = portal.getFromBlock();
         	}
+        	if (adjacentBlock==null) {
+                JOptionPane.showMessageDialog(_editor, Bundle.getMessage("invalidPortal", portalName, _currentBlock), 
+                        Bundle.getMessage("ErrorPortal"), JOptionPane.INFORMATION_MESSAGE);
+        		return;
+        	}
             if (_currentBlock!=null) {
                 // checkCircuits();
                 // check icons to be indicator type
                 _circuitIcons = _circuitMap.get(_currentBlock);
-                List<Positionable> adjacentIcons = _circuitMap.get(adjacentBlock);
                 if (iconsConverted(_currentBlock)&& iconsConverted(adjacentBlock)) {
                 	_editor.setSelectionGroup(makeSelectionGroup(_currentBlock, false));
                 	_editor.setSecondSelectionGroup(makeSelectionGroup(adjacentBlock, false));
@@ -645,23 +651,25 @@ public class CircuitBuilder  {
             	retOK = true;
             } else {
                 int result = JOptionPane.showConfirmDialog(_editor, java.text.MessageFormat.format(
-                                Bundle.getMessage("blockExists"), sysname), 
+                                Bundle.getMessage("blockExists"), sysname, uname), 
                                 Bundle.getMessage("AskTitle"), JOptionPane.YES_NO_OPTION, 
                                 JOptionPane.QUESTION_MESSAGE);
                 if (result==JOptionPane.YES_OPTION) {
-                    _currentBlock = InstanceManager.getDefault(jmri.jmrit.logix.OBlockManager.class).getBySystemName(sysname);
+                    _currentBlock = InstanceManager.getDefault(jmri.jmrit.logix.OBlockManager.class).getByUserName(uname);
                     if (_currentBlock==null) {
-                    	retOK = false;
+                        _currentBlock = InstanceManager.getDefault(jmri.jmrit.logix.OBlockManager.class).getBySystemName(sysname);
                     }
-                    checkCircuits();
-                    _editor.setSelectionGroup(_circuitMap.get(_currentBlock));
-                    _editCircuitFrame = new EditCircuitFrame(Bundle.getMessage("OpenCircuitItem"), this, _currentBlock);
-                    retOK = true;
-                }            }
+                    if (_currentBlock!=null) {
+                        retOK = true;
+                    }
+                }
+            }
         }
         if (!retOK) {
             JOptionPane.showMessageDialog(_editor, Bundle.getMessage("createOBlock"), 
                     Bundle.getMessage("NeedDataTitle"), JOptionPane.INFORMATION_MESSAGE);
+        } else if ( _circuitMap.size()<=1) {
+            makeCircuitMenu();        	
         }
         return retOK;
     }
@@ -725,6 +733,9 @@ public class CircuitBuilder  {
                 Positionable pos = selections.get(i);
                 if (pos instanceof IndicatorTrack) {
                     ((IndicatorTrack)pos).setOccBlockHandle(handle);
+                }
+                if (_lock) {
+                	pos.setPositionable(false);
                 }
                 icons.add(pos);
                 _iconMap.put(pos, block);
@@ -986,6 +997,9 @@ public class CircuitBuilder  {
     * Check if the block being edited has all its icons converted to indicator icons
     */
     protected boolean iconsConverted(OBlock block) {
+    	if (block==null) {
+    		return false;
+    	}
     	java.util.List<Positionable> list = _circuitMap.get(block);
         if (list!=null && list.size()>0) {
             for (int i=0; i<list.size(); i++) {
@@ -1158,11 +1172,16 @@ public class CircuitBuilder  {
     * select block's track icons for editing -***could be _circuitMap.get(block) is sufficient
     */
     private ArrayList<Positionable> makeSelectionGroup(OBlock block, boolean showPortal) {
+    	_lock = false;
     	ArrayList<Positionable> group = new ArrayList<Positionable>();
     	List<Positionable> circuitIcons = _circuitMap.get(block);
     	Iterator<Positionable> iter = circuitIcons.iterator();
         while(iter.hasNext()) {
         	Positionable p = iter.next();
+        	if (!p.isPositionable()) {
+        		_lock = true;
+        	}
+        	p.setPositionable(true);
         	if (p instanceof PortalIcon) {
         		if (showPortal) {
                 	((PortalIcon)p).setStatus(PortalIcon.VISIBLE);
@@ -1285,13 +1304,23 @@ public class CircuitBuilder  {
 
     ArrayList<Positionable> _saveSelectionGroup;
     /**
-    * Keep selections when editing.  Restore what editor nulls
+    * Keep selections when editing.  Editor calls at entry to mousePressed(). CircuitBuilder keeps is own concept
+    * of what is "selected".
     */
-    protected void saveSelectionGroup(ArrayList<Positionable> selectionGroup) {
+    protected boolean saveSelectionGroup(ArrayList<Positionable> selectionGroup) {
     	_saveSelectionGroup = selectionGroup;
+        if (_editCircuitFrame!=null || _editPortalFrame!=null || 
+        			_editPathsFrame!=null || _editDirectionFrame!=null) {
+        	return true;
+        } else {
+        	return false;
+        }
     }
-    
-    protected void doMousePressed(MouseEvent event, Positionable selection) {
+ 
+    /**
+     * If CircuitBuilder is in progress, restore what editor nulls
+     */
+    protected boolean doMousePressed(MouseEvent event, Positionable selection) {
     	if (_editCircuitFrame!=null) {
     		_editCircuitFrame.toFront();
             _editor.setSelectionGroup(_saveSelectionGroup);
@@ -1305,7 +1334,10 @@ public class CircuitBuilder  {
     	} else if (_editDirectionFrame!=null) {
     		_editDirectionFrame.toFront();
             _editor.setSelectionGroup(_saveSelectionGroup);
+    	} else {
+    		return false;
     	}
+    	return true;
     }
    
     public boolean doMouseReleased(Positionable selection, MouseEvent event) {
@@ -1319,28 +1351,94 @@ public class CircuitBuilder  {
         }
         return false;
     }
-
-    protected boolean doMouseClicked(Positionable selection, MouseEvent event) {
-        if (_editCircuitFrame!=null || _editPathsFrame!=null || (_editPortalFrame!=null) || _editDirectionFrame!=null) {
-            if (_editPathsFrame!=null && event.isShiftDown()) {
-            	selection.doMouseClicked(event);
-            }
-            if (!event.isPopupTrigger() && !event.isMetaDown() && !event.isAltDown()) {
-            	handleSelection(selection, event);
-            }
+    protected boolean doMouseClicked(List<Positionable> selections, MouseEvent event) {
+        if (_editCircuitFrame!=null || _editPathsFrame!=null || 
+    			_editPortalFrame!=null || _editDirectionFrame!=null) {
+        	if (selections!=null && selections.size()>0)
+        	{
+        		ArrayList<Positionable> tracks = new ArrayList<Positionable>();
+        		Iterator<Positionable> iter = selections.iterator();
+        		if (_editCircuitFrame!=null) {
+            		while (iter.hasNext()) {
+            			Positionable pos = iter.next();
+            			if (isTrack(pos)) {
+            				tracks.add(pos);
+            			}
+            		}        			
+        		} else if (_editPathsFrame!=null) {        			
+            		while (iter.hasNext()) {
+            			Positionable pos = iter.next();
+            			if (isTrack(pos) || pos instanceof PortalIcon) {
+            				tracks.add(pos);
+            			}
+            		}
+        		} else{        			
+            		while (iter.hasNext()) {
+            			Positionable pos = iter.next();
+            			if (pos instanceof PortalIcon) {
+            				tracks.add(pos);
+            			}
+            		}
+        		}
+        		if (tracks.size()>0)
+        		{
+        			Positionable selection = null;
+        			if (tracks.size()==1) {
+        				selection = tracks.get(0);
+        			} else {
+        				selection = getSelection(tracks);
+        			}
+                    if (_editPathsFrame!=null && event.isShiftDown()&& !event.isControlDown()) {
+                    	selection.doMouseClicked(event);
+                    }
+                    handleSelection(selection, event);
+        		}
+       		}
             return true;
         }
         return false;
     }
 
+
+    private Positionable getSelection(List<Positionable> tracks) {
+    	if (tracks.size()>0) {
+    		if (tracks.size()==1) {
+    			return tracks.get(0);
+    		}
+    		if (tracks.size()>1) {
+            	String[] selects = new String[tracks.size()];
+            	Iterator<Positionable> iter = tracks.iterator();
+            	int i = 0;
+            	while (iter.hasNext()) {
+        			selects[i++] =  iter.next().getNameString();
+            	}
+            	Object select = JOptionPane.showInputDialog(_editor,Bundle.getMessage("multipleSelections"),
+            					Bundle.getMessage("questionTitle"), JOptionPane.QUESTION_MESSAGE, 
+            					null, selects, null);
+            	if (select !=null) {
+                	iter = tracks.iterator();
+                	while (iter.hasNext()) {
+                		Positionable pos = iter.next();
+                		if (((String)select).equals(pos.getNameString())) {
+                			return pos;
+                		}
+                	}
+            	} else {
+            		return tracks.get(tracks.size()-1);
+            	}			
+    		}
+    	}
+    	return null;
+    }
+
     /**
-    * No dragging when editing
+    * No dragging when CircuitBuilder is in progress, except for PortalIcon
     */
     public boolean doMouseDragged(Positionable selection, MouseEvent event) {
         if (_editCircuitFrame!=null || _editPathsFrame!=null || _editDirectionFrame!=null) {
             return true;     // no dragging when editing
         }
-        if (_editPortalFrame!=null) {
+        if (_editPortalFrame!=null || _editDirectionFrame!=null) {
             if (selection instanceof PortalIcon) {
                 return false;		// OK to drag portal icon
             } else {
@@ -1414,7 +1512,7 @@ public class CircuitBuilder  {
                 block.pseudoPropertyChange("state", Integer.valueOf(0), Integer.valueOf(state));
                 _editPathsFrame.updatePath(true);
             }
-             _editPathsFrame.toFront();
+            _editPathsFrame.toFront();
         } else if (_editPortalFrame!=null) {
             if (log.isDebugEnabled()) log.debug("selection= "+(selection==null?"null":
                                                             selection.getClass().getName()));
@@ -1427,6 +1525,8 @@ public class CircuitBuilder  {
         } else if (_editDirectionFrame!=null) {
             if (selection instanceof PortalIcon && _circuitIcons.contains(selection)) {
             	_editDirectionFrame.setPortalIcon((PortalIcon)selection);
+            } else {
+            	_editDirectionFrame.setPortalIcon(null);            	
             }
         	_editDirectionFrame.toFront();
         }

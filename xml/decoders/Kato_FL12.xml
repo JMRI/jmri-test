@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="../XSLT/decoder.xsl"?>
 <!-- Copyright (C) JMRI 2003, 2004, 2005 All rights reserved -->
 <!-- See the COPYING file for more information on licensing and appropriate use -->
@@ -12,7 +12,7 @@
     </family>
     <programming direct="byteOnly" paged="yes" register="yes" ops="no"/>
     <variables>
-      <xi:include href="http://jmri.org/xml/decoders/digitrax/shortAndLongAddress.xml"/>
+      <xi:include href="http://jmri.org/xml/decoders/nmra/shortAndLongAddress.xml"/>
       <xi:include href="http://jmri.org/xml/decoders/digitrax/mfgVersionId.xml"/>
 
       <variable label="Normal direction of motion" CV="29" mask="XXXXXXXV" item="Locomotive Direction">

@@ -2,13 +2,11 @@
 
 package apps.cornwall;
 
+import apps.Apps;
+import java.text.MessageFormat;
+import javax.swing.JFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import apps.Apps;
-
-import java.text.MessageFormat;
-
-import javax.swing.JFrame;
 
 /**
  * Nick Kulp's Cornwall Railroad.
@@ -59,7 +57,7 @@ public class CornwallRR extends Apps {
         // show splash screen early
         splash(true);
 
-        log.info(apps.Apps.startupInfo("CornwallRR"));
+        Apps.setStartupInfo("CornwallRR");
 
         setConfigFilename("CornwallConfig2.xml", args);
         JFrame f = new JFrame("Cornwall Railroad");

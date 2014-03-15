@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="../XSLT/decoder.xsl"?>
 <!-- Copyright (C) JMRI 2005, 2011 All rights reserved -->
 <!--                                                                        -->
@@ -14,7 +14,7 @@
 <!-- version 1 - new file includes for LNCP files -->
 <!-- mode choices for Output pairing -->
 <enumVal>
-  <enumChoice choice="normal"/>
+  <enumChoice choice="Normal"/>
   <enumChoice choice="N/A . . . "/>
   <enumChoice choice="Paired"/>
   <enumChoice choice="Signal"/>

@@ -6,16 +6,12 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import jmri.jmrit.catalog.NamedIcon;
 import jmri.jmrit.display.Editor;
 import jmri.jmrit.display.controlPanelEditor.ControlPanelEditor;
-import jmri.jmrit.display.controlPanelEditor.PortalIcon;
 import jmri.util.JmriJFrame;
 
 /**
@@ -43,10 +39,8 @@ public /*abstract*/ class PortalItemPanel extends FamilyItemPanel {
     */
     public void init() {
        	if (!_initialized) {
-       		Thread.yield();
-       		_update = false;
+       		super.init();
        		_supressDragging = true;
-       		makeBottomPanel();
        		add(makeChangeDefaultIconsPanel());
        	}
     }
@@ -68,6 +62,8 @@ public /*abstract*/ class PortalItemPanel extends FamilyItemPanel {
     private void setDefaults() {
     	HashMap <String, NamedIcon> map = getIconMap();
     	((ControlPanelEditor)_editor).setDefaultPortalIcons(jmri.jmrit.display.PositionableIcon.cloneMap(map, null));
+    }
+    protected void makeDndIconPanel(HashMap<String, NamedIcon> iconMap, String displayKey) {
     }
 
     static Logger log = LoggerFactory.getLogger(PortalItemPanel.class.getName());

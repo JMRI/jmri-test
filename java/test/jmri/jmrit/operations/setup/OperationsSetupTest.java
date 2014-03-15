@@ -202,11 +202,11 @@ public class OperationsSetupTest extends TestCase {
 		s.setTrainDirection(Setup.SOUTH);
 		Assert.assertEquals("Direction South", 8, s.getTrainDirection());
 
-		s.setTrainLength(520);
-		Assert.assertEquals("Train Length", 520, s.getTrainLength());
+		s.setMaxTrainLength(520);
+		Assert.assertEquals("Train Length", 520, s.getMaxTrainLength());
 
-		s.setEngineSize(120);
-		Assert.assertEquals("Engine Size", 120, s.getEngineSize());
+		s.setMaxNumberEngines(120);
+		Assert.assertEquals("Engine Size", 120, s.getMaxNumberEngines());
 
 		s.setCarMoves(12);
 		Assert.assertEquals("Car Moves", 12, s.getCarMoves());
@@ -310,7 +310,7 @@ public class OperationsSetupTest extends TestCase {
 		Assert.assertEquals("Test directory name", "operations"+File.separator+"JUnitTest", OperationsSetupXml.getOperationsDirectoryName());
 	}
 
-	// test xml file creation
+	// test xml file creation and read
 	@SuppressWarnings("static-access")
 	public void testXMLFileCreate() throws Exception {
 		Setup s;
@@ -322,8 +322,8 @@ public class OperationsSetupTest extends TestCase {
 		Assert.assertEquals("Create Font Name", "File Test Font Name", s.getFontName());
 
 		Assert.assertEquals("Create Direction East", 1+2+4+8, s.getTrainDirection());
-		Assert.assertEquals("Create Train Length", 1111, s.getTrainLength());
-		Assert.assertEquals("Create Engine Size", 111, s.getEngineSize());
+		Assert.assertEquals("Create Train Length", 1111, s.getMaxTrainLength());
+		Assert.assertEquals("Create Engine Size", 111, s.getMaxNumberEngines());
 		Assert.assertEquals("Create Scale", 11, s.getScale());
 
 		Assert.assertEquals("Create Train Icon Cord Enabled True", true, s.isTrainIconCordEnabled());
@@ -334,12 +334,9 @@ public class OperationsSetupTest extends TestCase {
 		Assert.assertEquals("Create Train Icon Color West", "Green", s.getTrainIconColorWest());
 		Assert.assertEquals("Create Train Icon Color Local", "Black", s.getTrainIconColorLocal());
 		Assert.assertEquals("Create Train Icon Color Terminate", "White", s.getTrainIconColorTerminate());
-	}
-
-	// test xml file read
-	@SuppressWarnings("static-access")
-	public void testXMLFileRead() throws Exception {
-		Setup s = new Setup();
+		
+		// now get ready for the read operation
+		s = new Setup();
 
 		s.setRailroadName("Before Read Test Railroad Name");
 		s.setOwnerName("Before Read Test Railroad Owner");
@@ -349,19 +346,13 @@ public class OperationsSetupTest extends TestCase {
 		s.setMainMenuEnabled(false);
 
 		s.setTrainDirection(Setup.EAST);
-		s.setTrainLength(2222);
-		s.setEngineSize(222);
+		s.setMaxTrainLength(2222);
+		s.setMaxNumberEngines(222);
 		s.setScale(Setup.N_SCALE);
 
 		s.setCarTypes("Before Read Test Car Types");
 		s.setSwitchTime(22);
 		s.setTravelTime(222);
-		/*
-		s.setShowCarLengthEnabled(false);
-		s.setShowCarLoadEnabled(false);
-		s.setShowCarColorEnabled(false);
-		s.setAppendCarCommentEnabled(false);
-		*/
 		s.setBuildReportLevel("22");
 
 		s.setTrainIconCordEnabled(false);
@@ -381,19 +372,13 @@ public class OperationsSetupTest extends TestCase {
 		Assert.assertEquals("Before Read Main Menu Enabled", false, s.isMainMenuEnabled());
 
 		Assert.assertEquals("Before Read Direction East", 1, s.getTrainDirection());
-		Assert.assertEquals("Before Read Train Length", 2222, s.getTrainLength());
-		Assert.assertEquals("Before Read Engine Size", 222, s.getEngineSize());
+		Assert.assertEquals("Before Read Train Length", 2222, s.getMaxTrainLength());
+		Assert.assertEquals("Before Read Engine Size", 222, s.getMaxNumberEngines());
 		Assert.assertEquals("Before Read Scale", 2, s.getScale());
 
 		Assert.assertEquals("Before Read Test Car Types", "Before Read Test Car Types", s.getCarTypes());
 		Assert.assertEquals("Before Read Switch Time", 22, s.getSwitchTime());
 		Assert.assertEquals("Before Read Travel Time", 222, s.getTravelTime());
-		/*
-		Assert.assertEquals("Before Read Show Car Length Enabled", false, s.isShowCarLengthEnabled());
-		Assert.assertEquals("Before Read Show Car Load Enabled", false, s.isShowCarLoadEnabled());
-		Assert.assertEquals("Before Read Show Car Color Enabled", false, s.isShowCarColorEnabled());
-		Assert.assertEquals("Before Read Append Car Comment Enabled", false, s.isAppendCarCommentEnabled());
-		*/
 		Assert.assertEquals("Before Read Build Report Level", "22", s.getBuildReportLevel());
 
 		Assert.assertEquals("Before Read Train Icon Cord Enabled True", false, s.isTrainIconCordEnabled());
@@ -415,19 +400,13 @@ public class OperationsSetupTest extends TestCase {
 		Assert.assertEquals("After Read Main Menu Enabled", true, s.isMainMenuEnabled());
 
 		Assert.assertEquals("After Read Direction East", 1+2+4+8, s.getTrainDirection());
-		Assert.assertEquals("After Read Train Length", 1111, s.getTrainLength());
-		Assert.assertEquals("After Read Engine Size", 111, s.getEngineSize());
+		Assert.assertEquals("After Read Train Length", 1111, s.getMaxTrainLength());
+		Assert.assertEquals("After Read Engine Size", 111, s.getMaxNumberEngines());
 		Assert.assertEquals("After Read Scale", 11, s.getScale());
 
 		Assert.assertEquals("After Read Test Car Types", "File Test Car Types", s.getCarTypes());
 		Assert.assertEquals("After Read Switch Time", 11, s.getSwitchTime());
 		Assert.assertEquals("After Read Travel Time", 111, s.getTravelTime());
-		/*
-		Assert.assertEquals("After Read Show Car Length Enabled", true, s.isShowCarLengthEnabled());
-		Assert.assertEquals("After Read Show Car Load Enabled", true, s.isShowCarLoadEnabled());
-		Assert.assertEquals("After Read Show Car Color Enabled", true, s.isShowCarColorEnabled());
-		Assert.assertEquals("After Read Append Car Comment Enabled", true, s.isAppendCarCommentEnabled());
-		*/
 		Assert.assertEquals("After Read Build Report Level", "11", s.getBuildReportLevel());
 
 		Assert.assertEquals("After Read Train Icon Cord Enabled True", true, s.isTrainIconCordEnabled());
@@ -473,18 +452,12 @@ public class OperationsSetupTest extends TestCase {
 		s.setMainMenuEnabled(true);
 
 		s.setTrainDirection(Setup.EAST+Setup.WEST+Setup.NORTH+Setup.SOUTH);
-		s.setTrainLength(1111);
-		s.setEngineSize(111);
+		s.setMaxTrainLength(1111);
+		s.setMaxNumberEngines(111);
 		s.setScale(Setup.G_SCALE);
 		s.setCarTypes("File Test Car Types");
 		s.setSwitchTime(11);
 		s.setTravelTime(111);
-		/*
-		s.setShowCarLengthEnabled(true);
-		s.setShowCarLoadEnabled(true);
-		s.setShowCarColorEnabled(true);
-		s.setAppendCarCommentEnabled(true);
-		*/
 		s.setBuildReportLevel("11");
 
 		s.setTrainIconCordEnabled(true);
@@ -522,9 +495,6 @@ public class OperationsSetupTest extends TestCase {
 
 		// read it
 		ox.readFile(FileUtil.getUserFilesPath()+OperationsSetupXml.getOperationsDirectoryName()+File.separator+OperationsSetupXml.instance().getOperationsFileName());
-
-		// Set filename back to Operations
-//		ox.setOperationsFileName("Operations.xml");
 	}
 
 	// from here down is testing infrastructure

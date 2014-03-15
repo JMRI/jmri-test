@@ -68,12 +68,11 @@ public class RoutesTableModel extends javax.swing.table.AbstractTableModel imple
 			sysList = manager.getRoutesByNameList();
 		// and add them back in
 		for (int i = 0; i < sysList.size(); i++) {
-			// log.debug("route ids: " + (String) sysList.get(i));
-			manager.getRouteById(sysList.get(i)).addPropertyChangeListener(this);
+			sysList.get(i).addPropertyChangeListener(this);
 		}
 	}
 
-	List<String> sysList = null;
+	List<Route> sysList = null;
 
 	void initTable(JTable table) {
 		// Install the button handlers
@@ -87,7 +86,7 @@ public class RoutesTableModel extends javax.swing.table.AbstractTableModel imple
 		table.getColumnModel().getColumn(NAMECOLUMN).setPreferredWidth(220);
 		table.getColumnModel().getColumn(COMMENTCOLUMN).setPreferredWidth(300);
 		table.getColumnModel().getColumn(STATUSCOLUMN).setPreferredWidth(70);
-		table.getColumnModel().getColumn(EDITCOLUMN).setPreferredWidth(70);
+		table.getColumnModel().getColumn(EDITCOLUMN).setPreferredWidth(80);
 		// have to shut off autoResizeMode to get horizontal scroll to work (JavaSwing p 541)
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 	}
@@ -154,8 +153,7 @@ public class RoutesTableModel extends javax.swing.table.AbstractTableModel imple
 		}
 		if (row >= sysList.size())
 			return "ERROR unknown " + row; // NOI18N
-		String locId = sysList.get(row);
-		Route r = manager.getRouteById(locId);
+		Route r = sysList.get(row);
 		if (r == null)
 			return "ERROR route unknown " + row; // NOI18N
 		switch (col) {
@@ -192,7 +190,7 @@ public class RoutesTableModel extends javax.swing.table.AbstractTableModel imple
 		if (ref != null)
 			ref.dispose();
 		ref = new RouteEditFrame();
-		Route route = manager.getRouteById(sysList.get(row));
+		Route route = sysList.get(row);
 		ref.initComponents(route);
 		focusRef = true;
 	}
@@ -207,10 +205,10 @@ public class RoutesTableModel extends javax.swing.table.AbstractTableModel imple
 			updateList();
 			fireTableDataChanged();
 		} else if (e.getSource().getClass().equals(Route.class)) {
-			String locId = ((Route) e.getSource()).getId();
-			int row = sysList.indexOf(locId);
+			Route route = (Route) e.getSource();
+			int row = sysList.indexOf(route);
 			if (Control.showProperty && log.isDebugEnabled())
-				log.debug("Update route table row: " + row + " id: " + locId);
+				log.debug("Update route table row: " + row + " id: " + route.getId());
 			if (row >= 0)
 				fireTableRowsUpdated(row, row);
 		}
@@ -220,9 +218,9 @@ public class RoutesTableModel extends javax.swing.table.AbstractTableModel imple
 		if (sysList != null) {
 			for (int i = 0; i < sysList.size(); i++) {
 				// if object has been deleted, it's not here; ignore it
-				Route l = manager.getRouteById(sysList.get(i));
-				if (l != null)
-					l.removePropertyChangeListener(this);
+				Route route = sysList.get(i);
+				if (route != null)
+					route.removePropertyChangeListener(this);
 			}
 		}
 	}

@@ -351,8 +351,8 @@ public class PaneProgDp3Action 			extends jmri.util.swing.JmriAbstractAction imp
         if(progPane!=null){
             progPane.setVariableValue("Short Address", cv1);
             progPane.setVariableValue("Long Address", longAddress);
-            progPane.setCVValue(29, cv29);
-            progPane.setCVValue(19, cv19);
+            progPane.setCVValue("29", cv29);
+            progPane.setCVValue("19", cv19);
         }
     }
     
@@ -450,7 +450,7 @@ public class PaneProgDp3Action 			extends jmri.util.swing.JmriAbstractAction imp
         extendAddr = variableModel.findVar("Long Address");
         if (extendAddr==null) log.debug("DCC Address monitor didnt find an Long Address variable");
         else extendAddr.addPropertyChangeListener(dccNews);
-        addMode = variableModel.findVar("Address Format");
+        addMode = (EnumVariableValue)variableModel.findVar("Address Format");
         if (addMode==null) log.debug("DCC Address monitor didnt find an Address Format variable");
         else addMode.addPropertyChangeListener(dccNews);
         
@@ -469,8 +469,8 @@ public class PaneProgDp3Action 			extends jmri.util.swing.JmriAbstractAction imp
 
             progPane.setVariableValue("Short Address", cv1);
             progPane.setVariableValue("Long Address", longAddress);
-            progPane.setCVValue(29, cv29);
-            progPane.setCVValue(19, cv19);
+            progPane.setCVValue("29", cv29);
+            progPane.setCVValue("19", cv19);
             rosterPanel.add(progPane, BorderLayout.CENTER);
             rosterPanel.revalidate();
             rosterPanel.setVisible(true);
@@ -483,25 +483,30 @@ public class PaneProgDp3Action 			extends jmri.util.swing.JmriAbstractAction imp
         }
     }
     
+    boolean longMode = false;
+    String newAddr = null;
     void updateDccAddress() {
-        boolean longMode = false;
+
         if (log.isDebugEnabled())
             log.debug("updateDccAddress: short "+(primaryAddr==null?"<null>":primaryAddr.getValueString())+
                       " long "+(extendAddr==null?"<null>":extendAddr.getValueString())+
                       " mode "+(addMode==null?"<null>":addMode.getValueString()));
-        String newAddr = null;
-        if (addMode == null || extendAddr == null || !addMode.getValueString().equals("1")) {
-            // short address mode
+
+        new DccAddressVarHandler(primaryAddr, extendAddr, addMode){
+            protected void doPrimary() {
             longMode = false;
-            if (primaryAddr != null && !primaryAddr.getValueString().equals(""))
-                newAddr = primaryAddr.getValueString();
-        }
-        else {
-            // long address
-            if (!extendAddr.getValueString().equals(""))
-                longMode = true;
-                newAddr = extendAddr.getValueString();
-        }
+                if (primaryAddr != null && !primaryAddr.getValueString().equals("")) {
+                    newAddr = primaryAddr.getValueString();
+                }
+            }
+            protected void doExtended() {
+                // long address
+                if (!extendAddr.getValueString().equals("")) {
+                    longMode = true;
+                    newAddr = extendAddr.getValueString();
+                }
+            }
+        };
         // update if needed
         if (newAddr!=null) {
             synchronized(this){
@@ -581,7 +586,7 @@ public class PaneProgDp3Action 			extends jmri.util.swing.JmriAbstractAction imp
     // hold refs to variables to check dccAddress
     VariableValue primaryAddr = null;
     VariableValue extendAddr = null;
-    VariableValue addMode = null;
+    EnumVariableValue addMode = null;
     
     public boolean isBusy() { return false; }
     
@@ -664,7 +669,7 @@ public class PaneProgDp3Action 			extends jmri.util.swing.JmriAbstractAction imp
             }
         }
         
-        public void setCVValue(int cv, int value){
+        public void setCVValue(String cv, int value){
             if(_cvModel.getCvByNumber(cv)!=null){
                 (_cvModel.getCvByNumber(cv)).setValue(value);
                 (_cvModel.getCvByNumber(cv)).setState(AbstractValue.READ);

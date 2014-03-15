@@ -40,6 +40,9 @@ public class OptionFrame extends OperationsFrame {
 	// check boxes
 	JCheckBox routerCheckBox = new JCheckBox(Bundle.getMessage("EnableCarRouting"));
 	JCheckBox routerYardCheckBox = new JCheckBox(Bundle.getMessage("EnableCarRoutingYard"));
+	JCheckBox routerAllTrainsBox = new JCheckBox(Bundle.getMessage("AllTrains"));
+	JCheckBox routerRestrictBox = new JCheckBox(Bundle.getMessage("EnableTrackDestinationRestrications"));
+	
 	JCheckBox valueCheckBox = new JCheckBox(Bundle.getMessage("EnableValue"));
 	JCheckBox rfidCheckBox = new JCheckBox(Bundle.getMessage("EnableRfid"));
 	JCheckBox carLoggerCheckBox = new JCheckBox(Bundle.getMessage("EnableCarLogging"));
@@ -86,6 +89,8 @@ public class OptionFrame extends OperationsFrame {
 		// router
 		routerCheckBox.setSelected(Setup.isCarRoutingEnabled());
 		routerYardCheckBox.setSelected(Setup.isCarRoutingViaYardsEnabled());
+		routerAllTrainsBox.setSelected(!Setup.isOnlyActiveTrainsEnabled());
+		routerRestrictBox.setSelected(Setup.isCheckCarDestinationEnabled());
 		// logging options
 		carLoggerCheckBox.setSelected(Setup.isCarLoggerEnabled());
 		engineLoggerCheckBox.setSelected(Setup.isEngineLoggerEnabled());
@@ -154,6 +159,8 @@ public class OptionFrame extends OperationsFrame {
 		pRouter.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("BorderLayoutRouterOptions")));
 		addItemLeft(pRouter, routerCheckBox, 1, 0);
 		addItemLeft(pRouter, routerYardCheckBox, 1, 1);
+		addItemLeft(pRouter, routerAllTrainsBox, 1, 2);
+		addItemLeft(pRouter, routerRestrictBox, 1, 3);
 
 		// Logger panel
 		JPanel pLogger = new JPanel();
@@ -196,6 +203,10 @@ public class OptionFrame extends OperationsFrame {
 		buildGroup.add(buildAggressive);
 		addRadioButtonAction(buildNormal);
 		addRadioButtonAction(buildAggressive);
+		
+		// check boxes
+		addCheckBoxAction(routerCheckBox);
+		setRouterCheckBoxesEnabled();
 
 		setBuildOption();
 
@@ -243,6 +254,8 @@ public class OptionFrame extends OperationsFrame {
 			// Car routing enabled?
 			Setup.setCarRoutingEnabled(routerCheckBox.isSelected());
 			Setup.setCarRoutingViaYardsEnabled(routerYardCheckBox.isSelected());
+			Setup.setOnlyActiveTrainsEnabled(!routerAllTrainsBox.isSelected());
+			Setup.setCheckCarDestinationEnabled(routerRestrictBox.isSelected());
 			// Options
 			TrainManager.instance().setGenerateCsvManifestEnabled(generateCvsManifestCheckBox.isSelected());
 			Setup.setGenerateCsvSwitchListEnabled(generateCvsSwitchListCheckBox.isSelected());
@@ -261,6 +274,18 @@ public class OptionFrame extends OperationsFrame {
 			if (Setup.isCloseWindowOnSaveEnabled())
 				dispose();
 		}
+	}
+	
+	protected void checkBoxActionPerformed(java.awt.event.ActionEvent ae) {
+		if (ae.getSource() == routerCheckBox) {
+			setRouterCheckBoxesEnabled();
+		}
+	}
+	
+	private void setRouterCheckBoxesEnabled() {
+		routerYardCheckBox.setEnabled(routerCheckBox.isSelected());
+		routerAllTrainsBox.setEnabled(routerCheckBox.isSelected());
+		routerRestrictBox.setEnabled(routerCheckBox.isSelected());
 	}
 
 	static Logger log = LoggerFactory.getLogger(OptionFrame.class.getName());

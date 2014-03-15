@@ -14,21 +14,15 @@ import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.TreeSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.swing.*;
-import jmri.jmrit.symbolicprog.CvTableModel;
-import jmri.jmrit.symbolicprog.CvValue;
-import jmri.jmrit.symbolicprog.DccAddressPanel;
-import jmri.jmrit.symbolicprog.FnMapPanel;
-import jmri.jmrit.symbolicprog.IndexedCvTableModel;
-import jmri.jmrit.symbolicprog.SymbolicProgBundle;
-import jmri.jmrit.symbolicprog.ValueEditor;
-import jmri.jmrit.symbolicprog.ValueRenderer;
-import jmri.jmrit.symbolicprog.VariableTableModel;
-import jmri.jmrit.symbolicprog.VariableValue;
+import javax.swing.table.*;
+import jmri.jmrit.symbolicprog.*;
 import jmri.util.davidflanagan.HardcopyWriter;
 import jmri.util.jdom.LocaleSelector;
 import org.jdom.Attribute;
@@ -85,6 +79,8 @@ public class PaneProgPane extends javax.swing.JPanel
     protected transient ItemListener l4;
     transient ItemListener l5;
     transient ItemListener l6;
+    
+    boolean isCvTablePane = false;
 
     String mName = "";
     
@@ -120,6 +116,9 @@ public class PaneProgPane extends javax.swing.JPanel
         // laid-out JPanel
         setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 
+        // Add tooltip if present
+        setToolTipText(jmri.util.jdom.LocaleSelector.getAttribute(pane, "tooltip"));
+        
         // find out whether to display "label" (false) or "item" (true)
         boolean showItem = false;
         Attribute nameFmt = pane.getAttribute("nameFmt");
@@ -356,13 +355,13 @@ public class PaneProgPane extends javax.swing.JPanel
     int varListIndex;
     /**
      * This remembers the CVs on this pane for the Read/Write sheet
-     * operation.  They are stored as a list of Integer objects, each of which
+     * operation.  They are stored as a set of Integer objects, each of which
      * is the index of the CV in the CVTable. Note that variables are handled
      * separately, and the CVs that are represented by variables are not
      * entered here.  So far (sic), the only use of this is for the cvtable rep.
      */
-    protected List<Integer> cvList = new ArrayList<Integer>();
-    protected int cvListIndex;
+    protected TreeSet<Integer> cvList = new TreeSet<Integer>(); //  TreeSet is iterated in order
+    protected Iterator<Integer> cvListIterator;
     /**
      * This remembers the indexed CVs on this pane for the Read/Write sheet
      * operation.  They are stored as a list of Integer objects, each of which
@@ -482,6 +481,9 @@ public class PaneProgPane extends javax.swing.JPanel
     public void prepReadPane(boolean onlyChanges) {
         if (log.isDebugEnabled()) log.debug("start prepReadPane with onlyChanges="+onlyChanges);
         justChanges = onlyChanges;
+        
+        if (isCvTablePane) setCvListFromTable();  // make sure list of CVs up to date if table
+        
         enableButtons(false);
         if (justChanges == true) {
             readChangesButton.setEnabled(true);
@@ -495,7 +497,7 @@ public class PaneProgPane extends javax.swing.JPanel
         }
         setToRead(justChanges, true);
         varListIndex = 0;
-        cvListIndex = 0;
+        cvListIterator = cvList.iterator();
         indexedCvListIndex = 0;
     }
 
@@ -522,6 +524,8 @@ public class PaneProgPane extends javax.swing.JPanel
 
     /**
      * Set the "ToRead" parameter in all variables and CVs on this pane
+     * @param justChanges true if this is read changes, false if read all
+     * @param startProcess true if this is the start of processing, false if cleaning up at end
      */
     void setToRead(boolean justChanges, boolean startProcess) {
         if (!container.isBusy() ||  // the frame has already setToRead
@@ -541,8 +545,9 @@ public class PaneProgPane extends javax.swing.JPanel
                     var.setToRead(startProcess);
                 }
             }
-            for (int i = 0; i < cvList.size(); i++) {
-                int cvNum = cvList.get(i).intValue();
+
+            if (isCvTablePane) setCvListFromTable();  // make sure list of CVs up to date if table
+            for (int cvNum : cvList) {
                 CvValue cv = _cvModel.getCvByRow(cvNum);
                 if (justChanges) {
                     if (VariableValue.considerChanged(cv)) {
@@ -556,6 +561,7 @@ public class PaneProgPane extends javax.swing.JPanel
                     cv.setToRead(startProcess);
                 }
             }
+
             for (int i = 0; i < indexedCvList.size(); i++) {
                 CvValue icv = _indexedCvModel.getCvByRow(i);
                 if (justChanges) {
@@ -575,11 +581,13 @@ public class PaneProgPane extends javax.swing.JPanel
 
     /**
      * Set the "ToWrite" parameter in all variables and CVs on this pane
+     * @param justChanges true if this is read changes, false if read all
+     * @param startProcess true if this is the start of processing, false if cleaning up at end
      */
     void setToWrite(boolean justChanges, boolean startProcess) {
         if (log.isDebugEnabled()) log.debug("start setToWrite method with "+justChanges+","+startProcess);
         if (!container.isBusy() ||  // the frame has already setToWrite
-           (!startProcess)) {  // we want to setToRead false if the pane's process is being stopped
+           (!startProcess)) {  // we want to setToWrite false if the pane's process is being stopped
            log.debug("about to start setToWrite of varList");
            for (int i = 0; i < varList.size(); i++) {
                int varNum = varList.get(i).intValue();
@@ -596,9 +604,10 @@ public class PaneProgPane extends javax.swing.JPanel
                    var.setToWrite(startProcess);
                }
            }
+           
            log.debug("about to start setToWrite of cvList");
-           for (int i = 0; i < cvList.size(); i++) {
-               int cvNum = cvList.get(i).intValue();
+           if (isCvTablePane) setCvListFromTable();  // make sure list of CVs up to date if table
+           for (int cvNum : cvList) {
                CvValue cv = _cvModel.getCvByRow(cvNum);
                if (justChanges) {
                    if (VariableValue.considerChanged(cv)) {
@@ -612,6 +621,7 @@ public class PaneProgPane extends javax.swing.JPanel
                    cv.setToWrite(startProcess);
                }
            }
+           
            log.debug("about to start setToWrite of indexedCvList");
            for (int i = 0; i < indexedCvList.size(); i++) {
                CvValue icv = _indexedCvModel.getCvByRow(i);
@@ -675,13 +685,14 @@ public class PaneProgPane extends javax.swing.JPanel
      */
     boolean nextRead() {
         // look for possible variables
+        if (log.isDebugEnabled()) log.debug("nextRead scans "+varList.size()+" variables");
         while ((varList.size() >= 0) && (varListIndex < varList.size())){
             int varNum = varList.get(varListIndex).intValue();
             int vState = _varModel.getState( varNum );
             VariableValue var = _varModel.getVariable(varNum);
-            if (log.isDebugEnabled()) log.debug("nextRead var index "+varNum+" state "+vState+"  label: "+var.label());
+            if (log.isDebugEnabled()) log.debug("nextRead var index "+varNum+" state "+VariableValue.stateNameFromValue(vState)+" isToRead: "+var.isToRead()+" label: "+var.label());
             varListIndex++;
-            if (var.isToRead() || vState == VariableValue.UNKNOWN) {        // always read UNKNOWN state
+            if (var.isToRead()) {
                 if (log.isDebugEnabled()) log.debug("start read of variable "+_varModel.getLabel(varNum));
                 executeRead(var);
 
@@ -691,12 +702,13 @@ public class PaneProgPane extends javax.swing.JPanel
             }
         }
         // found no variables needing read, try CVs
-        while ((cvList.size() >= 0) && (cvListIndex < cvList.size())) {
-            int cvNum = cvList.get(cvListIndex).intValue();
+        if (log.isDebugEnabled()) log.debug("nextRead scans "+cvList.size()+" CVs");
+        while (cvListIterator!= null && cvListIterator.hasNext()) {
+            int cvNum = cvListIterator.next();
             CvValue cv = _cvModel.getCvByRow(cvNum);
             if (log.isDebugEnabled()) log.debug("nextRead cv index "+cvNum+" state "+cv.getState());
-            cvListIndex++;
-            if (cv.isToRead() || cv.getState() == CvValue.UNKNOWN) {  // always read UNKNOWN state
+
+            if (cv.isToRead()) {  // always read UNKNOWN state
                if (log.isDebugEnabled()) log.debug("start read of cv "+cvNum);
                 setBusy(true);
                 if (_programmingCV != null) log.error("listener already set at read start");
@@ -713,6 +725,7 @@ public class PaneProgPane extends javax.swing.JPanel
             }
         }
         // found no CVs needing read, try indexed CVs
+        if (log.isDebugEnabled()) log.debug("nextRead scans "+indexedCvList.size()+" indexed CVs");
         while ((indexedCvList.size() >= 0) && (indexedCvListIndex < indexedCvList.size())) {
             int indxVarNum = indexedCvList.get(indexedCvListIndex).intValue();
             int indxState = _varModel.getState(indxVarNum);
@@ -720,7 +733,7 @@ public class PaneProgPane extends javax.swing.JPanel
                 "nextRead indexed cv @ row index " + indexedCvListIndex + " state " + indxState);
             VariableValue iCv = _varModel.getVariable(indxVarNum);
             indexedCvListIndex++;
-            if (iCv.isToRead() || indxState == VariableValue.UNKNOWN) {
+            if (iCv.isToRead()) {
                 String sz = "start read of indexed cv " +
                     (_indexedCvModel.getCvByRow(indexedCvListIndex-1)).cvName();
                 if (log.isDebugEnabled()) log.debug(sz);
@@ -761,11 +774,11 @@ public class PaneProgPane extends javax.swing.JPanel
      */
     boolean nextConfirm() {
         // look for possible CVs
-        while ((cvList.size() >= 0) && (cvListIndex < cvList.size())) {
-            int cvNum = cvList.get(cvListIndex).intValue();
+        while (cvListIterator!= null && cvListIterator.hasNext()) {
+            int cvNum = cvListIterator.next();
             CvValue cv = _cvModel.getCvByRow(cvNum);
             if (log.isDebugEnabled()) log.debug("nextConfirm cv index "+cvNum+" state "+cv.getState());
-            cvListIndex++;
+
             if (cv.isToRead()) {
                if (log.isDebugEnabled()) log.debug("start confirm of cv "+cvNum);
                 setBusy(true);
@@ -851,6 +864,9 @@ public class PaneProgPane extends javax.swing.JPanel
         if (log.isDebugEnabled()) log.debug("start prepWritePane with "+onlyChanges);
         justChanges = onlyChanges;
         enableButtons(false);
+
+        if (isCvTablePane) setCvListFromTable();  // make sure list of CVs up to date if table
+
         if (justChanges == true) {
             writeChangesButton.setEnabled(true);
             writeChangesButton.setSelected(true);
@@ -863,7 +879,9 @@ public class PaneProgPane extends javax.swing.JPanel
         }
         setToWrite(justChanges, true);
         varListIndex = 0;
-        cvListIndex = 0;
+        
+        cvListIterator = cvList.iterator();
+
         indexedCvListIndex = 0;
         log.debug("end prepWritePane");
     }
@@ -878,7 +896,7 @@ public class PaneProgPane extends javax.swing.JPanel
             if (log.isDebugEnabled()) log.debug("nextWrite var index "+varNum+" state "+VariableValue.stateNameFromValue(vState)
                                                 +" isToWrite: "+var.isToWrite()+" label:"+var.label());
             varListIndex++;
-            if (var.isToWrite() || vState == VariableValue.UNKNOWN) {
+            if (var.isToWrite()) {
                 log.debug("start write of variable "+_varModel.getLabel(varNum));
 
                 executeWrite(var);
@@ -888,12 +906,12 @@ public class PaneProgPane extends javax.swing.JPanel
             }
         }
         // check for CVs to handle (e.g. for CV table)
-        while ((cvList.size() >= 0) && (cvListIndex < cvList.size())) {
-            int cvNum = cvList.get(cvListIndex).intValue();
+        while (cvListIterator!= null && cvListIterator.hasNext()) {
+            int cvNum = cvListIterator.next();
             CvValue cv = _cvModel.getCvByRow( cvNum );
             if (log.isDebugEnabled()) log.debug("nextWrite cv index "+cvNum+" state "+cv.getState());
-            cvListIndex++;
-            if (cv.isToWrite() || cv.getState()== CvValue.UNKNOWN) {
+
+            if (cv.isToWrite()) {
                 if (log.isDebugEnabled()) log.debug("start write of cv index "+cvNum);
                 setBusy(true);
                 if (_programmingCV != null) log.error("listener already set at write start");
@@ -916,7 +934,7 @@ public class PaneProgPane extends javax.swing.JPanel
                 "nextWrite indexed cv @ row index " + indexedCvListIndex + " state " + indxState);
             VariableValue iCv = _varModel.getVariable(indxVarNum);
             indexedCvListIndex++;
-            if (iCv.isToWrite() || indxState == VariableValue.UNKNOWN) {
+            if (iCv.isToWrite()) {
                 String sz = "start write of indexed cv " +
                     (  _indexedCvModel.getCvByRow(indexedCvListIndex-1)).cvName();
                 if (log.isDebugEnabled()) log.debug(sz);
@@ -958,6 +976,9 @@ public class PaneProgPane extends javax.swing.JPanel
         if (log.isDebugEnabled()) log.debug("start prepReadPane with onlyChanges="+onlyChanges);
         justChanges = onlyChanges;
         enableButtons(false);
+
+        if (isCvTablePane) setCvListFromTable();  // make sure list of CVs up to date if table
+
         if (justChanges) {
             confirmChangesButton.setEnabled(true);
             confirmChangesButton.setSelected(true);
@@ -971,7 +992,9 @@ public class PaneProgPane extends javax.swing.JPanel
         // we can use the read prep since confirm has to read first
         setToRead(justChanges, true);
         varListIndex = 0;
-        cvListIndex = 0;
+        
+        cvListIterator = cvList.iterator();
+        
         indexedCvListIndex = 0;
     }
 
@@ -1065,14 +1088,19 @@ public class PaneProgPane extends javax.swing.JPanel
         } else if (e.getSource() == _programmingCV &&
                    e.getPropertyName().equals("Busy") &&
                    ((Boolean)e.getNewValue()).equals(Boolean.FALSE) ) {
-            if (_programmingCV.getState() == CvValue.UNKNOWN) {
-                if (retry == 0) {
-                    cvListIndex--;
-                    retry++;
-                } else {
-                    retry = 0;
-                }
-            }
+                   
+            // there's no -- operator on the HashSet Iterator we're
+            // using for the CV list, so we don't do individual retries
+            // now.
+            //if (_programmingCV.getState() == CvValue.UNKNOWN) {
+            //    if (retry == 0) {
+            //        cvListIndex--;
+            //        retry++;
+            //    } else {
+            //        retry = 0;
+            //    }
+            //}
+            
             replyWhileProgrammingCV();
             return;
         } else if (e.getSource() == _programmingIndexedCV &&
@@ -1146,7 +1174,9 @@ public class PaneProgPane extends javax.swing.JPanel
         setToRead(false, false);
         setToWrite(false, false);
         varListIndex = varList.size();
-        cvListIndex = cvList.size();
+        
+        cvListIterator = null;
+
         indexedCvListIndex = indexedCvList.size();
         log.debug("end stopProgramming");
     }
@@ -1190,20 +1220,9 @@ public class PaneProgPane extends javax.swing.JPanel
                 c.add(j);
                 cs.gridwidth = 1;
             }
-            else if (name.equals("label")) { // its  a label
-                JLabel l = new JLabel(LocaleSelector.getAttribute(e,"label"));
-                l.setAlignmentX(1.0f);
-                cs.fill = GridBagConstraints.BOTH;
+            else if (name.equals("label")) {
                 cs.gridwidth = GridBagConstraints.REMAINDER;
-                if (log.isDebugEnabled()) {
-                    log.debug("Add label: "+l.getText()+" cs: "
-                              +cs.gridwidth+" "+cs.fill+" "
-                              +cs.gridx+" "+cs.gridy);
-                }
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.fill = GridBagConstraints.NONE;
-                cs.gridwidth = 1;
+                makeLabel(e, c, g, cs);
             }
             else if (name.equals("cvtable")) {
                 makeCvTable(cs, g, c);
@@ -1239,12 +1258,7 @@ public class PaneProgPane extends javax.swing.JPanel
 
             }
             else if (name.equals("fnmapping")) {
-                FnMapPanel l = new FnMapPanel(_varModel, varList, modelElem);
-                fnMapList.add(l); // remember for deletion
-                cs.gridwidth = GridBagConstraints.REMAINDER;
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridwidth = 1;
+                pickFnMapPanel(c, g, cs, modelElem);
             }
             else if (name.equals("dccaddress")) {
                 JPanel l = addDccAddressPanel(e);
@@ -1272,6 +1286,37 @@ public class PaneProgPane extends javax.swing.JPanel
         return c;
     }
 
+    /**
+     * Create label from Element
+     */
+    protected void makeLabel(Element e, JPanel c, GridBagLayout g, GridBagConstraints cs) {
+        final JLabel l = new JLabel(LocaleSelector.getAttribute(e,"label"));
+        l.setAlignmentX(1.0f);
+        cs.fill = GridBagConstraints.BOTH;
+        if (log.isDebugEnabled()) {
+            log.debug("Add label: "+l.getText()+" cs: "
+                      +cs.gridwidth+" "+cs.fill+" "
+                      +cs.gridx+" "+cs.gridy);
+        }
+        g.setConstraints(l, cs);
+        c.add(l);
+        cs.fill = GridBagConstraints.NONE;
+        cs.gridwidth = 1;
+        cs.gridheight = 1;
+        
+        // handle qualification if any
+        QualifierAdder qa = new QualifierAdder() {
+            protected Qualifier createQualifier(VariableValue var, String relation, String value) {
+                return new JComponentQualifier(l, var, Integer.parseInt(value), relation);
+            }
+            protected void addListener(java.beans.PropertyChangeListener qc) {
+                l.addPropertyChangeListener(qc);
+            }
+        };
+        
+        qa.processModifierElements(e, _varModel);
+    }
+    
     /**
      * Create a single row from the JDOM column Element
      */
@@ -1313,12 +1358,8 @@ public class PaneProgPane extends javax.swing.JPanel
                 cs.gridheight = 1;
             }
             else if (name.equals("label")) { // its  a label
-                JLabel l = new JLabel(LocaleSelector.getAttribute(e, "label"));
-                l.setAlignmentX(1.0f);
                 cs.gridheight = GridBagConstraints.REMAINDER;
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridheight = 1;
+                makeLabel(e, c, g, cs);
             }
             else if (name.equals("cvtable")) {
                 makeCvTable(cs, g, c);
@@ -1353,12 +1394,7 @@ public class PaneProgPane extends javax.swing.JPanel
                 log.debug("end of building IndexedCvTable pane");
             }
             else if (name.equals("fnmapping")) {
-                FnMapPanel l = new FnMapPanel(_varModel, varList, modelElem);
-                fnMapList.add(l); // remember for deletion
-                cs.gridheight = GridBagConstraints.REMAINDER;
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridheight = 1;
+                pickFnMapPanel(c, g, cs, modelElem);
             }
             else if (name.equals("dccaddress")) {
                 JPanel l = addDccAddressPanel(e);
@@ -1388,10 +1424,19 @@ public class PaneProgPane extends javax.swing.JPanel
 
     void makeCvTable(GridBagConstraints cs, GridBagLayout g, JPanel c) {
         log.debug("starting to build CvTable pane");
+        
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(_cvModel);
 
         JTable			cvTable		= new JTable(_cvModel);
-        cvTable.setAutoCreateRowSorter(true);
-        cvTable.getRowSorter().toggleSortOrder(0);  // sort on left most
+
+        sorter.setComparator(CvTableModel.NUMCOLUMN, new jmri.util.PreferNumericComparator());
+
+        List <RowSorter.SortKey> sortKeys 
+            = new ArrayList<RowSorter.SortKey>();
+        sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        sorter.setSortKeys(sortKeys); 
+
+        cvTable.setRowSorter(sorter);
         
         cvTable.setDefaultRenderer(JTextField.class, new ValueRenderer());
         cvTable.setDefaultRenderer(JButton.class, new ValueRenderer());
@@ -1411,13 +1456,53 @@ public class PaneProgPane extends javax.swing.JPanel
         cs.gridheight = 1;
 
         // remember which CVs to read/write
-        for (int j=0; j<_cvModel.getRowCount(); j++) {
-            cvList.add(Integer.valueOf(j));
-        }
+        isCvTablePane = true;
+        setCvListFromTable();
+        
         _cvTable = true;
         log.debug("end of building CvTable pane");
     }
     
+    void setCvListFromTable() {
+        // remember which CVs to read/write
+        System.out.println("found "+_cvModel.getRowCount()+" rows");
+        for (int j=0; j<_cvModel.getRowCount(); j++) {
+            cvList.add(Integer.valueOf(j));
+        }
+    }
+    
+    /**
+     * Pick an appropriate function map panel depending on model attribute.
+     *  <dl>
+     *  <dt>If attribute extFnsESU="yes":</dt>
+     *   <dd>Invoke FnMapPanelESU(VariableTableModel v, List<Integer> varsUsed, Element model)</dd>
+     *  <dt>Otherwise:</dt>
+     *   <dd>Invoke FnMapPanel(VariableTableModel v, List<Integer> varsUsed, Element model)</dd>
+     * </dl>
+     */
+    
+    void pickFnMapPanel(JPanel c, GridBagLayout g, GridBagConstraints cs, Element modelElem) {
+        boolean extFnsESU = false;
+        Attribute a = modelElem.getAttribute("extFnsESU");
+        try { if (a!=null) extFnsESU = (a.getValue()).equalsIgnoreCase("yes");}
+        catch (Exception ex) {log.error("error handling decoder's extFnsESU value");}        
+        if (extFnsESU) {
+            FnMapPanelESU l = new FnMapPanelESU(_varModel, varList, modelElem);
+            fnMapListESU.add(l); // remember for deletion
+            cs.gridwidth = GridBagConstraints.REMAINDER;
+            g.setConstraints(l, cs);
+            c.add(l);
+            cs.gridwidth = 1;
+        } else {
+            FnMapPanel l = new FnMapPanel(_varModel, varList, modelElem);
+            fnMapList.add(l); // remember for deletion
+            cs.gridwidth = GridBagConstraints.REMAINDER;
+            g.setConstraints(l, cs);
+            c.add(l);
+            cs.gridwidth = 1;
+        }
+}
+
     /**
      * Add the representation of a single variable.  The
      * variable is defined by a JDOM variable Element from the XML file.
@@ -1519,6 +1604,7 @@ public class PaneProgPane extends javax.swing.JPanel
      */
     public JComponent getRepresentation(String name, Element var) {
         int i = _varModel.findVarIndex(name);
+        VariableValue variable = _varModel.getVariable(i);
         JComponent rep = null;
         String format = "default";
         Attribute attr;
@@ -1528,13 +1614,105 @@ public class PaneProgPane extends javax.swing.JPanel
             rep = getRep(i, format);
             rep.setMaximumSize(rep.getPreferredSize());
             // set tooltip if specified here & not overridden by defn in Variable
-            String tip = "";
-            if ( (tip = LocaleSelector.getAttribute(var, "tooltip"))!=null
-                && rep.getToolTipText()==null)
-                rep.setToolTipText(tip);
+            String tip = LocaleSelector.getAttribute(var, "tooltip");
+            if ( rep.getToolTipText()!=null )
+                tip =  rep.getToolTipText();
+            rep.setToolTipText(modifyToolTipText(tip, variable));
         }
         return rep;
     }
+
+    /** 
+     * Takes default tooltip text, e.g. from the 
+     * decoder element, and modifies it as needed.
+     *
+     * Intended to handle e.g. adding CV numbers to variables.
+     */
+    String modifyToolTipText(String start, VariableValue variable) {
+        if (log.isDebugEnabled()) log.debug("modifyToolTipText: "+variable.label()+" "+_cvModel.getProgrammer());
+        // this is the place to invoke VariableValue methods to (conditionally)
+        // add information about CVs, etc in the ToolTip text
+        
+        // Optionally add CV numbers based on Roster Preferences setting
+        start = addCvDescription(start, variable.getCvDescription(), variable.getMask());
+        
+        // Indicate what the command station can do
+        // need to update this with e.g. the specific CV numbers
+        if (_cvModel.getProgrammer()!= null
+            && !_cvModel.getProgrammer().getCanRead()) {
+            start = start+" (Hardware cannot read)";
+        }
+        if (_cvModel.getProgrammer()!= null
+            && !_cvModel.getProgrammer().getCanWrite()) {
+            start = start+" (Hardware cannot write)";
+        }
+        
+        // indicate other reasons for read/write constraints
+        if (variable.getReadOnly()) start = start+" (Defined to be read only)";
+        if (variable.getWriteOnly()) start = start+" (Defined to be read only)";
+        
+        return start;
+    }
+    
+    /** 
+     * Optionally add CV numbers and bit numbers to tool tip text based on Roster Preferences setting.
+     *
+     * Needs to be independent of VariableValue methods to allow use by  non-standard elements
+     * such as SpeedTableVarValue, DccAddressPanel, FnMapPanel.
+     */
+    public static String addCvDescription(String toolTip, String cvDescription, String mask) {
+        // start with CV description
+        String descString = cvDescription;
+        
+        // generate bit numbers from bitmask if applicable
+        if ( (mask != null) && (mask.contains("X"))) {
+            int lastBit = mask.length()-1;
+            int lastV = -2;
+            if ( mask.contains("V")) {
+                if ( mask.indexOf('V') == mask.lastIndexOf('V') ) {
+                    descString = descString+" bit "+(lastBit-mask.indexOf('V'));
+                } else {
+                    descString = descString+" bits ";
+                    for (int i = 0; i <= lastBit; i++) {
+                        char descStringLastChar = descString.charAt(descString.length()-1);
+                        if ( mask.charAt(lastBit-i) == 'V' ) {
+                            if (descStringLastChar == ' ') {
+                                descString = descString+i;
+                            } else if (lastV == (i-1)) {
+                                if (descStringLastChar != '-') descString = descString+"-";
+                            } else {
+                                descString = descString+","+i;
+                            }
+                            lastV = i;
+                        }
+                        descStringLastChar = descString.charAt(descString.length()-1);
+                        if ((descStringLastChar == '-') && ((mask.charAt(lastBit-i) != 'V') || (i == lastBit))) {
+                            descString = descString+lastV;
+                        }
+                    }
+                }
+            } else {
+                descString = descString+" no bits";
+            }
+            log.debug(descString+" Mask:"+mask);
+        }
+        
+        // add to tool tip if Show CV Numbers enabled
+        // parenthesise if adding to existing tool tip
+        if (PaneProgFrame.getShowCvNumbers() && (descString != null)) {
+            if (toolTip == null) {
+                toolTip = descString;
+            } else {
+                toolTip = toolTip+" ("+descString+")";
+            }
+        } else {
+            if (toolTip == null)
+                toolTip = "";
+        }
+        
+        return toolTip;
+    }
+
 
     JComponent getRep(int i, String format) {
         return (JComponent)(_varModel.getRep(i, format));
@@ -1542,6 +1720,7 @@ public class PaneProgPane extends javax.swing.JPanel
 
     /** list of fnMapping objects to dispose */
     ArrayList<FnMapPanel> fnMapList = new ArrayList<FnMapPanel>();
+    ArrayList<FnMapPanelESU> fnMapListESU = new ArrayList<FnMapPanelESU>();
     /** list of JPanel objects to removeAll */
     ArrayList<JPanel> panelList = new ArrayList<JPanel>();
 
@@ -1841,16 +2020,14 @@ public class PaneProgPane extends javax.swing.JPanel
                 cvStrings[j] = "";
 
                 // get each CV and value
-              for (int i = 0; i < cvList.size(); i++) {
-
-                int cvNum = cvList.get(i).intValue();
+              int i = 0;
+              for (int cvNum : cvList) {
                 CvValue cv = _cvModel.getCvByRow(cvNum);
 
-                int num = cv.number();
                 int value = cv.getValue();
 
                 //convert and pad numbers as needed
-                String numString = Integer.toString(num);
+                String numString = cv.number();
                 String valueString = Integer.toString(value);
                 String valueStringHex = Integer.toHexString(value).toUpperCase();
                 if (value < 16)
@@ -1869,13 +2046,14 @@ public class PaneProgPane extends javax.swing.JPanel
 
                 //populate printing array - still treated as a single column
                 cvStrings[i] = s;
+                i++;
               }
                 //sort the array in CV order (just the members with values)
                 String temp;
                 boolean swap = false;
                 do {
                   swap = false;
-                  for (int i = 0; i < _cvModel.getRowCount() - 1; i++) {
+                  for (i = 0; i < _cvModel.getRowCount() - 1; i++) {
                     if (Integer.parseInt(cvStrings[i + 1].substring(2, 5).trim()) <
                         Integer.parseInt(cvStrings[i].substring(2, 5).trim())) {
                       temp = cvStrings[i + 1];
@@ -1888,7 +2066,7 @@ public class PaneProgPane extends javax.swing.JPanel
                 while (swap == true);
 
                 //Print the array in four columns
-                for (int i = 0; i < tableHeight; i++) {
+                for (i = 0; i < tableHeight; i++) {
                   s = cvStrings[i] + "    " + cvStrings[i + tableHeight] + "    " + cvStrings[i +
                       tableHeight * 2] + "    " + cvStrings[i + tableHeight * 3];
                   w.write(s, 0, s.length());

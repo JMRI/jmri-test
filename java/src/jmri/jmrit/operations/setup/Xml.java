@@ -47,6 +47,7 @@ public class Xml {
 	static final String TRAIN_DIRECTION = "trainDirection"; // NOI18N
 	static final String TRAIN_LENGTH = "trainLength"; // NOI18N
 	static final String MAX_ENGINES = "maxEngines"; // NOI18N
+	static final String HPT = "hpt"; // NOI18N
 	static final String SCALE = "scale"; // NOI18N
 	static final String CAR_TYPES = "carTypes"; // NOI18N
 	static final String SWITCH_TIME = "switchTime"; // NOI18N	
@@ -62,6 +63,7 @@ public class Xml {
 	static final String CAR_ROUTING_VIA_STAGING = "carRoutingViaStaging"; // NOI18N
 	static final String FORWARD_TO_YARD = "forwardToYard"; // NOI18N
 	static final String ONLY_ACTIVE_TRAINS = "onlyActiveTrains"; // NOI18N
+	static final String CHECK_CAR_DESTINATION = "checkCarDestination"; // NOI18N
 	
 	static final String LOGGER = "logger"; // NOI18N
 	static final String CAR_LOGGER = "carLogger"; // NOI18N
@@ -147,6 +149,7 @@ public class Xml {
 	static final String LEVEL = "level"; // NOI18N
 	static final String INDENT = "indent"; // NOI18N
 	static final String ROUTER_LEVEL = "routerLevel"; // NOI18N
+	static final String ALWAYS_PREVIEW = "alwaysPreview"; // NOI18N
 	
 	static final String OWNER = "owner"; // NOI18N
 	

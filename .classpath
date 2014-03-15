@@ -7,6 +7,7 @@
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/annotations.jar"/>
 	<classpathentry kind="lib" path="lib/ch.ntb.usb.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/ecj.jar"/>
 	<classpathentry kind="lib" path="lib/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-regexp-1.5.jar"/>
@@ -39,8 +40,8 @@
 	<classpathentry kind="lib" path="lib/RXTXcomm.jar"/>
 	<classpathentry kind="lib" path="lib/Serialio.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api-3.0.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-api-1.7.5.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.6.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.6.jar"/>
 	<classpathentry kind="lib" path="lib/smtp.jar"/>
 	<classpathentry kind="lib" path="lib/swing-worker-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/UmlGraph-5.6.jar"/>
@@ -53,5 +54,6 @@
 	<classpathentry kind="lib" path="lib/jackson-databind-2.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-annotations-2.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/i18nchecker.jar"/>
+	<classpathentry kind="lib" path="lib/xbee-api-0.9.jar"/>
 	<classpathentry kind="output" path="java/classes"/>
 </classpath>

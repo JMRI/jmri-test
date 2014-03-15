@@ -6,14 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.Component;
 import java.awt.Frame;
-import java.util.ResourceBundle;
-
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import jmri.jmrit.roster.CopyRosterItemAction;
 import jmri.jmrit.roster.DeleteRosterItemAction;
 import jmri.jmrit.roster.ExportRosterItemAction;
 import jmri.jmrit.roster.FullBackupExportAction;
+import jmri.jmrit.roster.FullBackupImportAction;
 import jmri.jmrit.roster.ImportRosterItemAction;
 import jmri.jmrit.roster.PrintRosterAction;
 import jmri.jmrit.roster.swing.speedprofile.SpeedProfileAction;
@@ -73,11 +72,11 @@ public class RosterMenu extends JMenu {
         AbstractAction editAction = new jmri.jmrit.symbolicprog.tabbedframe.PaneEditAction(Bundle.getMessage("MenuItemEdit"));
         editAction.setEnabled(false);
 
-        AbstractAction importAction = new ImportRosterItemAction(Bundle.getMessage("MenuItemImport"), pWho);
-        importAction.setEnabled(false);
-
         AbstractAction exportAction = new ExportRosterItemAction(Bundle.getMessage("MenuItemExport"), pWho);
         exportAction.setEnabled(false);
+
+        AbstractAction importAction = new ImportRosterItemAction(Bundle.getMessage("MenuItemImport"), pWho);
+        importAction.setEnabled(false);
 
         AbstractAction copyAction = new CopyRosterItemAction(Bundle.getMessage("MenuItemCopy"), pWho);
         copyAction.setEnabled(false);
@@ -102,6 +101,9 @@ public class RosterMenu extends JMenu {
        
         AbstractAction rosterExportAction = new FullBackupExportAction(Bundle.getMessage("MenuFullExport"), pWho);
         rosterExportAction.setEnabled(false);
+        
+        AbstractAction rosterImportAction = new FullBackupImportAction(Bundle.getMessage("MenuFullImport"), pWho);
+        rosterImportAction.setEnabled(false);
         
         AbstractAction speedProfileAction = new SpeedProfileAction(Bundle.getMessage("MenuSpeedProfile"));
         speedProfileAction.setEnabled(false);
@@ -135,6 +137,7 @@ public class RosterMenu extends JMenu {
         add(groupMenu);
         addSeparator();
         add(rosterExportAction);
+        add(rosterImportAction);
         add(speedProfileAction);
 
         // activate the right items
@@ -154,6 +157,7 @@ public class RosterMenu extends JMenu {
                 previewAction.setEnabled(true);
                 rosterGroupTableAction.setEnabled(true);
                 rosterExportAction.setEnabled(true);
+                rosterImportAction.setEnabled(true);
                 speedProfileAction.setEnabled(true);
                 break;
             case SELECTMENU:

@@ -4,10 +4,14 @@ package jmri.jmris.json;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.Locale;
 import jmri.JmriException;
 import jmri.jmris.AbstractLightServer;
 import jmri.jmris.JmriConnection;
-import static jmri.jmris.json.JSON.*;
+import static jmri.jmris.json.JSON.LIGHT;
+import static jmri.jmris.json.JSON.METHOD;
+import static jmri.jmris.json.JSON.NAME;
+import static jmri.jmris.json.JSON.PUT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +29,8 @@ import org.slf4j.LoggerFactory;
  */
 public class JsonLightServer extends AbstractLightServer {
 
-    private JmriConnection connection = null;
-    private ObjectMapper mapper = null;
+    private final JmriConnection connection;
+    private final ObjectMapper mapper;
     static Logger log = LoggerFactory.getLogger(JsonLightServer.class.getName());
 
     public JsonLightServer(JmriConnection connection) {
@@ -40,7 +44,7 @@ public class JsonLightServer extends AbstractLightServer {
     @Override
     public void sendStatus(String lightName, int status) throws IOException {
         try {
-            this.connection.sendMessage(this.mapper.writeValueAsString(JsonUtil.getLight(lightName)));
+            this.connection.sendMessage(this.mapper.writeValueAsString(JsonUtil.getLight(this.connection.getLocale(), lightName)));
         } catch (JsonException ex) {
             this.connection.sendMessage(this.mapper.writeValueAsString(ex.getJsonMessage()));
         }
@@ -48,7 +52,7 @@ public class JsonLightServer extends AbstractLightServer {
 
     @Override
     public void sendErrorStatus(String lightName) throws IOException {
-        this.connection.sendMessage(this.mapper.writeValueAsString(JsonUtil.handleError(500, Bundle.getMessage("ErrorObject", LIGHT, lightName))));
+        this.connection.sendMessage(this.mapper.writeValueAsString(JsonUtil.handleError(500, Bundle.getMessage(this.connection.getLocale(), "ErrorObject", LIGHT, lightName))));
     }
 
     @Override
@@ -56,14 +60,14 @@ public class JsonLightServer extends AbstractLightServer {
         throw new JmriException("Overridden but unsupported method"); // NOI18N
     }
 
-    public void parseRequest(JsonNode data) throws JmriException, IOException, JsonException {
+    public void parseRequest(Locale locale, JsonNode data) throws JmriException, IOException, JsonException {
         String name = data.path(NAME).asText();
         if (data.path(METHOD).asText().equals(PUT)) {
-            JsonUtil.putLight(name, data);
+            JsonUtil.putLight(locale, name, data);
         } else {
-            JsonUtil.setLight(name, data);
+            JsonUtil.setLight(locale, name, data);
         }
-        this.connection.sendMessage(this.mapper.writeValueAsString(JsonUtil.getLight(name)));
+        this.connection.sendMessage(this.mapper.writeValueAsString(JsonUtil.getLight(locale, name)));
         this.addLightToList(name);
     }
 }

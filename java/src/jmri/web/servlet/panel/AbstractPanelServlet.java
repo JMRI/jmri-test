@@ -6,17 +6,25 @@ package jmri.web.servlet.panel;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.JComponent;
+import jmri.jmris.json.JSON;
+import jmri.jmris.json.JsonUtil;
 import jmri.jmrit.display.Editor;
+import jmri.util.FileUtil;
 import jmri.util.JmriJFrame;
 import jmri.util.StringUtil;
 import jmri.web.server.WebServer;
+import jmri.web.servlet.ServletUtil;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.slf4j.Logger;
@@ -51,33 +59,77 @@ abstract class AbstractPanelServlet extends HttpServlet {
         if (request.getRequestURI().endsWith("/")) {
             listPanels(request, response);
         } else {
-            boolean useXML = true;
-            if ("json".equals(request.getParameter("format"))) {
-                useXML = false;
-            }
             String[] path = request.getRequestURI().split("/");
-            response.setContentType(XML_CONTENT_TYPE);
-            String panel = getPanel(StringUtil.unescapeString(path[path.length - 1]), useXML);
-            if (panel == null) {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "See the JMRI console for details.");
-            } else if (panel.startsWith("ERROR")) {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, panel.substring(5).trim());
+            String panelName = StringUtil.unescapeString(path[path.length - 1]);
+            if ("png".equals(request.getParameter("format"))) {
+                BufferedImage panel = getPanelImage(panelName);
+                if (panel == null) {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "See the JMRI console for details.");
+                } else {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ImageIO.write(panel, "png", baos);
+                    baos.close();
+                    response.setContentType("image/png");
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.setContentLength(baos.size());
+                    response.getOutputStream().write(baos.toByteArray());
+                    response.getOutputStream().close();
+                }
+            } else if ("html".equals(request.getParameter("format")) || null == request.getParameter("format")) {
+                this.listPanels(request, response);
             } else {
-                response.setStatus(HttpServletResponse.SC_OK);
-                response.setContentLength(panel.length());
-                response.getWriter().print(panel);
+                boolean useXML = (!JSON.JSON.equals(request.getParameter("format")));
+                response.setContentType(XML_CONTENT_TYPE);
+                String panel = getPanelText(panelName, useXML);
+                if (panel == null) {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "See the JMRI console for details.");
+                } else if (panel.startsWith("ERROR")) {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, panel.substring(5).trim());
+                } else {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.setContentLength(panel.length());
+                    response.getWriter().print(panel);
+                }
             }
         }
     }
 
     protected void listPanels(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if ("json".equals(request.getParameter("format"))) {
-            response.sendRedirect("/json/panels");
+        if (JSON.JSON.equals(request.getParameter("format"))) {
+            response.setContentType("application/json"); // NOI18N
+            ServletUtil.getHelper().setNonCachingHeaders(response);
+            response.getWriter().print(JsonUtil.getPanels(request.getLocale(), JSON.XML));
+        } else if (JSON.XML.equals(request.getParameter("format"))) {
+            response.sendRedirect("/xmlio/list?type=panel");
+        } else {
+            response.setContentType("text/html"); // NOI18N
+            response.getWriter().print(String.format(request.getLocale(),
+                    FileUtil.readURL(FileUtil.findURL(Bundle.getMessage(request.getLocale(), "Panel.html"))),
+                    String.format(request.getLocale(),
+                            Bundle.getMessage(request.getLocale(), "HtmlTitle"),
+                            ServletUtil.getHelper().getRailroadName(false),
+                            Bundle.getMessage(request.getLocale(), "PanelsTitle")
+                    ),
+                    ServletUtil.getHelper().getNavBar(request.getLocale(), "/panel"),
+                    ServletUtil.getHelper().getRailroadName(false),
+                    ServletUtil.getHelper().getFooter(request.getLocale(), "/panel")
+            ));
         }
-        response.sendRedirect("/xmlio/list?type=panel");
     }
 
-    protected String getPanel(String name, boolean useXML) {
+    protected BufferedImage getPanelImage(String name) {
+        JComponent panel = getPanel(name);
+        if (panel == null) {
+            return null;
+        }
+        BufferedImage bi = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        panel.paint(bi.getGraphics());
+        return bi;
+    }
+
+    abstract protected JComponent getPanel(String name);
+
+    protected String getPanelText(String name, boolean useXML) {
         if (useXML) {
             return getXmlPanel(name);
         } else {

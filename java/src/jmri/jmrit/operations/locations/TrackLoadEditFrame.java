@@ -4,6 +4,7 @@ package jmri.jmrit.operations.locations;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import jmri.jmrit.operations.OperationsFrame;
 import jmri.jmrit.operations.OperationsXml;
 import jmri.jmrit.operations.rollingstock.cars.CarLoad;
@@ -11,6 +12,7 @@ import jmri.jmrit.operations.rollingstock.cars.CarLoads;
 import jmri.jmrit.operations.rollingstock.cars.CarTypes;
 import jmri.jmrit.operations.setup.Control;
 import jmri.jmrit.operations.setup.Setup;
+
 import java.awt.*;
 
 import javax.swing.*;
@@ -238,8 +240,8 @@ public class TrackLoadEditFrame extends OperationsFrame implements java.beans.Pr
 			_track.addPropertyChangeListener(this);
 			trackName.setText(_track.getName());
 			// only show ship loads for staging tracks
-			paneShipLoadControls.setVisible(_track.getLocType().equals(Track.STAGING));
-			paneShipLoads.setVisible(_track.getLocType().equals(Track.STAGING));				
+			paneShipLoadControls.setVisible(_track.getTrackType().equals(Track.STAGING));
+			paneShipLoads.setVisible(_track.getTrackType().equals(Track.STAGING));				
 
 			updateButtons(true);
 		} else {
@@ -261,7 +263,7 @@ public class TrackLoadEditFrame extends OperationsFrame implements java.beans.Pr
 		loadAndTypeCheckBox.setSelected(loadAndType);
 		shipLoadAndTypeCheckBox.setSelected(shipLoadAndType);
 		
-		initMinimumSize();
+		initMinimumSize(new Dimension(Control.greaterPanelWidth, Control.mediumPanelHeight));
 	}
 
 	// Save, Delete, Add
@@ -350,22 +352,22 @@ public class TrackLoadEditFrame extends OperationsFrame implements java.beans.Pr
 	public void radioButtonActionPerformed(java.awt.event.ActionEvent ae) {
 		log.debug("radio button activated");
 		if (ae.getSource() == loadNameAll) {
-			_track.setLoadOption(Track.ALLLOADS);
+			_track.setLoadOption(Track.ALL_LOADS);
 		}
 		if (ae.getSource() == loadNameInclude) {
-			_track.setLoadOption(Track.INCLUDELOADS);
+			_track.setLoadOption(Track.INCLUDE_LOADS);
 		}
 		if (ae.getSource() == loadNameExclude) {
-			_track.setLoadOption(Track.EXCLUDELOADS);
+			_track.setLoadOption(Track.EXCLUDE_LOADS);
 		}
 		if (ae.getSource() == shipLoadNameAll) {
-			_track.setShipLoadOption(Track.ALLLOADS);
+			_track.setShipLoadOption(Track.ALL_LOADS);
 		}
 		if (ae.getSource() == shipLoadNameInclude) {
-			_track.setShipLoadOption(Track.INCLUDELOADS);
+			_track.setShipLoadOption(Track.INCLUDE_LOADS);
 		}
 		if (ae.getSource() == shipLoadNameExclude) {
-			_track.setShipLoadOption(Track.EXCLUDELOADS);
+			_track.setShipLoadOption(Track.EXCLUDE_LOADS);
 		}
 	}
 
@@ -386,9 +388,9 @@ public class TrackLoadEditFrame extends OperationsFrame implements java.beans.Pr
 		panelLoads.removeAll();
 		if (_track != null) {
 			// set radio button
-			loadNameAll.setSelected(_track.getLoadOption().equals(Track.ALLLOADS));
-			loadNameInclude.setSelected(_track.getLoadOption().equals(Track.INCLUDELOADS));
-			loadNameExclude.setSelected(_track.getLoadOption().equals(Track.EXCLUDELOADS));
+			loadNameAll.setSelected(_track.getLoadOption().equals(Track.ALL_LOADS));
+			loadNameInclude.setSelected(_track.getLoadOption().equals(Track.INCLUDE_LOADS));
+			loadNameExclude.setSelected(_track.getLoadOption().equals(Track.EXCLUDE_LOADS));
 			
 			pLoadControls.setVisible(!loadNameAll.isSelected());
 
@@ -422,9 +424,9 @@ public class TrackLoadEditFrame extends OperationsFrame implements java.beans.Pr
 		panelShipLoads.removeAll();
 		if (_track != null) {
 			// set radio button
-			shipLoadNameAll.setSelected(_track.getShipLoadOption().equals(Track.ALLLOADS));
-			shipLoadNameInclude.setSelected(_track.getShipLoadOption().equals(Track.INCLUDELOADS));
-			shipLoadNameExclude.setSelected(_track.getShipLoadOption().equals(Track.EXCLUDELOADS));
+			shipLoadNameAll.setSelected(_track.getShipLoadOption().equals(Track.ALL_LOADS));
+			shipLoadNameInclude.setSelected(_track.getShipLoadOption().equals(Track.INCLUDE_LOADS));
+			shipLoadNameExclude.setSelected(_track.getShipLoadOption().equals(Track.EXCLUDE_LOADS));
 			
 			pShipLoadControls.setVisible(!shipLoadNameAll.isSelected());
 

@@ -63,7 +63,7 @@ public class PrintLocationsByCarTypesAction extends AbstractAction {
 		// service that car type
 		String carTypes[] = CarTypes.instance().getNames();
 
-		List<String> locations = locManager.getLocationsByNameList();
+		List<Location> locations = locManager.getLocationsByNameList();
 
 		try {
 			// title line
@@ -76,14 +76,13 @@ public class PrintLocationsByCarTypesAction extends AbstractAction {
 				writer.write(s);
 				// locations
 				for (int i = 0; i < locations.size(); i++) {
-					Location location = locManager.getLocationById(locations.get(i));
+					Location location = locations.get(i);
 					if (location.acceptsTypeName(carTypes[t])) {
 						s = tab + location.getName() + newLine;
 						writer.write(s);
 						// tracks
-						List<String> tracks = location.getTrackIdsByNameList(null);
-						for (int j = 0; j < tracks.size(); j++) {
-							Track track = location.getTrackById(tracks.get(j));
+						List<Track> tracks = location.getTrackByNameList(null);
+						for (Track track : tracks) {
 							if (track.acceptsTypeName(carTypes[t])) {
 								s = tab + tab + tab + track.getName() + newLine;
 								writer.write(s);

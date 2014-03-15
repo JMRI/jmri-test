@@ -13,7 +13,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Calendar;
 import jmri.jmrit.XmlFile;
-import jmri.jmrit.operations.rollingstock.engines.Engine;
 import jmri.jmrit.operations.rollingstock.engines.EngineManager;
 import jmri.jmrit.operations.rollingstock.cars.Car;
 import jmri.jmrit.operations.rollingstock.cars.CarManager;
@@ -101,12 +100,11 @@ public class RollingStockLogger extends XmlFile implements java.beans.PropertyCh
 	}
 
 	private String getHeader() {
-		String header = Bundle.getMessage("Number") + DEL + Bundle.getMessage("Road") + DEL
-				+ Bundle.getMessage("Type") + DEL + Bundle.getMessage("Load") + DEL
-				+ Bundle.getMessage("Location") + DEL + Bundle.getMessage("Track") + DEL
-				+ Bundle.getMessage("FinalDestination") + DEL + Bundle.getMessage("Track") + DEL
-				+ Bundle.getMessage("Train") + DEL + Bundle.getMessage("Moves") + DEL
-				+ Bundle.getMessage("DateAndTime");
+		String header = Bundle.getMessage("Number") + DEL + Bundle.getMessage("Road") + DEL + Bundle.getMessage("Type")
+				+ DEL + Bundle.getMessage("Load") + DEL + Bundle.getMessage("Location") + DEL
+				+ Bundle.getMessage("Track") + DEL + Bundle.getMessage("FinalDestination") + DEL
+				+ Bundle.getMessage("Track") + DEL + Bundle.getMessage("Train") + DEL + Bundle.getMessage("Moves")
+				+ DEL + Bundle.getMessage("DateAndTime");
 		return header;
 	}
 
@@ -131,8 +129,7 @@ public class RollingStockLogger extends XmlFile implements java.beans.PropertyCh
 		}
 		String rsLocationName = rs.getLocationName();
 		if (rsLocationName.contains(DEL)) {
-			log.debug("RS (" + rs.toString() + ") has delimiter in location field: "
-					+ rsLocationName);
+			log.debug("RS (" + rs.toString() + ") has delimiter in location field: " + rsLocationName);
 			rsLocationName = ESC + rs.getLocationName() + ESC;
 		}
 		String rsTrackName = rs.getTrackName();
@@ -157,22 +154,20 @@ public class RollingStockLogger extends XmlFile implements java.beans.PropertyCh
 			}
 			carFinalDest = car.getFinalDestinationName();
 			if (carFinalDest.contains(DEL)) {
-				log.debug("RS (" + rs.toString()
-						+ ") has delimiter in car final destination field: " + carFinalDest); // NOI18N
+				log.debug("RS (" + rs.toString() + ") has delimiter in car final destination field: " + carFinalDest); // NOI18N
 				carFinalDest = ESC + car.getFinalDestinationName() + ESC;
 			}
 			carFinalDestTrack = car.getFinalDestinationTrackName();
 			if (carFinalDestTrack.contains(DEL)) {
-				log.debug("RS (" + rs.toString()
-						+ ") has delimiter in car final destination track field: " // NOI18N
+				log.debug("RS (" + rs.toString() + ") has delimiter in car final destination track field: " // NOI18N
 						+ carFinalDestTrack);
 				carFinalDestTrack = ESC + car.getFinalDestinationTrackName() + ESC;
 			}
 		}
 
-		String line = rs.getNumber() + DEL + rsRoad + DEL + rsType + DEL + carLoad + DEL
-				+ rsLocationName + DEL + rsTrackName + DEL + carFinalDest + DEL + carFinalDestTrack
-				+ DEL + rsTrainName + DEL + rs.getMoves() + DEL + getTime();
+		String line = rs.getNumber() + DEL + rsRoad + DEL + rsType + DEL + carLoad + DEL + rsLocationName + DEL
+				+ rsTrackName + DEL + carFinalDest + DEL + carFinalDestTrack + DEL + rsTrainName + DEL + rs.getMoves()
+				+ DEL + getTime();
 
 		// append line to file
 		fileOut(line);
@@ -187,12 +182,12 @@ public class RollingStockLogger extends XmlFile implements java.beans.PropertyCh
 			return;
 		}
 
-		PrintWriter fileOut;
+		PrintWriter fileOut = null;
 
 		try {
 			// FileOutputStream is set to append
-			fileOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-					fileLogger, true), "UTF-8")), true);	// NOI18N
+			fileOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileLogger, true),
+					"UTF-8")), true); // NOI18N
 		} catch (IOException e) {
 			log.error("Exception while opening log file: " + e.getLocalizedMessage());
 			return;
@@ -209,11 +204,9 @@ public class RollingStockLogger extends XmlFile implements java.beans.PropertyCh
 		if (Setup.isCarLoggerEnabled() && !carLog) {
 			log.debug("Rolling Stock Logger adding car listerners");
 			carLog = true;
-			List<String> cars = CarManager.instance().getList();
-			for (int i = 0; i < cars.size(); i++) {
-				Car car = CarManager.instance().getById(cars.get(i));
-				if (car != null)
-					car.addPropertyChangeListener(this);
+			List<RollingStock> cars = CarManager.instance().getList();
+			for (RollingStock car : cars) {
+				car.addPropertyChangeListener(this);
 			}
 			// listen for new rolling stock being added
 			CarManager.instance().addPropertyChangeListener(this);
@@ -224,11 +217,9 @@ public class RollingStockLogger extends XmlFile implements java.beans.PropertyCh
 		if (Setup.isEngineLoggerEnabled() && !engLog) {
 			engLog = true;
 			log.debug("Rolling Stock Logger adding engine listerners");
-			List<String> engines = EngineManager.instance().getList();
-			for (int i = 0; i < engines.size(); i++) {
-				Engine engine = EngineManager.instance().getById(engines.get(i));
-				if (engine != null)
-					engine.addPropertyChangeListener(this);
+			List<RollingStock> engines = EngineManager.instance().getList();
+			for (RollingStock engine : engines) {
+				engine.addPropertyChangeListener(this);
 			}
 			// listen for new rolling stock being added
 			EngineManager.instance().addPropertyChangeListener(this);
@@ -238,11 +229,9 @@ public class RollingStockLogger extends XmlFile implements java.beans.PropertyCh
 	private void removeCarListeners() {
 		if (carLog) {
 			log.debug("Rolling Stock Logger removing car listerners");
-			List<String> cars = CarManager.instance().getList();
-			for (int i = 0; i < cars.size(); i++) {
-				Car car = CarManager.instance().getById(cars.get(i));
-				if (car != null)
-					car.removePropertyChangeListener(this);
+			List<RollingStock> cars = CarManager.instance().getList();
+			for (RollingStock car : cars) {
+				car.removePropertyChangeListener(this);
 			}
 			CarManager.instance().removePropertyChangeListener(this);
 		}
@@ -252,11 +241,9 @@ public class RollingStockLogger extends XmlFile implements java.beans.PropertyCh
 	private void removeEngineListeners() {
 		if (engLog) {
 			log.debug("Rolling Stock Logger removing engine listerners");
-			List<String> engines = EngineManager.instance().getList();
-			for (int i = 0; i < engines.size(); i++) {
-				Engine engine = EngineManager.instance().getById(engines.get(i));
-				if (engine != null)
-					engine.removePropertyChangeListener(this);
+			List<RollingStock> engines = EngineManager.instance().getList();
+			for (RollingStock engine : engines) {
+				engine.removePropertyChangeListener(this);
 			}
 			EngineManager.instance().removePropertyChangeListener(this);
 		}
@@ -333,6 +320,5 @@ public class RollingStockLogger extends XmlFile implements java.beans.PropertyCh
 		return Calendar.getInstance().getTime().toString();
 	}
 
-	static Logger log = LoggerFactory.getLogger(RollingStockLogger.class
-			.getName());
+	static Logger log = LoggerFactory.getLogger(RollingStockLogger.class.getName());
 }

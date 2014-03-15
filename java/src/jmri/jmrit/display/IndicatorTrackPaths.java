@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -98,8 +97,8 @@ import jmri.jmrit.logix.OBlock;
             }
         } else if ((state & OBlock.OCCUPIED)!=0) {
            	status = "OccupiedTrack";       	
-        } else if ((state & Sensor.UNKNOWN)!=0) {
-            status = "DontUseTrack";
+//        } else if ((state & Sensor.UNKNOWN)!=0) {
+//            status = "DontUseTrack";
         } else {
         	status = "ClearTrack";             	       	
         }

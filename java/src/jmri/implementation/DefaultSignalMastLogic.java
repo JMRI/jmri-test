@@ -69,10 +69,14 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
      */
     public DefaultSignalMastLogic(SignalMast source){
         this.source = source;
-        this.stopAspect = source.getAppearanceMap().getSpecificAppearance(jmri.SignalAppearanceMap.DANGER);
-        this.source.addPropertyChangeListener(propertySourceMastListener);
-        if(source.getAspect()==null)
-            source.setAspect(stopAspect);
+        try {
+            this.stopAspect = source.getAppearanceMap().getSpecificAppearance(jmri.SignalAppearanceMap.DANGER);
+            this.source.addPropertyChangeListener(propertySourceMastListener);
+            if(source.getAspect()==null)
+                source.setAspect(stopAspect);
+        } catch (Exception ex){
+            log.error("Error while creating Signal Logic " + ex.toString());
+        }
     }
     
     public void setFacingBlock(LayoutBlock facing){
@@ -299,7 +303,7 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
                 if(log.isDebugEnabled())
                     log.debug(layout.get(i).getLayoutName());
                 if (facingBlock==null){
-                    facingBlock = InstanceManager.layoutBlockManagerInstance().getFacingBlockByMast(getSourceMast(), layout.get(i));
+                    facingBlock = InstanceManager.getDefault(LayoutBlockManager.class).getFacingBlockByMast(getSourceMast(), layout.get(i));
                 }
             }
         }
@@ -1000,7 +1004,11 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
             }
             if ((aspect!=null) && (!aspect.equals(""))){
                 log.debug("set mast aspect called from set appearance");
-                getSourceMast().setAspect(aspect);
+                try {
+                    getSourceMast().setAspect(aspect);
+                } catch (Exception ex){
+                    log.error("Error while setting Signal Logic " + ex.toString());
+                }
                 return;
             }
         }
@@ -1086,14 +1094,24 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
         
         DestinationMast(SignalMast destination){
             this.destination=destination;
-            if(destination.getAspect()==null)
-                destination.setAspect(destination.getAppearanceMap().getSpecificAppearance(jmri.SignalAppearanceMap.DANGER));
+            if(destination.getAspect()==null){
+                try {
+                    destination.setAspect(destination.getAppearanceMap().getSpecificAppearance(jmri.SignalAppearanceMap.DANGER));
+                } catch (Exception ex){
+                    log.error("Error while creating Signal Logic " + ex.toString());
+                }
+            }
         }
         
         void updateDestinationMast(SignalMast newMast){
             destination=newMast;
-            if(destination.getAspect()==null)
-                destination.setAspect(destination.getAppearanceMap().getSpecificAppearance(jmri.SignalAppearanceMap.DANGER));
+            if(destination.getAspect()==null){
+                try {
+                    destination.setAspect(destination.getAppearanceMap().getSpecificAppearance(jmri.SignalAppearanceMap.DANGER));
+                } catch (Exception ex){
+                    log.error("Error while creating Signal Logic " + ex.toString());
+                }
+            }
         }
         
         LayoutBlock getProtectingBlock(){
@@ -2031,7 +2049,7 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
             if (useLayoutEditor == boo)
                 return;
             useLayoutEditor = boo;
-            if ((boo) && (InstanceManager.layoutBlockManagerInstance().routingStablised())){
+            if ((boo) && (InstanceManager.getDefault(LayoutBlockManager.class).routingStablised())){
                 try{
                     setupLayoutEditorDetails();
                 } catch (jmri.JmriException e){
@@ -2052,7 +2070,7 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
                 log.debug(destination.getDisplayName() + " use layout editor details called " + useLayoutEditor);
             useLayoutEditorTurnouts=turnouts;
             useLayoutEditorBlocks=blocks;
-            if((useLayoutEditor) && (InstanceManager.layoutBlockManagerInstance().routingStablised())){
+            if((useLayoutEditor) && (InstanceManager.getDefault(LayoutBlockManager.class).routingStablised())){
                 try{
                     setupLayoutEditorDetails();
                 } catch (jmri.JmriException e){
@@ -2068,7 +2086,7 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
                 log.debug(useLayoutEditor + " " + disposed);
             if((!useLayoutEditor) || (disposed))
                 return;
-            LayoutBlockManager lbm = InstanceManager.layoutBlockManagerInstance();
+            LayoutBlockManager lbm = InstanceManager.getDefault(LayoutBlockManager.class);
             if ((destinationBlock!=null) && (log.isDebugEnabled()))
                 log.debug(destination.getDisplayName() + " Set use layout editor");
             ArrayList<LayoutEditor> layout = jmri.jmrit.display.PanelMenu.instance().getLayoutEditorPanelList();
@@ -2408,21 +2426,18 @@ public class DefaultSignalMastLogic implements jmri.SignalMastLogic {
                Turnout key = keys.nextElement();
                if(log.isDebugEnabled())
                     log.debug(destination.getDisplayName() + " turnout " + key.getDisplayName());
-               //if(!turnouts.containsKey(key)){
-                for(NamedBeanSetting nbTurn:userSetTurnouts){
-                    if(!nbTurn.getBean().equals(key)){
-                       if (key.getState()==Turnout.CLOSED){
-                            if (((key.getStraightLimit()<minimumBlockSpeed) || (minimumBlockSpeed==0)) && (key.getStraightLimit()!=-1)){
-                                minimumBlockSpeed = key.getStraightLimit();
-                                if(log.isDebugEnabled())
-                                    log.debug(destination.getDisplayName() + " turnout " + key.getDisplayName() + " set speed to " + minimumBlockSpeed);
-                            }
-                        } else {
-                            if (((key.getDivergingLimit()<minimumBlockSpeed) || (minimumBlockSpeed==0)) && (key.getDivergingLimit()!=-1)){
-                                minimumBlockSpeed = key.getDivergingLimit();
-                                if(log.isDebugEnabled())
-                                    log.debug(destination.getDisplayName() + " turnout " + key.getDisplayName() + " set speed to " + minimumBlockSpeed);
-                            }
+                if(!isTurnoutIncluded(key)){
+                   if (autoTurnouts.get(key)==Turnout.CLOSED){
+                        if (((key.getStraightLimit()<minimumBlockSpeed) || (minimumBlockSpeed==0)) && (key.getStraightLimit()!=-1)){
+                            minimumBlockSpeed = key.getStraightLimit();
+                            if(log.isDebugEnabled())
+                                log.debug(destination.getDisplayName() + " turnout " + key.getDisplayName() + " set speed to " + minimumBlockSpeed);
+                        }
+                    } else {
+                        if (((key.getDivergingLimit()<minimumBlockSpeed) || (minimumBlockSpeed==0)) && (key.getDivergingLimit()!=-1)){
+                            minimumBlockSpeed = key.getDivergingLimit();
+                            if(log.isDebugEnabled())
+                                log.debug(destination.getDisplayName() + " turnout " + key.getDisplayName() + " set speed to " + minimumBlockSpeed);
                         }
                     }
                 }

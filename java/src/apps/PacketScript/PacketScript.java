@@ -5,15 +5,13 @@
 package apps.PacketScript;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import apps.Apps;
-
 import java.text.MessageFormat;
-
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import jmri.util.swing.WindowInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main program for the NMRA PacketScript program based on JMRI.
@@ -56,7 +54,7 @@ public class PacketScript extends Apps {
     }
 
     protected String line1() {
-        return MessageFormat.format(rb.getString("PacketScriptVersionCredit"),
+        return MessageFormat.format(Bundle.getMessage("PacketScriptVersionCredit"),
                                 new Object[]{jmri.Version.name()});
     }
 
@@ -66,7 +64,7 @@ public class PacketScript extends Apps {
         // show splash screen early
         splash(true);
 
-        log.info(apps.Apps.startupInfo("PacketScript"));
+        Apps.setStartupInfo("PacketScript");
 
         setConfigFilename("PacketScriptConfig2.xml", args);
         JFrame f = new JFrame("PanelPro");

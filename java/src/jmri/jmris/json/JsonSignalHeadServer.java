@@ -5,11 +5,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.util.Locale;
 import jmri.InstanceManager;
 import jmri.JmriException;
 import jmri.jmris.AbstractSignalHeadServer;
 import jmri.jmris.JmriConnection;
-import static jmri.jmris.json.JSON.*;
+import static jmri.jmris.json.JSON.CODE;
+import static jmri.jmris.json.JSON.DATA;
+import static jmri.jmris.json.JSON.ERROR;
+import static jmri.jmris.json.JSON.MESSAGE;
+import static jmri.jmris.json.JSON.NAME;
+import static jmri.jmris.json.JSON.SIGNAL_HEAD;
+import static jmri.jmris.json.JSON.STATE;
+import static jmri.jmris.json.JSON.TYPE;
+import static jmri.jmris.json.JSON.UNKNOWN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +31,8 @@ import org.slf4j.LoggerFactory;
  */
 public class JsonSignalHeadServer extends AbstractSignalHeadServer {
 
-    private JmriConnection connection;
-    private ObjectMapper mapper;
+    private final JmriConnection connection;
+    private final ObjectMapper mapper;
     static Logger log = LoggerFactory.getLogger(JsonSignalHeadServer.class.getName());
 
     public JsonSignalHeadServer(JmriConnection connection) {
@@ -58,10 +67,10 @@ public class JsonSignalHeadServer extends AbstractSignalHeadServer {
 
     @Override
     public void parseStatus(String statusString) throws JmriException, IOException {
-        this.parseRequest(this.mapper.readTree(statusString).path(DATA));
+        this.parseRequest(Locale.getDefault(),this.mapper.readTree(statusString).path(DATA));
     }
 
-    public void parseRequest(JsonNode data) throws JmriException, IOException {
+    public void parseRequest(Locale locale, JsonNode data) throws JmriException, IOException {
         String name = data.path(NAME).asText();
         int state = data.path(STATE).asInt(UNKNOWN);
         if (state == UNKNOWN) {  //if unknown, retrieve current and respond

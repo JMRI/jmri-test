@@ -6,11 +6,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 import javax.management.Attribute;
 import jmri.JmriException;
 import jmri.jmris.AbstractOperationsServer;
 import jmri.jmris.JmriConnection;
-import static jmri.jmris.json.JSON.*;
+import static jmri.jmris.json.JSON.CABOOSE;
+import static jmri.jmris.json.JSON.CARS;
+import static jmri.jmris.json.JSON.CODE;
+import static jmri.jmris.json.JSON.DATA;
+import static jmri.jmris.json.JSON.ERROR;
+import static jmri.jmris.json.JSON.ID;
+import static jmri.jmris.json.JSON.LEAD_ENGINE;
+import static jmri.jmris.json.JSON.LENGTH;
+import static jmri.jmris.json.JSON.LOCATION;
+import static jmri.jmris.json.JSON.MESSAGE;
+import static jmri.jmris.json.JSON.METHOD;
+import static jmri.jmris.json.JSON.OPERATIONS;
+import static jmri.jmris.json.JSON.STATUS;
+import static jmri.jmris.json.JSON.TERMINATE;
+import static jmri.jmris.json.JSON.TRAIN;
+import static jmri.jmris.json.JSON.TYPE;
+import static jmri.jmris.json.JSON.WEIGHT;
+import jmri.jmrit.operations.trains.Train;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,9 +42,9 @@ import org.slf4j.LoggerFactory;
  */
 public class JsonOperationsServer extends AbstractOperationsServer {
 
-    private JmriConnection connection;
-    private ObjectMapper mapper;
-    static Logger log = LoggerFactory.getLogger(JsonOperationsServer.class.getName());
+    private final JmriConnection connection;
+    private final ObjectMapper mapper;
+    static Logger log = LoggerFactory.getLogger(JsonOperationsServer.class);
 
     public JsonOperationsServer(JmriConnection connection) {
         super();
@@ -38,11 +56,13 @@ public class JsonOperationsServer extends AbstractOperationsServer {
      * Protocol Specific Simple Functions
      */
     /**
-     * send a JSON object to the connection. The object is built from a set of
+     * Send a JSON object to the connection. The object is built from a set of
      * attributes.
      *
      * @param contents is the ArrayList of Attributes to be sent.
+     * @throws java.io.IOException
      */
+    @Override
     public void sendMessage(ArrayList<Attribute> contents) throws IOException {
         ObjectNode root = this.mapper.createObjectNode();
         root.put(TYPE, OPERATIONS);
@@ -64,6 +84,7 @@ public class JsonOperationsServer extends AbstractOperationsServer {
      * - this method will add it. It should be plain text.
      * @throws IOException if there is a problem sending the error message
      */
+    @Override
     public void sendErrorStatus(String errorStatus) throws IOException {
         ObjectNode root = this.mapper.createObjectNode();
         root.put(TYPE, ERROR);
@@ -76,10 +97,14 @@ public class JsonOperationsServer extends AbstractOperationsServer {
     /**
      * Parse a string into a JSON structure and then parse the data node for
      * operations commands
+     *
+     * @param statusString
+     * @throws jmri.JmriException
+     * @throws java.io.IOException
      */
     @Override
     public void parseStatus(String statusString) throws JmriException, IOException {
-        this.parseRequest(this.mapper.readTree(statusString).path(DATA));
+        this.parseRequest(Locale.getDefault(), this.mapper.readTree(statusString).path(DATA));
     }
 
     /**
@@ -89,11 +114,14 @@ public class JsonOperationsServer extends AbstractOperationsServer {
      * anything, but relies on the JsonClientHandler to handle requests for
      * lists of operations data on its behalf.
      *
+     * @param locale
      * @param data
      * @throws JmriException
      * @throws IOException
+     * @deprecated The use of the {@value jmri.jmris.json.JSON#OPERATIONS} key is deprecated.
+     * Use keys for the specific operations object instead.
      */
-    public void parseRequest(JsonNode data) throws JmriException, IOException {
+    public void parseRequest(Locale locale, JsonNode data) throws JmriException, IOException {
         ArrayList<Attribute> response = new ArrayList<Attribute>();
         if (!data.path(TRAIN).isMissingNode() && !data.path(TRAIN).isNull()) {
             String train = data.path(TRAIN).asText();
@@ -130,7 +158,48 @@ public class JsonOperationsServer extends AbstractOperationsServer {
                 this.sendMessage(response);
             }
         } else {
-            this.sendErrorStatus(Bundle.getMessage("ErrorTrainAttribute"));
+            this.sendErrorStatus(Bundle.getMessage(locale, "ErrorTrainAttribute"));
         }
+    }
+
+    @Override
+    public void sendTrainList() {
+        try {
+            try {
+                this.connection.sendMessage(this.mapper.writeValueAsString(JsonUtil.getTrains(this.connection.getLocale())));
+            } catch (JsonException ex) {
+                this.connection.sendMessage(this.mapper.writeValueAsString(ex.getJsonMessage()));
+            }
+        } catch (IOException ex) {
+            try {
+                this.connection.close();
+            } catch (IOException e1) {
+                log.warn("Unable to close connection.", e1);
+            }
+            log.warn("Unable to send message, closing connection.", ex);
+        }
+    }
+
+    @Override
+    public void sendLocationList() {
+        throw new UnsupportedOperationException("Overridden but unsupported method"); // NOI18N
+    }
+
+    @Override
+    public void sendFullStatus(Train train) throws IOException {
+        try {
+            this.connection.sendMessage(this.mapper.writeValueAsString(JsonUtil.getTrain(this.connection.getLocale(), train.getId())));
+        } catch (JsonException ex) {
+            this.connection.sendMessage(this.mapper.writeValueAsString(ex.getJsonMessage()));
+        }
+    }
+
+    void parseTrainRequest(Locale locale, JsonNode data) throws IOException, JsonException {
+        String id = data.path(ID).asText();
+        if (!data.path(METHOD).isMissingNode()) {
+            JsonUtil.setTrain(locale, id, data);
+        }
+        this.connection.sendMessage(this.mapper.writeValueAsString(JsonUtil.getTrain(locale, id)));
+        this.addTrainToList(id);
     }
 }
