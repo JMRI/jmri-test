@@ -9,7 +9,6 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.List;
@@ -36,7 +35,6 @@ import jmri.util.FileUtil;
 import jmri.util.StringUtil;
 import jmri.web.servlet.ServletUtil;
 import static jmri.web.servlet.ServletUtil.APPLICATION_JSON;
-import static jmri.web.servlet.ServletUtil.APPLICATION_XML;
 import static jmri.web.servlet.ServletUtil.IMAGE_PNG;
 import static jmri.web.servlet.ServletUtil.TEXT_HTML;
 import static jmri.web.servlet.ServletUtil.UTF8;
@@ -197,9 +195,9 @@ public class RosterServlet extends HttpServlet {
         } else if (type.equals("icon")) {
             this.doImage(request, response, new File(FileUtil.getAbsoluteFilename(re.getIconPath())));
         } else if (type.equals("file")) {
-            this.doFile(request, response, new File(Roster.getFileLocation(), "roster" + File.separator + re.getFileName())); // NOI18N
+            ServletUtil.getHelper().writeFile(response, new File(Roster.getFileLocation(), "roster" + File.separator + re.getFileName()), ServletUtil.APPLICATION_XML); // NOI18N
         } else if (type.equals("throttle")) {
-            this.doFile(request, response, new File(FileUtil.getUserFilesPath(), "trottle" + File.separator + id + ".xml")); // NOI18N
+            ServletUtil.getHelper().writeFile(response, new File(FileUtil.getUserFilesPath(), "throttle" + File.separator + id + ".xml"), ServletUtil.APPLICATION_XML); // NOI18N
         } else {
             // don't know what to do
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -214,12 +212,12 @@ public class RosterServlet extends HttpServlet {
      *
      * @param request
      * @param response
-     * @param list A list of {@link jmri.jmrit.roster.RosterEntry} objects
+     * @param filter
+     * @param groups
      * @throws ServletException
      * @throws IOException
      */
     void doRoster(HttpServletRequest request, HttpServletResponse response, JsonNode filter, Boolean groups) throws ServletException, IOException {
-        List<RosterEntry> list = null;
         ServletUtil.getHelper().setNonCachingHeaders(response);
         String group = (!filter.path(GROUP).isMissingNode()) ? filter.path(GROUP).asText() : null;
         if (JSON.JSON.equals(request.getParameter("format"))) { // NOI18N
@@ -316,18 +314,14 @@ public class RosterServlet extends HttpServlet {
             if (pWidth < width) {
                 width = pWidth;
             }
-            if (log.isDebugEnabled()) {
-                log.debug(fname + " @maxWidth: width: " + width + ", pWidth: " + pWidth + ", height: " + height + ", pHeight: " + pHeight);
-            }
+            log.debug("{} @maxWidth: width: {}, pWidth: {}, height: {}, pHeight: {}", fname, width, pWidth, height, pHeight);
         }
         if (request.getParameter("minWidth") != null) {
             pWidth = Integer.parseInt(request.getParameter("minWidth"));
             if (pWidth > width) {
                 width = pWidth;
             }
-            if (log.isDebugEnabled()) {
-                log.debug(fname + " @minWidth: width: " + width + ", pWidth: " + pWidth + ", height: " + height + ", pHeight: " + pHeight);
-            }
+            log.debug("{} @minWidth: width: {}, pWidth: {}, height: {}, pHeight: {}", fname, width, pWidth, height, pHeight);
         }
         if (request.getParameter("width") != null) {
             width = Integer.parseInt(request.getParameter("width"));
@@ -335,43 +329,31 @@ public class RosterServlet extends HttpServlet {
         if (width != image.getWidth()) {
             height = (int) (height * (1.0 * width / image.getWidth()));
             pHeight = height;
-            if (log.isDebugEnabled()) {
-                log.debug(fname + " @adjusting height: width: " + width + ", pWidth: " + pWidth + ", height: " + height + ", pHeight: " + pHeight);
-            }
+            log.debug("{} @adjusting height: width: {}, pWidth: {}, height: {}, pHeight: {}", fname, width, pWidth, height, pHeight);
         }
         if (request.getParameter("maxHeight") != null) {
             pHeight = Integer.parseInt(request.getParameter("maxHeight"));
             if (pHeight < height) {
                 height = pHeight;
             }
-            if (log.isDebugEnabled()) {
-                log.debug(fname + " @maxHeight: width: " + width + ", pWidth: " + pWidth + ", height: " + height + ", pHeight: " + pHeight);
-            }
+            log.debug("{} @maxHeight: width: {}, pWidth: {}, height: {}, pHeight: {}", fname, width, pWidth, height, pHeight);
         }
         if (request.getParameter("minHeight") != null) {
             pHeight = Integer.parseInt(request.getParameter("minHeight"));
             if (pHeight > height) {
                 height = pHeight;
             }
-            if (log.isDebugEnabled()) {
-                log.debug(fname + " @minHeight: width: " + width + ", pWidth: " + pWidth + ", height: " + height + ", pHeight: " + pHeight);
-            }
+            log.debug("{} @minHeight: width: {}, pWidth: {}, height: {}, pHeight: {}", fname, width, pWidth, height, pHeight);
         }
         if (request.getParameter("height") != null) {
             height = Integer.parseInt(request.getParameter("height"));
-            if (log.isDebugEnabled()) {
-                log.debug(fname + " @height: width: " + width + ", pWidth: " + pWidth + ", height: " + height + ", pHeight: " + pHeight);
-            }
+            log.debug("{} @height: width: {}, pWidth: {}, height: {}, pHeight: {}", fname, width, pWidth, height, pHeight);
         }
         if (height != image.getHeight() && width == image.getWidth()) {
             width = (int) (width * (1.0 * height / image.getHeight()));
-            if (log.isDebugEnabled()) {
-                log.debug(fname + " @adjusting width: width: " + width + ", pWidth: " + pWidth + ", height: " + height + ", pHeight: " + pHeight);
-            }
+            log.debug("{} @adjusting width: width: {}, pWidth: {}, height: {}, pHeight: {}", fname, width, pWidth, height, pHeight);
         }
-        if (log.isDebugEnabled()) {
-            log.debug(fname + " @responding: width: " + width + ", pWidth: " + pWidth + ", height: " + height + ", pHeight: " + pHeight);
-        }
+        log.debug("{} @responding: width: {}, pWidth: {}, height: {}, pHeight: {}", fname, width, pWidth, height, pHeight);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         if (height != image.getHeight() || width != image.getWidth()) {
             BufferedImage resizedImage = new BufferedImage(width, height, image.getType());
@@ -390,25 +372,5 @@ public class RosterServlet extends HttpServlet {
         response.setContentLength(baos.size());
         response.getOutputStream().write(baos.toByteArray());
         response.getOutputStream().close();
-    }
-
-    private void doFile(HttpServletRequest request, HttpServletResponse response, File file) throws IOException {
-        log.debug("Getting roster file {}", file.getPath());
-        if (file.exists()) {
-            if (file.canRead()) {
-                response.setContentType(APPLICATION_XML);
-                response.setStatus(HttpServletResponse.SC_OK);
-                response.setContentLength((int) file.length());
-                FileInputStream fileInputStream = new FileInputStream(file);
-                int bytes;
-                while ((bytes = fileInputStream.read()) != -1) {
-                    response.getOutputStream().write(bytes);
-                }
-            } else {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            }
-        } else {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
     }
 }

@@ -22,6 +22,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.table.*;
+import jmri.jmrit.roster.RosterEntry;
 import jmri.jmrit.symbolicprog.*;
 import jmri.util.davidflanagan.HardcopyWriter;
 import jmri.util.jdom.LocaleSelector;
@@ -68,6 +69,7 @@ public class PaneProgPane extends javax.swing.JPanel
     IndexedCvTableModel _indexedCvModel;
     protected VariableTableModel _varModel;
     protected PaneContainer container;
+    protected RosterEntry rosterEntry;
         
     boolean _cvTable;
     
@@ -98,16 +100,17 @@ public class PaneProgPane extends javax.swing.JPanel
      * @param icvModel Already existing TableModel containing the Indexed CV definitions
      * @param varModel Already existing TableModel containing the variable definitions
      * @param modelElem "model" element from the Decoder Index, used to check what decoder options are present.
+     * @param pRosterEntry The current roster entry, used to get sound labels.
      */
     @SuppressWarnings("unchecked")
-	public PaneProgPane(PaneContainer parent, String name, Element pane, CvTableModel cvModel, IndexedCvTableModel icvModel, VariableTableModel varModel, Element modelElem) {
+    public PaneProgPane(PaneContainer parent, String name, Element pane, CvTableModel cvModel, IndexedCvTableModel icvModel, VariableTableModel varModel, Element modelElem, RosterEntry pRosterEntry) {
 
-            
         container = parent;
         mName = name;
         _cvModel = cvModel;
         _indexedCvModel = icvModel;
         _varModel = varModel;
+        rosterEntry = pRosterEntry;
         
         // when true a cv table with compare was loaded into pane
         _cvTable = false;
@@ -1224,6 +1227,10 @@ public class PaneProgPane extends javax.swing.JPanel
                 cs.gridwidth = GridBagConstraints.REMAINDER;
                 makeLabel(e, c, g, cs);
             }
+            else if (name.equals("soundlabel")) {
+                cs.gridwidth = GridBagConstraints.REMAINDER;
+                makeSoundLabel(e, c, g, cs);
+            }
             else if (name.equals("cvtable")) {
                 makeCvTable(cs, g, c);
             }
@@ -1316,6 +1323,39 @@ public class PaneProgPane extends javax.swing.JPanel
         
         qa.processModifierElements(e, _varModel);
     }
+
+    /**
+     * Create sound label from Element
+     */
+    protected void makeSoundLabel(Element e, JPanel c, GridBagLayout g, GridBagConstraints cs) {
+        String labelText = rosterEntry.getSoundLabel(Integer.valueOf(LocaleSelector.getAttribute(e,"num")));
+//         final JLabel l = new JLabel(rosterEntry.getSoundLabel(Integer.valueOf(LocaleSelector.getAttribute(e,"num"))));
+        final JLabel l = new JLabel(labelText);
+        l.setAlignmentX(1.0f);
+        cs.fill = GridBagConstraints.BOTH;
+        if (log.isDebugEnabled()) {
+            log.debug("Add label: "+l.getText()+" cs: "
+                      +cs.gridwidth+" "+cs.fill+" "
+                      +cs.gridx+" "+cs.gridy);
+        }
+        g.setConstraints(l, cs);
+        c.add(l);
+        cs.fill = GridBagConstraints.NONE;
+        cs.gridwidth = 1;
+        cs.gridheight = 1;
+        
+        // handle qualification if any
+        QualifierAdder qa = new QualifierAdder() {
+            protected Qualifier createQualifier(VariableValue var, String relation, String value) {
+                return new JComponentQualifier(l, var, Integer.parseInt(value), relation);
+            }
+            protected void addListener(java.beans.PropertyChangeListener qc) {
+                l.addPropertyChangeListener(qc);
+            }
+        };
+        
+        qa.processModifierElements(e, _varModel);
+    }
     
     /**
      * Create a single row from the JDOM column Element
@@ -1360,6 +1400,10 @@ public class PaneProgPane extends javax.swing.JPanel
             else if (name.equals("label")) { // its  a label
                 cs.gridheight = GridBagConstraints.REMAINDER;
                 makeLabel(e, c, g, cs);
+            }
+            else if (name.equals("soundlabel")) { // its  a sound label
+                cs.gridheight = GridBagConstraints.REMAINDER;
+                makeSoundLabel(e, c, g, cs);
             }
             else if (name.equals("cvtable")) {
                 makeCvTable(cs, g, c);
@@ -1487,7 +1531,7 @@ public class PaneProgPane extends javax.swing.JPanel
         try { if (a!=null) extFnsESU = (a.getValue()).equalsIgnoreCase("yes");}
         catch (Exception ex) {log.error("error handling decoder's extFnsESU value");}        
         if (extFnsESU) {
-            FnMapPanelESU l = new FnMapPanelESU(_varModel, varList, modelElem);
+            FnMapPanelESU l = new FnMapPanelESU(_varModel, varList, modelElem, rosterEntry);
             fnMapListESU.add(l); // remember for deletion
             cs.gridwidth = GridBagConstraints.REMAINDER;
             g.setConstraints(l, cs);
@@ -1987,18 +2031,20 @@ public class PaneProgPane extends javax.swing.JPanel
                }
            }
 
+            final int TABLE_COLS = 3; 
+
             // index over CVs
             if (cvList.size() > 0){
 //            Check how many Cvs there are to print
               int cvCount = cvList.size();
               w.setFontStyle(Font.BOLD); //set font to Bold
               // print a simple heading
-              s = "         Value               Value               Value               Value";
+              s = "                 Value                       Value                       Value";
               w.write(s, 0, s.length());
               w.writeBorders();
               s = "\n";
               w.write(s,0,s.length());
-              s = "   CV   Dec Hex        CV   Dec Hex        CV   Dec Hex        CV   Dec Hex";
+            s = "            CV  Dec Hex                 CV  Dec Hex                 CV  Dec Hex";
               w.write(s, 0, s.length());
               w.writeBorders();
               s = "\n";
@@ -2006,69 +2052,64 @@ public class PaneProgPane extends javax.swing.JPanel
               w.setFontStyle(0); //set font back to Normal
               //           }
               /*create an array to hold CV/Value strings to allow reformatting and sorting
-                Same size as the table drawn above (4 columns*tableHeight; heading rows
+                Same size as the table drawn above (TABLE_COLS columns*tableHeight; heading rows
                 not included). Use the count of how many CVs there are to determine the number
-                of table rows required.  Add one more row if the divison into 4 columns
+                of table rows required.  Add one more row if the divison into TABLE_COLS columns
                 isn't even.
                */
-              int tableHeight = cvCount/4;
-              if (cvCount%4 > 0) tableHeight++;
-              String[] cvStrings = new String[4 * tableHeight];
+              int tableHeight = cvCount/TABLE_COLS;
+              if (cvCount%TABLE_COLS > 0) tableHeight++;
+              String[] cvStrings = new String[TABLE_COLS * tableHeight];
 
               //blank the array
               for (int j = 0; j < cvStrings.length; j++)
                 cvStrings[j] = "";
 
                 // get each CV and value
-              int i = 0;
-              for (int cvNum : cvList) {
-                CvValue cv = _cvModel.getCvByRow(cvNum);
+                int i = 0;
+                for (int cvNum : cvList) {
+                    CvValue cv = _cvModel.getCvByRow(cvNum);
 
-                int value = cv.getValue();
+                    int value = cv.getValue();
 
-                //convert and pad numbers as needed
-                String numString = cv.number();
-                String valueString = Integer.toString(value);
-                String valueStringHex = Integer.toHexString(value).toUpperCase();
-                if (value < 16)
-                  valueStringHex = "0" + valueStringHex;
-                for (int j = 1; j < 3; j++) {
-                  if (numString.length() < 3)
-                    numString = " " + numString;
+                    //convert and pad numbers as needed
+                    String numString = String.format("%12s",cv.number());
+                    String valueString = Integer.toString(value);
+                    String valueStringHex = Integer.toHexString(value).toUpperCase();
+                    if (value < 16)
+                      valueStringHex = "0" + valueStringHex;
+                    for (int j = 1; j < 3; j++) {
+                      if (valueString.length() < 3)
+                        valueString = " " + valueString;
+                    }
+                    //Create composite string of CV and its decimal and hex values
+                    s = "  " + numString + "  " + valueString + "  " + valueStringHex +
+                        " ";
+
+                    //populate printing array - still treated as a single column
+                    cvStrings[i] = s;
+                    i++;
                 }
-                for (int j = 1; j < 3; j++) {
-                  if (valueString.length() < 3)
-                    valueString = " " + valueString;
-                }
-                //Create composite string of CV and its decimal and hex values
-                s = "  " + numString + "   " + valueString + "  " + valueStringHex +
-                    " ";
 
-                //populate printing array - still treated as a single column
-                cvStrings[i] = s;
-                i++;
-              }
                 //sort the array in CV order (just the members with values)
                 String temp;
                 boolean swap = false;
                 do {
-                  swap = false;
-                  for (i = 0; i < _cvModel.getRowCount() - 1; i++) {
-                    if (Integer.parseInt(cvStrings[i + 1].substring(2, 5).trim()) <
-                        Integer.parseInt(cvStrings[i].substring(2, 5).trim())) {
-                      temp = cvStrings[i + 1];
-                      cvStrings[i + 1] = cvStrings[i];
-                      cvStrings[i] = temp;
-                      swap = true;
+                    swap = false;
+                    for (i = 0; i < _cvModel.getRowCount() - 1; i++) {
+                        if ( PrintCvAction.cvSortOrderVal(cvStrings[i + 1].substring(0,15).trim()) < PrintCvAction.cvSortOrderVal(cvStrings[i].substring(0,15).trim()) ) {
+                            temp = cvStrings[i + 1];
+                            cvStrings[i + 1] = cvStrings[i];
+                            cvStrings[i] = temp;
+                            swap = true;
+                        }
                     }
-                  }
-                }
-                while (swap == true);
+                } while (swap == true);
 
                 //Print the array in four columns
                 for (i = 0; i < tableHeight; i++) {
                   s = cvStrings[i] + "    " + cvStrings[i + tableHeight] + "    " + cvStrings[i +
-                      tableHeight * 2] + "    " + cvStrings[i + tableHeight * 3];
+                      tableHeight * 2];
                   w.write(s, 0, s.length());
                  w.writeBorders();
                  s = "\n";

@@ -70,27 +70,36 @@ class WarrantTableModel extends AbstractTableModel implements PropertyChangeList
         _frame = frame;
         _manager = InstanceManager.getDefault(jmri.jmrit.logix.WarrantManager.class);
         _manager.addPropertyChangeListener(this);   // for adds and deletes
+        _warList = new ArrayList<Warrant>();
         _warNX = new ArrayList<Warrant>();
     }
 
-    public void init() {
-        if (_warList != null) {
-            for (int i=0; i<_warList.size(); i++) {
-                _warList.get(i).removePropertyChangeListener(this);
-            }
-        }
+    /**
+     * Preserve current listeners so that there is no gap to miss a propertyChange
+     */
+    public synchronized void init() {
+    	ArrayList<Warrant> tempList = new ArrayList<Warrant>();
         List <String> systemNameList = _manager.getSystemNameList();
-        _warList = new ArrayList <Warrant> (systemNameList.size());
-
         Iterator <String> iter = systemNameList.iterator();
+        // copy over warrants still listed
         while (iter.hasNext()) {
-            _warList.add(_manager.getBySystemName(iter.next()));
+            Warrant w =_manager.getBySystemName(iter.next());
+            if (!_warList.contains(w)) {		// new warrant
+                w.addPropertyChangeListener(this);
+            } else {
+            	_warList.remove(w);
+            }
+        	tempList.add(w);	// add old or any new warrants
         }
-        // add name change listeners
+        // remove listeners from any deleted warrants
         for (int i=0; i<_warList.size(); i++) {
-            _warList.get(i).addPropertyChangeListener(this);
+        	_warList.get(i).removePropertyChangeListener(this);
         }
-        if (log.isDebugEnabled()) log.debug("_warList has "+_warList.size()+" warrants");
+        // add in current temporary NX warrants
+        for (int i=0; i<_warNX.size(); i++) {
+        	tempList.add(_warNX.get(i));        	
+        }
+        _warList = tempList;
     }
     
     public void addNXWarrant(Warrant w) {
@@ -408,7 +417,7 @@ class WarrantTableModel extends AbstractTableModel implements PropertyChangeList
                 }
                 break;
             case EDIT_COLUMN:
-                WarrantTableAction.openWarrantFrame(w.getDisplayName());
+                openWarrantFrame(w);
                 break;
             case DELETE_COLUMN:
                 if (w.getRunMode() == Warrant.MODE_NONE) {
@@ -424,6 +433,32 @@ class WarrantTableModel extends AbstractTableModel implements PropertyChangeList
             _frame.setStatusText(msg, Color.red, true);
         }
         fireTableRowsUpdated(row, row);
+    }
+    
+    private void openWarrantFrame(Warrant warrant) {
+    	if (WarrantTableAction._openFrame!=null) {
+    		WarrantTableAction._openFrame.dispose();
+    	}
+    	WarrantTableAction._openFrame = null;
+        for (int i=0; i<_warList.size(); i++) {
+        	if (warrant.equals(_warList.get(i)))  {
+            	WarrantTableAction._openFrame = new WarrantFrame(warrant);
+            	break;
+            }
+        }
+        if (WarrantTableAction._openFrame ==null) {
+            for (int i=0; i<_warNX.size(); i++) {
+            	if (warrant.equals(_warList.get(i)))  {
+                	WarrantTableAction._openFrame = new WarrantFrame(warrant);
+                	break;
+                }
+            }
+        if (WarrantTableAction._openFrame!=null) {
+        	WarrantTableAction._openFrame = new WarrantFrame(warrant);
+            WarrantTableAction._openFrame.setVisible(true);
+            WarrantTableAction._openFrame.toFront();        	
+            }
+        }
     }
 
     public void propertyChange(java.beans.PropertyChangeEvent e) {

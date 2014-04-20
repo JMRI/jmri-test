@@ -4,6 +4,7 @@ package jmri.jmrit.operations.trains;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -72,6 +73,7 @@ public class Train implements java.beans.PropertyChangeListener {
 	protected boolean _allowCarsReturnStaging = false; // when true allow cars to return to staging if necessary
 	protected boolean _serviceAllCarsWithFinalDestinations = false; // when true, service cars with final destinations
 	protected boolean _buildConsist = false; // when true, build a consist for this train using single locomotives
+	protected boolean _sendCarsWithCustomLoadsToStaging = false; // when true, send cars to staging if spurs full
 	protected Route _route = null;
 	protected Track _departureTrack; // the departure track from staging
 	protected Track _terminationTrack; // the termination track into staging
@@ -759,9 +761,9 @@ public class Train implements java.beans.PropertyChangeListener {
 	public String getMRStatus() {
 		switch (this._statusCode) {
 		case Train.CODE_PARTIAL_BUILT:
-			return this._statusCode + "||" + this.getNumberCarsRequested();
+			return this._statusCode + "||" + this.getNumberCarsRequested(); // NOI18N
 		case Train.CODE_TERMINATED:
-			return this._statusCode + "||" + this.getTerminationDate();
+			return this._statusCode + "||" + this.getTerminationDate(); // NOI18N
 		default:
 			return Integer.toString(this._statusCode);
 		}
@@ -1405,6 +1407,19 @@ public class Train implements java.beans.PropertyChangeListener {
 			length = car.getKernel().getTotalLength();
 		Route route = getRoute();
 		if (route != null) {
+			// determine if the car's location and destination is serviced by this train
+			if (route.getLastLocationByName(car.getLocationName()) == null) {
+				if (addToReport)
+					TrainCommon.addLine(buildReport, SEVEN, MessageFormat.format(Bundle
+							.getMessage("trainNotThisLocation"), new Object[] { getName(), car.getLocationName() }));
+				return false;
+			}
+			if (car.getDestination() != null && route.getLastLocationByName(car.getDestinationName()) == null) {
+				if (addToReport)
+					TrainCommon.addLine(buildReport, SEVEN, MessageFormat.format(Bundle
+							.getMessage("trainNotThisLocation"), new Object[] { getName(), car.getDestinationName() }));
+				return false;
+			}
 			List<RouteLocation> rLocations = route.getLocationsBySequenceList();
 			for (int j = 0; j < rLocations.size(); j++) {
 				RouteLocation rLoc = rLocations.get(j);
@@ -1607,6 +1622,9 @@ public class Train implements java.beans.PropertyChangeListener {
 				}
 			}
 		}
+		if (debugFlag)
+			log.debug("Train ({}) can't service car ({}) from ({}, {})", getName(), car.toString(), car
+					.getLocationName(), car.getTrackName());
 		return false;
 	}
 
@@ -2454,6 +2472,19 @@ public class Train implements java.beans.PropertyChangeListener {
 		}
 	}
 
+	public boolean isSendCarsWithCustomLoadsToStagingEnabled() {
+		return _sendCarsWithCustomLoadsToStaging;
+	}
+
+	public void setSendCarsWithCustomLoadsToStagingEnabled(boolean enable) {
+		boolean old = _sendCarsWithCustomLoadsToStaging;
+		_sendCarsWithCustomLoadsToStaging = enable;
+		if (old != enable) {
+			setDirtyAndFirePropertyChange("SendCarsWithCustomLoadsToStaging", old ? "true" : "false", // NOI18N
+					enable ? "true" : "false"); // NOI18N
+		}
+	}
+
 	protected void setBuilt(boolean built) {
 		boolean old = _built;
 		_built = built;
@@ -2675,12 +2706,17 @@ public class Train implements java.beans.PropertyChangeListener {
 	public boolean printManifest(boolean isPreview) {
 		if (isModified()) {
 			new TrainManifest(this);
+			try {
+				new JsonManifest(this).build();
+			} catch (IOException ex) {
+				log.error("Unable to create JSON manifest {}", ex.getLocalizedMessage());
+			}
 			if (Setup.isGenerateCsvManifestEnabled())
 				new TrainCsvManifest(this);
 		}
 		File file = TrainManagerXml.instance().getTrainManifestFile(getName());
 		if (!file.exists()) {
-			log.warn("Manifest file missing for train " + getName());
+			log.warn("Manifest file missing for train {}", getName());
 			return false;
 		}
 		if (isPreview && Setup.isManifestEditorEnabled()) {
@@ -2703,34 +2739,21 @@ public class Train implements java.beans.PropertyChangeListener {
 	}
 
 	public boolean openFile() {
-		if (isModified()) {
-			new TrainManifest(this);
-			if (Setup.isGenerateCsvManifestEnabled())
-				new TrainCsvManifest(this);
-		}
-		File file = TrainManagerXml.instance().getTrainCsvManifestFile(getName());
-		if (!file.exists()) {
-			log.warn("CSV manifest file missing for train " + getName());
+		File file = createCSVManifestFile();
+		if (file == null || !file.exists()) {
+			log.warn("CSV manifest file missing for train {}", getName());
 			return false;
 		}
-
 		TrainUtilities.openDesktop(file);
-
 		return true;
 	}
 
 	public boolean runFile() {
-		if (isModified()) {
-			new TrainManifest(this);
-			if (Setup.isGenerateCsvManifestEnabled())
-				new TrainCsvManifest(this);
-		}
-		File file = TrainManagerXml.instance().getTrainCsvManifestFile(getName());
-		if (!file.exists()) {
-			log.warn("CSV manifest file missing for train " + getName());
+		File file = createCSVManifestFile();
+		if (file == null || !file.exists()) {
+			log.warn("CSV manifest file missing for train {}", getName());
 			return false;
 		}
-
 		// Set up to process the CSV file by the external Manifest program
 		TrainCustomManifest.addCVSFile(file);
 		if (!TrainCustomManifest.process()) {
@@ -2742,13 +2765,17 @@ public class Train implements java.beans.PropertyChangeListener {
 			}
 			return false;
 		}
-
 		return true;
 	}
 
 	public File createCSVManifestFile() {
 		if (isModified()) {
 			new TrainManifest(this);
+			try {
+				new JsonManifest(this).build();
+			} catch (IOException ex) {
+				log.error("Unable to create JSON manifest {}", ex.getLocalizedMessage());
+			}
 			if (Setup.isGenerateCsvManifestEnabled())
 				new TrainCsvManifest(this);
 		}
@@ -2757,7 +2784,6 @@ public class Train implements java.beans.PropertyChangeListener {
 			log.warn("CSV manifest file was not created for train " + getName());
 			return null;
 		}
-
 		return file;
 	}
 
@@ -3329,6 +3355,8 @@ public class Train implements java.beans.PropertyChangeListener {
 			_serviceAllCarsWithFinalDestinations = a.getValue().equals(Xml.TRUE);
 		if ((a = e.getAttribute(Xml.BUILD_CONSIST)) != null)
 			_buildConsist = a.getValue().equals(Xml.TRUE);
+		if ((a = e.getAttribute(Xml.SEND_CUSTOM_STAGING)) != null)
+			_sendCarsWithCustomLoadsToStaging = a.getValue().equals(Xml.TRUE);
 		if ((a = e.getAttribute(Xml.BUILT)) != null)
 			_built = a.getValue().equals(Xml.TRUE);
 		if ((a = e.getAttribute(Xml.BUILD)) != null)
@@ -3531,6 +3559,7 @@ public class Train implements java.beans.PropertyChangeListener {
 		e.setAttribute(Xml.ALLOW_RETURN, isAllowReturnToStagingEnabled() ? Xml.TRUE : Xml.FALSE);
 		e.setAttribute(Xml.ALLOW_THROUGH_CARS, isAllowThroughCarsEnabled() ? Xml.TRUE : Xml.FALSE);
 		e.setAttribute(Xml.SERVICE_ALL, isServiceAllCarsWithFinalDestinationsEnabled() ? Xml.TRUE : Xml.FALSE);
+		e.setAttribute(Xml.SEND_CUSTOM_STAGING, isSendCarsWithCustomLoadsToStagingEnabled() ? Xml.TRUE : Xml.FALSE);
 		e.setAttribute(Xml.BUILD_CONSIST, isBuildConsistEnabled() ? Xml.TRUE : Xml.FALSE);
 		e.setAttribute(Xml.BUILT, isBuilt() ? Xml.TRUE : Xml.FALSE);
 		e.setAttribute(Xml.BUILD, isBuildEnabled() ? Xml.TRUE : Xml.FALSE);

@@ -16,6 +16,7 @@ import jmri.jmrit.symbolicprog.tabbedframe.PaneProgPane;
 import jmri.util.SystemType;
 import jmri.Application;
 import java.util.Arrays;
+import jmri.jmrit.roster.RosterEntry;
 
 /**
  * <p>Provide a graphical representation of the ESU mapping table.
@@ -29,7 +30,7 @@ import java.util.Arrays;
  *     <dd>Number of columns</dd>
  *   <dt>numFns</dt>
  *     <dd>Number of mapping rows</dd>
- *   <dt>output name="ddd" label="xxx/yyy"</dt>
+ *   <dt>output name="ddd" label="xxx|yyy"</dt>
  *     <dd>Replace default name of column "ddd" with "xxx yyy"</dd>
  *   <dt>output name="text1" label="text2"</dt>
  *     <dd>Replace default name of the nth column with "text1 text2"
@@ -98,14 +99,14 @@ public class FnMapPanelESU extends JPanel {
      * </dl></p>
      * <p>Column labels can be overridden by the "output" element of the "model" element from the decoder definition file.</p>
      */
-    final String[] outDescESU = new String[] {"Loco/drive","Loco/stop","Dir/fwd","Dir/rev"
-                                           ,"F0/on","F0/off","F1/on","F1/off","F2/on","F2/off","F3/on","F3/off","F4/on","F4/off","F5/on","F5/off","F6/on","F6/off","F7/on","F7/off","F8/on","F8/off","F9/on","F9/off"
-                                           ,"F10/on","F10/off","F11/on","F11/off","F12/on","F12/off","F13/on","F13/off","F14/on","F14/off","F15/on","F15/off","F16/on","F16/off","F17/on","F17/off","F18/on","F18/off","F19/on","F19/off"
-                                           ,"F20/on","F20/off","F21/on","F21/off","F22/on","F22/off","F23/on","F23/off","F24/on","F24/off","F25/on","F25/off","F26/on","F26/off","F27/on","F27/off","F28/on","F28/off"
-                                           ,"sensW/on","sensW/off","Sens1/on","Sens1/off","Sens2/on","Sens2/off","Sens3/on","Sens3/off","Sens4/on","Sens4/off"
-                                           ,"Head/light[1]","Rear/light[1]","Aux/1[1]","Aux/2[1]","Aux/3","Aux/4","Aux/5","Aux/6","Aux/7","Aux/8","Aux/9","Aux/10","Head/light[2]","Rear/light[2]","Aux/1[2]","Aux/2[2]"
-                                           ,"Momentum/off","Shunt/mode","Dynamic/brake","Uncouple/Cycle","not/used","Fire/box","Dim/lights","Grade/cross","Smoke/gen","Notch/up","Notch/down","Sound/fade","Brk sql/off","Doppler/effect","Volume/& mute","Shift/mode"
-                                           ,"SS/1","SS/2","SS/3","SS/4","SS/5","SS/6","SS/7","SS/8","SS/9","SS/10","SS/11","SS/12","SS/13","SS/14","SS/15","SS/16","SS/17","SS/18","SS/19","SS/20","SS/21","SS/22","SS/23","SS/24"
+    final String[] outDescESU = new String[] {"Loco|drive","Loco|stop","Dir|fwd","Dir|rev"
+                                           ,"F0|on","F0|off","F1|on","F1|off","F2|on","F2|off","F3|on","F3|off","F4|on","F4|off","F5|on","F5|off","F6|on","F6|off","F7|on","F7|off","F8|on","F8|off","F9|on","F9|off"
+                                           ,"F10|on","F10|off","F11|on","F11|off","F12|on","F12|off","F13|on","F13|off","F14|on","F14|off","F15|on","F15|off","F16|on","F16|off","F17|on","F17|off","F18|on","F18|off","F19|on","F19|off"
+                                           ,"F20|on","F20|off","F21|on","F21|off","F22|on","F22|off","F23|on","F23|off","F24|on","F24|off","F25|on","F25|off","F26|on","F26|off","F27|on","F27|off","F28|on","F28|off"
+                                           ,"sensW|on","sensW|off","Sens1|on","Sens1|off","Sens2|on","Sens2|off","Sens3|on","Sens3|off","Sens4|on","Sens4|off"
+                                           ,"Head|light[1]","Rear|light[1]","Aux|1[1]","Aux|2[1]","Aux|3","Aux|4","Aux|5","Aux|6","Aux|7","Aux|8","Aux|9","Aux|10","Head|light[2]","Rear|light[2]","Aux|1[2]","Aux|2[2]"
+                                           ,"Momentum|off","Shunt|mode","Dynamic|brake","Uncouple|Cycle","not|used","Fire|box","Dim|lights","Grade|cross","Smoke|gen","Notch|up","Notch|down","Sound|fade","Brk sql|off","Doppler|effect","Volume|& mute","Shift|mode"
+                                           ,"SS|1","SS|2","SS|3","SS|4","SS|5","SS|6","SS|7","SS|8","SS|9","SS|10","SS|11","SS|12","SS|13","SS|14","SS|15","SS|16","SS|17","SS|18","SS|19","SS|20","SS|21","SS|22","SS|23","SS|24"
                                            };
 
     final int maxOut = outDescESU.length;
@@ -113,7 +114,7 @@ public class FnMapPanelESU extends JPanel {
     final String[] outLabel = new String[maxOut];
     final boolean[] outIsUsed = new boolean[maxOut];
                                            
-    public FnMapPanelESU(VariableTableModel v, List<Integer> varsUsed, Element model) {
+    public FnMapPanelESU(VariableTableModel v, List<Integer> varsUsed, Element model, RosterEntry rosterEntry) {
         if (log.isDebugEnabled()) log.debug("ESU Function map starts");
         _varModel = v;
         
@@ -160,18 +161,33 @@ public class FnMapPanelESU extends JPanel {
                 // find the variable using the output label
                 String name = "ESU Function Row "+Integer.toString(iRow+1)+" Column "+Integer.toString(iOut+1);
                 int iVar = _varModel.findVarIndex(name);
+                String fullColumnName = null;
                 if (iVar>=0) {
-                // column labels
+                    if ( outName[iOut].equals("SS") ) {
+                        try {
+                            fullColumnName = rosterEntry.getSoundLabel(Integer.valueOf(outLabel[iOut]));
+                        } catch (Exception e) {}
+                    } else if ( outName[iOut].startsWith("F") && ( outLabel[iOut].equalsIgnoreCase("on") || outLabel[iOut].equalsIgnoreCase("off") ) ) {
+                        try {
+                            fullColumnName = rosterEntry.getFunctionLabel(Integer.valueOf(outName[iOut].substring(1))) ;
+                        } catch (Exception e) {}
+                    }
+                    if ( fullColumnName != null ) {
+                        fullColumnName = outName[iOut]+" "+outLabel[iOut] + " (" + fullColumnName + ")";
+                    } else {
+                        fullColumnName = outName[iOut]+" "+outLabel[iOut];
+                    }
+                    // column labels
                     if (iRow == 0) {
-                        labelAt( outputNumRow,   currentCol, outName[iOut]);
-                        labelAt( outputLabelRow, currentCol, outLabel[iOut]);
-                        labelAt( firstRow+numRows, currentCol, String.valueOf(iOut+1));
+                        labelAt( outputNumRow,   currentCol, outName[iOut], fullColumnName);
+                        labelAt( outputLabelRow, currentCol, outLabel[iOut], fullColumnName);
+                        labelAt( firstRow+numRows, currentCol, String.valueOf(iOut+1), ("Column "+String.valueOf(iOut+1)+", "+fullColumnName));
                     }
                     if (log.isDebugEnabled()) log.debug("Process var: "+name+" as index "+iVar);
                     varsUsed.add(Integer.valueOf(iVar));
                     JComponent j = (JComponent)(_varModel.getRep(iVar, "checkbox"));
                     VariableValue var = _varModel.getVariable(iVar);
-                    j.setToolTipText(PaneProgPane.addCvDescription(null, var.getCvDescription(), var.getMask()));
+                    j.setToolTipText(PaneProgPane.addCvDescription(("Row "+Integer.toString(iRow+1)+", "+fullColumnName), var.getCvDescription(), var.getMask()));
                     saveAt(currentRow, currentCol++, j);
                     outIsUsed[iOut] = true;
                 } else {
@@ -213,7 +229,7 @@ public class FnMapPanelESU extends JPanel {
                 JLabel l = new JLabel("<html><center><strong>You are using the Mac OS X native GUI<br/>"+
                     "and may experience slow scrolling</strong><br/>"+
                     "If affected, change GUI in "+Application.getApplicationName()+
-                    " &gt; Preferences &gt; Display  &gt; GUI<br/><br/></center></html>");
+                    "-&gt;Preferences-&gt;Display-&gt;GUI<br/><br/></center></html>");
                 cs.gridy = guiWarningRow;
                 cs.gridx = i*numOut/numWarnings;
                 cs.gridwidth = GUIwarningInterval;
@@ -233,8 +249,13 @@ public class FnMapPanelESU extends JPanel {
     }
     
     void labelAt(int row, int column, String name) {
+        this.labelAt(row, column, name, null);
+    }
+
+    void labelAt(int row, int column, String name, String toolTip) {
         if (row<0 || column<0) return;
         JLabel t = new JLabel(" "+name+" ");
+        if ( toolTip != null ) t.setToolTipText(toolTip);
         saveAt(row, column, t);
     }
     
@@ -296,7 +317,7 @@ public class FnMapPanelESU extends JPanel {
     // split and load ESU default labels
     void loadDescESU(int iOut, String theLabel) {
         if (iOut < outDescESU.length) {
-            String itemESU[] = theLabel.split("/");
+            String itemESU[] = theLabel.split("\\|");
             if (itemESU.length > 1) {
                 outName[iOut] = itemESU[0];
                 outLabel[iOut] = itemESU[1];

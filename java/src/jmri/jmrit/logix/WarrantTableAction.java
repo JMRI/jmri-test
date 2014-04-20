@@ -66,7 +66,7 @@ public class WarrantTableAction extends AbstractAction {
     private static JTextArea _textArea;
     private static boolean _hasErrors = false;
     private static JDialog _errorDialog;
-    private static WarrantFrame _openFrame;
+    protected static WarrantFrame _openFrame;
     protected static NXFrame _nxFrame;
     private static OpSessionLog	_log;
     static ShutDownTask 	_shutDownTask;
@@ -195,10 +195,7 @@ public class WarrantTableAction extends AbstractAction {
     synchronized protected static void writetoLog(String text) {
     	if (_log!=null) {
     		_log.writeLn(text);
-    	} else {
-    		log.error("Op Session log cannot write \""+text+"\"");
-    	}
-    	
+    	}    	
     }
     
     private static void setupWarrantTable() {

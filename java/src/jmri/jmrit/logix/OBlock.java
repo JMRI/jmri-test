@@ -266,7 +266,7 @@ public class OBlock extends jmri.Block implements java.beans.PropertyChangeListe
 
     /**
      * This block shares a turnout (e.g. a crossover) with another block.  Typically
-     *  one JMRI turnout driving two switches where each switch is in a digfferent block.
+     *  one JMRI turnout driving two switches where each switch is in a different block.
      * @param key a path in this block
      * @param block another block
      * @param path a path in that block sharing a turnout with key
@@ -314,7 +314,7 @@ public class OBlock extends jmri.Block implements java.beans.PropertyChangeListe
 			return true;
     	}
     }
-    protected String checkSharedTO() {
+    private String checkSharedTO() {
     	List<HashMap<OBlock, List<OPath>>> blockList = _sharedTO.get(_pathName);
     	if (blockList!=null) {
     		Iterator<HashMap<OBlock, List<OPath>>> iter = blockList.iterator();
@@ -676,24 +676,28 @@ public class OBlock extends jmri.Block implements java.beans.PropertyChangeListe
         String pName = path.getName();
         if (log.isDebugEnabled()) log.debug("addPath \""+pName+"\" to OBlock "+getSystemName());
         List <Path> list = getPaths();
-         for (int i=0; i<list.size(); i++) {
-//          if (pName.equals(((OPath)list.get(i)).getName())) {
-        	if (((OPath)list.get(i)).equals(path)) {
-        		log.info("\""+pName+"\" duplicated in OBlock "+getSystemName());
-             }
+        for (int i=0; i<list.size(); i++) {
+         	if (((OPath)list.get(i)).equals(path)) {
+        		log.warn("Path \""+pName+"\" duplicated in OBlock "+getSystemName());
+        		return false;
+        	}
+        	if (pName.equals(((OPath)list.get(i)).getName())) {
+        		log.warn("Path named \""+pName+"\" already exists in OBlock "+getSystemName());
+        		return false;
+        	}
         }
         path.setBlock(this);
         Portal portal = path.getFromPortal();
         if (portal!=null) {
             if (!portal.addPath(path)) { 
-                if (log.isDebugEnabled()) log.debug("\""+pName+"\" rejected by portal  "+portal.getName());
+                log.warn("Path \""+pName+"\" rejected by portal  "+portal.getName());
                 return false; 
             }
         }
         portal = path.getToPortal();
         if (portal!=null) {
             if (!portal.addPath(path)) { 
-                if (log.isDebugEnabled()) log.debug("\""+pName+"\" rejected by portal  "+portal.getName());
+                log.warn("Path \""+pName+"\" rejected by portal  "+portal.getName());
                 return false;
             }
         }

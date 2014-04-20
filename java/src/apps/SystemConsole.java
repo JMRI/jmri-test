@@ -1,778 +1,657 @@
-// IconAdder.java
-package jmri.jmrit.display;
+// SystemConsole.java
+
+package apps;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jmri.Manager;
-import jmri.NamedBean;
-import jmri.SignalHead;
-import jmri.CatalogTree;
-import jmri.CatalogTreeManager;
-import jmri.InstanceManager;
-//import jmri.jmrit.XmlFile;
-import jmri.jmrit.catalog.CatalogTreeLeaf;
-import jmri.jmrit.catalog.CatalogTreeNode;
-import jmri.jmrit.catalog.CatalogPanel;
-import jmri.jmrit.catalog.ImageIndexEditor;
-import jmri.jmrit.catalog.NamedIcon;
-import jmri.jmrit.picker.PickListModel;
-
-import java.awt.Dimension;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.FlowLayout;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Hashtable;
-import java.util.ResourceBundle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
-
-import java.awt.Color;
-import java.awt.datatransfer.Transferable; 
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.*;
-
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
-
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ListSelectionModel;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JToggleButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableColumn;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import jmri.UserPreferencesManager;
+import jmri.util.JmriJFrame;
 
 /**
- * Provides a simple editor for selecting N NamedIcons.  Class for
- * Icon Editors implements "Drag n Drop".  Allows
- * drops from icons dragged from a Catalog preview pane. 
- * <P>See {@link SensorIcon} for an item
- * that might want to have that type of information, and
- * {@link jmri.jmrit.display.panelEditor.PanelEditor} 
- * for an example of how to use this.
+ * Class to direct standard output and standard error to a JTextArea.
+ * This allows for easier clipboard operations etc.
+ * <hr>
+ * This file is part of JMRI.
+ * <P>
+ * JMRI is free software; you can redistribute it and/or modify it under
+ * the terms of version 2 of the GNU General Public License as published
+ * by the Free Software Foundation. See the "COPYING" file for a copy
+ * of this license.
+ * <P>
+ * JMRI is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ * <P>
  *
- * @author Pete Cressman  Copyright (c) 2009, 2010
+ * @author Matthew Harris  copyright (c) 2010, 2011, 2012
+ * @version $Revision$
  */
+public final class SystemConsole extends JTextArea {
 
-public class IconAdder extends JPanel implements ListSelectionListener {
+    static final ResourceBundle rbc = ResourceBundle.getBundle("apps.AppsConfigBundle"); // NOI18N
 
-    static final ResourceBundle rbean = ResourceBundle.getBundle("jmri.NamedBeanBundle");
+    private static final int STD_ERR = 1;
+    private static final int STD_OUT = 2;
 
-    int ROW_HEIGHT;
+    private JTextArea console = null;
 
-    HashMap <String, JToggleButton>   _iconMap;
-    ArrayList <String>          _order;
-    JScrollPane                 _pickTablePane;
-    PickListModel               _pickListModel;
-    CatalogTreeNode     _defaultIcons;      // current set of icons user has selected
-    JPanel          _iconPanel;
-    JPanel          _buttonPanel;
-    String          _type;
-    boolean         _userDefaults;
-    JTextField      _sysNametext;
-    Manager         _manager;
-    JTable          _table;
-    JButton         _addButton;
-    JButton         _addTableButton;
-    JButton         _changeButton;
-    JButton         _closeButton;
-    CatalogPanel    _catalog;
-    JFrame          _parent;
-    boolean         _allowDeletes;
-    boolean			_update;				// updating existing icon from popup
+    private PrintStream originalOut;
+    private PrintStream originalErr;
 
-    public IconAdder() {
-        _userDefaults = false;
-        _iconMap = new HashMap <String, JToggleButton>(10);
-        _order = new ArrayList <String>();
-        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-    }
+    private JmriJFrame frame = null;
 
-    public IconAdder(boolean allowDeletes) {
-        this();
-        _allowDeletes = allowDeletes;
-    }
+    private JPopupMenu popup = new JPopupMenu();
+    
+    private JMenuItem copySelection = null;
 
-    public void reset() {
-        if (_table != null) {
-            _table.getSelectedRow();
-            _table.clearSelection();
-        }
-        closeCatalog();
-        if (_defaultIcons != null) {
-            makeIconPanel(true);
-        }
-        this.validate();
-    }
+    private JMenu wrapMenu = null;
+    private ButtonGroup wrapGroup = null;
 
-    public IconAdder(String type) {
-        this();
-        _type = type;
-        initDefaultIcons();
-    }
+    private JMenu schemeMenu = null;
+    private ButtonGroup schemeGroup = null;
 
-    @SuppressWarnings("unchecked")
-    public void initDefaultIcons() {
-        CatalogTreeManager manager = InstanceManager.catalogTreeManagerInstance();
-        CatalogTree tree = manager.getBySystemName("NXDI");
-        if (tree != null) {
-            CatalogTreeNode node = (CatalogTreeNode)tree.getRoot();
-            Enumeration<CatalogTreeNode> e = node.children();
-            while (e.hasMoreElements()) {
-                CatalogTreeNode nChild = e.nextElement();
-                if (_type.equals(nChild.toString())) {
-                    _defaultIcons = nChild;
-                    _userDefaults = true;
-                }
-            }
-        }
-        if (log.isDebugEnabled()) log.debug("initDefaultIcons: type= "+_type+", defaultIcons= "+_defaultIcons);
-    }
+    private ArrayList<Scheme> schemes;
 
-    private CatalogTreeNode getDefaultIconNodeFromMap() {
-        if (log.isDebugEnabled()) log.debug("getDefaultIconNodeFromMap for node= "+_type+
-                                            ", _order.size()= "+_order.size());
-        _defaultIcons =new CatalogTreeNode(_type);
-        Iterator<Entry<String, JToggleButton>> it = _iconMap.entrySet().iterator();
-        while (it.hasNext()) {
-        	Entry<String, JToggleButton> e = it.next();
-            NamedIcon icon = (NamedIcon)e.getValue().getIcon();
-            _defaultIcons.addLeaf(new CatalogTreeLeaf(e.getKey(), icon.getURL(), _order.indexOf(e.getKey())));
-        }
-        return _defaultIcons;
-    }
+    private int scheme = 0; // Green on Black
 
-    public CatalogTreeNode getDefaultIconNode() {
-        if (log.isDebugEnabled()) log.debug("getDefaultIconNode for node= "+_type);
-        CatalogTreeNode defaultIcons = new CatalogTreeNode(_type);
-        ArrayList <CatalogTreeLeaf> list = _defaultIcons.getLeaves();
-        for (int i=0; i<list.size(); i++) {
-            CatalogTreeLeaf leaf = list.get(i);
-            defaultIcons.addLeaf(new CatalogTreeLeaf(leaf.getName(), leaf.getPath(), i));
-        }
-        return defaultIcons;
-    }
+    private int fontSize = 12;
+
+    private int fontStyle = Font.PLAIN;
+
+    private String fontFamily = "Monospaced";  //NOI18N
+
+    public static final int WRAP_STYLE_NONE = 0x00;
+    public static final int WRAP_STYLE_LINE = 0x01;
+    public static final int WRAP_STYLE_WORD = 0x02;
+
+    private int wrapStyle = WRAP_STYLE_WORD;
+
+    private static SystemConsole instance;
+    
+    private UserPreferencesManager pref;
+    
+    private JCheckBox autoScroll;
+    private JCheckBox alwaysOnTop;
+    
+    private String alwaysScrollCheck = this.getClass().getName()+".alwaysScroll"; //NOI18N
+    private String alwaysOnTopCheck = this.getClass().getName()+".alwaysOnTop";   //NOI18N
 
     /**
-    *  Build iconMap and orderArray from user's choice of defaults
-    */
-    protected void makeIcons(CatalogTreeNode n) {
-        if (log.isDebugEnabled()) log.debug("makeIcons from node= "+n.toString()+", numChildren= "+
-                                            n.getChildCount()+", NumLeaves= "+n.getNumLeaves());
-        _iconMap = new HashMap <String, JToggleButton>(10);
-        _order = new ArrayList <String>();
-        ArrayList <CatalogTreeLeaf> list = n.getLeaves();
-        // adjust order of icons
-        int k = list.size()-1;
-        for (int i=list.size()-1; i>=0; i--) {
-            CatalogTreeLeaf leaf = list.get(i);
-            String name = leaf.getName();
-            String path = leaf.getPath();
-            if ("BeanStateInconsistent".equals(name)) {
-                this.setIcon(0, name, new NamedIcon(path, path));          	
-            } else if ("BeanStateUnknown".equals(name)) {
-                this.setIcon(1, name, new NamedIcon(path, path));          	
+     * Initialise the system console ensuring both System.out and System.err
+     * streams are re-directed to the consoles JTextArea
+     */
+    public static void create() {
+
+        if (instance == null) {
+            instance = new SystemConsole();
+        }
+    }
+    
+    private SystemConsole() {
+        if (console == null) {
+            
+            // Record current System.out and System.err
+            // so that we can still send to them
+            originalOut = System.out;
+            originalErr = System.err;
+
+            // Create the console text area
+            console = new JTextArea();
+
+            // Setup the console text area
+            console.setRows(20);
+            console.setColumns(120);
+            console.setFont(new Font(fontFamily, fontStyle, fontSize));
+            console.setEditable(false);
+            setScheme(scheme);
+            setWrapStyle(wrapStyle);
+
+            // Then redirect to it
+            redirectSystemStreams();
+
+        }
+    }
+
+    public static SystemConsole getInstance() {
+        if (instance == null) {
+            SystemConsole.create();
+        }
+        return instance;
+    }
+    
+    /**
+     * Return the JFrame containing the console
+     * @return console JFrame
+     */
+    public static JFrame getConsole() {
+        return SystemConsole.getInstance().getFrame();
+    }
+        
+    public JFrame getFrame() {
+
+        // Check if we've created the frame and do so if not
+        if (frame==null) {
+            log.debug("Creating frame for console");
+            // To avoid possible locks, frame layout should be
+            // performed on the Swing thread
+            if (SwingUtilities.isEventDispatchThread()) {
+                createFrame();
             } else {
-            	this.setIcon(k, name, new NamedIcon(path, path));
-            	k--;
+                try {
+                    // Use invokeAndWait method as we don't want to
+                    // return until the frame layout is completed
+                    SwingUtilities.invokeAndWait(new Runnable() {
+                        @Override
+                        public void run() {
+                            createFrame();
+                        }
+                    });
+                } catch (Exception ex) {
+                    log.error("Exception creating system console frame: "+ex);
+                }
             }
+            log.debug("Frame created");
         }
+
+        return frame;
     }
 
     /**
-    * @param order -the index to Sensor's name and the inverse order that icons are drawn in doIconPanel()
-    * @param label -the Sensor's name displayed in the icon panel and the key to the icon button in _iconMap
-    * @param icon -the icon displayed in the icon button
-    */
-    protected void setIcon(int order, String label, NamedIcon icon) {
-        // make a button to change that icon
-        if (log.isDebugEnabled()) log.debug("setIcon at order= "+order+", key= "+label);
-        JToggleButton button = new IconButton(label, icon);
-        if (icon==null || icon.getIconWidth()<1 || icon.getIconHeight()<1) {
-            button.setText(Bundle.getMessage("invisibleIcon"));
-            button.setForeground(Color.lightGray);
-        } else {
-            icon.reduceTo(CatalogPanel.ICON_WIDTH, CatalogPanel.ICON_HEIGHT, CatalogPanel.ICON_SCALE);
-            button.setToolTipText(icon.getName());
-        }
-
-        if (_allowDeletes) {
-            String fileName = "resources/icons/misc/X-red.gif";
-            button.setSelectedIcon(new jmri.jmrit.catalog.NamedIcon(fileName, fileName));
-        }
-        if (icon!=null) {
-            icon.reduceTo(CatalogPanel.ICON_WIDTH, CatalogPanel.ICON_HEIGHT, CatalogPanel.ICON_SCALE);
-        }
-
-        _iconMap.put(label, button);
-        // calls may not be in ascending order, so pad array
-        if (order > _order.size()) {
-            for (int i=_order.size(); i<order; i++) {
-                _order.add(i, "placeHolder");
-            }
-        } else {
-            if (order < _order.size()) {
-                _order.remove(order);
-            }
-        }
-        _order.add(order, label);
-    }
-
-    /**
-    *  install the icons used to represent all the states of the entity being edited
-    *   @param label - the state name to display, Must be unique from all other  
-    *          calls to this method.
-    *   @param name - the resource name of the icon image to displa
-    *   @param order - (reverse) order of display, (0 last, to N first)
-    */
-    public void setIcon(int order, String label, String name) {
-        if (log.isDebugEnabled()) log.debug("setIcon: order= "+ order+", label= "+label+", name= "+name);
-        this.setIcon(order, label, new NamedIcon(name, name));
-    }
-
-    public void setParent(JFrame parent) {
-        _parent = parent;
-    }
-
-    void pack() {
-        _parent.pack();
-    }
-
-    public int getNumIcons() {
-        return _iconMap.size();
-    }    
-
-   static int STRUT_SIZE = 3;
-    /**
-    * After all the calls to setIcon(...) are made, make the icon
-    * display.   Two columns to save space for subsequent panels.
-    */
-    public void makeIconPanel(boolean useDefaults) {
-        if (useDefaults && _userDefaults) {
-            makeIcons(_defaultIcons);
-        }
-        clearIconPanel();
-        doIconPanel();
-    }
-    
-    private void clearIconPanel() {
-        if (_iconPanel != null) {
-            this.remove(_iconPanel);
-        }
-        _iconPanel = new JPanel();
-        _iconPanel.setLayout(new BoxLayout(_iconPanel, BoxLayout.Y_AXIS));    	
-    }
-
-    protected void doIconPanel() {
-        JPanel panel = null;
-        int cnt=0;
-        for (int i=_order.size()-1; i>=0; i--) {
-            if (panel == null) {
-                panel = new JPanel();
-                panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-                panel.add(Box.createHorizontalStrut(STRUT_SIZE));
-            }
-            String key = _order.get(i);
-            JPanel p =new JPanel(); 
-            p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-            String labelName = key;
-            try {
-                labelName = rbean.getString(key);
-            } catch (java.util.MissingResourceException mre) {
-            }
-            p.add(new JLabel(labelName));
-            p.add(_iconMap.get(key));
-            panel.add(p);
-            panel.add(Box.createHorizontalStrut(STRUT_SIZE));
-            if ((cnt&1)!=0) {
-                _iconPanel.add(panel);
-                _iconPanel.add(Box.createVerticalStrut(STRUT_SIZE));
-                panel = null;
-            }
-            cnt++;
-        }
-        if (panel != null) {
-            _iconPanel.add(panel);
-            _iconPanel.add(Box.createVerticalStrut(STRUT_SIZE));
-        }
-        this.add(_iconPanel, 0);
-    }
-
-    /**
-    * After the calls to makeIconPanel(), optionally.
-    * make a pick list table for managed elements.  (Not all
-    * Icon Editors use pick lists)
-    */
-    public void setPickList(PickListModel tableModel) {
-        tableModel.init();
-        _pickListModel = tableModel;
-        _table = new JTable(tableModel);
-        _pickListModel.makeSorter(_table);
-
-        _table.setRowSelectionAllowed(true);
-        _table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        ROW_HEIGHT = _table.getRowHeight();
-        _table.setPreferredScrollableViewportSize(new java.awt.Dimension(200,7*ROW_HEIGHT));
-        _table.setDragEnabled(true);
-        TableColumnModel columnModel = _table.getColumnModel();
-
-        TableColumn sNameColumnT = columnModel.getColumn(PickListModel.SNAME_COLUMN);
-        sNameColumnT.setResizable(true);
-        sNameColumnT.setMinWidth(50);
-        sNameColumnT.setMaxWidth(200);
-
-        TableColumn uNameColumnT = columnModel.getColumn(PickListModel.UNAME_COLUMN);
-        uNameColumnT.setResizable(true);
-        uNameColumnT.setMinWidth(100);
-        uNameColumnT.setMaxWidth(300);
-
-        _pickTablePane = new JScrollPane(_table);
-        this.add(_pickTablePane);
-        this.add(Box.createVerticalStrut(STRUT_SIZE));
-        pack();
-    }
-
-    public void setSelection(NamedBean bean) {
-        int row = _pickListModel.getIndexOf(bean);
-        _table.addRowSelectionInterval(row, row);
-        _pickTablePane.getVerticalScrollBar().setValue(row*ROW_HEIGHT);
-    }
-
-    /**
-    *  When a Pick list is installed, table selection controls the Add button
-    */
-    public void valueChanged(ListSelectionEvent e) {
-        if (_table == null) {
-            return;
-        }
-        int row = _table.getSelectedRow();
-        if (log.isDebugEnabled()) log.debug("Table valueChanged: row= "+row);
-        if (row >= 0) {
-            _addButton.setEnabled(true);
-            _addButton.setToolTipText(null);
-            if (_type!=null && _type.equals("SignalHead")){
-                makeIconMap(_pickListModel.getBeanAt(row));
-            	clearIconPanel();
-            	doIconPanel();
-            }
-
-        } else {
-            _addButton.setEnabled(false);
-            _addButton.setToolTipText(Bundle.getMessage("ToolTipPickFromTable"));
-        }
-        validate();
-    }
-
-    void makeIconMap(NamedBean bean) {
-    	if (bean!=null && _type!=null && _type.equals("SignalHead")) {
-        	_order = new ArrayList <String>();
-            _iconMap = new HashMap <String, JToggleButton>(12);
-        	int k=0;
-        	ArrayList <CatalogTreeLeaf> list = _defaultIcons.getLeaves();
-    		String[] states = ((SignalHead)bean).getValidStateNames();
-    		for (int i=0; i<list.size(); i++) {
-    			CatalogTreeLeaf leaf = list.get(i);
-    			String name = leaf.getName();
-    			try {
-    				name = rbean.getString(leaf.getName());
-    			} catch (java.util.MissingResourceException mre) {
-    			}
-    			if (log.isDebugEnabled()) log.debug("makeIconMap: leafName= "+leaf.getName()+", name= "+name);
-    			for (int j=0; j<states.length; j++) {
-    				if (name.equals(states[j]) ||
-    						leaf.getName().equals(rbean.getString("SignalHeadStateDark")) ||
-    						leaf.getName().equals(rbean.getString("SignalHeadStateHeld"))) {
-    					String path = leaf.getPath();
-    					this.setIcon(k++, leaf.getName(), new NamedIcon(path, path));
-    					break;
-    				}
-    			}
-    		}
-    	} else {
-    		makeIcons(_defaultIcons);
-    	}
-    	if (log.isDebugEnabled()) log.debug("makeIconMap: _iconMap.size()= "+_iconMap.size());
-    }
-
-    void checkIconSizes() {
-        if (!_addButton.isEnabled()){
-            return;
-        }
-        Iterator <JToggleButton> iter = _iconMap.values().iterator();
-        int lastWidth = 0;
-        int lastHeight = 0;
-        boolean first = true;
-        while (iter.hasNext()) {
-            JToggleButton but = iter.next();
-        	if (first) {
-                lastWidth = but.getIcon().getIconWidth();
-                lastHeight = but.getIcon().getIconHeight();
-                first = false;
-                continue;
-        	}
-            int nextWidth = but.getIcon().getIconWidth();
-            int nextHeight = but.getIcon().getIconHeight();
-            if ((Math.abs(lastWidth - nextWidth) > 3 || Math.abs(lastHeight - nextHeight) > 3)) {
-                JOptionPane.showMessageDialog(this, Bundle.getMessage("IconSizeDiff"), Bundle.getMessage("warnTitle"),
-                                                     JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            lastWidth = nextWidth;
-            lastHeight = nextHeight;
-        }
-        if (log.isDebugEnabled()) log.debug("Size: width= "+lastWidth+", height= "+lastHeight); 
-    }
-
-    /**
-    * Used by Panel Editor to make the final installation of the icon(s)
-    * into the user's Panel.
-    * <P>Note! the selection is cleared. When two successive calls are made, the
-    * 2nd will always return null, regardless of the 1st return.
-    */
-    public NamedBean getTableSelection() {
-        if (ImageIndexEditor.isIndexChanged()) {
-            checkIconSizes();
-        }
-        int row = _table.getSelectedRow();
-        if (row >= 0) {
-            NamedBean b = _pickListModel.getBeanAt(row);
-            _table.clearSelection();
-            _addButton.setEnabled(false);
-            _addButton.setToolTipText(null);
-            this.validate();
-            if (log.isDebugEnabled()) log.debug("getTableSelection: row= "+row+", bean= "+b.getDisplayName());
-            return b;
-        } else if (log.isDebugEnabled()) log.debug("getTableSelection: row=0");
-        return null;
-    }
-
-    /**
-     * Returns a new NamedIcon object for your own use.
-     * @param key Name of key (label)
-     * @return Unique object
+     * Layout the console frame
      */
-    public NamedIcon getIcon(String key) {
-        if (log.isDebugEnabled()) log.debug("getIcon for key= "+key); 
-        return new NamedIcon((NamedIcon)_iconMap.get(key).getIcon());
-    }
+    private void createFrame() {
+        // Use a JmriJFrame to ensure that we fit on the screen
+        frame = new JmriJFrame(Bundle.getMessage("TitleConsole"));
 
-    /**
-     * Returns a new Hashtable of only the icons selected for display.
-     */
-    public Hashtable <String, NamedIcon> getIconMap() {
-        if (log.isDebugEnabled()) log.debug("getIconMap: _allowDeletes= "+_allowDeletes);
-        Hashtable <String, NamedIcon> iconMap = new Hashtable <String, NamedIcon>();
-        Iterator<String> iter = _iconMap.keySet().iterator();
-        while (iter.hasNext()) {
-            String key = iter.next();
-            JToggleButton button = _iconMap.get(key);
-            if (log.isDebugEnabled()) log.debug("getIconMap: key= "+key+", button.isSelected()= "+button.isSelected());
-            if (!_allowDeletes || !button.isSelected()) {
-                iconMap.put(key, new NamedIcon((NamedIcon)button.getIcon()));
-            }
-        }
-        return iconMap;
-    }
+        pref = jmri.InstanceManager.getDefault(jmri.UserPreferencesManager.class);
+        
+        // Grab a reference to the system clipboard
+        final Clipboard clipboard = frame.getToolkit().getSystemClipboard();
 
-    /*
-    * Supports selection of NamedBean from a pick list table
-    * @param addIconAction - ActionListener that adds an icon to the panel -
-    * representing either an entity a pick list selection, an
-    * arbitrary inmage, or a value, such a
-    * memory value.
-    * @param changeIconAction - ActionListener that displays sources from
-    * which to select an image file.  
-    */
-    public void complete(ActionListener addIconAction, boolean changeIcon,
-                         boolean addToTable, boolean update) {
-    	_update = update;
-        if (_buttonPanel!=null) {
-            this.remove(_buttonPanel);
-        }
-        _buttonPanel = new JPanel();
-        _buttonPanel.setLayout(new BoxLayout(_buttonPanel, BoxLayout.Y_AXIS));
+        // Setup the scroll pane
+        JScrollPane scroll = new JScrollPane(console);
+        frame.add(scroll, BorderLayout.CENTER);
+
+        // Add button to allow copy to clipboard
         JPanel p = new JPanel();
-        p.setLayout(new FlowLayout());       
-        if (addToTable) {
-            _sysNametext = new JTextField();
-            _sysNametext.setPreferredSize(
-                new Dimension(150, _sysNametext.getPreferredSize().height+2));
-            _addTableButton = new JButton(Bundle.getMessage("addToTable"));
-            _addTableButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent a) {
-                        addToTable();
-                    }
-            });
-            _addTableButton.setEnabled(false);
-            _addTableButton.setToolTipText(Bundle.getMessage("ToolTipWillActivate"));
-            p.add(_sysNametext);
-            _sysNametext.addKeyListener(new KeyAdapter() {
-                    public void keyReleased(KeyEvent a){
-                        if (_sysNametext.getText().length() > 0) {
-                            _addTableButton.setEnabled(true);
-                            _addTableButton.setToolTipText(null);
-                            _table.clearSelection();
-                        }
-                    }
-                });
+        JButton copy = new JButton(Bundle.getMessage("ButtonCopyClip"));
+        copy.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                StringSelection text = new StringSelection(console.getText());
+                clipboard.setContents(text, text);
+            }
+        });
+        p.add(copy);
 
-            p.add(_addTableButton);
-            _buttonPanel.add(p);
-            p = new JPanel();
-            p.setLayout(new FlowLayout());  //new BoxLayout(p, BoxLayout.Y_AXIS)
+        // Add button to allow console window to be closed
+        JButton close = new JButton(Bundle.getMessage("ButtonClose"));
+        close.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                frame.setVisible(false);
+                frame.dispose();
+            }
+        });
+        p.add(close);
+        
+        JButton stackTrace = new JButton(Bundle.getMessage("ButtonStackTrace"));
+        stackTrace.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                performStackTrace();
+            }
+        });
+        p.add(stackTrace);
+        
+        // Add checkbox to enable/disable auto-scrolling
+        // Use the inverted SimplePreferenceState to default as enabled
+        p.add(autoScroll = new JCheckBox(Bundle.getMessage("CheckBoxAutoScroll"),
+                !pref.getSimplePreferenceState(alwaysScrollCheck)));
+        autoScroll.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                doAutoScroll(console, autoScroll.isSelected());
+                pref.setSimplePreferenceState(alwaysScrollCheck, !autoScroll.isSelected());
+            }
+        });
+        
+        // Add checkbox to enable/disable always on top
+        p.add(alwaysOnTop = new JCheckBox(Bundle.getMessage("CheckBoxOnTop"),
+                pref.getSimplePreferenceState(alwaysOnTopCheck)));
+        alwaysOnTop.setVisible(true);
+        alwaysOnTop.setToolTipText(Bundle.getMessage("ToolTipOnTop"));
+        alwaysOnTop.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.setAlwaysOnTop(alwaysOnTop.isSelected());
+                pref.setSimplePreferenceState(alwaysOnTopCheck, alwaysOnTop.isSelected());
+            }
+        });
+        
+        frame.setAlwaysOnTop(alwaysOnTop.isSelected());
+
+         // Define the pop-up menu
+        copySelection = new JMenuItem(Bundle.getMessage("MenuItemCopy"));
+        copySelection.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                StringSelection text = new StringSelection(console.getSelectedText());
+                clipboard.setContents(text, text);
+            }
+        });
+        popup.add(copySelection);
+        
+        JMenuItem menuItem = new JMenuItem(Bundle.getMessage("ButtonCopyClip"));
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                StringSelection text = new StringSelection(console.getText());
+                clipboard.setContents(text, text);
+            }
+        });
+        popup.add(menuItem);
+
+        popup.add(new JSeparator());
+
+        JRadioButtonMenuItem rbMenuItem;
+
+        // Define the colour scheme sub-menu
+        schemeMenu = new JMenu(rbc.getString("ConsoleSchemeMenu"));
+        schemeGroup = new ButtonGroup();
+        for (final Scheme s: schemes) {
+            rbMenuItem = new JRadioButtonMenuItem(s.description);
+            rbMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent event) {
+                    setScheme(schemes.indexOf(s));
+                }
+            });
+            rbMenuItem.setSelected(getScheme()==schemes.indexOf(s));
+            schemeMenu.add(rbMenuItem);
+            schemeGroup.add(rbMenuItem);
         }
-        if (update) {
-            _addButton = new JButton(Bundle.getMessage("ButtonUpdateIcon"));
+        popup.add(schemeMenu);
+
+        // Define the wrap style sub-menu
+        wrapMenu = new JMenu(rbc.getString("ConsoleWrapStyleMenu"));
+        wrapGroup = new ButtonGroup();
+        rbMenuItem = new JRadioButtonMenuItem(rbc.getString("ConsoleWrapStyleNone"));
+        rbMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                setWrapStyle(WRAP_STYLE_NONE);
+            }
+        });
+        rbMenuItem.setSelected(getWrapStyle()==WRAP_STYLE_NONE);
+        wrapMenu.add(rbMenuItem);
+        wrapGroup.add(rbMenuItem);
+
+        rbMenuItem = new JRadioButtonMenuItem(rbc.getString("ConsoleWrapStyleLine"));
+        rbMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                setWrapStyle(WRAP_STYLE_LINE);
+            }
+        });
+        rbMenuItem.setSelected(getWrapStyle()==WRAP_STYLE_LINE);
+        wrapMenu.add(rbMenuItem);
+        wrapGroup.add(rbMenuItem);
+
+        rbMenuItem = new JRadioButtonMenuItem(rbc.getString("ConsoleWrapStyleWord"));
+        rbMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                setWrapStyle(WRAP_STYLE_WORD);
+            }
+        });
+        rbMenuItem.setSelected(getWrapStyle()==WRAP_STYLE_WORD);
+        wrapMenu.add(rbMenuItem);
+        wrapGroup.add(rbMenuItem);
+
+        popup.add(wrapMenu);
+
+        // Bind pop-up to objects
+        MouseListener popupListener = new PopupListener();
+        console.addMouseListener(popupListener);
+        frame.addMouseListener(popupListener);
+
+        // Add document listener to scroll to end when modified if required
+        console.getDocument().addDocumentListener(new DocumentListener() {
+
+            // References to the JTextArea and JCheckBox
+            // of this instantiation
+            JTextArea ta = console;
+            JCheckBox chk = autoScroll;
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                doAutoScroll(ta, chk.isSelected());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                doAutoScroll(ta, chk.isSelected());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                doAutoScroll(ta, chk.isSelected());
+            }
+        });
+
+        // Add the button panel to the frame & then arrange everything
+        frame.add(p, BorderLayout.SOUTH);
+        frame.pack();
+    }
+
+    /**
+     * Add text to the console
+     * @param text the text to add
+     * @param which the stream that this text is for
+     */
+    private void updateTextArea(final String text, final int which) {
+
+        // Append message to the original System.out / System.err streams
+        if (which == STD_OUT) {
+            originalOut.append(text);
+        } else if (which==STD_ERR) {
+            originalErr.append(text);
+        }
+
+        // Now append to the JTextArea
+        // As append method is thread safe, we don't need to run this on
+        // the Swing dispatch thread
+        console.append(text);
+    }
+
+    /**
+     * Method to position caret at end of JTextArea ta when
+     * scroll true.
+     * @param ta Reference to JTextArea
+     * @param scroll True to move to end
+     */
+    private void doAutoScroll(final JTextArea ta, final boolean scroll) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int len = ta.getText().length();
+                if (scroll) {
+                    ta.setCaretPosition(len);
+                } else if (ta.getCaretPosition()==len && len>0) {
+                    ta.setCaretPosition(len-1);
+                }        
+            }
+        });
+    }
+
+    /**
+     * Creates a new OutputStream for the specified stream
+     * @param which the stream, either STD_OUT or STD_ERR
+     * @return the new OutputStream
+     */
+    private OutputStream outStream(final int which) {
+        return new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                updateTextArea(String.valueOf((char)b), which);
+            }
+            @Override
+            @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="DM_DEFAULT_ENCODING",
+                    justification="Can only be called from the same instance so default encoding OK")
+            public void write(byte[] b, int off, int len) throws IOException {
+                updateTextArea(new String(b, off, len), which);
+            }
+            @Override
+            public void write(byte[] b) throws IOException {
+                write(b, 0, b.length);
+            }
+        };
+    }
+
+    /**
+     * Method to redirect the system streams to the console
+     */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="DM_DEFAULT_ENCODING",
+            justification="Can only be called from the same instance so default encoding OK")
+    private void redirectSystemStreams() {
+        System.setOut(new PrintStream(outStream(STD_OUT), true));
+        System.setErr(new PrintStream(outStream(STD_ERR), true));
+    }
+
+    /**
+     * Set the console wrapping style to one of the following:
+     * @param style one of the defined style attributes - one of
+     * <ul>
+     * <li>{@link #WRAP_STYLE_NONE} No wrapping
+     * <li>{@link #WRAP_STYLE_LINE} Wrap at end of line
+     * <li>{@link #WRAP_STYLE_WORD} Wrap by word boundaries
+     * </ul>
+     */
+    public void setWrapStyle(int style) {
+        wrapStyle = style;
+        console.setLineWrap(style!=WRAP_STYLE_NONE);
+        console.setWrapStyleWord(style==WRAP_STYLE_WORD);
+
+        if (wrapGroup!=null) {
+            wrapGroup.setSelected(wrapMenu.getItem(style).getModel(), true);
+        }
+    }
+
+    /**
+     * Retrieve the current console wrapping style
+     * @return current wrapping style - one of
+     * <ul>
+     * <li>{@link #WRAP_STYLE_NONE} No wrapping
+     * <li>{@link #WRAP_STYLE_LINE} Wrap at end of line
+     * <li>{@link #WRAP_STYLE_WORD} Wrap by word boundaries (default)
+     * </ul>
+     */
+    public int getWrapStyle() {
+        return wrapStyle;
+    }
+
+    /**
+     * Set the console font size
+     * @param size point size of font between 6 and 24 point
+     */
+    public void setFontSize(int size) {
+        updateFont(fontFamily, fontStyle, (fontSize = size<6?6:size>24?24:size));
+    }
+
+    /**
+     * Retrieve the current console font size (default 12 point)
+     * @return selected font size in points
+     */
+    public int getFontSize() {
+        return fontSize;
+    }
+
+    /**
+     * Set the console font style
+     * @param style one of {@link Font#BOLD}, {@link Font#ITALIC}, {@link Font#PLAIN} (default)
+     */
+    public void setFontStyle(int style) {
+
+        if (style==Font.BOLD || style==Font.ITALIC || style==Font.PLAIN || style==(Font.BOLD|Font.ITALIC)) {
+            fontStyle = style;
         } else {
-            _addButton = new JButton(Bundle.getMessage("ButtonAddIcon"));
+            fontStyle = Font.PLAIN;
         }
-        _addButton.addActionListener(addIconAction);
-        _addButton.setEnabled(true);
-        if (changeIcon) {
-            _changeButton = new JButton(Bundle.getMessage("ButtonChangeIcon"));
-            _changeButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent a) {
-                    addCatalog();
-                }
-            });
-            p.add(_changeButton);
-            _closeButton = new JButton(Bundle.getMessage("ButtonCloseCatalog"));
-            _closeButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent a) {
-                    closeCatalog();
-                }
-            });
-            _closeButton.setVisible(false);
-            p.add(_closeButton);
-        }
-        _buttonPanel.add(p);
-        if (_table != null) {
-            _addButton.setEnabled(false);
-            _addButton.setToolTipText(Bundle.getMessage("ToolTipPickFromTable"));
-        }
-        addAdditionalButtons(_buttonPanel);
-        p = new JPanel();
-        p.add(_addButton);
-        _buttonPanel.add(p);
-
-        _buttonPanel.add(Box.createVerticalStrut(STRUT_SIZE));
-        _buttonPanel.add(new JSeparator());
-        this.add(_buttonPanel);
-
-        if (changeIcon) {
-            _catalog = CatalogPanel.makeDefaultCatalog();
-            _catalog.setVisible(false);
-            _catalog.setToolTipText(Bundle.getMessage("ToolTipDragIcon"));
-            this.add(_catalog);
-        }
-        if (_type != null /*&& _defaultIcons == null*/) {
-            getDefaultIconNodeFromMap();
-        }
-        // Allow initial row to be set without getting callback to valueChanged
-        if (_table!=null) {
-            _table.getSelectionModel().addListSelectionListener(this);
-        }
-        pack();
+        updateFont(fontFamily, fontStyle, fontSize);
     }
 
-    protected void addAdditionalButtons(JPanel p) {}
-
-    public boolean addIconIsEnabled() {
-        return _addButton.isEnabled();
+    public void setFontFamily(String family) {
+        updateFont((fontFamily = family), fontStyle, fontSize);
     }
 
-    
-    void addToTable() {
-        String name = _sysNametext.getText();
-        if (name != null && name.length() > 0) {
-            NamedBean bean = _pickListModel.addBean(name);
-            int setRow = _pickListModel.getIndexOf(bean);
-            _table.setRowSelectionInterval(setRow, setRow);
-            _pickTablePane.getVerticalScrollBar().setValue(setRow*ROW_HEIGHT);
-        }
-        _sysNametext.setText("");
-        _addTableButton.setEnabled(false);
-        _addTableButton.setToolTipText(Bundle.getMessage("ToolTipWillActivate"));
-    }
-
-    /*
-    * Add panel to change icons 
-    */
-    public void addCatalog() {
-        if (log.isDebugEnabled()) log.debug("addCatalog called:"); 
-        // add the catalog, so icons can be selected
-        if (_catalog == null)  {
-            _catalog = CatalogPanel.makeDefaultCatalog();
-            _catalog.setToolTipText(Bundle.getMessage("ToolTipDragIcon"));
-        }
-        _catalog.setVisible(true);
-        /*
-        this.add(new JSeparator());
-        */
-        if (_changeButton != null) {
-            _changeButton.setVisible(false);
-            _closeButton.setVisible(true);
-        }
-        //this.add(_catalog);
-        if (_pickTablePane != null) {
-            _pickTablePane.setVisible(false);
-        }
-        pack();
-    }
-
-    void closeCatalog() {
-        if (_changeButton != null) {
-            _catalog.setVisible(false);
-            _changeButton.setVisible(true);
-            _closeButton.setVisible(false);
-        }
-        if (_pickTablePane != null) {
-            _pickTablePane.setVisible(true);
-        }
-        pack();
-    }
-
-    public void addDirectoryToCatalog(java.io.File dir) {
-        if (_catalog == null) {
-            _catalog = CatalogPanel.makeDefaultCatalog();
-        }
-        if (_changeButton != null) {
-            _changeButton.setVisible(false);
-            _closeButton.setVisible(true);
-        }
-        String name = dir.getName();
-        _catalog.createNewBranch("IF"+name, name, dir.getAbsolutePath());
-        this.add(_catalog);
-        this.pack();
+    public String getFontFamily() {
+        return fontFamily;
     }
 
     /**
-     * If icons are changed, update global tree
+     * Retrieve the current console font style
+     * @return selected font style - one of {@link Font#BOLD}, {@link Font#ITALIC}, {@link Font#PLAIN} (default)
      */
-    private void updateCatalogTree() {
-        CatalogTreeManager manager = InstanceManager.catalogTreeManagerInstance();
-        // unfiltered, xml-stored, default icon tree
-        CatalogTree tree = manager.getBySystemName("NXDI");
-        if (tree == null) {	// build a new Default Icons tree
-            tree = manager.newCatalogTree("NXDI", "Default Icons");
-        }
-        CatalogTreeNode root = (CatalogTreeNode)tree.getRoot();
-        @SuppressWarnings("unchecked")
-		Enumeration<CatalogTreeNode> e = root.children();
-        String name = _defaultIcons.toString();
-        while (e.hasMoreElements()) {
-            CatalogTreeNode nChild = e.nextElement();
-            if (name.equals(nChild.toString())) {
-                if (log.isDebugEnabled()) log.debug("Remove node "+nChild);
-                root.remove(nChild);
-                break;
-            }
-        }
-        root.add(_defaultIcons);
-        ImageIndexEditor.indexChanged(true);
+    public int getFontStyle() {
+        return fontStyle;
     }
 
-    private class IconButton extends DropButton {
-        String key;
-        IconButton(String label, Icon icon) {  // init icon passed to avoid ref before ctor complete
-            super(icon);
-            key = label;
+    /**
+     * Update the system console font with the specified parameters
+     * @param style font style
+     * @param size font size
+     */
+    private void updateFont(String family, int style, int size) {
+        console.setFont(new Font(family, style, size));
+    }
+
+    /**
+     * Method to define console colour schemes
+     */
+    private void defineSchemes() {
+        schemes = new ArrayList<Scheme>();
+        schemes.add(new Scheme(rbc.getString("ConsoleSchemeGreenOnBlack"), Color.GREEN, Color.BLACK));
+        schemes.add(new Scheme(rbc.getString("ConsoleSchemeOrangeOnBlack"), Color.ORANGE, Color.BLACK));
+        schemes.add(new Scheme(rbc.getString("ConsoleSchemeWhiteOnBlack"), Color.WHITE, Color.BLACK));
+        schemes.add(new Scheme(rbc.getString("ConsoleSchemeBlackOnWhite"), Color.BLACK, Color.WHITE));
+        schemes.add(new Scheme(rbc.getString("ConsoleSchemeWhiteOnBlue"), Color.WHITE, Color.BLUE));
+        schemes.add(new Scheme(rbc.getString("ConsoleSchemeBlackOnLightGray"), Color.BLACK, Color.LIGHT_GRAY));
+        schemes.add(new Scheme(rbc.getString("ConsoleSchemeBlackOnGray"), Color.BLACK, Color.GRAY));
+        schemes.add(new Scheme(rbc.getString("ConsoleSchemeWhiteOnGray"), Color.WHITE, Color.GRAY));
+        schemes.add(new Scheme(rbc.getString("ConsoleSchemeWhiteOnDarkGray"), Color.WHITE, Color.DARK_GRAY));
+        schemes.add(new Scheme(rbc.getString("ConsoleSchemeGreenOnDarkGray"), Color.GREEN, Color.DARK_GRAY));
+        schemes.add(new Scheme(rbc.getString("ConsoleSchemeOrangeOnDarkGray"), Color.ORANGE, Color.DARK_GRAY));
+    }
+    
+    private Map<Thread, StackTraceElement[]> traces;
+    
+    private void performStackTrace() {
+        System.out.println("----------- Begin Stack Trace -----------"); //NO18N
+        System.out.println("-----------------------------------------"); //NO18N
+        traces = new HashMap<Thread, StackTraceElement[]>(Thread.getAllStackTraces());
+        for(Thread thread: traces.keySet()) {
+            System.out.println("["+thread.getId()+"] "+thread.getName());
+            for(StackTraceElement el: thread.getStackTrace()) {
+                System.out.println("  " + el);
+            }
+            System.out.println("-----------------------------------------"); //NO18N
         }
+        System.out.println("-----------  End Stack Trace  -----------"); //NO18N
+    }
+
+    /**
+     * Set the console colour scheme
+     * @param which the scheme to use
+     */
+    public void setScheme(int which) {
+        scheme = which;
+
+        if (schemes == null) {
+            defineSchemes();
+        }
+
+        Scheme s;
+
+        try {
+            s = schemes.get(which);
+        } catch (IndexOutOfBoundsException ex) {
+            s = schemes.get(0);
+            scheme = 0;
+        }
+
+        console.setForeground(s.foreground);
+        console.setBackground(s.background);
+
+        if (schemeGroup!=null) {
+            schemeGroup.setSelected(schemeMenu.getItem(scheme).getModel(), true);
+        }
+    }
+
+    /**
+     * Retrieve the current console colour scheme
+     * @return selected colour scheme
+     */
+    public int getScheme() {
+        return scheme;
+    }
+
+    public Scheme[] getSchemes() {
+        return this.schemes.toArray(new Scheme[this.schemes.size()]);
     }
     
     /**
-     * Clean up when its time to make it all go away
+     * Class holding details of each scheme
      */
-    public void dispose() {
-        // clean up GUI aspects
-        this.removeAll();
-        _iconMap = null;
-        _order = null;
-        _catalog = null;
+    public static final class Scheme {
+        public Color foreground;
+        public Color background;
+        public String description;
+
+        Scheme(String description, Color foreground, Color background) {
+            this.foreground = foreground;
+            this.background = background;
+            this.description = description;
+        }
     }
 
-    class DropButton extends JToggleButton implements DropTargetListener {
-        DataFlavor dataFlavor;
-        DropButton (Icon icon) {
-            super(icon);
-            try {
-                dataFlavor = new DataFlavor(ImageIndexEditor.IconDataFlavorMime);
-            } catch (ClassNotFoundException cnfe) {
-                cnfe.printStackTrace();
-            }
-            new DropTarget(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
-            //if (log.isDebugEnabled()) log.debug("DropJLabel ctor");
+    /**
+     * Class to deal with handling popup menu
+     */
+    public final class PopupListener extends MouseAdapter {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            maybeShowPopup(e);
         }
-        public void dragExit(DropTargetEvent dte) {
-            //if (log.isDebugEnabled()) log.debug("DropJLabel.dragExit ");
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            maybeShowPopup(e);
         }
-        public void dragEnter(DropTargetDragEvent dtde) {
-            //if (log.isDebugEnabled()) log.debug("DropJLabel.dragEnter ");
-        }
-        public void dragOver(DropTargetDragEvent dtde) {
-            //if (log.isDebugEnabled()) log.debug("DropJLabel.dragOver ");
-        }
-        public void dropActionChanged(DropTargetDragEvent dtde) {
-            //if (log.isDebugEnabled()) log.debug("DropJLabel.dropActionChanged ");
-        }
-        public void drop(DropTargetDropEvent e) {
-            try {
-                Transferable tr = e.getTransferable();
-                if(e.isDataFlavorSupported(dataFlavor)) {
-                    NamedIcon newIcon = (NamedIcon)tr.getTransferData(dataFlavor);
-                    if (newIcon !=null) {
-                        e.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-                        DropTarget target = (DropTarget)e.getSource();
-                        IconButton iconButton = (IconButton)target.getComponent();
-                        String key = iconButton.key;
-                        JToggleButton button = _iconMap.get(key);
-                        NamedIcon oldIcon = (NamedIcon)button.getIcon();
-                        button.setIcon(newIcon);
-                        if (newIcon.getIconWidth()<1 || newIcon.getIconHeight()<1) {
-                            button.setText(Bundle.getMessage("invisibleIcon"));
-                            button.setForeground(Color.lightGray);
-                        } else {
-                            button.setText(null);
-                        }
-                        _iconMap.put(key, button);
-                        if (!_update){
-                            _defaultIcons.deleteLeaf(key, oldIcon.getURL());
-                            _defaultIcons.addLeaf(key, newIcon.getURL());
-                            updateCatalogTree();
-                        }
-                        e.dropComplete(true);                       
-                        if (log.isDebugEnabled()) log.debug("DropJLabel.drop COMPLETED for "+key+
-                                                             ", "+newIcon.getURL());
-                    } else {
-                        if (log.isDebugEnabled()) log.debug("DropJLabel.drop REJECTED!");
-                        e.rejectDrop();
-                    }
-                }
-            } catch(IOException ioe) {
-                if (log.isDebugEnabled()) log.debug("DropPanel.drop REJECTED!");
-                e.rejectDrop();
-            } catch(UnsupportedFlavorException ufe) {
-                if (log.isDebugEnabled()) log.debug("DropJLabel.drop REJECTED!");
-                e.rejectDrop();
+
+        private void maybeShowPopup(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                copySelection.setEnabled(console.getSelectionStart()!=console.getSelectionEnd());
+                popup.show(e.getComponent(), e.getX(), e.getY());
             }
         }
     }
 
-    static Logger log = LoggerFactory.getLogger(IconAdder.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(SystemConsole.class.getName());
+
 }
+
+/* @(#)SystemConsole.java */
