@@ -36,7 +36,7 @@ public class XBeeNode extends IEEE802154Node {
 
     private String Identifier;
     private HashMap<Integer,NamedBean> pinObjects=null;  
-
+    private boolean isPolled;
 
     /**
      * Creates a new instance of XBeeNode
@@ -44,6 +44,7 @@ public class XBeeNode extends IEEE802154Node {
     public XBeeNode() {
          Identifier="";
          pinObjects = new HashMap<Integer,NamedBean>(); 
+         isPolled = false;
     }
 
     public XBeeNode(byte pan[],byte user[], byte global[]) {
@@ -52,6 +53,7 @@ public class XBeeNode extends IEEE802154Node {
         if(log.isDebugEnabled()) log.debug("Created new node with panId: " +
                                 pan + " userId: " + user + " and GUID: " + global);
          pinObjects = new HashMap<Integer,NamedBean>(); 
+         isPolled = false;
     }
    
     /**
@@ -69,7 +71,19 @@ public class XBeeNode extends IEEE802154Node {
      * Are there sensors present, and hence this node will need to be polled?
      *  Note:  returns 'true' if at least one sensor is active for this node
      */
-    public boolean getSensorsActive() {return false;} //TODO
+    public boolean getSensorsActive() {
+        if(getPoll()) {
+	   for( Object bean: pinObjects.values() ) 
+               if( bean instanceof XBeeSensor) return true;
+        }
+        return false;
+    }
+
+    /*
+     *  get/set the isPolled attribute;
+     */
+    public void setPoll(boolean poll){ isPolled = poll; }
+    public boolean getPoll(){ return isPolled; }
     
     /**
      * Deal with a timeout in the transmission controller.
@@ -132,6 +146,21 @@ public class XBeeNode extends IEEE802154Node {
     }
 
    /**
+    *  Remove the bean associated with the specified pin
+    *  @param pin is the XBee pin assigned.
+    *  @param bean is the bean we are attempting to remove.
+    *  @return true if bean removed, false if specified bean was not 
+    *          assigned to the pin.
+    **/
+    public boolean removePinBean(int pin, NamedBean bean){
+       if(bean == getPinBean(pin)) {
+          pinObjects.remove(pin);
+          return true;
+       }
+       return false;
+    }
+
+   /**
     *  Get the bean associated with the specified pin
     *  @param pin is the XBee pin assigned.
     *  @return the bean assigned to the pin, or null if
@@ -150,6 +179,38 @@ public class XBeeNode extends IEEE802154Node {
       return (pinObjects.containsKey(pin));
     }
 
+    /**
+     * Get the prefered name for this XBee Node.
+     * @return the Identifier string if it is not blank
+     *         then a string representation of the bytes of the 
+     *         16 bit address if it is not a broadcast address. 
+     *         Otherwise return the 64 bit GUID.
+     **/
+    public String getPreferedName() {
+         if(!Identifier.equals("")) { 
+             return Identifier;
+         } else if(!(getXBeeAddress16().equals(XBeeAddress16.BROADCAST)) &&
+                 !(getXBeeAddress16().equals(XBeeAddress16.ZNET_BROADCAST))) {
+                 return jmri.util.StringUtil.hexStringFromBytes(useraddress);
+         } else {
+            return jmri.util.StringUtil.hexStringFromBytes(globaladdress);
+         }
+      
+    }
+
+    /**
+     * Get the prefered transmit address for this XBee Node.
+     * @return the 16 bit address if it is not a broadcast address. 
+     *         Otherwise return the 64 bit GUID.
+     **/
+    public com.rapplogic.xbee.api.XBeeAddress getPreferedTransmitAddress() {
+         if(!(getXBeeAddress16().equals(XBeeAddress16.BROADCAST)) &&
+                 !(getXBeeAddress16().equals(XBeeAddress16.ZNET_BROADCAST))) {
+                 return getXBeeAddress16();
+         } else {
+            return getXBeeAddress64();
+         }
+    }  
 
     private static Logger log = LoggerFactory.getLogger(XBeeNode.class.getName());
 }

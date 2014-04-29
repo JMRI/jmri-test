@@ -21,7 +21,10 @@ public class XBeeSensorTest extends TestCase {
         memo.setSystemPrefix("ABC");
         memo.setSensorManager(new XBeeSensorManager(tc,"ABC"));
         tc.setAdapterMemo(memo);
-        XBeeSensor s = new XBeeSensor("ABCS1234","XBee Sensor Test",tc); 
+        XBeeSensor s = new XBeeSensor("ABCS1234","XBee Sensor Test",tc){
+           @Override
+           public void requestUpdateFromLayout(){}
+        }; 
         Assert.assertNotNull("exists",s);
     }
 
@@ -31,17 +34,49 @@ public class XBeeSensorTest extends TestCase {
         memo.setSystemPrefix("ABC");
         memo.setSensorManager(new XBeeSensorManager(tc,"ABC"));
         tc.setAdapterMemo(memo);
-        XBeeSensor s = new XBeeSensor("ABCS123:4","XBee Sensor Test",tc); 
+        XBeeSensor s = new XBeeSensor("ABCS123:4","XBee Sensor Test",tc){ 
+           @Override
+           public void requestUpdateFromLayout(){}
+        }; 
         Assert.assertNotNull("exists",s);
     }
 
-    public void testCtorHexNodeAddress() {
+    public void testCtor16BitHexNodeAddress() {
         XBeeTrafficController tc = new XBeeTrafficController();
         XBeeConnectionMemo memo = new XBeeConnectionMemo();
         memo.setSystemPrefix("ABC");
         memo.setSensorManager(new XBeeSensorManager(tc,"ABC"));
         tc.setAdapterMemo(memo);
-        XBeeSensor s = new XBeeSensor("ABCSABCD:4","XBee Sensor Test",tc); 
+        XBeeSensor s = new XBeeSensor("ABCSABCD:4","XBee Sensor Test",tc){ 
+           @Override
+           public void requestUpdateFromLayout(){}
+        }; 
+        Assert.assertNotNull("exists",s);
+    }
+
+    public void testCtor16BitHexStringNodeAddress() {
+        XBeeTrafficController tc = new XBeeTrafficController();
+        XBeeConnectionMemo memo = new XBeeConnectionMemo();
+        memo.setSystemPrefix("ABC");
+        memo.setSensorManager(new XBeeSensorManager(tc,"ABC"));
+        tc.setAdapterMemo(memo);
+        XBeeSensor s = new XBeeSensor("ABCSAB CD:4","XBee Sensor Test",tc){ 
+           @Override
+           public void requestUpdateFromLayout(){}
+        }; 
+        Assert.assertNotNull("exists",s);
+    }
+
+    public void testCtor64BitHexStringNodeAddress() {
+        XBeeTrafficController tc = new XBeeTrafficController();
+        XBeeConnectionMemo memo = new XBeeConnectionMemo();
+        memo.setSystemPrefix("ABC");
+        memo.setSensorManager(new XBeeSensorManager(tc,"ABC"));
+        tc.setAdapterMemo(memo);
+        XBeeSensor s = new XBeeSensor("ABCS00 13 A2 00 40 A0 4D 2D:4","XBee Sensor Test",tc){ 
+           @Override
+           public void requestUpdateFromLayout(){}
+        }; 
         Assert.assertNotNull("exists",s);
     }
 
