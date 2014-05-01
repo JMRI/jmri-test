@@ -78,29 +78,33 @@ public class MrcTrafficController extends AbstractMRTrafficController
         return MrcMessage.getExitProgMode();
     }
 
-    /**
-     * static function returning the MrcTrafficController instance to use.
-     * @return The registered MrcTrafficController instance for general use,
-     *         if need be creating one.
-     */
-    static public MrcTrafficController instance() {
-        if (self == null) {
-            if (log.isDebugEnabled()) log.debug("creating a new MrcTrafficController object");
-            self = new MrcTrafficController();
-        }
-        return self;
-    }
-
-    static volatile protected MrcTrafficController self = null;
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
-                        justification="temporary until mult-system; only set at startup")
-    protected void setInstance() { self = this; }
-
     protected AbstractMRReply newReply() { return new MrcReply(); }
+    
+    /**
+     * instance use of the traffic controller is no longer used for multiple connections
+     */
+	@Deprecated
+    public void setInstance(){}
 
     protected boolean endOfMessage(AbstractMRReply msg) {
         // for now, _every_ character is a message
         return true;
+    }
+    
+    public void setAdapterMemo(MrcSystemConnectionMemo memo){
+        adaptermemo = memo;
+    }
+    
+    MrcSystemConnectionMemo adaptermemo;
+    
+    public String getUserName() { 
+        if(adaptermemo==null) return "MRC";
+        return adaptermemo.getUserName();
+    }
+    
+    public String getSystemPrefix() { 
+        if(adaptermemo==null) return "MR";
+        return adaptermemo.getSystemPrefix();
     }
 
     static Logger log = LoggerFactory.getLogger(MrcTrafficController.class.getName());

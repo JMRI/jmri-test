@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jmri.jmrix.mrc.MrcPortController;
 import jmri.jmrix.mrc.MrcTrafficController;
+import jmri.jmrix.mrc.MrcSystemConnectionMemo;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -29,7 +30,11 @@ import gnu.io.SerialPort;
 public class SerialDriverAdapter extends MrcPortController  implements jmri.jmrix.SerialPortAdapter {
 
     SerialPort activeSerialPort = null;
-
+    
+    public SerialDriverAdapter() {
+        setManufacturer(jmri.jmrix.DCCManufacturerList.MRC);
+        adaptermemo = new MrcSystemConnectionMemo();
+    }
 
     public String openPort(String portName, String appName)  {
         // open the port, check ability to set moderators
@@ -105,24 +110,13 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
      * station connected to this port
      */
     public void configure() {
-        // connect to the traffic controller
-        MrcTrafficController.instance().connectPort(this);
-
-/*         jmri.InstanceManager.setProgrammerManager( */
-/*                 new EasyDccProgrammerManager( */
-/*                     new EasyDccProgrammer())); */
-/*  */
-/*         jmri.InstanceManager.setPowerManager(new jmri.jmrix.easydcc.EasyDccPowerManager()); */
-/*  */
-/*         jmri.InstanceManager.setTurnoutManager(new jmri.jmrix.easydcc.EasyDccTurnoutManager()); */
-/*  */
-/* 		// KSL 20040409 - Create an instance of EasyDccThrottleManager  */
-/* 		jmri.InstanceManager.setThrottleManager(new jmri.jmrix.easydcc.EasyDccThrottleManager()); */
-/*  */
-/*         // Create an instance of the consist manager.  Make sure this  */
-/*         // happens AFTER the programmer manager to override the default  */
-/*         // consist manager.  */
-/*         jmri.InstanceManager.setConsistManager(new jmri.jmrix.easydcc.EasyDccConsistManager()); */
+        MrcTrafficController tc = new MrcTrafficController(); 
+        adaptermemo.setMrcTrafficController(tc);
+        tc.setAdapterMemo(adaptermemo);
+        
+        tc.connectPort(this);
+        
+        adaptermemo.configureManagers();
 
         jmri.jmrix.mrc.ActiveFlag.setActive();
     }
@@ -153,6 +147,7 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
      * Get an array of valid baud rates. 
      */
     public String[] validBaudRates() {
+        // Needs to be confirmed
         return new String[]{"9,600 bps", "19,200 bps", "38,400 bps", "57,600 bps"};
     }
 
@@ -160,24 +155,24 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
      * Return array of valid baud rates as integers.
      */
     public int[] validBaudNumber() {
+        // Needs to be confirmed
         return new int[]{9600, 19200, 38400, 57600};
     }
 
     // private control members
     private boolean opened = false;
     InputStream serialStream = null;
-
-    static public SerialDriverAdapter instance() {
-        if (mInstance == null) mInstance = new SerialDriverAdapter();
-        return mInstance;
+    
+    
+    
+    public MrcSystemConnectionMemo getSystemConnectionMemo() { return adaptermemo; }
+    
+    public void dispose(){
+        if (adaptermemo!=null)
+            adaptermemo.dispose();
+        adaptermemo = null;
     }
-    static SerialDriverAdapter mInstance = null;
     
-    String manufacturerName = jmri.jmrix.DCCManufacturerList.OTHER;
-    
-    public String getManufacturer() { return manufacturerName; }
-    public void setManufacturer(String manu) { manufacturerName=manu; }
-
     static Logger log = LoggerFactory.getLogger(SerialDriverAdapter.class.getName());
 
 }
