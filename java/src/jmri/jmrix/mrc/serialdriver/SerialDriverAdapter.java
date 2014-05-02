@@ -50,7 +50,7 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
 
             // try to set it for comunication via SerialDriver
             try {
-                activeSerialPort.setSerialPortParams(currentBaudNumber(getCurrentBaudRate()), SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+                activeSerialPort.setSerialPortParams(currentBaudNumber(getCurrentBaudRate()), SerialPort.DATABITS_8, SerialPort.STOPBITS_2, SerialPort.PARITY_ODD);
             } catch (gnu.io.UnsupportedCommOperationException e) {
                 log.error("Cannot set serial parameters on port "+portName+": "+e.getMessage());
                 return "Cannot set serial parameters on port "+portName+": "+e.getMessage();
@@ -148,7 +148,7 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
      */
     public String[] validBaudRates() {
         // Needs to be confirmed
-        return new String[]{"9,600 bps", "19,200 bps", "38,400 bps", "57,600 bps"};
+        return new String[]{"19,200 bps", "38,400 bps", "57,600 bps"};
     }
 
     /**
@@ -156,7 +156,7 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
      */
     public int[] validBaudNumber() {
         // Needs to be confirmed
-        return new int[]{9600, 19200, 38400, 57600};
+        return new int[]{19200, 38400, 57600};
     }
 
     // private control members

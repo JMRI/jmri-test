@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
     
     public MrcSystemConnectionMemo() {
-        super("N", "MRC");
+        super("MR", "MRC");
         register(); // registers general type
         InstanceManager.store(this, MrcSystemConnectionMemo.class); // also register as specific type
         
