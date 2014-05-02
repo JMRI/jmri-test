@@ -29,8 +29,14 @@ public class MrcTrafficController extends AbstractMRTrafficController
 
     public MrcTrafficController() {
         super();
+        setAllowUnexpectedReply(true);
     }
 
+    public void setCabNumber(int x){
+        cabAddress = x;
+    }
+    
+    int cabAddress = 0;
     // The methods to implement the MrcInterface
 
     public synchronized void addMrcListener(MrcListener l) {
@@ -88,7 +94,29 @@ public class MrcTrafficController extends AbstractMRTrafficController
 
     protected boolean endOfMessage(AbstractMRReply msg) {
         // for now, _every_ character is a message
-        return true;
+        if(msg.getElement(1)==0x01 && msg.getNumDataElements()>=6){
+            if(msg.getElement(0)==cabAddress){
+                //Need to use this to trigger sending any commands?
+            }
+            return true;
+        }
+        if(msg.getElement(1)==0x00 && msg.getNumDataElements()>=4){
+            msg.setUnsolicited();
+            return true;
+        }
+        return false;
+    }
+    
+        /**
+     * Add trailer to the outgoing byte stream.
+     * @param msg  The output byte stream
+     * @param offset the first byte not yet used
+     */
+    protected void addTrailerToOutput(byte[] msg, int offset, AbstractMRMessage m) {
+        //if (! m.isBinary()){
+            msg[offset] = 0x00;
+           // msg[offset+1] = 0x00;
+        //}
     }
     
     public void setAdapterMemo(MrcSystemConnectionMemo memo){
