@@ -78,10 +78,12 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
     }
 
     public synchronized void message(MrcMessage m) {  // receive a message and log it
-        /*if (m.isBinary())
-          	nextLine(mrcMon.displayMessage(m), m.toString());
-        else*/
-            nextLine("cmd: \""+m.toString()+"\"\n", null);
+	    String raw = "";
+	    for (int i=0;i<m.getNumDataElements(); i++) {
+	        if (i>0) raw+=" ";
+            raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
+        }
+            nextLine("cmd: \""+m.toString()+"\"\n", raw);
 	}
     
 	public synchronized void reply(MrcReply r) {  // receive a reply message and log it

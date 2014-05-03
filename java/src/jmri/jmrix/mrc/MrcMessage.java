@@ -2,6 +2,7 @@
 
 package jmri.jmrix.mrc;
 
+import jmri.jmrix.AbstractMRMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,64 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
 
     public boolean isEnableMain() {
         return getOpCode() == 'E';
+    }
+    
+    byte bytePre[];
+    
+    public void setByte(){
+        bytePre = new byte[lengthOfByteStream(this)];
+
+        // add data content
+        int len = getNumDataElements();
+        for (int i=0; i< len; i++)
+            bytePre[i] = (byte) this.getElement(i);
+        
+    }   
+    protected int lengthOfByteStream(AbstractMRMessage m) {
+        int len = m.getNumDataElements();
+        int cr = 0;
+        if (! m.isBinary()) cr = 1;  // space for return
+        return len+cr;
+    }
+    
+    
+    public byte[] getByte(){
+        return bytePre;
+    }
+    
+    boolean attention = false;
+    
+    public boolean getAttention(){
+        return attention;
+    }
+    
+    static public MrcMessage getSpeed(byte addressLo, byte addressHi, byte speed){
+        MrcMessage m = new MrcMessage(14);
+        m.setElement(0,0x25);
+        m.setElement(1,0x00);
+        m.setElement(2,0x25);
+        m.setElement(3,0x00);
+        m.setElement(4,addressHi);
+        m.setElement(5, 0x00);
+        m.setElement(6,addressLo);
+        m.setElement(7,0x00);
+        m.setElement(8,speed);
+        m.setElement(9,0x00);
+        m.setElement(10,0x02);
+        m.setElement(11,0x00);
+        m.setElement(12,0x00);
+        m.setElement(13,0x00);
+        return m;
+    }
+    
+    static public MrcMessage getAttention(byte cabAddress){
+        MrcMessage m = new MrcMessage(4);
+        m.setElement(0,cabAddress);
+        m.setElement(1,0x00);
+        m.setElement(2,cabAddress);
+        m.setElement(3,0x00);
+        m.attention = true;
+        return m;
     }
 
 

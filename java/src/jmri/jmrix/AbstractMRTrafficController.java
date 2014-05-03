@@ -47,7 +47,7 @@ abstract public class AbstractMRTrafficController {
     // this is a local variable, used here only;
     // it's not the instance() variable, which is static
     // and done in individual subclasses.
-    private AbstractMRTrafficController selfLock;  // this is needed for synchronization
+    protected AbstractMRTrafficController selfLock;  // this is needed for synchronization
     
     public AbstractMRTrafficController getSelfLock(){ return selfLock; }
     
@@ -590,7 +590,7 @@ abstract public class AbstractMRTrafficController {
         log.warn("sendMessage: Exception: port warn "+e.toString());
     }
 
-    boolean connectionError=false;
+    protected boolean connectionError=false;
     protected void portWarnTCP(Exception e) {
         log.warn("Exception java net: "+e.toString());
         connectionError=true;
