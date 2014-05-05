@@ -89,9 +89,15 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         m.setElement(9,0x00);
         m.setElement(10,0x02);
         m.setElement(11,0x00);
-        m.setElement(12,0x00);
+        m.setElement(12,getCheckSum(addressHi, addressLo, speed, (byte)0x02));
         m.setElement(13,0x00);
         return m;
+    }
+    
+    static byte getCheckSum(byte addressHi, byte addressLo, byte data1, byte data2){
+        byte address = (byte)(addressHi^addressLo);
+        byte data = (byte)(data1^data2);
+        return (byte)(address^data);
     }
     
     static public MrcMessage getAttention(byte cabAddress){

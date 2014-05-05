@@ -2,7 +2,6 @@
 
 package jmri.jmrix.mrc;
 
-import java.util.Calendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jmri.jmrix.AbstractMRListener;
@@ -102,8 +101,8 @@ public class MrcTrafficController extends AbstractMRTrafficController
     MrcMessage attention;
     synchronized protected void sendMessage(AbstractMRMessage m, AbstractMRListener reply) {
         //We only need to send the get attention once when we send a fresh command.
-        msgQueue.addLast(attention);
-        listenerQueue.addLast(reply);
+        //msgQueue.addLast(attention);
+        //listenerQueue.addLast(reply);
         ((MrcMessage)m).setByte();
         msgQueue.addLast(m);
         listenerQueue.addLast(reply);
@@ -118,17 +117,13 @@ public class MrcTrafficController extends AbstractMRTrafficController
         if(msg.getElement(1)==0x01 && msg.getNumDataElements()>=6){
             if(msg.getElement(0)==cabAddress){
                 waiting = true;
-                   /*synchronized (xmtRunnable) {
-    ommands?                   mCurrentState = NOTIFIEDSTATE;
-                       replyInDispatch = false;
-                       xmtRunnable.notify();
-                   }*/
-                //Need to use this to trigger sending any c
             }
+            ((MrcReply)msg).setPollMessage();
             return true;
         }
         if(mCurrentState == WAITMSGREPLYSTATE){
-            if(msg.getNumDataElements()==2)
+            log.info("waiting for reply");
+            if(msg.getNumDataElements()==4)
                 return true;
             return false;
         }
@@ -148,8 +143,9 @@ public class MrcTrafficController extends AbstractMRTrafficController
     
     boolean waiting = false;
     
+    byte[] noData = new byte[]{0x00,0x00,0x00,0x00};
+    
     protected void transmitLoop() {
-        log.info("Transmit loop");
         while(!connectionError) {
             MrcMessage m = null;
             AbstractMRListener l = null;
@@ -157,8 +153,6 @@ public class MrcTrafficController extends AbstractMRTrafficController
                 // check for something to do
                 //synchronized(selfLock) {
                     if (msgQueue.size()!=0) {
-                        log.info("transmit loop has something to do: "+m);
-                        // yes, something to do
                         m = (MrcMessage)msgQueue.getFirst();
                         l = listenerQueue.getFirst();
                         mLastSender = l;
@@ -168,20 +162,23 @@ public class MrcTrafficController extends AbstractMRTrafficController
                         } catch (Exception e) {
                             log.error("Unable to send");
                         }
-                        Runnable r = new XmtNotifier(m, mLastSender, this);
-                        javax.swing.SwingUtilities.invokeLater(r);
-                        //forwardToPort(m, l);
-                        
                         listenerQueue.removeFirst();
                         msgQueue.removeFirst();
                         mCurrentState = IDLESTATE;
                         if(!m.getAttention()){
-                            waiting = false;
                             mCurrentState = WAITMSGREPLYSTATE;
+                            waiting = false;
                         }
+                        Runnable r = new XmtNotifier(m, mLastSender, this);
+                        javax.swing.SwingUtilities.invokeLater(r);
                         
-                        
-                    } else { // release lock here to proceed in parallel
+                    } else { // release lock here to proceed
+                        try {
+                            ostream.write(noData);
+                            ostream.flush();
+                        } catch (Exception e) {
+                            log.error("Unable to send");
+                        }
                         waiting = false;
                         mCurrentState = IDLESTATE;
                    }
@@ -190,78 +187,8 @@ public class MrcTrafficController extends AbstractMRTrafficController
         }
 
     }
-    
-        synchronized protected void forwardToPort(AbstractMRMessage m, AbstractMRListener reply) {
-        if (log.isDebugEnabled()) log.debug("forwardToPort message: ["+m+"]");
-        // remember who sent this
-        mLastSender = reply;
-        
-        // forward the message to the registered recipients,
-        // which includes the communications monitor, except the sender.
-        // Schedule notification via the Swing event queue to ensure order
-        Runnable r = new XmtNotifier(m, mLastSender, this);
-        javax.swing.SwingUtilities.invokeLater(r);
-
-        // stream to port in single write, as that's needed by serial
-        byte msg[] = new byte[lengthOfByteStream(m)];
-        // add header
-        int offset = addHeaderToOutput(msg, m);
-
-        // add data content
-        int len = m.getNumDataElements();
-        for (int i=0; i< len; i++)
-            msg[i+offset] = (byte) m.getElement(i);
-        // add trailer
-        addTrailerToOutput(msg, len+offset, m);
-        // and stream the bytes
-        try {
-            if (ostream != null) {
-                if (log.isDebugEnabled()) {
-                    StringBuilder f = new StringBuilder("formatted message: ");
-                    for (int i = 0; i<msg.length; i++) {
-                        f.append(Integer.toHexString(0xFF&msg[i]));
-                        f.append(" ");
-                    }
-                    log.debug(new String(f));
-                }
-                while(m.getRetries()>=0) {
-                    if(portReadyToSend(controller)) {
-                        ostream.write(msg);
-                        ostream.flush();
-                        log.debug("written, msg timeout: "+m.getTimeout()+" mSec");
-                        break;
-                    } else if(m.getRetries()>=0) {
-                        if (log.isDebugEnabled()) {
-                            StringBuilder b = new StringBuilder("Retry message: ");
-                            b.append(m.toString());
-                            b.append(" attempts remaining: ");
-                            b.append(m.getRetries());
-                            log.debug(new String(b));
-                        }
-                        m.setRetries(m.getRetries() - 1);
-                        try {
-                            synchronized(xmtRunnable) {
-                                xmtRunnable.wait(m.getTimeout());
-                            }
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt(); // retain if needed later
-                            log.error("retry wait interupted");
-                        }
-                    } else log.warn("sendMessage: port not ready for data sending: " +java.util.Arrays.toString(msg));
-                }
-            } else {  // ostream is null
-                // no stream connected
-                connectionWarn();
-            }
-     } catch (Exception e) {
-        	// TODO Currently there's no port recovery if an exception occurs
-        	// must restart JMRI to clear xmtException.
-        	xmtException = true;
-            portWarn(e);
-        }
-     }
-    
-        /**
+       
+    /**
      * Add trailer to the outgoing byte stream.
      * @param msg  The output byte stream
      * @param offset the first byte not yet used

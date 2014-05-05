@@ -154,17 +154,15 @@ public class MrcThrottle extends AbstractThrottle{
         float oldSpeed = this.speedSetting;
 		this.speedSetting = speed;
         if (log.isDebugEnabled()) log.debug("setSpeedSetting= "+speed);
-        byte[] bl;
+        //byte[] bl;
         int value;
         
-        if (super.speedStepMode == SpeedStepMode128) {
+        //if (super.speedStepMode == SpeedStepMode128) {
             value = (int)((127-1)*speed);     // -1 for rescale to avoid estop
             if (value>0) value = value+1;  // skip estop
             if (value>127) value = 127;    // max possible speed
             if (value<0) value = 1;        // emergency stop
-            bl = jmri.NmraPacket.speedStep128Packet(address.getNumber(),
-                    address.isLongAddress(), value, isForward);
-        } else {
+        //} else {
 
                 /* [A Crosland 05Feb12] There is a potential issue in the way
                  * the float speed value is converted to integer speed step.
@@ -184,12 +182,13 @@ public class MrcThrottle extends AbstractThrottle{
                  * 		bl = jmri.NmraPacket.speedStep28Packet(true, address.getNumber(),
                  * 				address.isLongAddress(), value, isForward);
                  */
-            value = (int) ((28) * speed); // -1 for rescale to avoid estop
+        /*    value = (int) ((28) * speed); // -1 for rescale to avoid estop
             if (value > 0) value = value + 1; // skip estop
             if (value > 28) value = 28; // max possible speed
             if (value < 0)	value = 1; // emergency stop
-            bl = jmri.NmraPacket.speedStep28Packet(address.getNumber(),
-                    address.isLongAddress(), value, isForward);
+        }*/
+        if(isForward){
+            value = value+128;
         }
         MrcMessage m = MrcMessage.getSpeed(addressLo, addressHi, (byte)value);
         //MrcMessage m = MrcMessage.queuePacketMessage(tc, bl);

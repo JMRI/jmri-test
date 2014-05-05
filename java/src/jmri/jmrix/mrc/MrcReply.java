@@ -62,6 +62,14 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
 		}
 		return val;
 	}
+    
+    boolean poll = false;
+    
+    public void setPollMessage(){
+        poll = true;
+    }
+    
+    public boolean isPollMessage(){return poll;}
 
     static Logger log = LoggerFactory.getLogger(MrcReply.class.getName());
 
