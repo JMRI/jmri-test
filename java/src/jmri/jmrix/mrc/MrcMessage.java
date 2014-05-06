@@ -25,6 +25,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     // create a new one
     public  MrcMessage(int i) {
         super(i);
+        setRetries(2);
     }
 
     // copy one
@@ -52,7 +53,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
             this.setElement(i, packet[i]);
             i++;
         }
-        setRetries(1);
+        setRetries(2);
     }
     
     byte bytePre[];
@@ -95,7 +96,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         m.setElement(11,0x00);
         m.setElement(12,getCheckSum(addressHi, addressLo, speed, (byte)0x02));
         m.setElement(13,0x00);
-        m.setTimeout(30);
+        m.setTimeout(100);
         return m;
     }
     
@@ -113,7 +114,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         m.setElement(9,0x00);
         m.setElement(10,getCheckSum(addressHi, addressLo, function, (byte)0x00));
         m.setElement(11,0x00);
-        m.setTimeout(30);
+        m.setTimeout(100);
         return m;
     }
     
@@ -130,7 +131,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         byte cvHi = (byte)(cv>>8);
         
         MrcMessage m = new MrcMessage(10);
-        m.setBinary(false);
+        //m.setBinary(false);
         m.setTimeout(LONG_TIMEOUT);
         m.setNeededMode(jmri.jmrix.AbstractMRTrafficController.PROGRAMINGMODE);
         
@@ -141,11 +142,13 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         m.setElement(4, cvHi);
         m.setElement(5,0x00);
         m.setElement(6, cvLo);
-        m.setElement(7,0x00);
+        m.setElement(7, 0x00);
         m.setElement(8, getCheckSum((byte)0x00, (byte)0x00, cvHi, cvLo));
         m.setElement(9, 0x00);
         return m;
     }
+    
+    static protected final int LONG_TIMEOUT=65000;  // e.g. for programming options
 
 /* Bellow have been taken from the NCE Message left for the time being as examples */
     
@@ -325,8 +328,6 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         m.addIntAsTwoHex(val, 3);
         return m;
     }
-
-    static protected final int LONG_TIMEOUT=180000;  // e.g. for programming options
 
     static Logger log = LoggerFactory.getLogger(MrcMessage.class.getName());
 

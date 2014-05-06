@@ -166,12 +166,13 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
         MrcMessage msg = new MrcMessage();
         if (val < 0) {
             // read
-            if (_mode == Programmer.PAGEMODE)
+            return MrcMessage.getReadCV(cvnum);
+            /*if (_mode == Programmer.PAGEMODE)
                 return msg; //MrcMessage.getReadPagedCV(tc, cvnum);
             else if (_mode == Programmer.DIRECTBYTEMODE)
                 return msg; // MrcMessage.getReadDirectCV(tc, cvnum);
 			else
-                return msg; //MrcMessage.getReadRegister(tc, registerFromCV(cvnum));
+                return msg; //MrcMessage.getReadRegister(tc, registerFromCV(cvnum));*/
         } else {
             // write
             if (_mode == Programmer.PAGEMODE)

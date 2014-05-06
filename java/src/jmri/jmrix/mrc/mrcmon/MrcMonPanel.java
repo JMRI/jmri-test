@@ -99,6 +99,10 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
             previousPollMessage = r;
             return;
         } else if (previousPollMessage!=null) { //Only show the previous poll message if there is subsequent traffic resulting from the poll
+            if(r.getElement(0)==0x00 && r.getElement(1)==0x00 && r.getElement(1)==0x00 && r.getElement(2)==0x00){
+                previousPollMessage = null;
+                return;
+            }
             for (int i=0;i<previousPollMessage.getNumDataElements(); i++) {
                 if (i>0) raw+=" ";
                 raw = jmri.util.StringUtil.appendTwoHexFromInt(previousPollMessage.getElement(i)&0xFF, raw);

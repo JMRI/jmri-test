@@ -102,6 +102,7 @@ public class MrcTrafficController extends AbstractMRTrafficController
     synchronized protected void sendMessage(AbstractMRMessage m, AbstractMRListener reply) {
         //We only need to send the get attention once when we send a fresh command.
         if(m!=null){
+            log.info("Added " + m.toString());
             ((MrcMessage)m).setByte();
         }
         super.sendMessage(m, reply);
@@ -163,7 +164,7 @@ public class MrcTrafficController extends AbstractMRTrafficController
         
         if(msg.getElement(0)==0x66 && msg.getElement(1) ==0x00 && msg.getElement(2)==0x66 && msg.getElement(3)==0x00){
             //return of a programming packet
-            if(msg.getNumDataElements()>=16){
+            if(msg.getNumDataElements()>=8){
                 return true;
             }
             return false;
@@ -176,11 +177,20 @@ public class MrcTrafficController extends AbstractMRTrafficController
             }
             return false;
         }
+        if(msg.getElement(0) ==0x42 && msg.getElement(2)==0x42){
+            if(msg.getNumDataElements()>=8) return true;
+            return false;
+        }
+        if(msg.getElement(0) ==0x43 && msg.getElement(2)==0x43){
+            if(msg.getNumDataElements()>=10) return true;
+            return false;
+        }
         //Error occured during read
         if(msg.getNumDataElements()>=4){
             if(msg.getElement(0)==0xee && msg.getElement(2)==0xee){
                 return true;
             }
+
             if(msg.getElement(1)==0x00 && !waiting){
                 return true;
             }
@@ -205,15 +215,19 @@ public class MrcTrafficController extends AbstractMRTrafficController
                         mLastSender = l;
                         listenerQueue.removeFirst();
                         msgQueue.removeFirst();
-                        mCurrentState = WAITMSGREPLYSTATE;
                     }
                 }
             }
             while(waiting){
                 if(m!=null){
                     try {
+                        synchronized(selfLock) {
+                            mCurrentState = WAITMSGREPLYSTATE;
+                        }
+                        //log.info(""+m.getByte());
                         ostream.write(m.getByte());
                         ostream.flush();
+
                         Runnable r = new XmtNotifier(m, mLastSender, this);
                         javax.swing.SwingUtilities.invokeLater(r);
                         // reply expected?
@@ -224,8 +238,9 @@ public class MrcTrafficController extends AbstractMRTrafficController
                             checkReplyInDispatch();
                             if (mCurrentState == WAITMSGREPLYSTATE) {
                                 handleTimeout(m,l);
-                            } else if(mCurrentState == AUTORETRYSTATE) {
+                            } else if (mCurrentState == AUTORETRYSTATE && m.getRetries()>=0) {
                                  log.info("Message added back to queue: " + m.toString());
+                                 m.setRetries(m.getRetries() - 1);
                                  msgQueue.addFirst(m);
                                  listenerQueue.addFirst(l);
                                  synchronized (xmtRunnable) {

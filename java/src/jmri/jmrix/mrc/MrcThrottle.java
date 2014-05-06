@@ -243,9 +243,14 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
     protected void throttleDispose(){ finishRecord(); }
     
     public void reply(MrcReply m) {
-        if(m.isUnsolicited())
+        if(m.isUnsolicited() || m.isPollMessage())
             return;
-        log.info("Reply received " + m.toString());
+        String raw = "";
+        for (int i=0;i<m.getNumDataElements(); i++) {
+	        if (i>0) raw+=" ";
+            raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
+        }
+        log.info("Reply received " + raw);
         //need to work out the resend function for if the loco is also controlled by another handset.
     }
     
