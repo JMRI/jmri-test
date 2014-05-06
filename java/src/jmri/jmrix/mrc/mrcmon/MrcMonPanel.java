@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import jmri.jmrix.mrc.*;
 import jmri.jmrix.mrc.swing.*;
 import javax.swing.JOptionPane;
+import javax.swing.JCheckBox;
 
 
 public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListener, MrcPanelInterface{
@@ -66,7 +67,10 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
         }
     }
     
+    JCheckBox excludePoll = new JCheckBox("Exclude Poll Messages");
+    
     public void initComponents(MrcSystemConnectionMemo memo) {
+        add(excludePoll);
         this.memo = memo;
         // connect to the MrcTrafficController
         try {
@@ -86,18 +90,30 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
             nextLine("cmd: \""+m.toString()+"\"\n", raw);
 	}
     
+    MrcReply previousPollMessage;
+    
 	public synchronized void reply(MrcReply r) {  // receive a reply message and log it
-	    String raw = "";
+        String raw = "";
+        if(excludePoll.isSelected() && r.isPollMessage() && r.getElement(0) != memo.getMrcTrafficController().getCabNumber() && r.getElement(1)==0x01){
+            //Do not show poll messages for other devices
+            previousPollMessage = r;
+            return;
+        } else if (previousPollMessage!=null) { //Only show the previous poll message if there is subsequent traffic resulting from the poll
+            for (int i=0;i<previousPollMessage.getNumDataElements(); i++) {
+                if (i>0) raw+=" ";
+                raw = jmri.util.StringUtil.appendTwoHexFromInt(previousPollMessage.getElement(i)&0xFF, raw);
+            }
+            nextLine("msg: \""+previousPollMessage.toString()+"\"\n", raw);
+            raw = "";
+            previousPollMessage = null;
+        }
+	    
 	    for (int i=0;i<r.getNumDataElements(); i++) {
 	        if (i>0) raw+=" ";
             raw = jmri.util.StringUtil.appendTwoHexFromInt(r.getElement(i)&0xFF, raw);
         }
 	        
-	    //if (r.isUnsolicited()) {    
-            nextLine("msg: \""+r.toString()+"\"\n", raw);
-        /*} else {
-            nextLine(mrcMon.displayReply(r), raw);
-        }*/
+        nextLine("msg: \""+r.toString()+"\"\n", raw);
 	}
     
     /**

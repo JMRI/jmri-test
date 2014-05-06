@@ -49,8 +49,8 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
         //Do not want to return a programmer if the system is disabled
         if (getDisabled())
                 return null;
-        /*if (programmerManager == null)
-            programmerManager = new MrcProgrammerManager(new MrcProgrammer(getMrcTrafficController()), this);*/
+        if (programmerManager == null)
+            programmerManager = new MrcProgrammerManager(new MrcProgrammer(getMrcTrafficController()), this);
         return programmerManager;
     }
     public void setProgrammerManager(ProgrammerManager p) {
@@ -71,8 +71,8 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
     public boolean provides(Class<?> type) {
         if (getDisabled())
             return false;
-        /*if (type.equals(jmri.ProgrammerManager.class))
-            return true;*/
+        if (type.equals(jmri.ProgrammerManager.class))
+            return true;
         if (type.equals(jmri.ThrottleManager.class))
             return true;
         /*if (type.equals(jmri.PowerManager.class))
@@ -95,8 +95,8 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
     public <T> T get(Class<?> T) {
         if (getDisabled())
             return null;
-        /*if (T.equals(jmri.ProgrammerManager.class))
-            return (T)getProgrammerManager();*/
+        if (T.equals(jmri.ProgrammerManager.class))
+            return (T)getProgrammerManager();
         if (T.equals(jmri.ThrottleManager.class))
             return (T)getThrottleManager();
         /*if (T.equals(jmri.PowerManager.class))
@@ -133,16 +133,10 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
         throttleManager = new jmri.jmrix.mrc.MrcThrottleManager(this);
         InstanceManager.setThrottleManager(throttleManager);
         
-        /*if (getMrcUsbSystem() != MrcTrafficController.USB_SYSTEM_NONE) {
-            if (getMrcUsbSystem() != MrcTrafficController.USB_SYSTEM_POWERHOUSE) {
-                jmri.InstanceManager.setProgrammerManager(new MrcProgrammerManager(new MrcProgrammer(getMrcTrafficController()), this));
-            }
-        } else {
-            InstanceManager.setProgrammerManager(
-                getProgrammerManager());
-        }
+        InstanceManager.setProgrammerManager(
+            getProgrammerManager());
 
-        clockManager = new jmri.jmrix.mrc.MrcClockControl(getMrcTrafficController(), getSystemPrefix());
+        /*clockManager = new jmri.jmrix.mrc.MrcClockControl(getMrcTrafficController(), getSystemPrefix());
         InstanceManager.addClockControl(clockManager);
         
         consistManager = new jmri.jmrix.mrc.MrcConsistManager(this);
@@ -168,8 +162,8 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
 /*        if (powerManager != null) 
             InstanceManager.deregister(powerManager, jmri.jmrix.mrc.MrcPowerManager.class);
         if (turnoutManager != null) 
-            InstanceManager.deregister(turnoutManager, jmri.jmrix.mrc.MrcTurnoutManager.class);
-        if (throttleManager != null) */
+            InstanceManager.deregister(turnoutManager, jmri.jmrix.mrc.MrcTurnoutManager.class);*/
+        if (throttleManager != null)
             InstanceManager.deregister(throttleManager, jmri.jmrix.mrc.MrcThrottleManager.class);
         /*if (clockManager != null) 
             InstanceManager.deregister(clockManager, jmri.jmrix.mrc.MrcClockControl.class);

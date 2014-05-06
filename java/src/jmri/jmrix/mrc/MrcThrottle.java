@@ -2,6 +2,7 @@ package jmri.jmrix.mrc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jmri.Throttle;
 import jmri.LocoAddress;
 import jmri.DccLocoAddress;
 import jmri.jmrix.AbstractThrottle;
@@ -18,7 +19,7 @@ import jmri.jmrix.AbstractThrottle;
  * @author	Bob Jacobsen  Copyright (C) 2001
  * @version     $Revision: 25048 $
  */
-public class MrcThrottle extends AbstractThrottle{
+public class MrcThrottle extends AbstractThrottle implements MrcListener{
 
     private MrcTrafficController tc = null;
     
@@ -80,67 +81,98 @@ public class MrcThrottle extends AbstractThrottle{
     byte addressHi = 0x00;
 
     public LocoAddress getLocoAddress() { return address; }
+    
+    public void setF0(boolean f0) {
+    	boolean old = this.f0;
+        this.f0 = f0;
+        if (old != this.f0){
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x00);
+            tc.sendMrcMessage(m, this);
+            notifyPropertyChangeListener(Throttle.F0, old, this.f0 );
+        }
+    }
 
-    /**
-     * Send the message to set the state of functions F0, F1, F2, F3, F4.
-     */
-    protected void sendFunctionGroup1() {
-		setSpeedSetting(this.speedSetting);
-			byte[] result = jmri.NmraPacket.function0Through4Packet(address
-					.getNumber(), address.isLongAddress(), getF0(), getF1(),
-					getF2(), getF3(), getF4());
-			//MrcMessage m = MrcMessage.sendPacketMessage(tc, result);
-			//tc.sendMrcMessage(m, null);
-	}
+    public void setF1(boolean f1) {
+    	boolean old = this.f1;
+        this.f1 = f1;
+        if (old != this.f1){
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x01);
+            tc.sendMrcMessage(m, this);
+        	notifyPropertyChangeListener(Throttle.F1, old, this.f1 );
+        }
+    }
 
-    /**
-	 * Send the message to set the state of functions F5, F6, F7, F8.
-	 */
-	protected void sendFunctionGroup2() {
-		setSpeedSetting(this.speedSetting);
-        byte[] result = jmri.NmraPacket.function5Through8Packet(address
-                .getNumber(), address.isLongAddress(), getF5(), getF6(),
-                getF7(), getF8());
-        //MrcMessage m = MrcMessage.sendPacketMessage(tc, result);
-        //tc.sendMrcMessage(m, null);
-	}
+    public void setF2(boolean f2) {
+    	boolean old = this.f2;
+        this.f2 = f2;
+        if (old != this.f2) {
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x02);
+            tc.sendMrcMessage(m, this);
+        	notifyPropertyChangeListener(Throttle.F2, old, this.f2 );
+        }
+    }
 
-    /**
-	 * Send the message to set the state of functions F9, F10, F11, F12.
-	 */
-    protected void sendFunctionGroup3() {
-		setSpeedSetting(this.speedSetting);
-		byte[] result = jmri.NmraPacket.function9Through12Packet(address
-					.getNumber(), address.isLongAddress(), getF9(), getF10(),
-					getF11(), getF12());
-		//	MrcMessage m = MrcMessage.sendPacketMessage(tc, result);
-		//	tc.sendMrcMessage(m, null);
-	}
+    public void setF3(boolean f3) {
+    	boolean old = this.f3;
+        this.f3 = f3;
+        if (old != this.f3){
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x03);
+            tc.sendMrcMessage(m, this);
+        	notifyPropertyChangeListener(Throttle.F3, old, this.f3 );
+        }
+    }
 
-    /**
-	 * Send the message to set the state of functions F13, F14, F15, F16, F17, F18, F19, F20
-	 */
-    protected void sendFunctionGroup4() {
-		setSpeedSetting(this.speedSetting);
-			// Note MRC EPROM 2004 doesn't support LOCO_CMD_FG4
-			byte[] result = jmri.NmraPacket.function13Through20Packet(address
-					.getNumber(), address.isLongAddress(), getF13(), getF14(),
-					getF15(), getF16(), getF17(), getF18(), getF19(), getF20());
-		//	MrcMessage m = MrcMessage.sendPacketMessage(tc, result);
-		//	tc.sendMrcMessage(m, null);
-	}
+    public void setF4(boolean f4) {
+    	boolean old = this.f4;
+        this.f4 = f4;
+        if (old != this.f4){
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x04);
+            tc.sendMrcMessage(m, this);
+        	notifyPropertyChangeListener(Throttle.F4, old, this.f4 );
+        }
+    }
 
-    /**
-	 * Send the message to set the state of functions F21, F22, F23, F24, F25, F26, F27, F28
-	 */
-    protected void sendFunctionGroup5() {
-		setSpeedSetting(this.speedSetting);
-			byte[] result = jmri.NmraPacket.function21Through28Packet(address
-					.getNumber(), address.isLongAddress(), getF21(), getF22(),
-					getF23(), getF24(), getF25(), getF25(), getF27(), getF28());
-		//	MrcMessage m = MrcMessage.sendPacketMessage(tc, result);
-		//	tc.sendMrcMessage(m, null);
-	}
+    public void setF5(boolean f5) {
+    	boolean old = this.f5;
+        this.f5 = f5;
+        if (old != this.f5){
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x05);
+            tc.sendMrcMessage(m, this);
+        	notifyPropertyChangeListener(Throttle.F5, old, this.f5 );
+        }
+    }
+
+    public void setF6(boolean f6) {
+    	boolean old = this.f6;
+        this.f6 = f6;
+        if (old != this.f6){
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x06);
+            tc.sendMrcMessage(m, this);
+        	notifyPropertyChangeListener(Throttle.F6, old, this.f6 );
+        }
+    }
+
+    public void setF7(boolean f7) {
+    	boolean old = this.f7;
+        this.f7 = f7;
+        if (old != this.f7){
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x07);
+            tc.sendMrcMessage(m, this);
+        	notifyPropertyChangeListener(Throttle.F7, old, this.f7 );
+            
+        }
+    }
+
+    public void setF8(boolean f8) {
+    	boolean old = this.f8;
+        this.f8 = f8;
+        if (old != this.f8) {
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x08);
+            tc.sendMrcMessage(m, this);
+        	notifyPropertyChangeListener(Throttle.F8, old, this.f8 );
+            
+        }
+    }
 
     /**
 	 * Set the speed & direction.
@@ -190,9 +222,9 @@ public class MrcThrottle extends AbstractThrottle{
         if(isForward){
             value = value+128;
         }
-        MrcMessage m = MrcMessage.getSpeed(addressLo, addressHi, (byte)value);
+        MrcMessage m = MrcMessage.getSendSpeed(addressLo, addressHi, (byte)value);
         //MrcMessage m = MrcMessage.queuePacketMessage(tc, bl);
-        tc.sendMrcMessage(m, null);
+        tc.sendMrcMessage(m, this);
 
         if (oldSpeed != this.speedSetting)
             notifyPropertyChangeListener("SpeedSetting", oldSpeed, this.speedSetting );
@@ -209,7 +241,15 @@ public class MrcThrottle extends AbstractThrottle{
     }
 
     protected void throttleDispose(){ finishRecord(); }
-
+    
+    public void reply(MrcReply m) {
+        //need to work out the resend function for if the loco is also controlled by another handset.
+    }
+    
+    public void message(MrcMessage m) {
+        //System.out.println("Ecos message - "+ m);
+        // messages are ignored
+    }
     // initialize logging
     static Logger log = LoggerFactory.getLogger(MrcThrottle.class.getName());
 

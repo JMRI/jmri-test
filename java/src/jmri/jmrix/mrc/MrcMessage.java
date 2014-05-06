@@ -36,14 +36,23 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     public  MrcMessage(String m) {
         super(m);
     }
-
-    // diagnose format
-    public boolean isKillMain() {
-        return getOpCode() == 'K';
-    }
-
-    public boolean isEnableMain() {
-        return getOpCode() == 'E';
+    
+    /**
+     * Creates a new MrcMessage containing a byte array to represent
+     * a packet to output
+     * @param packet The contents of the packet
+     */
+    public MrcMessage(byte [] packet ) {
+    	this((packet.length));
+        int i = 0; // counter of byte in output message
+        int j = 0; // counter of byte in input packet
+        setBinary(true);
+        // add each byte of the input message
+        for (j=0; j<packet.length; j++) {
+            this.setElement(i, packet[i]);
+            i++;
+        }
+        setRetries(1);
     }
     
     byte bytePre[];
@@ -56,7 +65,8 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         for (int i=0; i< len; i++)
             bytePre[i] = (byte) this.getElement(i);
         
-    }   
+    }
+    
     protected int lengthOfByteStream(AbstractMRMessage m) {
         int len = m.getNumDataElements();
         int cr = 0;
@@ -69,13 +79,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         return bytePre;
     }
     
-    boolean attention = false;
-    
-    public boolean getAttention(){
-        return attention;
-    }
-    
-    static public MrcMessage getSpeed(byte addressLo, byte addressHi, byte speed){
+    static public MrcMessage getSendSpeed(byte addressLo, byte addressHi, byte speed){
         MrcMessage m = new MrcMessage(14);
         m.setElement(0,0x25);
         m.setElement(1,0x00);
@@ -91,8 +95,29 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         m.setElement(11,0x00);
         m.setElement(12,getCheckSum(addressHi, addressLo, speed, (byte)0x02));
         m.setElement(13,0x00);
+        m.setTimeout(30);
         return m;
     }
+    
+    static public MrcMessage getSendFunction(byte addressLo, byte addressHi, byte function){
+        MrcMessage m = new MrcMessage(12);
+        m.setElement(0,0x25);
+        m.setElement(1,0x00);
+        m.setElement(2,0x25);
+        m.setElement(3,0x00);
+        m.setElement(4,addressHi);
+        m.setElement(5, 0x00);
+        m.setElement(6,addressLo);
+        m.setElement(7,0x00);
+        m.setElement(8,function);
+        m.setElement(9,0x00);
+        m.setElement(10,getCheckSum(addressHi, addressLo, function, (byte)0x00));
+        m.setElement(11,0x00);
+        m.setTimeout(30);
+        return m;
+    }
+    
+    
     
     static byte getCheckSum(byte addressHi, byte addressLo, byte data1, byte data2){
         byte address = (byte)(addressHi^addressLo);
@@ -100,17 +125,39 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         return (byte)(address^data);
     }
     
-    static public MrcMessage getAttention(byte cabAddress){
-        MrcMessage m = new MrcMessage(4);
-        m.setElement(0,cabAddress);
-        m.setElement(1,0x00);
-        m.setElement(2,cabAddress);
-        m.setElement(3,0x00);
-        m.attention = true;
+    static public MrcMessage getReadCV(int cv) { //R xxx
+        byte cvLo = (byte)(cv);
+        byte cvHi = (byte)(cv>>8);
+        
+        MrcMessage m = new MrcMessage(10);
+        m.setBinary(false);
+        m.setTimeout(LONG_TIMEOUT);
+        m.setNeededMode(jmri.jmrix.AbstractMRTrafficController.PROGRAMINGMODE);
+        
+        m.setElement(0, 0x43);
+        m.setElement(1, 0x00);
+        m.setElement(2, 0x43);
+        m.setElement(3, 0x00);
+        m.setElement(4, cvHi);
+        m.setElement(5,0x00);
+        m.setElement(6, cvLo);
+        m.setElement(7,0x00);
+        m.setElement(8, getCheckSum((byte)0x00, (byte)0x00, cvHi, cvLo));
+        m.setElement(9, 0x00);
         return m;
     }
 
+/* Bellow have been taken from the NCE Message left for the time being as examples */
+    
+    // diagnose format
+    public boolean isKillMain() {
+        return getOpCode() == 'K';
+    }
 
+    public boolean isEnableMain() {
+        return getOpCode() == 'E';
+    }
+    
     // static methods to return a formatted message
     static public MrcMessage getEnableMain() {
         MrcMessage m = new MrcMessage(1);
@@ -125,7 +172,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         m.setOpCode('K');
         return m;
     }
-
+    
     /* 
      * get a static message to add a locomotive to a Standard Consist 
      * in the normal direction

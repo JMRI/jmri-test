@@ -424,7 +424,7 @@ abstract public class AbstractMRTrafficController {
     private static final int DISPATCH_WARNING_TIME = 12000; // report warning when max dispatch time exceeded
     private static final int WARN_NEXT_TIME = 1000;         // report every second
     
-    private void checkReplyInDispatch() {
+    protected void checkReplyInDispatch() {
         int loopCount = 0;
         while (replyInDispatch) {
             try {

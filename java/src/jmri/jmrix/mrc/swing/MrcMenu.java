@@ -47,7 +47,6 @@ public class MrcMenu extends JMenu {
             if (item == null) {
                 add(new javax.swing.JSeparator());
             } else {
-                System.out.println(item.name);
             	MrcNamedPaneAction a = new MrcNamedPaneAction( Bundle.getMessage(item.name), wi, item.load, memo);
                 add(a);
             }

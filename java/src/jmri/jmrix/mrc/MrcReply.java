@@ -70,7 +70,13 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
     }
     
     public boolean isPollMessage(){return poll;}
-
+    
+    public boolean isRetransmittableErrorMsg() {
+        if(getElement(0)==0xee && getElement(1)==0x00 && getElement(2)==0xee && getElement(3) ==0x00)
+            return true;
+        return false;
+    }
+    
     static Logger log = LoggerFactory.getLogger(MrcReply.class.getName());
 
 }

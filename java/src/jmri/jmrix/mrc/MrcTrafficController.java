@@ -31,18 +31,18 @@ public class MrcTrafficController extends AbstractMRTrafficController
 
     public MrcTrafficController() {
         super();
-        attention = MrcMessage.getAttention((byte)cabAddress);
-        attention.setByte();
         setAllowUnexpectedReply(true);
     }
 
     public void setCabNumber(int x){
         cabAddress = x;
-        attention = MrcMessage.getAttention((byte)cabAddress);
-        attention.setByte();
     }
     
     int cabAddress = 0;
+    
+    public int getCabNumber(){
+        return cabAddress;
+    }
     // The methods to implement the MrcInterface
 
     public synchronized void addMrcListener(MrcListener l) {
@@ -97,91 +97,150 @@ public class MrcTrafficController extends AbstractMRTrafficController
      */
 	@Deprecated
     public void setInstance(){}
-    
-    MrcMessage attention;
+
+//Test to see if we can use the standard sendMessage without causing too much delay.
     synchronized protected void sendMessage(AbstractMRMessage m, AbstractMRListener reply) {
         //We only need to send the get attention once when we send a fresh command.
-        //msgQueue.addLast(attention);
+        if(m!=null){
+            ((MrcMessage)m).setByte();
+        }
+        super.sendMessage(m, reply);
+        //msgQueue.addLast(m);
         //listenerQueue.addLast(reply);
-        ((MrcMessage)m).setByte();
-        msgQueue.addLast(m);
-        listenerQueue.addLast(reply);
-        log.info("Something in queue");
-        if(m!=null)
-            log.debug("just notified transmit thread with message " +m.toString());
     }
     
+    /* this is also used to classify the packet and notify the xmt when it can send a packet out*/
     protected boolean endOfMessage(AbstractMRReply msg) {
         waiting = false;
-        // for now, _every_ character is a message
-        if(msg.getElement(1)==0x01 && msg.getNumDataElements()>=6){
-            if(msg.getElement(0)==cabAddress){
+        //Poll message is put first as we need to react quickly to it.
+        if(msg.getElement(0)==cabAddress && msg.getElement(1)==0x01){
+            //Poll message for us
+            if(msg.getNumDataElements()>=6){
+                //triggers off the sending of a message
+                ((MrcReply)msg).setPollMessage();
                 waiting = true;
+                return true;
             }
-            ((MrcReply)msg).setPollMessage();
-            return true;
+            return false;
         }
+        if(msg.getElement(0)<=0x20 && msg.getElement(1)==0x01){
+            //Will have to see how this works out, if we are waiting for a reply and we recieve a poll message for another handset
+            //then we will have to resend the command.
+            if(mCurrentState == WAITMSGREPLYSTATE){
+                log.info("we have missed our send message window");
+                //Hope by setting the currentstate to autoretry then the transmit will pick this up and add the message back to the queue.
+                synchronized (xmtRunnable) {
+                    mCurrentState = AUTORETRYSTATE;
+                }
+            }
+            //Poll Message for cab addresses <31
+            if(msg.getNumDataElements()>=6){
+                ((MrcReply)msg).setPollMessage();
+                return true;
+            }
+            return false;
+        }
+
+        if(msg.getElement(0)==0x25 && msg.getElement(1) ==0x00 && msg.getElement(2)==0x25 && msg.getElement(3)==0x00){
+            //Thottle speed packet from another handset, need to wait until all is recieved
+            if(msg.getNumDataElements()>=14){
+                msg.setUnsolicited();
+                return true;
+            }
+            return false;
+        }
+        
+        if(msg.getElement(0)==0x66 && msg.getElement(1) ==0x00 && msg.getElement(2)==0x66 && msg.getElement(3)==0x00){
+            //return of a programming packet
+            if(msg.getNumDataElements()>=16){
+                msg.setUnsolicited();
+                return true;
+            }
+            return false;
+        }
+        
         if(mCurrentState == WAITMSGREPLYSTATE){
             log.info("waiting for reply");
             if(msg.getNumDataElements()==4)
                 return true;
             return false;
         }
-        if(msg.getElement(0)==0x25 && msg.getElement(1)==0x00){
-            //Thottle speed , need to wait until all is recieved
-            if(msg.getNumDataElements()>=14){
+        //Error occured during read
+        if(msg.getNumDataElements()>=4){
+            if(msg.getElement(0)==0xee && msg.getElement(2)==0xee){
+                //packet in error;
                 return true;
             }
-            return false;
-        } 
-        if(msg.getElement(1)==0x00 && msg.getNumDataElements()>=4){
-            msg.setUnsolicited();
-            return true;
+            if(msg.getElement(1)==0x00 && !waiting){
+                msg.setUnsolicited();
+                return true;
+            }
         }
+        
         return false;
     }
     
-    boolean waiting = false;
+    boolean waiting = false; //Trigger to say that we can send a message
     
     byte[] noData = new byte[]{0x00,0x00,0x00,0x00};
     
     protected void transmitLoop() {
+        MrcMessage m = null;
+        AbstractMRListener l = null;
         while(!connectionError) {
-            MrcMessage m = null;
-            AbstractMRListener l = null;
-            while(waiting){
-                // check for something to do
-                //synchronized(selfLock) {
+            //Get the message we are ready to send sorted so that when we are polled we can send it off straight away.
+            if(m==null){
+                synchronized(selfLock) {
                     if (msgQueue.size()!=0) {
                         m = (MrcMessage)msgQueue.getFirst();
                         l = listenerQueue.getFirst();
                         mLastSender = l;
-                        try {
-                            ostream.write(m.getByte());
-                            ostream.flush();
-                        } catch (Exception e) {
-                            log.error("Unable to send");
-                        }
                         listenerQueue.removeFirst();
                         msgQueue.removeFirst();
-                        mCurrentState = IDLESTATE;
-                        if(!m.getAttention()){
-                            mCurrentState = WAITMSGREPLYSTATE;
-                            waiting = false;
-                        }
+                        mCurrentState = WAITMSGREPLYSTATE;
+                    }
+                }
+            }
+            while(waiting){
+                if(m!=null){
+                    try {
+                        ostream.write(m.getByte());
+                        ostream.flush();
                         Runnable r = new XmtNotifier(m, mLastSender, this);
                         javax.swing.SwingUtilities.invokeLater(r);
-                        
-                    } else { // release lock here to proceed
-                        try {
-                            ostream.write(noData);
-                            ostream.flush();
-                        } catch (Exception e) {
-                            log.error("Unable to send");
+                        // reply expected?
+                        if (m.replyExpected()) {
+                            // wait for a reply, or eventually timeout
+                            // @todo Need to see if this works or not
+                            transmitWait(m.getTimeout(), WAITMSGREPLYSTATE, "transmitLoop interrupted");
+                            checkReplyInDispatch();
+                            if (mCurrentState == WAITMSGREPLYSTATE) {
+                                handleTimeout(m,l);
+                            } else if(mCurrentState == AUTORETRYSTATE) {
+                                 log.info("Message added back to queue: " + m.toString());
+                                 msgQueue.addFirst(m);
+                                 listenerQueue.addFirst(l);
+                                 synchronized (xmtRunnable) {
+                                       mCurrentState = IDLESTATE;
+                                 }
+                            } else {
+                                resetTimeout(m);
+                            }
                         }
-                        waiting = false;
-                        mCurrentState = IDLESTATE;
-                   }
+                        m = null;
+                    } catch (Exception e) {
+                        log.error("Unable to send");
+                    }
+                } else { //Nothing to send so tell master.
+                    try {
+                        ostream.write(noData);
+                        ostream.flush();
+                    } catch (Exception e) {
+                        log.error("Unable to send");
+                    }
+                    mCurrentState = IDLESTATE;
+                }
+                waiting = false;
             }
             
         }
@@ -195,7 +254,7 @@ public class MrcTrafficController extends AbstractMRTrafficController
      */
     protected void addTrailerToOutput(byte[] msg, int offset, AbstractMRMessage m) {
         //if (! m.isBinary()){
-            msg[offset] = 0x00;
+            //msg[offset] = 0x00;
            // msg[offset+1] = 0x00;
         //}
     }
