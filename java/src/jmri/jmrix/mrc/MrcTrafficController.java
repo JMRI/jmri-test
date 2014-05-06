@@ -109,8 +109,12 @@ public class MrcTrafficController extends AbstractMRTrafficController
         //listenerQueue.addLast(reply);
     }
     
+    boolean unsolicited = true; //Used to detemine if the messages received are a result of a message we sent out or not.
+    
     /* this is also used to classify the packet and notify the xmt when it can send a packet out*/
     protected boolean endOfMessage(AbstractMRReply msg) {
+        //We expect a minimum of two bytes for a reply.
+        if(msg.getNumDataElements()<2) return false;
         waiting = false;
         //Poll message is put first as we need to react quickly to it.
         if(msg.getElement(0)==cabAddress && msg.getElement(1)==0x01){
@@ -119,11 +123,14 @@ public class MrcTrafficController extends AbstractMRTrafficController
                 //triggers off the sending of a message
                 ((MrcReply)msg).setPollMessage();
                 waiting = true;
+                unsolicited = false; //Any recieved reply will be unsolicited (ie reply to a message we send) until the next poll is recieved.
                 return true;
             }
             return false;
         }
         if(msg.getElement(0)<=0x20 && msg.getElement(1)==0x01){
+            //Poll Message for cab addresses <31
+            unsolicited = true;
             //Will have to see how this works out, if we are waiting for a reply and we recieve a poll message for another handset
             //then we will have to resend the command.
             if(mCurrentState == WAITMSGREPLYSTATE){
@@ -133,18 +140,22 @@ public class MrcTrafficController extends AbstractMRTrafficController
                     mCurrentState = AUTORETRYSTATE;
                 }
             }
-            //Poll Message for cab addresses <31
+            
             if(msg.getNumDataElements()>=6){
+                msg.setUnsolicited();
                 ((MrcReply)msg).setPollMessage();
                 return true;
             }
             return false;
         }
-
+        
+        if(unsolicited){
+            msg.setUnsolicited();
+        }
+        
         if(msg.getElement(0)==0x25 && msg.getElement(1) ==0x00 && msg.getElement(2)==0x25 && msg.getElement(3)==0x00){
             //Thottle speed packet from another handset, need to wait until all is recieved
             if(msg.getNumDataElements()>=14){
-                msg.setUnsolicited();
                 return true;
             }
             return false;
@@ -153,7 +164,6 @@ public class MrcTrafficController extends AbstractMRTrafficController
         if(msg.getElement(0)==0x66 && msg.getElement(1) ==0x00 && msg.getElement(2)==0x66 && msg.getElement(3)==0x00){
             //return of a programming packet
             if(msg.getNumDataElements()>=16){
-                msg.setUnsolicited();
                 return true;
             }
             return false;
@@ -161,22 +171,20 @@ public class MrcTrafficController extends AbstractMRTrafficController
         
         if(mCurrentState == WAITMSGREPLYSTATE){
             log.info("waiting for reply");
-            if(msg.getNumDataElements()==4)
+            if(msg.getNumDataElements()==4){
                 return true;
+            }
             return false;
         }
         //Error occured during read
         if(msg.getNumDataElements()>=4){
             if(msg.getElement(0)==0xee && msg.getElement(2)==0xee){
-                //packet in error;
                 return true;
             }
             if(msg.getElement(1)==0x00 && !waiting){
-                msg.setUnsolicited();
                 return true;
             }
         }
-        
         return false;
     }
     
