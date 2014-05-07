@@ -26,35 +26,34 @@ public class MrcOpsModeProgrammer extends MrcProgrammer  {
     public MrcOpsModeProgrammer(MrcTrafficController tc, int pAddress, boolean pLongAddr) {
     	super(tc);
         log.debug("MRC ops mode programmer "+pAddress+" "+pLongAddr);
-        mAddress = pAddress;
-        mLongAddr = pLongAddr;
+        if(pLongAddr){
+            addressLo = pAddress;
+            addressHi = pAddress>>8;
+            addressHi = addressHi + 0xc0; //We add 0xc0 to the high byte.
+        } else {
+            addressLo = pAddress;
+        }
     }
+    
+    int addressLo = 0x00;
+    int addressHi = 0x00;
 
     /**
      * Forward a write request to an ops-mode write operation
      */
     public synchronized void writeCV(int CV, int val, ProgListener p) throws ProgrammerException {
         if (log.isDebugEnabled()) log.debug("write CV="+CV+" val="+val);
-        MrcMessage msg = new MrcMessage();
-        // USB can't send a NMRA packet, must use new ops mode command
-			// create the message and fill it,
-			byte[] contents = NmraPacket.opsCvWriteByte(mAddress, mLongAddr,
-					CV, val);
-			if (contents == null)
-				throw new ProgrammerException();
-//			msg = MrcMessage.sendPacketMessage(tc, contents, 5);	// retry 5 times
-        // record state. COMMANDSENT is just waiting for a reply...
+        MrcMessage msg = MrcMessage.getPOM(addressLo, addressHi,CV, val);
+        
         useProgrammer(p);
         _progRead = false;
-        progState = COMMANDSENT_2;
+        progState = POMCOMMANDSENT;
         _val = val;
         _cv = CV;
-
+        
         // start the error timer
         startShortTimer();
-
-        // send it twice (2x5) so MRC CS will send at least two consecutive commands to decoder
-        tc.sendMrcMessage(msg, this);
+        
         tc.sendMrcMessage(msg, this);
     }
 

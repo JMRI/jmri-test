@@ -34,8 +34,8 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
     protected int _mode = Programmer.PAGEMODE;
 
     /**
-     * Switch to a new programming mode.  Note that MRC can only
-     * doesn't support the setting of mode the command station works it out.
+     * Switch to a new programming mode.  Note that MRC 
+     * doesn't support the setting of mode, the command station works it out.
      * @param mode The new mode, use values from the jmri.Programmer interface
      */
     public void setMode(int mode) {
@@ -92,8 +92,9 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
 
     int progState = 0;
     static final int NOTPROGRAMMING = 0;// is notProgramming
-    static final int COMMANDSENT = 2; 	// read/write command sent, waiting reply
-    static final int COMMANDSENT_2 = 4;	// ops programming mode, send msg twice
+    static final int READCOMMANDSENT = 2; 	// read command sent, waiting reply
+    static final int WRITECOMMANDSENT = 4; // POM write command sent 
+    static final int POMCOMMANDSENT = 6;	// ops programming mode, send msg twice
     boolean  _progRead = false;
     int _val;	// remember the value being read/written for confirmative reply
     int _cv;	// remember the cv being read/written
@@ -104,7 +105,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
         useProgrammer(p);
         _progRead = false;
         // set state
-        progState = COMMANDSENT;
+        progState = WRITECOMMANDSENT;
         _val = val;
         _cv = CV;
 
@@ -129,7 +130,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
         _progRead = true;
 
         // set commandPending state
-        progState = COMMANDSENT;
+        progState = READCOMMANDSENT;
         _cv = CV;
 
         try {
@@ -163,24 +164,11 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
     /* todo MRC doesn't set the porg mode the command station sorts it out.*/
     protected MrcMessage progTaskStart(int mode, int val, int cvnum) throws jmri.ProgrammerException {
         // val = -1 for read command; mode is direct, etc
-        MrcMessage msg = new MrcMessage();
         if (val < 0) {
             // read
             return MrcMessage.getReadCV(cvnum);
-            /*if (_mode == Programmer.PAGEMODE)
-                return msg; //MrcMessage.getReadPagedCV(tc, cvnum);
-            else if (_mode == Programmer.DIRECTBYTEMODE)
-                return msg; // MrcMessage.getReadDirectCV(tc, cvnum);
-			else
-                return msg; //MrcMessage.getReadRegister(tc, registerFromCV(cvnum));*/
         } else {
-            // write
-            if (_mode == Programmer.PAGEMODE)
-                return msg; //MrcMessage.getWritePagedCV(tc, cvnum, val);
-            else if (_mode == Programmer.DIRECTBYTEMODE)
-                return msg;//MrcMessage.getWriteDirectCV(tc, cvnum, val);
-            else
-                return msg; //MrcMessage.getWriteRegister(tc, registerFromCV(cvnum), val);
+            return MrcMessage.getWriteCV((byte)cvnum, (byte)val);
         }
     }
 
@@ -193,33 +181,26 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
             // we get the complete set of replies now, so ignore these
             if (log.isDebugEnabled()) log.debug("reply in NOTPROGRAMMING state");
             return;
-        } else if (progState == COMMANDSENT) {
-            if (log.isDebugEnabled()) log.debug("reply in COMMANDSENT state");
-            // operation done, capture result, then post response
-            progState = NOTPROGRAMMING;
-            // check for errors
-            if ((m.match("NO FEEDBACK DETECTED") >= 0) 
-                    || (m.isBinary() && !_progRead && (m.getElement(0) != '!'))
-                    || (m.isBinary() && _progRead && (m.getElement(1) != '!'))) {
-                if (log.isDebugEnabled()) log.debug("handle NO FEEDBACK DETECTED");
-                // perhaps no loco present? Fail back to end of programming
-                notifyProgListenerEnd(_val, jmri.ProgListener.NoLocoDetected);
+        }
+        if(MrcReply.startsWith(m, MrcReply.badCmdRecieved)){
+            //Command station rejected packet
+            notifyProgListenerEnd(_val, jmri.ProgListener.CommError);
+        }
+        if(MrcReply.startsWith(m, MrcReply.goodCmdRecieved)){
+            //Wait for the confirmation.
+            return;
+        } else if (MrcReply.startsWith(m, MrcReply.progCmdSent)){
+            notifyProgListenerEnd(_val, jmri.ProgListener.OK);
+        } else if (progState == READCOMMANDSENT) {
+            //Currently we have no way to know if the write was sucessful or not.
+            if (_progRead) {
+                // read was in progress - get return value
+                _val = m.value();
             }
-            else {
-                // see why waiting
-                if (_progRead) {
-                    // read was in progress - get return value
-                    _val = m.value();
-                }
-                // if this was a read, we retrieved the value above.  If its a
-                // write, we're to return the original write value
-                notifyProgListenerEnd(_val, jmri.ProgListener.OK);
-            }
+            // if this was a read, we retrieved the value above.  If its a
+            // write, we're to return the original write value
+            notifyProgListenerEnd(_val, jmri.ProgListener.OK);
         
-        } else if (progState == COMMANDSENT_2) {
-            if (log.isDebugEnabled()) log.debug("first reply in COMMANDSENT_2 state");
-            // first message sent, now wait for second reply to arrive
-            progState = COMMANDSENT;
         } else {
             if (log.isDebugEnabled()) log.debug("reply in un-decoded state");
         }

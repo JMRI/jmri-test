@@ -67,18 +67,18 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         this.address      = address;
         this.isForward    = true;
         if(address.isLongAddress()){
-            addressLo = (byte)(address.getNumber());
-            addressHi = (byte)(address.getNumber()>>8);
-            addressHi = (byte)(addressHi + 0xc0); //We add 0xc0 to the high byte.
+            addressLo = address.getNumber();
+            addressHi = address.getNumber()>>8;
+            addressHi = addressHi + 0xc0; //We add 0xc0 to the high byte.
         } else {
-            addressLo = (byte) address.getNumber();
+            addressLo = address.getNumber();
         }
     }
 
     DccLocoAddress address;
     
-    byte addressLo = 0x00;
-    byte addressHi = 0x00;
+    int addressLo = 0x00;
+    int addressHi = 0x00;
 
     public LocoAddress getLocoAddress() { return address; }
     
@@ -86,7 +86,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
     	boolean old = this.f0;
         this.f0 = f0;
         if (old != this.f0){
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x00);
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x00);
             tc.sendMrcMessage(m, this);
             notifyPropertyChangeListener(Throttle.F0, old, this.f0 );
         }
@@ -96,7 +96,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
     	boolean old = this.f1;
         this.f1 = f1;
         if (old != this.f1){
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x01);
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x01);
             tc.sendMrcMessage(m, this);
         	notifyPropertyChangeListener(Throttle.F1, old, this.f1 );
         }
@@ -106,7 +106,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
     	boolean old = this.f2;
         this.f2 = f2;
         if (old != this.f2) {
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x02);
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x02);
             tc.sendMrcMessage(m, this);
         	notifyPropertyChangeListener(Throttle.F2, old, this.f2 );
         }
@@ -116,7 +116,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
     	boolean old = this.f3;
         this.f3 = f3;
         if (old != this.f3){
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x03);
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x03);
             tc.sendMrcMessage(m, this);
         	notifyPropertyChangeListener(Throttle.F3, old, this.f3 );
         }
@@ -126,7 +126,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
     	boolean old = this.f4;
         this.f4 = f4;
         if (old != this.f4){
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x04);
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x04);
             tc.sendMrcMessage(m, this);
         	notifyPropertyChangeListener(Throttle.F4, old, this.f4 );
         }
@@ -136,7 +136,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
     	boolean old = this.f5;
         this.f5 = f5;
         if (old != this.f5){
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x05);
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x05);
             tc.sendMrcMessage(m, this);
         	notifyPropertyChangeListener(Throttle.F5, old, this.f5 );
         }
@@ -146,7 +146,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
     	boolean old = this.f6;
         this.f6 = f6;
         if (old != this.f6){
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x06);
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x06);
             tc.sendMrcMessage(m, this);
         	notifyPropertyChangeListener(Throttle.F6, old, this.f6 );
         }
@@ -156,7 +156,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
     	boolean old = this.f7;
         this.f7 = f7;
         if (old != this.f7){
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x07);
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x07);
             tc.sendMrcMessage(m, this);
         	notifyPropertyChangeListener(Throttle.F7, old, this.f7 );
             
@@ -167,7 +167,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
     	boolean old = this.f8;
         this.f8 = f8;
         if (old != this.f8) {
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, (byte)0x08);
+            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x08);
             tc.sendMrcMessage(m, this);
         	notifyPropertyChangeListener(Throttle.F8, old, this.f8 );
             
@@ -222,7 +222,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         if(isForward){
             value = value+128;
         }
-        MrcMessage m = MrcMessage.getSendSpeed(addressLo, addressHi, (byte)value);
+        MrcMessage m = MrcMessage.getSendSpeed(addressLo, addressHi, value);
         //MrcMessage m = MrcMessage.queuePacketMessage(tc, bl);
         tc.sendMrcMessage(m, this);
 
@@ -242,6 +242,8 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
 
     protected void throttleDispose(){ finishRecord(); }
     
+    //Might need to look at other packets from handsets to see if they also have control of our loco and adjust from that.
+    
     public void reply(MrcReply m) {
         if(m.isUnsolicited() || m.isPollMessage())
             return;
@@ -251,7 +253,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
             raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
         }
         log.info("Reply received " + raw);
-        //need to work out the resend function for if the loco is also controlled by another handset.
+        //need to work out the resend function for if the loco is also controlled by another handset. - Might get done in the MrcTrafficController.
     }
     
     public void message(MrcMessage m) {

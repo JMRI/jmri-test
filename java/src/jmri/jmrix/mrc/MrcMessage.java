@@ -7,13 +7,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Encodes a message to an EasyDCC command station.  The MrcReply
+ * Encodes a message to an MRC command station.  The MrcReply
  * class handles the response from the command station.
  * <P>
  * The {@link MrcReply}
  * class handles the response from the command station.
- *
+ * <p>
+ * Some of the message formats used in this class are Copyright MRC, Inc.
+ * and used with permission as part of the JMRI project.  That permission
+ * does not extend to uses in other software products.  If you wish to
+ * use this code, algorithm or these message formats outside of JMRI, please
+ * contact MRC Inc for separate permission.
+ * <p>
  * @author			Bob Jacobsen  Copyright (C) 2001, 2004
+ * @author      Kevin Dickerson    Copyright (C) 2014
+ * @author		kcameron Copyright (C) 2014
  * @version			$Revision$
  */
 public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
@@ -34,9 +42,9 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     }
 
     // from String
-    public  MrcMessage(String m) {
+    /*public  MrcMessage(String m) {
         super(m);
-    }
+    }*/
     
     /**
      * Creates a new MrcMessage containing a byte array to represent
@@ -64,7 +72,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         // add data content
         int len = getNumDataElements();
         for (int i=0; i< len; i++)
-            bytePre[i] = (byte) this.getElement(i);
+            bytePre[i] = (byte)this.getElement(i);
         
     }
     
@@ -76,75 +84,119 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     }
     
     
-    public byte[] getByte(){
+    protected byte[] getByte(){
         return bytePre;
     }
     
-    static public MrcMessage getSendSpeed(byte addressLo, byte addressHi, byte speed){
-        MrcMessage m = new MrcMessage(14);
-        m.setElement(0,0x25);
-        m.setElement(1,0x00);
-        m.setElement(2,0x25);
-        m.setElement(3,0x00);
-        m.setElement(4,addressHi);
-        m.setElement(5, 0x00);
-        m.setElement(6,addressLo);
-        m.setElement(7,0x00);
-        m.setElement(8,speed);
-        m.setElement(9,0x00);
-        m.setElement(10,0x02);
-        m.setElement(11,0x00);
-        m.setElement(12,getCheckSum(addressHi, addressLo, speed, (byte)0x02));
-        m.setElement(13,0x00);
+    int putHeader(int[] insert){
+        int i = 0;
+        for (i=0; i<insert.length; i++) {
+            this.setElement(i, insert[i]);
+        }
+        return i;
+    }
+    
+    final protected static int[] throttlePacketHeader = new int[]{0x25,0x00,0x25,0x00};
+    final protected static int[] functionPacketHeader = new int[]{0x34,0x00,0x34,0x00};
+    final protected static int[] readCVHeader = new int[]{0x43,0x00,0x43,0x00};
+    final protected static int[] readDecoderAddress = new int[]{0x42,0x00,0x42,0x00,0x42,0x00};
+    final protected static int[] writeCVPROGHeader = new int[]{0x24,0x00,0x24,0x00};
+    final protected static int[] writeCVPOMHeader = new int[]{0x56,0x00,0x56,0x00};
+    
+    static public MrcMessage getSendSpeed(int addressLo, int addressHi, int speed){
+        MrcMessage m = new MrcMessage(throttlePacketHeader.length+10);
+        int i = m.putHeader(throttlePacketHeader);
+        
+        m.setElement(i++,addressHi);
+        m.setElement(i++, 0x00);
+        m.setElement(i++,addressLo);
+        m.setElement(i++,0x00);
+        m.setElement(i++,speed);
+        m.setElement(i++,0x00);
+        m.setElement(i++,0x02);
+        m.setElement(i++,0x00);
+        m.setElement(i++,getCheckSum(addressHi, addressLo, speed, 0x02));
+        m.setElement(i++,0x00);
         m.setTimeout(100);
         return m;
     }
     
-    static public MrcMessage getSendFunction(byte addressLo, byte addressHi, byte function){
-        MrcMessage m = new MrcMessage(12);
-        m.setElement(0,0x25);
-        m.setElement(1,0x00);
-        m.setElement(2,0x25);
-        m.setElement(3,0x00);
-        m.setElement(4,addressHi);
-        m.setElement(5, 0x00);
-        m.setElement(6,addressLo);
-        m.setElement(7,0x00);
-        m.setElement(8,function);
-        m.setElement(9,0x00);
-        m.setElement(10,getCheckSum(addressHi, addressLo, function, (byte)0x00));
-        m.setElement(11,0x00);
+    static public MrcMessage getSendFunction(int addressLo, int addressHi, int function){
+        MrcMessage m = new MrcMessage(functionPacketHeader.length+8);
+        int i = m.putHeader(functionPacketHeader);
+
+        m.setElement(i++,addressHi);
+        m.setElement(i++, 0x00);
+        m.setElement(i++,addressLo);
+        m.setElement(i++,0x00);
+        m.setElement(i++,function);
+        m.setElement(i++,0x00);
+        m.setElement(i++,getCheckSum(addressHi, addressLo, function, 0x00));
+        m.setElement(i++,0x00);
         m.setTimeout(100);
         return m;
     }
     
     
     
-    static byte getCheckSum(byte addressHi, byte addressLo, byte data1, byte data2){
-        byte address = (byte)(addressHi^addressLo);
-        byte data = (byte)(data1^data2);
-        return (byte)(address^data);
+    static int getCheckSum(int addressHi, int addressLo, int data1, int data2){
+        int address = addressHi^addressLo;
+        int data = data1^data2;
+        return (address^data);
     }
     
     static public MrcMessage getReadCV(int cv) { //R xxx
-        byte cvLo = (byte)(cv);
-        byte cvHi = (byte)(cv>>8);
+        int cvLo = (cv);
+        int cvHi = (cv>>8);
         
-        MrcMessage m = new MrcMessage(10);
-        //m.setBinary(false);
+        MrcMessage m = new MrcMessage(readCVHeader.length+6);
         m.setTimeout(LONG_TIMEOUT);
         m.setNeededMode(jmri.jmrix.AbstractMRTrafficController.PROGRAMINGMODE);
+        int i = m.putHeader(readCVHeader);
+
+        m.setElement(i++, cvHi);
+        m.setElement(i++,0x00);
+        m.setElement(i++, cvLo);
+        m.setElement(i++, 0x00);
+        m.setElement(i++, getCheckSum(0x00, 0x00, cvHi, cvLo));
+        m.setElement(i++, 0x00);
+        return m;
+    }
+    
+    static public MrcMessage getPOM(int addressLo, int addressHi, int cv, int val){
+        MrcMessage m = new MrcMessage(writeCVPOMHeader.length+12);
+        int i = m.putHeader(writeCVPOMHeader);
+        cv--;
+        m.setElement(i++,addressHi);
+        m.setElement(i++, 0x00);
+        m.setElement(i++,addressLo);
+        m.setElement(i++,0x00);
+        m.setElement(i++, 0xEC);
+        m.setElement(i++,0x00);
+        m.setElement(i++, cv);
+        m.setElement(i++, 0x00);
+        m.setElement(i++, val);
+        m.setElement(i++, 0x00);
+        int checksum = getCheckSum(addressHi, addressLo, 0xEC, cv);
+        checksum = getCheckSum(checksum, val, 0x00, 0x00);
+        m.setElement(i++, checksum);
+        return m;
+    }
+    
+    static public MrcMessage getWriteCV(int cv, int val){
+        MrcMessage m = new MrcMessage(writeCVPROGHeader.length+8);
+        int i = m.putHeader(writeCVPROGHeader);
         
-        m.setElement(0, 0x43);
-        m.setElement(1, 0x00);
-        m.setElement(2, 0x43);
-        m.setElement(3, 0x00);
-        m.setElement(4, cvHi);
-        m.setElement(5,0x00);
-        m.setElement(6, cvLo);
-        m.setElement(7, 0x00);
-        m.setElement(8, getCheckSum((byte)0x00, (byte)0x00, cvHi, cvLo));
-        m.setElement(9, 0x00);
+        int cvLo = cv;
+        int cvHi = cv>>8;
+        
+        m.setElement(i++, cvHi);
+        m.setElement(i++,0x00);
+        m.setElement(i++, cvLo);
+        m.setElement(i++, 0x00);
+        m.setElement(i++, val);
+        m.setElement(i++, 0x00);
+        m.setElement(i++, getCheckSum(cvHi, cvLo, val, 0x00));
         return m;
     }
     

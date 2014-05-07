@@ -102,7 +102,12 @@ public class MrcTrafficController extends AbstractMRTrafficController
     synchronized protected void sendMessage(AbstractMRMessage m, AbstractMRListener reply) {
         //We only need to send the get attention once when we send a fresh command.
         if(m!=null){
-            log.info("Added " + m.toString());
+            String raw = "";
+            for (int i=0;i<m.getNumDataElements(); i++) {
+                if (i>0) raw+=" ";
+                raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
+            }
+            log.info("Added " + raw);
             ((MrcMessage)m).setByte();
         }
         super.sendMessage(m, reply);
@@ -154,7 +159,8 @@ public class MrcTrafficController extends AbstractMRTrafficController
             msg.setUnsolicited();
         }
         
-        if(msg.getElement(0)==0x25 && msg.getElement(1) ==0x00 && msg.getElement(2)==0x25 && msg.getElement(3)==0x00){
+        //if(msg.getElement(0)==0x25 && msg.getElement(1) ==0x00 && msg.getElement(2)==0x25 && msg.getElement(3)==0x00){
+        if(MrcReply.startsWith(msg, MrcMessage.throttlePacketHeader)){
             //Thottle speed packet from another handset, need to wait until all is recieved
             if(msg.getNumDataElements()>=14){
                 return true;
@@ -162,7 +168,8 @@ public class MrcTrafficController extends AbstractMRTrafficController
             return false;
         }
         
-        if(msg.getElement(0)==0x66 && msg.getElement(1) ==0x00 && msg.getElement(2)==0x66 && msg.getElement(3)==0x00){
+        //if(msg.getElement(0)==0x66 && msg.getElement(1) ==0x00 && msg.getElement(2)==0x66 && msg.getElement(3)==0x00){
+        if(MrcReply.startsWith(msg, MrcReply.readCVHeaderReply)){
             //return of a programming packet
             if(msg.getNumDataElements()>=8){
                 return true;
@@ -177,17 +184,36 @@ public class MrcTrafficController extends AbstractMRTrafficController
             }
             return false;
         }
-        if(msg.getElement(0) ==0x42 && msg.getElement(2)==0x42){
+        if(MrcReply.startsWith(msg, MrcMessage.readDecoderAddress)){
+        //if(msg.getElement(0) ==0x42 && msg.getElement(2)==0x42){
             if(msg.getNumDataElements()>=8) return true;
             return false;
         }
-        if(msg.getElement(0) ==0x43 && msg.getElement(2)==0x43){
+        if(MrcReply.startsWith(msg, MrcMessage.readCVHeader)){
+        //if(msg.getElement(0) ==0x43 && msg.getElement(2)==0x43){
             if(msg.getNumDataElements()>=10) return true;
+            return false;
+        }
+        if(MrcReply.startsWith(msg, MrcMessage.writeCVPROGHeader)){
+            if(msg.getNumDataElements()>=12) return true;
+            return false;
+        }
+        if(MrcReply.startsWith(msg, MrcMessage.writeCVPOMHeader)){
+            if(msg.getNumDataElements()>=16) return true;
+            return false;
+        }
+        if(MrcReply.startsWith(msg, MrcMessage.functionPacketHeader)){
+            if(msg.getNumDataElements()>=12) return true;
             return false;
         }
         //Error occured during read
         if(msg.getNumDataElements()>=4){
-            if(msg.getElement(0)==0xee && msg.getElement(2)==0xee){
+            if(MrcReply.startsWith(msg, MrcReply.locoDblControl)){
+                //A loco that is also under the control of another handset requires us to send the command a second time round, so hopefully this will trigger it.
+                mCurrentState = AUTORETRYSTATE;
+                return true;
+            }
+            if(MrcReply.startsWith(msg, MrcReply.badCmdRecieved)){
                 return true;
             }
 
@@ -195,6 +221,9 @@ public class MrcTrafficController extends AbstractMRTrafficController
                 return true;
             }
         }
+        //For some reason we see the odd two byte packet that doesn't match anything we know about, so at this stage ignore it.
+        if(msg.getNumDataElements()==2 && (msg.getElement(1)!=0x00 || msg.getElement(1)!=0x01))
+            return true;
         return false;
     }
     
