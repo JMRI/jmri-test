@@ -107,12 +107,9 @@ public class MrcTrafficController extends AbstractMRTrafficController
                 if (i>0) raw+=" ";
                 raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
             }
-            log.info("Added " + raw);
             ((MrcMessage)m).setByte();
         }
         super.sendMessage(m, reply);
-        //msgQueue.addLast(m);
-        //listenerQueue.addLast(reply);
     }
     
     boolean unsolicited = true; //Used to detemine if the messages received are a result of a message we sent out or not.
@@ -170,15 +167,15 @@ public class MrcTrafficController extends AbstractMRTrafficController
         
         //if(msg.getElement(0)==0x66 && msg.getElement(1) ==0x00 && msg.getElement(2)==0x66 && msg.getElement(3)==0x00){
         if(MrcReply.startsWith(msg, MrcReply.readCVHeaderReply)){
-            //return of a programming packet
+            //return of a read programming packet
             if(msg.getNumDataElements()>=8){
                 return true;
             }
             return false;
         }
-        
+               
         if(mCurrentState == WAITMSGREPLYSTATE){
-            log.info("waiting for reply");
+            //log.info("waiting for reply");
             if(msg.getNumDataElements()==4){
                 return true;
             }
@@ -190,6 +187,7 @@ public class MrcTrafficController extends AbstractMRTrafficController
             return false;
         }
         if(MrcReply.startsWith(msg, MrcMessage.readCVHeader)){
+            if(msg.isUnsolicited()) log.info("Good read marked as unsolicited");
         //if(msg.getElement(0) ==0x43 && msg.getElement(2)==0x43){
             if(msg.getNumDataElements()>=10) return true;
             return false;
@@ -221,9 +219,10 @@ public class MrcTrafficController extends AbstractMRTrafficController
                 return true;
             }
         }
-        //For some reason we see the odd two byte packet that doesn't match anything we know about, so at this stage ignore it.
-        if(msg.getNumDataElements()==2 && (msg.getElement(1)!=0x00 || msg.getElement(1)!=0x01))
+        //For some reason we see the odd two byte packet that doesn't match anything we know about, so at this stage ignore it, this could possibly be a corruption of the nodata bytes.
+        if(msg.getNumDataElements()==2 && ((msg.getElement(0)&0xff)==0xE0 || (msg.getElement(0)&0xff)==0xFE || (msg.getElement(0)&0xff)==0x80 || (msg.getElement(0)&0xff)==0x80)){
             return true;
+        }
         return false;
     }
     
@@ -250,13 +249,12 @@ public class MrcTrafficController extends AbstractMRTrafficController
             while(waiting){
                 if(m!=null){
                     try {
-                        synchronized(selfLock) {
-                            mCurrentState = WAITMSGREPLYSTATE;
-                        }
                         //log.info(""+m.getByte());
                         ostream.write(m.getByte());
                         ostream.flush();
-
+                        synchronized(xmtRunnable) {
+                            mCurrentState = WAITMSGREPLYSTATE;
+                        }
                         Runnable r = new XmtNotifier(m, mLastSender, this);
                         javax.swing.SwingUtilities.invokeLater(r);
                         // reply expected?

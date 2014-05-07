@@ -862,7 +862,7 @@ abstract public class AbstractMRTrafficController {
                 // message, otherwise go on to the next message
                 if(msg.isRetransmittableErrorMsg()){
                   if(log.isDebugEnabled())
-                        log.debug("Automatic Recovery from Error Message: +msg.toString()");
+                        log.info("Automatic Recovery from Error Message: +msg.toString()");
                    synchronized (xmtRunnable) {
                        mCurrentState = AUTORETRYSTATE;
                        replyInDispatch = false;

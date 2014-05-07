@@ -199,6 +199,7 @@ public class NceProgrammer extends AbstractProgrammer implements NceListener {
     // internal method to remember who's using the programmer
     protected void useProgrammer(jmri.ProgListener p) throws jmri.ProgrammerException {
         // test for only one!
+        log.info("useProgrammer called " + p);
         if (_usingProgrammer != null && _usingProgrammer != p) {
             if (log.isInfoEnabled()) log.info("programmer already in use by "+_usingProgrammer);
             throw new jmri.ProgrammerException("programmer in use");
@@ -293,9 +294,11 @@ public class NceProgrammer extends AbstractProgrammer implements NceListener {
     // internal method to notify of the final result
     protected void notifyProgListenerEnd(int value, int status) {
         if (log.isDebugEnabled()) log.debug("notifyProgListenerEnd value "+value+" status "+status);
+        log.info("notifyProgListenerEnd value "+value+" status "+status);
         // the programmingOpReply handler might send an immediate reply, so
         // clear the current listener _first_
         jmri.ProgListener temp = _usingProgrammer;
+        log.info(""+_usingProgrammer);
         _usingProgrammer = null;
         temp.programmingOpReply(value, status);
     }

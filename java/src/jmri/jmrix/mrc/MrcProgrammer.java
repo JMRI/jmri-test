@@ -182,6 +182,10 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
             if (log.isDebugEnabled()) log.debug("reply in NOTPROGRAMMING state");
             return;
         }
+        if(m.isUnsolicited() || m.isPollMessage()){
+            if(MrcReply.startsWith(m, MrcReply.goodCmdRecieved)) log.info("Good reply marked as unsolicited");
+            return;
+        }
         if(MrcReply.startsWith(m, MrcReply.badCmdRecieved)){
             //Command station rejected packet
             notifyProgListenerEnd(_val, jmri.ProgListener.CommError);
@@ -190,10 +194,13 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
             //Wait for the confirmation.
             return;
         } else if (MrcReply.startsWith(m, MrcReply.progCmdSent)){
+            progState = NOTPROGRAMMING;
             notifyProgListenerEnd(_val, jmri.ProgListener.OK);
         } else if (progState == READCOMMANDSENT) {
+            progState = NOTPROGRAMMING;
             //Currently we have no way to know if the write was sucessful or not.
             if (_progRead) {
+                log.info("prog Read " + _cv);
                 // read was in progress - get return value
                 _val = m.value();
             }

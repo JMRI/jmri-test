@@ -50,7 +50,7 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
         int val = -1;
         if(startsWith(this, readCVHeaderReply)){
             if(getElement(4)==getElement(6))
-                val = getElement(4);
+                val = getElement(4)&0xff;
             else
                 log.error("Error in format of the returned CV value");
         } else {
@@ -96,6 +96,8 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
         }
         return false;
     }
+    
+    static public final int DEFAULTMAXSIZE = 20;
     
     static Logger log = LoggerFactory.getLogger(MrcReply.class.getName());
 
