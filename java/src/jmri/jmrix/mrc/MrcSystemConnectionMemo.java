@@ -78,10 +78,10 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
         /*if (type.equals(jmri.PowerManager.class))
             return true;
         if (type.equals(jmri.TurnoutManager.class))
-            return true;
+            return true;*/
         if (type.equals(jmri.ClockControl.class))
             return true;
-        if (type.equals(jmri.CommandStation.class))
+        /*if (type.equals(jmri.CommandStation.class))
             return true;
         if (type.equals(jmri.ConsistManager.class))
             return true;*/
@@ -102,10 +102,10 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
         /*if (T.equals(jmri.PowerManager.class))
             return (T)getPowerManager();
         if (T.equals(jmri.TurnoutManager.class))
-            return (T)getTurnoutManager();
+            return (T)getTurnoutManager();*/
         if (T.equals(jmri.ClockControl.class))
             return (T)getClockControl();
-        if (T.equals(jmri.CommandStation.class))
+        /*if (T.equals(jmri.CommandStation.class))
             return (T)getMrcTrafficController();
         if (T.equals(jmri.ConsistManager.class))
             return (T)getConsistManager();*/
