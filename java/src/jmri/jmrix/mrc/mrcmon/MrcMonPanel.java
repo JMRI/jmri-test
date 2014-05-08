@@ -94,7 +94,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
     
 	public synchronized void reply(MrcReply r) {  // receive a reply message and log it
         String raw = "";
-        if(excludePoll.isSelected() && r.isPollMessage() && r.getElement(0) && r.getElement(1)==0x01){
+        if(excludePoll.isSelected() && r.isPollMessage() && r.getElement(1)==0x01){
             //Do not show poll messages for other devices
             previousPollMessage = r;
             return;
