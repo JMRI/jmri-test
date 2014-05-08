@@ -115,8 +115,8 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
  /*   private MrcPowerManager powerManager;
     private MrcTurnoutManager turnoutManager;*/
     private MrcThrottleManager throttleManager;
-    /*private MrcClockControl clockManager;
-    private MrcConsistManager consistManager;*/
+    private MrcClockControl clockManager;
+    /*private MrcConsistManager consistManager;*/
     
     /**
      * Configure the common managers for MRC connections.
@@ -136,10 +136,10 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
         InstanceManager.setProgrammerManager(
             getProgrammerManager());
 
-        /*clockManager = new jmri.jmrix.mrc.MrcClockControl(getMrcTrafficController(), getSystemPrefix());
+        clockManager = new jmri.jmrix.mrc.MrcClockControl(getMrcTrafficController(), getSystemPrefix());
         InstanceManager.addClockControl(clockManager);
         
-        consistManager = new jmri.jmrix.mrc.MrcConsistManager(this);
+        /*consistManager = new jmri.jmrix.mrc.MrcConsistManager(this);
         InstanceManager.setConsistManager(consistManager);*/
 
     }
@@ -147,8 +147,8 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
 /*    public MrcPowerManager getPowerManager() { return powerManager; }
     public MrcTurnoutManager  getTurnoutManager() { return turnoutManager; }*/
     public MrcThrottleManager  getThrottleManager() { return throttleManager; }
-    /*public MrcClockControl  getClockControl() { return clockManager; }
-    public MrcConsistManager  getConsistManager() { return consistManager; }*/
+    public MrcClockControl  getClockControl() { return clockManager; }
+    /*public MrcConsistManager  getConsistManager() { return consistManager; }*/
     
     protected ResourceBundle getActionModelResourceBundle(){
         return ResourceBundle.getBundle("jmri.jmrix.mrc.MrcActionListBundle");
@@ -165,9 +165,9 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
             InstanceManager.deregister(turnoutManager, jmri.jmrix.mrc.MrcTurnoutManager.class);*/
         if (throttleManager != null)
             InstanceManager.deregister(throttleManager, jmri.jmrix.mrc.MrcThrottleManager.class);
-        /*if (clockManager != null) 
+        if (clockManager != null) 
             InstanceManager.deregister(clockManager, jmri.jmrix.mrc.MrcClockControl.class);
-        if (consistManager != null)
+        /*if (consistManager != null)
         	InstanceManager.deregister(consistManager, jmri.jmrix.mrc.MrcConsistManager.class);*/
         	
         super.dispose();
