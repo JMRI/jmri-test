@@ -148,7 +148,6 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
      * Get an array of valid baud rates. 
      */
     public String[] validBaudRates() {
-        // Needs to be confirmed
         return new String[]{"38,400 bps"};
     }
 
@@ -156,7 +155,6 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
      * Return array of valid baud rates as integers.
      */
     public int[] validBaudNumber() {
-        // Needs to be confirmed
         return new int[]{38400};
     }
 
@@ -164,7 +162,7 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
     private boolean opened = false;
     InputStream serialStream = null;
     
-    protected String [] validOption1 = new String[]{"01", "02", "03"};
+    protected String [] validOption1 = new String[]{"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"};
     
     
     

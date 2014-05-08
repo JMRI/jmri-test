@@ -107,12 +107,21 @@ public class MrcTrafficController extends AbstractMRTrafficController
                 if (i>0) raw+=" ";
                 raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
             }
+            log.info(raw);
             ((MrcMessage)m).setByte();
         }
         super.sendMessage(m, reply);
     }
     
     boolean unsolicited = true; //Used to detemine if the messages received are a result of a message we sent out or not.
+    
+    //We keep a copy of the lengths here to save on time on each request later.
+    final private static int throttlePacketLength = MrcMessage.getThrottlePacketLength();
+    final private static int functionGroupLength = MrcMessage.getFunctionPacketLength();
+    final private static int readCVLength = MrcMessage.getReadCVPacketLength();
+    final private static int readDecoderAddressLength = MrcMessage.getReadDecoderAddressLength();
+    final private static int writeCVPROGLength = MrcMessage.getWriteCVPROGPacketLength();
+    final private static int writeCVPOMLength = MrcMessage.getWriteCVPOMPacketLength();
     
     /* this is also used to classify the packet and notify the xmt when it can send a packet out*/
     protected boolean endOfMessage(AbstractMRReply msg) {
@@ -156,16 +165,14 @@ public class MrcTrafficController extends AbstractMRTrafficController
             msg.setUnsolicited();
         }
         
-        //if(msg.getElement(0)==0x25 && msg.getElement(1) ==0x00 && msg.getElement(2)==0x25 && msg.getElement(3)==0x00){
         if(MrcReply.startsWith(msg, MrcMessage.throttlePacketHeader)){
             //Thottle speed packet from another handset, need to wait until all is recieved
-            if(msg.getNumDataElements()>=14){
+            if(msg.getNumDataElements()>=throttlePacketLength){
                 return true;
             }
             return false;
         }
         
-        //if(msg.getElement(0)==0x66 && msg.getElement(1) ==0x00 && msg.getElement(2)==0x66 && msg.getElement(3)==0x00){
         if(MrcReply.startsWith(msg, MrcReply.readCVHeaderReply)){
             //return of a read programming packet
             if(msg.getNumDataElements()>=8){
@@ -182,33 +189,37 @@ public class MrcTrafficController extends AbstractMRTrafficController
             return false;
         }
         if(MrcReply.startsWith(msg, MrcMessage.readDecoderAddress)){
-        //if(msg.getElement(0) ==0x42 && msg.getElement(2)==0x42){
-            if(msg.getNumDataElements()>=8) return true;
+            if(msg.getNumDataElements()>=readDecoderAddressLength) return true;
             return false;
         }
         if(MrcReply.startsWith(msg, MrcMessage.readCVHeader)){
             if(msg.isUnsolicited()) log.info("Good read marked as unsolicited");
-        //if(msg.getElement(0) ==0x43 && msg.getElement(2)==0x43){
-            if(msg.getNumDataElements()>=10) return true;
+            if(msg.getNumDataElements()>=readCVLength) return true;
             return false;
         }
         if(MrcReply.startsWith(msg, MrcMessage.writeCVPROGHeader)){
-            if(msg.getNumDataElements()>=12) return true;
+            if(msg.getNumDataElements()>=writeCVPROGLength) return true;
             return false;
         }
         if(MrcReply.startsWith(msg, MrcMessage.writeCVPOMHeader)){
-            if(msg.getNumDataElements()>=16) return true;
+            if(msg.getNumDataElements()>=writeCVPOMLength) return true;
             return false;
         }
-        if(MrcReply.startsWith(msg, MrcMessage.functionPacketHeader)){
-            if(msg.getNumDataElements()>=12) return true;
+        if(MrcReply.startsWith(msg, MrcMessage.functionGroup1PacketHeader)){
+            if(msg.getNumDataElements()>=functionGroupLength) return true;
+            return false;
+        }
+        if(MrcReply.startsWith(msg, MrcMessage.functionGroup2PacketHeader)){
+            if(msg.getNumDataElements()>=functionGroupLength) return true;
             return false;
         }
         //Error occured during read
         if(msg.getNumDataElements()>=4){
             if(MrcReply.startsWith(msg, MrcReply.locoDblControl)){
-                //A loco that is also under the control of another handset requires us to send the command a second time round, so hopefully this will trigger it.
-                mCurrentState = AUTORETRYSTATE;
+                //A loco that is also under the control of another handset requires us to send the command a second time round, so hopefully this will trigger the xmt loop to re add the message to the front of the queue
+                synchronized(xmtRunnable) {
+                    mCurrentState = WAITMSGREPLYSTATE;
+                }
                 return true;
             }
             if(MrcReply.startsWith(msg, MrcReply.badCmdRecieved)){
@@ -249,7 +260,6 @@ public class MrcTrafficController extends AbstractMRTrafficController
             while(waiting){
                 if(m!=null){
                     try {
-                        //log.info(""+m.getByte());
                         ostream.write(m.getByte());
                         ostream.flush();
                         synchronized(xmtRunnable) {
@@ -278,7 +288,7 @@ public class MrcTrafficController extends AbstractMRTrafficController
                             }
                         }
                         m = null;
-                    } catch (Exception e) {
+                    } catch (java.io.IOException e) {
                         log.error("Unable to send");
                     }
                 } else { //Nothing to send so tell master.

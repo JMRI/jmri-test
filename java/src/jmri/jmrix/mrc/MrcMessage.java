@@ -96,15 +96,38 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         return i;
     }
     
-    final protected static int[] throttlePacketHeader = new int[]{0x25,0x00,0x25,0x00};
-    final protected static int[] functionPacketHeader = new int[]{0x34,0x00,0x34,0x00};
-    final protected static int[] readCVHeader = new int[]{0x43,0x00,0x43,0x00};
-    final protected static int[] readDecoderAddress = new int[]{0x42,0x00,0x42,0x00,0x42,0x00};
-    final protected static int[] writeCVPROGHeader = new int[]{0x24,0x00,0x24,0x00};
-    final protected static int[] writeCVPOMHeader = new int[]{0x56,0x00,0x56,0x00};
+    
+   
+    final static int[] throttlePacketHeader = new int[]{0x25,0x00,0x25,0x00};
+    final static int throttlePacketLength = 10;//length of packet less the header
+    public static int getThrottlePacketLength() { return throttlePacketHeader.length+throttlePacketLength; }
+    
+    final static int[] functionGroup1PacketHeader = new int[]{0x34,0x00,0x34,0x00};
+    final static int[] functionGroup2PacketHeader = new int[]{0x44,0x00,0x44,0x00};
+    final static int[] functionGroup3PacketHeader = new int[]{0x54,0x00,0x54,0x00}; //Guess at this
+    final static int[] functionGroup4PacketHeader = new int[]{0x74,0x00,0x74,0x00}; //Guess at this
+    final static int[] functionGroup5PacketHeader = new int[]{0x84,0x00,0x84,0x00}; //Guess at this
+    final static int[] functionGroup6PacketHeader = new int[]{0xA4,0x00,0xA4,0x00}; //Guess at this
+    final static int functionGroupLength = 8;
+    public static int getFunctionPacketLength() { return functionGroup1PacketHeader.length+functionGroupLength; }
+    
+    final static int[] readCVHeader = new int[]{0x43,0x00,0x43,0x00};
+    final private static int readCVLength = 6;
+    public static int getReadCVPacketLength() { return readCVHeader.length+readCVLength; }
+    
+    final static int[] readDecoderAddress = new int[]{0x42,0x00,0x42,0x00,0x42,0x00};
+    public static int getReadDecoderAddressLength() { return readDecoderAddress.length; }
+    
+    final static int[] writeCVPROGHeader = new int[]{0x24,0x00,0x24,0x00};
+    final private static int writeCVPROGLength = 8;
+    public static int getWriteCVPROGPacketLength() { return writeCVPROGHeader.length+writeCVPROGLength; }
+    
+    final static int[] writeCVPOMHeader = new int[]{0x56,0x00,0x56,0x00};
+    final private static int writeCVPOMLength = 12;
+    public static int getWriteCVPOMPacketLength() { return writeCVPOMHeader.length+writeCVPOMLength; }
     
     static public MrcMessage getSendSpeed(int addressLo, int addressHi, int speed){
-        MrcMessage m = new MrcMessage(throttlePacketHeader.length+10);
+        MrcMessage m = new MrcMessage(getThrottlePacketLength());
         int i = m.putHeader(throttlePacketHeader);
         
         m.setElement(i++,addressHi);
@@ -121,23 +144,37 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         return m;
     }
     
-    static public MrcMessage getSendFunction(int addressLo, int addressHi, int function){
-        MrcMessage m = new MrcMessage(functionPacketHeader.length+8);
-        int i = m.putHeader(functionPacketHeader);
+    static public MrcMessage getSendFunction(int group, int addressLo, int addressHi, int data){
+        MrcMessage m = new MrcMessage(getFunctionPacketLength());
+        int i= 0;
+        switch(group){
+            case 1: i = m.putHeader(functionGroup1PacketHeader);
+                    break;
+            case 2: i = m.putHeader(functionGroup2PacketHeader);
+                    break;
+            case 3: i = m.putHeader(functionGroup3PacketHeader);
+                    break;
+            case 4: i= m.putHeader(functionGroup4PacketHeader);
+                    break;
+            case 5: i = m.putHeader(functionGroup5PacketHeader);
+                    break;
+            case 6: i = m.putHeader(functionGroup6PacketHeader);
+                    break;
+            default: log.error("Invalid function group " + group);
+                    return null;
+        }
 
         m.setElement(i++,addressHi);
         m.setElement(i++, 0x00);
         m.setElement(i++,addressLo);
         m.setElement(i++,0x00);
-        m.setElement(i++,function);
+        m.setElement(i++,data);
         m.setElement(i++,0x00);
-        m.setElement(i++,getCheckSum(addressHi, addressLo, function, 0x00));
+        m.setElement(i++,getCheckSum(addressHi, addressLo, data, 0x00));
         m.setElement(i++,0x00);
         m.setTimeout(100);
         return m;
     }
-    
-    
     
     static int getCheckSum(int addressHi, int addressLo, int data1, int data2){
         int address = addressHi^addressLo;
@@ -149,7 +186,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         int cvLo = (cv);
         int cvHi = (cv>>8);
         
-        MrcMessage m = new MrcMessage(readCVHeader.length+6);
+        MrcMessage m = new MrcMessage(getReadCVPacketLength());
         m.setTimeout(LONG_TIMEOUT);
         m.setNeededMode(jmri.jmrix.AbstractMRTrafficController.PROGRAMINGMODE);
         int i = m.putHeader(readCVHeader);
@@ -164,7 +201,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     }
     
     static public MrcMessage getPOM(int addressLo, int addressHi, int cv, int val){
-        MrcMessage m = new MrcMessage(writeCVPOMHeader.length+12);
+        MrcMessage m = new MrcMessage(getWriteCVPOMPacketLength());
         int i = m.putHeader(writeCVPOMHeader);
         cv--;
         m.setElement(i++,addressHi);
@@ -184,7 +221,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     }
     
     static public MrcMessage getWriteCV(int cv, int val){
-        MrcMessage m = new MrcMessage(writeCVPROGHeader.length+8);
+        MrcMessage m = new MrcMessage(getWriteCVPROGPacketLength());
         int i = m.putHeader(writeCVPROGHeader);
         
         int cvLo = cv;

@@ -74,106 +74,79 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
             addressLo = address.getNumber();
         }
     }
-
+    
     DccLocoAddress address;
     
     int addressLo = 0x00;
     int addressHi = 0x00;
 
     public LocoAddress getLocoAddress() { return address; }
+
+    protected void sendFunctionGroup1() {
+        
+        int data = 0x00 |
+        ( f0 ? 0x10 : 0) |
+        ( f1 ? 0x01 : 0) |
+        ( f2 ? 0x02 : 0) |
+        ( f3 ? 0x04 : 0) |
+        ( f4 ? 0x08 : 0);
+        
+        data = data + 0x80;
+        MrcMessage m = MrcMessage.getSendFunction(1, addressLo, addressHi, data);
+        if(m!=null)
+            tc.sendMrcMessage(m, this);
+	}
+
+    /**
+	 * Send the message to set the state of functions F5, F6, F7, F8.
+	 */
+	protected void sendFunctionGroup2() {
+		// The NCE USB doesn't support the NMRA packet format
+		// Always need speed command before function group command to reset consist pointer
+        int data = 0x00 |
+        (f8 ? 0x08 : 0) |
+        (f7 ? 0x04 : 0)	|
+        (f6 ? 0x02 : 0) |
+        (f5 ? 0x01 : 0);
+        
+        data = data + 0xB0;
+        
+        MrcMessage m = MrcMessage.getSendFunction(2, addressLo, addressHi, data);
+        if(m!=null)
+            tc.sendMrcMessage(m, this);
+	}
     
-    public void setF0(boolean f0) {
-    	boolean old = this.f0;
-        this.f0 = f0;
-        if (old != this.f0){
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x00);
+    //Need to work out what MRC have covered in group3
+    protected void sendFunctionGroup3() {
+        
+        int data = 0x00 |
+        ( f9 ? 0x01 : 0) |
+        ( f10 ? 0x02 : 0) |
+        ( f11 ? 0x04 : 0) |
+        ( f12 ? 0x08 : 0);
+        
+        data = data + 0x80;
+        MrcMessage m = MrcMessage.getSendFunction(3, addressLo, addressHi, data);
+        if(m!=null)
             tc.sendMrcMessage(m, this);
-            notifyPropertyChangeListener(Throttle.F0, old, this.f0 );
-        }
-    }
-
-    public void setF1(boolean f1) {
-    	boolean old = this.f1;
-        this.f1 = f1;
-        if (old != this.f1){
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x01);
+	}
+    //Need to work out what MRC have covered in group4
+	protected void sendFunctionGroup4() {
+		// The NCE USB doesn't support the NMRA packet format
+		// Always need speed command before function group command to reset consist pointer
+        int data = 0x00 |
+        (f16 ? 0x08 : 0) |
+        (f15 ? 0x04 : 0)	|
+        (f14 ? 0x02 : 0) |
+        (f13 ? 0x01 : 0);
+        
+        data = data + 0xB0;
+        
+        MrcMessage m = MrcMessage.getSendFunction(4, addressLo, addressHi, data);
+        if(m!=null)
             tc.sendMrcMessage(m, this);
-        	notifyPropertyChangeListener(Throttle.F1, old, this.f1 );
-        }
-    }
-
-    public void setF2(boolean f2) {
-    	boolean old = this.f2;
-        this.f2 = f2;
-        if (old != this.f2) {
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x02);
-            tc.sendMrcMessage(m, this);
-        	notifyPropertyChangeListener(Throttle.F2, old, this.f2 );
-        }
-    }
-
-    public void setF3(boolean f3) {
-    	boolean old = this.f3;
-        this.f3 = f3;
-        if (old != this.f3){
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x03);
-            tc.sendMrcMessage(m, this);
-        	notifyPropertyChangeListener(Throttle.F3, old, this.f3 );
-        }
-    }
-
-    public void setF4(boolean f4) {
-    	boolean old = this.f4;
-        this.f4 = f4;
-        if (old != this.f4){
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x04);
-            tc.sendMrcMessage(m, this);
-        	notifyPropertyChangeListener(Throttle.F4, old, this.f4 );
-        }
-    }
-
-    public void setF5(boolean f5) {
-    	boolean old = this.f5;
-        this.f5 = f5;
-        if (old != this.f5){
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x05);
-            tc.sendMrcMessage(m, this);
-        	notifyPropertyChangeListener(Throttle.F5, old, this.f5 );
-        }
-    }
-
-    public void setF6(boolean f6) {
-    	boolean old = this.f6;
-        this.f6 = f6;
-        if (old != this.f6){
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x06);
-            tc.sendMrcMessage(m, this);
-        	notifyPropertyChangeListener(Throttle.F6, old, this.f6 );
-        }
-    }
-
-    public void setF7(boolean f7) {
-    	boolean old = this.f7;
-        this.f7 = f7;
-        if (old != this.f7){
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x07);
-            tc.sendMrcMessage(m, this);
-        	notifyPropertyChangeListener(Throttle.F7, old, this.f7 );
-            
-        }
-    }
-
-    public void setF8(boolean f8) {
-    	boolean old = this.f8;
-        this.f8 = f8;
-        if (old != this.f8) {
-            MrcMessage m = MrcMessage.getSendFunction(addressLo, addressHi, 0x08);
-            tc.sendMrcMessage(m, this);
-        	notifyPropertyChangeListener(Throttle.F8, old, this.f8 );
-            
-        }
-    }
-
+	}
+    
     /**
 	 * Set the speed & direction.
 	 * <P>
@@ -186,44 +159,15 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         float oldSpeed = this.speedSetting;
 		this.speedSetting = speed;
         if (log.isDebugEnabled()) log.debug("setSpeedSetting= "+speed);
-        //byte[] bl;
-        int value;
-        
-        //if (super.speedStepMode == SpeedStepMode128) {
-            value = (int)((127-1)*speed);     // -1 for rescale to avoid estop
-            if (value>0) value = value+1;  // skip estop
-            if (value>127) value = 127;    // max possible speed
-            if (value<0) value = 1;        // emergency stop
-        //} else {
-
-                /* [A Crosland 05Feb12] There is a potential issue in the way
-                 * the float speed value is converted to integer speed step.
-                 * A max speed value of 1 is first converted to int 28 then incremented
-                 * to 29 which is too large. The next highest speed value also
-                 * results in a value of 28. So two discrete throttle steps
-                 * both map to speed step 28.
-                 *
-                 * This is compounded by the bug in speedStep28Packet() which
-                 * cannot generate a DCC packet with speed step 28.
-                 *
-                 * Suggested correct code is
-         *   value = (int) ((31-3) * speed); // -3 for rescale to avoid stop and estop x2
-                 * 		if (value > 0) value = value + 3; // skip stop and estop x2
-                 * 		if (value > 31) value = 31; // max possible speed
-                 * 		if (value < 0)	value = 2; // emergency stop
-                 * 		bl = jmri.NmraPacket.speedStep28Packet(true, address.getNumber(),
-                 * 				address.isLongAddress(), value, isForward);
-                 */
-        /*    value = (int) ((28) * speed); // -1 for rescale to avoid estop
-            if (value > 0) value = value + 1; // skip estop
-            if (value > 28) value = 28; // max possible speed
-            if (value < 0)	value = 1; // emergency stop
-        }*/
+        //MRC use a value between 0-127 no matter what the controller is set to
+        int value = (int)((127-1)*speed);     // -1 for rescale to avoid estop
+        if (value>0) value = value+1;  // skip estop
+        if (value>127) value = 127;    // max possible speed
+        if (value<0) value = 1;        // emergency stop
         if(isForward){
             value = value+128;
         }
         MrcMessage m = MrcMessage.getSendSpeed(addressLo, addressHi, value);
-        //MrcMessage m = MrcMessage.queuePacketMessage(tc, bl);
         tc.sendMrcMessage(m, this);
 
         if (oldSpeed != this.speedSetting)
@@ -245,7 +189,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
     //Might need to look at other packets from handsets to see if they also have control of our loco and adjust from that.
     
     public void reply(MrcReply m) {
-        if(m.isUnsolicited() || m.isPollMessage())
+        if(m.isPollMessage())
             return;
         String raw = "";
         for (int i=0;i<m.getNumDataElements(); i++) {
@@ -253,6 +197,37 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
             raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
         }
         log.info("Reply received " + raw);
+        if(m.isUnsolicited()){
+            if(m.getNumDataElements()>8 && m.getElement(5)==addressHi && m.getElement(7)==addressLo){
+                //message potentially matches our loco
+                if(MrcReply.startsWith(m, MrcMessage.throttlePacketHeader)){
+                        log.info("speed Packet from another controller for our loco");
+                } else if (MrcReply.startsWith(m, MrcMessage.functionGroup1PacketHeader)){
+                        log.info("function Packet 1 from another controller for our loco");
+                        //reverse engineer the function
+                }  else if (MrcReply.startsWith(m, MrcMessage.functionGroup2PacketHeader)){
+                        log.info("function Packet 2 from another controller for our loco");
+                        //reverse engineer the function
+                }  else if (MrcReply.startsWith(m, MrcMessage.functionGroup3PacketHeader)){
+                        log.info("function Packet 3 from another controller for our loco");
+                        //reverse engineer the function
+                }  else if (MrcReply.startsWith(m, MrcMessage.functionGroup4PacketHeader)){
+                        log.info("function Packet 4 from another controller for our loco");
+                        //reverse engineer the function
+                }  else if (MrcReply.startsWith(m, MrcMessage.functionGroup5PacketHeader)){
+                        log.info("function Packet 5 from another controller for our loco");
+                        //reverse engineer the function
+                }  else if (MrcReply.startsWith(m, MrcMessage.functionGroup6PacketHeader)){
+                        log.info("function Packet 6 from another controller for our loco");
+                        //reverse engineer the function
+                } else {
+                    return;
+                }
+            } else {
+                return;
+            }
+        }
+
         //need to work out the resend function for if the loco is also controlled by another handset. - Might get done in the MrcTrafficController.
     }
     
