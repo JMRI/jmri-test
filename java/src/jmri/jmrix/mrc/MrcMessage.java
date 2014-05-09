@@ -134,6 +134,18 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     final private static int writeCVPOMLength = 12;
     public static int getWriteCVPOMPacketLength() { return writeCVPOMHeader.length+writeCVPOMLength; }
     
+    final static int[] setClockRatioHeader = new int[]{0x12,0x00,0x12,0x00};
+    final private static int setClockRatioLength = 10;
+    public static int getSetClockRatioPacketLength() { return setClockRatioLength; }
+
+    final static int[] setClockTimeHeader = new int[]{0x13,0x00,0x13,0x00};
+    final private static int setClockTimeLength = 10;
+    public static int getSetClockTimePacketLength() { return setClockTimeLength; }
+
+    final static int[] setClockAmPmHeader = new int[]{0x32,0x00,0x32,0x00};
+    final private static int setClockAmPmLength = 10;
+    public static int getSetClockAmPmPacketLength() { return setClockAmPmLength; }
+    
     static public MrcMessage getSendSpeed(int addressLo, int addressHi, int speed){
         MrcMessage m = new MrcMessage(getThrottlePacketLength());
         int i = m.putHeader(throttlePacketHeader);
@@ -423,6 +435,57 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         m.setElement(1, s.charAt(s.length()-1));
         m.setElement(2,' ');
         m.addIntAsTwoHex(val, 3);
+        return m;
+    }
+
+    /**
+     * set the fast clock ratio
+     * ratio is integer and max of 60 and min of 1
+     * @param ratio
+     * @return
+     */
+    static public MrcMessage setClockRatio(int ratio) {
+        if (ratio < 0 || ratio > 60) log.error("ratio number too large: "+ratio);
+        MrcMessage m = new MrcMessage(getSetClockRatioPacketLength());
+        int i = m.putHeader(setClockRatioHeader);
+        
+        m.setElement(i++, ratio);
+        m.setElement(i++, 0x00);
+        m.setElement(i++, getCheckSum(ratio, 0x00, 0x00, 0x00));
+        return m;
+    }
+
+    /**
+     * set the fast time clock
+     * @param hour
+     * @param minute
+     * @return
+     */
+    static public MrcMessage setClockTime(int hour, int minute) {
+        if (hour < 0 || hour > 23) log.error("hour number out of range : " + hour);
+        if (minute < 0 || minute > 59) log.error("hour minute out of range : " + minute);
+        MrcMessage m = new MrcMessage(getSetClockTimePacketLength());
+        int i = m.putHeader(setClockTimeHeader);
+        
+        m.setElement(i++, hour);
+        m.setElement(i++, 0x00);
+        m.setElement(i++, minute);
+        m.setElement(i++, 0x00);
+        m.setElement(i++, getCheckSum(hour, 0x00, minute, 0x00));
+        return m;
+    }
+
+    /**
+     * Toggle the AM/PM vs 24 hour mode
+     * @return
+     */
+    static public MrcMessage setClockAmPm() {
+        MrcMessage m = new MrcMessage(getSetClockAmPmPacketLength());
+        int i = m.putHeader(setClockAmPmHeader);
+        
+        m.setElement(i++, 0x32);
+        m.setElement(i++, 0x00);
+        m.setElement(i++, getCheckSum(0x32, 0x00, 0x00, 0x00));
         return m;
     }
 

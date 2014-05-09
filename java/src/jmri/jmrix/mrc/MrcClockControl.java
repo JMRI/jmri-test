@@ -112,7 +112,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
     //private Date lastClockReadAtTime;
     private int	mrcLastHour;
     private int mrcLastMinute;
-    private int mrcLastSecond;
+//    private int mrcLastSecond;
     private int mrcLastRatio;
     private boolean mrcLastAmPm;
     private boolean mrcLast1224;
@@ -122,7 +122,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
     //private double syncInterval = TARGET_SYNC_DELAY;
     //private int internalSyncInitStateCounter = 0;
     //private int internalSyncRunStateCounter = 0;
-    private boolean issueDeferredGetTime = false;
+//    private boolean issueDeferredGetTime = false;
     //private boolean issueDeferredGetRate = false;
     //private boolean initNeverCalledBefore = true;
     
@@ -145,7 +145,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
     		// not a clock packet
     		return;
     	}
-    	if (false && log.isDebugEnabled()){
+    	if (log.isDebugEnabled()){
             log.debug("MrcReply(len " + r.getNumDataElements() + ") waiting: " + waiting +
         		" watingForRead: " + waitingForCmdRead +
         		" waitingForCmdTime: " + waitingForCmdTime +
@@ -156,11 +156,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
         	);
     		
     	}
-//        if (waiting <= 0) {
-//            log.error(rb.getString("LogReplyEnexpected"));
-//            return;
-//        }
-//        waiting--;
+
         readClockPacket(r);
 
 //        if (waitingForCmdTime) {
@@ -232,21 +228,21 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
 		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
 			log.debug("canSet12Or24HourClock");
 		}
-		return false;
+		return true;
 	}
 	
-//	/** sets Mrc clock speed, must be 1 to 15 */
-//	public void setRate(double newRate) {
-//		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
-//			log.debug("setRate: " + newRate);
-//		}
-//		int newRatio = (int)newRate;
-//		if (newRatio < 1 || newRatio > 15) {
-//			log.error(rb.getString("LogMrcClockRatioRangeError"));
-//		} else {
-//        	issueClockRatio(newRatio);
-//		}
-//	}
+	/** sets Mrc clock speed, must be 1 to 15 */
+	public void setRate(double newRate) {
+		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
+			log.debug("setRate: " + newRate);
+		}
+		int newRatio = (int)newRate;
+		if (newRatio < 1 || newRatio > 60) {
+			log.error(rb.getString("LogMrcClockRatioRangeError"));
+		} else {
+        	issueClockRatio(newRatio);
+		}
+	}
 	
 	/** Mrc only supports integer rates */
 	public boolean requiresIntegerRate() {
@@ -266,20 +262,20 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
 		return(mrcLastRatio);
 	}
 	
-//	/** set the time, the date part is ignored */
-//    @SuppressWarnings("deprecation")
-//	public void setTime(Date now) {
-//		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
-//			log.debug("setTime: " + now);
-//		}
-//		issueClockSet(now.getHours(), now.getMinutes(), now.getSeconds());
-//	}
+	/** set the time, the date part is ignored */
+    @SuppressWarnings("deprecation")
+	public void setTime(Date now) {
+		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
+			log.debug("setTime: " + now);
+		}
+		issueClockTime(now.getHours(), now.getMinutes());
+	}
 	
 	/** returns the current Mrc time, does not have a date component */
     @SuppressWarnings("deprecation")
 	public Date getTime() {
 //		issueReadOnlyRequest();	// go get the current time value
-		issueDeferredGetTime = true;
+//		issueDeferredGetTime = true;
         Date now = internalClock.getTime();
         if (lastClockReadPacket != null) {
 			if (mrcLast1224) {	// is 24 hour mode
@@ -300,18 +296,18 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
         return(now);
 	}
 	
-//	/** set Mrc clock and start clock */
-//    @SuppressWarnings("deprecation")
-//	public void startHardwareClock(Date now) {
-//		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
-//			log.debug("startHardwareClock: " + now);
-//		}
-//		if (!internalClock.getInternalMaster() && internalClock.getMasterName().equals(getHardwareClockName())){
-//			
-//		}
-//		issueClockSet(now.getHours(), now.getMinutes(), now.getSeconds());
+	/** set Mrc clock and start clock */
+    @SuppressWarnings("deprecation")
+	public void startHardwareClock(Date now) {
+		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
+			log.debug("startHardwareClock: " + now);
+		}
+		if (!internalClock.getInternalMaster() && internalClock.getMasterName().equals(getHardwareClockName())){
+			
+		}
+		issueClockTime(now.getHours(), now.getMinutes());
 //		issueClockStart();
-//	}
+	}
 	
 //	/** stops the Mrc Clock */
 //	public void stopHardwareClock() {
@@ -384,24 +380,24 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
         internalClock.userSetTime(now);
     }
         
-//    private void issueClockRatio(int r) {
-//    	log.debug("sending ratio " + r + " to mrc cmd station");
-//        byte [] cmd = jmri.jmrix.mrc.MrcMessage.accSetClockRatio(r);
-//        MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.createBinaryMessage(tc, cmd, CMD_CLOCK_SET_REPLY_SIZE);
-//        waiting++;
-//        waitingForCmdRatio = true;
-//        tc.sendMrcMessage(cmdMrc, this);
-//    }
-//    
-//    @SuppressWarnings("unused")
-//	private void issueClock1224(boolean mode) {
-//        byte [] cmd = jmri.jmrix.mrc.MrcMessage.accSetClock1224(mode);
-//		MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.createBinaryMessage(tc, cmd, CMD_CLOCK_SET_REPLY_SIZE);
-//		waiting++;
-//		waitingForCmd1224 = true;
-//		tc.sendMrcMessage(cmdMrc, this);
-//    }
-//    
+    private void issueClockRatio(int r) {
+    	log.debug("sending ratio " + r + " to mrc cmd station");
+        MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.setClockRatio(r);
+        waiting++;
+        waitingForCmdRatio = true;
+        tc.sendMrcMessage(cmdMrc, this);
+    }
+    
+    @SuppressWarnings("unused")
+	private void issueClock1224(boolean mode) {
+    	if (mode != mrcLast1224) {
+        	MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.setClockAmPm();
+        	waiting++;
+    		waitingForCmd1224 = true;
+    		tc.sendMrcMessage(cmdMrc, this);
+    	}
+    }
+    
 //    private void issueClockStop() {
 //        byte [] cmd = jmri.jmrix.mrc.MrcMessage.accStopClock();
 //        MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.createBinaryMessage(tc, cmd, CMD_CLOCK_SET_REPLY_SIZE);
@@ -428,21 +424,13 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
 //            //			log.debug("issueReadOnlyRequest at " + internalClock.getTime());
 //        }
 //    }
-//
-//    private void issueClockSet(int hh, int mm, int ss) {
-//        issueClockSetMem(hh, mm, ss);
-//    }
-//    
-//    private void issueClockSetMem(int hh, int mm, int ss){
-//        byte [] cmd = jmri.jmrix.mrc.MrcMessage.accMemoryWriteN(CS_CLOCK_MEM_ADDR + CS_CLOCK_SECONDS, 3);
-//        cmd[4] = (byte) ss;
-//        cmd[5] = (byte) mm;
-//        cmd[6] = (byte) hh;
-//        MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.createBinaryMessage(tc, cmd, CMD_MEM_SET_REPLY_SIZE);
-//        waiting++;
-//        waitingForCmdTime = true;
-//        tc.sendMrcMessage(cmdMrc, this);
-//    }
+
+    private void issueClockTime(int hh, int mm){
+        MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.setClockTime(hh, mm);
+        waiting++;
+        waitingForCmdTime = true;
+        tc.sendMrcMessage(cmdMrc, this);
+    }
    
     @SuppressWarnings({ "deprecation", "unused" })
     private Date getMrcDate() {
