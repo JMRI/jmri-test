@@ -96,6 +96,14 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         return i;
     }
     
+    public String toString(){
+        String raw="";
+        for (int i=0;i<getNumDataElements(); i++) {
+            if (i>0) raw+=" ";
+            raw = jmri.util.StringUtil.appendTwoHexFromInt(getElement(i)&0xFF, raw);
+        }
+        return raw;
+    }
     
    
     final static int[] throttlePacketHeader = new int[]{0x25,0x00,0x25,0x00};

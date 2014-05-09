@@ -196,7 +196,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
 	        if (i>0) raw+=" ";
             raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
         }
-        log.info("Reply received " + raw);
+
         if(m.isUnsolicited()){
             if(m.getNumDataElements()>8 && m.getElement(5)==addressHi && m.getElement(7)==addressLo){
                 //message potentially matches our loco

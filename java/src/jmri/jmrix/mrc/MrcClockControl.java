@@ -48,6 +48,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
         super();
         this.tc = tc;
         this.prefix = prefix;
+        
 
         // Create a Timebase listener for the Minute change events
         internalClock = InstanceManager.timebaseInstance();
@@ -65,6 +66,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
             return;
         }
         internalClock.addMinuteChangeListener(minuteChangeListener);
+        tc.addMrcListener(this);
     }
     @SuppressWarnings("unused")
 	private String prefix = "";
@@ -138,8 +140,8 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
     }  
     
     public void reply(MrcReply r) {
-    	if (r.getNumDataElements() != 8 || r.getElement(0) != 0 || r.getElement(1) != 1 ||
-    			r.getElement(2) != 0 || r.getElement(3) != 0) {
+    	if (r.getNumDataElements() != 6 || r.getElement(0) != 0 || r.getElement(1) != 1 ||
+    			r.getElement(3) != 0 || r.getElement(5) != 0) {
     		// not a clock packet
     		return;
     	}
@@ -355,14 +357,14 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
         lastClockReadPacket = r;
         //lastClockReadAtTime = internalClock.getTime();
         //log.debug("readClockPacket - at time: " + lastClockReadAtTime);
-        mrcLastHour = r.getElement(4) & 0x1F;
-        mrcLastMinute = r.getElement(6) & 0xFF;
-        if ((r.getElement(4) & 0xC0) == 0x80) {
+        mrcLastHour = r.getElement(2) & 0x1F;
+        mrcLastMinute = r.getElement(4) & 0xFF;
+        if ((r.getElement(2) & 0xC0) == 0x80) {
             mrcLast1224 = true;
         } else {
             mrcLast1224 = false;
         }
-        if ((r.getElement(4) & 0xC0) == 0x0) {
+        if ((r.getElement(2) & 0xC0) == 0x0) {
             mrcLastAmPm = true;
         } else {
             mrcLastAmPm = false;

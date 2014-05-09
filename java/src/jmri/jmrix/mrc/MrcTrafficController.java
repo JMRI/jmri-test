@@ -8,6 +8,7 @@ import jmri.jmrix.AbstractMRListener;
 import jmri.jmrix.AbstractMRMessage;
 import jmri.jmrix.AbstractMRReply;
 import jmri.jmrix.AbstractMRTrafficController;
+import static jmri.jmrix.AbstractMRTrafficController.AUTORETRYSTATE;
 import static jmri.jmrix.AbstractMRTrafficController.IDLESTATE;
 import static jmri.jmrix.AbstractMRTrafficController.WAITMSGREPLYSTATE;
 
@@ -123,6 +124,7 @@ public class MrcTrafficController extends AbstractMRTrafficController
     final private static int writeCVPROGLength = MrcMessage.getWriteCVPROGPacketLength();
     final private static int writeCVPOMLength = MrcMessage.getWriteCVPOMPacketLength();
     
+    static final int MISSEDPOLL = 60;
     /* this is also used to classify the packet and notify the xmt when it can send a packet out*/
     protected boolean endOfMessage(AbstractMRReply msg) {
         //We expect a minimum of two bytes for a reply.
@@ -149,7 +151,7 @@ public class MrcTrafficController extends AbstractMRTrafficController
                 log.info("we have missed our send message window");
                 //Hope by setting the currentstate to autoretry then the transmit will pick this up and add the message back to the queue.
                 synchronized (xmtRunnable) {
-                    mCurrentState = AUTORETRYSTATE;
+                    mCurrentState = MISSEDPOLL;
                 }
             }
             
@@ -225,13 +227,17 @@ public class MrcTrafficController extends AbstractMRTrafficController
             if(MrcReply.startsWith(msg, MrcReply.badCmdRecieved)){
                 return true;
             }
+            if(msg.getElement(0)==0x00 && msg.getElement(1)==0x00 && msg.getElement(2)==0x00 && msg.getElement(3)==0x00){
+                ((MrcReply)msg).setPollMessage();
+                return true;
+            }
 
             if(msg.getElement(1)==0x00 && !waiting){
                 return true;
             }
         }
         //For some reason we see the odd two byte packet that doesn't match anything we know about, so at this stage ignore it, this could possibly be a corruption of the nodata bytes.
-        if(msg.getNumDataElements()==2 && ((msg.getElement(0)&0xff)==0xE0 || (msg.getElement(0)&0xff)==0xFE || (msg.getElement(0)&0xff)==0x80 || (msg.getElement(0)&0xff)==0x80)){
+        if(msg.getNumDataElements()==2 && ((msg.getElement(0)&0xff)==0xF8 ||(msg.getElement(0)&0xff)==0xE0 || (msg.getElement(0)&0xff)==0xFE || (msg.getElement(0)&0xff)==0x80)){
             return true;
         }
         return false;
@@ -275,6 +281,13 @@ public class MrcTrafficController extends AbstractMRTrafficController
                             checkReplyInDispatch();
                             if (mCurrentState == WAITMSGREPLYSTATE) {
                                 handleTimeout(m,l);
+                            } else if (mCurrentState == MISSEDPOLL && m.getRetries()>=0) {
+                                 log.info("Message missed poll added back to front of queue: " + m.toString());
+                                 msgQueue.addFirst(m);
+                                 listenerQueue.addFirst(l);
+                                 synchronized (xmtRunnable) {
+                                       mCurrentState = IDLESTATE;
+                                 }
                             } else if (mCurrentState == AUTORETRYSTATE && m.getRetries()>=0) {
                                  log.info("Message added back to queue: " + m.toString());
                                  m.setRetries(m.getRetries() - 1);
