@@ -200,71 +200,23 @@ public class SimulatorAdapter extends MrcPortController implements
 	private MrcReply generateReply(MrcMessage m) {
 		MrcReply reply = new MrcReply();
 		int command = m.getElement(0);
-		if (command < 0x80) 					// NOTE: MRC command station does not respond to
-			return null;						// command less than 0x80 (times out)
-		if (command < 0x80 || command > 0xBF){	// Command is out of range
-			reply.setElement(0, MRC_ERROR);		// Mrc command not supported
-			return reply;	
+		if (command != m.getElement(2) || m.getElement(1) != 1) {
+			reply.setElement(0, 0x55);
+			reply.setElement(1, 0x0);
+			reply.setElement(2, 0x55);
+			reply.setElement(3, 0x0);
+			return reply;
 		}
 		switch (command) {
-//		case MrcBinaryCommand.SW_REV_CMD:		// Get Eprom revision
-//			reply.setElement(0, 0x06); 			// Send Eprom revision 6 2 1
+		case MrcMessage.setClockRatioCmd:		// set fast clock ratio
+//			reply.setElement(0, 0x06);
 //			reply.setElement(1, 0x02);
 //			reply.setElement(2, 0x01);
-//			break;
-//		case MrcBinaryCommand.READ_CLOCK_CMD:	// Read clock
-//			reply.setElement(0, 0x12);			// Return fixed time
-//			reply.setElement(1, 0x30);
-//			break;
-//		case MrcBinaryCommand.READ_AUI4_CMD:	// Read AUI 4 byte response
-//			reply.setElement(0, 0x00);			// fixed data for now
-//			reply.setElement(1, 0x00);			// fixed data for now
-//			reply.setElement(2, 0x00);			// fixed data for now
-//			reply.setElement(3, 0x00);			// fixed data for now
-//			break;
-//		case MrcBinaryCommand.DUMMY_CMD:		// Dummy instruction
-//			reply.setElement(0, MRC_OKAY);		// return ! CR LF
-//			reply.setElement(1, 0x0D);
-//			reply.setElement(2, 0x0A);
-//			break;
-//		case MrcBinaryCommand.READ16_CMD:		// Read 16 bytes
-//			readMemory(m, reply, 16);
-//			break;
-//		case MrcBinaryCommand.READ_AUI2_CMD:	// Read AUI 2 byte response
-//			reply.setElement(0, 0x00);			// fixed data for now
-//			reply.setElement(1, 0x00);			// fixed data for now
-//			break;
-//		case MrcBinaryCommand.READ1_CMD:		// Read 1 bytes
-//			readMemory(m, reply, 1);
-//			break;
-//		case MrcBinaryCommand.WRITE1_CMD:		// Write 1 bytes
-//			writeMemory(m, reply, 1, false);
-//			break;
-//		case MrcBinaryCommand.WRITE2_CMD:		// Write 2 bytes
-//			writeMemory(m, reply, 2, false);
-//			break;
-//		case MrcBinaryCommand.WRITE4_CMD:		// Write 4 bytes
-//			writeMemory(m, reply, 4, false);
-//			break;
-//		case MrcBinaryCommand.WRITE8_CMD:		// Write 8 bytes
-//			writeMemory(m, reply, 8, false);
-//			break;
-//		case MrcBinaryCommand.WRITEn_CMD:		// Write n bytes
-//			writeMemory(m, reply, m.getElement(3), true);
-//			break;
-//		case MrcBinaryCommand.ACC_CMD:			// accessory command
-//			accessoryCommand(m, reply);
-//			break;
-//		case MrcMessage.READ_DIR_CV_CMD:
-//			reply.setElement(0, 0xff);			// dummy data
-//			//reply.setElement(1,MRC_DATA_OUT_OF_RANGE);  // forces fail
-//			reply.setElement(1,MRC_OKAY);  // forces succeed
-//			break;
-//		case MrcMessage.READ_PAGED_CV_CMD:
-//			reply.setElement(0, 0xff);			// dummy data
-//			//reply.setElement(1,MRC_DATA_OUT_OF_RANGE);  // forces fail
-//			reply.setElement(1,MRC_OKAY);  // forces succeed
-//			break;
+			break;
+		case MrcMessage.setClockTimeCmd:	// Set clock
+			break;
+		case MrcMessage.setClockAmPmCmd:	// Set clock mode
+			break;
 //		case MrcMessage.READ_REG_CMD:
 //			reply.setElement(0, 0xff);			// dummy data
 //			//reply.setElement(1,MRC_DATA_OUT_OF_RANGE);  // forces fail
