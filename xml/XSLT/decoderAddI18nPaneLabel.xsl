@@ -4,13 +4,12 @@
 ]>
 <!-- $Id$ -->
 
-<!-- Process a JMRI pane definition file, adding a label element (with specific -->
-<!-- language) based on the label (preferred) or item attribute             -->
+<!-- Process a JMRI pane definition file, adding a text element (with specific -->
+<!-- language) based on the default text element            -->
 
 <!-- Provide the two-character language code in the ENTITY line above.      -->
 
 <!-- You should normalize the decoder file before using this tool.          -->
-<!-- See the decoderLabelToItem.xsl template.                               -->
 
 <!-- Note: Existing specific-language label elements are not replaced.      -->
 
@@ -35,21 +34,25 @@
 
 <xsl:output method="xml" encoding="utf-8"/>
 
-<!--specific template match for label element with specific-language label element -->
-    <xsl:template match="label[label[@xml:lang = '&target;']]" priority="5">
+<!--specific template match for lanel element with specific-language text element -->
+    <xsl:template match="label[text[@xml:lang = '&target;']]" priority="5">
       <xsl:copy>
         <xsl:apply-templates select="@*|node()" />
       </xsl:copy>
     </xsl:template>
 
-<!--specific template match for label element with no label element but with non-blank label attribute present-->
-    <xsl:template match="label[not(translate(@label, ' ', '') = '')]" priority="4">
+<!--specific template match for label element with text element with no language attribute present-->
+    <xsl:template match="label[text[not(@xml:lang)]]" priority="4">
       <xsl:copy>
-        <xsl:apply-templates select="@*|*[not(self::label[@xml:lang = '&target;'])]" />
-        <xsl:element name="label">
-          <xsl:attribute name="xml:lang">&target;</xsl:attribute>
-          <xsl:value-of select="@label"/>
+        <xsl:element name="text">
+          <xsl:value-of select="."/>
         </xsl:element>
+        <xsl:if test="not(translate(@label, ' ', '') = '')"><!-- don't translate is empty -->
+          <xsl:element name="text">
+            <xsl:attribute name="xml:lang">&target;</xsl:attribute>
+            <xsl:value-of select="."/>
+          </xsl:element>
+        </xsl:if>
       </xsl:copy>
     </xsl:template>
 

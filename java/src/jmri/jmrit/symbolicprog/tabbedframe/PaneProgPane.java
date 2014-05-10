@@ -62,6 +62,7 @@ import org.jdom.Element;
  * @author    Bob Jacobsen   Copyright (C) 2001, 2003, 2004, 2005, 2006
  * @author    D Miller Copyright 2003
  * @author    Howard G. Penny   Copyright (C) 2005
+ * @author    Dave Heap   Copyright (C) 2014
  * @version   $Revision$
  * @see       jmri.jmrit.symbolicprog.VariableValue#isChanged
  *
@@ -1246,7 +1247,7 @@ public class PaneProgPane extends javax.swing.JPanel
             }
             else if (name.equals("indxcvtable")) {
                 log.debug("starting to build IndexedCvTable pane");
-                JTable indxcvTable   = new JTable(_indexedCvModel);
+                JTable indxcvTable = new JTable(_indexedCvModel);
                 JScrollPane cvScroll = new JScrollPane(indxcvTable);
                 indxcvTable.setDefaultRenderer(JTextField.class, new ValueRenderer());
                 indxcvTable.setDefaultRenderer(JButton.class, new ValueRenderer());
@@ -1272,42 +1273,60 @@ public class PaneProgPane extends javax.swing.JPanel
 
                 _cvTable = true;
                 log.debug("end of building IndexedCvTable pane");
-
             }
             else if (name.equals("fnmapping")) {
                 pickFnMapPanel(c, g, cs, modelElem);
             }
             else if (name.equals("dccaddress")) {
                 JPanel l = addDccAddressPanel(e);
-                cs.gridwidth = GridBagConstraints.REMAINDER;
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridwidth = 1;
+                if (l.getComponentCount() > 0) {
+                    cs.gridwidth = GridBagConstraints.REMAINDER;
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridwidth = 1;
+                }
+            }
+            else if (name.equals("column")) {
+                // nested "column" elements ...
+                cs.gridheight = GridBagConstraints.REMAINDER;
+                JPanel l = newColumn(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridheight = 1;
+                }
             }
             else if (name.equals("row")) {
                                 // nested "row" elements ...
                 cs.gridwidth = GridBagConstraints.REMAINDER;
                 JPanel l = newRow(e, showStdName, modelElem);
-                panelList.add(l);
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridwidth = 1;
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridwidth = 1;
+                }
             }
             else if (name.equals("grid")) {
                                 // nested "grid" elements ...
                 cs.gridwidth = GridBagConstraints.REMAINDER;
                 JPanel l = newGrid(e, showStdName, modelElem);
-                panelList.add(l);
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridwidth = 1;
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridwidth = 1;
+                }
             }
             else { // its a mistake
                 log.error("No code to handle element of type "+e.getName()+" in newColumn");
             }
         }
         // add glue to the bottom to allow resize
-        c.add(Box.createVerticalGlue());
+        if (c.getComponentCount() > 0) {
+            c.add(Box.createVerticalGlue());
+        }
 
         return c;
     }
@@ -1415,11 +1434,11 @@ public class PaneProgPane extends javax.swing.JPanel
                 cs.fill = GridBagConstraints.NONE;
                 cs.gridheight = 1;
             }
-            else if (name.equals("label")) { // its  a label
+            else if (name.equals("label")) {
                 cs.gridheight = GridBagConstraints.REMAINDER;
                 makeLabel(e, c, g, cs);
             }
-            else if (name.equals("soundlabel")) { // its  a sound label
+            else if (name.equals("soundlabel")) {
                 cs.gridheight = GridBagConstraints.REMAINDER;
                 makeSoundLabel(e, c, g, cs);
             }
@@ -1460,36 +1479,54 @@ public class PaneProgPane extends javax.swing.JPanel
             }
             else if (name.equals("dccaddress")) {
                 JPanel l = addDccAddressPanel(e);
-                cs.gridheight = GridBagConstraints.REMAINDER;
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridheight = 1;
+                if (l.getComponentCount() > 0) {
+                    cs.gridheight = GridBagConstraints.REMAINDER;
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridheight = 1;
+                }
             }
             else if (name.equals("column")) {
                 // nested "column" elements ...
                 cs.gridheight = GridBagConstraints.REMAINDER;
                 JPanel l = newColumn(e, showStdName, modelElem);
-                panelList.add(l);
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridheight = 1;
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridheight = 1;
+                }
+            }
+            else if (name.equals("row")) {
+                                // nested "row" elements ...
+                cs.gridwidth = GridBagConstraints.REMAINDER;
+                JPanel l = newRow(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridwidth = 1;
+                }
             }
             else if (name.equals("grid")) {
                                 // nested "grid" elements ...
                 cs.gridwidth = GridBagConstraints.REMAINDER;
                 JPanel l = newGrid(e, showStdName, modelElem);
-                panelList.add(l);
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridwidth = 1;
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridwidth = 1;
+                }
             }
             else { // its a mistake
                 log.error("No code to handle element of type "+e.getName()+" in newRow");
             }
         }
         // add glue to the bottom to allow resize
-        c.add(Box.createVerticalGlue());
-
+        if (c.getComponentCount() > 0) {
+            c.add(Box.createVerticalGlue());
+        }
         return c;
     }
 
@@ -1520,7 +1557,6 @@ public class PaneProgPane extends javax.swing.JPanel
                 List<Attribute> itemAttList = e.getAttributes(); // get item-level attributes
                 List<Attribute> attList = new ArrayList<Attribute>(gridAttList);
                 attList.addAll(itemAttList); // merge grid and item-level attributes
-//                 log.info("attribute list="+attList);
                 for (int j = 0; j < attList.size(); j++) {
                     Attribute attrib = attList.get(j);
                     String attribName = attrib.getName();
@@ -1585,18 +1621,20 @@ public class PaneProgPane extends javax.swing.JPanel
                     }
                 }
                 JPanel l = newGridItem(e, showStdName, modelElem);
-                panelList.add(l);
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridwidth = 1;
-            }
-            else { // its a mistake
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridwidth = 1;
+                }
+            } else { // its a mistake
                 log.error("No code to handle element of type "+e.getName()+" in newGrid");
             }
         }
         // add glue to the bottom to allow resize
-        c.add(Box.createVerticalGlue());
-
+        if (c.getComponentCount() > 0) {
+            c.add(Box.createVerticalGlue());
+        }
         return c;
     }
 
@@ -1614,7 +1652,7 @@ public class PaneProgPane extends javax.swing.JPanel
         c.setLayout(g);
 
         // handle the xml definition
-        // for all elements in the column or row
+        // for all elements in the grid item
         List<Element> elemList = element.getChildren();
         if (log.isDebugEnabled()) log.debug("newGridItem starting with "+elemList.size()+" elements");
         for (int i=0; i<elemList.size(); i++) {
@@ -1640,11 +1678,11 @@ public class PaneProgPane extends javax.swing.JPanel
                 cs.fill = GridBagConstraints.NONE;
                 cs.gridheight = 1;
             }
-            else if (name.equals("label")) { // its  a label
+            else if (name.equals("label")) {
                 cs.gridheight = GridBagConstraints.REMAINDER;
                 makeLabel(e, c, g, cs);
             }
-            else if (name.equals("soundlabel")) { // its  a sound label
+            else if (name.equals("soundlabel")) {
                 cs.gridheight = GridBagConstraints.REMAINDER;
                 makeSoundLabel(e, c, g, cs);
             }
@@ -1685,45 +1723,54 @@ public class PaneProgPane extends javax.swing.JPanel
             }
             else if (name.equals("dccaddress")) {
                 JPanel l = addDccAddressPanel(e);
-                cs.gridheight = GridBagConstraints.REMAINDER;
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridheight = 1;
+                if (l.getComponentCount() > 0) {
+                    cs.gridheight = GridBagConstraints.REMAINDER;
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridheight = 1;
+                }
             }
             else if (name.equals("column")) {
                 // nested "column" elements ...
                 cs.gridheight = GridBagConstraints.REMAINDER;
                 JPanel l = newColumn(e, showStdName, modelElem);
-                panelList.add(l);
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridheight = 1;
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridheight = 1;
+                }
             }
             else if (name.equals("row")) {
                                 // nested "row" elements ...
                 cs.gridwidth = GridBagConstraints.REMAINDER;
                 JPanel l = newRow(e, showStdName, modelElem);
-                panelList.add(l);
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridwidth = 1;
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridwidth = 1;
+                }
             }
             else if (name.equals("grid")) {
                                 // nested "grid" elements ...
                 cs.gridwidth = GridBagConstraints.REMAINDER;
                 JPanel l = newGrid(e, showStdName, modelElem);
-                panelList.add(l);
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridwidth = 1;
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridwidth = 1;
+                }
             }
             else { // its a mistake
                 log.error("No code to handle element of type "+e.getName()+" in newGridItem");
             }
         }
         // add glue to the bottom to allow resize
-        c.add(Box.createVerticalGlue());
-
+        if (c.getComponentCount() > 0) {
+            c.add(Box.createVerticalGlue());
+        }
         return c;
     }
 
@@ -1732,7 +1779,7 @@ public class PaneProgPane extends javax.swing.JPanel
         
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(_cvModel);
 
-        JTable			cvTable		= new JTable(_cvModel);
+        JTable cvTable = new JTable(_cvModel);
 
         sorter.setComparator(CvTableModel.NUMCOLUMN, new jmri.util.PreferNumericComparator());
 
@@ -1855,7 +1902,7 @@ public class PaneProgPane extends javax.swing.JPanel
             g.setConstraints(l, cs);
             col.add(l);
 
-            cs.gridx = GridBagConstraints.RELATIVE;
+            cs.gridx++;
             cs.anchor= GridBagConstraints.WEST;
             g.setConstraints(rep, cs);
             col.add(rep);
@@ -1865,7 +1912,7 @@ public class PaneProgPane extends javax.swing.JPanel
             g.setConstraints(rep, cs);
             col.add(rep);
 
-            cs.gridx = GridBagConstraints.RELATIVE;
+            cs.gridx++;
             cs.anchor= GridBagConstraints.WEST;
             g.setConstraints(l, cs);
             col.add(l);

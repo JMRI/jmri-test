@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import jmri.jmrit.operations.locations.Track;
-import jmri.jmrit.operations.rollingstock.RollingStock;
 import jmri.jmrit.operations.rollingstock.cars.Car;
 import jmri.jmrit.operations.rollingstock.cars.CarLoad;
 import jmri.jmrit.operations.rollingstock.cars.CarLoads;
@@ -19,7 +17,6 @@ import jmri.jmrit.operations.trains.Train;
 import static jmri.jmrit.operations.trains.TrainCommon.isThereWorkAtLocation;
 import static jmri.jmrit.operations.trains.TrainCommon.splitString;
 import jmri.util.FileUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,11 +24,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author rhwood
  */
-public class Conductor extends Manifest {
+public class HtmlConductor extends HtmlTrainCommon {
 
-    private final static Logger log = LoggerFactory.getLogger(Manifest.class);
+    private final static Logger log = LoggerFactory.getLogger(HtmlConductor.class);
 
-    public Conductor(Locale locale, Train train) throws IOException {
+    public HtmlConductor(Locale locale, Train train) throws IOException {
         super(locale, train);
         this.resourcePrefix = "Conductor";
     }
@@ -57,14 +54,10 @@ public class Conductor extends Manifest {
             );
         }
 
-        StringBuilder builder = new StringBuilder();
         List<Engine> engineList = EngineManager.instance().getByTrainBlockingList(train);
         List<Car> carList = CarManager.instance().getByTrainDestinationList(train);
         log.debug("Train has {} cars assigned to it", carList.size());
 
-        int sequenceId = location.getSequenceId();
-        int sequence = train.getRoute().getLocationsBySequenceList().size();
-        boolean work = isThereWorkAtLocation(train, location.getLocation());
         String pickups = performWork(true, false);  // pickup=true, local=false
         String setouts = performWork(false, false); // pickup=false, local=false
         String localMoves = performWork(false, true); // pickup=false, local=true
@@ -171,22 +164,7 @@ public class Conductor extends Manifest {
         }
 
         // engine change or helper service?
-        if (train.getSecondLegOptions() != Train.NONE) {
-            if (location == train.getSecondLegStartLocation()) {
-                builder.append(engineChange(location, train.getSecondLegOptions()));
-            }
-            if (location == train.getSecondLegEndLocation() && train.getSecondLegOptions() == Train.HELPER_ENGINES) {
-                builder.append(String.format(strings.getProperty("RemoveHelpersAt"), splitString(location.getName()))); // NOI18N
-            }
-        }
-        if (train.getThirdLegOptions() != Train.NONE) {
-            if (location == train.getThirdLegStartLocation()) {
-                builder.append(engineChange(location, train.getSecondLegOptions()));
-            }
-            if (location == train.getThirdLegEndLocation() && train.getThirdLegOptions() == Train.HELPER_ENGINES) {
-                builder.append(String.format(strings.getProperty("RemoveHelpersAt"), splitString(location.getName()))); // NOI18N
-            }
-        }
+        builder.append(this.getEngineChanges(location));
 
         if (r < sequence.size() - 1) {
             // Is the next location the same as the previous?

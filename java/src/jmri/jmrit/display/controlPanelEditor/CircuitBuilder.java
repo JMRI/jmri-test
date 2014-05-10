@@ -994,6 +994,7 @@ public class CircuitBuilder  {
     
     protected void changePortalName(String oldName, String newName) {
     	PortalIcon icon = _portalIconMap.get(oldName);
+    	icon.setName(newName);
        	_portalIconMap.remove(oldName);
      	_portalIconMap.put(newName, icon);
     }
@@ -1593,7 +1594,7 @@ public class CircuitBuilder  {
             if (log.isDebugEnabled()) log.debug("selection= "+(selection==null?"null":
                                                             selection.getClass().getName()));
             if (selection instanceof PortalIcon && _circuitIcons.contains(selection)) {
-                _editPortalFrame.checkPortalIconForUpdate((PortalIcon)selection);
+                //_editPortalFrame.checkPortalIconForUpdate((PortalIcon)selection);
                 //_editor.getSelectionGroup().add(selection);
                 _editor.highlight(getPortalIconMap().get(((PortalIcon)selection).getName()));
             }
