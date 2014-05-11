@@ -2,9 +2,9 @@
 
 package jmri.jmrix.lenz;
 
+import jmri.Turnout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jmri.Turnout;
 
 /**
  * Implement turnout manager.
@@ -43,7 +43,7 @@ public class XNetTurnoutManager extends jmri.managers.AbstractTurnoutManager imp
 
     // listen for turnouts, creating them as needed
     public void message(XNetReply l) {
-	if(log.isDebugEnabled()) log.debug("recieved message: " +l);
+	log.debug("recieved message: {}", l);
 	if(l.isFeedbackBroadcastMessage()) {
 	   int numDataBytes = l.getElement(0) & 0x0f;
 	   for(int i=1;i<numDataBytes;i+=2) {
@@ -54,8 +54,7 @@ public class XNetTurnoutManager extends jmri.managers.AbstractTurnoutManager imp
                    // continuing.
                    int a2=l.getElement(i+1);
                    if((a2 & 0x03)!=0) {
-        	     if (log.isDebugEnabled()) 
-			log.debug("message has address: "+addr);
+                     log.debug("message has address: {}", addr);
         	     // reach here for switch command; make sure we know 
                      // about this one
         	     String s = prefix+typeLetter()+addr;
@@ -116,7 +115,8 @@ public class XNetTurnoutManager extends jmri.managers.AbstractTurnoutManager imp
     // Handle a timeout notification
     public void notifyTimeout(XNetMessage msg)
     {
-       if(log.isDebugEnabled()) log.debug("Notified of timeout on message" + msg.toString());
+        // use isDebugEnabled to avoid calling msg.toString() unless actually logging
+       if(log.isDebugEnabled()) log.debug("Notified of timeout on message {}", msg.toString());
     }
 
     @Deprecated
