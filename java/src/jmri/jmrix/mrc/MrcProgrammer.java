@@ -101,7 +101,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
 
     // programming interface
     public synchronized void writeCV(int CV, int val, jmri.ProgListener p) throws jmri.ProgrammerException {
-        if (log.isDebugEnabled()) log.debug("writeCV "+CV+" listens "+p);
+        log.debug("writeCV {} listens {}", CV, p);
         useProgrammer(p);
         _progRead = false;
         // set state
@@ -125,7 +125,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
     }
 
     public synchronized void readCV(int CV, jmri.ProgListener p) throws jmri.ProgrammerException {
-        if (log.isDebugEnabled()) log.debug("readCV "+CV+" listens "+p);
+        log.debug("readCV {} listens {}", CV, p);
         useProgrammer(p);
         _progRead = true;
 
@@ -179,7 +179,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
     public synchronized void reply(MrcReply m) {
         if (progState == NOTPROGRAMMING) {
             // we get the complete set of replies now, so ignore these
-            if (log.isDebugEnabled()) log.debug("reply in NOTPROGRAMMING state");
+            log.debug("reply in NOTPROGRAMMING state");
             return;
         }
         if(m.isUnsolicited() || m.isPollMessage()){
@@ -209,7 +209,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
             notifyProgListenerEnd(_val, jmri.ProgListener.OK);
         
         } else {
-            if (log.isDebugEnabled()) log.debug("reply in un-decoded state");
+            log.debug("reply in un-decoded state");
         }
     }
 
@@ -219,7 +219,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
     protected synchronized void timeout() {
         if (progState != NOTPROGRAMMING) {
             // we're programming, time to stop
-            if (log.isDebugEnabled()) log.debug("timeout!");
+            log.debug("timeout!");
             // perhaps no loco present? Fail back to end of programming
             progState = NOTPROGRAMMING;
             cleanup();
@@ -233,7 +233,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
     }
     // internal method to notify of the final result
     protected void notifyProgListenerEnd(int value, int status) {
-        if (log.isDebugEnabled()) log.debug("notifyProgListenerEnd value "+value+" status "+status);
+        log.debug("notifyProgListenerEnd value {} status {}", value, status);
         // the programmingOpReply handler might send an immediate reply, so
         // clear the current listener _first_
         jmri.ProgListener temp = _usingProgrammer;

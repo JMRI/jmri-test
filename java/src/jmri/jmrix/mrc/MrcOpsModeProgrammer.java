@@ -42,7 +42,7 @@ public class MrcOpsModeProgrammer extends MrcProgrammer  {
      * Forward a write request to an ops-mode write operation
      */
     public synchronized void writeCV(int CV, int val, ProgListener p) throws ProgrammerException {
-        if (log.isDebugEnabled()) log.debug("write CV="+CV+" val="+val);
+        log.debug("write CV={} val={}", CV, val);
         MrcMessage msg = MrcMessage.getPOM(addressLo, addressHi,CV, val);
         
         useProgrammer(p);
@@ -58,20 +58,20 @@ public class MrcOpsModeProgrammer extends MrcProgrammer  {
     }
 
     public synchronized void readCV(int CV, ProgListener p) throws ProgrammerException {
-        if (log.isDebugEnabled()) log.debug("read CV="+CV);
+        log.debug("read CV={}", CV);
         log.error("readCV not available in this protocol");
         throw new ProgrammerException();
     }
 
     public synchronized void confirmCV(int CV, int val, ProgListener p) throws ProgrammerException {
-        if (log.isDebugEnabled()) log.debug("confirm CV="+CV);
+        log.debug("confirm CV={}", CV);
         log.error("confirmCV not available in this protocol");
         throw new ProgrammerException();
     }
     
     // add 200mSec between commands, so MRC command station queue doesn't get overrun
     protected void notifyProgListenerEnd(int value, int status) {
-    	if (log.isDebugEnabled()) log.debug("MrcOpsModeProgrammer adds 200mSec delay to response");
+    	log.debug("MrcOpsModeProgrammer adds 200mSec delay to response");
 		try{
 			wait(200);
 		}catch (InterruptedException e){

@@ -145,17 +145,10 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
     		// not a clock packet
     		return;
     	}
-    	if (log.isDebugEnabled()){
-            log.debug("MrcReply(len " + r.getNumDataElements() + ") waiting: " + waiting +
-        		" watingForRead: " + waitingForCmdRead +
-        		" waitingForCmdTime: " + waitingForCmdTime +
-        		" waitingForCmd1224: " + waitingForCmd1224 +
-        		" waitingForCmdRatio: " + waitingForCmdRatio +
-        		" waitingForCmdStop: " + waitingForCmdStop +
-        		" waitingForCmdStart: " + waitingForCmdStart
-        	);
-    		
-    	}
+        log.debug("MrcReply(len {}) waiting: {} watingForRead: {} waitingForCmdTime: {} waitingForCmd1224: {} waitingForCmdRatio: {} waitingForCmdStop: {} waitingForCmdStart: {}",
+        		r.getNumDataElements(), waiting, waitingForCmdRead, waitingForCmdTime,
+        		waitingForCmd1224, waitingForCmdRatio, waitingForCmdStop, waitingForCmdStart
+    	);
 
         readClockPacket(r);
 
@@ -209,7 +202,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
     
     /** name of Mrc clock */
 	public String getHardwareClockName() {
-		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
+		if (DEBUG_SHOW_PUBLIC_CALLS){
 			log.debug("getHardwareClockName");
 		}
 		return ("Mrc Fast Clock");
@@ -217,7 +210,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
 	
 	/** Mrc clock runs stable enough */
 	public boolean canCorrectHardwareClock() {
-		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
+		if (DEBUG_SHOW_PUBLIC_CALLS){
 			log.debug("getHardwareClockName");
 		}
 		return false;
@@ -225,7 +218,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
 
 	/** Mrc clock supports 12/24 operation */
 	public boolean canSet12Or24HourClock() {
-		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
+		if (DEBUG_SHOW_PUBLIC_CALLS){
 			log.debug("canSet12Or24HourClock");
 		}
 		return true;
@@ -233,7 +226,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
 	
 	/** sets Mrc clock speed, must be 1 to 15 */
 	public void setRate(double newRate) {
-		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
+		if (DEBUG_SHOW_PUBLIC_CALLS){
 			log.debug("setRate: " + newRate);
 		}
 		int newRatio = (int)newRate;
@@ -246,7 +239,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
 	
 	/** Mrc only supports integer rates */
 	public boolean requiresIntegerRate() {
-		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
+		if (DEBUG_SHOW_PUBLIC_CALLS){
 			log.debug("requiresIntegerRate");
 		}
 		return true;
@@ -256,8 +249,8 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
 	public double getRate() {
 //		issueReadOnlyRequest();	// get the current rate
 		//issueDeferredGetRate = true;
-		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
-			log.debug("getRate: " + mrcLastRatio);
+		if (DEBUG_SHOW_PUBLIC_CALLS){
+			log.debug("getRate: {}", mrcLastRatio);
 		}
 		return(mrcLastRatio);
 	}
@@ -265,8 +258,8 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
 	/** set the time, the date part is ignored */
     @SuppressWarnings("deprecation")
 	public void setTime(Date now) {
-		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
-			log.debug("setTime: " + now);
+		if (DEBUG_SHOW_PUBLIC_CALLS){
+			log.debug("setTime: {}", now);
 		}
 		issueClockTime(now.getHours(), now.getMinutes());
 	}
@@ -290,8 +283,8 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
             now.setMinutes(mrcLastMinute);
             now.setSeconds(0);
         }
-        if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
-        	log.debug("getTime returning: " + now);
+        if (DEBUG_SHOW_PUBLIC_CALLS){
+        	log.debug("getTime returning: {}", now);
         }
         return(now);
 	}
@@ -299,8 +292,8 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
 	/** set Mrc clock and start clock */
     @SuppressWarnings("deprecation")
 	public void startHardwareClock(Date now) {
-		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
-			log.debug("startHardwareClock: " + now);
+		if (DEBUG_SHOW_PUBLIC_CALLS){
+			log.debug("startHardwareClock: {}", now);
 		}
 		if (!internalClock.getInternalMaster() && internalClock.getMasterName().equals(getHardwareClockName())){
 			
@@ -311,7 +304,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
 	
 //	/** stops the Mrc Clock */
 //	public void stopHardwareClock() {
-//		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
+//		if (DEBUG_SHOW_PUBLIC_CALLS){
 //			log.debug("stopHardwareClock");
 //		}
 //		issueClockStop();
@@ -319,7 +312,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
 //	
 //	/** not sure when or if this gets called, but will issue a read to get latest time */
 //	public void initiateRead() {
-//		if (DEBUG_SHOW_PUBLIC_CALLS && log.isDebugEnabled()){
+//		if (DEBUG_SHOW_PUBLIC_CALLS){
 //			log.debug("initiateRead");
 //		}
 //		issueReadOnlyRequest();
@@ -340,8 +333,9 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
      */
     public void newInternalMinute()
     {
-        if (DEBUG_SHOW_SYNC_CALLS && log.isDebugEnabled()) {
-        	log.debug("newInternalMinute clockMode: " + clockMode + " mrcInit: " + mrcSyncInitStateCounter + " mrcRun: " + mrcSyncRunStateCounter);
+        if (DEBUG_SHOW_SYNC_CALLS) {
+        	log.debug("newInternalMinute clockMode: {} mrcInit: {} mrcRun: {}",
+        			clockMode, mrcSyncInitStateCounter, mrcSyncRunStateCounter);
         }
     }
     
@@ -460,8 +454,8 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
 //        int ss = now.getSeconds();
 //        int mm = now.getMinutes();
 //        int hh = now.getHours();
-//        if (false && log.isDebugEnabled()) {
-//            log.debug("getIntTime: " + hh + ":" + mm + ":" + ss + "." + ms);
+//        if (false) {
+//            log.debug("getIntTime: {}:{}:{}.{}", hh, mm, ss, ms);
 //        }
 //        return((hh * 60 * 60) + (mm * 60) + ss + (ms / 1000));
 //    }

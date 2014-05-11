@@ -158,7 +158,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
     public void setSpeedSetting(float speed) {
         float oldSpeed = this.speedSetting;
 		this.speedSetting = speed;
-        if (log.isDebugEnabled()) log.debug("setSpeedSetting= "+speed);
+        log.debug("setSpeedSetting= {}", speed);
         //MRC use a value between 0-127 no matter what the controller is set to
         int value = (int)((127-1)*speed);     // -1 for rescale to avoid estop
         if (value>0) value = value+1;  // skip estop
@@ -179,7 +179,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         boolean old = isForward;
         isForward = forward;
         setSpeedSetting(speedSetting);  // send the command
-        if (log.isDebugEnabled()) log.debug("setIsForward= "+forward);
+        log.debug("setIsForward= {}", forward);
         if (old != isForward)
             notifyPropertyChangeListener("IsForward", old, isForward );
     }
