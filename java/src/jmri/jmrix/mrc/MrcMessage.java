@@ -97,12 +97,97 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     }
     
     public String toString(){
-        String raw="";
-        for (int i=0;i<getNumDataElements(); i++) {
-            if (i>0) raw+=" ";
-            raw = jmri.util.StringUtil.appendTwoHexFromInt(getElement(i)&0xFF, raw);
+        StringBuilder txt = new StringBuilder();
+        switch (getElement(0)&0xFF) {
+        case setClockRatioCmd:
+        	txt.append("Set Clock Ratio: " + getElement(4));
+        	break;
+        case setClockTimeCmd:
+        	txt.append("Set Clock Time: " + getElement(4) + ":" + getElement(6));
+        	break;
+        case setClockAmPmCmd:
+        	txt.append("Set Clock AM/PM");
+        	break;
+        case throttlePacketCmd:
+        	txt.append("Loco " + Integer.toString((getElement(4) << 8) + getElement(6)));
+        	txt.append(" Speed: " + Integer.toString(getElement(8)));
+    		break;
+        case functionGroup1PacketCmd:
+        	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 1");
+        	txt.append(" F1 " + Integer.toString(getElement(8) & 0x01));
+        	txt.append(" F2 " + Integer.toString(getElement(8) & 0x02));
+        	txt.append(" F3 " + Integer.toString(getElement(8) & 0x04));
+        	txt.append(" F4 " + Integer.toString(getElement(8) & 0x08));
+        	txt.append(" F0 " + Integer.toString(getElement(8) & 0x10));
+    		break;
+        case functionGroup2PacketCmd:
+        	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 2");
+        	txt.append(" F5 " + Integer.toString(getElement(8) & 0x01));
+        	txt.append(" F6 " + Integer.toString(getElement(8) & 0x02));
+        	txt.append(" F7 " + Integer.toString(getElement(8) & 0x04));
+        	txt.append(" F8 " + Integer.toString(getElement(8) & 0x08));
+    		break;
+        case functionGroup3PacketCmd:
+        	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 3");
+        	txt.append(" F9 " + Integer.toString(getElement(8) & 0x01));
+        	txt.append(" F10 " + Integer.toString(getElement(8) & 0x02));
+        	txt.append(" F11 " + Integer.toString(getElement(8) & 0x04));
+        	txt.append(" F12 " + Integer.toString(getElement(8) & 0x08));
+    		break;
+        case functionGroup4PacketCmd:
+        	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 4");
+        	txt.append(" F12 " + Integer.toString(getElement(8) & 0x01));
+        	txt.append(" F13 " + Integer.toString(getElement(8) & 0x02));
+        	txt.append(" F14 " + Integer.toString(getElement(8) & 0x04));
+        	txt.append(" F15" + Integer.toString(getElement(8) & 0x08));
+    		break;
+        case functionGroup5PacketCmd:
+        	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 5");
+        	txt.append(" F17 " + Integer.toString(getElement(8) & 0x01));
+        	txt.append(" F18 " + Integer.toString(getElement(8) & 0x02));
+        	txt.append(" F19 " + Integer.toString(getElement(8) & 0x04));
+        	txt.append(" F20 " + Integer.toString(getElement(8) & 0x08));
+        	txt.append(" F16 " + Integer.toString(getElement(8) & 0x10));
+    		break;
+        case functionGroup6PacketCmd:
+        	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 6");
+        	txt.append(" F21 " + Integer.toString(getElement(8) & 0x01));
+        	txt.append(" F22 " + Integer.toString(getElement(8) & 0x02));
+        	txt.append(" F23 " + Integer.toString(getElement(8) & 0x04));
+        	txt.append(" F24 " + Integer.toString(getElement(8) & 0x08));
+        	txt.append(" F25 " + Integer.toString(getElement(8) & 0x10));
+        	txt.append(" F26 " + Integer.toString(getElement(8) & 0x20));
+        	txt.append(" F27 " + Integer.toString(getElement(8) & 0x40));
+        	txt.append(" F28 " + Integer.toString(getElement(8) & 0x80));
+    		break;
+        case readCVCmd:
+        	int cv = (getElement(4) << 8) + getElement(6);
+        	txt.append("Read CV " + Integer.toString(cv));
+    		break;
+        case readDecoderAddressCmd:
+        	txt.append("Read Decoder Address ");
+    		break;
+        case writeCVPROGCmd:
+        	txt.append("Write PROG CV ");
+        	txt.append(Integer.toString((getElement(4) << 8) + getElement(6)));
+        	txt.append("=");
+        	txt.append(Integer.toString(getElement(8)));
+    		break;
+        case writeCVPOMCmd:
+        	txt.append("Write POM CV ");
+        	txt.append(Integer.toString(getElement(4) << 8) + getElement(6));
+        	txt.append("=");
+        	txt.append(Integer.toString(getElement(8)));
+    		break;
+        default:
+        	txt.append("Unk Cmd Code:");
+            for (int i=0;i<getNumDataElements(); i++) {
+                txt.append(" ");
+                txt.append(jmri.util.StringUtil.twoHexFromInt(getElement(i)&0xFF));
+            }
+        	break;
         }
-        return raw;
+        return txt.toString();
     }
     
     public static final int throttlePacketCmd = 0x25;
