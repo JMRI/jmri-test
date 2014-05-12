@@ -140,10 +140,10 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     		break;
         case functionGroup4PacketCmd:
         	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 4");
-        	txt.append(" F12 " + Integer.toString(getElement(8) & 0x01));
-        	txt.append(" F13 " + Integer.toString(getElement(8) & 0x02));
-        	txt.append(" F14 " + Integer.toString(getElement(8) & 0x04));
-        	txt.append(" F15" + Integer.toString(getElement(8) & 0x08));
+        	txt.append(" F13 " + Integer.toString(getElement(8) & 0x01));
+        	txt.append(" F14 " + Integer.toString(getElement(8) & 0x02));
+        	txt.append(" F15 " + Integer.toString(getElement(8) & 0x04));
+        	txt.append(" F16" + Integer.toString(getElement(8) & 0x08));
     		break;
         case functionGroup5PacketCmd:
         	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 5");
@@ -151,7 +151,6 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         	txt.append(" F18 " + Integer.toString(getElement(8) & 0x02));
         	txt.append(" F19 " + Integer.toString(getElement(8) & 0x04));
         	txt.append(" F20 " + Integer.toString(getElement(8) & 0x08));
-        	txt.append(" F16 " + Integer.toString(getElement(8) & 0x10));
     		break;
         case functionGroup6PacketCmd:
         	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 6");
@@ -191,7 +190,22 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
             }
         	break;
         }
+        validCheckSum();
         return txt.toString();
+    }
+    
+    public boolean validCheckSum(){
+        if(getNumDataElements()>6){
+            int result = 0x00;
+            for(int i = 4; i<getNumDataElements()-2; i++){ //skip the header, and ignore the checksum
+                log.info(""+getElement(i));
+                result = (getElement(i))^result;
+            }
+            log.info("check sum result "+result);
+            log.info("check sum found "+(getElement(getNumDataElements()-2)));
+            if(result==(getElement(getNumDataElements()-1))) return true;
+        }
+        return false;
     }
     
     public static final int throttlePacketCmd = 0x25;

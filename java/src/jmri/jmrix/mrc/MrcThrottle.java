@@ -226,6 +226,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
 
         if(m.isUnsolicited()){
             if(m.getNumDataElements()>8 && m.getElement(4)==addressHi && m.getElement(6)==addressLo){
+                log.info(raw);
                 if(!m.validCheckSum()) {log.info("invalid check sum"); return;}
                 //message potentially matches our loco
                 if(MrcReply.startsWith(m, MrcMessage.throttlePacketHeader)){
@@ -254,47 +255,55 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
                         int data = m.getElement(8)&0xff;
                         data = data - 0x80;
                         if((data&0x10)==0x10){
+                            log.info("Function 0 on");
                             if(!this.f0) {
                                 notifyPropertyChangeListener(Throttle.F0, this.f0, true);
                                 this.f0 = true;
-                                log.info("Function 0 on");
                             }
                         } else if (this.f0){
                             log.info("Function 0 off");
                             notifyPropertyChangeListener(Throttle.F0, this.f0, false);
                             this.f0 = false;
                         }
-                        if((data&0x01)==0x01 && !this.f1){
+                        if((data&0x01)==0x01){
                             log.info("Function 1 on");
-                            notifyPropertyChangeListener(Throttle.F1, this.f1, true);
-                            this.f1 = true;
+                            if(!this.f1){
+                                notifyPropertyChangeListener(Throttle.F1, this.f1, true);
+                                this.f1 = true;
+                            }
                         } else if (this.f1){
                             log.info("Function 1 off");
                             notifyPropertyChangeListener(Throttle.F1, this.f1, false);
                             this.f1 = false;
                         }
-                        if((data&0x02)==0x02 && !this.f2){
+                        if((data&0x02)==0x02){
                             log.info("Function 2 on");
-                            notifyPropertyChangeListener(Throttle.F2, this.f2, true);
-                            this.f2 = true;
+                            if(!this.f2){
+                                notifyPropertyChangeListener(Throttle.F2, this.f2, true);
+                                this.f2 = true;
+                            }
                         } else if (this.f2){
                             log.info("Function 2 off");
                             notifyPropertyChangeListener(Throttle.F2, this.f2, false);
                             this.f2 = false;
                         }
-                        if((data&0x04)==0x04 && !this.f3){
+                        if((data&0x04)==0x04){
                             log.info("Function 3 on");
-                            notifyPropertyChangeListener(Throttle.F3, this.f3, true);
-                            this.f3 = true;
+                            if(!this.f3){
+                                notifyPropertyChangeListener(Throttle.F3, this.f3, true);
+                                this.f3 = true;
+                            }
                         } else if (this.f3){
                             log.info("Function 3 off");
                             notifyPropertyChangeListener(Throttle.F3, this.f3, false);
                             this.f3 = false;       
                         }
-                        if((data&0x08)==0x08 && !this.f4){
+                        if((data&0x08)==0x08){
                             log.info("Function 4 on");
-                            notifyPropertyChangeListener(Throttle.F4, this.f4, true);
-                            this.f4 = true;
+                            if(!this.f4){
+                                notifyPropertyChangeListener(Throttle.F4, this.f4, true);
+                                this.f4 = true;
+                            }
                         } else if (this.f4){
                             log.info("Function 4 off");
                             notifyPropertyChangeListener(Throttle.F4, this.f4, false);

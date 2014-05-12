@@ -276,6 +276,8 @@ public class MrcTrafficController extends AbstractMRTrafficController
                         mLastSender = l;
                         listenerQueue.removeFirst();
                         msgQueue.removeFirst();
+                        //We do not know at what stage (or if) the last poll message was sent while retrieving this message, therefore we will set it wait until the next poll, otherwise the message could be sent out at the incorrect time.
+                        waiting=false;
                     }
                 }
             }
