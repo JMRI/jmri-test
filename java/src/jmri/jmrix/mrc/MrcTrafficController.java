@@ -135,8 +135,8 @@ public class MrcTrafficController extends AbstractMRTrafficController
             //Poll message for us
             if(msg.getNumDataElements()>=6){
                 //triggers off the sending of a message
+                 waiting = true;
                 ((MrcReply)msg).setPollMessage();
-                waiting = true;
                 unsolicited = false; //Any recieved reply will be unsolicited (ie reply to a message we send) until the next poll is recieved.
                 return true;
             }
@@ -166,73 +166,82 @@ public class MrcTrafficController extends AbstractMRTrafficController
         if(unsolicited){
             msg.setUnsolicited();
         }
-        
-        if(MrcReply.startsWith(msg, MrcMessage.throttlePacketHeader)){
-            //Thottle speed packet from another handset, need to wait until all is recieved
-            if(msg.getNumDataElements()>=throttlePacketLength){
+        if(msg.getNumDataElements()==4){
+            if(mCurrentState == WAITMSGREPLYSTATE){
                 return true;
             }
-            return false;
-        }
-        
-        if(MrcReply.startsWith(msg, MrcReply.readCVHeaderReply)){
-            //return of a read programming packet
-            if(msg.getNumDataElements()>=8){
+            if(msg.getElement(0)==0x00 && msg.getElement(1)==0x00 && msg.getElement(2)==0x00 && msg.getElement(3)==0x00){
                 return true;
             }
-            return false;
         }
-               
         if(mCurrentState == WAITMSGREPLYSTATE){
-            //log.info("waiting for reply");
-            if(msg.getNumDataElements()==4){
+            return false;
+        }
+        if(msg.getNumDataElements()>=6){  //skip these as they have a size greater than 6
+            //byte 0 & 2 should always be the same.
+            if(msg.getElement(0)!=msg.getElement(2)){
                 return true;
             }
-            return false;
-        }
-        if(MrcReply.startsWith(msg, MrcMessage.readDecoderAddress)){
-            if(msg.getNumDataElements()>=readDecoderAddressLength) return true;
-            return false;
-        }
-        if(MrcReply.startsWith(msg, MrcMessage.readCVHeader)){
-            if(msg.isUnsolicited()) log.info("Good read marked as unsolicited");
-            if(msg.getNumDataElements()>=readCVLength) return true;
-            return false;
-        }
-        if(MrcReply.startsWith(msg, MrcMessage.writeCVPROGHeader)){
-            if(msg.getNumDataElements()>=writeCVPROGLength) return true;
-            return false;
-        }
-        if(MrcReply.startsWith(msg, MrcMessage.writeCVPOMHeader)){
-            if(msg.getNumDataElements()>=writeCVPOMLength) return true;
-            return false;
-        }
-        if(MrcReply.startsWith(msg, MrcMessage.functionGroup1PacketHeader)){
-            if(msg.getNumDataElements()>=functionGroupLength) return true;
-            return false;
-        }
-        if(MrcReply.startsWith(msg, MrcMessage.functionGroup2PacketHeader)){
-            if(msg.getNumDataElements()>=functionGroupLength) return true;
-            return false;
-        }
+            if(MrcReply.startsWith(msg, MrcMessage.readDecoderAddress)){
+                if(msg.getNumDataElements()>=readDecoderAddressLength) return true;
+                return false;
+            }
+            if(MrcReply.startsWith(msg, MrcMessage.readCVHeader)){
+                if(msg.isUnsolicited()) log.info("Good read marked as unsolicited");
+                if(msg.getNumDataElements()>=readCVLength) return true;
+                return false;
+            }
+            if(MrcReply.startsWith(msg, MrcMessage.writeCVPROGHeader)){
+                if(msg.getNumDataElements()>=writeCVPROGLength) return true;
+                return false;
+            }
+            if(MrcReply.startsWith(msg, MrcMessage.writeCVPOMHeader)){
+                if(msg.getNumDataElements()>=writeCVPOMLength) return true;
+                return false;
+            }
+                    
+            if(MrcReply.startsWith(msg, MrcMessage.throttlePacketHeader)){
+                //Thottle speed packet from another handset, need to wait until all is recieved
+                if(msg.getNumDataElements()>=throttlePacketLength) return true;
+                return false;
+            }
+            if(MrcReply.startsWith(msg, MrcMessage.functionGroup1PacketHeader)){
+                if(msg.getNumDataElements()>=functionGroupLength) return true;
+                return false;
+            }
+            if(MrcReply.startsWith(msg, MrcMessage.functionGroup2PacketHeader)){
+                if(msg.getNumDataElements()>=functionGroupLength) return true;
+                return false;
+            }
             if(MrcReply.startsWith(msg, MrcMessage.functionGroup3PacketHeader)){
-            if(msg.getNumDataElements()>=functionGroupLength) return true;
-            return false;
+                if(msg.getNumDataElements()>=functionGroupLength) return true;
+                return false;
+            }
+            if(MrcReply.startsWith(msg, MrcMessage.functionGroup4PacketHeader)){
+                log.info("Function group 4");
+                if(msg.getNumDataElements()>=functionGroupLength) return true;
+                return false;
+            }
+            if(MrcReply.startsWith(msg, MrcMessage.functionGroup5PacketHeader)){
+                log.info("Function group 5");
+                if(msg.getNumDataElements()>=functionGroupLength) return true;
+                return false;
+            }
+            if(MrcReply.startsWith(msg, MrcMessage.functionGroup6PacketHeader)){
+                log.info("Function group 6");
+                if(msg.getNumDataElements()>=functionGroupLength) return true;
+                return false;
+            }
+            //Error occured during read
         }
-        if(MrcReply.startsWith(msg, MrcMessage.functionGroup4PacketHeader)){
-            if(msg.getNumDataElements()>=functionGroupLength) return true;
-            return false;
-        }
-        if(MrcReply.startsWith(msg, MrcMessage.functionGroup5PacketHeader)){
-            if(msg.getNumDataElements()>=functionGroupLength) return true;
-            return false;
-        }
-        if(MrcReply.startsWith(msg, MrcMessage.functionGroup6PacketHeader)){
-            if(msg.getNumDataElements()>=functionGroupLength) return true;
-            return false;
-        }
-        //Error occured during read
         if(msg.getNumDataElements()>=4){
+            if(msg.getElement(0)!=msg.getElement(2)){
+                //Potential error in the packets received back these bytes should always be equal.
+                return true;
+            }
+            if(msg.getElement(0)==0x00 && msg.getElement(1)==0x00 && msg.getElement(2)==0x00 && msg.getElement(3)==0x00){
+                return true;
+            }
             if(MrcReply.startsWith(msg, MrcReply.locoDblControl)){
                 //A loco that is also under the control of another handset requires us to send the command a second time round, so hopefully this will trigger the xmt loop to re add the message to the front of the queue
                 synchronized(xmtRunnable) {
@@ -243,15 +252,11 @@ public class MrcTrafficController extends AbstractMRTrafficController
             if(MrcReply.startsWith(msg, MrcReply.badCmdRecieved)){
                 return true;
             }
-            if(msg.getElement(0)==0x00 && msg.getElement(1)==0x00 && msg.getElement(2)==0x00 && msg.getElement(3)==0x00){
-                ((MrcReply)msg).setPollMessage();
-                return true;
-            }
-
             if(msg.getElement(1)==0x00 && !waiting){
                 return true;
             }
         }
+
         //For some reason we see the odd two byte packet that doesn't match anything we know about, so at this stage ignore it, this could possibly be a corruption of the nodata bytes.
         if(msg.getNumDataElements()==2 && ((msg.getElement(0)&0xff)==0xF8 ||(msg.getElement(0)&0xff)==0xE0 || (msg.getElement(0)&0xff)==0xFE || (msg.getElement(0)&0xff)==0x80)){
             return true;

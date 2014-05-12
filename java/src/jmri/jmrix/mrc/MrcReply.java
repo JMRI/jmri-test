@@ -85,9 +85,8 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
         if (match.length > (source.getNumDataElements())) {
             return false;
         }
-
         for (int i = 0; i < match.length; i++) {
-            if (source.getElement(i) != match[i]) {
+            if ((source.getElement(i)&0xff) != (match[i]&0xff)) {
                 return false;
             }
         }
@@ -108,12 +107,9 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
         if(getNumDataElements()>6){
             int result = 0x00;
             for(int i = 4; i<getNumDataElements()-2; i++){
-                log.info(""+getElement(i));
                 result = (getElement(i)&0xff)^result;
             }
-            log.info("check sum result "+result);
-            log.info("check sum found "+(getElement(getNumDataElements()-2)&0xff));
-            if(result==(getElement(getNumDataElements()-1)&0xff)) return true;
+            if(result==(getElement(getNumDataElements()-2)&0xff)) return true;
         }
         return false;
     }
@@ -125,33 +121,57 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
      */
     public String toString() {
     	StringBuilder txt = new StringBuilder();
-    	switch (getElement(0)) {
-    	case readCVHeaderReplyCode:
-    		txt.append("Read CV");
-    		break;
-    	case badCmdRecievedCode:
-    		txt.append("Bad Cmd Ack");
-    		break;
-    	case goodCmdRecievedCode:
-    		txt.append("Good Cmd Ack");
-    		break;
-    	case progCmdSentCode:
-    		txt.append("Pgm Cmd Sent");
-    		break;
-    	case locoSoleControlCode:
-    		txt.append("Single Throttle");
-    		break;
-    	case locoDblControlCode:
-    		txt.append("Multiple Throttle");
-    		break;
-    	default:
-    		txt.append("Unk Code");
+        if(getNumDataElements()>=4 && getElement(0)!=getElement(2) && getElement(1)!=0x01){
+            //byte 0 and byte 2 should always be the same except for a clock update packet.
+            txt.append("Error in Packet");
             for (int i=0;i<getNumDataElements(); i++) {
                 txt.append(" ");
                 txt.append(jmri.util.StringUtil.twoHexFromInt(getElement(i)&0xFF));
             }
-    		break;
-    	}
+        } else {
+            switch (getElement(0)) {
+            case readCVHeaderReplyCode:
+                txt.append("Read CV");
+                break;
+            case badCmdRecievedCode:
+                txt.append("Bad Cmd Ack");
+                break;
+            case goodCmdRecievedCode:
+                txt.append("Good Cmd Ack");
+                break;
+            case progCmdSentCode:
+                txt.append("Pgm Cmd Sent");
+                break;
+            case locoSoleControlCode:
+                txt.append("Single Throttle");
+                break;
+            case locoDblControlCode:
+                txt.append("Multiple Throttle");
+                break;
+            default:
+                if(getNumDataElements()==6){
+                    if(getElement(0)==0x00 && getElement(1)==0x01){
+                        txt.append("Clock Update");
+                        break;
+                    } else if(getElement(1)==0x01){
+                        txt.append("Poll to Cab " + jmri.util.StringUtil.twoHexFromInt(getElement(0)&0xFF));
+                        break;
+                    }
+                }
+                if(getNumDataElements()==4){
+                    if(getElement(0)==0x00 && getElement(1)==0x00 && getElement(2)==0x00 && getElement(3)==0x00){
+                        txt.append("Cab - No Data To Send");
+                        break;
+                    }
+                }
+                txt.append("Unk Code");
+                for (int i=0;i<getNumDataElements(); i++) {
+                    txt.append(" ");
+                    txt.append(jmri.util.StringUtil.twoHexFromInt(getElement(i)&0xFF));
+                }
+                break;
+            }
+        }
 		return txt.toString();
     }
     

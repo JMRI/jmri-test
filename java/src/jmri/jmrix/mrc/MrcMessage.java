@@ -190,22 +190,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
             }
         	break;
         }
-        validCheckSum();
         return txt.toString();
-    }
-    
-    public boolean validCheckSum(){
-        if(getNumDataElements()>6){
-            int result = 0x00;
-            for(int i = 4; i<getNumDataElements()-2; i++){ //skip the header, and ignore the checksum
-                log.info(""+getElement(i));
-                result = (getElement(i))^result;
-            }
-            log.info("check sum result "+result);
-            log.info("check sum found "+(getElement(getNumDataElements()-2)));
-            if(result==(getElement(getNumDataElements()-1))) return true;
-        }
-        return false;
     }
     
     public static final int throttlePacketCmd = 0x25;
