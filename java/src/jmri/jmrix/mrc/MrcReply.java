@@ -146,6 +146,10 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
     		break;
     	default:
     		txt.append("Unk Code");
+            for (int i=0;i<getNumDataElements(); i++) {
+                txt.append(" ");
+                txt.append(jmri.util.StringUtil.twoHexFromInt(getElement(i)&0xFF));
+            }
     		break;
     	}
 		return txt.toString();

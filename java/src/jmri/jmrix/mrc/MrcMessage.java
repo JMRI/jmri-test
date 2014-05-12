@@ -109,7 +109,11 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         	txt.append("Set Clock AM/PM");
         	break;
         case throttlePacketCmd:
-        	txt.append("Loco " + Integer.toString((getElement(4) << 8) + getElement(6)));
+        	if (getElement(4) != 0) {
+            	txt.append("Loco (L)" + Integer.toString(((getElement(4) & 0xC0) << 8) + getElement(6)));
+        	} else {
+            	txt.append("Loco (S)" + Integer.toString(getElement(6)));
+        	}
         	txt.append(" Speed: " + Integer.toString(getElement(8)));
     		break;
         case functionGroup1PacketCmd:
