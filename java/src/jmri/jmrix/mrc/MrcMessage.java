@@ -190,56 +190,56 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         return txt.toString();
     }
     
-    public static final int throttlePacketCmd = 0x25;
+    private static final int throttlePacketCmd = 0x25;
     final static int[] throttlePacketHeader = new int[]{throttlePacketCmd,0x00,throttlePacketCmd,0x00};
     final static int throttlePacketLength = 10;//length of packet less the header
     public static int getThrottlePacketLength() { return throttlePacketHeader.length+throttlePacketLength; }
 
-    public static final int functionGroup1PacketCmd = 0x34;
+    private static final int functionGroup1PacketCmd = 0x34;
     final static int[] functionGroup1PacketHeader = new int[]{functionGroup1PacketCmd,0x00,functionGroup1PacketCmd,0x00};
-    public static final int functionGroup2PacketCmd = 0x44;
+    private static final int functionGroup2PacketCmd = 0x44;
     final static int[] functionGroup2PacketHeader = new int[]{functionGroup2PacketCmd,0x00,functionGroup2PacketCmd,0x00};
-    public static final int functionGroup3PacketCmd = 0x54;
+    private static final int functionGroup3PacketCmd = 0x54;
     final static int[] functionGroup3PacketHeader = new int[]{functionGroup3PacketCmd,0x00,functionGroup3PacketCmd,0x00}; //Guess at this
-    public static final int functionGroup4PacketCmd = 0x74;
+    private static final int functionGroup4PacketCmd = 0x74;
     final static int[] functionGroup4PacketHeader = new int[]{functionGroup4PacketCmd,0x00,functionGroup4PacketCmd,0x00}; //Guess at this
-    public static final int functionGroup5PacketCmd = 0x84;
+    private static final int functionGroup5PacketCmd = 0x84;
     final static int[] functionGroup5PacketHeader = new int[]{functionGroup5PacketCmd,0x00,functionGroup5PacketCmd,0x00}; //Guess at this
-    public static final int functionGroup6PacketCmd = 0xA4;
+    private static final int functionGroup6PacketCmd = 0xA4;
     final static int[] functionGroup6PacketHeader = new int[]{functionGroup6PacketCmd,0x00,functionGroup6PacketCmd,0x00}; //Guess at this
     final static int functionGroupLength = 8;
     public static int getFunctionPacketLength() { return functionGroup1PacketHeader.length+functionGroupLength; }
 
-    public static final int readCVCmd = 0x43;
+    private static final int readCVCmd = 0x43;
     final static int[] readCVHeader = new int[]{readCVCmd,0x00,readCVCmd,0x00};
     final private static int readCVLength = 6;
     public static int getReadCVPacketLength() { return readCVHeader.length+readCVLength; }
 
-    public static final int readDecoderAddressCmd = 0x42;
+    private static final int readDecoderAddressCmd = 0x42;
     final static int[] readDecoderAddress = new int[]{readDecoderAddressCmd,0x00,readDecoderAddressCmd,0x00,readDecoderAddressCmd,0x00};
     public static int getReadDecoderAddressLength() { return readDecoderAddress.length; }
 
-    public static final int writeCVPROGCmd = 0x24;
+    private static final int writeCVPROGCmd = 0x24;
     final static int[] writeCVPROGHeader = new int[]{writeCVPROGCmd,0x00,writeCVPROGCmd,0x00};
     final private static int writeCVPROGLength = 8;
     public static int getWriteCVPROGPacketLength() { return writeCVPROGHeader.length+writeCVPROGLength; }
 
-    public static final int writeCVPOMCmd = 0x56;
+    private static final int writeCVPOMCmd = 0x56;
     final static int[] writeCVPOMHeader = new int[]{writeCVPOMCmd,0x00,writeCVPOMCmd,0x00};
     final private static int writeCVPOMLength = 12;
     public static int getWriteCVPOMPacketLength() { return writeCVPOMHeader.length+writeCVPOMLength; }
 
-    public static final int setClockRatioCmd = 0x12;
+    private static final int setClockRatioCmd = 0x12;
     final static int[] setClockRatioHeader = new int[]{setClockRatioCmd,0x00,setClockRatioCmd,0x00};
     final private static int setClockRatioLength = 10;
     public static int getSetClockRatioPacketLength() { return setClockRatioLength; }
 
-    public static final int setClockTimeCmd = 0x13;
+    private static final int setClockTimeCmd = 0x13;
     final static int[] setClockTimeHeader = new int[]{setClockTimeCmd,0x00,setClockTimeCmd,0x00};
     final private static int setClockTimeLength = 10;
     public static int getSetClockTimePacketLength() { return setClockTimeLength; }
 
-    public static final int setClockAmPmCmd = 0x32;
+    private static final int setClockAmPmCmd = 0x32;
     final static int[] setClockAmPmHeader = new int[]{setClockAmPmCmd,0x00,setClockAmPmCmd,0x00};
     final private static int setClockAmPmLength = 10;
     public static int getSetClockAmPmPacketLength() { return setClockAmPmLength; }

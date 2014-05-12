@@ -67,13 +67,19 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
     
     public boolean isPollMessage(){return poll;}
     
-    final static int[] readCVHeaderReply = new int[]{0x66,0x00,0x66,0x00};
-    final static int[] badCmdRecieved = new int[]{0xEE,0x00,0xEE,0x00};
-    final static int[] goodCmdRecieved = new int[]{0x55,0x00,0x55,0x00};
-    final static int[] progCmdSent = new int[]{0x33,0x00,0x33,0x00};
-    
-    final static int[] locoSoleControl = new int[]{0x22,0x00,0x22,0x00};  //Reply indicates that we are the sole controller of the loco
-    final static int[] locoDblControl = new int[]{0xDD,0x00,0xDD,0x00};  //Reply indicates that another throttle also has controll of the loco
+    private final static int readCVHeaderReplyCode = 0x66;
+    final static int[] readCVHeaderReply = new int[]{readCVHeaderReplyCode,0x00,readCVHeaderReplyCode,0x00};
+    private final static int badCmdRecievedCode = 0xEE;
+    final static int[] badCmdRecieved = new int[]{badCmdRecievedCode,0x00,badCmdRecievedCode,0x00};
+    private final static int goodCmdRecievedCode = 0x55;
+    final static int[] goodCmdRecieved = new int[]{goodCmdRecievedCode,0x00,goodCmdRecievedCode,0x00};
+    private final static int progCmdSentCode = 0x33;
+    final static int[] progCmdSent = new int[]{progCmdSentCode,0x00,progCmdSentCode,0x00};
+
+    private final static int locoSoleControlCode = 0x22;
+    final static int[] locoSoleControl = new int[]{locoSoleControlCode,0x00,locoSoleControlCode,0x00};  //Reply indicates that we are the sole controller of the loco
+    private final static int locoDblControlCode = 0xDD;
+    final static int[] locoDblControl = new int[]{locoDblControlCode,0x00,locoDblControlCode,0x00};  //Reply indicates that another throttle also has controll of the loco
     
     public static boolean startsWith(jmri.jmrix.AbstractMRReply source, int[] match) {
         if (match.length > (source.getNumDataElements())) {
@@ -97,6 +103,37 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
     }
     
     static public final int DEFAULTMAXSIZE = 20;
+    
+    /**
+     * 
+     */
+    public String toString() {
+    	StringBuilder txt = new StringBuilder();
+    	switch (getElement(0)) {
+    	case readCVHeaderReplyCode:
+    		txt.append("Read CV");
+    		break;
+    	case badCmdRecievedCode:
+    		txt.append("Bad Cmd Ack");
+    		break;
+    	case goodCmdRecievedCode:
+    		txt.append("Good Cmd Ack");
+    		break;
+    	case progCmdSentCode:
+    		txt.append("Pgm Cmd Sent");
+    		break;
+    	case locoSoleControlCode:
+    		txt.append("Single Throttle");
+    		break;
+    	case locoDblControlCode:
+    		txt.append("Multiple Throttle");
+    		break;
+    	default:
+    		txt.append("Unk Code");
+    		break;
+    	}
+		return txt.toString();
+    }
     
     static Logger log = LoggerFactory.getLogger(MrcReply.class.getName());
 
