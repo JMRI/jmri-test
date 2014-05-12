@@ -215,6 +215,22 @@ public class MrcTrafficController extends AbstractMRTrafficController
             if(msg.getNumDataElements()>=functionGroupLength) return true;
             return false;
         }
+            if(MrcReply.startsWith(msg, MrcMessage.functionGroup3PacketHeader)){
+            if(msg.getNumDataElements()>=functionGroupLength) return true;
+            return false;
+        }
+        if(MrcReply.startsWith(msg, MrcMessage.functionGroup4PacketHeader)){
+            if(msg.getNumDataElements()>=functionGroupLength) return true;
+            return false;
+        }
+        if(MrcReply.startsWith(msg, MrcMessage.functionGroup5PacketHeader)){
+            if(msg.getNumDataElements()>=functionGroupLength) return true;
+            return false;
+        }
+        if(MrcReply.startsWith(msg, MrcMessage.functionGroup6PacketHeader)){
+            if(msg.getNumDataElements()>=functionGroupLength) return true;
+            return false;
+        }
         //Error occured during read
         if(msg.getNumDataElements()>=4){
             if(MrcReply.startsWith(msg, MrcReply.locoDblControl)){

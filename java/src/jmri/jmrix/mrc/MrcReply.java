@@ -102,6 +102,22 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
         return false;
     }
     
+    //Principle last two ar ehte checksum, the first four indicate the packet type and ignored.
+    //the rest should be XOR'd.
+    public boolean validCheckSum(){
+        if(getNumDataElements()>6){
+            int result = 0x00;
+            for(int i = 4; i<getNumDataElements()-2; i++){
+                log.info(""+getElement(i));
+                result = (getElement(i)&0xff)^result;
+            }
+            log.info("check sum result "+result);
+            log.info("check sum found "+(getElement(getNumDataElements()-2)&0xff));
+            if(result==(getElement(getNumDataElements()-1)&0xff)) return true;
+        }
+        return false;
+    }
+    
     static public final int DEFAULTMAXSIZE = 20;
     
     /**

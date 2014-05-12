@@ -73,6 +73,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         } else {
             addressLo = address.getNumber();
         }
+        tc.addMrcListener(this);
     }
     
     DccLocoAddress address;
@@ -116,7 +117,9 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
             tc.sendMrcMessage(m, this);
 	}
     
-    //Need to work out what MRC have covered in group3
+    /**
+	 * Send the message to set the state of functions F9, F12, F11, F12.
+	 */    
     protected void sendFunctionGroup3() {
         
         int data = 0x00 |
@@ -125,13 +128,17 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         ( f11 ? 0x04 : 0) |
         ( f12 ? 0x08 : 0);
         
-        data = data + 0x80;
+        data = data + 0xA0;
         MrcMessage m = MrcMessage.getSendFunction(3, addressLo, addressHi, data);
         if(m!=null)
             tc.sendMrcMessage(m, this);
 	}
-    //Need to work out what MRC have covered in group4
-	protected void sendFunctionGroup4() {
+
+    /**
+	 * Send the message to set the state of functions F13 to F20.
+     * MRC Group 4 & 5
+	 */    
+    protected void sendFunctionGroup4() {
 		// The NCE USB doesn't support the NMRA packet format
 		// Always need speed command before function group command to reset consist pointer
         int data = 0x00 |
@@ -140,12 +147,32 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         (f14 ? 0x02 : 0) |
         (f13 ? 0x01 : 0);
         
-        data = data + 0xB0;
+        data = data + 0xD0;
         
         MrcMessage m = MrcMessage.getSendFunction(4, addressLo, addressHi, data);
         if(m!=null)
             tc.sendMrcMessage(m, this);
+        
+        data = 0x00 |
+        (f20 ? 0x08 : 0) |
+        (f19 ? 0x04 : 0)	|
+        (f18 ? 0x02 : 0) |
+        (f17 ? 0x01 : 0);        
+        data = data + 0xC0;
+        
+        m = MrcMessage.getSendFunction(5, addressLo, addressHi, data);
+        if(m!=null)
+            tc.sendMrcMessage(m, this);
 	}
+    
+    /**
+	 * Send the message to set the state of functions F21 to F28.
+     * MRC Group 6
+	 */
+    protected void sendFunctionGroup5() {
+        
+        
+    }
     
     /**
 	 * Set the speed & direction.
@@ -198,12 +225,82 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         }
 
         if(m.isUnsolicited()){
-            if(m.getNumDataElements()>8 && m.getElement(5)==addressHi && m.getElement(7)==addressLo){
+            if(m.getNumDataElements()>8 && m.getElement(4)==addressHi && m.getElement(6)==addressLo){
+                if(!m.validCheckSum()) {log.info("invalid check sum"); return;}
                 //message potentially matches our loco
                 if(MrcReply.startsWith(m, MrcMessage.throttlePacketHeader)){
                         log.info("speed Packet from another controller for our loco");
+                        int speed = m.getElement(8)&0xff;
+                        if(speed>=128) {
+                            //Forward
+                            if(!this.isForward){
+                                this.isForward = true;
+                                notifyPropertyChangeListener("IsForward", !isForward, isForward );
+                            }
+                            speed = speed-128;
+                        } else if(this.isForward){
+                            //reverse
+                            this.isForward = false;
+                            notifyPropertyChangeListener("IsForward", !isForward, isForward );
+                        }
+                        float val = speed/128.0f;
+                        if (val != this.speedSetting){
+                            notifyPropertyChangeListener("SpeedSetting", this.speedSetting, val );
+                            this.speedSetting = val;
+                            record(val);
+                        }
                 } else if (MrcReply.startsWith(m, MrcMessage.functionGroup1PacketHeader)){
                         log.info("function Packet 1 from another controller for our loco");
+                        int data = m.getElement(8)&0xff;
+                        data = data - 0x80;
+                        if((data&0x10)==0x10){
+                            if(!this.f0) {
+                                notifyPropertyChangeListener(Throttle.F0, this.f0, true);
+                                this.f0 = true;
+                                log.info("Function 0 on");
+                            }
+                        } else if (this.f0){
+                            log.info("Function 0 off");
+                            notifyPropertyChangeListener(Throttle.F0, this.f0, false);
+                            this.f0 = false;
+                        }
+                        if((data&0x01)==0x01 && !this.f1){
+                            log.info("Function 1 on");
+                            notifyPropertyChangeListener(Throttle.F1, this.f1, true);
+                            this.f1 = true;
+                        } else if (this.f1){
+                            log.info("Function 1 off");
+                            notifyPropertyChangeListener(Throttle.F1, this.f1, false);
+                            this.f1 = false;
+                        }
+                        if((data&0x02)==0x02 && !this.f2){
+                            log.info("Function 2 on");
+                            notifyPropertyChangeListener(Throttle.F2, this.f2, true);
+                            this.f2 = true;
+                        } else if (this.f2){
+                            log.info("Function 2 off");
+                            notifyPropertyChangeListener(Throttle.F2, this.f2, false);
+                            this.f2 = false;
+                        }
+                        if((data&0x04)==0x04 && !this.f3){
+                            log.info("Function 3 on");
+                            notifyPropertyChangeListener(Throttle.F3, this.f3, true);
+                            this.f3 = true;
+                        } else if (this.f3){
+                            log.info("Function 3 off");
+                            notifyPropertyChangeListener(Throttle.F3, this.f3, false);
+                            this.f3 = false;       
+                        }
+                        if((data&0x08)==0x08 && !this.f4){
+                            log.info("Function 4 on");
+                            notifyPropertyChangeListener(Throttle.F4, this.f4, true);
+                            this.f4 = true;
+                        } else if (this.f4){
+                            log.info("Function 4 off");
+                            notifyPropertyChangeListener(Throttle.F4, this.f4, false);
+                            this.f4 = false;
+                        }
+                        
                         //reverse engineer the function
                 }  else if (MrcReply.startsWith(m, MrcMessage.functionGroup2PacketHeader)){
                         log.info("function Packet 2 from another controller for our loco");

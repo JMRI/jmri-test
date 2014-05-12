@@ -200,13 +200,13 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     public static final int functionGroup2PacketCmd = 0x44;
     final static int[] functionGroup2PacketHeader = new int[]{functionGroup2PacketCmd,0x00,functionGroup2PacketCmd,0x00};
     public static final int functionGroup3PacketCmd = 0x54;
-    final static int[] functionGroup3PacketHeader = new int[]{functionGroup3PacketCmd,0x00,functionGroup3PacketCmd,0x00}; //Guess at this
+    final static int[] functionGroup3PacketHeader = new int[]{functionGroup3PacketCmd,0x00,functionGroup3PacketCmd,0x00};
     public static final int functionGroup4PacketCmd = 0x74;
-    final static int[] functionGroup4PacketHeader = new int[]{functionGroup4PacketCmd,0x00,functionGroup4PacketCmd,0x00}; //Guess at this
+    final static int[] functionGroup4PacketHeader = new int[]{functionGroup4PacketCmd,0x00,functionGroup4PacketCmd,0x00};
     public static final int functionGroup5PacketCmd = 0x84;
-    final static int[] functionGroup5PacketHeader = new int[]{functionGroup5PacketCmd,0x00,functionGroup5PacketCmd,0x00}; //Guess at this
+    final static int[] functionGroup5PacketHeader = new int[]{functionGroup5PacketCmd,0x00,functionGroup5PacketCmd,0x00};
     public static final int functionGroup6PacketCmd = 0xA4;
-    final static int[] functionGroup6PacketHeader = new int[]{functionGroup6PacketCmd,0x00,functionGroup6PacketCmd,0x00}; //Guess at this
+    final static int[] functionGroup6PacketHeader = new int[]{functionGroup6PacketCmd,0x00,functionGroup6PacketCmd,0x00};
     final static int functionGroupLength = 8;
     public static int getFunctionPacketLength() { return functionGroup1PacketHeader.length+functionGroupLength; }
 
@@ -354,7 +354,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         m.setElement(i++, getCheckSum(cvHi, cvLo, val, 0x00));
         return m;
     }
-    
+       
     static protected final int LONG_TIMEOUT=65000;  // e.g. for programming options
 
 /* Bellow have been taken from the NCE Message left for the time being as examples */
