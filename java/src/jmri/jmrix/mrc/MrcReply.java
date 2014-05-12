@@ -67,18 +67,18 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
     
     public boolean isPollMessage(){return poll;}
     
-    private final static int readCVHeaderReplyCode = 0x66;
+    public final static int readCVHeaderReplyCode = 0x66;
     final static int[] readCVHeaderReply = new int[]{readCVHeaderReplyCode,0x00,readCVHeaderReplyCode,0x00};
-    private final static int badCmdRecievedCode = 0xEE;
+    public final static int badCmdRecievedCode = 0xEE;
     final static int[] badCmdRecieved = new int[]{badCmdRecievedCode,0x00,badCmdRecievedCode,0x00};
-    private final static int goodCmdRecievedCode = 0x55;
+    public final static int goodCmdRecievedCode = 0x55;
     final static int[] goodCmdRecieved = new int[]{goodCmdRecievedCode,0x00,goodCmdRecievedCode,0x00};
-    private final static int progCmdSentCode = 0x33;
+    public final static int progCmdSentCode = 0x33;
     final static int[] progCmdSent = new int[]{progCmdSentCode,0x00,progCmdSentCode,0x00};
 
-    private final static int locoSoleControlCode = 0x22;
+    public final static int locoSoleControlCode = 0x22;
     final static int[] locoSoleControl = new int[]{locoSoleControlCode,0x00,locoSoleControlCode,0x00};  //Reply indicates that we are the sole controller of the loco
-    private final static int locoDblControlCode = 0xDD;
+    public final static int locoDblControlCode = 0xDD;
     final static int[] locoDblControl = new int[]{locoDblControlCode,0x00,locoDblControlCode,0x00};  //Reply indicates that another throttle also has controll of the loco
     
     public static boolean startsWith(jmri.jmrix.AbstractMRReply source, int[] match) {
