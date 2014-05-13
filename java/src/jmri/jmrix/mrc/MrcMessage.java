@@ -122,10 +122,11 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
 	        	break;
 	        case throttlePacketCmd:
 	        	if (getElement(4) != 0) {
-	            	txt.append("Loco (L)" + Integer.toString(((getElement(4) & 0xC0) << 8) + getElement(6)));
+	            	txt.append("Loco (L)");
 	        	} else {
-	            	txt.append("Loco (S)" + Integer.toString(getElement(6)));
+	            	txt.append("Loco (S)");
 	        	}
+	        	txt.append(Integer.toString(provideLocoId(getElement(4), getElement(6))));
 	        	if ((getElement(8) & 0x80) == 0x80) {
 	        		txt.append("Fwd ");
 	        	} else {
@@ -134,7 +135,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
 	        	txt.append(" Speed: " + Integer.toString((getElement(8) & 0x80)));
 	    		break;
 	        case functionGroup1PacketCmd:
-	        	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 1");
+	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 1");
 	        	txt.append(" F1 " + Integer.toString(getElement(8) & 0x01));
 	        	txt.append(" F2 " + Integer.toString(getElement(8) & 0x02));
 	        	txt.append(" F3 " + Integer.toString(getElement(8) & 0x04));
@@ -142,35 +143,35 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
 	        	txt.append(" F0 " + Integer.toString(getElement(8) & 0x10));
 	    		break;
 	        case functionGroup2PacketCmd:
-	        	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 2");
+	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 2");
 	        	txt.append(" F5 " + Integer.toString(getElement(8) & 0x01));
 	        	txt.append(" F6 " + Integer.toString(getElement(8) & 0x02));
 	        	txt.append(" F7 " + Integer.toString(getElement(8) & 0x04));
 	        	txt.append(" F8 " + Integer.toString(getElement(8) & 0x08));
 	    		break;
 	        case functionGroup3PacketCmd:
-	        	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 3");
+	        	txt.append("Loco " + nteger.toString(provideLocoId(getElement(4), getElement(6))) + " Group 3");
 	        	txt.append(" F9 " + Integer.toString(getElement(8) & 0x01));
 	        	txt.append(" F10 " + Integer.toString(getElement(8) & 0x02));
 	        	txt.append(" F11 " + Integer.toString(getElement(8) & 0x04));
 	        	txt.append(" F12 " + Integer.toString(getElement(8) & 0x08));
 	    		break;
 	        case functionGroup4PacketCmd:
-	        	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 4");
+	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 4");
 	        	txt.append(" F13 " + Integer.toString(getElement(8) & 0x01));
 	        	txt.append(" F14 " + Integer.toString(getElement(8) & 0x02));
 	        	txt.append(" F15 " + Integer.toString(getElement(8) & 0x04));
 	        	txt.append(" F16" + Integer.toString(getElement(8) & 0x08));
 	    		break;
 	        case functionGroup5PacketCmd:
-	        	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 5");
+	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 5");
 	        	txt.append(" F17 " + Integer.toString(getElement(8) & 0x01));
 	        	txt.append(" F18 " + Integer.toString(getElement(8) & 0x02));
 	        	txt.append(" F19 " + Integer.toString(getElement(8) & 0x04));
 	        	txt.append(" F20 " + Integer.toString(getElement(8) & 0x08));
 	    		break;
 	        case functionGroup6PacketCmd:
-	        	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 6");
+	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 6");
 	        	txt.append(" F21 " + Integer.toString(getElement(8) & 0x01));
 	        	txt.append(" F22 " + Integer.toString(getElement(8) & 0x02));
 	        	txt.append(" F23 " + Integer.toString(getElement(8) & 0x04));
@@ -209,6 +210,14 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
 	        }
         }
         return txt.toString();
+    }
+    
+    private int provideLocoId(int hi, int lo) {
+    	if (hi == 0) {
+    		return lo & 0x80;
+    	} else {
+    		return lo + ((hi & 0xC0) << 8);
+    	}
     }
     
     public static final int throttlePacketCmd = 0x25;
