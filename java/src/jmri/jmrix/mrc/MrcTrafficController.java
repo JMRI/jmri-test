@@ -120,11 +120,17 @@ public class MrcTrafficController extends AbstractMRTrafficController
     final private static int throttlePacketLength = MrcMessage.getThrottlePacketLength();
     final private static int functionGroupLength = MrcMessage.getFunctionPacketLength();
     final private static int readCVLength = MrcMessage.getReadCVPacketLength();
+    final private static int readCVReplyLength = MrcReply.getReadCVPacketReplyLength();
     final private static int readDecoderAddressLength = MrcMessage.getReadDecoderAddressLength();
     final private static int writeCVPROGLength = MrcMessage.getWriteCVPROGPacketLength();
     final private static int writeCVPOMLength = MrcMessage.getWriteCVPOMPacketLength();
+    final private static int setClockRatioLength = MrcMessage.getSetClockRatioPacketLength();
+    final private static int setClockTimeLength = MrcMessage.getSetClockTimePacketLength();
+    final private static int setClockAMPMLength = MrcMessage.getSetClockAmPmPacketLength();
+    
     
     static final int MISSEDPOLL = 60;
+    
     /* this is also used to classify the packet and notify the xmt when it can send a packet out*/
     protected boolean endOfMessage(AbstractMRReply msg) {
         //We expect a minimum of two bytes for a reply.
@@ -177,7 +183,58 @@ public class MrcTrafficController extends AbstractMRTrafficController
         if(mCurrentState == WAITMSGREPLYSTATE){
             return false;
         }
-        if(msg.getNumDataElements()>=6){  //skip these as they have a size greater than 6
+        
+        if(msg.getNumDataElements()>=4){
+            int num = msg.getNumDataElements();
+            if(msg.getElement(0)!=msg.getElement(2)){
+                return true;
+            }
+            int requiredLength = 0;
+            switch(msg.getElement(0)){
+                case 0x00 : requiredLength = 4;
+                            break;
+
+                case MrcMessage.throttlePacketCmd : requiredLength = throttlePacketLength;
+                                                    break;
+                case MrcMessage.functionGroup1PacketCmd : 
+                case MrcMessage.functionGroup2PacketCmd : 
+                case MrcMessage.functionGroup3PacketCmd : 
+                case MrcMessage.functionGroup4PacketCmd : 
+                case MrcMessage.functionGroup5PacketCmd : 
+                case MrcMessage.functionGroup6PacketCmd : requiredLength = functionGroupLength;
+                                                          break;
+                case MrcMessage.readCVCmd :               requiredLength = readCVLength;
+                                                          break;
+                case MrcMessage.readDecoderAddressCmd :   requiredLength = readDecoderAddressLength;
+                                                          break;
+                case MrcMessage.writeCVPROGCmd :          requiredLength = writeCVPROGLength;
+                                                          break;
+                case MrcMessage.writeCVPOMCmd :           requiredLength = writeCVPOMLength;
+                                                          break;
+                case MrcMessage.setClockRatioCmd :        requiredLength = setClockRatioLength;
+                                                          break;
+                case MrcMessage.setClockTimeCmd :         requiredLength = setClockTimeLength;
+                                                          break;
+                case MrcMessage.setClockAmPmCmd :         requiredLength = setClockAMPMLength;
+                                                          break;
+                case MrcReply.readCVHeaderReplyCode :     requiredLength = readCVReplyLength;
+                                                          break;
+                case MrcReply.locoDblControlCode :      synchronized(xmtRunnable) {
+                                                            mCurrentState = WAITMSGREPLYSTATE;
+                                                        }
+                case MrcReply.badCmdRecievedCode :
+                case MrcReply.goodCmdRecievedCode :
+                case MrcReply.locoSoleControlCode :       requiredLength = 4;
+                                                          break;
+                default : return false; //Unknown
+            }
+            if(num>=requiredLength) return true;
+            //Need to double check this one. think it catches where things go out of sync
+            if(requiredLength==0 && msg.getElement(1)==0x00 && !waiting){
+                return true;
+            }
+        }
+        /*if(msg.getNumDataElements()>=6){  //skip these as they have a size greater than 6
             //byte 0 & 2 should always be the same.
             if(msg.getElement(0)!=msg.getElement(2)){
                 return true;
@@ -233,8 +290,8 @@ public class MrcTrafficController extends AbstractMRTrafficController
                 return false;
             }
             //Error occured during read
-        }
-        if(msg.getNumDataElements()>=4){
+        }*/
+        /*if(msg.getNumDataElements()>=4){
             if(msg.getElement(0)!=msg.getElement(2)){
                 //Potential error in the packets received back these bytes should always be equal.
                 return true;
@@ -252,10 +309,11 @@ public class MrcTrafficController extends AbstractMRTrafficController
             if(MrcReply.startsWith(msg, MrcReply.badCmdRecieved)){
                 return true;
             }
+            //Need to double check this one. think it catches where things go out of sync
             if(msg.getElement(1)==0x00 && !waiting){
                 return true;
             }
-        }
+        }*/
 
         //For some reason we see the odd two byte packet that doesn't match anything we know about, so at this stage ignore it, this could possibly be a corruption of the nodata bytes.
         if(msg.getNumDataElements()==2 && ((msg.getElement(0)&0xff)==0xF8 ||(msg.getElement(0)&0xff)==0xE0 || (msg.getElement(0)&0xff)==0xFE || (msg.getElement(0)&0xff)==0x80)){

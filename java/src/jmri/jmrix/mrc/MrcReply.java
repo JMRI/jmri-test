@@ -69,6 +69,9 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
     
     public final static int readCVHeaderReplyCode = 0x66;
     final static int[] readCVHeaderReply = new int[]{readCVHeaderReplyCode,0x00,readCVHeaderReplyCode,0x00};
+    final static int readCVPacketLength = 4;//need to double check the length of this packet
+    public static int getReadCVPacketReplyLength() { return readCVHeaderReply.length+readCVPacketLength; }
+    
     public final static int badCmdRecievedCode = 0xEE;
     final static int[] badCmdRecieved = new int[]{badCmdRecievedCode,0x00,badCmdRecievedCode,0x00};
     public final static int goodCmdRecievedCode = 0x55;
