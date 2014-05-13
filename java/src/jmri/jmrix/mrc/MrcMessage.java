@@ -150,7 +150,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
 	        	txt.append(" F8 " + Integer.toString(getElement(8) & 0x08));
 	    		break;
 	        case functionGroup3PacketCmd:
-	        	txt.append("Loco " + nteger.toString(provideLocoId(getElement(4), getElement(6))) + " Group 3");
+	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 3");
 	        	txt.append(" F9 " + Integer.toString(getElement(8) & 0x01));
 	        	txt.append(" F10 " + Integer.toString(getElement(8) & 0x02));
 	        	txt.append(" F11 " + Integer.toString(getElement(8) & 0x04));

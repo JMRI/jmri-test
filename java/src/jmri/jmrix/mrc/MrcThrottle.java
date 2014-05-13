@@ -170,8 +170,19 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
      * MRC Group 6
 	 */
     protected void sendFunctionGroup5() {
-        
-        
+    	int data = 0x00 |
+    			(f28 ? 0x80 : 0) |
+    			(f27 ? 0x40 : 0)	|
+    			(f26 ? 0x20 : 0) |
+    			(f25 ? 0x10 : 0) |
+    			(f24 ? 0x08 : 0) |
+    			(f23 ? 0x04 : 0)	|
+    			(f22 ? 0x02 : 0) |
+    			(f21 ? 0x01 : 0);
+
+    	MrcMessage m = MrcMessage.getSendFunction(6, addressLo, addressHi, data);
+    	if(m!=null)
+    		tc.sendMrcMessage(m, this);   
     }
     
     /**
