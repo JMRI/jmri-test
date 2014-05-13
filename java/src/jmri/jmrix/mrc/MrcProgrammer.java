@@ -10,6 +10,7 @@ import jmri.jmrix.AbstractProgrammer;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Vector;
+import static jmri.jmrix.mrc.MrcReply.readCVHeaderReply;
 
 /**
  * Convert the jmri.Programmer interface into commands for the MRC power house.
@@ -175,6 +176,8 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
     public void message(MrcMessage m) {
         log.error("message received unexpectedly: "+m.toString());
     }
+    
+
 
     public synchronized void reply(MrcReply m) {
         if (progState == NOTPROGRAMMING) {
@@ -182,8 +185,8 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
             log.debug("reply in NOTPROGRAMMING state");
             return;
         }
-        if(m.isUnsolicited() || m.isPollMessage()){
-            if(MrcReply.startsWith(m, MrcReply.goodCmdRecieved)) log.info("Good reply marked as unsolicited");
+        if(m.isUnsolicited() || m.isPollMessage() || m.isPacketInError()){
+            //if(MrcReply.startsWith(m, MrcReply.goodCmdRecieved))
             return;
         }
         if(MrcReply.startsWith(m, MrcReply.badCmdRecieved)){
@@ -196,7 +199,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
         } else if (MrcReply.startsWith(m, MrcReply.progCmdSent)){
             progState = NOTPROGRAMMING;
             notifyProgListenerEnd(_val, jmri.ProgListener.OK);
-        } else if (progState == READCOMMANDSENT) {
+        } else if (MrcReply.startsWith(m, MrcReply.readCVHeaderReply) && progState == READCOMMANDSENT) {
             progState = NOTPROGRAMMING;
             //Currently we have no way to know if the write was sucessful or not.
             if (_progRead) {
@@ -206,10 +209,11 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
             }
             // if this was a read, we retrieved the value above.  If its a
             // write, we're to return the original write value
+            log.info("Has value " + _val);
             notifyProgListenerEnd(_val, jmri.ProgListener.OK);
         
         } else {
-            log.debug("reply in un-decoded state");
+            log.info("reply in un-decoded state cv:" + _cv + " " + m.toString());
         }
     }
 

@@ -148,39 +148,70 @@ public class MrcTrafficController extends AbstractMRTrafficController
             }
             return false;
         }
-        if(msg.getElement(0)<=0x20 && msg.getElement(1)==0x01){
-            //Poll Message for cab addresses <31
-            unsolicited = true;
-            //Will have to see how this works out, if we are waiting for a reply and we recieve a poll message for another handset
-            //then we will have to resend the command.
-            if(mCurrentState == WAITMSGREPLYSTATE){
-                log.info("we have missed our send message window");
-                //Hope by setting the currentstate to autoretry then the transmit will pick this up and add the message back to the queue.
-                synchronized (xmtRunnable) {
-                    mCurrentState = MISSEDPOLL;
+        if(/*msg.getElement(0)>0x00 &&*/ msg.getElement(0)<=0x20){
+            if(msg.getElement(1)==0x01){
+                //Poll Message for cab addresses <31
+                unsolicited = true;
+                //Will have to see how this works out, if we are waiting for a reply and we recieve a poll message for another handset
+                //then we will have to resend the command.
+                if(mCurrentState == WAITMSGREPLYSTATE){
+                    log.info("we have missed our send message window");
+                    //Hope by setting the currentstate to autoretry then the transmit will pick this up and add the message back to the queue.
+                    synchronized (xmtRunnable) {
+                        mCurrentState = MISSEDPOLL;
+                    }
+                }
+
+                if(msg.getNumDataElements()>=6){
+                    msg.setUnsolicited();
+                    ((MrcReply)msg).setPollMessage();
+                    return true;
+                }
+                return false;
+            } else if (msg.getElement(1)==0x00){
+                if(msg.getNumDataElements()==4) return true;
+                return false;
+            } else {
+                log.info("Corrupt?");
+                if(msg.getElement(0)==0x00 && msg.getElement(1)!=0x00){
+                    //Our bytes are out of sync, so allow a three byte packet to get back into sync
+                    log.info("Our Bytes appear to be out of sync " + msg.toString());
+                    if(msg.getNumDataElements()==3) return true;
+                    
+                    
+                    return false;
+                } else {
+                    ((MrcReply)msg).setPacketInError();
+                    msg.setUnsolicited();
+                    return true;
                 }
             }
-            
-            if(msg.getNumDataElements()>=6){
-                msg.setUnsolicited();
-                ((MrcReply)msg).setPollMessage();
-                return true;
-            }
-            return false;
         }
         
         if(unsolicited){
             msg.setUnsolicited();
         }
         if(msg.getNumDataElements()==4){
-            if(mCurrentState == WAITMSGREPLYSTATE){
-                return true;
-            }
             if(msg.getElement(0)==0x00 && msg.getElement(1)==0x00 && msg.getElement(2)==0x00 && msg.getElement(3)==0x00){
                 return true;
             }
+            if(mCurrentState == WAITMSGREPLYSTATE){
+                if(msg.getElement(0)!=MrcReply.badCmdRecievedCode && msg.getElement(0)!=MrcReply.goodCmdRecievedCode){
+                    log.info("reply not as expected correct format " + msg.toString());
+                    ((MrcReply)msg).setPacketInError();
+                    synchronized(xmtRunnable) {
+                        log.info("Flag for retransmission");
+                        mCurrentState = AUTORETRYSTATE;
+                        return true;
+                    }
+                }
+                log.info("Exit here finished");
+                return true;
+            }
         }
+
         if(mCurrentState == WAITMSGREPLYSTATE){
+            log.info("Exit no finished");
             return false;
         }
         
@@ -230,93 +261,15 @@ public class MrcTrafficController extends AbstractMRTrafficController
             }
             if(num>=requiredLength) return true;
             //Need to double check this one. think it catches where things go out of sync
+            log.info(""+requiredLength + " e0 " + msg.getElement(1) + " Not waiting " + !waiting);
             if(requiredLength==0 && msg.getElement(1)==0x00 && !waiting){
                 return true;
             }
         }
-        /*if(msg.getNumDataElements()>=6){  //skip these as they have a size greater than 6
-            //byte 0 & 2 should always be the same.
-            if(msg.getElement(0)!=msg.getElement(2)){
-                return true;
-            }
-            if(MrcReply.startsWith(msg, MrcMessage.readDecoderAddress)){
-                if(msg.getNumDataElements()>=readDecoderAddressLength) return true;
-                return false;
-            }
-            if(MrcReply.startsWith(msg, MrcMessage.readCVHeader)){
-                if(msg.isUnsolicited()) log.info("Good read marked as unsolicited");
-                if(msg.getNumDataElements()>=readCVLength) return true;
-                return false;
-            }
-            if(MrcReply.startsWith(msg, MrcMessage.writeCVPROGHeader)){
-                if(msg.getNumDataElements()>=writeCVPROGLength) return true;
-                return false;
-            }
-            if(MrcReply.startsWith(msg, MrcMessage.writeCVPOMHeader)){
-                if(msg.getNumDataElements()>=writeCVPOMLength) return true;
-                return false;
-            }
-                    
-            if(MrcReply.startsWith(msg, MrcMessage.throttlePacketHeader)){
-                //Thottle speed packet from another handset, need to wait until all is recieved
-                if(msg.getNumDataElements()>=throttlePacketLength) return true;
-                return false;
-            }
-            if(MrcReply.startsWith(msg, MrcMessage.functionGroup1PacketHeader)){
-                if(msg.getNumDataElements()>=functionGroupLength) return true;
-                return false;
-            }
-            if(MrcReply.startsWith(msg, MrcMessage.functionGroup2PacketHeader)){
-                if(msg.getNumDataElements()>=functionGroupLength) return true;
-                return false;
-            }
-            if(MrcReply.startsWith(msg, MrcMessage.functionGroup3PacketHeader)){
-                if(msg.getNumDataElements()>=functionGroupLength) return true;
-                return false;
-            }
-            if(MrcReply.startsWith(msg, MrcMessage.functionGroup4PacketHeader)){
-                log.info("Function group 4");
-                if(msg.getNumDataElements()>=functionGroupLength) return true;
-                return false;
-            }
-            if(MrcReply.startsWith(msg, MrcMessage.functionGroup5PacketHeader)){
-                log.info("Function group 5");
-                if(msg.getNumDataElements()>=functionGroupLength) return true;
-                return false;
-            }
-            if(MrcReply.startsWith(msg, MrcMessage.functionGroup6PacketHeader)){
-                log.info("Function group 6");
-                if(msg.getNumDataElements()>=functionGroupLength) return true;
-                return false;
-            }
-            //Error occured during read
-        }*/
-        /*if(msg.getNumDataElements()>=4){
-            if(msg.getElement(0)!=msg.getElement(2)){
-                //Potential error in the packets received back these bytes should always be equal.
-                return true;
-            }
-            if(msg.getElement(0)==0x00 && msg.getElement(1)==0x00 && msg.getElement(2)==0x00 && msg.getElement(3)==0x00){
-                return true;
-            }
-            if(MrcReply.startsWith(msg, MrcReply.locoDblControl)){
-                //A loco that is also under the control of another handset requires us to send the command a second time round, so hopefully this will trigger the xmt loop to re add the message to the front of the queue
-                synchronized(xmtRunnable) {
-                    mCurrentState = WAITMSGREPLYSTATE;
-                }
-                return true;
-            }
-            if(MrcReply.startsWith(msg, MrcReply.badCmdRecieved)){
-                return true;
-            }
-            //Need to double check this one. think it catches where things go out of sync
-            if(msg.getElement(1)==0x00 && !waiting){
-                return true;
-            }
-        }*/
 
         //For some reason we see the odd two byte packet that doesn't match anything we know about, so at this stage ignore it, this could possibly be a corruption of the nodata bytes.
         if(msg.getNumDataElements()==2 && ((msg.getElement(0)&0xff)==0xF8 ||(msg.getElement(0)&0xff)==0xE0 || (msg.getElement(0)&0xff)==0xFE || (msg.getElement(0)&0xff)==0x80)){
+            ((MrcReply)msg).setPacketInError();
             return true;
         }
         return false;
@@ -351,16 +304,19 @@ public class MrcTrafficController extends AbstractMRTrafficController
                         ostream.flush();
                         synchronized(xmtRunnable) {
                             mCurrentState = WAITMSGREPLYSTATE;
+                            log.info("State Set and wait");
                         }
                         Runnable r = new XmtNotifier(m, mLastSender, this);
                         javax.swing.SwingUtilities.invokeLater(r);
                         // reply expected?
                         if (m.replyExpected()) {
+                            log.info("Reply expected");
                             // wait for a reply, or eventually timeout
                             // @todo Need to see if this works or not
                             transmitWait(m.getTimeout(), WAITMSGREPLYSTATE, "transmitLoop interrupted");
                             checkReplyInDispatch();
                             if (mCurrentState == WAITMSGREPLYSTATE) {
+                                log.info("Handle timeout");
                                 handleTimeout(m,l);
                             } else if (mCurrentState == MISSEDPOLL && m.getRetries()>=0) {
                                  log.info("Message missed poll added back to front of queue: " + m.toString());
@@ -370,7 +326,7 @@ public class MrcTrafficController extends AbstractMRTrafficController
                                        mCurrentState = IDLESTATE;
                                  }
                             } else if (mCurrentState == AUTORETRYSTATE && m.getRetries()>=0) {
-                                 log.info("Message added back to queue: " + m.toString());
+                                 log.info("Auto Retry send message added back to queue: " + m.toString());
                                  m.setRetries(m.getRetries() - 1);
                                  msgQueue.addFirst(m);
                                  listenerQueue.addFirst(l);
@@ -378,6 +334,7 @@ public class MrcTrafficController extends AbstractMRTrafficController
                                        mCurrentState = IDLESTATE;
                                  }
                             } else {
+                                log.info("Reset Time out");
                                 resetTimeout(m);
                             }
                         }

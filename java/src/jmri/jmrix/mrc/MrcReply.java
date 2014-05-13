@@ -49,16 +49,28 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
 	public int value() {
         int val = -1;
         if(startsWith(this, readCVHeaderReply)){
-            if(getElement(4)==getElement(6))
+            if(getElement(4)==getElement(6)){
                 val = getElement(4)&0xff;
+                log.info("good reply " + val);
+            }
             else
                 log.error("Error in format of the returned CV value");
         } else {
+            log.info(toString());
             log.error("Not a CV Read formated packet");
         }
 		return val;
 	}
     
+    boolean packetInError = false;
+    
+    public void setPacketInError(){
+        packetInError = true;
+    }
+    
+    public boolean isPacketInError(){
+        return packetInError;
+    }
     boolean poll = false;
     
     public void setPollMessage(){
