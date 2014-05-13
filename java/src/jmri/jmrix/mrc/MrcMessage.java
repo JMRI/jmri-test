@@ -126,7 +126,12 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
 	        	} else {
 	            	txt.append("Loco (S)" + Integer.toString(getElement(6)));
 	        	}
-	        	txt.append(" Speed: " + Integer.toString(getElement(8)));
+	        	if ((getElement(8) & 0x80) == 0x80) {
+	        		txt.append("Fwd ");
+	        	} else {
+	        		txt.append("Rev ");
+	        	}
+	        	txt.append(" Speed: " + Integer.toString((getElement(8) & 0x80)));
 	    		break;
 	        case functionGroup1PacketCmd:
 	        	txt.append("Loco " + (getElement(4) << 8) + getElement(6) + " Group 1");
