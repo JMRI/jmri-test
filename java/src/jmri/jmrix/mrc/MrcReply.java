@@ -124,9 +124,13 @@ public class MrcReply extends jmri.jmrix.AbstractMRReply {
      */
     public String toString() {
     	StringBuilder txt = new StringBuilder();
-        if(getNumDataElements()>=4 && getElement(0)!=getElement(2) && getElement(1)!=0x01){
+        if((getNumDataElements() <4) || (getNumDataElements()>=4 && getElement(0)!=getElement(2) && getElement(1)!=0x01)){
             //byte 0 and byte 2 should always be the same except for a clock update packet.
-            txt.append("Error in Packet");
+        	if (getNumDataElements() < 4) {
+        		txt.append("Short Packet");
+        	} else {
+        		txt.append("Error in Packet");
+        	}
             for (int i=0;i<getNumDataElements(); i++) {
                 txt.append(" ");
                 txt.append(jmri.util.StringUtil.twoHexFromInt(getElement(i)&0xFF));
