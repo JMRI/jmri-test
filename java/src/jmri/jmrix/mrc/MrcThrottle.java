@@ -68,8 +68,12 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         this.isForward    = true;
         if(address.isLongAddress()){
             addressLo = address.getNumber();
+            log.info("Lo " + addressLo);
             addressHi = address.getNumber()>>8;
+            log.info("Hi before " + addressHi);
             addressHi = addressHi + 0xc0; //We add 0xc0 to the high byte.
+            log.info("Hi After " + addressHi);
+            log.info("" + addressLo);
         } else {
             addressLo = address.getNumber();
         }

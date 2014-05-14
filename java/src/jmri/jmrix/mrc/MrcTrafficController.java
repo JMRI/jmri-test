@@ -177,8 +177,6 @@ public class MrcTrafficController extends AbstractMRTrafficController
                     //Our bytes are out of sync, so allow a three byte packet to get back into sync
                     log.info("Our Bytes appear to be out of sync " + msg.toString());
                     if(msg.getNumDataElements()==3) return true;
-                    
-                    
                     return false;
                 } else {
                     ((MrcReply)msg).setPacketInError();
