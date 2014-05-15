@@ -95,7 +95,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         }
         return i;
     }
-    
+    //Need to test toString() for POM
     public String toString(){
         StringBuilder txt = new StringBuilder();
         if((getNumDataElements() <4) || (getNumDataElements()>=4 && getElement(0)!=getElement(2) && getElement(1)!=0x01)){
@@ -122,10 +122,11 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
 	        	break;
 	        case throttlePacketCmd:
 	        	if (getElement(4) != 0) {
-	            	txt.append("Loco (L) " + Integer.toString(decodeAddress(getElement(4), getElement(6))));
+	            	txt.append("Loco (L)");
 	        	} else {
-	            	txt.append("Loco (S)" + Integer.toString(getElement(6)));
+	            	txt.append("Loco (S)");
 	        	}
+	        	txt.append(Integer.toString(provideLocoId(getElement(4), getElement(6))));
 	        	if ((getElement(8) & 0x80) == 0x80) {
 	        		txt.append(" Fwd ");
 	        	} else {
@@ -134,7 +135,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
 	        	txt.append(" Speed: " + Integer.toString((getElement(8) & 0x80)));
 	    		break;
 	        case functionGroup1PacketCmd:
-	        	txt.append("Loco " + decodeAddress(getElement(4), getElement(6)) + " Group 1");
+	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 1");
 	        	txt.append(" F1 " + Integer.toString(getElement(8) & 0x01));
 	        	txt.append(" F2 " + Integer.toString(getElement(8) & 0x02));
 	        	txt.append(" F3 " + Integer.toString(getElement(8) & 0x04));
@@ -142,35 +143,35 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
 	        	txt.append(" F0 " + Integer.toString(getElement(8) & 0x10));
 	    		break;
 	        case functionGroup2PacketCmd:
-	        	txt.append("Loco " + decodeAddress(getElement(4), getElement(6)) + " Group 2");
+	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 2");
 	        	txt.append(" F5 " + Integer.toString(getElement(8) & 0x01));
 	        	txt.append(" F6 " + Integer.toString(getElement(8) & 0x02));
 	        	txt.append(" F7 " + Integer.toString(getElement(8) & 0x04));
 	        	txt.append(" F8 " + Integer.toString(getElement(8) & 0x08));
 	    		break;
 	        case functionGroup3PacketCmd:
-	        	txt.append("Loco " + decodeAddress(getElement(4), getElement(6)) + " Group 3");
+	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 3");
 	        	txt.append(" F9 " + Integer.toString(getElement(8) & 0x01));
 	        	txt.append(" F10 " + Integer.toString(getElement(8) & 0x02));
 	        	txt.append(" F11 " + Integer.toString(getElement(8) & 0x04));
 	        	txt.append(" F12 " + Integer.toString(getElement(8) & 0x08));
 	    		break;
 	        case functionGroup4PacketCmd:
-	        	txt.append("Loco " + decodeAddress(getElement(4), getElement(6)) + " Group 4");
+	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 4");
 	        	txt.append(" F13 " + Integer.toString(getElement(8) & 0x01));
 	        	txt.append(" F14 " + Integer.toString(getElement(8) & 0x02));
 	        	txt.append(" F15 " + Integer.toString(getElement(8) & 0x04));
 	        	txt.append(" F16" + Integer.toString(getElement(8) & 0x08));
 	    		break;
 	        case functionGroup5PacketCmd:
-	        	txt.append("Loco " + decodeAddress(getElement(4), getElement(6)) + " Group 5");
+	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 5");
 	        	txt.append(" F17 " + Integer.toString(getElement(8) & 0x01));
 	        	txt.append(" F18 " + Integer.toString(getElement(8) & 0x02));
 	        	txt.append(" F19 " + Integer.toString(getElement(8) & 0x04));
 	        	txt.append(" F20 " + Integer.toString(getElement(8) & 0x08));
 	    		break;
 	        case functionGroup6PacketCmd:
-	        	txt.append("Loco " + decodeAddress(getElement(4), getElement(6)) + " Group 6");
+	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 6");
 	        	txt.append(" F21 " + Integer.toString(getElement(8) & 0x01));
 	        	txt.append(" F22 " + Integer.toString(getElement(8) & 0x02));
 	        	txt.append(" F23 " + Integer.toString(getElement(8) & 0x04));
@@ -188,14 +189,14 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
 	        	txt.append("Read Decoder Address ");
 	    		break;
 	        case writeCVPROGCmd:
-	        	txt.append("Write PROG CV ");
-	        	txt.append(Integer.toString(decodeAddress(getElement(4), getElement(6))));
+	        	txt.append("Write PROG CV Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))));
+	        	txt.append(Integer.toString(getElement(10)&0xff));
 	        	txt.append("=");
 	        	txt.append(Integer.toString(getElement(8)&0xff));
 	    		break;
 	        case writeCVPOMCmd:
 	        	txt.append("Write POM CV ");
-	        	txt.append(Integer.toString(decodeAddress(getElement(4), getElement(6))));
+	        	txt.append(Integer.toString(getElement(4) << 8) + getElement(6));
 	        	txt.append("=");
 	        	txt.append(Integer.toString(getElement(8)&0xff));
 	    		break;
@@ -211,10 +212,14 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         return txt.toString();
     }
     
-    int decodeAddress(int addressHi, int addressLo){
-        int hi = (((getElement(4)&0xff)-0xc0)<<8);
-        hi = hi+(addressLo&0xff);
-        return hi;
+    private int provideLocoId(int hi, int lo) {
+    	if (hi == 0) {
+    		return lo & 0x80;
+    	} else {
+            hi = (((hi&0xff)-0xc0)<<8);
+            hi = hi+(lo&0xff);
+    		return hi;
+    	}
     }
     
     public static final int throttlePacketCmd = 0x25;
