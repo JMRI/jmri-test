@@ -140,7 +140,7 @@ public class EcosDccThrottle extends AbstractThrottle implements EcosListener
      */
     @Override
     protected void sendFunctionGroup1() {
-        if(!_haveControl) return;
+        /*if(!_haveControl) return;
         
         String message = "set("+this.objectNumber+", func[0, "+(getF0()? 1 : 0 )+"])";
         EcosMessage m = new EcosMessage(message);
@@ -160,7 +160,62 @@ public class EcosDccThrottle extends AbstractThrottle implements EcosListener
         
         message = "set("+this.objectNumber+", func[4, "+(getF4()? 1 : 0 )+"])";
         m = new EcosMessage(message);
-        tc.sendEcosMessage(m, this);
+        tc.sendEcosMessage(m, this);*/
+    }
+    
+    public void setF0(boolean f0) {
+    	boolean old = this.f0;
+        this.f0 = f0;
+        if(_haveControl){
+            EcosMessage m = new EcosMessage("set("+this.objectNumber+", func[0, "+(getF0()? 1 : 0 )+"])");
+            tc.sendEcosMessage(m, this);
+        }
+        if (old != this.f0)
+        	notifyPropertyChangeListener(Throttle.F0, old, this.f0 );
+    }
+
+    public void setF1(boolean f1) {
+    	boolean old = this.f1;
+        this.f1 = f1;
+        if(_haveControl){
+            EcosMessage m = new EcosMessage("set("+this.objectNumber+", func[1, "+(getF1()? 1 : 0 )+"])");
+            tc.sendEcosMessage(m, this);
+        }
+        if (old != this.f1)
+        	notifyPropertyChangeListener(Throttle.F1, old, this.f1 );
+    }
+
+    public void setF2(boolean f2) {
+    	boolean old = this.f2;
+        this.f2 = f2;
+        if(_haveControl){
+            EcosMessage m = new EcosMessage("set("+this.objectNumber+", func[2, "+(getF2()? 1 : 0 )+"])");
+            tc.sendEcosMessage(m, this);
+        }
+        if (old != this.f2)
+        	notifyPropertyChangeListener(Throttle.F2, old, this.f2 );
+    }
+
+    public void setF3(boolean f3) {
+    	boolean old = this.f3;
+        this.f3 = f3;
+        if(_haveControl){
+            EcosMessage m = new EcosMessage("set("+this.objectNumber+", func[3, "+(getF3()? 1 : 0 )+"])");
+            tc.sendEcosMessage(m, this);
+        }
+        if (old != this.f3)
+        	notifyPropertyChangeListener(Throttle.F3, old, this.f3 );
+    }
+
+    public void setF4(boolean f4) {
+    	boolean old = this.f4;
+        this.f4 = f4;
+        if(_haveControl){
+            EcosMessage m = new EcosMessage("set("+this.objectNumber+", func[4, "+(getF4()? 1 : 0 )+"])");
+            tc.sendEcosMessage(m, this);
+        }
+        if (old != this.f4)
+        	notifyPropertyChangeListener(Throttle.F4, old, this.f4 );
     }
 
     /**
