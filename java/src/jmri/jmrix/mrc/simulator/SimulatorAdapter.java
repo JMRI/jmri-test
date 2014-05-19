@@ -15,6 +15,7 @@ import java.io.DataOutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.IOException;
+import jmri.jmrix.mrc.MrcPackets;
 
 /**
  * MRC simulator
@@ -192,29 +193,29 @@ public class SimulatorAdapter extends MrcPortController implements
 	private MrcReply generateReply(MrcMessage m) {
 		MrcReply reply = new MrcReply();
 		if (m.getNumDataElements() < 4) {
-			reply.setElement(0, MrcReply.badCmdRecievedCode);
+			reply.setElement(0, MrcPackets.badCmdRecievedCode);
 			reply.setElement(1, 0x0);
-			reply.setElement(2, MrcReply.badCmdRecievedCode);
+			reply.setElement(2, MrcPackets.badCmdRecievedCode);
 			reply.setElement(3, 0x0);
 			return reply;
 		}
 		int command = m.getElement(0);
 		if (command != m.getElement(2) || m.getElement(1) != 1) {
-			reply.setElement(0, MrcReply.badCmdRecievedCode);
+			reply.setElement(0, MrcPackets.badCmdRecievedCode);
 			reply.setElement(1, 0x0);
-			reply.setElement(2, MrcReply.badCmdRecievedCode);
+			reply.setElement(2, MrcPackets.badCmdRecievedCode);
 			reply.setElement(3, 0x0);
 			return reply;
 		}
 		switch (command) {
-		case MrcMessage.setClockRatioCmd:		// set fast clock ratio
+		case MrcPackets.setClockRatioCmd:		// set fast clock ratio
 //			reply.setElement(0, 0x06);
 //			reply.setElement(1, 0x02);
 //			reply.setElement(2, 0x01);
 			break;
-		case MrcMessage.setClockTimeCmd:	// Set clock
+		case MrcPackets.setClockTimeCmd:	// Set clock
 			break;
-		case MrcMessage.setClockAmPmCmd:	// Set clock mode
+		case MrcPackets.setClockAmPmCmd:	// Set clock mode
 			break;
 //		case MrcMessage.READ_REG_CMD:
 //			reply.setElement(0, 0xff);			// dummy data
@@ -223,9 +224,9 @@ public class SimulatorAdapter extends MrcPortController implements
 //			break;
 		default:
 	 		// we don't know what it is but presume ok
-			reply.setElement(0, MrcReply.goodCmdRecievedCode);
+			reply.setElement(0, MrcPackets.goodCmdRecievedCode);
 			reply.setElement(1, 0x0);
-			reply.setElement(2, MrcReply.goodCmdRecievedCode);
+			reply.setElement(2, MrcPackets.goodCmdRecievedCode);
 			reply.setElement(3, 0x0);
 			break;
 		}

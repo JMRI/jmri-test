@@ -95,190 +95,14 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         }
         return i;
     }
-    //Need to test toString() for POM
+    
     public String toString(){
-        StringBuilder txt = new StringBuilder();
-        if((getNumDataElements() <4) || (getNumDataElements()>=4 && getElement(0)!=getElement(2) && getElement(1)!=0x01)){
-            //byte 0 and byte 2 should always be the same except for a clock update packet.
-        	if (getNumDataElements() < 4) {
-        		txt.append("Short Packet");
-        	} else {
-        		txt.append("Error in Packet");
-        	}
-            for (int i=0;i<getNumDataElements(); i++) {
-                txt.append(" ");
-                txt.append(jmri.util.StringUtil.twoHexFromInt(getElement(i)&0xFF));
-            }
-        } else {
-	        switch (getElement(0)&0xFF) {
-	        case setClockRatioCmd:
-	        	txt.append("Set Clock Ratio: " + getElement(4));
-	        	break;
-	        case setClockTimeCmd:
-	        	txt.append("Set Clock Time: " + getElement(4) + ":" + getElement(6));
-	        	break;
-	        case setClockAmPmCmd:
-	        	txt.append("Set Clock AM/PM");
-	        	break;
-	        case throttlePacketCmd:
-	        	if (getElement(4) != 0) {
-	            	txt.append("Loco (L)");
-	        	} else {
-	            	txt.append("Loco (S)");
-	        	}
-	        	txt.append(Integer.toString(provideLocoId(getElement(4), getElement(6))));
-	        	if ((getElement(8) & 0x80) == 0x80) {
-	        		txt.append(" Fwd ");
-	        	} else {
-	        		txt.append(" Rev ");
-	        	}
-	        	txt.append(" Speed: " + Integer.toString((getElement(8) & 0x80)));
-	    		break;
-	        case functionGroup1PacketCmd:
-	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 1");
-	        	txt.append(" F1 " + Integer.toString(getElement(8) & 0x01));
-	        	txt.append(" F2 " + Integer.toString(getElement(8) & 0x02));
-	        	txt.append(" F3 " + Integer.toString(getElement(8) & 0x04));
-	        	txt.append(" F4 " + Integer.toString(getElement(8) & 0x08));
-	        	txt.append(" F0 " + Integer.toString(getElement(8) & 0x10));
-	    		break;
-	        case functionGroup2PacketCmd:
-	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 2");
-	        	txt.append(" F5 " + Integer.toString(getElement(8) & 0x01));
-	        	txt.append(" F6 " + Integer.toString(getElement(8) & 0x02));
-	        	txt.append(" F7 " + Integer.toString(getElement(8) & 0x04));
-	        	txt.append(" F8 " + Integer.toString(getElement(8) & 0x08));
-	    		break;
-	        case functionGroup3PacketCmd:
-	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 3");
-	        	txt.append(" F9 " + Integer.toString(getElement(8) & 0x01));
-	        	txt.append(" F10 " + Integer.toString(getElement(8) & 0x02));
-	        	txt.append(" F11 " + Integer.toString(getElement(8) & 0x04));
-	        	txt.append(" F12 " + Integer.toString(getElement(8) & 0x08));
-	    		break;
-	        case functionGroup4PacketCmd:
-	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 4");
-	        	txt.append(" F13 " + Integer.toString(getElement(8) & 0x01));
-	        	txt.append(" F14 " + Integer.toString(getElement(8) & 0x02));
-	        	txt.append(" F15 " + Integer.toString(getElement(8) & 0x04));
-	        	txt.append(" F16" + Integer.toString(getElement(8) & 0x08));
-	    		break;
-	        case functionGroup5PacketCmd:
-	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 5");
-	        	txt.append(" F17 " + Integer.toString(getElement(8) & 0x01));
-	        	txt.append(" F18 " + Integer.toString(getElement(8) & 0x02));
-	        	txt.append(" F19 " + Integer.toString(getElement(8) & 0x04));
-	        	txt.append(" F20 " + Integer.toString(getElement(8) & 0x08));
-	    		break;
-	        case functionGroup6PacketCmd:
-	        	txt.append("Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))) + " Group 6");
-	        	txt.append(" F21 " + Integer.toString(getElement(8) & 0x01));
-	        	txt.append(" F22 " + Integer.toString(getElement(8) & 0x02));
-	        	txt.append(" F23 " + Integer.toString(getElement(8) & 0x04));
-	        	txt.append(" F24 " + Integer.toString(getElement(8) & 0x08));
-	        	txt.append(" F25 " + Integer.toString(getElement(8) & 0x10));
-	        	txt.append(" F26 " + Integer.toString(getElement(8) & 0x20));
-	        	txt.append(" F27 " + Integer.toString(getElement(8) & 0x40));
-	        	txt.append(" F28 " + Integer.toString(getElement(8) & 0x80));
-	    		break;
-	        case readCVCmd:
-	        	int cv = ((getElement(4)&0xff) << 8) + (getElement(6)&0xff);
-	        	txt.append("Read CV " + Integer.toString(cv));
-	    		break;
-	        case readDecoderAddressCmd:
-	        	txt.append("Read Decoder Address ");
-	    		break;
-	        case writeCVPROGCmd:
-	        	txt.append("Write PROG CV Loco " + Integer.toString(provideLocoId(getElement(4), getElement(6))));
-	        	txt.append(Integer.toString(getElement(10)&0xff));
-	        	txt.append("=");
-	        	txt.append(Integer.toString(getElement(8)&0xff));
-	    		break;
-	        case writeCVPOMCmd:
-	        	txt.append("Write POM CV ");
-	        	txt.append(Integer.toString(getElement(4) << 8) + getElement(6));
-	        	txt.append("=");
-	        	txt.append(Integer.toString(getElement(8)&0xff));
-	    		break;
-	        default:
-	        	txt.append("Unk Cmd Code:");
-	            for (int i=0;i<getNumDataElements(); i++) {
-	                txt.append(" ");
-	                txt.append(jmri.util.StringUtil.twoHexFromInt(getElement(i)&0xFF));
-	            }
-	        	break;
-	        }
-        }
-        return txt.toString();
+        return MrcPackets.toString(this);
     }
-    
-    private int provideLocoId(int hi, int lo) {
-    	if (hi == 0) {
-    		return lo & 0x80;
-    	} else {
-            hi = (((hi&0xff)-0xc0)<<8);
-            hi = hi+(lo&0xff);
-    		return hi;
-    	}
-    }
-    
-    public static final int throttlePacketCmd = 0x25;
-    final static int[] throttlePacketHeader = new int[]{throttlePacketCmd,0x00,throttlePacketCmd,0x00};
-    final static int throttlePacketLength = 10;//length of packet less the header
-    public static int getThrottlePacketLength() { return throttlePacketHeader.length+throttlePacketLength; }
-
-    public static final int functionGroup1PacketCmd = 0x34;
-    final static int[] functionGroup1PacketHeader = new int[]{functionGroup1PacketCmd,0x00,functionGroup1PacketCmd,0x00};
-    public static final int functionGroup2PacketCmd = 0x44;
-    final static int[] functionGroup2PacketHeader = new int[]{functionGroup2PacketCmd,0x00,functionGroup2PacketCmd,0x00};
-    public static final int functionGroup3PacketCmd = 0x54;
-    final static int[] functionGroup3PacketHeader = new int[]{functionGroup3PacketCmd,0x00,functionGroup3PacketCmd,0x00};
-    public static final int functionGroup4PacketCmd = 0x74;
-    final static int[] functionGroup4PacketHeader = new int[]{functionGroup4PacketCmd,0x00,functionGroup4PacketCmd,0x00};
-    public static final int functionGroup5PacketCmd = 0x84;
-    final static int[] functionGroup5PacketHeader = new int[]{functionGroup5PacketCmd,0x00,functionGroup5PacketCmd,0x00};
-    public static final int functionGroup6PacketCmd = 0xA4;
-    final static int[] functionGroup6PacketHeader = new int[]{functionGroup6PacketCmd,0x00,functionGroup6PacketCmd,0x00};
-    final static int functionGroupLength = 8;
-    public static int getFunctionPacketLength() { return functionGroup1PacketHeader.length+functionGroupLength; }
-
-    public static final int readCVCmd = 0x43;
-    final static int[] readCVHeader = new int[]{readCVCmd,0x00,readCVCmd,0x00};
-    final private static int readCVLength = 6;
-    public static int getReadCVPacketLength() { return readCVHeader.length+readCVLength; }
-
-    public static final int readDecoderAddressCmd = 0x42;
-    final static int[] readDecoderAddress = new int[]{readDecoderAddressCmd,0x00,readDecoderAddressCmd,0x00,readDecoderAddressCmd,0x00};
-    public static int getReadDecoderAddressLength() { return readDecoderAddress.length; }
-
-    public static final int writeCVPROGCmd = 0x24;
-    final static int[] writeCVPROGHeader = new int[]{writeCVPROGCmd,0x00,writeCVPROGCmd,0x00};
-    final private static int writeCVPROGLength = 8;
-    public static int getWriteCVPROGPacketLength() { return writeCVPROGHeader.length+writeCVPROGLength; }
-
-    public static final int writeCVPOMCmd = 0x56;
-    final static int[] writeCVPOMHeader = new int[]{writeCVPOMCmd,0x00,writeCVPOMCmd,0x00};
-    final private static int writeCVPOMLength = 12;
-    public static int getWriteCVPOMPacketLength() { return writeCVPOMHeader.length+writeCVPOMLength; }
-
-    public static final int setClockRatioCmd = 0x12;
-    final static int[] setClockRatioHeader = new int[]{setClockRatioCmd,0x00,setClockRatioCmd,0x00};
-    final private static int setClockRatioLength = 10;
-    public static int getSetClockRatioPacketLength() { return setClockRatioLength; }
-
-    public static final int setClockTimeCmd = 0x13;
-    final static int[] setClockTimeHeader = new int[]{setClockTimeCmd,0x00,setClockTimeCmd,0x00};
-    final private static int setClockTimeLength = 10;
-    public static int getSetClockTimePacketLength() { return setClockTimeLength; }
-
-    public static final int setClockAmPmCmd = 0x32;
-    final static int[] setClockAmPmHeader = new int[]{setClockAmPmCmd,0x00,setClockAmPmCmd,0x00};
-    final private static int setClockAmPmLength = 10;
-    public static int getSetClockAmPmPacketLength() { return setClockAmPmLength; }
     
     static public MrcMessage getSendSpeed(int addressLo, int addressHi, int speed){
-        MrcMessage m = new MrcMessage(getThrottlePacketLength());
-        int i = m.putHeader(throttlePacketHeader);
+        MrcMessage m = new MrcMessage(MrcPackets.getThrottlePacketLength());
+        int i = m.putHeader(MrcPackets.throttlePacketHeader);
         
         m.setElement(i++,addressHi);
         m.setElement(i++, 0x00);
@@ -295,20 +119,20 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     }
     
     static public MrcMessage getSendFunction(int group, int addressLo, int addressHi, int data){
-        MrcMessage m = new MrcMessage(getFunctionPacketLength());
+        MrcMessage m = new MrcMessage(MrcPackets.getFunctionPacketLength());
         int i= 0;
         switch(group){
-            case 1: i = m.putHeader(functionGroup1PacketHeader);
+            case 1: i = m.putHeader(MrcPackets.functionGroup1PacketHeader);
                     break;
-            case 2: i = m.putHeader(functionGroup2PacketHeader);
+            case 2: i = m.putHeader(MrcPackets.functionGroup2PacketHeader);
                     break;
-            case 3: i = m.putHeader(functionGroup3PacketHeader);
+            case 3: i = m.putHeader(MrcPackets.functionGroup3PacketHeader);
                     break;
-            case 4: i= m.putHeader(functionGroup4PacketHeader);
+            case 4: i= m.putHeader(MrcPackets.functionGroup4PacketHeader);
                     break;
-            case 5: i = m.putHeader(functionGroup5PacketHeader);
+            case 5: i = m.putHeader(MrcPackets.functionGroup5PacketHeader);
                     break;
-            case 6: i = m.putHeader(functionGroup6PacketHeader);
+            case 6: i = m.putHeader(MrcPackets.functionGroup6PacketHeader);
                     break;
             default: log.error("Invalid function group " + group);
                     return null;
@@ -336,10 +160,10 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         int cvLo = (cv);
         int cvHi = (cv>>8);
         
-        MrcMessage m = new MrcMessage(getReadCVPacketLength());
+        MrcMessage m = new MrcMessage(MrcPackets.getReadCVPacketLength());
         m.setTimeout(LONG_TIMEOUT);
-        m.setNeededMode(jmri.jmrix.AbstractMRTrafficController.PROGRAMINGMODE);
-        int i = m.putHeader(readCVHeader);
+        //m.setNeededMode(jmri.jmrix.AbstractMRTrafficController.PROGRAMINGMODE);
+        int i = m.putHeader(MrcPackets.readCVHeader);
 
         m.setElement(i++, cvHi);
         m.setElement(i++,0x00);
@@ -351,8 +175,8 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     }
     
     static public MrcMessage getPOM(int addressLo, int addressHi, int cv, int val){
-        MrcMessage m = new MrcMessage(getWriteCVPOMPacketLength());
-        int i = m.putHeader(writeCVPOMHeader);
+        MrcMessage m = new MrcMessage(MrcPackets.getWriteCVPOMPacketLength());
+        int i = m.putHeader(MrcPackets.writeCVPOMHeader);
         cv--;
         m.setElement(i++,addressHi);
         m.setElement(i++, 0x00);
@@ -371,8 +195,8 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     }
     
     static public MrcMessage getWriteCV(int cv, int val){
-        MrcMessage m = new MrcMessage(getWriteCVPROGPacketLength());
-        int i = m.putHeader(writeCVPROGHeader);
+        MrcMessage m = new MrcMessage(MrcPackets.getWriteCVPROGPacketLength());
+        int i = m.putHeader(MrcPackets.writeCVPROGHeader);
         
         int cvLo = cv;
         int cvHi = cv>>8;
@@ -576,8 +400,8 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
      */
     static public MrcMessage setClockRatio(int ratio) {
         if (ratio < 0 || ratio > 60) log.error("ratio number too large: "+ratio);
-        MrcMessage m = new MrcMessage(getSetClockRatioPacketLength());
-        int i = m.putHeader(setClockRatioHeader);
+        MrcMessage m = new MrcMessage(MrcPackets.getSetClockRatioPacketLength());
+        int i = m.putHeader(MrcPackets.setClockRatioHeader);
         
         m.setElement(i++, ratio);
         m.setElement(i++, 0x00);
@@ -594,8 +418,8 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     static public MrcMessage setClockTime(int hour, int minute) {
         if (hour < 0 || hour > 23) log.error("hour number out of range : " + hour);
         if (minute < 0 || minute > 59) log.error("hour minute out of range : " + minute);
-        MrcMessage m = new MrcMessage(getSetClockTimePacketLength());
-        int i = m.putHeader(setClockTimeHeader);
+        MrcMessage m = new MrcMessage(MrcPackets.getSetClockTimePacketLength());
+        int i = m.putHeader(MrcPackets.setClockTimeHeader);
         
         m.setElement(i++, hour);
         m.setElement(i++, 0x00);
@@ -610,8 +434,8 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
      * @return
      */
     static public MrcMessage setClockAmPm() {
-        MrcMessage m = new MrcMessage(getSetClockAmPmPacketLength());
-        int i = m.putHeader(setClockAmPmHeader);
+        MrcMessage m = new MrcMessage(MrcPackets.getSetClockAmPmPacketLength());
+        int i = m.putHeader(MrcPackets.setClockAmPmHeader);
         
         m.setElement(i++, 0x32);
         m.setElement(i++, 0x00);

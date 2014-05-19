@@ -132,6 +132,7 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
     }
 
     public DataOutputStream getOutputStream() {
+        log.info("Outputstream opened");
         if (!opened) log.error("getOutputStream called before load(), stream not available");
         try {
             return new DataOutputStream(activeSerialPort.getOutputStream());

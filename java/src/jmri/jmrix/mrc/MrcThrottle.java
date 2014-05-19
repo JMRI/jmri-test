@@ -124,6 +124,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
     /**
 	 * Send the message to set the state of functions F9, F12, F11, F12.
 	 */    
+    @Override
     protected void sendFunctionGroup3() {
         
         int data = 0x00 |
@@ -142,12 +143,13 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
 	 * Send the message to set the state of functions F13 to F20.
      * MRC Group 4 & 5
 	 */    
+    @Override
     protected void sendFunctionGroup4() {
 		// The NCE USB doesn't support the NMRA packet format
 		// Always need speed command before function group command to reset consist pointer
         int data = 0x00 |
         (f16 ? 0x08 : 0) |
-        (f15 ? 0x04 : 0)	|
+        (f15 ? 0x04 : 0) |
         (f14 ? 0x02 : 0) |
         (f13 ? 0x01 : 0);
         
@@ -242,9 +244,9 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         if(m.isUnsolicited()){
             if(m.getNumDataElements()>8 && m.getElement(4)==addressHi && m.getElement(6)==addressLo){
                 log.info(raw);
-                if(!m.validCheckSum()) {log.info("invalid check sum"); return;}
+                if(!MrcPackets.validCheckSum(m)) {log.info("invalid check sum"); return;}
                 //message potentially matches our loco
-                if(MrcReply.startsWith(m, MrcMessage.throttlePacketHeader)){
+                if(MrcPackets.startsWith(m, MrcPackets.throttlePacketHeader)){
                         log.info("speed Packet from another controller for our loco");
                         int speed = m.getElement(8)&0xff;
                         if(speed>=128) {
@@ -265,7 +267,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
                             this.speedSetting = val;
                             record(val);
                         }
-                } else if (MrcReply.startsWith(m, MrcMessage.functionGroup1PacketHeader)){
+                } else if (MrcPackets.startsWith(m, MrcPackets.functionGroup1PacketHeader)){
                         log.info("function Packet 1 from another controller for our loco");
                         int data = m.getElement(8)&0xff;
                         data = data - 0x80;
@@ -326,19 +328,19 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
                         }
                         
                         //reverse engineer the function
-                }  else if (MrcReply.startsWith(m, MrcMessage.functionGroup2PacketHeader)){
+                }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup2PacketHeader)){
                         log.info("function Packet 2 from another controller for our loco");
                         //reverse engineer the function
-                }  else if (MrcReply.startsWith(m, MrcMessage.functionGroup3PacketHeader)){
+                }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup3PacketHeader)){
                         log.info("function Packet 3 from another controller for our loco");
                         //reverse engineer the function
-                }  else if (MrcReply.startsWith(m, MrcMessage.functionGroup4PacketHeader)){
+                }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup4PacketHeader)){
                         log.info("function Packet 4 from another controller for our loco");
                         //reverse engineer the function
-                }  else if (MrcReply.startsWith(m, MrcMessage.functionGroup5PacketHeader)){
+                }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup5PacketHeader)){
                         log.info("function Packet 5 from another controller for our loco");
                         //reverse engineer the function
-                }  else if (MrcReply.startsWith(m, MrcMessage.functionGroup6PacketHeader)){
+                }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup6PacketHeader)){
                         log.info("function Packet 6 from another controller for our loco");
                         //reverse engineer the function
                 } else {

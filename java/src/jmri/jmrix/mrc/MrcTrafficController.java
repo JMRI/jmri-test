@@ -8,9 +8,11 @@ import jmri.jmrix.AbstractMRListener;
 import jmri.jmrix.AbstractMRMessage;
 import jmri.jmrix.AbstractMRReply;
 import jmri.jmrix.AbstractMRTrafficController;
+import java.io.DataInputStream;
 import static jmri.jmrix.AbstractMRTrafficController.AUTORETRYSTATE;
 import static jmri.jmrix.AbstractMRTrafficController.IDLESTATE;
 import static jmri.jmrix.AbstractMRTrafficController.WAITMSGREPLYSTATE;
+import static jmri.jmrix.mrc.MrcPackets.locoSoleControlCode;
 
 /**
  * Converts Stream-based I/O to/from MRC messages.  The "MrcInterface"
@@ -117,37 +119,73 @@ public class MrcTrafficController extends AbstractMRTrafficController
     boolean unsolicited = true; //Used to detemine if the messages received are a result of a message we sent out or not.
     
     //We keep a copy of the lengths here to save on time on each request later.
-    final private static int throttlePacketLength = MrcMessage.getThrottlePacketLength();
-    final private static int functionGroupLength = MrcMessage.getFunctionPacketLength();
-    final private static int readCVLength = MrcMessage.getReadCVPacketLength();
-    final private static int readCVReplyLength = MrcReply.getReadCVPacketReplyLength();
-    final private static int readDecoderAddressLength = MrcMessage.getReadDecoderAddressLength();
-    final private static int writeCVPROGLength = MrcMessage.getWriteCVPROGPacketLength();
-    final private static int writeCVPOMLength = MrcMessage.getWriteCVPOMPacketLength();
-    final private static int setClockRatioLength = MrcMessage.getSetClockRatioPacketLength();
-    final private static int setClockTimeLength = MrcMessage.getSetClockTimePacketLength();
-    final private static int setClockAMPMLength = MrcMessage.getSetClockAmPmPacketLength();
+    final private static int throttlePacketLength = MrcPackets.getThrottlePacketLength();
+    final private static int functionGroupLength = MrcPackets.getFunctionPacketLength();
+    final private static int readCVLength = MrcPackets.getReadCVPacketLength();
+    final private static int readCVReplyLength = MrcPackets.getReadCVPacketReplyLength();
+    final private static int readDecoderAddressLength = MrcPackets.getReadDecoderAddressLength();
+    final private static int writeCVPROGLength = MrcPackets.getWriteCVPROGPacketLength();
+    final private static int writeCVPOMLength = MrcPackets.getWriteCVPOMPacketLength();
+    final private static int setClockRatioLength = MrcPackets.getSetClockRatioPacketLength();
+    final private static int setClockTimeLength = MrcPackets.getSetClockTimePacketLength();
+    final private static int setClockAMPMLength = MrcPackets.getSetClockAmPmPacketLength();
     
     
     static final int MISSEDPOLL = 60;
+    
+    int expectedSize  = 0;
     
     /* this is also used to classify the packet and notify the xmt when it can send a packet out*/
     protected boolean endOfMessage(AbstractMRReply msg) {
         //We expect a minimum of two bytes for a reply.
         if(msg.getNumDataElements()<2) return false;
+        if(msg.getNumDataElements()==expectedSize){
+            if(msg.getElement(1)==0x01){
+                if(msg.getElement(0)==cabAddress){
+                    waiting = true;
+                    //log.info("poll for us");
+                    unsolicited = false;
+                } else if(mCurrentState == WAITMSGREPLYSTATE){
+                    log.info("we have missed our send message window");
+                        //Hope by setting the currentstate to autoretry then the transmit will pick this up and add the message back to the queue.
+                    synchronized (xmtRunnable) {
+                        mCurrentState = MISSEDPOLL;
+                    }
+                }
+            }
+            if(mCurrentState == WAITMSGREPLYSTATE){
+                if(msg.getElement(0)!=MrcPackets.badCmdRecievedCode && msg.getElement(0)!=MrcPackets.goodCmdRecievedCode){
+                    log.info("reply not as expected correct format " + msg.toString());
+                    ((MrcReply)msg).setPacketInError();
+                    synchronized(xmtRunnable) {
+                        log.info("Flag for retransmission");
+                        mCurrentState = AUTORETRYSTATE;
+                    }
+                }
+            }
+            expectedSize=0;
+            return true;
+        } else if (msg.getNumDataElements()<expectedSize){
+            return false;
+        }
         waiting = false;
         //Poll message is put first as we need to react quickly to it.
-        if(msg.getElement(0)==cabAddress && msg.getElement(1)==0x01){
+        /*if(msg.getElement(0)==cabAddress && msg.getElement(1)==0x01){
             //Poll message for us
+            ((MrcReply)msg).setPollMessage();
+            unsolicited = false;
             if(msg.getNumDataElements()>=6){
                 //triggers off the sending of a message
                  waiting = true;
-                ((MrcReply)msg).setPollMessage();
-                unsolicited = false; //Any recieved reply will be unsolicited (ie reply to a message we send) until the next poll is recieved.
+                
+                 //Any recieved reply will be unsolicited (ie reply to a message we send) until the next poll is recieved.
+                log.info("poll for us");
+                expectedSize=0;
                 return true;
             }
+            expectedSize = 6;
             return false;
-        }
+        }*/
         if(/*msg.getElement(0)>0x00 &&*/ msg.getElement(0)<=0x20){
             if(msg.getElement(1)==0x01){
                 //Poll Message for cab addresses <31
@@ -162,116 +200,181 @@ public class MrcTrafficController extends AbstractMRTrafficController
                     }
                 }
 
-                if(msg.getNumDataElements()>=6){
+                /*if(msg.getNumDataElements()>=6){
                     msg.setUnsolicited();
                     ((MrcReply)msg).setPollMessage();
+                    expectedSize=0;
                     return true;
-                }
+                }*/
+                msg.setUnsolicited();
+                ((MrcReply)msg).setPollMessage();
+                expectedSize = 6;
                 return false;
             } else if (msg.getElement(1)==0x00){
-                if(msg.getNumDataElements()==4) return true;
+                if(msg.getElement(0)==0x00) {
+                    //Remove the polled "No Data" Packets and do not process them.
+                    //removeErroredPackets = true;
+                    //return true; //false;
+                }
+                if(msg.getNumDataElements()==4){
+                    expectedSize=0;
+                    return true;
+                }
+                expectedSize=4;
                 return false;
-            } else {
+            } /*else if (msg.getElement(0)==0x00 && msg.getElement(0)==0x00){
+                log.info("poll msg");
+                return true;
+            } */else {
                 log.info("Corrupt?");
                 if(msg.getElement(0)==0x00 && msg.getElement(1)!=0x00){
                     //Our bytes are out of sync, so allow a three byte packet to get back into sync
                     log.info("Our Bytes appear to be out of sync " + msg.toString());
-                    if(msg.getNumDataElements()==3) return true;
+                    if(msg.getNumDataElements()==3) { 
+                        //removeErroredPackets = true;
+                        expectedSize=0;
+                        return true;
+                    }
+                    expectedSize=3;
                     return false;
                 } else {
                     ((MrcReply)msg).setPacketInError();
                     msg.setUnsolicited();
+                    expectedSize=0;
                     return true;
                 }
             }
         }
         
-        if(unsolicited){
+        /*if(unsolicited){
             msg.setUnsolicited();
-        }
-        if(msg.getNumDataElements()==4){
-            if(msg.getElement(0)==0x00 && msg.getElement(1)==0x00 && msg.getElement(2)==0x00 && msg.getElement(3)==0x00){
-                return true;
-            }
+        }*/
+        //if(msg.getNumDataElements()==4){
+           /* if(msg.getElement(0)==0x00 && msg.getElement(1)==0x00){
+                expectedSize=4;
+                return false;
+            }*/
             if(mCurrentState == WAITMSGREPLYSTATE){
-                if(msg.getElement(0)!=MrcReply.badCmdRecievedCode && msg.getElement(0)!=MrcReply.goodCmdRecievedCode){
+                if(msg.getElement(0)!=MrcPackets.badCmdRecievedCode && msg.getElement(0)!=MrcPackets.goodCmdRecievedCode){
                     log.info("reply not as expected correct format " + msg.toString());
                     ((MrcReply)msg).setPacketInError();
                     synchronized(xmtRunnable) {
                         log.info("Flag for retransmission");
                         mCurrentState = AUTORETRYSTATE;
+                        expectedSize=0;
                         return true;
                     }
                 }
                 log.info("Exit here finished");
-                return true;
+                expectedSize=4;
+                return false;
             }
-        }
+        //}
 
-        if(mCurrentState == WAITMSGREPLYSTATE){
+        /*if(mCurrentState == WAITMSGREPLYSTATE){
             log.info("Exit no finished");
+            expectedSize=4;
             return false;
-        }
+        }*/
         
-        if(msg.getNumDataElements()>=4){
-            int num = msg.getNumDataElements();
+        /*if(msg.getNumDataElements()==4){//only do this check the once at 4 bytes.
+            //int num = msg.getNumDataElements();
             if(msg.getElement(0)!=msg.getElement(2)){
+                expectedSize=0;
                 return true;
             }
-            int requiredLength = 0;
-            switch(msg.getElement(0)){
-                case 0x00 : requiredLength = 4;
-                            break;
+        }*/
+        log.info("fall through to here");
+        int requiredLength = 0;
+        switch(msg.getElement(0)&0xff){
+            case 0x00 : requiredLength = 4;
+                        break;
 
-                case MrcMessage.throttlePacketCmd : requiredLength = throttlePacketLength;
-                                                    break;
-                case MrcMessage.functionGroup1PacketCmd : 
-                case MrcMessage.functionGroup2PacketCmd : 
-                case MrcMessage.functionGroup3PacketCmd : 
-                case MrcMessage.functionGroup4PacketCmd : 
-                case MrcMessage.functionGroup5PacketCmd : 
-                case MrcMessage.functionGroup6PacketCmd : requiredLength = functionGroupLength;
-                                                          break;
-                case MrcMessage.readCVCmd :               requiredLength = readCVLength;
-                                                          break;
-                case MrcMessage.readDecoderAddressCmd :   requiredLength = readDecoderAddressLength;
-                                                          break;
-                case MrcMessage.writeCVPROGCmd :          requiredLength = writeCVPROGLength;
-                                                          break;
-                case MrcMessage.writeCVPOMCmd :           requiredLength = writeCVPOMLength;
-                                                          break;
-                case MrcMessage.setClockRatioCmd :        requiredLength = setClockRatioLength;
-                                                          break;
-                case MrcMessage.setClockTimeCmd :         requiredLength = setClockTimeLength;
-                                                          break;
-                case MrcMessage.setClockAmPmCmd :         requiredLength = setClockAMPMLength;
-                                                          break;
-                case MrcReply.readCVHeaderReplyCode :     requiredLength = readCVReplyLength;
-                                                          break;
-                case MrcReply.locoDblControlCode :      synchronized(xmtRunnable) {
-                                                            mCurrentState = WAITMSGREPLYSTATE;
-                                                        }
-                case MrcReply.badCmdRecievedCode :
-                case MrcReply.goodCmdRecievedCode :
-                case MrcReply.locoSoleControlCode :       requiredLength = 4;
-                                                          break;
-                default : return false; //Unknown
-            }
-            if(num>=requiredLength) return true;
-            //Need to double check this one. think it catches where things go out of sync
-            log.info(""+requiredLength + " e0 " + msg.getElement(1) + " Not waiting " + !waiting);
-            if(requiredLength==0 && msg.getElement(1)==0x00 && !waiting){
-                return true;
-            }
+            case MrcPackets.throttlePacketCmd : requiredLength = throttlePacketLength;
+                                                break;
+            case MrcPackets.functionGroup1PacketCmd : 
+            case MrcPackets.functionGroup2PacketCmd : 
+            case MrcPackets.functionGroup3PacketCmd : 
+            case MrcPackets.functionGroup4PacketCmd : 
+            case MrcPackets.functionGroup5PacketCmd : 
+            case MrcPackets.functionGroup6PacketCmd : requiredLength = functionGroupLength;
+                                                      break;
+            case MrcPackets.readCVCmd :               requiredLength = readCVLength;
+                                                      break;
+            case MrcPackets.readDecoderAddressCmd :   requiredLength = readDecoderAddressLength;
+                                                      break;
+            case MrcPackets.writeCVPROGCmd :          requiredLength = writeCVPROGLength;
+                                                      break;
+            case MrcPackets.writeCVPOMCmd :           requiredLength = writeCVPOMLength;
+                                                      break;
+            case MrcPackets.setClockRatioCmd :        requiredLength = setClockRatioLength;
+                                                      break;
+            case MrcPackets.setClockTimeCmd :         requiredLength = setClockTimeLength;
+                                                      break;
+            case MrcPackets.setClockAmPmCmd :         requiredLength = setClockAMPMLength;
+                                                      break;
+            case MrcPackets.readCVHeaderReplyCode :     requiredLength = readCVReplyLength;
+                                                      break;
+            case MrcPackets.locoDblControlCode :      synchronized(xmtRunnable) {
+                                                        mCurrentState = WAITMSGREPLYSTATE;
+                                                    }
+            case MrcPackets.badCmdRecievedCode :
+            case MrcPackets.goodCmdRecievedCode :       
+            case MrcPackets.locoSoleControlCode :     
+                                                      requiredLength = 4;
+                                                      break;
+            default : requiredLength = 2; //Unknown
+        }
+        if(msg.getNumDataElements()>=requiredLength){expectedSize=0; return true;}
+        //Need to double check this one. think it catches where things go out of sync
+        log.info(""+requiredLength + " e0 " + msg.getElement(1) + " Not waiting " + !waiting);
+        expectedSize = requiredLength;
+        if(requiredLength==0 && msg.getElement(1)==0x00 && !waiting){
+            expectedSize=0;
+            return true;
         }
 
         //For some reason we see the odd two byte packet that doesn't match anything we know about, so at this stage ignore it, this could possibly be a corruption of the nodata bytes.
-        if(msg.getNumDataElements()==2 && ((msg.getElement(0)&0xff)==0xF8 ||(msg.getElement(0)&0xff)==0xE0 || (msg.getElement(0)&0xff)==0xFE || (msg.getElement(0)&0xff)==0x80)){
+        /*if(msg.getNumDataElements()==2 && ((msg.getElement(0)&0xff)==0xF8 ||(msg.getElement(0)&0xff)==0xE0 || (msg.getElement(0)&0xff)==0xFE || (msg.getElement(0)&0xff)==0x80)){
             ((MrcReply)msg).setPacketInError();
-            return true;
-        }
+            log.info("In Error");
+            removeErroredPackets = true;
+        }*/
         return false;
     }
+    
+    boolean removeErroredPackets = false;
+    
+    protected void loadCharstst(AbstractMRReply msg, DataInputStream istream)
+                           throws java.io.IOException {
+        int i;
+        for (i = 0; i < msg.maxSize(); i++) {
+            byte char1 = readByteProtected(istream);
+            //if (log.isDebugEnabled()) log.debug("char: "+(char1&0xFF)+" i: "+i);
+            // if there was a timeout, flush any char received and start over
+            if(flushReceiveChars){
+                log.warn("timeout flushes receive buffer: "+ msg.toString());
+                msg.flush();
+                i = 0;  // restart
+                flushReceiveChars = false;
+            }
+            if (canReceive()) {
+                msg.setElement(i, char1);
+                if (endOfMessage(msg))
+                    break;
+                /*if(removeErroredPackets){
+                    log.info("Flush");
+                    msg.flush();
+                    i = 0;
+                    removeErroredPackets = false;
+                }*/
+            } else {
+                i--; // flush char
+                log.error("unsolicited character received: "+ Integer.toHexString(char1));
+            }
+        }
+    }
+
     
     boolean waiting = false; //Trigger to say that we can send a message
     
@@ -304,6 +407,7 @@ public class MrcTrafficController extends AbstractMRTrafficController
                             mCurrentState = WAITMSGREPLYSTATE;
                             log.info("State Set and wait");
                         }
+                        log.info("Message sent " + m.toString());
                         Runnable r = new XmtNotifier(m, mLastSender, this);
                         javax.swing.SwingUtilities.invokeLater(r);
                         // reply expected?
@@ -344,6 +448,7 @@ public class MrcTrafficController extends AbstractMRTrafficController
                     try {
                         ostream.write(noData);
                         ostream.flush();
+                        //log.info("Send no data");
                     } catch (Exception e) {
                         log.error("Unable to send");
                     }

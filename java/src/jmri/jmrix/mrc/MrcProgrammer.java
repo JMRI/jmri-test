@@ -10,7 +10,7 @@ import jmri.jmrix.AbstractProgrammer;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Vector;
-import static jmri.jmrix.mrc.MrcReply.readCVHeaderReply;
+//import static jmri.jmrix.mrc.MrcReply.readCVHeaderReply;
 
 /**
  * Convert the jmri.Programmer interface into commands for the MRC power house.
@@ -189,17 +189,17 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
             //if(MrcReply.startsWith(m, MrcReply.goodCmdRecieved))
             return;
         }
-        if(MrcReply.startsWith(m, MrcReply.badCmdRecieved)){
+        if(MrcPackets.startsWith(m, MrcPackets.badCmdRecieved)){
             //Command station rejected packet
             notifyProgListenerEnd(_val, jmri.ProgListener.CommError);
         }
-        if(MrcReply.startsWith(m, MrcReply.goodCmdRecieved)){
+        if(MrcPackets.startsWith(m, MrcPackets.goodCmdRecieved)){
             //Wait for the confirmation.
             return;
-        } else if (MrcReply.startsWith(m, MrcReply.progCmdSent)){
+        } else if (MrcPackets.startsWith(m, MrcPackets.progCmdSent)){
             progState = NOTPROGRAMMING;
             notifyProgListenerEnd(_val, jmri.ProgListener.OK);
-        } else if (MrcReply.startsWith(m, MrcReply.readCVHeaderReply) && progState == READCOMMANDSENT) {
+        } else if (MrcPackets.startsWith(m, MrcPackets.readCVHeaderReply) && progState == READCOMMANDSENT) {
             progState = NOTPROGRAMMING;
             //Currently we have no way to know if the write was sucessful or not.
             if (_progRead) {
