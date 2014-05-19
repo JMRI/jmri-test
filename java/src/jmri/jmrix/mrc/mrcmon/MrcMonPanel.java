@@ -18,11 +18,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jmri.jmrix.mrc.*;
 import jmri.jmrix.mrc.swing.*;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.JCheckBox;
 
 
-public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListener, MrcPanelInterface{
+public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListener, MrcTrafficListener, MrcPanelInterface{
 
 	private static final long serialVersionUID = 6106790197336170348L;
 
@@ -47,11 +48,10 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
     }
 
     public void dispose() {
-        // disconnect from the MrcTrafficController
-        try {
-            memo.getMrcTrafficController().removeMrcListener(this);
-        } catch (java.lang.NullPointerException e){
-            log.error("Error on dispose " + e.toString());
+        if(memo.getMrcTrafficController()!=null){
+        // disconnect from the LnTrafficController
+            memo.getMrcTrafficController().removeTrafficListener(MrcTrafficListener.MRC_TRAFFIC_ALL, this);
+            memo.getMrcTrafficController().removeMrcListener(~0,this);
         }
         // and unwind swing
         super.dispose();
@@ -69,16 +69,17 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
     
     JCheckBox excludePoll = new JCheckBox("Exclude Poll Messages");
     
+    private int trafficFilter = MrcTrafficListener.MRC_TRAFFIC_ALL;
+    
     public void initComponents(MrcSystemConnectionMemo memo) {
-        add(excludePoll);
         this.memo = memo;
-        // connect to the MrcTrafficController
-        try {
-            memo.getMrcTrafficController().addMrcListener(this);
-        } catch (java.lang.NullPointerException e){
-            log.error("Unable to start the MRC Command monitor");
-            JOptionPane.showMessageDialog(null, "An Error has occured that prevents the MRC Command Monitor from being loaded.\nPlease check the System Console for more information", "No Connection", JOptionPane.WARNING_MESSAGE);
+        // connect to the LnTrafficController
+        if(memo.getMrcTrafficController()==null){
+            log.error("No traffic controller is available");
+            return;
         }
+        memo.getMrcTrafficController().addTrafficListener(trafficFilter, this);
+		memo.getMrcTrafficController().addMrcListener(~0, this);
     }
 
     public synchronized void message(MrcMessage m) {  // receive a message and log it
@@ -87,12 +88,22 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
 	        if (i>0) raw+=" ";
             raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
         }
-            nextLine("cmd: \""+m.toString()+"\"\n", raw);
+        
+        // send the raw data, to display if requested
+        //String raw = m.toString();
+
+        // display the decoded data
+        // we use Llnmon to format, expect it to provide consistent \n after each line
+        //nextLine( raw );
+        nextLine("cmd: \""+m.toString()+"\"\n", raw);
 	}
     
-    MrcReply previousPollMessage;
+    MrcMessage previousPollMessage;
     
-	public synchronized void reply(MrcReply r) {  // receive a reply message and log it
+    private boolean filterEcho = true;
+    private MrcMessage lastLoggedTxMessage = null;
+    
+	/*public synchronized void reply(MrcReply r) {  // receive a reply message and log it
         String raw = "";
         if(excludePoll.isSelected() && r.isPollMessage() && r.getElement(1)==0x01){
             //Do not show poll messages for other devices
@@ -118,7 +129,59 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
         }
 	        
         nextLine("msg: \""+r.toString()+"\"\n", raw);
-	}
+	}*/
+    
+    public synchronized void notifyXmit(Date timestamp, MrcMessage m) {
+    	
+    	//if (useSimpleLogging) return;
+    	
+    	logMessage(timestamp, m, "Tx");
+    	lastLoggedTxMessage = m;
+    }
+    
+    public synchronized void notifyRcv(Date timestamp, MrcMessage m) {
+    	
+    	//if (useSimpleLogging) return;
+
+    	/*if (filterEcho) {
+    		if ((lastLoggedTxMessage != null) && (lastLoggedTxMessage.equals(m))) {     	
+    			return;
+    		}
+    	}*/
+        String raw = "";
+        if(excludePoll.isSelected() && ((m.isPollMessage() && m.getElement(1)==0x01) || m.isNoDataReply())){
+            //Do not show poll messages
+            previousPollMessage = m;
+            return;
+        } else if (previousPollMessage!=null) {
+            /*if(m.isNoDataReply()){
+                previousPollMessage = null;
+                return;
+            }*/
+            for (int i=0;i<previousPollMessage.getNumDataElements(); i++) {
+                if (i>0) raw+=" ";
+                raw = jmri.util.StringUtil.appendTwoHexFromInt(previousPollMessage.getElement(i)&0xFF, raw);
+            }
+            nextLine("msg: \""+previousPollMessage.toString()+"\"\n", raw);
+            raw = "";
+            previousPollMessage = null;
+        }
+    	logMessage(timestamp, m, "Rx");
+    }
+    
+    private void logMessage(Date timestamp, MrcMessage m, String src) {  // receive a LocoNet message and log it
+        // send the raw data, to display if requested
+        //String raw = src + " - " + l.toString();
+        String raw = "";
+        for (int i=0;i<m.getNumDataElements(); i++) {
+	        if (i>0) raw+=" ";
+            raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
+        }
+
+        // display the decoded data
+        // we use Llnmon to format, expect it to provide consistent \n after each line
+        nextLineWithTime(timestamp, m.toString(), raw );
+    }
     
     /**
      * Nested class to create one of these using old-style defaults

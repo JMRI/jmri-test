@@ -54,7 +54,7 @@ public class MrcOpsModeProgrammer extends MrcProgrammer  {
         // start the error timer
         startShortTimer();
         
-        tc.sendMrcMessage(msg, this);
+        tc.sendMrcMessage(msg);
     }
 
     public synchronized void readCV(int CV, ProgListener p) throws ProgrammerException {

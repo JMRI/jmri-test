@@ -4,10 +4,9 @@ package jmri.jmrix.mrc.simulator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jmri.jmrix.mrc.MrcReply;
 import jmri.jmrix.mrc.MrcMessage;
 import jmri.jmrix.mrc.MrcPortController;
-import jmri.jmrix.mrc.MrcTrafficController;
+import jmri.jmrix.mrc.MrcPacketizer;
 import jmri.jmrix.mrc.MrcSystemConnectionMemo;
 
 import java.io.DataInputStream;
@@ -75,10 +74,10 @@ public class SimulatorAdapter extends MrcPortController implements
 	 * station.
 	 */
 	public void configure() {
-        MrcTrafficController tc = new MrcTrafficController();
+        MrcPacketizer tc = new MrcPacketizer();
         adaptermemo.setMrcTrafficController(tc);
         tc.setAdapterMemo(adaptermemo);
-        tc.connectPort(this);     
+        //tc.connectPort(this);     
 		                
         adaptermemo.configureManagers();
         
@@ -144,7 +143,7 @@ public class SimulatorAdapter extends MrcPortController implements
 				log.debug(buf.toString());
 			}
 			if (m != null) {
-				MrcReply r = generateReply(m);
+				MrcMessage r = generateReply(m);
 				writeReply(r);
 				if (log.isDebugEnabled() && r != null) {
 					StringBuffer buf = new StringBuffer();
@@ -190,8 +189,8 @@ public class SimulatorAdapter extends MrcPortController implements
 
 	// generateReply is the heart of the simulation.  It translates an 
 	// incoming MrcMessage into an outgoing MrcReply.
-	private MrcReply generateReply(MrcMessage m) {
-		MrcReply reply = new MrcReply();
+	private MrcMessage generateReply(MrcMessage m) {
+		MrcMessage reply = new MrcMessage();
 		if (m.getNumDataElements() < 4) {
 			reply.setElement(0, MrcPackets.badCmdRecievedCode);
 			reply.setElement(1, 0x0);
@@ -233,7 +232,7 @@ public class SimulatorAdapter extends MrcPortController implements
 		return reply;
 	}
 
-	private void writeReply(MrcReply r) {
+	private void writeReply(MrcMessage r) {
 		if(r == null)
 			return;
 		for (int i = 0; i < r.getNumDataElements(); i++){

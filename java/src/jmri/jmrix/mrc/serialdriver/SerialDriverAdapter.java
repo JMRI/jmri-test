@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jmri.jmrix.mrc.MrcPortController;
 import jmri.jmrix.mrc.MrcTrafficController;
+import jmri.jmrix.mrc.MrcPacketizer;
 import jmri.jmrix.mrc.MrcSystemConnectionMemo;
 
 import java.io.DataInputStream;
@@ -66,9 +67,9 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
 
             // set timeout
             // activeSerialPort.enableReceiveTimeout(1000);
-            log.debug("Serial timeout was observed as: "+activeSerialPort.getReceiveTimeout()
+            log.info("Serial timeout was observed as: "+activeSerialPort.getReceiveTimeout()
                       +" "+activeSerialPort.isReceiveTimeoutEnabled());
-
+            log.info("input buffer " + activeSerialPort.getInputBufferSize());
             // get and save stream
             serialStream = activeSerialPort.getInputStream();
 
@@ -111,14 +112,16 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
      * station connected to this port
      */
     public void configure() {
-        MrcTrafficController tc = new MrcTrafficController(); 
-        adaptermemo.setMrcTrafficController(tc);
-        tc.setAdapterMemo(adaptermemo);
-        tc.setCabNumber(Integer.parseInt(getOptionState("CabAddress")));
-        tc.connectPort(this);
+        MrcPacketizer packets = new MrcPacketizer();
+        packets.connectPort(this);
+        adaptermemo.setMrcTrafficController(packets);
+        
+        packets.setAdapterMemo(adaptermemo);
+        packets.setCabNumber(Integer.parseInt(getOptionState("CabAddress")));        
         
         adaptermemo.configureManagers();
-
+        
+        packets.startThreads();
         jmri.jmrix.mrc.ActiveFlag.setActive();
     }
 
@@ -128,6 +131,7 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
             log.error("getInputStream called before load(), stream not available");
             return null;
         }
+        
         return new DataInputStream(serialStream);
     }
 

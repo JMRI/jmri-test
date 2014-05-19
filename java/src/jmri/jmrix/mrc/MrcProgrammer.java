@@ -114,7 +114,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
             // start the error timer
             startLongTimer();
             // format and send the write message
-            tc.sendMrcMessage(progTaskStart(getMode(), _val, _cv), this);
+            tc.sendMrcMessage(progTaskStart(getMode(), _val, _cv));
         } catch (jmri.ProgrammerException e) {
             progState = NOTPROGRAMMING;
             throw e;
@@ -139,7 +139,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
             startLongTimer();
             
             // format and send the write message
-            tc.sendMrcMessage(progTaskStart(getMode(), -1, _cv), this);
+            tc.sendMrcMessage(progTaskStart(getMode(), -1, _cv));
         } catch (jmri.ProgrammerException e) {
             progState = NOTPROGRAMMING;
             throw e;
@@ -173,19 +173,19 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
         }
     }
 
-    public void message(MrcMessage m) {
+    /*public void message(MrcMessage m) {
         log.error("message received unexpectedly: "+m.toString());
-    }
+    }*/
     
 
 
-    public synchronized void reply(MrcReply m) {
+    public synchronized void  message(MrcMessage m) {
         if (progState == NOTPROGRAMMING) {
             // we get the complete set of replies now, so ignore these
             log.debug("reply in NOTPROGRAMMING state");
             return;
         }
-        if(m.isUnsolicited() || m.isPollMessage() || m.isPacketInError()){
+        if(m.isPollMessage() || m.isPacketInError()){
             //if(MrcReply.startsWith(m, MrcReply.goodCmdRecieved))
             return;
         }

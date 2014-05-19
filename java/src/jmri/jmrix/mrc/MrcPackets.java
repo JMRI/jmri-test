@@ -113,7 +113,7 @@ public class MrcPackets {
         return readCVHeader.length + readCVLength;
     }
 
-    public static boolean startsWith(jmri.jmrix.AbstractMRReply source, int[] match) {
+    public static boolean startsWith(MrcMessage source, int[] match) {
         if (match.length > (source.getNumDataElements())) {
             return false;
         }
@@ -140,7 +140,7 @@ public class MrcPackets {
     }
     
         //Need to test toString() for POM
-    static public String toString(AbstractMessage m){
+    static public String toString(MrcMessage m){
         StringBuilder txt = new StringBuilder();
         if((m.getNumDataElements() <4) || (m.getNumDataElements()>=4 && m.getElement(0)!=m.getElement(2) && m.getElement(1)!=0x01)){
             //byte 0 and byte 2 should always be the same except for a clock update packet.
@@ -287,13 +287,13 @@ public class MrcPackets {
 
     //Principle last two ar ehte checksum, the first four indicate the packet type and ignored.
     //the rest should be XOR'd.
-    static public boolean validCheckSum(MrcReply mrcReply) {
-        if (mrcReply.getNumDataElements() > 6) {
+    static public boolean validCheckSum(MrcMessage m) {
+        if (m.getNumDataElements() > 6) {
             int result = 0;
-            for (int i = 4; i < mrcReply.getNumDataElements() - 2; i++) {
-                result = (mrcReply.getElement(i) & 255) ^ result;
+            for (int i = 4; i < m.getNumDataElements() - 2; i++) {
+                result = (m.getElement(i) & 255) ^ result;
             }
-            if (result == (mrcReply.getElement(mrcReply.getNumDataElements() - 2) & 255)) {
+            if (result == (m.getElement(m.getNumDataElements() - 2) & 255)) {
                 return true;
             }
         }

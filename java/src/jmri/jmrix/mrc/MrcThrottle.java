@@ -22,6 +22,7 @@ import jmri.jmrix.AbstractThrottle;
 public class MrcThrottle extends AbstractThrottle implements MrcListener{
 
     private MrcTrafficController tc = null;
+    //private MrcInterface network;
     
     /**
      * Constructor.
@@ -77,7 +78,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         } else {
             addressLo = address.getNumber();
         }
-        tc.addMrcListener(this);
+//        tc.addMrcListener(this);
     }
     
     DccLocoAddress address;
@@ -99,7 +100,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         data = data + 0x80;
         MrcMessage m = MrcMessage.getSendFunction(1, addressLo, addressHi, data);
         if(m!=null)
-            tc.sendMrcMessage(m, this);
+            tc.sendMrcMessage(m);
 	}
 
     /**
@@ -118,7 +119,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         
         MrcMessage m = MrcMessage.getSendFunction(2, addressLo, addressHi, data);
         if(m!=null)
-            tc.sendMrcMessage(m, this);
+            tc.sendMrcMessage(m);
 	}
     
     /**
@@ -136,7 +137,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         data = data + 0xA0;
         MrcMessage m = MrcMessage.getSendFunction(3, addressLo, addressHi, data);
         if(m!=null)
-            tc.sendMrcMessage(m, this);
+            tc.sendMrcMessage(m);
 	}
 
     /**
@@ -157,7 +158,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         
         MrcMessage m = MrcMessage.getSendFunction(4, addressLo, addressHi, data);
         if(m!=null)
-            tc.sendMrcMessage(m, this);
+            tc.sendMrcMessage(m);
         
         data = 0x00 |
         (f20 ? 0x08 : 0) |
@@ -168,7 +169,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         
         m = MrcMessage.getSendFunction(5, addressLo, addressHi, data);
         if(m!=null)
-            tc.sendMrcMessage(m, this);
+            tc.sendMrcMessage(m);
 	}
     
     /**
@@ -188,7 +189,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
 
     	MrcMessage m = MrcMessage.getSendFunction(6, addressLo, addressHi, data);
     	if(m!=null)
-    		tc.sendMrcMessage(m, this);   
+    		tc.sendMrcMessage(m);   
     }
     
     /**
@@ -212,7 +213,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
             value = value+128;
         }
         MrcMessage m = MrcMessage.getSendSpeed(addressLo, addressHi, value);
-        tc.sendMrcMessage(m, this);
+        tc.sendMrcMessage(m);
 
         if (oldSpeed != this.speedSetting)
             notifyPropertyChangeListener("SpeedSetting", oldSpeed, this.speedSetting );
@@ -232,7 +233,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
     
     //Might need to look at other packets from handsets to see if they also have control of our loco and adjust from that.
     
-    public void reply(MrcReply m) {
+    public void message(MrcMessage m) {
         if(m.isPollMessage())
             return;
         String raw = "";
@@ -241,123 +242,121 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
             raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
         }
 
-        if(m.isUnsolicited()){
-            if(m.getNumDataElements()>8 && m.getElement(4)==addressHi && m.getElement(6)==addressLo){
-                log.info(raw);
-                if(!MrcPackets.validCheckSum(m)) {log.info("invalid check sum"); return;}
-                //message potentially matches our loco
-                if(MrcPackets.startsWith(m, MrcPackets.throttlePacketHeader)){
-                        log.info("speed Packet from another controller for our loco");
-                        int speed = m.getElement(8)&0xff;
-                        if(speed>=128) {
-                            //Forward
-                            if(!this.isForward){
-                                this.isForward = true;
-                                notifyPropertyChangeListener("IsForward", !isForward, isForward );
-                            }
-                            speed = speed-128;
-                        } else if(this.isForward){
-                            //reverse
-                            this.isForward = false;
+        if(m.getNumDataElements()>8 && m.getElement(4)==addressHi && m.getElement(6)==addressLo){
+            log.info(raw);
+            if(!MrcPackets.validCheckSum(m)) {log.info("invalid check sum"); return;}
+            //message potentially matches our loco
+            if(MrcPackets.startsWith(m, MrcPackets.throttlePacketHeader)){
+                    log.info("speed Packet from another controller for our loco");
+                    int speed = m.getElement(8)&0xff;
+                    if(speed>=128) {
+                        //Forward
+                        if(!this.isForward){
+                            this.isForward = true;
                             notifyPropertyChangeListener("IsForward", !isForward, isForward );
                         }
-                        float val = speed/128.0f;
-                        if (val != this.speedSetting){
-                            notifyPropertyChangeListener("SpeedSetting", this.speedSetting, val );
-                            this.speedSetting = val;
-                            record(val);
+                        speed = speed-128;
+                    } else if(this.isForward){
+                        //reverse
+                        this.isForward = false;
+                        notifyPropertyChangeListener("IsForward", !isForward, isForward );
+                    }
+                    float val = speed/128.0f;
+                    if (val != this.speedSetting){
+                        notifyPropertyChangeListener("SpeedSetting", this.speedSetting, val );
+                        this.speedSetting = val;
+                        record(val);
+                    }
+            } else if (MrcPackets.startsWith(m, MrcPackets.functionGroup1PacketHeader)){
+                    log.info("function Packet 1 from another controller for our loco");
+                    int data = m.getElement(8)&0xff;
+                    data = data - 0x80;
+                    if((data&0x10)==0x10){
+                        log.info("Function 0 on");
+                        if(!this.f0) {
+                            notifyPropertyChangeListener(Throttle.F0, this.f0, true);
+                            this.f0 = true;
                         }
-                } else if (MrcPackets.startsWith(m, MrcPackets.functionGroup1PacketHeader)){
-                        log.info("function Packet 1 from another controller for our loco");
-                        int data = m.getElement(8)&0xff;
-                        data = data - 0x80;
-                        if((data&0x10)==0x10){
-                            log.info("Function 0 on");
-                            if(!this.f0) {
-                                notifyPropertyChangeListener(Throttle.F0, this.f0, true);
-                                this.f0 = true;
-                            }
-                        } else if (this.f0){
-                            log.info("Function 0 off");
-                            notifyPropertyChangeListener(Throttle.F0, this.f0, false);
-                            this.f0 = false;
+                    } else if (this.f0){
+                        log.info("Function 0 off");
+                        notifyPropertyChangeListener(Throttle.F0, this.f0, false);
+                        this.f0 = false;
+                    }
+                    if((data&0x01)==0x01){
+                        log.info("Function 1 on");
+                        if(!this.f1){
+                            notifyPropertyChangeListener(Throttle.F1, this.f1, true);
+                            this.f1 = true;
                         }
-                        if((data&0x01)==0x01){
-                            log.info("Function 1 on");
-                            if(!this.f1){
-                                notifyPropertyChangeListener(Throttle.F1, this.f1, true);
-                                this.f1 = true;
-                            }
-                        } else if (this.f1){
-                            log.info("Function 1 off");
-                            notifyPropertyChangeListener(Throttle.F1, this.f1, false);
-                            this.f1 = false;
+                    } else if (this.f1){
+                        log.info("Function 1 off");
+                        notifyPropertyChangeListener(Throttle.F1, this.f1, false);
+                        this.f1 = false;
+                    }
+                    if((data&0x02)==0x02){
+                        log.info("Function 2 on");
+                        if(!this.f2){
+                            notifyPropertyChangeListener(Throttle.F2, this.f2, true);
+                            this.f2 = true;
                         }
-                        if((data&0x02)==0x02){
-                            log.info("Function 2 on");
-                            if(!this.f2){
-                                notifyPropertyChangeListener(Throttle.F2, this.f2, true);
-                                this.f2 = true;
-                            }
-                        } else if (this.f2){
-                            log.info("Function 2 off");
-                            notifyPropertyChangeListener(Throttle.F2, this.f2, false);
-                            this.f2 = false;
+                    } else if (this.f2){
+                        log.info("Function 2 off");
+                        notifyPropertyChangeListener(Throttle.F2, this.f2, false);
+                        this.f2 = false;
+                    }
+                    if((data&0x04)==0x04){
+                        log.info("Function 3 on");
+                        if(!this.f3){
+                            notifyPropertyChangeListener(Throttle.F3, this.f3, true);
+                            this.f3 = true;
                         }
-                        if((data&0x04)==0x04){
-                            log.info("Function 3 on");
-                            if(!this.f3){
-                                notifyPropertyChangeListener(Throttle.F3, this.f3, true);
-                                this.f3 = true;
-                            }
-                        } else if (this.f3){
-                            log.info("Function 3 off");
-                            notifyPropertyChangeListener(Throttle.F3, this.f3, false);
-                            this.f3 = false;       
+                    } else if (this.f3){
+                        log.info("Function 3 off");
+                        notifyPropertyChangeListener(Throttle.F3, this.f3, false);
+                        this.f3 = false;       
+                    }
+                    if((data&0x08)==0x08){
+                        log.info("Function 4 on");
+                        if(!this.f4){
+                            notifyPropertyChangeListener(Throttle.F4, this.f4, true);
+                            this.f4 = true;
                         }
-                        if((data&0x08)==0x08){
-                            log.info("Function 4 on");
-                            if(!this.f4){
-                                notifyPropertyChangeListener(Throttle.F4, this.f4, true);
-                                this.f4 = true;
-                            }
-                        } else if (this.f4){
-                            log.info("Function 4 off");
-                            notifyPropertyChangeListener(Throttle.F4, this.f4, false);
-                            this.f4 = false;
-                        }
-                        
-                        //reverse engineer the function
-                }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup2PacketHeader)){
-                        log.info("function Packet 2 from another controller for our loco");
-                        //reverse engineer the function
-                }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup3PacketHeader)){
-                        log.info("function Packet 3 from another controller for our loco");
-                        //reverse engineer the function
-                }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup4PacketHeader)){
-                        log.info("function Packet 4 from another controller for our loco");
-                        //reverse engineer the function
-                }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup5PacketHeader)){
-                        log.info("function Packet 5 from another controller for our loco");
-                        //reverse engineer the function
-                }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup6PacketHeader)){
-                        log.info("function Packet 6 from another controller for our loco");
-                        //reverse engineer the function
-                } else {
-                    return;
-                }
+                    } else if (this.f4){
+                        log.info("Function 4 off");
+                        notifyPropertyChangeListener(Throttle.F4, this.f4, false);
+                        this.f4 = false;
+                    }
+                    
+                    //reverse engineer the function
+            }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup2PacketHeader)){
+                    log.info("function Packet 2 from another controller for our loco");
+                    //reverse engineer the function
+            }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup3PacketHeader)){
+                    log.info("function Packet 3 from another controller for our loco");
+                    //reverse engineer the function
+            }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup4PacketHeader)){
+                    log.info("function Packet 4 from another controller for our loco");
+                    //reverse engineer the function
+            }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup5PacketHeader)){
+                    log.info("function Packet 5 from another controller for our loco");
+                    //reverse engineer the function
+            }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup6PacketHeader)){
+                    log.info("function Packet 6 from another controller for our loco");
+                    //reverse engineer the function
             } else {
                 return;
             }
+        } else {
+            return;
         }
 
         //need to work out the resend function for if the loco is also controlled by another handset. - Might get done in the MrcTrafficController.
     }
     
-    public void message(MrcMessage m) {
+    /*public void message(MrcMessage m) {
         //System.out.println("Ecos message - "+ m);
         // messages are ignored
-    }
+    }*/
     // initialize logging
     static Logger log = LoggerFactory.getLogger(MrcThrottle.class.getName());
 

@@ -131,13 +131,13 @@ public class MrcPacketGenPanel extends jmri.jmrix.mrc.swing.MrcPanel implements 
 			for (int i = 0; i < packetTextField.getText().length(); i++)
 				m.setElement(i, packetTextField.getText().charAt(i));
 
-			tc.sendMrcMessage(m, this);
+			tc.sendMrcMessage(m);
 
 		//}
 	}
 
     public void  message(MrcMessage m) {}  // ignore replies
-    public void  reply(MrcReply r) {} // ignore replies
+    //public void  reply(MrcReply r) {} // ignore replies
 
     MrcMessage createPacket(String s) {
     	// gather bytes in result

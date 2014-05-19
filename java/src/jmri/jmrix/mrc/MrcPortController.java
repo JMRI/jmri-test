@@ -3,8 +3,8 @@
 package jmri.jmrix.mrc;
 
 import jmri.jmrix.SystemConnectionMemo;
-/*import java.io.DataInputStream;
-import java.io.DataOutputStream;*/
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 
 /**
  * Abstract base for classes representing a MRC communications port
@@ -27,10 +27,20 @@ public abstract class MrcPortController extends jmri.jmrix.AbstractSerialPortCon
     
     protected MrcSystemConnectionMemo adaptermemo = null;
     
+    // returns the InputStream from the port
+    public abstract DataInputStream getInputStream();
+
+    // returns the outputStream to the port
+    public abstract DataOutputStream getOutputStream();
+    
     public void setDisabled(boolean disabled) { 
         mDisabled = disabled;
         if(adaptermemo!=null)
             adaptermemo.setDisabled(disabled);
+    }
+    
+    public boolean okToSend() {
+        return true;
     }
     
     @Override

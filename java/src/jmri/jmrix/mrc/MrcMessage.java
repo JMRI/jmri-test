@@ -64,9 +64,9 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         setRetries(2);
     }
     
-    byte bytePre[];
+    //byte bytePre[];
     
-    public void setByte(){
+    /*public void setByte(){
         bytePre = new byte[lengthOfByteStream(this)];
 
         // add data content
@@ -74,7 +74,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         for (int i=0; i< len; i++)
             bytePre[i] = (byte)this.getElement(i);
         
-    }
+    }*/
     
     protected int lengthOfByteStream(AbstractMRMessage m) {
         int len = m.getNumDataElements();
@@ -84,9 +84,34 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     }
     
     
-    protected byte[] getByte(){
+    /*protected byte[] getByte(){
         return bytePre;
+    }*/
+    
+    boolean poll = false;
+    
+    public void setPollMessage(){
+        poll = true;
     }
+    
+    public boolean isPollMessage(){return poll;}
+    
+    boolean inError = false;
+    
+    public void setMessageInError(){
+        inError = true;
+    }
+    
+    public boolean isPacketInError(){return inError;}
+    
+    boolean noDataReply = false;
+    
+    public void setNoDataReply(){
+        noDataReply = true;
+    }
+    
+    public boolean isNoDataReply(){return noDataReply;}
+    
     
     int putHeader(int[] insert){
         int i = 0;
@@ -212,187 +237,37 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     }
        
     static protected final int LONG_TIMEOUT=65000;  // e.g. for programming options
-
-/* Bellow have been taken from the NCE Message left for the time being as examples */
     
-    // diagnose format
-    public boolean isKillMain() {
-        return getOpCode() == 'K';
-    }
-
-    public boolean isEnableMain() {
-        return getOpCode() == 'E';
-    }
-    
-    // static methods to return a formatted message
-    static public MrcMessage getEnableMain() {
-        MrcMessage m = new MrcMessage(1);
-        m.setBinary(false);
-        m.setOpCode('E');
-        return m;
-    }
-
-    static public MrcMessage getKillMain() {
-        MrcMessage m = new MrcMessage(1);
-        m.setBinary(false);
-        m.setOpCode('K');
-        return m;
+    public boolean validCheckSum() {
+        if (getNumDataElements() > 6) {
+            int result = 0;
+            for (int i = 4; i < getNumDataElements() - 2; i++) {
+                result = (getElement(i) & 255) ^ result;
+            }
+            if (result == (getElement(getNumDataElements() - 2) & 255)) {
+                return true;
+            }
+        }
+        return false;
     }
     
-    /* 
-     * get a static message to add a locomotive to a Standard Consist 
-     * in the normal direction
-     * @param ConsistAddress - a consist address in the range 1-255
-     * @param LocoAddress - a jmri.DccLocoAddress object representing the 
-     * locomotive to add
-     * @return an MrcMessage of the form GN cc llll 
-     */
-    static public MrcMessage getAddConsistNormal(int ConsistAddress,jmri.DccLocoAddress LocoAddress) {
-        MrcMessage m = new MrcMessage(10);
-        m.setBinary(false);
-        m.setOpCode('G');
-        m.setElement(1,'N');
-        m.setElement(2,' ');
-        m.addIntAsTwoHex(ConsistAddress, 3);
-        m.setElement(5,' ');
-        m.addIntAsFourHex(LocoAddress.getNumber(), 6);
-        return m;
+    public int value(){
+        int val = -1;
+        if(MrcPackets.startsWith(this, MrcPackets.readCVHeaderReply)){
+            if(getElement(4)==getElement(6)){
+                val = getElement(4)&0xff;
+                log.info("good reply " + val);
+            }
+            else
+                log.error("Error in format of the returned CV value");
+        } else {
+            log.info(toString());
+            log.error("Not a CV Read formated packet");
+        }
+		return val;
     }
-
-    /* 
-     * get a static message to add a locomotive to a standard consist in 
-     * the reverse direction
-     * @param ConsistAddress - a consist address in the range 1-255
-     * @param LocoAddress - a jmri.DccLocoAddress object representing the 
-     * locomotive to add
-     * @return an MrcMessage of the form GS cc llll 
-     */
-    static public MrcMessage getAddConsistReverse(int ConsistAddress,jmri.DccLocoAddress LocoAddress) {
-        MrcMessage m = new MrcMessage(10);
-        m.setBinary(false);
-        m.setOpCode('G');
-        m.setElement(1,'R');
-        m.setElement(2,' ');
-        m.addIntAsTwoHex(ConsistAddress, 3);
-        m.setElement(5,' ');
-        m.addIntAsFourHex(LocoAddress.getNumber(), 6);
-        return m;
-    }
-
-    /* 
-     * get a static message to subtract a locomotive from a Standard Consist
-     * @param ConsistAddress - a consist address in the range 1-255
-     * @param LocoAddress - a jmri.DccLocoAddress object representing the 
-     * locomotive to remove
-     * @return an MrcMessage of the form GS cc llll 
-     */
-    static public MrcMessage getSubtractConsist(int ConsistAddress,jmri.DccLocoAddress LocoAddress) {
-        MrcMessage m = new MrcMessage(10);
-        m.setBinary(false);
-        m.setOpCode('G');
-        m.setElement(1,'S');
-        m.setElement(2,' ');
-        m.addIntAsTwoHex(ConsistAddress, 3);
-        m.setElement(5,' ');
-        m.addIntAsFourHex(LocoAddress.getNumber(), 6);
-        return m;
-    }
-
-    /* 
-     * get a static message to delete a standard consist
-     * @param ConsistAddress - a consist address in the range 1-255
-     * @return an MrcMessage of the form GK cc 
-     */
-    static public MrcMessage getKillConsist(int ConsistAddress) {
-        MrcMessage m = new MrcMessage(5);
-        m.setBinary(false);
-        m.setOpCode('G');
-        m.setElement(1,'K');
-        m.setElement(2,' ');
-        m.addIntAsTwoHex(ConsistAddress, 3);
-        return m;
-    }
-
-    /* 
-     * get a static message to display a standard consist
-     * @param ConsistAddress - a consist address in the range 1-255
-     * @return an MrcMessage of the form GD cc 
-     */
-    static public MrcMessage getDisplayConsist(int ConsistAddress) {
-        MrcMessage m = new MrcMessage(5);
-        m.setBinary(false);
-        m.setOpCode('G');
-        m.setElement(1,'D');
-        m.setElement(2,' ');
-        m.addIntAsTwoHex(ConsistAddress, 3);
-        return m;
-    }
-
-    static public MrcMessage getProgMode() {
-        MrcMessage m = new MrcMessage(1);
-        m.setBinary(false);
-        m.setOpCode('M');
-        return m;
-    }
-
-    static public MrcMessage getExitProgMode() {
-        MrcMessage m = new MrcMessage(1);
-        m.setBinary(false);
-        m.setOpCode('X');
-        return m;
-    }
-
-    static public MrcMessage getReadPagedCV(int cv) { //R xxx
-        MrcMessage m = new MrcMessage(5);
-        m.setBinary(false);
-        m.setNeededMode(jmri.jmrix.AbstractMRTrafficController.PROGRAMINGMODE);
-        m.setTimeout(LONG_TIMEOUT);
-        m.setOpCode('R');
-        m.setElement(1,' ');
-        m.addIntAsThreeHex(cv, 2);
-        return m;
-    }
-
-    static public MrcMessage getWritePagedCV(int cv, int val) { //P xxx xx
-        MrcMessage m = new MrcMessage(8);
-        m.setBinary(false);
-        m.setNeededMode(jmri.jmrix.AbstractMRTrafficController.PROGRAMINGMODE);
-        m.setTimeout(LONG_TIMEOUT);
-        m.setOpCode('P');
-        m.setElement(1,' ');
-        m.addIntAsThreeHex(cv, 2);
-        m.setElement(5,' ');
-        m.addIntAsTwoHex(val, 6);
-        return m;
-    }
-
-    static public MrcMessage getReadRegister(int reg) { //Vx
-        if (reg>8) log.error("register number too large: "+reg);
-        MrcMessage m = new MrcMessage(2);
-        m.setBinary(false);
-        m.setNeededMode(jmri.jmrix.AbstractMRTrafficController.PROGRAMINGMODE);
-        m.setTimeout(LONG_TIMEOUT);
-        m.setOpCode('V');
-        String s = ""+reg;
-        m.setElement(1, s.charAt(s.length()-1));
-        return m;
-    }
-
-    static public MrcMessage getWriteRegister(int reg, int val) { //Sx xx
-        if (reg>8) log.error("register number too large: "+reg);
-        MrcMessage m = new MrcMessage(5);
-        m.setBinary(false);
-        m.setNeededMode(jmri.jmrix.AbstractMRTrafficController.PROGRAMINGMODE);
-        m.setTimeout(LONG_TIMEOUT);
-        m.setOpCode('S');
-        String s = ""+reg;
-        m.setElement(1, s.charAt(s.length()-1));
-        m.setElement(2,' ');
-        m.addIntAsTwoHex(val, 3);
-        return m;
-    }
-
-    /**
+    
+        /**
      * set the fast clock ratio
      * ratio is integer and max of 60 and min of 1
      * @param ratio

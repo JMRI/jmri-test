@@ -11,6 +11,7 @@ import jmri.Timebase;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
+import java.util.Arrays;
 
 /**
  * MrcClockControl.java
@@ -37,7 +38,7 @@ import java.util.ResourceBundle;
  * @author		Bob Jacobsen, Alex Shepherd
  * @version     $Revision: 22887 $
  */
-public class MrcClockControl extends DefaultClockControl implements MrcListener
+public class MrcClockControl extends DefaultClockControl implements MrcListener,  MrcTrafficListener
 {
     ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.mrc.MrcClockControlBundle");
 
@@ -61,12 +62,9 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
                     newInternalMinute();
                 }
             } ;
-        if (minuteChangeListener == null){
-            log.error("No minuteChangeListener");
-            return;
-        }
+
         internalClock.addMinuteChangeListener(minuteChangeListener);
-        tc.addMrcListener(this);
+        tc.addTrafficListener(MrcInterface.CLOCK, this);
     }
     @SuppressWarnings("unused")
 	private String prefix = "";
@@ -108,7 +106,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
     private boolean waitingForCmdRatio = false;
     private boolean waitingForCmdTime = false;
     private boolean waitingForCmd1224 = false;
-    private MrcReply lastClockReadPacket = null;
+    private MrcMessage lastClockReadPacket = null;
     //private Date lastClockReadAtTime;
     private int	mrcLastHour;
     private int mrcLastMinute;
@@ -135,11 +133,8 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
     java.beans.PropertyChangeListener minuteChangeListener;
 
     //  ignore replies
-    public void  message(MrcMessage m) {
-        log.error("message received: " + m);
-    }  
     
-    public void reply(MrcReply r) {
+    public void message(MrcMessage r) {
     	if (r.getNumDataElements() != 6 || r.getElement(0) != 0 || r.getElement(1) != 1 ||
     			r.getElement(3) != 0 || r.getElement(5) != 0) {
     		// not a clock packet
@@ -198,6 +193,13 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
 //            }
 //        }
         return;
+    }
+    
+    public synchronized void notifyXmit(Date timestamp, MrcMessage m) {
+    }
+    
+    public synchronized void notifyRcv(Date timestamp, MrcMessage m) {
+        message(m);
     }
     
     /** name of Mrc clock */
@@ -340,7 +342,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
     }
     
     @SuppressWarnings("deprecation")
-    private void readClockPacket (MrcReply r) {
+    private void readClockPacket (MrcMessage r) {
     	//MrcReply priorClockReadPacket = lastClockReadPacket;
     	//int priorMrcRatio = mrcLastRatio;
     	//boolean priorMrcRunning = mrcLastRunning;
@@ -379,7 +381,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
         MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.setClockRatio(r);
         waiting++;
         waitingForCmdRatio = true;
-        tc.sendMrcMessage(cmdMrc, this);
+        tc.sendMrcMessage(cmdMrc);
     }
     
     @SuppressWarnings("unused")
@@ -388,7 +390,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
         	MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.setClockAmPm();
         	waiting++;
     		waitingForCmd1224 = true;
-    		tc.sendMrcMessage(cmdMrc, this);
+    		tc.sendMrcMessage(cmdMrc);
     	}
     }
     
@@ -423,7 +425,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener
         MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.setClockTime(hh, mm);
         waiting++;
         waitingForCmdTime = true;
-        tc.sendMrcMessage(cmdMrc, this);
+        tc.sendMrcMessage(cmdMrc);
     }
    
     @SuppressWarnings({ "deprecation", "unused" })

@@ -9,9 +9,9 @@ package jmri.jmrix.mrc;
  * @author		Bob Jacobsen  Copyright (C) 2001, 2004
  * @version		$Revision$
  */
-public interface MrcListener extends jmri.jmrix.AbstractMRListener {
+public interface MrcListener extends java.util.EventListener {
     public void message(MrcMessage m);
-    public void reply(MrcReply m);
+    /*public void reply(MrcReply m);*/
 }
 
 /* @(#)MrcListener.java */
