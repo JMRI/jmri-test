@@ -187,7 +187,6 @@ public class MrcPacketizer extends MrcTrafficController {
     }
     // Defined this way to reduce new object creation
     private byte[] rcvBuffer = new byte[1];
-    
     boolean xmtWindow = false;
     
     /**
@@ -206,21 +205,25 @@ public class MrcPacketizer extends MrcTrafficController {
 
         @SuppressWarnings("null")
 		public void run() {
- 
-            int firstByte;
-            int secondByte;
+            int firstByte=0x00;
+            int secondByte=0x00;
+            try {
+                firstByte = readByteProtected(istream)&0xFF;
+                secondByte = readByteProtected(istream)&0xFF;
+            } catch (java.io.IOException e) {
+            }
             while (true) {   // loop permanently, program close will exit
+                mainloop:
                 try {
                     // start by looking for command -  skip if bit not set
-                    firstByte = readByteProtected(istream)&0xFF;
-                    secondByte = readByteProtected(istream)&0xFF;
-                    while ( secondByte !=0x00 || secondByte != 0x01 )  {
+                    while ( secondByte !=0x00 && secondByte != 0x01 )  {
+                       log.info("In here " + firstByte + " " + secondByte);
                         firstByte = secondByte;
                         secondByte = readByteProtected(istream)&0xFF;
-                        if (fulldebug) log.debug("Skipping: "+Integer.toHexString(firstByte) + " " + Integer.toHexString(secondByte));
+                        if (debug) log.debug("Skipping: "+Integer.toHexString(firstByte) + " " + Integer.toHexString(secondByte));
                     }
                     // here opCode is OK. Create output message
-                    if (fulldebug) log.debug(" (RcvHandler) Start message with opcode: "+ Integer.toHexString(firstByte) + " " + Integer.toHexString(secondByte));
+                    if (fulldebug) log.debug(" (RcvHandler) Start message with message: "+ Integer.toHexString(firstByte) + " " + Integer.toHexString(secondByte));
                     MrcMessage msg = null;
                     boolean pollForUs = false;
                     while (msg == null) {
@@ -230,15 +233,20 @@ public class MrcPacketizer extends MrcTrafficController {
                         // Decide length
                         
                         if(secondByte==0x01){
-                            log.info("Poll Message");
+                            
                             msg = new MrcMessage(6);
                             msg.setPollMessage();
                             if(firstByte==cabAddress){
+                                //log.debug("Poll Message for us");
                                 pollForUs = true;
                             } else if (mCurrentState == WAITFORCMDRECEIVED) {
-                                synchronized(xmtHandler) {
-                                    mCurrentState = MISSEDPOLL;
-                                }
+                                log.debug("Missed our poll slot");
+                                //synchronized(xmtHandler) {
+                                mCurrentState = MISSEDPOLL;
+                                //}
+                            }
+                            if(firstByte==0x00){
+                               msg.setClockPacket();
                             }
                         } else {
                             switch(firstByte) {
@@ -273,57 +281,73 @@ public class MrcPacketizer extends MrcTrafficController {
                                                                           break;
                                 case MrcPackets.readCVHeaderReplyCode :   msg = new MrcMessage(readCVReplyLength);
                                                                           break;
+                                case MrcPackets.locoDblControlCode :    //synchronized(xmtHandler) {
+                                                                        mCurrentState = DOUBLELOCOCONTROL;
+                                                                        msg = new MrcMessage(4);
+                                                                        break;
+                                                                        //}
                                 //$FALL-THROUGH$
-                                case MrcPackets.locoDblControlCode :    synchronized(xmtHandler) {
-                                                                            mCurrentState = DOUBLELOCOCONTROL;
-                                                                        }
-                                //$FALL-THROUGH$
-                                case MrcPackets.goodCmdRecievedCode :
-                                case MrcPackets.badCmdRecievedCode :
-                                case MrcPackets.locoSoleControlCode :     
-                                                                          msg = new MrcMessage(4);
-                                                                          break;
+                                case MrcPackets.locoSoleControlCode :    mCurrentState =IDLESTATE;
+                                case MrcPackets.goodCmdRecievedCode : 
+                                case MrcPackets.badCmdRecievedCode  :    mCurrentState =IDLESTATE;
+                                                                         msg = new MrcMessage(4);
+                                                                         break;
                                 default : msg = new MrcMessage(2); //Unknown
                             }
                         }
                         
                         msg.setElement(0, firstByte);
                         msg.setElement(1, secondByte);
-                        
-                        // message exists, now fill it
-                        int len = msg.getNumDataElements();
-                        if (fulldebug) log.debug("len: "+len);
-                        for (int i = 2; i < len; i++)  {
-                            // check for message-blocking error
-                            int b = readByteProtected(istream)&0xFF;
-                            if (fulldebug) log.debug("char "+i+" is: "+Integer.toHexString(b));
-                            msg.setElement(i, b);
-                        }
-                        if(pollForUs){
-                            xmtWindow = true;//Trigger sending of packet.
-                        }
-                    }
-                    // check parity
-                    if (msg.isPollMessage() && msg.getNumDataElements()>6 && !msg.validCheckSum()) {
-                        log.warn("Ignore Mrc packet with bad checksum: "+msg.toString());
-                        throw new MrcMessageException();
-                    }
-                    // message is complete, dispatch it !!
-                    {
-                        if (debug) log.debug("queue message for notification: "+msg.toString());
-                        final MrcMessage thisMsg = msg;
-                        final MrcPacketizer thisTC = trafficController;
-                        // return a notification via the queue to ensure end
-                        Runnable r = new Runnable() {
-                                MrcMessage msgForLater = thisMsg;
-                                MrcPacketizer myTC = thisTC;
-                                public void run() {
-                                    myTC.notifyRcv(new Date(), msgForLater);
-                                }
-                            };
-                        javax.swing.SwingUtilities.invokeLater(r);
-                    }
+                        int b = readByteProtected(istream)&0xFF;
+                        if(!msg.isClockPacket() && b!=firstByte){
+                            log.info("incorrect pattern " + firstByte + " " + secondByte + " " + b);
+                            msg=null;
+                            firstByte = b;
+                            secondByte=readByteProtected(istream)&0xFF;
+                            break mainloop;
+                        } else {
+                           msg.setElement(2, b);
 
+                            // message exists, now fill it
+                            int len = msg.getNumDataElements();
+                            if (fulldebug) log.debug("len: "+len);
+                            for (int i = 3; i < len; i++)  {
+                                // check for message-blocking error
+                                b = readByteProtected(istream)&0xFF;
+                                msg.setElement(i, b);
+                                if (fulldebug) log.debug("char "+i+" is: "+Integer.toHexString(b));
+
+                            }
+                            if(pollForUs){
+                                xmtWindow = true;//Trigger sending of packet.
+                            }
+                        }
+                    }
+                    if(msg!=null){
+                        // check parity
+                        if (msg.isPollMessage() && msg.getNumDataElements()>6 && !msg.validCheckSum()) {
+                            log.warn("Ignore Mrc packet with bad checksum: "+msg.toString());
+                            throw new MrcMessageException();
+                        }
+                        // message is complete, dispatch it !!
+                        {
+                            if (fulldebug) log.debug("queue message for notification: "+msg.toString());
+                            final MrcMessage thisMsg = msg;
+                            final MrcPacketizer thisTC = trafficController;
+                            // return a notification via the queue to ensure end
+                            Runnable r = new Runnable() {
+                                    MrcMessage msgForLater = thisMsg;
+                                    MrcPacketizer myTC = thisTC;
+                                    public void run() {
+                                        myTC.notifyRcv(new Date(), msgForLater);
+                                    }
+                                };
+                            javax.swing.SwingUtilities.invokeLater(r);
+                        }
+                        //Set up the next read
+                        firstByte = readByteProtected(istream)&0xFF;
+                        secondByte = readByteProtected(istream)&0xFF;
+                    }
                     // done with this one
             	}
                 catch (MrcMessageException e) {
@@ -363,49 +387,55 @@ public class MrcPacketizer extends MrcTrafficController {
     class XmtHandler implements Runnable {
         public void run() {
             boolean debug = log.isDebugEnabled();
-
+            byte msg[] = null;
             while (true) {   // loop permanently
                 // any input?
                 try {
-                    // get content; failure is a NoSuchElementException
-                    if (fulldebug) log.debug("check for input");
-                    byte msg[] = null;
-                    synchronized (this) {
-                        msg = xmtList.removeFirst();
+                    if(xmtList.size()!=0 && msg==null){ 
+                        // get content; failure is a NoSuchElementException
+                        if (fulldebug) log.debug("check for input");
+
+                        synchronized (this) {
+                            msg = xmtList.removeFirst();
+                            xmtWindow = false;
+                        }
+                        log.info("grabbed a message");
                     }
-                    if (ostream != null) {
+                    if (ostream != null && msg!=null) {
                         if (!controller.okToSend()) log.debug("Mrc port not ready to receive");
-                        if (debug) log.debug("start write to stream  : "+jmri.util.StringUtil.hexStringFromBytes(msg));
-                        xmtWindow = false;
-                        while(xmtWindow && msg!=null){
+                        //if (debug) log.debug("start write to stream  : "+jmri.util.StringUtil.hexStringFromBytes(msg));
+                        if(xmtWindow){
                             // input - now send
                             try {
                                 ostream.write(msg);
+                                messageTransmited(msg);
+                                mCurrentState = WAITFORCMDRECEIVED;
                                 ostream.flush();
                                 xmtWindow = false;
                                 //mCurrentState = WAITFORCMDRECEIVED;
-                                synchronized(this) {
-                                    mCurrentState = WAITFORCMDRECEIVED;
-                                    log.info("State Set and wait");
-                                }
+                                //synchronized(this) {
+                                log.info("State Set and wait");
+                                //}
                                 if (fulldebug) log.debug("end write to stream: "+jmri.util.StringUtil.hexStringFromBytes(msg));
-                                messageTransmited(msg);
-                                transmitWait(100, WAITFORCMDRECEIVED, "transmitLoop interrupted");
+                                //messageTransmited(msg);
+                                transmitWait(150, WAITFORCMDRECEIVED, "transmitLoop interrupted");
                                 if(mCurrentState == WAITFORCMDRECEIVED){
                                     log.info("Timed out");
                                 } else if (mCurrentState == MISSEDPOLL /*&& m.getRetries()>=0*/) {
-                                     xmtList.addFirst(msg);
-                                     synchronized (this) {
+                                    log.info("Missed add to front");
+                                    xmtList.addFirst(msg);
+                                     //synchronized (this) {
                                            mCurrentState = IDLESTATE;
-                                     }
+                                     //}
                                 } else if (mCurrentState == DOUBLELOCOCONTROL/* && m.getRetries()>=0*/) {
                                      log.info("Auto Retry send message added back to queue: " + Arrays.toString(msg));
                                      //m.setRetries(m.getRetries() - 1);
                                      xmtList.addFirst(msg);
-                                     synchronized (this) {
+                                     //synchronized (this) {
                                            mCurrentState = IDLESTATE;
-                                     }
+                                     //}
                                 }
+                                msg = null;
                             }
                             catch (java.io.IOException e) {
                                 log.warn("sendMrcMessage: IOException: "+e.toString());
@@ -413,7 +443,7 @@ public class MrcPacketizer extends MrcTrafficController {
                         }
                     } else {
                         // no stream connected
-                        log.warn("sendMrcMessage: no connection established");
+                        //log.warn("sendMrcMessage: no connection established");
                     }
 
                 }
@@ -504,7 +534,7 @@ public class MrcPacketizer extends MrcTrafficController {
         // start the RcvHandler in a thread of its own
         if( rcvHandler == null )
           rcvHandler = new RcvHandler(this) ;
-        Thread rcvThread = new Thread(rcvHandler, "Mrc receive handler");
+        Thread rcvThread = new Thread(rcvHandler, "Mrc receive handler " + Thread.MAX_PRIORITY);
         rcvThread.setDaemon(true);
         rcvThread.setPriority(Thread.MAX_PRIORITY);
         rcvThread.start();

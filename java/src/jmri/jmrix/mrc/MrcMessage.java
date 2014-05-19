@@ -112,6 +112,11 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     
     public boolean isNoDataReply(){return noDataReply;}
     
+    boolean clock = false;
+    public void setClockPacket(){
+        clock = true;
+    }
+    public boolean isClockPacket() { return clock; }
     
     int putHeader(int[] insert){
         int i = 0;

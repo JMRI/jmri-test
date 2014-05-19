@@ -73,6 +73,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
     
     public void initComponents(MrcSystemConnectionMemo memo) {
         this.memo = memo;
+        add(excludePoll);
         // connect to the LnTrafficController
         if(memo.getMrcTrafficController()==null){
             log.error("No traffic controller is available");
@@ -95,7 +96,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
         // display the decoded data
         // we use Llnmon to format, expect it to provide consistent \n after each line
         //nextLine( raw );
-        nextLine("cmd: \""+m.toString()+"\"\n", raw);
+        //nextLine("cmd: \""+m.toString()+"\"\n", raw);
 	}
     
     MrcMessage previousPollMessage;
@@ -180,7 +181,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
 
         // display the decoded data
         // we use Llnmon to format, expect it to provide consistent \n after each line
-        nextLineWithTime(timestamp, m.toString(), raw );
+        nextLineWithTime(timestamp, m.toString()+"\"\n", raw );
     }
     
     /**
