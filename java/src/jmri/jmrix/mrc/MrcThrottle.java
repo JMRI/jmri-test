@@ -1,5 +1,6 @@
 package jmri.jmrix.mrc;
 
+import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jmri.Throttle;
@@ -19,7 +20,7 @@ import jmri.jmrix.AbstractThrottle;
  * @author	Bob Jacobsen  Copyright (C) 2001
  * @version     $Revision: 25048 $
  */
-public class MrcThrottle extends AbstractThrottle implements MrcListener{
+public class MrcThrottle extends AbstractThrottle implements MrcListener/*, MrcTrafficListener*/{
 
     private MrcTrafficController tc = null;
     //private MrcInterface network;
@@ -78,6 +79,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
         } else {
             addressLo = address.getNumber();
         }
+        tc.addMrcListener(~0, this);
 //        tc.addMrcListener(this);
     }
     
@@ -241,7 +243,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
 	        if (i>0) raw+=" ";
             raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
         }
-
+        log.info(raw);
         if(m.getNumDataElements()>8 && m.getElement(4)==addressHi && m.getElement(6)==addressLo){
             log.info(raw);
             if(!MrcPackets.validCheckSum(m)) {log.info("invalid check sum"); return;}
@@ -352,6 +354,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener{
 
         //need to work out the resend function for if the loco is also controlled by another handset. - Might get done in the MrcTrafficController.
     }
+    public void notifyRcv(Date timestamp, MrcMessage m) { message(m); }
     
     /*public void message(MrcMessage m) {
         //System.out.println("Ecos message - "+ m);
