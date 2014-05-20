@@ -11,9 +11,6 @@ import jmri.jmrix.AbstractMRTrafficController;
 import java.io.DataInputStream;
 import java.util.Date;
 import java.util.Vector;
-import static jmri.jmrix.AbstractMRTrafficController.AUTORETRYSTATE;
-import static jmri.jmrix.AbstractMRTrafficController.IDLESTATE;
-import static jmri.jmrix.AbstractMRTrafficController.WAITMSGREPLYSTATE;
 import static jmri.jmrix.mrc.MrcPackets.locoSoleControlCode;
 
 /**
@@ -146,7 +143,7 @@ public abstract class MrcTrafficController implements MrcInterface{
         }
 
         // call the old notify for other listeners
-        notify(m);
+        //notify(m);
     }
 
 	@SuppressWarnings("unchecked")
@@ -165,7 +162,7 @@ public abstract class MrcTrafficController implements MrcInterface{
         }
         
         // call the old notify for other listeners
-        notify(m);
+        //notify(m);
     }
 
 	/**

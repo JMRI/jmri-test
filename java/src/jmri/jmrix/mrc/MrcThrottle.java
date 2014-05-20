@@ -236,8 +236,10 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener/*, MrcT
     //Might need to look at other packets from handsets to see if they also have control of our loco and adjust from that.
     
     public void message(MrcMessage m) {
-        if(m.isPollMessage())
+        if(m.getMessageClass()!=MrcInterface.THROTTLEINFO)
             return;
+        /*if(m.isPollMessage())
+            return;*/
         String raw = "";
         for (int i=0;i<m.getNumDataElements(); i++) {
 	        if (i>0) raw+=" ";
@@ -354,7 +356,9 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener/*, MrcT
 
         //need to work out the resend function for if the loco is also controlled by another handset. - Might get done in the MrcTrafficController.
     }
+    
     public void notifyRcv(Date timestamp, MrcMessage m) { message(m); }
+    public void notifyFailedXmit(Date timestamp, MrcMessage m) { /*message(m);*/ }
     
     /*public void message(MrcMessage m) {
         //System.out.println("Ecos message - "+ m);

@@ -10,6 +10,7 @@ import jmri.jmrix.AbstractProgrammer;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Vector;
+import java.util.Date;
 //import static jmri.jmrix.mrc.MrcReply.readCVHeaderReply;
 
 /**
@@ -22,7 +23,7 @@ import java.util.Vector;
  * @auther  Kevin Dickerson Copyright (C) 2014
  * @version     $Revision: 24290 $
  */
-public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
+public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListener {
 	
     protected MrcTrafficController tc;
 
@@ -112,8 +113,9 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
 
         try {
             // start the error timer
-            startLongTimer();
+            startShortTimer();//we get no confirmation back that the packet has been read.
             // format and send the write message
+            tc.addTrafficListener(MrcTrafficListener.MRC_TRAFFIC_RX, this);
             tc.sendMrcMessage(progTaskStart(getMode(), _val, _cv));
         } catch (jmri.ProgrammerException e) {
             progState = NOTPROGRAMMING;
@@ -139,6 +141,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
             startLongTimer();
             
             // format and send the write message
+            tc.addTrafficListener(MrcTrafficListener.MRC_TRAFFIC_RX, this);
             tc.sendMrcMessage(progTaskStart(getMode(), -1, _cv));
         } catch (jmri.ProgrammerException e) {
             progState = NOTPROGRAMMING;
@@ -162,41 +165,44 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
     }
 
     // internal method to create the MrcMessage for programmer task start
-    /* todo MRC doesn't set the porg mode the command station sorts it out.*/
+    /* todo MRC doesn't set the prog mode the command station sorts it out.*/
     protected MrcMessage progTaskStart(int mode, int val, int cvnum) throws jmri.ProgrammerException {
         // val = -1 for read command; mode is direct, etc
+        MrcMessage m;
         if (val < 0) {
             // read
-            return MrcMessage.getReadCV(cvnum);
+            
+            m = MrcMessage.getReadCV(cvnum);
         } else {
-            return MrcMessage.getWriteCV((byte)cvnum, (byte)val);
+            m = MrcMessage.getWriteCV((byte)cvnum, (byte)val);
         }
+        m.setSource(this);
+        return m;
     }
 
     /*public void message(MrcMessage m) {
         log.error("message received unexpectedly: "+m.toString());
     }*/
-    
+    public synchronized void notifyXmit(Date timestamp, MrcMessage m){ }
+    public synchronized void notifyFailedXmit(Date timestamp, MrcMessage m){
+        if(progState == NOTPROGRAMMING){
+            return;
+        }
+        log.info("Error occured in programming command");
+        timeout();
+    }
 
-
-    public synchronized void  message(MrcMessage m) {
+    public synchronized void notifyRcv(Date timestamp, MrcMessage m){
+    //public synchronized void message(MrcMessage m) {
         if (progState == NOTPROGRAMMING) {
             // we get the complete set of replies now, so ignore these
             log.debug("reply in NOTPROGRAMMING state");
             return;
         }
-        if(m.isPollMessage() || m.isPacketInError()){
-            //if(MrcReply.startsWith(m, MrcReply.goodCmdRecieved))
+        if(m.getMessageClass()!=MrcInterface.PROGRAMMING){
             return;
         }
-        if(MrcPackets.startsWith(m, MrcPackets.badCmdRecieved)){
-            //Command station rejected packet
-            notifyProgListenerEnd(_val, jmri.ProgListener.CommError);
-        }
-        if(MrcPackets.startsWith(m, MrcPackets.goodCmdRecieved)){
-            //Wait for the confirmation.
-            return;
-        } else if (MrcPackets.startsWith(m, MrcPackets.progCmdSent)){
+        if (MrcPackets.startsWith(m, MrcPackets.progCmdSent)){
             progState = NOTPROGRAMMING;
             notifyProgListenerEnd(_val, jmri.ProgListener.OK);
         } else if (MrcPackets.startsWith(m, MrcPackets.readCVHeaderReply) && progState == READCOMMANDSENT) {
@@ -240,6 +246,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcListener {
         log.debug("notifyProgListenerEnd value {} status {}", value, status);
         // the programmingOpReply handler might send an immediate reply, so
         // clear the current listener _first_
+        tc.removeTrafficListener(MrcTrafficListener.MRC_TRAFFIC_RX, this);
         jmri.ProgListener temp = _usingProgrammer;
         _usingProgrammer = null;
         temp.programmingOpReply(value, status);

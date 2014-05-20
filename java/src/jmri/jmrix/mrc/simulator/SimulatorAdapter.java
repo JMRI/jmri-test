@@ -190,7 +190,7 @@ public class SimulatorAdapter extends MrcPortController implements
 	// generateReply is the heart of the simulation.  It translates an 
 	// incoming MrcMessage into an outgoing MrcReply.
 	private MrcMessage generateReply(MrcMessage m) {
-		MrcMessage reply = new MrcMessage();
+		MrcMessage reply = new MrcMessage(4);
 		if (m.getNumDataElements() < 4) {
 			reply.setElement(0, MrcPackets.badCmdRecievedCode);
 			reply.setElement(1, 0x0);

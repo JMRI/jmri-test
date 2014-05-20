@@ -7,60 +7,45 @@ import jmri.jmrix.AbstractMessage;
  */
 public class MrcPackets {
     
-    private static final int setClockRatioLength = 10;
-    public static final int setClockAmPmCmd = 50;
-    public static final int functionGroup3PacketCmd = 84;
-    public static final int readCVCmd = 67;
-    private static final int setClockAmPmLength = 10;
-    public static final int setClockRatioCmd = 18;
-    public static final int readDecoderAddressCmd = 66;
-    private static final int writeCVPROGLength = 8;
-    private static final int setClockTimeLength = 10;
-    public static final int writeCVPOMCmd = 86;
+    public static final int throttlePacketCmd = 37;
+    static final int[] throttlePacketHeader = new int[]{throttlePacketCmd, 0, throttlePacketCmd, 0};
     static final int throttlePacketLength = 10; //length of packet less the header
+    
     public static final int functionGroup1PacketCmd = 52;
-
-    public static final int setClockTimeCmd = 19;
-    static final int functionGroupLength = 8;
-    static final int[] setClockAmPmHeader = new int[]{setClockAmPmCmd, 0, setClockAmPmCmd, 0};
-    public static final int functionGroup6PacketCmd = 164;
-    public static final int functionGroup5PacketCmd = 132;
-    static final int[] functionGroup6PacketHeader = new int[]{functionGroup6PacketCmd, 0, functionGroup6PacketCmd, 0};
+    static final int[] functionGroup1PacketHeader = new int[]{functionGroup1PacketCmd, 0, functionGroup1PacketCmd, 0};
     
     public static final int functionGroup2PacketCmd = 68;
     static final int[] functionGroup2PacketHeader = new int[]{functionGroup2PacketCmd, 0, functionGroup2PacketCmd, 0};
     
-    static final int[] functionGroup1PacketHeader = new int[]{functionGroup1PacketCmd, 0, functionGroup1PacketCmd, 0};
-    
-    public static final int throttlePacketCmd = 37;
-    static final int[] throttlePacketHeader = new int[]{throttlePacketCmd, 0, throttlePacketCmd, 0};
-    
-    static final int[] writeCVPOMHeader = new int[]{writeCVPOMCmd, 0, writeCVPOMCmd, 0};
+    public static final int functionGroup3PacketCmd = 84;
+    static final int[] functionGroup3PacketHeader = new int[]{functionGroup3PacketCmd, 0, functionGroup3PacketCmd, 0};
     
     public static final int functionGroup4PacketCmd = 116;
     static final int[] functionGroup4PacketHeader = new int[]{functionGroup4PacketCmd, 0, functionGroup4PacketCmd, 0};
     
-    static final int[] setClockRatioHeader = new int[]{setClockRatioCmd, 0, setClockRatioCmd, 0};
-    
-    
-    static final int[] readCVHeader = new int[]{readCVCmd, 0, readCVCmd, 0};
-    static final int[] readDecoderAddress = new int[]{readDecoderAddressCmd, 0, readDecoderAddressCmd, 0, readDecoderAddressCmd, 0};
-    
+    public static final int functionGroup5PacketCmd = 132;
     static final int[] functionGroup5PacketHeader = new int[]{functionGroup5PacketCmd, 0, functionGroup5PacketCmd, 0};
-
-    static final int[] setClockTimeHeader = new int[]{setClockTimeCmd, 0, setClockTimeCmd, 0};
-    public static final int writeCVPROGCmd = 36;
-    private static final int readCVLength = 6;
-    static final int[] writeCVPROGHeader = new int[]{writeCVPROGCmd, 0, writeCVPROGCmd, 0};
-    static final int[] functionGroup3PacketHeader = new int[]{functionGroup3PacketCmd, 0, functionGroup3PacketCmd, 0};
     
+    public static final int functionGroup6PacketCmd = 164;
+    static final int[] functionGroup6PacketHeader = new int[]{functionGroup6PacketCmd, 0, functionGroup6PacketCmd, 0};
+    
+    static final int functionGroupLength = 8;
+    
+    public static final int writeCVPOMCmd = 86;
+    static final int[] writeCVPOMHeader = new int[]{writeCVPOMCmd, 0, writeCVPOMCmd, 0};
     private static final int writeCVPOMLength = 12;
     
-    public static final int locoSoleControlCode = 34;
-    static final int[] locoSoleControl = new int[]{locoSoleControlCode, 0, locoSoleControlCode, 0}; //Reply indicates that we are the sole controller of the loco
+    public static final int writeCVPROGCmd = 36;
+    static final int[] writeCVPROGHeader = new int[]{writeCVPROGCmd, 0, writeCVPROGCmd, 0};
+    private static final int writeCVPROGLength = 8;
     
-    public static final int locoDblControlCode = 221;
-    static final int[] locoDblControl = new int[]{locoDblControlCode, 0, locoDblControlCode, 0}; //Reply indicates that another throttle also has controll of the loco
+    public static final int readDecoderAddressCmd = 66;
+    static final int[] readDecoderAddress = new int[]{readDecoderAddressCmd, 0, readDecoderAddressCmd, 0, readDecoderAddressCmd, 0};
+    
+    public static final int readCVCmd = 67;
+    static final int[] readCVHeader = new int[]{readCVCmd, 0, readCVCmd, 0};
+    private static final int readCVLength = 6;
+    static final int readCVPacketLength = 4; //need to double check the length of this packet
     
     public static final int progCmdSentCode = 51;
     static final int[] progCmdSent = new int[]{progCmdSentCode, 0, progCmdSentCode, 0};
@@ -68,15 +53,30 @@ public class MrcPackets {
     public static final int readCVHeaderReplyCode = 102;
     static final int[] readCVHeaderReply = new int[]{readCVHeaderReplyCode, 0, readCVHeaderReplyCode, 0};
     
+    public static final int setClockRatioCmd = 18;
+    static final int[] setClockRatioHeader = new int[]{setClockRatioCmd, 0, setClockRatioCmd, 0};
+    private static final int setClockRatioLength = 10;
+    
+    public static final int setClockTimeCmd = 19;
+    static final int[] setClockTimeHeader = new int[]{setClockTimeCmd, 0, setClockTimeCmd, 0};
+    private static final int setClockTimeLength = 10;
+    
+    public static final int setClockAmPmCmd = 50;
+    static final int[] setClockAmPmHeader = new int[]{setClockAmPmCmd, 0, setClockAmPmCmd, 0};
+    private static final int setClockAmPmLength = 10;
+    
+    public static final int locoSoleControlCode = 34;
+    static final int[] locoSoleControl = new int[]{locoSoleControlCode, 0, locoSoleControlCode, 0}; //Reply indicates that we are the sole controller of the loco
+    
+    public static final int locoDblControlCode = 221;
+    static final int[] locoDblControl = new int[]{locoDblControlCode, 0, locoDblControlCode, 0}; //Reply indicates that another throttle also has controll of the loco    
+    
     public static final int goodCmdRecievedCode = 85;
-    static final int readCVPacketLength = 4; //need to double check the length of this packet
     static final int[] goodCmdRecieved = new int[]{goodCmdRecievedCode, 0, goodCmdRecievedCode, 0};
     
-    public static final int badCmdRecievedCode = 238;
+    public static final int badCmdRecievedCode = 238; //Or unable to read from decoder
     static final int[] badCmdRecieved = new int[]{badCmdRecievedCode, 0, badCmdRecievedCode, 0};
     
-    
-
     public static int getWriteCVPROGPacketLength() {
         return writeCVPROGHeader.length + writeCVPROGLength;
     }
@@ -104,15 +104,19 @@ public class MrcPackets {
     public static int getSetClockTimePacketLength() {
         return setClockTimeLength;
     }
-
+    
     public static int getThrottlePacketLength() {
         return throttlePacketHeader.length + throttlePacketLength;
     }
-
+    
     public static int getReadCVPacketLength() {
         return readCVHeader.length + readCVLength;
     }
-
+    
+    public static int getReadCVPacketReplyLength() {
+        return readCVHeaderReply.length + readCVPacketLength;
+    }
+    
     public static boolean startsWith(MrcMessage source, int[] match) {
         if (match.length > (source.getNumDataElements())) {
             return false;
@@ -124,11 +128,7 @@ public class MrcPackets {
         }
         return true;
     }
-
-    public static int getReadCVPacketReplyLength() {
-        return readCVHeaderReply.length + readCVPacketLength;
-    }
-
+    
     static protected int provideLocoId(int hi, int lo) {
         if (hi == 0) {
             return lo;

@@ -2,7 +2,6 @@
 
 package jmri.jmrix.mrc;
 
-import jmri.jmrix.AbstractMRMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,77 +23,68 @@ import org.slf4j.LoggerFactory;
  * @author		kcameron Copyright (C) 2014
  * @version			$Revision$
  */
-public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
-
-    public MrcMessage() {
-        super();
-    }
+public class MrcMessage {
 
     // create a new one
-    public  MrcMessage(int i) {
-        super(i);
-        setRetries(2);
+    public  MrcMessage(int len) {
+        if (len<1)
+            log.error("invalid length in call to ctor: "+len);
+        _nDataChars = len;
+        _dataChars = new int[len];
     }
 
     // copy one
-    public  MrcMessage(MrcMessage m) {
-        super(m);
-    }
-
-    // from String
-    /*public  MrcMessage(String m) {
-        super(m);
-    }*/
-    
-    /**
-     * Creates a new MrcMessage containing a byte array to represent
-     * a packet to output
-     * @param packet The contents of the packet
-     */
-    public MrcMessage(byte [] packet ) {
-    	this((packet.length));
-        int i = 0; // counter of byte in output message
-        int j = 0; // counter of byte in input packet
-        setBinary(true);
-        // add each byte of the input message
-        for (j=0; j<packet.length; j++) {
-            this.setElement(i, packet[i]);
-            i++;
-        }
-        setRetries(2);
+    public MrcMessage(MrcMessage original) {
+        this(original._dataChars);
     }
     
-    //byte bytePre[];
-    
-    /*public void setByte(){
-        bytePre = new byte[lengthOfByteStream(this)];
+    public MrcMessage(int[] contents) {
+        this(contents.length);
+        for (int i=0; i<contents.length; i++) this.setElement(i, contents[i]);
+    }
 
-        // add data content
-        int len = getNumDataElements();
-        for (int i=0; i< len; i++)
-            bytePre[i] = (byte)this.getElement(i);
-        
-    }*/
+    public MrcMessage(byte[] contents) {
+        this(contents.length);
+        for (int i=0; i<contents.length; i++) this.setElement(i, contents[i]&0xFF);
+    }
     
-    protected int lengthOfByteStream(AbstractMRMessage m) {
+    MrcTrafficListener source = null;
+    
+    public void setSource(MrcTrafficListener s){
+        source = s;
+    }
+    
+    public MrcTrafficListener getSource(){
+        return source;
+    }
+    
+    int msgClass = 0x00;
+    
+    void setMessageClass(int i){
+        msgClass = i;
+    }
+    
+    public int getMessageClass(){
+        return msgClass;
+    }
+    
+    int SHORT_TIMEOUT = 150;
+    //int LONG_TIMEOUT = 4000;
+    
+    int timeout = SHORT_TIMEOUT;
+    
+    void setTimeout(int i) { timeout = i; }
+    public int getTimeout() { return timeout; }
+    
+    int retries = 3;
+    public int getRetries() { return retries; }
+    public void setRetries(int i) { retries=i; }
+    /*protected int lengthOfByteStream(AbstractMRMessage m) {
         int len = m.getNumDataElements();
         int cr = 0;
         if (! m.isBinary()) cr = 1;  // space for return
         return len+cr;
-    }
-    
-    
-    /*protected byte[] getByte(){
-        return bytePre;
     }*/
-    
-    boolean poll = false;
-    
-    public void setPollMessage(){
-        poll = true;
-    }
-    
-    public boolean isPollMessage(){return poll;}
     
     boolean inError = false;
     
@@ -103,20 +93,6 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     }
     
     public boolean isPacketInError(){return inError;}
-    
-    boolean noDataReply = false;
-    
-    public void setNoDataReply(){
-        noDataReply = true;
-    }
-    
-    public boolean isNoDataReply(){return noDataReply;}
-    
-    boolean clock = false;
-    public void setClockPacket(){
-        clock = true;
-    }
-    public boolean isClockPacket() { return clock; }
     
     int putHeader(int[] insert){
         int i = 0;
@@ -132,6 +108,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     
     static public MrcMessage getSendSpeed(int addressLo, int addressHi, int speed){
         MrcMessage m = new MrcMessage(MrcPackets.getThrottlePacketLength());
+        m.setMessageClass(MrcInterface.THROTTLEINFO);
         int i = m.putHeader(MrcPackets.throttlePacketHeader);
         
         m.setElement(i++,addressHi);
@@ -144,12 +121,13 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         m.setElement(i++,0x00);
         m.setElement(i++,getCheckSum(addressHi, addressLo, speed, 0x02));
         m.setElement(i++,0x00);
-        m.setTimeout(100);
+    //    m.setTimeout(100);
         return m;
     }
     
     static public MrcMessage getSendFunction(int group, int addressLo, int addressHi, int data){
         MrcMessage m = new MrcMessage(MrcPackets.getFunctionPacketLength());
+        m.setMessageClass(MrcInterface.THROTTLEINFO);
         int i= 0;
         switch(group){
             case 1: i = m.putHeader(MrcPackets.functionGroup1PacketHeader);
@@ -176,7 +154,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         m.setElement(i++,0x00);
         m.setElement(i++,getCheckSum(addressHi, addressLo, data, 0x00));
         m.setElement(i++,0x00);
-        m.setTimeout(100);
+    //    m.setTimeout(100);
         return m;
     }
     
@@ -191,6 +169,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         int cvHi = (cv>>8);
         
         MrcMessage m = new MrcMessage(MrcPackets.getReadCVPacketLength());
+        m.setMessageClass(MrcInterface.PROGRAMMING);
         m.setTimeout(LONG_TIMEOUT);
         //m.setNeededMode(jmri.jmrix.AbstractMRTrafficController.PROGRAMINGMODE);
         int i = m.putHeader(MrcPackets.readCVHeader);
@@ -206,7 +185,9 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     
     static public MrcMessage getPOM(int addressLo, int addressHi, int cv, int val){
         MrcMessage m = new MrcMessage(MrcPackets.getWriteCVPOMPacketLength());
+        m.setMessageClass(MrcInterface.PROGRAMMING);
         int i = m.putHeader(MrcPackets.writeCVPOMHeader);
+        
         cv--;
         m.setElement(i++,addressHi);
         m.setElement(i++, 0x00);
@@ -226,6 +207,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     
     static public MrcMessage getWriteCV(int cv, int val){
         MrcMessage m = new MrcMessage(MrcPackets.getWriteCVPROGPacketLength());
+        m.setMessageClass(MrcInterface.PROGRAMMING);
         int i = m.putHeader(MrcPackets.writeCVPROGHeader);
         
         int cvLo = cv;
@@ -281,6 +263,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
     static public MrcMessage setClockRatio(int ratio) {
         if (ratio < 0 || ratio > 60) log.error("ratio number too large: "+ratio);
         MrcMessage m = new MrcMessage(MrcPackets.getSetClockRatioPacketLength());
+        m.setMessageClass(MrcInterface.CLOCK);
         int i = m.putHeader(MrcPackets.setClockRatioHeader);
         
         m.setElement(i++, ratio);
@@ -299,6 +282,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         if (hour < 0 || hour > 23) log.error("hour number out of range : " + hour);
         if (minute < 0 || minute > 59) log.error("hour minute out of range : " + minute);
         MrcMessage m = new MrcMessage(MrcPackets.getSetClockTimePacketLength());
+        m.setMessageClass(MrcInterface.CLOCK);
         int i = m.putHeader(MrcPackets.setClockTimeHeader);
         
         m.setElement(i++, hour);
@@ -315,6 +299,7 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
      */
     static public MrcMessage setClockAmPm() {
         MrcMessage m = new MrcMessage(MrcPackets.getSetClockAmPmPacketLength());
+        m.setMessageClass(MrcInterface.CLOCK);
         int i = m.putHeader(MrcPackets.setClockAmPmHeader);
         
         m.setElement(i++, 0x32);
@@ -322,7 +307,19 @@ public class MrcMessage extends jmri.jmrix.AbstractMRMessage {
         m.setElement(i++, getCheckSum(0x32, 0x00, 0x00, 0x00));
         return m;
     }
+    
+    public int getElement(int n) {        return _dataChars[n];}
 
+
+    // accessors to the bulk data
+    public int getNumDataElements() {        return _nDataChars;}
+
+    public void setElement(int n, int v) {         _dataChars[n] = v;  }
+    
+    // contents (private)
+    private int _nDataChars = 0;
+    private int _dataChars[] = null;
+    
     static Logger log = LoggerFactory.getLogger(MrcMessage.class.getName());
 
 }

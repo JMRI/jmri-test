@@ -51,7 +51,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
         if(memo.getMrcTrafficController()!=null){
         // disconnect from the LnTrafficController
             memo.getMrcTrafficController().removeTrafficListener(MrcTrafficListener.MRC_TRAFFIC_ALL, this);
-            memo.getMrcTrafficController().removeMrcListener(~0,this);
+            //memo.getMrcTrafficController().removeMrcListener(~0,this);
         }
         // and unwind swing
         super.dispose();
@@ -80,7 +80,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
             return;
         }
         memo.getMrcTrafficController().addTrafficListener(trafficFilter, this);
-		memo.getMrcTrafficController().addMrcListener(~0, this);
+		//memo.getMrcTrafficController().addMrcListener(~0, this);
     }
 
     public synchronized void message(MrcMessage m) {  // receive a message and log it
@@ -104,40 +104,20 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
     private boolean filterEcho = true;
     private MrcMessage lastLoggedTxMessage = null;
     
-	/*public synchronized void reply(MrcReply r) {  // receive a reply message and log it
-        String raw = "";
-        if(excludePoll.isSelected() && r.isPollMessage() && r.getElement(1)==0x01){
-            //Do not show poll messages for other devices
-            previousPollMessage = r;
-            return;
-        } else if (previousPollMessage!=null) { //Only show the previous poll message if there is subsequent traffic resulting from the poll
-            if(r.getElement(0)==0x00 && r.getElement(1)==0x00 && r.getElement(1)==0x00 && r.getElement(2)==0x00){
-                previousPollMessage = null;
-                return;
-            }
-            for (int i=0;i<previousPollMessage.getNumDataElements(); i++) {
-                if (i>0) raw+=" ";
-                raw = jmri.util.StringUtil.appendTwoHexFromInt(previousPollMessage.getElement(i)&0xFF, raw);
-            }
-            nextLine("msg: \""+previousPollMessage.toString()+"\"\n", raw);
-            raw = "";
-            previousPollMessage = null;
-        }
-	    
-	    for (int i=0;i<r.getNumDataElements(); i++) {
-	        if (i>0) raw+=" ";
-            raw = jmri.util.StringUtil.appendTwoHexFromInt(r.getElement(i)&0xFF, raw);
-        }
-	        
-        nextLine("msg: \""+r.toString()+"\"\n", raw);
-	}*/
-    
     public synchronized void notifyXmit(Date timestamp, MrcMessage m) {
     	
     	//if (useSimpleLogging) return;
     	
     	logMessage(timestamp, m, "Tx");
     	lastLoggedTxMessage = m;
+    }
+    
+    public synchronized void notifyFailedXmit(Date timestamp, MrcMessage m) {
+    	
+    	//if (useSimpleLogging) return;
+    	
+    	//logMessage(timestamp, m, "Tx");
+    	//lastLoggedTxMessage = m;
     }
     
     public synchronized void notifyRcv(Date timestamp, MrcMessage m) {
@@ -150,15 +130,15 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
     		}
     	}*/
         String raw = "";
-        if(excludePoll.isSelected() && ((m.isPollMessage() && m.getElement(1)==0x01) || m.isNoDataReply())){
+        if(excludePoll.isSelected() && m.getMessageClass()==MrcInterface.POLL){
             //Do not show poll messages
             previousPollMessage = m;
             return;
         } else if (previousPollMessage!=null) {
-            /*if(m.isNoDataReply()){
+            if(m.getMessageClass()==MrcInterface.POLL){
                 previousPollMessage = null;
                 return;
-            }*/
+            }
             for (int i=0;i<previousPollMessage.getNumDataElements(); i++) {
                 if (i>0) raw+=" ";
                 raw = jmri.util.StringUtil.appendTwoHexFromInt(previousPollMessage.getElement(i)&0xFF, raw);

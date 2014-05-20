@@ -11,7 +11,7 @@ import jmri.Timebase;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
-import java.util.Arrays;
+
 
 /**
  * MrcClockControl.java
@@ -135,6 +135,9 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener,
     //  ignore replies
     
     public void message(MrcMessage r) {
+        if(r.getMessageClass()!=MrcInterface.CLOCK){
+            return;
+        }
     	if (r.getNumDataElements() != 6 || r.getElement(0) != 0 || r.getElement(1) != 1 ||
     			r.getElement(3) != 0 || r.getElement(5) != 0) {
     		// not a clock packet
@@ -195,8 +198,8 @@ public class MrcClockControl extends DefaultClockControl implements MrcListener,
         return;
     }
     
-    public synchronized void notifyXmit(Date timestamp, MrcMessage m) {
-    }
+    public synchronized void notifyXmit(Date timestamp, MrcMessage m) {}
+    public synchronized void notifyFailedXmit(Date timestamp, MrcMessage m) {}
     
     public synchronized void notifyRcv(Date timestamp, MrcMessage m) {
         message(m);

@@ -22,11 +22,11 @@ public interface MrcInterface {
 	public static final int ALL				=  ~0;
 
 	/**
-	 * Mask value to request notification of messages effecting slot status, including the programming slot
+	 * Mask value to request notification of messages effecting throttle changes
 	 */
 	public static final int THROTTLEINFO		=   1;
 
-	/**
+	/**(MrcInter
 	 * Mask value to request notification of messages associated with programming
 	 */
 	public static final int PROGRAMMING		=   2;
@@ -45,8 +45,13 @@ public interface MrcInterface {
 	 * Mask value to request notification of messages associated with layout power
 	 */
 	public static final int POWER			=  16;
-    
+	
+    /**
+	 * Mask value to request notification of messages associated with layout power
+	 */
     public static final int CLOCK           = 32;
+    
+    public static final int POLL            = 64;
 }
 
 

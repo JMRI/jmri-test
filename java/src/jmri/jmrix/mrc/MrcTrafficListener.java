@@ -28,4 +28,5 @@ public interface MrcTrafficListener {
 	
 	public void notifyXmit(Date timestamp, MrcMessage m);
 	public void notifyRcv(Date timestamp, MrcMessage m);
+    public void notifyFailedXmit(Date timestamp, MrcMessage m);
 }
