@@ -105,10 +105,12 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
     private MrcMessage lastLoggedTxMessage = null;
     
     public synchronized void notifyXmit(Date timestamp, MrcMessage m) {
-    	
+    	if(excludePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
+            return;
+        }
     	//if (useSimpleLogging) return;
     	
-    	logMessage(timestamp, m, "Tx");
+    	logMessage(timestamp, m, "Tx:");
     	lastLoggedTxMessage = m;
     }
     
@@ -147,7 +149,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
             raw = "";
             previousPollMessage = null;
         }
-    	logMessage(timestamp, m, "Rx");
+    	logMessage(timestamp, m, "Rx:");
     }
     
     private void logMessage(Date timestamp, MrcMessage m, String src) {  // receive a LocoNet message and log it
@@ -161,7 +163,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
 
         // display the decoded data
         // we use Llnmon to format, expect it to provide consistent \n after each line
-        nextLineWithTime(timestamp, m.toString()+"\"\n", raw );
+        nextLineWithTime(timestamp, src + " " + m.toString()+"\"\n", raw );
     }
     
     /**

@@ -49,7 +49,7 @@ public interface MrcInterface {
     /**
 	 * Mask value to request notification of messages associated with layout power
 	 */
-    public static final int CLOCK           = 32;
+    public static final int CLOCK           = 0x20;
     
     public static final int POLL            = 64;
 }

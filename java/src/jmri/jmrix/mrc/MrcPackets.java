@@ -232,14 +232,14 @@ public class MrcPackets {
 	        case readDecoderAddressCmd:
 	        	txt.append("Read Decoder Address ");
 	    		break;
-	        case writeCVPROGCmd:
-	        	txt.append("Write PROG CV Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))));
+	        case writeCVPOMCmd:
+	        	txt.append("Write POM CV Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))));
 	        	txt.append(Integer.toString(m.getElement(10)&0xff));
 	        	txt.append("=");
 	        	txt.append(Integer.toString(m.getElement(8)&0xff));
 	    		break;
-	        case writeCVPOMCmd:
-	        	txt.append("Write POM CV ");
+	        case writeCVPROGCmd:
+	        	txt.append("Write PROG CV ");
 	        	txt.append(Integer.toString(m.getElement(4) << 8) + m.getElement(6));
 	        	txt.append("=");
 	        	txt.append(Integer.toString(m.getElement(8)&0xff));
