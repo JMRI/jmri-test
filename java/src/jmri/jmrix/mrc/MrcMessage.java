@@ -308,6 +308,33 @@ public class MrcMessage {
         return m;
     }
     
+    static public MrcMessage setNoData(){
+        MrcMessage m = new MrcMessage(4);
+        m.setMessageClass(MrcInterface.POLL);
+        m.setElement(0,0x00);
+        m.setElement(1,0x00);
+        m.setElement(2,0x00);
+        m.setElement(3,0x00);
+//Message is throw away, so if it doesn't get transmited correctly then forget about it, don't attempt retry.
+        m.setTimeout(0); 
+        m.setRetries(0);
+        m.setByteStream();
+        return m;
+    }
+    
+    byte[] byteStream;
+    
+    void setByteStream(){
+        log.info("Set byte stream");
+        int len = getNumDataElements();
+        byteStream = new byte[len];
+        for (int i=0; i< len; i++){
+             byteStream[i] = (byte) getElement(i);
+        }
+    }
+    
+    byte[] getByteStream(){ return byteStream; }
+    
     public int getElement(int n) {        return _dataChars[n];}
 
 

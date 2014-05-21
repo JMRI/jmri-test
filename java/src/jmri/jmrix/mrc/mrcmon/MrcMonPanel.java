@@ -130,12 +130,12 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
     		}
     	}*/
         String raw = "";
-        if(excludePoll.isSelected() && m.getMessageClass()==MrcInterface.POLL){
+        if(excludePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
             //Do not show poll messages
             previousPollMessage = m;
             return;
         } else if (previousPollMessage!=null) {
-            if(m.getMessageClass()==MrcInterface.POLL){
+            if((m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
                 previousPollMessage = null;
                 return;
             }

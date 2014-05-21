@@ -75,12 +75,13 @@ public class SimulatorAdapter extends MrcPortController implements
 	 */
 	public void configure() {
         MrcPacketizer tc = new MrcPacketizer();
+        tc.connectPort(this);
         adaptermemo.setMrcTrafficController(tc);
         tc.setAdapterMemo(adaptermemo);
         //tc.connectPort(this);     
 		                
         adaptermemo.configureManagers();
-        
+        tc.setCabNumber(2);
 		jmri.jmrix.mrc.ActiveFlag.setActive();
 
 		// start the simulator
@@ -88,6 +89,7 @@ public class SimulatorAdapter extends MrcPortController implements
 		sourceThread.setName("Mrc Simulator");
 		sourceThread.setPriority(Thread.MIN_PRIORITY);
 		sourceThread.start();
+        tc.startThreads();
 	}
 
 	// base class methods for the MrcPortController interface
@@ -128,13 +130,16 @@ public class SimulatorAdapter extends MrcPortController implements
         // report status?
         if (log.isInfoEnabled()) 
             log.info("MRC Simulator Started");     
+        int cab = 1;
 		while (true) {
 			try{
-				wait(100);
+                synchronized(this){
+                    wait(100);
+                }
 			}catch (Exception e){
 
 			}
-			MrcMessage m = readMessage();
+            MrcMessage m = readMessage();
 			if (log.isDebugEnabled()) {
 				StringBuffer buf = new StringBuffer();
 				buf.append("Mrc Simulator Thread received message: ");
@@ -152,7 +157,13 @@ public class SimulatorAdapter extends MrcPortController implements
 						buf.append(Integer.toHexString(0xFF & r.getElement(i)) + " ");
 					log.debug(buf.toString());
 				}
-			}
+			} else {
+                if (cab>8) cab = 1;
+                int[] poll = new int[]{cab, 1, cab,0,cab,0};
+                cab++;
+                MrcMessage r = new MrcMessage(poll);
+                writeReply(r);
+            }
 		}
 	}
 
@@ -160,7 +171,8 @@ public class SimulatorAdapter extends MrcPortController implements
 	private MrcMessage readMessage() {
 		MrcMessage msg = null;
 		try {
-			msg = loadChars();
+            if(inpipe.available()>0)
+                msg = loadChars();
 		} catch (java.io.IOException e) {
 
 		}
@@ -199,7 +211,7 @@ public class SimulatorAdapter extends MrcPortController implements
 			return reply;
 		}
 		int command = m.getElement(0);
-		if (command != m.getElement(2) || m.getElement(1) != 1) {
+		if (command != m.getElement(2) && m.getElement(1) != 1) {
 			reply.setElement(0, MrcPackets.badCmdRecievedCode);
 			reply.setElement(1, 0x0);
 			reply.setElement(2, MrcPackets.badCmdRecievedCode);
@@ -221,6 +233,16 @@ public class SimulatorAdapter extends MrcPortController implements
 //			//reply.setElement(1,MRC_DATA_OUT_OF_RANGE);  // forces fail
 //			reply.setElement(1,MRC_OKAY);  // forces succeed
 //			break;
+        case MrcPackets.functionGroup2PacketCmd:
+            // Use this to simulate a missed poll
+            reply = new MrcMessage(6);
+			reply.setElement(0, 0x03);
+			reply.setElement(1, 0x01);
+			reply.setElement(2, 0x03);
+			reply.setElement(3, 0x0);
+            reply.setElement(4, 0x03);
+			reply.setElement(5, 0x0);
+            break;
 		default:
 	 		// we don't know what it is but presume ok
 			reply.setElement(0, MrcPackets.goodCmdRecievedCode);
