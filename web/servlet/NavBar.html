@@ -45,6 +45,7 @@ should not be changed. See JavaDoc for jmri.web.servlet.ServletHelper#getNavBar(
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                <li id="navbar-power" data-power="readonly" class="disabled"><a href="#" class="visible-xs">Layout power unknown</a><button type="button" class="btn navbar-btn disabled btn-warning hidden-xs"><span class="glyphicon glyphicon-off"></span></button></li>
                 <li class="dropdown context-config">
                     <a href="/config" class="dropdown-toggle" data-toggle="dropdown">Preferences <b class="caret"></b></a>
                     <ul id="navbar-config" class="dropdown-menu">
@@ -69,5 +70,48 @@ should not be changed. See JavaDoc for jmri.web.servlet.ServletHelper#getNavBar(
 
             </ul>
         </div><!--/.navbar-collapse -->
+    </div>
+</div>
+<div class="modal fade" id="navbar-power-modal" tabindex="-1" role="dialog" aria-labelledby="navbar-power-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="navbar-power-modal-label">Layout Power</h4>
+            </div>
+            <div class="modal-body">
+                Turn power<br class="visible-xs">
+                <button type="button" class="btn btn-success btn-lg" id="navbar-power-modal-on">On</button>
+                <button type="button" class="btn btn-danger btn-lg" id="navbar-power-modal-off">Off</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--
+Provide a generic WebSocket reconnecting dialog for use by subclasses of the
+jquery.jmri JavaScript library. See json-console.js for an example use.
+
+Note that the jquery.jmri subclass that supports the power button in the
+navigation bar silently attempts a reconnection and does not use this dialog.
+-->
+<div class="modal fade" id="modal-websocket-reconnecting" tabindex="-1" role="dialog" aria-labelledby="modal-websocket-reconnecting-label" aria-hidden="true">
+    <div class="modal-dialog text-danger">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!--
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                -->
+                <h4 class="modal-title" id="modal-websocket-reconnecting-label">Reconnecting to <!-- Railroad name %1$s --></h4>
+            </div>
+            <div class="modal-body">
+                <p>The WebSocket connection to <!-- Railroad name %1$s --> on JMRI was lost.</p>
+                <p id="modal-websocket-reconnecting-attempt">Reconnecting <span id="modal-websocket-reconnecting-next">soon</span> (attempt <span id="modal-websocket-reconnecting-attempts">1</span> out of 20).</p>
+                <p id="modal-websocket-reconnecting-failed" class="hidden">Unable to reconnect.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="modal-websocket-reconnecting-reload">Reload Page</button>
+                <button type="button" class="btn btn-primary" id="modal-websocket-reconnecting-now">Reconnect Now</button>
+            </div>
+        </div>
     </div>
 </div>

@@ -25,6 +25,8 @@ import jmri.util.JmriJFrame;
 import jmri.util.StringUtil;
 import jmri.web.server.WebServer;
 import jmri.web.servlet.ServletUtil;
+import static jmri.web.servlet.ServletUtil.APPLICATION_JSON;
+import static jmri.web.servlet.ServletUtil.TEXT_HTML;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.slf4j.Logger;
@@ -94,23 +96,23 @@ abstract class AbstractPanelServlet extends HttpServlet {
 
     protected void listPanels(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (JSON.JSON.equals(request.getParameter("format"))) {
-            response.setContentType("application/json"); // NOI18N
-            ServletUtil.getHelper().setNonCachingHeaders(response);
+            response.setContentType(APPLICATION_JSON);
+            ServletUtil.getInstance().setNonCachingHeaders(response);
             response.getWriter().print(JsonUtil.getPanels(request.getLocale(), JSON.XML));
         } else if (JSON.XML.equals(request.getParameter("format"))) {
             response.sendRedirect("/xmlio/list?type=panel");
         } else {
-            response.setContentType("text/html"); // NOI18N
+            response.setContentType(TEXT_HTML);
             response.getWriter().print(String.format(request.getLocale(),
                     FileUtil.readURL(FileUtil.findURL(Bundle.getMessage(request.getLocale(), "Panel.html"))),
                     String.format(request.getLocale(),
                             Bundle.getMessage(request.getLocale(), "HtmlTitle"),
-                            ServletUtil.getHelper().getRailroadName(false),
+                            ServletUtil.getInstance().getRailroadName(false),
                             Bundle.getMessage(request.getLocale(), "PanelsTitle")
                     ),
-                    ServletUtil.getHelper().getNavBar(request.getLocale(), "/panel"),
-                    ServletUtil.getHelper().getRailroadName(false),
-                    ServletUtil.getHelper().getFooter(request.getLocale(), "/panel")
+                    ServletUtil.getInstance().getNavBar(request.getLocale(), "/panel"),
+                    ServletUtil.getInstance().getRailroadName(false),
+                    ServletUtil.getInstance().getFooter(request.getLocale(), "/panel")
             ));
         }
     }
