@@ -20,7 +20,7 @@ import jmri.jmrix.AbstractThrottle;
  * @author	Bob Jacobsen  Copyright (C) 2001
  * @version     $Revision: 25048 $
  */
-public class MrcThrottle extends AbstractThrottle implements MrcListener/*, MrcTrafficListener*/{
+public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
 
     private MrcTrafficController tc = null;
     //private MrcInterface network;
@@ -79,8 +79,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener/*, MrcT
         } else {
             addressLo = address.getNumber();
         }
-        tc.addMrcListener(~0, this);
-//        tc.addMrcListener(this);
+        tc.addTrafficListener(MrcInterface.THROTTLEINFO, this);
     }
     
     DccLocoAddress address;
@@ -235,7 +234,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener/*, MrcT
     
     //Might need to look at other packets from handsets to see if they also have control of our loco and adjust from that.
     
-    public void message(MrcMessage m) {
+    public void notifyRcv(Date timestamp, MrcMessage m) {
         if(m.getMessageClass()!=MrcInterface.THROTTLEINFO)
             return;
         /*if(m.isPollMessage())
@@ -357,7 +356,8 @@ public class MrcThrottle extends AbstractThrottle implements MrcListener/*, MrcT
         //need to work out the resend function for if the loco is also controlled by another handset. - Might get done in the MrcTrafficController.
     }
     
-    public void notifyRcv(Date timestamp, MrcMessage m) { message(m); }
+    //public void notifyRcv(Date timestamp, MrcMessage m) { message(m); }
+    public void notifyXmit(Date timestamp, MrcMessage m) {/* message(m); */}
     public void notifyFailedXmit(Date timestamp, MrcMessage m) { /*message(m);*/ }
     
     /*public void message(MrcMessage m) {

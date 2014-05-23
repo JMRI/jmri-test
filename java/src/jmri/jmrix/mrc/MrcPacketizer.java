@@ -17,6 +17,16 @@ import java.util.Arrays;
  * side sends/receives MrcMessage objects.  The connection to
  * a MrcPortController is via a pair of *Streams, which then carry sequences
  * of characters for transmission.
+ *<p>
+ * This is based upon the Packetizer used for Loconet Connections due to its
+ * speed and efficiency to handle messages.
+ * This also takes some code from the AbstractMRTrafficController, 
+ * when dealing with handling replies to messages sent.
+ *
+ * The MRC Command Station sends out a poll message to each handset which then has 
+ * approximately 20ms to initially respond with a request. Otherwise the Command
+ * Station will poll the next handset.
+ *
  *<P>
  * Messages come to this via the main GUI thread, and are forwarded back to
  * listeners in that same thread.  Reception and transmission are handled in
@@ -28,12 +38,14 @@ import java.util.Arrays;
  *<LI>  (everything else)
  *</UL>
  * <P>
- * Some of the message formats used in this class are Copyright Digitrax, Inc.
+ * Some of the message formats used in this class are Copyright MRC, Inc.
  * and used with permission as part of the JMRI project.  That permission
  * does not extend to uses in other software products.  If you wish to
  * use this code, algorithm or these message formats outside of JMRI, please
- * contact Digitrax Inc for separate permission.
+ * contact Mrc Inc for separate permission.
  * @author			Bob Jacobsen  Copyright (C) 2001
+ * @author			Kevin Dickerson  Copyright (C) 2014
+ * @author			Ken Cameron  Copyright (C) 2014
  * @version 		$Revision: 23315 $
  *
  */
@@ -66,7 +78,6 @@ public class MrcPacketizer extends MrcTrafficController {
      * <P>
      * This is public to allow access from the internal class(es) when compiling with Java 1.1
      */
-    //public LinkedList<byte[]> xmtList = new LinkedList<byte[]>();
     public LinkedList<MrcMessage> xmtList = new LinkedList<MrcMessage>();
 
     /**
@@ -82,28 +93,23 @@ public class MrcPacketizer extends MrcTrafficController {
     /**
      * Forward a preformatted MrcMessage to the actual interface.
      *
-     * Checksum is computed and overwritten here, then the message
-     * is converted to a byte array and queue for transmission
-     * @param m Message to send; will be updated with CRC
+     * The message is converted to a byte array and queue for transmission
+     * @param m Message to send;
      */
     public void sendMrcMessage(MrcMessage m) {
         // update statistics
         transmittedMsgCount++;
+        
+        //Convert the message to a byte stream, to save doing this when the message
+        //is picked out
         m.setByteStream();
         
-        // set the error correcting code byte(s) before transmittal
-        //m.setParity();
-        
         if (debug) log.debug("queue Mrc packet: "+m.toString());
-        log.info("queue Mrc packet: "+m.toString());
         // in an atomic operation, queue the request and wake the xmit thread
         try {
             synchronized(xmtHandler) {
-                log.info("Message added " + m.toString());
                 xmtList.addLast(m);
                 log.info("xmt list size " + xmtList.size());
-                //xmtList.addLast(msg);
-               //xmtHandler.notify();
             } 
         }
         catch (Exception e) {
@@ -168,6 +174,15 @@ public class MrcPacketizer extends MrcTrafficController {
     final private static int setClockRatioLength = MrcPackets.getSetClockRatioPacketLength();
     final private static int setClockTimeLength = MrcPackets.getSetClockTimePacketLength();
     final private static int setClockAMPMLength = MrcPackets.getSetClockAmPmPacketLength();
+    final private static int powerOnLength = MrcPackets.getPowerOnPacketLength();
+    final private static int powerOffLength = MrcPackets.getPowerOffPacketLength();
+    
+    final private static int addToConsistLength = MrcPackets.getClearConsistPacketLength();
+    final private static int clearConsistLength = MrcPackets.getClearConsistPacketLength();
+    final private static int routeControlLength = MrcPackets.getRouteControlPacketLength();
+    final private static int clearRouteLength = MrcPackets.getClearRoutePacketLength();
+    final private static int addToRouteLength = MrcPackets.getAddToRoutePacketLength();
+    final private static int accessoryLength = MrcPackets.getAccessoryPacketLength();
 
     /**
      * Read a single byte, protecting against various timeouts, etc.
@@ -305,6 +320,40 @@ public class MrcPacketizer extends MrcTrafficController {
                                                                           msg = new MrcMessage(4);
                                                                           msg.setMessageClass(MrcInterface.PROGRAMMING);
                                                                           break;
+                                case MrcPackets.powerOnCmd  :             log.info("Power On Cmd");
+                                                                          mCurrentState = IDLESTATE;
+                                                                          msg = new MrcMessage(powerOnLength);
+                                                                          msg.setMessageClass(MrcInterface.POWER);
+                                                                          break;
+                                case MrcPackets.powerOffCmd  :             log.info("Power Off Cmd");
+                                                                          mCurrentState = IDLESTATE;
+                                                                          msg = new MrcMessage(powerOffLength);
+                                                                          msg.setMessageClass(MrcInterface.POWER);
+                                                                          break;
+                                case MrcPackets.addToConsistPacketCmd:    mCurrentState = IDLESTATE;
+                                                                          msg = new MrcMessage(addToConsistLength);
+                                                                          msg.setMessageClass(MrcInterface.THROTTLEINFO);
+                                                                          break;
+                                case MrcPackets.clearConsistPacketCmd:    mCurrentState = IDLESTATE;
+                                                                          msg = new MrcMessage(clearConsistLength);
+                                                                          msg.setMessageClass(MrcInterface.THROTTLEINFO);
+                                                                          break;
+                                case MrcPackets.routeControlPacketCmd:    mCurrentState = IDLESTATE;
+                                                                          msg = new MrcMessage(routeControlLength);
+                                                                          msg.setMessageClass(MrcInterface.THROTTLEINFO);
+                                                                          break;
+                                case MrcPackets.clearRoutePacketCmd:      mCurrentState = IDLESTATE;
+                                                                          msg = new MrcMessage(clearRouteLength);
+                                                                          msg.setMessageClass(MrcInterface.TURNOUTS);
+                                                                          break;
+                                case MrcPackets.addToRoutePacketCmd:      mCurrentState = IDLESTATE;
+                                                                          msg = new MrcMessage(addToRouteLength);
+                                                                          msg.setMessageClass(MrcInterface.TURNOUTS);
+                                                                          break;
+                                case MrcPackets.accessoryPacketCmd:       mCurrentState = IDLESTATE;
+                                                                          msg = new MrcMessage(accessoryLength);
+                                                                          msg.setMessageClass(MrcInterface.TURNOUTS);
+                                                                          break;
                                 case MrcPackets.locoDblControlCode :     //synchronized(xmtHandler) {
                                                                           mCurrentState = DOUBLELOCOCONTROL;
                                                                           msg = new MrcMessage(4);
@@ -316,7 +365,7 @@ public class MrcPacketizer extends MrcTrafficController {
                                                                           msg.setMessageClass(MrcInterface.THROTTLEINFO);
                                                                           break;
                                 case MrcPackets.goodCmdRecievedCode :     log.info("Gd Cmd");
-                                                                          mCurrentState = IDLESTATE;
+                                                                          mCurrentState = IDLESTATE; //Possibly shouldn't change the state, as we wait for further confirmation.
                                                                           msg = new MrcMessage(4);
                                                                           break;
                                 case MrcPackets.badCmdRecievedCode  :     if(mCurrentState == WAITFORPROGREAD){
@@ -343,6 +392,8 @@ public class MrcPacketizer extends MrcTrafficController {
 
                         }
                         final Date time = new Date();
+                        /*Slight trade off with this we may see any transmitted message go out prior to the 
+                        poll message being passed to the monitor. */
                         if(pollForUs){
                             synchronized(xmtHandler) {
                                 xmtHandler.notify(); //This will notify the xmt to send a message, even if it is only "no Data" reply
@@ -409,18 +460,16 @@ public class MrcPacketizer extends MrcTrafficController {
     
     final MrcMessage noData = MrcMessage.setNoData();
     final byte noDataMsg[] = new byte[]{(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00};
+    
     /**
      * Captive class to handle transmission
      */
     class XmtHandler implements Runnable {
         
         public void run() {
-            log.info("XMT");
             boolean debug = log.isDebugEnabled();
             byte msg[];
             MrcMessage m;
-            //MrcMessage noData = MrcMessage.setNoData();
-            //byte noDataMsg[] = new byte[]{0x00,0x00,0x00,0x00};
             while (true) {   // loop permanently
                 m = noData;
                 msg = noDataMsg;
@@ -434,7 +483,6 @@ public class MrcPacketizer extends MrcTrafficController {
                     //log.info("wait until we have been polled");
                     new jmri.util.WaitHandler(this);  // handle synchronization, spurious wake, interruption
                     if (fulldebug) log.debug("end wait");
-                    log.info("end wait");                    
 
                     if(xmtList.size()!=0){
                         m = xmtList.removeFirst();
@@ -443,15 +491,6 @@ public class MrcPacketizer extends MrcTrafficController {
                     
                     log.info("Message to send on" + m);
                 }
-                //log.info(""+msg);
-                //log.info(Arrays.toString(msg));
-                /*log.info("Has message fall through");
-                while(!xmtWindow){
-                    //Wait until transmit window is free;
-                }*/
-                /*if (!controller.okToSend()) log.debug("Mrc port not ready to send");*/
-                //if (debug) log.debug("start write to stream  : "+jmri.util.StringUtil.hexStringFromBytes(msg));
-                    // input - now send
                 try {
                     ostream.write(msg);
                     mCurrentState = WAITFORCMDRECEIVED;
@@ -470,24 +509,26 @@ public class MrcPacketizer extends MrcTrafficController {
                         log.info("Timed out");
                         if(m.getRetries()>=0){
                             m.setRetries(m.getRetries() - 1);
-                            xmtList.addFirst(m);
+                            synchronized (this) {
+                                xmtList.addFirst(m);
+                            }
                         } else {
                             messageFailed(m);
                         }
                         mCurrentState = IDLESTATE;
                     } else if (mCurrentState == MISSEDPOLL && m.getRetries()>=0) {
                         log.info("Missed add to front");
-                        xmtList.addFirst(m);
-                        //synchronized (this) {
-                               mCurrentState = IDLESTATE;
-                        // }
+                        synchronized (this) {
+                            xmtList.addFirst(m);
+                            mCurrentState = IDLESTATE;
+                        }
                     } else if (mCurrentState == DOUBLELOCOCONTROL && m.getRetries()>=0) {
-                         log.info("Auto Retry send message added back to queue: " + Arrays.toString(msg));
-                         m.setRetries(m.getRetries() - 1);
-                         xmtList.addFirst(m);
-                        // synchronized (this) {
-                               mCurrentState = IDLESTATE;
-                        // }
+                        log.info("Auto Retry send message added back to queue: " + Arrays.toString(msg));
+                        m.setRetries(m.getRetries() - 1);
+                        synchronized (this) {
+                            xmtList.addFirst(m);
+                            mCurrentState = IDLESTATE;
+                        }
                     } else if(mCurrentState == BADCOMMAND){
                         log.info("Bad command sent");
                         messageFailed(m);
@@ -508,6 +549,7 @@ public class MrcPacketizer extends MrcTrafficController {
 		long endTime = currentTime + waitTime;
 		while (endTime > (currentTime = Calendar.getInstance().getTimeInMillis())){
 			long wait = endTime - currentTime;
+            log.info("Wait time " + wait);
 			try {
 				synchronized(xmtHandler) { 
 					// Do not wait if the current state has changed since we
@@ -516,10 +558,13 @@ public class MrcPacketizer extends MrcTrafficController {
                         if(mCurrentState == WAITFORPROGREAD){
                             state = WAITFORPROGREAD;
                         } else {
+                            log.info("Bomb out here");
                             return;
                         }
                     }
+                    log.info("Start wait in transmitwait");
 					xmtHandler.wait(wait); // rcvr normally ends this w state change
+                    log.info("end wait in transmitwait");
 				}
 			} catch (InterruptedException e) { 
 				Thread.currentThread().interrupt(); // retain if needed later

@@ -21,7 +21,7 @@ import javax.swing.*;
  * @author Dan Boudreau 	Copyright (C) 2007
  * @version $Revision: 25018 $
  */
-public class MrcPacketGenPanel extends jmri.jmrix.mrc.swing.MrcPanel implements jmri.jmrix.mrc.MrcListener {
+public class MrcPacketGenPanel extends jmri.jmrix.mrc.swing.MrcPanel /*implements /*jmri.jmrix.mrc.MrcListener */{
 	
     //ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.mrc.packetgen.MrcPacketGenBundle");
 

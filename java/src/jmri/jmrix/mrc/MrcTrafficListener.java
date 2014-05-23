@@ -20,10 +20,10 @@ import java.util.Date;
  */
 public interface MrcTrafficListener {
 
-	public final static int MRC_TRAFFIC_NONE  = 0x00;
+	/*public final static int MRC_TRAFFIC_NONE  = 0x00;
 	public final static int MRC_TRAFFIC_RX    = 0x01;
 	public final static int MRC_TRAFFIC_TX    = 0x02;
-	public final static int MRC_TRAFFIC_ALL   = 0x03;
+	public final static int MRC_TRAFFIC_ALL   = 0x03;*/
 
 	
 	public void notifyXmit(Date timestamp, MrcMessage m);

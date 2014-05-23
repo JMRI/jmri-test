@@ -11,8 +11,9 @@ public interface MrcInterface {
 
     public void sendMrcMessage(MrcMessage msg);
         
-	public void addMrcListener(int Mask, MrcListener l);
-	public void removeMrcListener(int Mask, MrcListener l);
+	public void addTrafficListener(int Mask, MrcTrafficListener l);
+	public void removeTrafficListener(int Mask, MrcTrafficListener l);
+	public void changeTrafficListener(int Mask, MrcTrafficListener l);
 
 	boolean status();   // true if the implementation is operational
 
@@ -49,7 +50,7 @@ public interface MrcInterface {
     /**
 	 * Mask value to request notification of messages associated with layout power
 	 */
-    public static final int CLOCK           = 0x20;
+    public static final int CLOCK           = 32;
     
     public static final int POLL            = 64;
 }

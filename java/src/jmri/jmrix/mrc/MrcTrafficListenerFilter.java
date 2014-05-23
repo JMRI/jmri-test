@@ -7,6 +7,7 @@ import java.util.Date;
  * client is not interested in.
  *
  * @author	Matthias Keil Copyright (C) 2013
+ * @author	Kevin Dickerson Copyright (C) 2014
  * @version $Revision: $
  *
  */
@@ -63,14 +64,20 @@ public class MrcTrafficListenerFilter {
     }
 
     public void fireXmit(Date timestamp, MrcMessage m) {
-        if ((mask & MrcTrafficListener.MRC_TRAFFIC_TX) != 0) {
+        if (forwardMessage(m.getMessageClass())) {
             l.notifyXmit(timestamp, m);
         }
     }
 
     public void fireRcv(Date timestamp, MrcMessage m) {
-        if ((mask & MrcTrafficListener.MRC_TRAFFIC_RX) != 0) {
+        if (forwardMessage(m.getMessageClass())) {
             l.notifyRcv(timestamp, m);
         }
+    }
+    
+    boolean forwardMessage(int messageClass){
+        if((mask & messageClass) != 0)
+            return true;
+        return false;
     }
 }

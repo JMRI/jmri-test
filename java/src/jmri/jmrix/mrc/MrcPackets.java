@@ -31,6 +31,30 @@ public class MrcPackets {
     
     static final int functionGroupLength = 8;
     
+    public static final int addToConsistPacketCmd = 100;
+    static final int[] addToConsistPacketHeader = new int[]{addToConsistPacketCmd, 0, addToConsistPacketCmd, 0};
+    static final int addToConsistPacketLength = 4;
+    
+    public static final int clearConsistPacketCmd = 98;
+    static final int[] clearConsistPacketHeader = new int[]{clearConsistPacketCmd, 0, clearConsistPacketCmd, 0};
+    static final int clearConsistPacketLength = 4;
+    
+    public static final int routeControlPacketCmd = 195;
+    static final int[] routeControlPacketHeader = new int[]{routeControlPacketCmd, 0, routeControlPacketCmd, 0};
+    static final int routeControlPacketLength = 6; //Need to check.
+    
+    public static final int clearRoutePacketCmd = 210;
+    static final int[] clearRoutePacketHeader = new int[]{clearRoutePacketCmd, 0, clearRoutePacketCmd, 0};
+    static final int clearRoutePacketLength = 4;
+    
+    public static final int addToRoutePacketCmd = 211;
+    static final int[] addToRoutePacketHeader = new int[]{addToRoutePacketCmd, 0, addToRoutePacketCmd, 0};
+    static final int addToRoutePacketLength = 6;
+    
+    public static final int accessoryPacketCmd = 115;
+    static final int[] accessoryPacketHeader = new int[]{accessoryPacketCmd, 0, accessoryPacketCmd, 0};
+    static final int accessoryPacketLength = 6;
+    
     public static final int writeCVPOMCmd = 86;
     static final int[] writeCVPOMHeader = new int[]{writeCVPOMCmd, 0, writeCVPOMCmd, 0};
     private static final int writeCVPOMLength = 12;
@@ -77,6 +101,36 @@ public class MrcPackets {
     public static final int badCmdRecievedCode = 238; //Or unable to read from decoder
     static final int[] badCmdRecieved = new int[]{badCmdRecievedCode, 0, badCmdRecievedCode, 0};
     
+    public static final int powerOnCmd = 130;
+    static final int[] powerOn = new int[]{powerOnCmd, 0, powerOnCmd, 0, powerOnCmd, 0, powerOnCmd, 0};
+    
+    public static final int powerOffCmd = 146;
+    static final int[] powerOff = new int[]{powerOffCmd, 0, powerOffCmd, 0, powerOffCmd, 0, powerOffCmd, 0};
+    
+    public static int getAddToConsistPacketLength() {
+        return addToConsistPacketHeader.length+addToConsistPacketLength;
+    }
+
+    public static int getClearConsistPacketLength() {
+        return clearConsistPacketHeader.length+clearConsistPacketLength;
+    }
+
+    public static int getRouteControlPacketLength() {
+        return routeControlPacketHeader.length+routeControlPacketLength;
+    }
+
+    public static int getClearRoutePacketLength() {
+        return clearRoutePacketHeader.length+clearRoutePacketLength;
+    }
+
+    public static int getAddToRoutePacketLength() {
+        return addToRoutePacketHeader.length+addToRoutePacketLength;
+    }
+
+    public static int getAccessoryPacketLength() {
+        return accessoryPacketHeader.length+accessoryPacketLength;
+    }
+    
     public static int getWriteCVPROGPacketLength() {
         return writeCVPROGHeader.length + writeCVPROGLength;
     }
@@ -114,8 +168,16 @@ public class MrcPackets {
     }
     
     public static int getReadCVPacketReplyLength() {
-        return readCVHeaderReply.length + readCVPacketLength;
+        return readCVHeaderReply.length;
     }
+    
+    public static int getPowerOnPacketLength() {
+        return powerOn.length;
+    }   
+
+    public static int getPowerOffPacketLength() {
+        return powerOn.length;
+    }    
     
     public static boolean startsWith(MrcMessage source, int[] match) {
         if (match.length > (source.getNumDataElements())) {
@@ -262,7 +324,30 @@ public class MrcPackets {
             case locoDblControlCode:
                 txt.append("Multiple Throttle");
                 break;
-
+            case powerOnCmd:
+                txt.append("Track Power On");
+                break;
+            case powerOffCmd:
+                txt.append("Track Power Off");
+                break;
+            case addToConsistPacketCmd:
+                txt.append("Loco Added to Consist");
+                break;
+            case clearConsistPacketCmd:
+                txt.append("Consist Cleared");
+                break;
+            case routeControlPacketCmd:
+                txt.append("Route Control");
+                break;
+            case clearRoutePacketCmd:
+                txt.append("Route Cleared");
+                break;
+            case addToRoutePacketCmd:
+                txt.append("Route Added");
+                break;
+            case accessoryPacketCmd:
+                txt.append("Accessory Controlled");
+                break;
 	        default:
                 if(m.getNumDataElements()==6){
                     if(m.getElement(0)==m.getElement(2)&&m.getElement(0)==m.getElement(4)){

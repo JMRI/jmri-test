@@ -48,25 +48,8 @@ public abstract class MrcTrafficController implements MrcInterface{
     abstract public boolean status();
     
     abstract public void sendMrcMessage(MrcMessage m);
-
-        // The methods to implement adding and removing listeners
-    protected Vector<MrcListener> listeners = new Vector<MrcListener>();
-
-    public synchronized void addMrcListener(int mask, MrcListener l) {
-        // add only if not already registered
-        if (l == null) throw new java.lang.NullPointerException();
-        if (!listeners.contains(l)) {
-            listeners.addElement(l);
-        }
-    }
-
-    public synchronized void removeMrcListener(int mask, MrcListener l) {
-    	if (listeners.contains(l)) {
-            listeners.removeElement(l);
-    	}
-    }
     
-        // The methods to implement adding and removing listeners
+    // The methods to implement adding and removing listeners
     protected Vector<MrcTrafficListenerFilter> trafficListeners = new Vector<MrcTrafficListenerFilter>();
 
     public synchronized void addTrafficListener(int mask, MrcTrafficListener l) {
@@ -97,36 +80,6 @@ public abstract class MrcTrafficController implements MrcInterface{
     	}
     }
     
-       /**
-     * Forward a MrcMessage to all registered listeners.
-     * <P>
-     * this needs to have public access, as 
-     * {@link jmri.jmrix.loconet.loconetovertcp.LnOverTcpPacketizer}
-     * and
-     * {@link jmri.jmrix.loconet.Intellibox.IBLnPacketizer} invoke it,
-     * but don't inherit from it
-     * @param m Message to forward. Listeners should not modify it!
-     */
-    @SuppressWarnings("unchecked")
-	public void notify(MrcMessage m) {
-        // record statistics
-        receivedMsgCount++;
-        receivedByteCount += m.getNumDataElements();
-        
-        // make a copy of the listener vector to synchronized not needed for transmit
-        Vector<MrcListener> v;
-        synchronized(this) {
-            v = (Vector<MrcListener>) listeners.clone();
-        }
-        if (log.isDebugEnabled()) log.debug("notify of LocoNet packet: "+m.toString());
-        // forward to all listeners
-        int cnt = v.size();
-        for (int i=0; i < cnt; i++) {
-            MrcListener client = listeners.elementAt(i);
-            client.message(m);
-        }
-    }
-    
 	@SuppressWarnings("unchecked")
 	public void notifyRcv(Date timestamp, MrcMessage m) {
         
@@ -141,9 +94,6 @@ public abstract class MrcTrafficController implements MrcInterface{
         for (MrcTrafficListenerFilter adapter : v) {
         	adapter.fireRcv(timestamp, m);
         }
-
-        // call the old notify for other listeners
-        //notify(m);
     }
 
 	@SuppressWarnings("unchecked")
@@ -160,9 +110,6 @@ public abstract class MrcTrafficController implements MrcInterface{
         for (MrcTrafficListenerFilter adapter : v) {
         	adapter.fireXmit(timestamp, m);
         }
-        
-        // call the old notify for other listeners
-        //notify(m);
     }
 
 	/**

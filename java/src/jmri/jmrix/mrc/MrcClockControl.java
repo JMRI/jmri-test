@@ -38,7 +38,7 @@ import java.util.ResourceBundle;
  * @author		Bob Jacobsen, Alex Shepherd
  * @version     $Revision: 22887 $
  */
-public class MrcClockControl extends DefaultClockControl implements MrcListener,  MrcTrafficListener
+public class MrcClockControl extends DefaultClockControl implements /*MrcListener,*/  MrcTrafficListener
 {
     ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.mrc.MrcClockControlBundle");
 

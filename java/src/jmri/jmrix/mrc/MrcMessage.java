@@ -309,6 +309,26 @@ public class MrcMessage {
         return m;
     }
     
+    /**
+     * Set Track Power Off/Emergency Stop
+     * @return
+     */
+    static public MrcMessage setPowerOff() {
+        MrcMessage m = new MrcMessage(MrcPackets.getPowerOffPacketLength());
+        m.setMessageClass(MrcInterface.POWER);
+        m.putHeader(MrcPackets.powerOff);
+        return m;
+    }
+    
+    static public MrcMessage setPowerOn() {
+        MrcMessage m = new MrcMessage(MrcPackets.getPowerOffPacketLength());
+        m.setMessageClass(MrcInterface.POWER);
+        m.putHeader(MrcPackets.powerOn);
+        return m;
+    }
+    
+    
+    
     static public MrcMessage setNoData(){
         MrcMessage m = new MrcMessage(4);
         m.setMessageClass(MrcInterface.POLL);

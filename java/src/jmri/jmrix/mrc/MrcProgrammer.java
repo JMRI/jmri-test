@@ -115,7 +115,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
             // start the error timer
             startShortTimer();//we get no confirmation back that the packet has been read.
             // format and send the write message
-            tc.addTrafficListener(MrcTrafficListener.MRC_TRAFFIC_RX, this);
+            tc.addTrafficListener(MrcInterface.PROGRAMMING, this);
             tc.sendMrcMessage(progTaskStart(getMode(), _val, _cv));
         } catch (jmri.ProgrammerException e) {
             progState = NOTPROGRAMMING;
@@ -141,7 +141,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
             startLongTimer();
             
             // format and send the write message
-            tc.addTrafficListener(MrcTrafficListener.MRC_TRAFFIC_RX, this);
+            tc.addTrafficListener(MrcInterface.PROGRAMMING, this);
             tc.sendMrcMessage(progTaskStart(getMode(), -1, _cv));
         } catch (jmri.ProgrammerException e) {
             progState = NOTPROGRAMMING;
@@ -247,7 +247,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
         log.debug("notifyProgListenerEnd value {} status {}", value, status);
         // the programmingOpReply handler might send an immediate reply, so
         // clear the current listener _first_
-        tc.removeTrafficListener(MrcTrafficListener.MRC_TRAFFIC_RX, this);
+        tc.removeTrafficListener(MrcInterface.PROGRAMMING, this);
         jmri.ProgListener temp = _usingProgrammer;
         _usingProgrammer = null;
         temp.programmingOpReply(value, status);

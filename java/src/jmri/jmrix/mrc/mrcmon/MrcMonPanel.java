@@ -23,15 +23,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JCheckBox;
 
 
-public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListener, MrcTrafficListener, MrcPanelInterface{
+public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTrafficListener, MrcPanelInterface{
 
 	private static final long serialVersionUID = 6106790197336170348L;
 
 	public MrcMonPanel() {
         super();
     }
-    
-    //MrcMonBinary mrcMon = new MrcMonBinary();
     
     public String getHelpTarget() { return null; }
 
@@ -50,8 +48,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
     public void dispose() {
         if(memo.getMrcTrafficController()!=null){
         // disconnect from the LnTrafficController
-            memo.getMrcTrafficController().removeTrafficListener(MrcTrafficListener.MRC_TRAFFIC_ALL, this);
-            //memo.getMrcTrafficController().removeMrcListener(~0,this);
+            memo.getMrcTrafficController().removeTrafficListener(trafficFilter, this);
         }
         // and unwind swing
         super.dispose();
@@ -69,7 +66,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
     
     JCheckBox excludePoll = new JCheckBox("Exclude Poll Messages");
     
-    private int trafficFilter = MrcTrafficListener.MRC_TRAFFIC_ALL;
+    private int trafficFilter = MrcInterface.ALL;
     
     public void initComponents(MrcSystemConnectionMemo memo) {
         this.memo = memo;
@@ -80,7 +77,6 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
             return;
         }
         memo.getMrcTrafficController().addTrafficListener(trafficFilter, this);
-		//memo.getMrcTrafficController().addMrcListener(~0, this);
     }
 
     public synchronized void message(MrcMessage m) {  // receive a message and log it
@@ -101,9 +97,6 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
     
     MrcMessage previousPollMessage;
     
-    private boolean filterEcho = true;
-    private MrcMessage lastLoggedTxMessage = null;
-    
     public synchronized void notifyXmit(Date timestamp, MrcMessage m) {
     	if(excludePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
             return;
@@ -111,7 +104,6 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
     	//if (useSimpleLogging) return;
     	
     	logMessage(timestamp, m, "Tx:");
-    	lastLoggedTxMessage = m;
     }
     
     public synchronized void notifyFailedXmit(Date timestamp, MrcMessage m) {
@@ -126,11 +118,6 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcListen
     	
     	//if (useSimpleLogging) return;
 
-    	/*if (filterEcho) {
-    		if ((lastLoggedTxMessage != null) && (lastLoggedTxMessage.equals(m))) {     	
-    			return;
-    		}
-    	}*/
         String raw = "";
         if(excludePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
             //Do not show poll messages
