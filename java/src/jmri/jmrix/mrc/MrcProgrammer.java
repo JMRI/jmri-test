@@ -176,6 +176,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
         } else {
             m = MrcMessage.getWriteCV((byte)cvnum, (byte)val);
         }
+        m.setTimeout(SHORT_TIMEOUT);
         m.setSource(this);
         return m;
     }

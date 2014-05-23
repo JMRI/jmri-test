@@ -69,6 +69,7 @@ public class MrcMessage {
     }
     
     int SHORT_TIMEOUT = 150;
+    int SHORT_PROG_TIMEOUT = 4000;
     //int LONG_TIMEOUT = 4000;
     
     int timeout = SHORT_TIMEOUT;

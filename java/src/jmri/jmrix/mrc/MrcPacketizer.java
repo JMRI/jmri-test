@@ -413,6 +413,7 @@ public class MrcPacketizer extends MrcTrafficController {
      * Captive class to handle transmission
      */
     class XmtHandler implements Runnable {
+        
         public void run() {
             log.info("XMT");
             boolean debug = log.isDebugEnabled();
@@ -455,7 +456,7 @@ public class MrcPacketizer extends MrcTrafficController {
                     ostream.write(msg);
                     mCurrentState = WAITFORCMDRECEIVED;
                     ostream.flush();
-                    messageTransmited(msg);
+                    messageTransmited(m);
                     if(m.getMessageClass()==MrcInterface.POLL){
                         mCurrentState = IDLESTATE;
                     } else {
@@ -556,12 +557,12 @@ public class MrcPacketizer extends MrcTrafficController {
      * to listeners if echoing is needed
      *
      */
-     protected void messageTransmited(byte[] msg) {
+     protected void messageTransmited(MrcMessage msg) {
         if (debug) log.debug("message transmitted");
         if (!echo) return;
         // message is queued for transmit, echo it when needed
         // return a notification via the queue to ensure end
-        javax.swing.SwingUtilities.invokeLater(new Echo(this, new Date(), new MrcMessage(msg)));
+        javax.swing.SwingUtilities.invokeLater(new Echo(this, new Date(), msg));
     }
     
     static class Echo implements Runnable {
