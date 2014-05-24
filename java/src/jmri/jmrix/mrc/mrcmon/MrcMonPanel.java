@@ -98,9 +98,9 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTraffi
     MrcMessage previousPollMessage;
     
     public synchronized void notifyXmit(Date timestamp, MrcMessage m) {
-    	if(excludePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
+    	/*if(excludePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
             return;
-        }
+        }*/
     	//if (useSimpleLogging) return;
     	
     	logMessage(timestamp, m, "Tx:");

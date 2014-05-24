@@ -58,7 +58,7 @@ public class MrcMessage {
         return source;
     }
     
-    int msgClass = 0x00;
+    int msgClass = ~0;
     
     void setMessageClass(int i){
         msgClass = i;
@@ -66,6 +66,16 @@ public class MrcMessage {
     
     public int getMessageClass(){
         return msgClass;
+    }
+    
+    public void replyNotExpected(){
+        replyExpected=false;
+    }
+    
+    boolean replyExpected =true;
+    
+    public boolean isReplyExpected(){
+        return replyExpected;
     }
     
     int SHORT_TIMEOUT = 150;
@@ -129,6 +139,7 @@ public class MrcMessage {
     static public MrcMessage getSendFunction(int group, int addressLo, int addressHi, int data){
         MrcMessage m = new MrcMessage(MrcPackets.getFunctionPacketLength());
         m.setMessageClass(MrcInterface.THROTTLEINFO);
+        m.replyNotExpected();
         int i= 0;
         switch(group){
             case 1: i = m.putHeader(MrcPackets.functionGroup1PacketHeader);
@@ -346,7 +357,6 @@ public class MrcMessage {
     byte[] byteStream;
     
     void setByteStream(){
-        log.info("Set byte stream");
         int len = getNumDataElements();
         byteStream = new byte[len];
         for (int i=0; i< len; i++){

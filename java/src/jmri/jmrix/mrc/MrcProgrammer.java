@@ -29,11 +29,12 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
 
     public MrcProgrammer(MrcTrafficController tc) {
     	this.tc = tc;
-        super.SHORT_TIMEOUT = 4000;
+        super.SHORT_TIMEOUT = 15000;
     }
 
     // handle mode
     protected int _mode = Programmer.PAGEMODE;
+    int PACKET_TIMEOUT = 5000;
 
     /**
      * Switch to a new programming mode.  Note that MRC 
@@ -103,7 +104,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
 
     // programming interface
     public synchronized void writeCV(int CV, int val, jmri.ProgListener p) throws jmri.ProgrammerException {
-        log.debug("writeCV {} listens {}", CV, p);
+        log.info("writeCV {} listens {}", CV, p);
         useProgrammer(p);
         _progRead = false;
         // set state
@@ -128,7 +129,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
     }
 
     public synchronized void readCV(int CV, jmri.ProgListener p) throws jmri.ProgrammerException {
-        log.debug("readCV {} listens {}", CV, p);
+        log.info("readCV {} listens {}", CV, p);
         useProgrammer(p);
         _progRead = true;
 
@@ -176,7 +177,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
         } else {
             m = MrcMessage.getWriteCV((byte)cvnum, (byte)val);
         }
-        m.setTimeout(SHORT_TIMEOUT);
+        m.setTimeout(PACKET_TIMEOUT);
         m.setSource(this);
         return m;
     }
@@ -230,7 +231,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
     protected synchronized void timeout() {
         if (progState != NOTPROGRAMMING) {
             // we're programming, time to stop
-            log.debug("timeout!");
+            log.info("timeout!" + _cv);
             // perhaps no loco present? Fail back to end of programming
             progState = NOTPROGRAMMING;
             cleanup();

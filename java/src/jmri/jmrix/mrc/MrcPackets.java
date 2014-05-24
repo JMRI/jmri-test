@@ -69,13 +69,13 @@ public class MrcPackets {
     public static final int readCVCmd = 67;
     static final int[] readCVHeader = new int[]{readCVCmd, 0, readCVCmd, 0};
     private static final int readCVLength = 6;
-    static final int readCVPacketLength = 4; //need to double check the length of this packet
     
     public static final int progCmdSentCode = 51;
     static final int[] progCmdSent = new int[]{progCmdSentCode, 0, progCmdSentCode, 0};
     
     public static final int readCVHeaderReplyCode = 102;
     static final int[] readCVHeaderReply = new int[]{readCVHeaderReplyCode, 0, readCVHeaderReplyCode, 0};
+    static final int readCVPacketLength = 4; //need to double check the length of this packet
     
     public static final int setClockRatioCmd = 18;
     static final int[] setClockRatioHeader = new int[]{setClockRatioCmd, 0, setClockRatioCmd, 0};
@@ -168,7 +168,7 @@ public class MrcPackets {
     }
     
     public static int getReadCVPacketReplyLength() {
-        return readCVHeaderReply.length;
+        return readCVHeaderReply.length+readCVPacketLength;
     }
     
     public static int getPowerOnPacketLength() {
@@ -307,7 +307,8 @@ public class MrcPackets {
 	        	txt.append(Integer.toString(m.getElement(8)&0xff));
 	    		break;
             case readCVHeaderReplyCode:
-                txt.append("Read CV");
+                txt.append("Read CV Value of:");
+                txt.append(Integer.toString(m.value()));
                 break;
             case badCmdRecievedCode:
                 txt.append("Bad Cmd Ack");
