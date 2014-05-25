@@ -7,176 +7,176 @@ import jmri.jmrix.AbstractMessage;
  */
 public class MrcPackets {
     
-    public static final int throttlePacketCmd = 37;
-    static final int[] throttlePacketHeader = new int[]{throttlePacketCmd, 0, throttlePacketCmd, 0};
-    static final int throttlePacketLength = 10; //length of packet less the header
+    public static final int THROTTLEPACKETCMD = 37;
+    static final int[] THROTTLEPACKETHEADER = new int[]{THROTTLEPACKETCMD, 0, THROTTLEPACKETCMD, 0};
+    static final int THROTTLEPACKETLENGTH = 10; //length of packet less the header
     
-    public static final int functionGroup1PacketCmd = 52;
-    static final int[] functionGroup1PacketHeader = new int[]{functionGroup1PacketCmd, 0, functionGroup1PacketCmd, 0};
+    public static final int FUNCTIONGROUP1PACKETCMD = 52;
+    static final int[] FUNCTIONGROUP1PACKETHEADER = new int[]{FUNCTIONGROUP1PACKETCMD, 0, FUNCTIONGROUP1PACKETCMD, 0};
     
-    public static final int functionGroup2PacketCmd = 68;
-    static final int[] functionGroup2PacketHeader = new int[]{functionGroup2PacketCmd, 0, functionGroup2PacketCmd, 0};
+    public static final int FUNCTIONGROUP2PACKETCMD = 68;
+    static final int[] FUNCTIONGROUP2PACKETHEADER = new int[]{FUNCTIONGROUP2PACKETCMD, 0, FUNCTIONGROUP2PACKETCMD, 0};
     
-    public static final int functionGroup3PacketCmd = 84;
-    static final int[] functionGroup3PacketHeader = new int[]{functionGroup3PacketCmd, 0, functionGroup3PacketCmd, 0};
+    public static final int FUNCTIONGROUP3PACKETCMD = 84;
+    static final int[] FUNCTIONGROUP3PACKETHEADER = new int[]{FUNCTIONGROUP3PACKETCMD, 0, FUNCTIONGROUP3PACKETCMD, 0};
     
-    public static final int functionGroup4PacketCmd = 116;
-    static final int[] functionGroup4PacketHeader = new int[]{functionGroup4PacketCmd, 0, functionGroup4PacketCmd, 0};
+    public static final int FUNCTIONGROUP4PACKETCMD = 116;
+    static final int[] FUNCTIONGROUP4PACKETHEADER = new int[]{FUNCTIONGROUP4PACKETCMD, 0, FUNCTIONGROUP4PACKETCMD, 0};
     
-    public static final int functionGroup5PacketCmd = 132;
-    static final int[] functionGroup5PacketHeader = new int[]{functionGroup5PacketCmd, 0, functionGroup5PacketCmd, 0};
+    public static final int FUNCTIONGROUP5PACKETCMD = 132;
+    static final int[] FUNCTIONGROUP5PACKETHEADER = new int[]{FUNCTIONGROUP5PACKETCMD, 0, FUNCTIONGROUP5PACKETCMD, 0};
     
-    public static final int functionGroup6PacketCmd = 164;
-    static final int[] functionGroup6PacketHeader = new int[]{functionGroup6PacketCmd, 0, functionGroup6PacketCmd, 0};
+    public static final int FUNCTIONGROUP6PACKETCMD = 164;
+    static final int[] FUNCTIONGROUP6PACKETHEADER = new int[]{FUNCTIONGROUP6PACKETCMD, 0, FUNCTIONGROUP6PACKETCMD, 0};
     
-    static final int functionGroupLength = 8;
+    static final int FUNCTIONGROUPLENGTH = 8;
     
-    public static final int addToConsistPacketCmd = 100;
-    static final int[] addToConsistPacketHeader = new int[]{addToConsistPacketCmd, 0, addToConsistPacketCmd, 0};
-    static final int addToConsistPacketLength = 4;
+    public static final int ADDTOCONSISTPACKETCMD = 100;
+    static final int[] ADDTOCONSISTPACKETHEADER = new int[]{ADDTOCONSISTPACKETCMD, 0, ADDTOCONSISTPACKETCMD, 0};
+    static final int ADDTOCONSISTPACKETLENGTH = 4;
     
-    public static final int clearConsistPacketCmd = 98;
-    static final int[] clearConsistPacketHeader = new int[]{clearConsistPacketCmd, 0, clearConsistPacketCmd, 0};
-    static final int clearConsistPacketLength = 4;
+    public static final int CLEARCONSISTPACKETCMD = 98;
+    static final int[] CLEARCONSISTPACKETHEADER = new int[]{CLEARCONSISTPACKETCMD, 0, CLEARCONSISTPACKETCMD, 0};
+    static final int CLEARCONSISTPACKETLENGTH = 4;
     
-    public static final int routeControlPacketCmd = 195;
-    static final int[] routeControlPacketHeader = new int[]{routeControlPacketCmd, 0, routeControlPacketCmd, 0};
-    static final int routeControlPacketLength = 6; //Need to check.
+    public static final int ROUTECONTROLPACKETCMD = 195;
+    static final int[] ROUTECONTROLPACKETHEADER = new int[]{ROUTECONTROLPACKETCMD, 0, ROUTECONTROLPACKETCMD, 0};
+    static final int ROUTECONTROLPACKETLENGTH = 6; //Need to check.
     
-    public static final int clearRoutePacketCmd = 210;
-    static final int[] clearRoutePacketHeader = new int[]{clearRoutePacketCmd, 0, clearRoutePacketCmd, 0};
-    static final int clearRoutePacketLength = 4;
+    public static final int CLEARROUTEPACKETCMD = 210;
+    static final int[] CLEARROUTEPACKETHEADER = new int[]{CLEARROUTEPACKETCMD, 0, CLEARROUTEPACKETCMD, 0};
+    static final int CLEARROUTEPACKETLENGTH = 4;
     
-    public static final int addToRoutePacketCmd = 211;
-    static final int[] addToRoutePacketHeader = new int[]{addToRoutePacketCmd, 0, addToRoutePacketCmd, 0};
-    static final int addToRoutePacketLength = 6;
+    public static final int ADDTOROUTEPACKETCMD = 211;
+    static final int[] ADDTOROUTEPACKETHEADER = new int[]{ADDTOROUTEPACKETCMD, 0, ADDTOROUTEPACKETCMD, 0};
+    static final int ADDTOROUTEPACKETLENGTH = 6;
     
-    public static final int accessoryPacketCmd = 115;
-    static final int[] accessoryPacketHeader = new int[]{accessoryPacketCmd, 0, accessoryPacketCmd, 0};
-    static final int accessoryPacketLength = 6;
+    public static final int ACCESSORYPACKETCMD = 115;
+    static final int[] ACCESSORYPACKETHEADER = new int[]{ACCESSORYPACKETCMD, 0, ACCESSORYPACKETCMD, 0};
+    static final int ACCESSORYPACKETLENGTH = 6;
     
-    public static final int writeCVPOMCmd = 86;
-    static final int[] writeCVPOMHeader = new int[]{writeCVPOMCmd, 0, writeCVPOMCmd, 0};
-    private static final int writeCVPOMLength = 12;
+    public static final int WRITECVPOMCMD = 86;
+    static final int[] WRITECVPOMHEADER = new int[]{WRITECVPOMCMD, 0, WRITECVPOMCMD, 0};
+    private static final int WRITECVPOMLENGTH = 12;
     
-    public static final int writeCVPROGCmd = 36;
-    static final int[] writeCVPROGHeader = new int[]{writeCVPROGCmd, 0, writeCVPROGCmd, 0};
-    private static final int writeCVPROGLength = 8;
+    public static final int WRITECVPROGCMD = 36;
+    static final int[] WRITECVPROGHEADER = new int[]{WRITECVPROGCMD, 0, WRITECVPROGCMD, 0};
+    private static final int WRITECVPROGLENGTH = 8;
     
-    public static final int readDecoderAddressCmd = 66;
-    static final int[] readDecoderAddress = new int[]{readDecoderAddressCmd, 0, readDecoderAddressCmd, 0, readDecoderAddressCmd, 0};
+    public static final int READDECODERADDRESSCMD = 66;
+    static final int[] READDECODERADDRESS = new int[]{READDECODERADDRESSCMD, 0, READDECODERADDRESSCMD, 0, READDECODERADDRESSCMD, 0};
     
-    public static final int readCVCmd = 67;
-    static final int[] readCVHeader = new int[]{readCVCmd, 0, readCVCmd, 0};
-    private static final int readCVLength = 6;
+    public static final int READCVCMD = 67;
+    static final int[] READCVHEADER = new int[]{READCVCMD, 0, READCVCMD, 0};
+    private static final int READCVLENGTH = 6;
     
-    public static final int progCmdSentCode = 51;
-    static final int[] progCmdSent = new int[]{progCmdSentCode, 0, progCmdSentCode, 0};
+    public static final int PROGCMDSENTCODE = 51;
+    static final int[] PROGCMDSENT = new int[]{PROGCMDSENTCODE, 0, PROGCMDSENTCODE, 0};
     
-    public static final int readCVHeaderReplyCode = 102;
-    static final int[] readCVHeaderReply = new int[]{readCVHeaderReplyCode, 0, readCVHeaderReplyCode, 0};
-    static final int readCVPacketLength = 4; //need to double check the length of this packet
+    public static final int READCVHEADERREPLYCODE = 102;
+    static final int[] READCVHEADERREPLY = new int[]{READCVHEADERREPLYCODE, 0, READCVHEADERREPLYCODE, 0};
+    static final int READCVPACKETLENGTH = 4; //need to double check the length of this packet
     
-    public static final int setClockRatioCmd = 18;
-    static final int[] setClockRatioHeader = new int[]{setClockRatioCmd, 0, setClockRatioCmd, 0};
-    private static final int setClockRatioLength = 10;
+    public static final int SETCLOCKRATIOCMD = 18;
+    static final int[] SETCLOCKRATIOHEADER = new int[]{SETCLOCKRATIOCMD, 0, SETCLOCKRATIOCMD, 0};
+    private static final int SETCLOCKRATIOLENGTH = 10;
     
-    public static final int setClockTimeCmd = 19;
-    static final int[] setClockTimeHeader = new int[]{setClockTimeCmd, 0, setClockTimeCmd, 0};
-    private static final int setClockTimeLength = 10;
+    public static final int SETCLOCKTIMECMD = 19;
+    static final int[] SETCLOCKTIMEHEADER = new int[]{SETCLOCKTIMECMD, 0, SETCLOCKTIMECMD, 0};
+    private static final int SETCLOCKTIMELENGTH = 10;
     
-    public static final int setClockAmPmCmd = 50;
-    static final int[] setClockAmPmHeader = new int[]{setClockAmPmCmd, 0, setClockAmPmCmd, 0};
-    private static final int setClockAmPmLength = 10;
+    public static final int SETCLOCKAMPMCMD = 50;
+    static final int[] SETCLOCKAMPMHEADER = new int[]{SETCLOCKAMPMCMD, 0, SETCLOCKAMPMCMD, 0};
+    private static final int SETCLOCKAMPMLENGTH = 10;
     
-    public static final int locoSoleControlCode = 34;
-    static final int[] locoSoleControl = new int[]{locoSoleControlCode, 0, locoSoleControlCode, 0}; //Reply indicates that we are the sole controller of the loco
+    public static final int LOCOSOLECONTROLCODE = 34;
+    static final int[] LOCOSOLECONTROL = new int[]{LOCOSOLECONTROLCODE, 0, LOCOSOLECONTROLCODE, 0}; //Reply indicates that we are the sole controller of the loco
     
-    public static final int locoDblControlCode = 221;
-    static final int[] locoDblControl = new int[]{locoDblControlCode, 0, locoDblControlCode, 0}; //Reply indicates that another throttle also has controll of the loco    
+    public static final int LOCODBLCONTROLCODE = 221;
+    static final int[] LOCODBLCONTROL = new int[]{LOCODBLCONTROLCODE, 0, LOCODBLCONTROLCODE, 0}; //Reply indicates that another throttle also has controll of the loco    
     
-    public static final int goodCmdRecievedCode = 85;
-    static final int[] goodCmdRecieved = new int[]{goodCmdRecievedCode, 0, goodCmdRecievedCode, 0};
+    public static final int GOODCMDRECIEVEDCODE = 85;
+    static final int[] GOODCMDRECIEVED = new int[]{GOODCMDRECIEVEDCODE, 0, GOODCMDRECIEVEDCODE, 0};
     
-    public static final int badCmdRecievedCode = 238; //Or unable to read from decoder
-    static final int[] badCmdRecieved = new int[]{badCmdRecievedCode, 0, badCmdRecievedCode, 0};
+    public static final int BADCMDRECIEVEDCODE = 238; //Or unable to read from decoder
+    static final int[] BADCMDRECIEVED = new int[]{BADCMDRECIEVEDCODE, 0, BADCMDRECIEVEDCODE, 0};
     
-    public static final int powerOnCmd = 130;
-    static final int[] powerOn = new int[]{powerOnCmd, 0, powerOnCmd, 0, powerOnCmd, 0, powerOnCmd, 0};
+    public static final int POWERONCMD = 130;
+    static final int[] POWERON = new int[]{POWERONCMD, 0, POWERONCMD, 0, POWERONCMD, 0, POWERONCMD, 0};
     
-    public static final int powerOffCmd = 146;
-    static final int[] powerOff = new int[]{powerOffCmd, 0, powerOffCmd, 0, powerOffCmd, 0, powerOffCmd, 0};
+    public static final int POWEROFFCMD = 146;
+    static final int[] POWEROFF = new int[]{POWEROFFCMD, 0, POWEROFFCMD, 0, POWEROFFCMD, 0, POWEROFFCMD, 0};
     
     public static int getAddToConsistPacketLength() {
-        return addToConsistPacketHeader.length+addToConsistPacketLength;
+        return ADDTOCONSISTPACKETHEADER.length+ADDTOCONSISTPACKETLENGTH;
     }
 
     public static int getClearConsistPacketLength() {
-        return clearConsistPacketHeader.length+clearConsistPacketLength;
+        return CLEARCONSISTPACKETHEADER.length+CLEARCONSISTPACKETLENGTH;
     }
 
     public static int getRouteControlPacketLength() {
-        return routeControlPacketHeader.length+routeControlPacketLength;
+        return ROUTECONTROLPACKETHEADER.length+ROUTECONTROLPACKETLENGTH;
     }
 
     public static int getClearRoutePacketLength() {
-        return clearRoutePacketHeader.length+clearRoutePacketLength;
+        return CLEARROUTEPACKETHEADER.length+CLEARROUTEPACKETLENGTH;
     }
 
     public static int getAddToRoutePacketLength() {
-        return addToRoutePacketHeader.length+addToRoutePacketLength;
+        return ADDTOROUTEPACKETHEADER.length+ADDTOROUTEPACKETLENGTH;
     }
 
     public static int getAccessoryPacketLength() {
-        return accessoryPacketHeader.length+accessoryPacketLength;
+        return ACCESSORYPACKETHEADER.length+ACCESSORYPACKETLENGTH;
     }
     
     public static int getWriteCVPROGPacketLength() {
-        return writeCVPROGHeader.length + writeCVPROGLength;
+        return WRITECVPROGHEADER.length + WRITECVPROGLENGTH;
     }
 
     public static int getWriteCVPOMPacketLength() {
-        return writeCVPOMHeader.length + writeCVPOMLength;
+        return WRITECVPOMHEADER.length + WRITECVPOMLENGTH;
     }
 
     public static int getSetClockRatioPacketLength() {
-        return setClockRatioLength;
+        return SETCLOCKRATIOLENGTH;
     }
 
     public static int getSetClockAmPmPacketLength() {
-        return setClockAmPmLength;
+        return SETCLOCKAMPMLENGTH;
     }
 
     public static int getFunctionPacketLength() {
-        return functionGroup1PacketHeader.length + functionGroupLength;
+        return FUNCTIONGROUP1PACKETHEADER.length + FUNCTIONGROUPLENGTH;
     }
 
     public static int getReadDecoderAddressLength() {
-        return readDecoderAddress.length;
+        return READDECODERADDRESS.length;
     }
 
     public static int getSetClockTimePacketLength() {
-        return setClockTimeLength;
+        return SETCLOCKTIMELENGTH;
     }
     
     public static int getThrottlePacketLength() {
-        return throttlePacketHeader.length + throttlePacketLength;
+        return THROTTLEPACKETHEADER.length + THROTTLEPACKETLENGTH;
     }
     
     public static int getReadCVPacketLength() {
-        return readCVHeader.length + readCVLength;
+        return READCVHEADER.length + READCVLENGTH;
     }
     
     public static int getReadCVPacketReplyLength() {
-        return readCVHeaderReply.length+readCVPacketLength;
+        return READCVHEADERREPLY.length+READCVPACKETLENGTH;
     }
     
     public static int getPowerOnPacketLength() {
-        return powerOn.length;
+        return POWERON.length;
     }   
 
     public static int getPowerOffPacketLength() {
-        return powerOn.length;
+        return POWERON.length;
     }    
     
     public static boolean startsWith(MrcMessage source, int[] match) {
@@ -217,16 +217,16 @@ public class MrcPackets {
             }
         } else {
 	        switch (m.getElement(0)&0xFF) {
-	        case setClockRatioCmd:
+	        case SETCLOCKRATIOCMD:
 	        	txt.append("Set Clock Ratio: " + m.getElement(4));
 	        	break;
-	        case setClockTimeCmd:
+	        case SETCLOCKTIMECMD:
 	        	txt.append("Set Clock Time: " + m.getElement(4) + ":" + m.getElement(6));
 	        	break;
-	        case setClockAmPmCmd:
+	        case SETCLOCKAMPMCMD:
 	        	txt.append("Set Clock AM/PM");
 	        	break;
-	        case MrcPackets.throttlePacketCmd:
+	        case MrcPackets.THROTTLEPACKETCMD:
 	        	if (m.getElement(4) != 0) {
 	            	txt.append("Loco (L)");
 	        	} else {
@@ -240,7 +240,7 @@ public class MrcPackets {
 	        	}
 	        	txt.append(" Speed: " + Integer.toString((m.getElement(8) & 0x80)));
 	    		break;
-	        case functionGroup1PacketCmd:
+	        case FUNCTIONGROUP1PACKETCMD:
 	        	txt.append("Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))) + " Group 1");
 	        	txt.append(" F1 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F2 " + Integer.toString(m.getElement(8) & 0x02));
@@ -248,35 +248,35 @@ public class MrcPackets {
 	        	txt.append(" F4 " + Integer.toString(m.getElement(8) & 0x08));
 	        	txt.append(" F0 " + Integer.toString(m.getElement(8) & 0x10));
 	    		break;
-	        case functionGroup2PacketCmd:
+	        case FUNCTIONGROUP2PACKETCMD:
 	        	txt.append("Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))) + " Group 2");
 	        	txt.append(" F5 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F6 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F7 " + Integer.toString(m.getElement(8) & 0x04));
 	        	txt.append(" F8 " + Integer.toString(m.getElement(8) & 0x08));
 	    		break;
-	        case functionGroup3PacketCmd:
+	        case FUNCTIONGROUP3PACKETCMD:
 	        	txt.append("Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))) + " Group 3");
 	        	txt.append(" F9 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F10 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F11 " + Integer.toString(m.getElement(8) & 0x04));
 	        	txt.append(" F12 " + Integer.toString(m.getElement(8) & 0x08));
 	    		break;
-	        case functionGroup4PacketCmd:
+	        case FUNCTIONGROUP4PACKETCMD:
 	        	txt.append("Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))) + " Group 4");
 	        	txt.append(" F13 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F14 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F15 " + Integer.toString(m.getElement(8) & 0x04));
 	        	txt.append(" F16" + Integer.toString(m.getElement(8) & 0x08));
 	    		break;
-	        case functionGroup5PacketCmd:
+	        case FUNCTIONGROUP5PACKETCMD:
 	        	txt.append("Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))) + " Group 5");
 	        	txt.append(" F17 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F18 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F19 " + Integer.toString(m.getElement(8) & 0x04));
 	        	txt.append(" F20 " + Integer.toString(m.getElement(8) & 0x08));
 	    		break;
-	        case functionGroup6PacketCmd:
+	        case FUNCTIONGROUP6PACKETCMD:
 	        	txt.append("Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))) + " Group 6");
 	        	txt.append(" F21 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F22 " + Integer.toString(m.getElement(8) & 0x02));
@@ -287,66 +287,66 @@ public class MrcPackets {
 	        	txt.append(" F27 " + Integer.toString(m.getElement(8) & 0x40));
 	        	txt.append(" F28 " + Integer.toString(m.getElement(8) & 0x80));
 	    		break;
-	        case readCVCmd:
+	        case READCVCMD:
 	        	int cv = ((m.getElement(4)&0xff) << 8) + (m.getElement(6)&0xff);
 	        	txt.append("Read CV " + Integer.toString(cv));
 	    		break;
-	        case readDecoderAddressCmd:
+	        case READDECODERADDRESSCMD:
 	        	txt.append("Read Decoder Address ");
 	    		break;
-	        case writeCVPOMCmd:
+	        case WRITECVPOMCMD:
 	        	txt.append("Write POM CV Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))));
 	        	txt.append(Integer.toString(m.getElement(10)&0xff));
 	        	txt.append("=");
 	        	txt.append(Integer.toString(m.getElement(8)&0xff));
 	    		break;
-	        case writeCVPROGCmd:
+	        case WRITECVPROGCMD:
 	        	txt.append("Write PROG CV ");
 	        	txt.append(Integer.toString(m.getElement(4) << 8) + m.getElement(6));
 	        	txt.append("=");
 	        	txt.append(Integer.toString(m.getElement(8)&0xff));
 	    		break;
-            case readCVHeaderReplyCode:
+            case READCVHEADERREPLYCODE:
                 txt.append("Read CV Value of:");
                 txt.append(Integer.toString(m.value()));
                 break;
-            case badCmdRecievedCode:
+            case BADCMDRECIEVEDCODE:
                 txt.append("Bad Cmd Ack");
                 break;
-            case goodCmdRecievedCode:
+            case GOODCMDRECIEVEDCODE:
                 txt.append("Good Cmd Ack");
                 break;
-            case progCmdSentCode:
+            case PROGCMDSENTCODE:
                 txt.append("Pgm Cmd Sent");
                 break;
-            case locoSoleControlCode:
+            case LOCOSOLECONTROLCODE:
                 txt.append("Single Throttle");
                 break;
-            case locoDblControlCode:
+            case LOCODBLCONTROLCODE:
                 txt.append("Multiple Throttle");
                 break;
-            case powerOnCmd:
+            case POWERONCMD:
                 txt.append("Track Power On");
                 break;
-            case powerOffCmd:
+            case POWEROFFCMD:
                 txt.append("Track Power Off");
                 break;
-            case addToConsistPacketCmd:
+            case ADDTOCONSISTPACKETCMD:
                 txt.append("Loco Added to Consist");
                 break;
-            case clearConsistPacketCmd:
+            case CLEARCONSISTPACKETCMD:
                 txt.append("Consist Cleared");
                 break;
-            case routeControlPacketCmd:
+            case ROUTECONTROLPACKETCMD:
                 txt.append("Route Control");
                 break;
-            case clearRoutePacketCmd:
+            case CLEARROUTEPACKETCMD:
                 txt.append("Route Cleared");
                 break;
-            case addToRoutePacketCmd:
+            case ADDTOROUTEPACKETCMD:
                 txt.append("Route Added");
                 break;
-            case accessoryPacketCmd:
+            case ACCESSORYPACKETCMD:
                 txt.append("Accessory Controlled");
                 break;
 	        default:

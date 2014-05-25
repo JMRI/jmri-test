@@ -249,7 +249,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
             log.info(raw);
             if(!MrcPackets.validCheckSum(m)) {log.info("invalid check sum"); return;}
             //message potentially matches our loco
-            if(MrcPackets.startsWith(m, MrcPackets.throttlePacketHeader)){
+            if(MrcPackets.startsWith(m, MrcPackets.THROTTLEPACKETHEADER)){
                     log.info("speed Packet from another controller for our loco");
                     int speed = m.getElement(8)&0xff;
                     if(speed>=128) {
@@ -270,7 +270,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
                         this.speedSetting = val;
                         record(val);
                     }
-            } else if (MrcPackets.startsWith(m, MrcPackets.functionGroup1PacketHeader)){
+            } else if (MrcPackets.startsWith(m, MrcPackets.FUNCTIONGROUP1PACKETHEADER)){
                     log.info("function Packet 1 from another controller for our loco");
                     int data = m.getElement(8)&0xff;
                     data = data - 0x80;
@@ -331,19 +331,19 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
                     }
                     
                     //reverse engineer the function
-            }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup2PacketHeader)){
+            }  else if (MrcPackets.startsWith(m, MrcPackets.FUNCTIONGROUP2PACKETHEADER)){
                     log.info("function Packet 2 from another controller for our loco");
                     //reverse engineer the function
-            }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup3PacketHeader)){
+            }  else if (MrcPackets.startsWith(m, MrcPackets.FUNCTIONGROUP3PACKETHEADER)){
                     log.info("function Packet 3 from another controller for our loco");
                     //reverse engineer the function
-            }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup4PacketHeader)){
+            }  else if (MrcPackets.startsWith(m, MrcPackets.FUNCTIONGROUP4PACKETHEADER)){
                     log.info("function Packet 4 from another controller for our loco");
                     //reverse engineer the function
-            }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup5PacketHeader)){
+            }  else if (MrcPackets.startsWith(m, MrcPackets.FUNCTIONGROUP5PACKETHEADER)){
                     log.info("function Packet 5 from another controller for our loco");
                     //reverse engineer the function
-            }  else if (MrcPackets.startsWith(m, MrcPackets.functionGroup6PacketHeader)){
+            }  else if (MrcPackets.startsWith(m, MrcPackets.FUNCTIONGROUP6PACKETHEADER)){
                     log.info("function Packet 6 from another controller for our loco");
                     //reverse engineer the function
             } else {

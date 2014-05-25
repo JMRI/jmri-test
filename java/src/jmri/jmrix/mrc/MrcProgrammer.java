@@ -11,7 +11,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Vector;
 import java.util.Date;
-//import static jmri.jmrix.mrc.MrcReply.readCVHeaderReply;
+//import static jmri.jmrix.mrc.MrcReply.READCVHEADERREPLY;
 
 /**
  * Convert the jmri.Programmer interface into commands for the MRC power house.
@@ -204,10 +204,10 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
         if(m.getMessageClass()!=MrcInterface.PROGRAMMING){
             return;
         }
-        if (MrcPackets.startsWith(m, MrcPackets.progCmdSent)){
+        if (MrcPackets.startsWith(m, MrcPackets.PROGCMDSENT)){
             progState = NOTPROGRAMMING;
             notifyProgListenerEnd(_val, jmri.ProgListener.OK);
-        } else if (MrcPackets.startsWith(m, MrcPackets.readCVHeaderReply) && progState == READCOMMANDSENT) {
+        } else if (MrcPackets.startsWith(m, MrcPackets.READCVHEADERREPLY) && progState == READCOMMANDSENT) {
             progState = NOTPROGRAMMING;
             //Currently we have no way to know if the write was sucessful or not.
             if (_progRead) {

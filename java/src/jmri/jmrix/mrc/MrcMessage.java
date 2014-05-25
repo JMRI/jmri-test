@@ -120,7 +120,7 @@ public class MrcMessage {
     static public MrcMessage getSendSpeed(int addressLo, int addressHi, int speed){
         MrcMessage m = new MrcMessage(MrcPackets.getThrottlePacketLength());
         m.setMessageClass(MrcInterface.THROTTLEINFO);
-        int i = m.putHeader(MrcPackets.throttlePacketHeader);
+        int i = m.putHeader(MrcPackets.THROTTLEPACKETHEADER);
         
         m.setElement(i++,addressHi);
         m.setElement(i++, 0x00);
@@ -142,17 +142,17 @@ public class MrcMessage {
         m.replyNotExpected();
         int i= 0;
         switch(group){
-            case 1: i = m.putHeader(MrcPackets.functionGroup1PacketHeader);
+            case 1: i = m.putHeader(MrcPackets.FUNCTIONGROUP1PACKETHEADER);
                     break;
-            case 2: i = m.putHeader(MrcPackets.functionGroup2PacketHeader);
+            case 2: i = m.putHeader(MrcPackets.FUNCTIONGROUP2PACKETHEADER);
                     break;
-            case 3: i = m.putHeader(MrcPackets.functionGroup3PacketHeader);
+            case 3: i = m.putHeader(MrcPackets.FUNCTIONGROUP3PACKETHEADER);
                     break;
-            case 4: i= m.putHeader(MrcPackets.functionGroup4PacketHeader);
+            case 4: i= m.putHeader(MrcPackets.FUNCTIONGROUP4PACKETHEADER);
                     break;
-            case 5: i = m.putHeader(MrcPackets.functionGroup5PacketHeader);
+            case 5: i = m.putHeader(MrcPackets.FUNCTIONGROUP5PACKETHEADER);
                     break;
-            case 6: i = m.putHeader(MrcPackets.functionGroup6PacketHeader);
+            case 6: i = m.putHeader(MrcPackets.FUNCTIONGROUP6PACKETHEADER);
                     break;
             default: log.error("Invalid function group " + group);
                     return null;
@@ -184,7 +184,7 @@ public class MrcMessage {
         m.setMessageClass(MrcInterface.PROGRAMMING);
         m.setTimeout(LONG_TIMEOUT);
         //m.setNeededMode(jmri.jmrix.AbstractMRTrafficController.PROGRAMINGMODE);
-        int i = m.putHeader(MrcPackets.readCVHeader);
+        int i = m.putHeader(MrcPackets.READCVHEADER);
 
         m.setElement(i++, cvHi);
         m.setElement(i++,0x00);
@@ -198,7 +198,7 @@ public class MrcMessage {
     static public MrcMessage getPOM(int addressLo, int addressHi, int cv, int val){
         MrcMessage m = new MrcMessage(MrcPackets.getWriteCVPOMPacketLength());
         m.setMessageClass(MrcInterface.PROGRAMMING);
-        int i = m.putHeader(MrcPackets.writeCVPOMHeader);
+        int i = m.putHeader(MrcPackets.WRITECVPOMHEADER);
         
         cv--;
         m.setElement(i++,addressHi);
@@ -220,7 +220,7 @@ public class MrcMessage {
     static public MrcMessage getWriteCV(int cv, int val){
         MrcMessage m = new MrcMessage(MrcPackets.getWriteCVPROGPacketLength());
         m.setMessageClass(MrcInterface.PROGRAMMING);
-        int i = m.putHeader(MrcPackets.writeCVPROGHeader);
+        int i = m.putHeader(MrcPackets.WRITECVPROGHEADER);
         
         int cvLo = cv;
         int cvHi = cv>>8;
@@ -252,7 +252,7 @@ public class MrcMessage {
     
     public int value(){
         int val = -1;
-        if(MrcPackets.startsWith(this, MrcPackets.readCVHeaderReply)){
+        if(MrcPackets.startsWith(this, MrcPackets.READCVHEADERREPLY)){
             if(getElement(4)==getElement(6)){
                 val = getElement(4)&0xff;
                 log.info("good reply " + val);
@@ -276,7 +276,7 @@ public class MrcMessage {
         if (ratio < 0 || ratio > 60) log.error("ratio number too large: "+ratio);
         MrcMessage m = new MrcMessage(MrcPackets.getSetClockRatioPacketLength());
         m.setMessageClass(MrcInterface.CLOCK);
-        int i = m.putHeader(MrcPackets.setClockRatioHeader);
+        int i = m.putHeader(MrcPackets.SETCLOCKRATIOHEADER);
         
         m.setElement(i++, ratio);
         m.setElement(i++, 0x00);
@@ -295,7 +295,7 @@ public class MrcMessage {
         if (minute < 0 || minute > 59) log.error("hour minute out of range : " + minute);
         MrcMessage m = new MrcMessage(MrcPackets.getSetClockTimePacketLength());
         m.setMessageClass(MrcInterface.CLOCK);
-        int i = m.putHeader(MrcPackets.setClockTimeHeader);
+        int i = m.putHeader(MrcPackets.SETCLOCKTIMEHEADER);
         
         m.setElement(i++, hour);
         m.setElement(i++, 0x00);
@@ -312,7 +312,7 @@ public class MrcMessage {
     static public MrcMessage setClockAmPm() {
         MrcMessage m = new MrcMessage(MrcPackets.getSetClockAmPmPacketLength());
         m.setMessageClass(MrcInterface.CLOCK);
-        int i = m.putHeader(MrcPackets.setClockAmPmHeader);
+        int i = m.putHeader(MrcPackets.SETCLOCKAMPMHEADER);
         
         m.setElement(i++, 0x32);
         m.setElement(i++, 0x00);
@@ -327,14 +327,14 @@ public class MrcMessage {
     static public MrcMessage setPowerOff() {
         MrcMessage m = new MrcMessage(MrcPackets.getPowerOffPacketLength());
         m.setMessageClass(MrcInterface.POWER);
-        m.putHeader(MrcPackets.powerOff);
+        m.putHeader(MrcPackets.POWEROFF);
         return m;
     }
     
     static public MrcMessage setPowerOn() {
         MrcMessage m = new MrcMessage(MrcPackets.getPowerOffPacketLength());
         m.setMessageClass(MrcInterface.POWER);
-        m.putHeader(MrcPackets.powerOn);
+        m.putHeader(MrcPackets.POWERON);
         return m;
     }
     

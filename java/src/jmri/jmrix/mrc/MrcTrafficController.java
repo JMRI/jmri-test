@@ -11,7 +11,7 @@ import jmri.jmrix.AbstractMRTrafficController;
 import java.io.DataInputStream;
 import java.util.Date;
 import java.util.Vector;
-import static jmri.jmrix.mrc.MrcPackets.locoSoleControlCode;
+import static jmri.jmrix.mrc.MrcPackets.LOCOSOLECONTROLCODE;
 
 /**
  * Converts Stream-based I/O to/from MRC messages.  The "MrcInterface"

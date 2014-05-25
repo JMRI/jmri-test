@@ -172,15 +172,15 @@ public class MrcPacketizer extends MrcTrafficController {
     public OutputStream ostream = null;
 
         //We keep a copy of the lengths here to save on time on each request later.
-    final private static int throttlePacketLength = MrcPackets.getThrottlePacketLength();
-    final private static int functionGroupLength = MrcPackets.getFunctionPacketLength();
-    final private static int readCVLength = MrcPackets.getReadCVPacketLength();
+    final private static int THROTTLEPACKETLENGTH = MrcPackets.getThrottlePacketLength();
+    final private static int FUNCTIONGROUPLENGTH = MrcPackets.getFunctionPacketLength();
+    final private static int READCVLENGTH = MrcPackets.getReadCVPacketLength();
     final private static int readCVReplyLength = MrcPackets.getReadCVPacketReplyLength();
     final private static int readDecoderAddressLength = MrcPackets.getReadDecoderAddressLength();
-    final private static int writeCVPROGLength = MrcPackets.getWriteCVPROGPacketLength();
-    final private static int writeCVPOMLength = MrcPackets.getWriteCVPOMPacketLength();
-    final private static int setClockRatioLength = MrcPackets.getSetClockRatioPacketLength();
-    final private static int setClockTimeLength = MrcPackets.getSetClockTimePacketLength();
+    final private static int WRITECVPROGLENGTH = MrcPackets.getWriteCVPROGPacketLength();
+    final private static int WRITECVPOMLENGTH = MrcPackets.getWriteCVPOMPacketLength();
+    final private static int SETCLOCKRATIOLENGTH = MrcPackets.getSetClockRatioPacketLength();
+    final private static int SETCLOCKTIMELENGTH = MrcPackets.getSetClockTimePacketLength();
     final private static int setClockAMPMLength = MrcPackets.getSetClockAmPmPacketLength();
     final private static int powerOnLength = MrcPackets.getPowerOnPacketLength();
     final private static int powerOffLength = MrcPackets.getPowerOffPacketLength();
@@ -291,41 +291,41 @@ public class MrcPacketizer extends MrcTrafficController {
                                     msg = new MrcMessage(4);
                                     msg.setMessageClass(MrcInterface.POLL);
                                     break;
-                                case MrcPackets.throttlePacketCmd : msg = new MrcMessage(throttlePacketLength);
+                                case MrcPackets.THROTTLEPACKETCMD : msg = new MrcMessage(THROTTLEPACKETLENGTH);
                                                                     msg.setMessageClass(MrcInterface.THROTTLEINFO);
                                                                     break;
                                 //$FALL-THROUGH$
-                                case MrcPackets.functionGroup1PacketCmd : 
-                                case MrcPackets.functionGroup2PacketCmd : 
-                                case MrcPackets.functionGroup3PacketCmd : 
-                                case MrcPackets.functionGroup4PacketCmd : 
-                                case MrcPackets.functionGroup5PacketCmd : 
-                                case MrcPackets.functionGroup6PacketCmd : msg = new MrcMessage(functionGroupLength);
+                                case MrcPackets.FUNCTIONGROUP1PACKETCMD : 
+                                case MrcPackets.FUNCTIONGROUP2PACKETCMD : 
+                                case MrcPackets.FUNCTIONGROUP3PACKETCMD : 
+                                case MrcPackets.FUNCTIONGROUP4PACKETCMD : 
+                                case MrcPackets.FUNCTIONGROUP5PACKETCMD : 
+                                case MrcPackets.FUNCTIONGROUP6PACKETCMD : msg = new MrcMessage(FUNCTIONGROUPLENGTH);
                                                                           msg.setMessageClass(MrcInterface.THROTTLEINFO);
                                                                           break;
-                                case MrcPackets.readCVCmd :               msg = new MrcMessage(readCVLength);
+                                case MrcPackets.READCVCMD :               msg = new MrcMessage(READCVLENGTH);
                                                                           msg.setMessageClass(MrcInterface.PROGRAMMING);
                                                                           log.info("Read CV Cmd");
                                                                           break;
-                                case MrcPackets.readDecoderAddressCmd :   msg = new MrcMessage(readDecoderAddressLength);
+                                case MrcPackets.READDECODERADDRESSCMD :   msg = new MrcMessage(readDecoderAddressLength);
                                                                           msg.setMessageClass(MrcInterface.PROGRAMMING);
                                                                           break;
-                                case MrcPackets.writeCVPROGCmd :          msg = new MrcMessage(writeCVPROGLength);
+                                case MrcPackets.WRITECVPROGCMD :          msg = new MrcMessage(WRITECVPROGLENGTH);
                                                                           msg.setMessageClass(MrcInterface.PROGRAMMING);
                                                                           break;
-                                case MrcPackets.writeCVPOMCmd :           msg = new MrcMessage(writeCVPOMLength);
+                                case MrcPackets.WRITECVPOMCMD :           msg = new MrcMessage(WRITECVPOMLENGTH);
                                                                           msg.setMessageClass(MrcInterface.PROGRAMMING);
                                                                           break;
-                                case MrcPackets.setClockRatioCmd :        msg = new MrcMessage(setClockRatioLength);
+                                case MrcPackets.SETCLOCKRATIOCMD :        msg = new MrcMessage(SETCLOCKRATIOLENGTH);
                                                                           msg.setMessageClass(MrcInterface.CLOCK);
                                                                           break;
-                                case MrcPackets.setClockTimeCmd :         msg = new MrcMessage(setClockTimeLength);
+                                case MrcPackets.SETCLOCKTIMECMD :         msg = new MrcMessage(SETCLOCKTIMELENGTH);
                                                                           msg.setMessageClass(MrcInterface.CLOCK);
                                                                           break;
-                                case MrcPackets.setClockAmPmCmd :         msg = new MrcMessage(setClockAMPMLength);
+                                case MrcPackets.SETCLOCKAMPMCMD :         msg = new MrcMessage(setClockAMPMLength);
                                                                           msg.setMessageClass(MrcInterface.CLOCK);
                                                                           break;
-                                case MrcPackets.readCVHeaderReplyCode :   msg = new MrcMessage(readCVReplyLength);
+                                case MrcPackets.READCVHEADERREPLYCODE :   msg = new MrcMessage(readCVReplyLength);
                                                                           msg.setMessageClass(MrcInterface.PROGRAMMING);
                                                                           synchronized(transmitLock) {
                                                                             mCurrentState = IDLESTATE;
@@ -333,7 +333,7 @@ public class MrcPacketizer extends MrcTrafficController {
                                                                           }
                                                                           log.info("CV read reply");
                                                                           break;
-                                case MrcPackets.progCmdSentCode  :        log.info("Gd Prog Cmd Sent");
+                                case MrcPackets.PROGCMDSENTCODE  :        log.info("Gd Prog Cmd Sent");
                                                                           synchronized(transmitLock) {
                                                                             mCurrentState = IDLESTATE;
                                                                             transmitLock.notify();
@@ -341,41 +341,41 @@ public class MrcPacketizer extends MrcTrafficController {
                                                                           msg = new MrcMessage(4);
                                                                           msg.setMessageClass(MrcInterface.PROGRAMMING);
                                                                           break;
-                                case MrcPackets.powerOnCmd  :             log.info("Power On Cmd");
+                                case MrcPackets.POWERONCMD  :             log.info("Power On Cmd");
                                                                           mCurrentState = IDLESTATE;
                                                                           msg = new MrcMessage(powerOnLength);
                                                                           msg.setMessageClass(MrcInterface.POWER);
                                                                           break;
-                                case MrcPackets.powerOffCmd  :             log.info("Power Off Cmd");
+                                case MrcPackets.POWEROFFCMD  :             log.info("Power Off Cmd");
                                                                           mCurrentState = IDLESTATE;
                                                                           msg = new MrcMessage(powerOffLength);
                                                                           msg.setMessageClass(MrcInterface.POWER);
                                                                           break;
-                                case MrcPackets.addToConsistPacketCmd:    mCurrentState = IDLESTATE;
+                                case MrcPackets.ADDTOCONSISTPACKETCMD:    mCurrentState = IDLESTATE;
                                                                           msg = new MrcMessage(addToConsistLength);
                                                                           msg.setMessageClass(MrcInterface.THROTTLEINFO);
                                                                           break;
-                                case MrcPackets.clearConsistPacketCmd:    mCurrentState = IDLESTATE;
+                                case MrcPackets.CLEARCONSISTPACKETCMD:    mCurrentState = IDLESTATE;
                                                                           msg = new MrcMessage(clearConsistLength);
                                                                           msg.setMessageClass(MrcInterface.THROTTLEINFO);
                                                                           break;
-                                case MrcPackets.routeControlPacketCmd:    mCurrentState = IDLESTATE;
+                                case MrcPackets.ROUTECONTROLPACKETCMD:    mCurrentState = IDLESTATE;
                                                                           msg = new MrcMessage(routeControlLength);
                                                                           msg.setMessageClass(MrcInterface.THROTTLEINFO);
                                                                           break;
-                                case MrcPackets.clearRoutePacketCmd:      mCurrentState = IDLESTATE;
+                                case MrcPackets.CLEARROUTEPACKETCMD:      mCurrentState = IDLESTATE;
                                                                           msg = new MrcMessage(clearRouteLength);
                                                                           msg.setMessageClass(MrcInterface.TURNOUTS);
                                                                           break;
-                                case MrcPackets.addToRoutePacketCmd:      mCurrentState = IDLESTATE;
+                                case MrcPackets.ADDTOROUTEPACKETCMD:      mCurrentState = IDLESTATE;
                                                                           msg = new MrcMessage(addToRouteLength);
                                                                           msg.setMessageClass(MrcInterface.TURNOUTS);
                                                                           break;
-                                case MrcPackets.accessoryPacketCmd:       mCurrentState = IDLESTATE;
+                                case MrcPackets.ACCESSORYPACKETCMD:       mCurrentState = IDLESTATE;
                                                                           msg = new MrcMessage(accessoryLength);
                                                                           msg.setMessageClass(MrcInterface.TURNOUTS);
                                                                           break;
-                                case MrcPackets.locoDblControlCode :     //synchronized(xmtHandler) {
+                                case MrcPackets.LOCODBLCONTROLCODE :     //synchronized(xmtHandler) {
                                                                           //mCurrentState = DOUBLELOCOCONTROL;
                                                                           synchronized(transmitLock) {
                                                                             mCurrentState = DOUBLELOCOCONTROL;
@@ -385,7 +385,7 @@ public class MrcPacketizer extends MrcTrafficController {
                                                                           msg.setMessageClass(MrcInterface.THROTTLEINFO);
                                                                           break;
                                                                           //}
-                                case MrcPackets.locoSoleControlCode :     mCurrentState = IDLESTATE;
+                                case MrcPackets.LOCOSOLECONTROLCODE :     mCurrentState = IDLESTATE;
                                                                           msg = new MrcMessage(4);
                                                                           msg.setMessageClass(MrcInterface.THROTTLEINFO);
                                                                           synchronized(transmitLock) {
@@ -393,7 +393,7 @@ public class MrcPacketizer extends MrcTrafficController {
                                                                             transmitLock.notify();
                                                                           }
                                                                           break;
-                                case MrcPackets.goodCmdRecievedCode :      //Possibly shouldn't change the state, as we wait for further confirmation.
+                                case MrcPackets.GOODCMDRECIEVEDCODE :      //Possibly shouldn't change the state, as we wait for further confirmation.
                                                                           msg = new MrcMessage(4);
                                                                           /*synchronized(xmtHandler) {
                                                                             mCurrentState = IDLESTATE;
@@ -401,7 +401,7 @@ public class MrcPacketizer extends MrcTrafficController {
                                                                           }*/
                                                                           log.info("Gd Cmd");
                                                                           break;
-                                case MrcPackets.badCmdRecievedCode  :     if(mCurrentState == WAITFORPROGREAD){
+                                case MrcPackets.BADCMDRECIEVEDCODE  :     if(mCurrentState == WAITFORPROGREAD){
                                                                             msg.setMessageClass(MrcInterface.PROGRAMMING);
                                                                           }
                                                                           mCurrentState = BADCOMMAND;
