@@ -4,14 +4,8 @@ package jmri.jmrix.mrc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jmri.jmrix.AbstractMRListener;
-import jmri.jmrix.AbstractMRMessage;
-import jmri.jmrix.AbstractMRReply;
-import jmri.jmrix.AbstractMRTrafficController;
-import java.io.DataInputStream;
 import java.util.Date;
 import java.util.Vector;
-import static jmri.jmrix.mrc.MrcPackets.LOCOSOLECONTROLCODE;
 
 /**
  * Converts Stream-based I/O to/from MRC messages.  The "MrcInterface"

@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import jmri.jmrix.mrc.*;
 import jmri.jmrix.mrc.swing.*;
 import java.util.Date;
-import javax.swing.JOptionPane;
 import javax.swing.JCheckBox;
 
 
@@ -45,6 +44,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTraffi
         return x.toString(); 
     }
 
+    @Override
     public void dispose() {
         if(memo.getMrcTrafficController()!=null){
         // disconnect from the LnTrafficController
@@ -54,10 +54,12 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTraffi
         super.dispose();
     }
     
+    @Override
     public void init() {}
     
     MrcSystemConnectionMemo memo;
     
+    @Override
     public void initContext(Object context) {
         if (context instanceof MrcSystemConnectionMemo ) {
             initComponents((MrcSystemConnectionMemo) context);
@@ -68,6 +70,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTraffi
     
     private int trafficFilter = MrcInterface.ALL;
     
+    @Override
     public void initComponents(MrcSystemConnectionMemo memo) {
         this.memo = memo;
         add(excludePoll);
@@ -97,6 +100,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTraffi
     
     MrcMessage previousPollMessage;
     
+    @Override
     public synchronized void notifyXmit(Date timestamp, MrcMessage m) {
     	/*if(excludePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
             return;
@@ -114,6 +118,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTraffi
     	//lastLoggedTxMessage = m;
     }
     
+    @Override
     public synchronized void notifyRcv(Date timestamp, MrcMessage m) {
     	
     	//if (useSimpleLogging) return;

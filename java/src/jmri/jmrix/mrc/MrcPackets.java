@@ -1,9 +1,13 @@
 package jmri.jmrix.mrc;
 
-import jmri.jmrix.AbstractMessage;
 /**
+ * Some of the message formats used in this class are Copyright MRC, Inc.
+ * and used with permission as part of the JMRI project.  That permission
+ * does not extend to uses in other software products.  If you wish to
+ * use this code, algorithm or these message formats outside of JMRI, please
+ * contact Mrc Inc for separate permission.
  *
- * @author kevin
+ * @author Kevin Dickerson 2014
  */
 public class MrcPackets {
     
@@ -352,7 +356,8 @@ public class MrcPackets {
 	        default:
                 if(m.getNumDataElements()==6){
                     if(m.getElement(0)==m.getElement(2)&&m.getElement(0)==m.getElement(4)){
-                        txt.append("Poll to Cab " + m.getElement(0));
+                        txt.append("Poll to Cab ");
+                        txt.append(m.getElement(0));
                     } else if (m.getElement(0)==0 && m.getElement(1)==0x01){
                         txt.append("Clock Update");
                     }

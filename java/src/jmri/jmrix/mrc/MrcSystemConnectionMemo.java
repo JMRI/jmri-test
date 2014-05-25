@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
  * and provide general information.
  * <p>
  * Objects of specific subtypes are registered
- * in the instamrc manager to activate their
+ * in the instance manager to activate their
  * particular system.
  *
  * @author      Ken Cameron Copyright (C) 2014
@@ -75,9 +75,9 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
             return true;
         if (type.equals(jmri.ThrottleManager.class))
             return true;
-        /*if (type.equals(jmri.PowerManager.class))
+        if (type.equals(jmri.PowerManager.class))
             return true;
-        if (type.equals(jmri.TurnoutManager.class))
+        /*if (type.equals(jmri.TurnoutManager.class))
             return true;*/
         if (type.equals(jmri.ClockControl.class))
             return true;
@@ -99,9 +99,9 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
             return (T)getProgrammerManager();
         if (T.equals(jmri.ThrottleManager.class))
             return (T)getThrottleManager();
-        /*if (T.equals(jmri.PowerManager.class))
+        if (T.equals(jmri.PowerManager.class))
             return (T)getPowerManager();
-        if (T.equals(jmri.TurnoutManager.class))
+        /*if (T.equals(jmri.TurnoutManager.class))
             return (T)getTurnoutManager();*/
         if (T.equals(jmri.ClockControl.class))
             return (T)getClockControl();
@@ -112,8 +112,8 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
         return null; // nothing, by default
     }
 
- /*   private MrcPowerManager powerManager;
-    private MrcTurnoutManager turnoutManager;*/
+    private MrcPowerManager powerManager;
+    /*private MrcTurnoutManager turnoutManager;*/
     private MrcThrottleManager throttleManager;
     private MrcClockControl clockManager;
     /*private MrcConsistManager consistManager;*/
@@ -124,10 +124,10 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
      * place.  
      */
     public void configureManagers() {
-    	/*powerManager = new jmri.jmrix.mrc.MrcPowerManager(this);
+    	powerManager = new jmri.jmrix.mrc.MrcPowerManager(this);
         InstanceManager.setPowerManager(powerManager);
 
-        turnoutManager = new jmri.jmrix.mrc.MrcTurnoutManager(getMrcTrafficController(), getSystemPrefix());
+        /*turnoutManager = new jmri.jmrix.mrc.MrcTurnoutManager(getMrcTrafficController(), getSystemPrefix());
         InstanceManager.setTurnoutManager(turnoutManager);  */
 
         throttleManager = new jmri.jmrix.mrc.MrcThrottleManager(this);
@@ -144,8 +144,8 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
 
     }
 
-/*    public MrcPowerManager getPowerManager() { return powerManager; }
-    public MrcTurnoutManager  getTurnoutManager() { return turnoutManager; }*/
+    public MrcPowerManager getPowerManager() { return powerManager; }
+   /* public MrcTurnoutManager  getTurnoutManager() { return turnoutManager; }*/
     public MrcThrottleManager  getThrottleManager() { return throttleManager; }
     public MrcClockControl  getClockControl() { return clockManager; }
     /*public MrcConsistManager  getConsistManager() { return consistManager; }*/
@@ -159,9 +159,9 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
         InstanceManager.deregister(this, MrcSystemConnectionMemo.class);
         if (componentFactory != null) 
             InstanceManager.deregister(componentFactory, jmri.jmrix.swing.ComponentFactory.class);
-/*        if (powerManager != null) 
+        if (powerManager != null) 
             InstanceManager.deregister(powerManager, jmri.jmrix.mrc.MrcPowerManager.class);
-        if (turnoutManager != null) 
+        /*if (turnoutManager != null) 
             InstanceManager.deregister(turnoutManager, jmri.jmrix.mrc.MrcTurnoutManager.class);*/
         if (throttleManager != null)
             InstanceManager.deregister(throttleManager, jmri.jmrix.mrc.MrcThrottleManager.class);
