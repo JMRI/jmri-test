@@ -54,6 +54,7 @@ public class TrainCommon {
 
 	protected static final boolean PICKUP = true;
 	protected static final boolean LOCAL = true;
+	protected static final boolean ENGINE = true;
 
 	CarManager carManager = CarManager.instance();
 	EngineManager engineManager = EngineManager.instance();
@@ -1236,35 +1237,35 @@ public class TrainCommon {
 	}
 
 	public String getPickupEngineHeader() {
-		return getHeader(Setup.getPickupEngineMessageFormat(), PICKUP, !LOCAL);
+		return getHeader(Setup.getPickupEngineMessageFormat(), PICKUP, !LOCAL, ENGINE);
 	}
 
 	public String getDropEngineHeader() {
-		return getHeader(Setup.getDropEngineMessageFormat(), !PICKUP, !LOCAL);
+		return getHeader(Setup.getDropEngineMessageFormat(), !PICKUP, !LOCAL, ENGINE);
 	}
 
 	public String getPickupCarHeader(boolean isManifest) {
 		if (isManifest)
-			return getHeader(Setup.getPickupCarMessageFormat(), PICKUP, !LOCAL);
+			return getHeader(Setup.getPickupCarMessageFormat(), PICKUP, !LOCAL, !ENGINE);
 		else
-			return getHeader(Setup.getSwitchListPickupCarMessageFormat(), PICKUP, !LOCAL);
+			return getHeader(Setup.getSwitchListPickupCarMessageFormat(), PICKUP, !LOCAL, !ENGINE);
 	}
 
 	public String getDropCarHeader(boolean isManifest) {
 		if (isManifest)
-			return getHeader(Setup.getDropCarMessageFormat(), !PICKUP, !LOCAL);
+			return getHeader(Setup.getDropCarMessageFormat(), !PICKUP, !LOCAL, !ENGINE);
 		else
-			return getHeader(Setup.getSwitchListDropCarMessageFormat(), !PICKUP, !LOCAL);
+			return getHeader(Setup.getSwitchListDropCarMessageFormat(), !PICKUP, !LOCAL, !ENGINE);
 	}
 
 	public String getLocalMoveHeader(boolean isManifest) {
 		if (isManifest)
-			return getHeader(Setup.getLocalMessageFormat(), !PICKUP, LOCAL);
+			return getHeader(Setup.getLocalMessageFormat(), !PICKUP, LOCAL, !ENGINE);
 		else
-			return getHeader(Setup.getSwitchListLocalMessageFormat(), !PICKUP, LOCAL);
+			return getHeader(Setup.getSwitchListLocalMessageFormat(), !PICKUP, LOCAL, !ENGINE);
 	}
 
-	private String getHeader(String[] format, boolean isPickup, boolean isLocal) {
+	private String getHeader(String[] format, boolean isPickup, boolean isLocal, boolean isEngine) {
 		StringBuffer buf = new StringBuffer();
 		for (String attribute : format) {
 			if (attribute.equals(Setup.NONE))
@@ -1273,8 +1274,12 @@ public class TrainCommon {
 				buf.append(padAndTruncateString(TrainManifestHeaderText.getStringHeader_Road(), CarRoads.instance()
 						.getCurMaxNameLength())
 						+ " ");
-			else if (attribute.equals(Setup.NUMBER))
+			else if (attribute.equals(Setup.NUMBER) && !isEngine)
 				buf.append(padAndTruncateString(TrainManifestHeaderText.getStringHeader_Number(),
+						Control.max_len_string_road_number - trimRoadNumber)
+						+ " ");
+			else if (attribute.equals(Setup.NUMBER) && isEngine)
+				buf.append(padAndTruncateString(TrainManifestHeaderText.getStringHeader_EngineNumber(),
 						Control.max_len_string_road_number - trimRoadNumber)
 						+ " ");
 			else if (attribute.equals(Setup.TYPE))
@@ -1535,12 +1540,6 @@ public class TrainCommon {
 	}
 
 	private static int getLineLength(String orientation, int fontSize, String fontName) {
-		// page size has been adjusted to account for margins of .5
-		Dimension pagesize = new Dimension(540, 792); // Portrait
-		if (orientation.equals(Setup.LANDSCAPE))
-			pagesize = new Dimension(720, 612);
-		if (orientation.equals(Setup.HANDHELD))
-			pagesize = new Dimension(206, 792);
 		// Metrics don't always work for the various font names, so use
 		// Monospaced
 		Font font = new Font(fontName, Font.PLAIN, fontSize); // NOI18N
@@ -1549,7 +1548,7 @@ public class TrainCommon {
 		int charwidth = metrics.charWidth('m');
 
 		// compute lines and columns within margins
-		return pagesize.width / charwidth;
+		return getPageSize(orientation).width / charwidth;
 	}
 
 	private boolean checkStringLength(String string, boolean isManifest) {
@@ -1568,17 +1567,21 @@ public class TrainCommon {
 	 * @return true if string length is longer than page width
 	 */
 	private boolean checkStringLength(String string, String orientation, String fontName, int fontSize) {
-		// page size has been adjusted to account for margins of .5
-		Dimension pagesize = new Dimension(540, 792); // Portrait
-		if (orientation.equals(Setup.LANDSCAPE))
-			pagesize = new Dimension(720, 612);
-		if (orientation.equals(Setup.HANDHELD))
-			pagesize = new Dimension(206, 792);
 		Font font = new Font(fontName, Font.PLAIN, fontSize); // NOI18N
 		JLabel label = new JLabel();
 		FontMetrics metrics = label.getFontMetrics(font);
 		int stringWidth = metrics.stringWidth(string);
-		return stringWidth <= pagesize.width;
+		return stringWidth <= getPageSize(orientation).width;
+	}
+	
+	private static Dimension getPageSize(String orientation) {
+		// page size has been adjusted to account for margins of .5
+		Dimension pagesize = new Dimension(523, 769); // Portrait 8.5 x 11
+		if (orientation.equals(Setup.LANDSCAPE))
+			pagesize = new Dimension(769, 523);
+		if (orientation.equals(Setup.HANDHELD))
+			pagesize = new Dimension(206, 769);
+		return pagesize;
 	}
 
 	/**
