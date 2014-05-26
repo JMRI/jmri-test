@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<project name="maven-antrun-" default="main"  >
-<target name="main">
-  <echo message="Executing ant clean..."/>
-  <ant antfile="/Users/rhwood/Developer/JMRI/JMRI/netbeans/TrainPro/jmri-core/../../build.xml" target="clean" inheritAll="false"></ant>
-</target>
-</project>
