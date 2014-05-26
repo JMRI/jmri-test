@@ -4,11 +4,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
       <groupId>org.jmri.app</groupId>
-      <artifactId>TrainPro</artifactId>
+      <artifactId>trainpro</artifactId>
       <version>3.99.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>TrainPro-branding</artifactId>
+  <artifactId>trainpro-branding</artifactId>
   <packaging>nbm</packaging>
 
   <name>TrainPro Branding</name>

@@ -4,14 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jmri.app</groupId>
-        <artifactId>TrainPro</artifactId>
+        <artifactId>trainpro</artifactId>
         <version>3.99.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>TrainPro-app</artifactId>
+    <artifactId>trainpro-app</artifactId>
     <packaging>nbm-application</packaging>
 
-    <name>TrainPro App</name>
+    <name>TrainPro Application</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -47,7 +47,7 @@
         -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>TrainPro-core</artifactId>
+            <artifactId>trainpro-core</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

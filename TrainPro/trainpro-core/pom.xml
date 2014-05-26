@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jmri.app</groupId>
-        <artifactId>TrainPro</artifactId>
+        <artifactId>trainpro</artifactId>
         <version>3.99.0-SNAPSHOT</version>
     </parent>
-    <artifactId>core</artifactId>
+    <artifactId>trainpro-core</artifactId>
     <packaging>nbm</packaging>
     <build>
         <plugins>
@@ -31,8 +31,8 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jmri.lib</groupId>
-            <artifactId>core</artifactId>
+            <groupId>org.jmri</groupId>
+            <artifactId>jmri-core</artifactId>
             <version>3.99.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
