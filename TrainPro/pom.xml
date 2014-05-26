@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.jmri.app</groupId>
-    <artifactId>TrainPro</artifactId>
+    <artifactId>trainpro</artifactId>
     <version>3.99.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -61,6 +61,7 @@
         <module>trainpro-app</module>
         <module>jmri-core</module>
         <module>jmri-logging</module>
+        <module>jmri-netbeans</module>
     </modules>
 
     <properties>
