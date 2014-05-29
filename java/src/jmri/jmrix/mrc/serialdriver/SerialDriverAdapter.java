@@ -5,7 +5,6 @@ package jmri.jmrix.mrc.serialdriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jmri.jmrix.mrc.MrcPortController;
-import jmri.jmrix.mrc.MrcTrafficController;
 import jmri.jmrix.mrc.MrcPacketizer;
 import jmri.jmrix.mrc.MrcSystemConnectionMemo;
 
@@ -38,6 +37,7 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
         adaptermemo = new MrcSystemConnectionMemo();
     }
 
+    @Override
     public String openPort(String portName, String appName)  {
         // open the port, check ability to set moderators
         try {
@@ -111,6 +111,7 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
      * set up all of the other objects to operate with an serial command
      * station connected to this port
      */
+    @Override
     public void configure() {
         MrcPacketizer packets = new MrcPacketizer();
         packets.connectPort(this);
@@ -126,6 +127,7 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
     }
 
     // base class methods for the MrcPortController interface
+    @Override
     public DataInputStream getInputStream() {
         if (!opened) {
             log.error("getInputStream called before load(), stream not available");
@@ -135,6 +137,7 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
         return new DataInputStream(serialStream);
     }
 
+    @Override
     public DataOutputStream getOutputStream() {
         log.info("Outputstream opened");
         if (!opened) log.error("getOutputStream called before load(), stream not available");
@@ -147,11 +150,13 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
      	return null;
     }
 
+    @Override
     public boolean status() {return opened;}
 
     /**
      * Get an array of valid baud rates. 
      */
+    @Override
     public String[] validBaudRates() {
         return new String[]{"38,400 bps"};
     }
@@ -171,8 +176,10 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
     
     
     
+    @Override
     public MrcSystemConnectionMemo getSystemConnectionMemo() { return adaptermemo; }
     
+    @Override
     public void dispose(){
         if (adaptermemo!=null)
             adaptermemo.dispose();

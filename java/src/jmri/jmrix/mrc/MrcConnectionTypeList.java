@@ -13,6 +13,7 @@ package jmri.jmrix.mrc;
  */
 public class MrcConnectionTypeList  implements jmri.jmrix.ConnectionTypeList {
 
+    @Override
     public String[] getAvailableProtocolClasses() { 
         return new String[] {
               "jmri.jmrix.mrc.serialdriver.ConnectionConfig",

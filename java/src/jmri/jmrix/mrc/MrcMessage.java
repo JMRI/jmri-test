@@ -328,6 +328,7 @@ public class MrcMessage {
         MrcMessage m = new MrcMessage(MrcPackets.getPowerOffPacketLength());
         m.setMessageClass(MrcInterface.POWER);
         m.putHeader(MrcPackets.POWEROFF);
+        m.replyNotExpected();
         return m;
     }
     
@@ -335,6 +336,7 @@ public class MrcMessage {
         MrcMessage m = new MrcMessage(MrcPackets.getPowerOffPacketLength());
         m.setMessageClass(MrcInterface.POWER);
         m.putHeader(MrcPackets.POWERON);
+        m.replyNotExpected();
         return m;
     }
     

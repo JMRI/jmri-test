@@ -45,11 +45,11 @@ public class MrcPowerManager
         checkTC();
         if (v==ON) {
             // send GPON
-            MrcMessage l = new MrcMessage(2);
+            MrcMessage l = MrcMessage.setPowerOn();
             tc.sendMrcMessage(l);
         } else if (v==OFF) {
             // send GPOFF
-            MrcMessage l = new MrcMessage(2);
+            MrcMessage l = MrcMessage.setPowerOff();
             tc.sendMrcMessage(l);
         }
 

@@ -408,7 +408,7 @@ public class MrcPacketizer extends MrcTrafficController {
                                                                           msg = new MrcMessage(4);
                                                                           break;
                                 default : msg = new MrcMessage(4); //Unknown
-                                         log.info("UNKNOWN");
+                                         log.info("UNKNOWN " + Integer.toHexString(firstByte));
                             }     
                         }
                         

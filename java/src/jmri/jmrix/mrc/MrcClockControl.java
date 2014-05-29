@@ -58,6 +58,7 @@ public class MrcClockControl extends DefaultClockControl implements /*MrcListene
             return;
         }
         minuteChangeListener = new java.beans.PropertyChangeListener() {
+                @Override
                 public void propertyChange(java.beans.PropertyChangeEvent e) {
                     newInternalMinute();
                 }
@@ -199,13 +200,16 @@ public class MrcClockControl extends DefaultClockControl implements /*MrcListene
     }
     
     public synchronized void notifyXmit(Date timestamp, MrcMessage m) {}
+    @Override
     public synchronized void notifyFailedXmit(Date timestamp, MrcMessage m) {}
     
+    @Override
     public synchronized void notifyRcv(Date timestamp, MrcMessage m) {
         message(m);
     }
     
     /** name of Mrc clock */
+    @Override
 	public String getHardwareClockName() {
 		if (DEBUG_SHOW_PUBLIC_CALLS){
 			log.debug("getHardwareClockName");
