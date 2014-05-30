@@ -196,12 +196,18 @@ public class TamsTrafficController extends AbstractMRTrafficController implement
      * @return next location in the stream to fill
      */
     protected int addHeaderToOutput(byte[] msg, AbstractMRMessage m) {
-        if (m.isBinary()){
+        /*if (m.isBinary()){
             msg[0] = (byte) 0x58;
             return 1;
-        }
+        }*/
         return 0;
     }
+    
+    /*protected int lengthOfByteStream(AbstractMRMessage m) {
+        int len = m.getNumDataElements();
+        //Binary has a one byte header, while ascii has a one byte footer
+        return len+1;
+    }*/
     
     protected AbstractMRReply newReply() { 
         TamsReply reply = new TamsReply();
@@ -211,7 +217,18 @@ public class TamsTrafficController extends AbstractMRTrafficController implement
     protected boolean endOfMessage(AbstractMRReply msg) {
         int num = msg.getNumDataElements();
         if(num>2 && msg.getElement(num-2)==0x0d && msg.getElement(num-1)==0x5d){
+            //End character for an ASCII reply
+            msg.setBinary(false);
             return true;
+        }
+        //Binary Reply has no end character.
+        try {
+            if(controller.getInputStream().available()==0){
+                msg.setBinary(true);
+                return true;
+            }
+        } catch (java.io.IOException ex){
+            log.error("IO Exception" + ex.toString());
         }
         return false;
     }
