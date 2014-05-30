@@ -242,7 +242,7 @@ public class MrcPackets {
 	        	} else {
 	        		txt.append(" Rev ");
 	        	}
-	        	txt.append(" Speed: " + Integer.toString((m.getElement(8) & 0x80)));
+	        	txt.append(" Speed: " + Integer.toString((m.getElement(8) ^ 0x80)));
 	    		break;
 	        case FUNCTIONGROUP1PACKETCMD:
 	        	txt.append("Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))) + " Group 1");

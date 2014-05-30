@@ -34,26 +34,24 @@ public class MrcPowerManager
         this.tc = memo.getMrcTrafficController();
         tc.addTrafficListener(MrcInterface.POWER, this);
         
-        //updateTrackPowerStatus();  // this delays a while then reads slot 0 to get current track status
     }
     
     protected int power = UNKNOWN;
 
     public void setPower(int v) throws JmriException {
-        power = UNKNOWN;
+        //power = UNKNOWN;
+        int old = power;
 
         checkTC();
         if (v==ON) {
-            // send GPON
             MrcMessage l = MrcMessage.setPowerOn();
             tc.sendMrcMessage(l);
         } else if (v==OFF) {
-            // send GPOFF
             MrcMessage l = MrcMessage.setPowerOff();
             tc.sendMrcMessage(l);
         }
-
-        firePropertyChange("Power", null, null);
+        power = v;
+        firePropertyChange("Power", old, power);
     }
 
 	public int getPower() { return power;}

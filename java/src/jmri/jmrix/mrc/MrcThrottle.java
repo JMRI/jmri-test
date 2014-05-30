@@ -251,20 +251,21 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
             //message potentially matches our loco
             if(MrcPackets.startsWith(m, MrcPackets.THROTTLEPACKETHEADER)){
                     log.info("speed Packet from another controller for our loco");
-                    int speed = m.getElement(8)&0xff;
-                    if(speed>=128) {
+                    int speed = 0;
+                    if((m.getElement(8) & 0x80) == 0x80){
                         //Forward
                         if(!this.isForward){
                             this.isForward = true;
                             notifyPropertyChangeListener("IsForward", !isForward, isForward );
                         }
-                        speed = speed-128;
+                        speed = m.getElement(8) - 0x80;
                     } else if(this.isForward){
                         //reverse
                         this.isForward = false;
                         notifyPropertyChangeListener("IsForward", !isForward, isForward );
+                        speed = m.getElement(8);
                     }
-                    float val = speed/128.0f;
+                    float val = speed/126.0f;
                     if (val != this.speedSetting){
                         notifyPropertyChangeListener("SpeedSetting", this.speedSetting, val );
                         this.speedSetting = val;

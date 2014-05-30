@@ -181,13 +181,10 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
         m.setSource(this);
         return m;
     }
-
-    /*public void message(MrcMessage m) {
-        log.error("message received unexpectedly: "+m.toString());
-    }*/
+    
     public synchronized void notifyXmit(Date timestamp, MrcMessage m){ }
     public synchronized void notifyFailedXmit(Date timestamp, MrcMessage m){
-        if(progState == NOTPROGRAMMING){
+        if(progState == NOTPROGRAMMING && m.getMessageClass()!=MrcInterface.PROGRAMMING){
             return;
         }
         log.info("Error occured in programming command");
