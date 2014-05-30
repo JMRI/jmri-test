@@ -136,7 +136,7 @@ public class MrcClockControl extends DefaultClockControl implements /*MrcListene
     //  ignore replies
     
     public void message(MrcMessage r) {
-        if(r.getMessageClass()!=MrcInterface.CLOCK){
+        if((r.getMessageClass()& MrcInterface.CLOCK)!=MrcInterface.CLOCK){
             return;
         }
     	if (r.getNumDataElements() != 6 || r.getElement(0) != 0 || r.getElement(1) != 1 ||

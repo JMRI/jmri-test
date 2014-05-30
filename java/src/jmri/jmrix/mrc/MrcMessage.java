@@ -281,6 +281,7 @@ public class MrcMessage {
         m.setElement(i++, ratio);
         m.setElement(i++, 0x00);
         m.setElement(i++, getCheckSum(ratio, 0x00, 0x00, 0x00));
+        m.replyNotExpected();
         return m;
     }
 
@@ -302,6 +303,7 @@ public class MrcMessage {
         m.setElement(i++, minute);
         m.setElement(i++, 0x00);
         m.setElement(i++, getCheckSum(hour, 0x00, minute, 0x00));
+        m.replyNotExpected();
         return m;
     }
 
@@ -317,6 +319,7 @@ public class MrcMessage {
         m.setElement(i++, 0x32);
         m.setElement(i++, 0x00);
         m.setElement(i++, getCheckSum(0x32, 0x00, 0x00, 0x00));
+        m.replyNotExpected();
         return m;
     }
     
