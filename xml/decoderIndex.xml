@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="/xml/XSLT/DecoderID.xsl"?>
+<?xml-stylesheet href="/xml/XSLT/DecoderID.xsl" type="text/xsl"?>
 <!DOCTYPE decoderIndex-config SYSTEM "../xml/decoderIndex-config.dtd">
 
 <decoderIndex-config>
-  <!--Written by JMRI version 20140519-0717-heap on Mon May 19 17:17:39 EST 2014 $Id$-->
-  <decoderIndex version="386">
+  <!--Written by JMRI version 20140530-2250-Alain Le Marchand on Sat May 31 00:50:12 CEST 2014 $Id$-->
+  <decoderIndex version="400">
     <mfgList nmraListDate="2012-12-05" updated="2013-04-11" lastadd="106">
       <manufacturer mfg="NMRA" mfgID="999" />
       <manufacturer mfg="A-Train Electronics" mfgID="137" />
@@ -2266,13 +2266,14 @@
       </family>
       <family name="ESU LokPilot V4.0" mfg="Electronic Solutions Ulm GmbH" file="ESU_LokPilotV4.0.xml">
         <model model="LokPilot V4.0" numOuts="105" numFns="32" maxMotorCurrent="1.1A" extFnsESU="yes" productID="LPV4">
-          <output name="97" label="not|used" />
-          <output name="98" label="not|used" />
-          <output name="99" label="not|used" />
-          <output name="100" label="not|used" />
-          <output name="101" label="not|used" />
-          <output name="102" label="not|used" />
-          <output name="103" label="not|used" />
+          <output name="97" label="" />
+          <output name="98" label="" />
+          <output name="99" label="" />
+          <output name="100" label="" />
+          <output name="101" label="" />
+          <output name="102" label="" />
+          <output name="103" label="" />
+          <output name="104" label="" />
           <output name="105" label="Virtual|Drv Snd" />
           <size length="21.3" width="15.5" height="5.5" units="mm" />
           <!-- connector="NEM651, NEM 652, 21MTC, Plux12, wires" -->
@@ -2283,25 +2284,27 @@
           </protocols>
         </model>
         <model model="LokPilot DCC V4.0" numOuts="105" numFns="32" maxMotorCurrent="1.1A" extFnsESU="yes" productID="LPV4DCC">
-          <output name="97" label="not|used" />
-          <output name="98" label="not|used" />
-          <output name="99" label="not|used" />
-          <output name="100" label="not|used" />
-          <output name="101" label="not|used" />
-          <output name="102" label="not|used" />
-          <output name="103" label="not|used" />
+          <output name="97" label="" />
+          <output name="98" label="" />
+          <output name="99" label="" />
+          <output name="100" label="" />
+          <output name="101" label="" />
+          <output name="102" label="" />
+          <output name="103" label="" />
+          <output name="104" label="" />
           <output name="105" label="Virtual|Drv Snd" />
           <size length="21.3" width="15.5" height="5.5" units="mm" />
           <!-- connector="NEM651, NEM 652, 21MTC" -->
         </model>
         <model model="LokPilot Micro V4.0" numOuts="105" numFns="32" maxMotorCurrent="0.75A" extFnsESU="yes" productID="LPmV4">
-          <output name="97" label="not|used" />
-          <output name="98" label="not|used" />
-          <output name="99" label="not|used" />
-          <output name="100" label="not|used" />
-          <output name="101" label="not|used" />
-          <output name="102" label="not|used" />
-          <output name="103" label="not|used" />
+          <output name="97" label="" />
+          <output name="98" label="" />
+          <output name="99" label="" />
+          <output name="100" label="" />
+          <output name="101" label="" />
+          <output name="102" label="" />
+          <output name="103" label="" />
+          <output name="104" label="" />
           <output name="105" label="Virtual|Drv Snd" />
           <size length="10.5" width="5.8" height="2.8" units="mm" />
           <!-- connector="NEM651, NEM 652, Next18" -->
@@ -2312,33 +2315,35 @@
           </protocols>
         </model>
         <model model="LokPilot Micro DCC V4.0" numOuts="105" numFns="32" maxMotorCurrent="0.75A" extFnsESU="yes" productID="LPmV4DCC">
-          <output name="97" label="not|used" />
-          <output name="98" label="not|used" />
-          <output name="99" label="not|used" />
-          <output name="100" label="not|used" />
-          <output name="101" label="not|used" />
-          <output name="102" label="not|used" />
-          <output name="103" label="not|used" />
+          <output name="97" label="" />
+          <output name="98" label="" />
+          <output name="99" label="" />
+          <output name="100" label="" />
+          <output name="101" label="" />
+          <output name="102" label="" />
+          <output name="103" label="" />
+          <output name="104" label="" />
           <output name="105" label="Virtual|Drv Snd" />
           <size length="10.5" width="5.8" height="2.8" units="mm" />
           <!-- connector="NEM651, Next18" -->
         </model>
         <model model="LokPilot Fx V4.0" numOuts="105" numFns="32" extFnsESU="yes" productID="LPfxV4">
-          <output name="65" label="not|used" />
-          <output name="66" label="not|used" />
-          <output name="67" label="not|used" />
-          <output name="68" label="not|used" />
-          <output name="69" label="not|used" />
-          <output name="70" label="not|used" />
-          <output name="71" label="not|used" />
-          <output name="72" label="not|used" />
-          <output name="97" label="not|used" />
-          <output name="98" label="not|used" />
-          <output name="99" label="not|used" />
-          <output name="100" label="not|used" />
-          <output name="101" label="not|used" />
-          <output name="102" label="not|used" />
-          <output name="103" label="not|used" />
+          <output name="65" label="" />
+          <output name="66" label="" />
+          <output name="67" label="" />
+          <output name="68" label="" />
+          <output name="69" label="" />
+          <output name="70" label="" />
+          <output name="71" label="" />
+          <output name="72" label="" />
+          <output name="97" label="" />
+          <output name="98" label="" />
+          <output name="99" label="" />
+          <output name="100" label="" />
+          <output name="101" label="" />
+          <output name="102" label="" />
+          <output name="103" label="" />
+          <output name="104" label="" />
           <output name="105" label="Virtual|Drv Snd" />
           <size length="17.5" width="15.5" height="5.5" units="mm" />
           <!-- connector="NEM651, 21MTC" -->
@@ -2349,13 +2354,14 @@
           </protocols>
         </model>
         <model model="LokPilot XL V4.0" numOuts="105" numFns="32" maxMotorCurrent="4A" extFnsESU="yes" productID="LPV4">
-          <output name="97" label="not|used" />
-          <output name="98" label="not|used" />
-          <output name="99" label="not|used" />
-          <output name="100" label="not|used" />
-          <output name="101" label="not|used" />
-          <output name="102" label="not|used" />
-          <output name="103" label="not|used" />
+          <output name="97" label="" />
+          <output name="98" label="" />
+          <output name="99" label="" />
+          <output name="100" label="" />
+          <output name="101" label="" />
+          <output name="102" label="" />
+          <output name="103" label="" />
+          <output name="104" label="" />
           <output name="105" label="Virtual|Drv Snd" />
           <size length="55" width="25" height="10" units="mm" />
           <!-- connector="screw terminals" -->
@@ -6379,166 +6385,177 @@
       <family name="Tsunami Diesel" mfg="Throttle-Up (SoundTraxx)" comment="These are the -retail- version Tsunami diesel decoders" file="SoundTraxx_Tsu_Diesel.xml">
         <model model="TSU-750 Alco 244" numOuts="2" numFns="14" connector="other" productID="827004" comment="Model 827004">
           <versionCV lowVersionID="64" />
-          <output name="Air Horn" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Air Horn" />
+          <output name="Bell" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 Alco 539 (Non-Turbo)" numOuts="2" numFns="14" connector="other" productID="827011" comment="Model 827011">
           <versionCV lowVersionID="64" />
-          <output name="Air Horn" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Air Horn" />
+          <output name="Bell" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 Alco 539 (Turbo)" numOuts="2" numFns="14" connector="other" productID="827012" comment="Model 827012">
           <versionCV lowVersionID="64" />
-          <output name="Air Horn" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Air Horn" />
+          <output name="Bell" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 EMD 567" numOuts="2" numFns="14" connector="other" productID="827001" comment="Model 827001">
           <versionCV lowVersionID="64" />
-          <output name="Air Horn" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Air Horn" />
+          <output name="Bell" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 EMD 567 (Dual Motors)" numOuts="2" numFns="14" connector="other" productID="827018" comment="Model 827018">
           <versionCV lowVersionID="64" />
-          <output name="Air Horn" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Air Horn" />
+          <output name="Bell" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 EMD 645 (Turbo)" numOuts="2" numFns="14" connector="other" productID="827002" comment="Model 827002">
           <versionCV lowVersionID="64" />
-          <output name="Air Horn" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Air Horn" />
+          <output name="Bell" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 EMD 710" numOuts="2" numFns="14" connector="other" productID="827003" comment="Model 827003">
           <versionCV lowVersionID="64" />
-          <output name="Air Horn" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Air Horn" />
+          <output name="Bell" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 Fairbanks-Morse H-12" numOuts="2" numFns="14" connector="other" productID="827008" comment="Model 827008">
           <versionCV lowVersionID="64" />
-          <output name="Air Horn" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Air Horn" />
+          <output name="Bell" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 Galloping Goose" numOuts="2" numFns="14" connector="other" productID="827010" comment="Model 827010">
           <versionCV lowVersionID="64" />
-          <output name="Air Horn" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Air Horn" />
+          <output name="Bell" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 GE Cummins" numOuts="2" numFns="14" connector="other" productID="827014" comment="Model 827014">
           <versionCV lowVersionID="64" />
-          <output name="Air Horn" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Air Horn" />
+          <output name="Bell" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 UP Gas Turbine" numOuts="2" numFns="14" connector="other" productID="827015" comment="Model 827015">
           <versionCV lowVersionID="64" />
-          <output name="Air Horn" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" label="(Turbine On)" />
+          <output name="Air Horn" />
+          <output name="Bell" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="Turbine On" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" label="(Turbine Off)" />
+          <output name="Compressor" label="Turbine Off" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6548,12 +6565,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6563,12 +6581,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6578,12 +6597,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6593,12 +6613,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6608,12 +6629,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6623,12 +6645,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6638,12 +6661,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6653,12 +6677,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6668,12 +6693,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6683,12 +6709,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6698,12 +6725,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6713,12 +6741,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6728,12 +6757,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6743,12 +6773,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6758,12 +6789,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6773,12 +6805,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6788,12 +6821,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6803,12 +6837,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6818,12 +6853,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6833,12 +6869,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" label="(Turbine On)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="Turbine On" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" label="(Turbine Off)" />
+          <output name="Compressor" label="Turbine Off" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6848,12 +6885,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6863,12 +6901,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6878,12 +6917,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6893,12 +6933,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6908,12 +6949,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6923,11 +6965,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6937,12 +6981,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6952,12 +6997,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6967,12 +7013,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6982,12 +7029,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -6997,12 +7045,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7012,12 +7061,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7027,12 +7077,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7042,12 +7093,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7057,12 +7109,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7072,12 +7125,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7087,12 +7141,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7102,12 +7157,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7117,12 +7173,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7132,12 +7189,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7147,12 +7205,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7162,12 +7221,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7177,12 +7237,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7192,12 +7253,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7207,12 +7269,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7222,12 +7285,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7236,13 +7300,13 @@
           <output name="Air Horn" />
           <output name="Bell" />
           <output name="3" label="  FX5  " />
-          <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7252,12 +7316,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7267,12 +7332,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7282,12 +7348,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7297,12 +7364,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7312,12 +7380,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7327,12 +7396,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7347,7 +7417,7 @@
           <functionlabel num="7" lockable="true">Dimmer</functionlabel>
           <functionlabel num="8" lockable="true">Mute</functionlabel>
           <functionlabel num="9" lockable="true">Fans</functionlabel>
-          <functionlabel num="10" lockable="true">Air Comprssor</functionlabel>
+          <functionlabel num="10" lockable="true">Air Compressor</functionlabel>
           <functionlabel num="11" lockable="true">Brake Squeal</functionlabel>
           <functionlabel num="12" lockable="true">Coupler</functionlabel>
         </functionlabels>
@@ -7359,12 +7429,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7374,12 +7445,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7389,12 +7461,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7404,12 +7477,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7419,12 +7493,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7434,12 +7509,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7449,12 +7525,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7464,12 +7541,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7479,12 +7557,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7494,12 +7573,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7509,12 +7589,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7524,12 +7605,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7539,12 +7621,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7554,12 +7637,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7574,7 +7658,7 @@
           <functionlabel num="7" lockable="true">Dimmer</functionlabel>
           <functionlabel num="8" lockable="true">Mute</functionlabel>
           <functionlabel num="9" lockable="true">Fans</functionlabel>
-          <functionlabel num="10" lockable="true">Air Comprssor</functionlabel>
+          <functionlabel num="10" lockable="true">Air Compressor</functionlabel>
           <functionlabel num="11" lockable="true">Brake Squeal</functionlabel>
           <functionlabel num="12" lockable="true">Coupler</functionlabel>
         </functionlabels>
@@ -7586,12 +7670,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7601,12 +7686,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7616,12 +7702,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7631,12 +7718,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7646,12 +7734,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7661,12 +7750,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7676,12 +7766,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7691,12 +7782,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7706,12 +7798,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7721,12 +7814,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7736,12 +7830,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7751,12 +7846,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7766,12 +7862,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7781,12 +7878,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7796,12 +7894,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7811,12 +7910,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7826,12 +7926,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7841,12 +7942,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7856,12 +7958,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7871,12 +7974,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7886,12 +7990,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7901,12 +8006,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7916,12 +8022,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7931,12 +8038,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7946,12 +8054,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7965,10 +8074,8 @@
           <functionlabel num="6" lockable="true">FX6 Light</functionlabel>
           <functionlabel num="7" lockable="true">Dimmer</functionlabel>
           <functionlabel num="8" lockable="true">Mute</functionlabel>
-          <functionlabel num="9" lockable="true">Fans</functionlabel>
-          <functionlabel num="10" lockable="true">Air Comprssor</functionlabel>
-          <functionlabel num="11" lockable="true">Brake Squeal</functionlabel>
-          <functionlabel num="12" lockable="true">Coupler</functionlabel>
+          <functionlabel num="9" lockable="true">Brake Squeal</functionlabel>
+          <functionlabel num="10" lockable="true">Coupler</functionlabel>
         </functionlabels>
       </family>
       <family name="Tsunami Diesel Intermountain OEM" mfg="Throttle-Up (SoundTraxx)" comment="These are OEM for Intermountain Tsunami diesel decoders" file="SoundTraxx_Tsu_Diesel_IMRC.xml">
@@ -7978,12 +8085,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -7993,12 +8101,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8008,12 +8117,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8023,12 +8133,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8038,12 +8149,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8053,12 +8165,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8068,12 +8181,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8083,12 +8197,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8103,7 +8218,7 @@
           <functionlabel num="7" lockable="true">Dimmer</functionlabel>
           <functionlabel num="8" lockable="true">Mute</functionlabel>
           <functionlabel num="9" lockable="true">Fans</functionlabel>
-          <functionlabel num="10" lockable="true">Air Comprssor</functionlabel>
+          <functionlabel num="10" lockable="true">Air Compressor</functionlabel>
           <functionlabel num="11" lockable="true">Brake Squeal</functionlabel>
           <functionlabel num="12" lockable="true">Coupler</functionlabel>
         </functionlabels>
@@ -8111,14 +8226,17 @@
       <family name="Tsunami Diesel Rapido OEM" mfg="Throttle-Up (SoundTraxx)" comment="These are the Rapido OEM version Tsunami diesel decoders" file="SoundTraxx_Tsu_Diesel_Rapido.xml">
         <model model="FP9A - CN/VIA" numOuts="4" numFns="14" connector="9pin" productID="101" comment="CN configuration">
           <versionCV lowVersionID="64" />
+          <output name="3" label="STR8-2-8" />
+          <!-- FX5 -->
+          <output name="4" label="Ditch Lites" />
+          <!-- FX6 -->
           <output name="Air Horn" />
           <output name="Bell" />
-          <output name="3" label="STR8-2-8" />
-          <output name="4" label="Ditch Lites" />
           <output name="Dynamics" />
+          <output name="N/A" />
+          <output name="Number" label="Boards" />
           <output name="Roof" label="Light" />
           <output name="Dimming" />
-          <output name="Number" label="Boards" />
           <output name="Mute" />
           <output name="Class" label="Light" />
           <output name="Brakes" />
@@ -8126,19 +8244,37 @@
         </model>
         <model model="FP9A - CP/VIA-The Canadian" numOuts="4" numFns="14" connector="9pin" productID="102" comment="CP-Canadian configuration">
           <versionCV lowVersionID="64" />
+          <output name="3" label="STR8-2-8" />
+          <!-- FX5 -->
+          <output name="4" label="Ditch Lites" />
+          <!-- FX6 -->
           <output name="Air Horn" />
           <output name="Bell" />
-          <output name="3" label="STR8-2-8" />
-          <output name="4" label="Ditch Lites" />
           <output name="Dynamics" />
+          <output name="N/A" />
+          <output name="Number" label="Boards" />
           <output name="Roof" label="Light" />
           <output name="Dimming" />
-          <output name="Number" label="Boards" />
           <output name="Mute" />
           <output name="Class" label="Light" />
           <output name="Brakes" />
           <output name="Grade" label="Xing" />
         </model>
+        <functionlabels>
+          <functionlabel num="0" lockable="true">Headlight</functionlabel>
+          <functionlabel num="1" lockable="true">Bell</functionlabel>
+          <functionlabel num="2" lockable="false">Horn</functionlabel>
+          <functionlabel num="3" lockable="true">Straight to 8</functionlabel>
+          <functionlabel num="4" lockable="true">Dynamic Brake</functionlabel>
+          <functionlabel num="5" lockable="true">Roof Light</functionlabel>
+          <functionlabel num="6" lockable="true">Ditch Lights</functionlabel>
+          <functionlabel num="7" lockable="true">Dimmer</functionlabel>
+          <functionlabel num="8" lockable="true">Mute</functionlabel>
+          <functionlabel num="9" lockable="true">Number Boards</functionlabel>
+          <functionlabel num="10" lockable="true">Class Light</functionlabel>
+          <functionlabel num="11" lockable="true">Brake Squeal</functionlabel>
+          <functionlabel num="12" lockable="true">Grade Xing</functionlabel>
+        </functionlabels>
       </family>
       <family name="Tsunami Diesel Walthers OEM" mfg="Throttle-Up (SoundTraxx)" comment="These are OEM for Walthers Proto2000 Tsunami diesel decoders" file="SoundTraxx_Tsu_Diesel_Walthers.xml">
         <model model="E8" numOuts="4" numFns="14" connector="other" productID="E8">
@@ -8147,12 +8283,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8162,12 +8299,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8177,12 +8315,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8192,12 +8331,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8207,12 +8347,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8222,12 +8363,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8237,12 +8379,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8252,12 +8395,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8267,12 +8411,13 @@
           <output name="Bell" />
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
-          <output name="Dynamics" />
-          <output name="Short Horn" />
-          <output name="Fans(+)" />
+          <output name="Dynamic" label="Brakes" />
+          <output name="Short" label="Horn" />
+          <output name="Reserved" />
+          <output name="Fans" label="RPM +" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Comp(-)" />
+          <output name="Compressor" label="RPM -" />
           <output name="Brakes" />
           <output name="Coupler" />
         </model>
@@ -8286,123 +8431,121 @@
           <functionlabel num="6" lockable="true">FX6 Light</functionlabel>
           <functionlabel num="7" lockable="true">Dimmer</functionlabel>
           <functionlabel num="8" lockable="true">Mute</functionlabel>
-          <functionlabel num="9" lockable="true">Fans</functionlabel>
-          <functionlabel num="10" lockable="true">Air Comprssor</functionlabel>
-          <functionlabel num="11" lockable="true">Brake Squeal</functionlabel>
-          <functionlabel num="12" lockable="true">Coupler</functionlabel>
+          <functionlabel num="9" lockable="true">Brake Squeal</functionlabel>
+          <functionlabel num="10" lockable="true">Coupler</functionlabel>
         </functionlabels>
       </family>
       <family name="Tsunami Steam" mfg="Throttle-Up (SoundTraxx)" comment="These are the -retail- version Tsunami steam decoders" file="SoundTraxx_Tsu_Steam.xml">
         <model model="TSU-750 Light Steam" numOuts="2" numFns="14" connector="other" productID="826001" comment="Model 826001">
           <versionCV lowVersionID="64" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 Medium Steam" numOuts="2" numFns="14" connector="other" productID="826002" comment="Model 826002">
           <versionCV lowVersionID="64" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 Heavy Steam" numOuts="2" numFns="14" connector="other" productID="826003" comment="Model 826003">
           <versionCV lowVersionID="64" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 Lt Logging Steam" numOuts="2" numFns="14" connector="other" productID="826020" comment="Model 826020">
           <versionCV lowVersionID="64" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 DRGW C-Class Steam" numOuts="2" numFns="14" connector="other" productID="826016" comment="Model 826016">
           <versionCV lowVersionID="64" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 DRGW K-Class Steam" numOuts="2" numFns="14" connector="other" productID="826004" comment="Model 826004">
           <versionCV lowVersionID="64" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-750 SP Cab Forward Steam" numOuts="2" numFns="14" connector="other" productID="826005" comment="Model 826005">
           <versionCV lowVersionID="64" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-1000 Light Steam" numOuts="4" numFns="14" connector="other" productID="826101" comment="Model 826101">
@@ -8412,13 +8555,13 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-1000 Medium Steam" numOuts="4" numFns="14" connector="other" productID="826102" comment="Model 826102">
@@ -8428,13 +8571,13 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-1000 Heavy Steam" numOuts="4" numFns="14" connector="other" productID="826103" comment="Model 826103">
@@ -8444,13 +8587,13 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-1000 Lt Logging Steam" numOuts="4" numFns="14" connector="other" productID="826120" comment="Model 826120">
@@ -8460,13 +8603,13 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-1000 DRGW C-Class Steam" numOuts="4" numFns="14" connector="other" productID="826116" comment="Model 826116">
@@ -8476,13 +8619,13 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-1000 DRGW K-Class Steam" numOuts="4" numFns="14" connector="other" productID="826104" comment="Model 826104">
@@ -8492,13 +8635,13 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-1000 SP Cab Forward Steam" numOuts="4" numFns="14" connector="other" productID="826105" comment="Model 826105">
@@ -8508,13 +8651,13 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-1000 Southern Steam" numOuts="4" numFns="14" connector="other" productID="826121" comment="Model 826121">
@@ -8524,13 +8667,13 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="TSU-4664N Challenger" numOuts="4" numFns="14" connector="other" productID="826601" comment="Model 826601">
@@ -8540,13 +8683,13 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <functionlabels>
@@ -8568,362 +8711,386 @@
       <family name="Tsunami Steam Bachmann OEM" mfg="Throttle-Up (SoundTraxx)" file="SoundTraxx_Tsu_Steam_Bachmann.xml">
         <model model="HO 2-6-6-2" numOuts="2" numFns="14" connector="other" productID="2662">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="HO 2-8-8-4 EM-1" numOuts="2" numFns="14" connector="other" productID="2884">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="HO 2-8-0" numOuts="2" numFns="14" connector="other" productID="280">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="HO 2-10-0 Russian Decapod" numOuts="2" numFns="14" connector="other" productID="2100">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="HO 2-10-2 USRA Light" numOuts="2" numFns="14" connector="other" productID="2102">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="HO 4-4-0 Low Boiler" numOuts="2" numFns="14" connector="other" productID="440l">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="HO 4-4-0 High Boiler" numOuts="2" numFns="14" connector="other" productID="440h">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="HO 4-6-0" numOuts="2" numFns="14" connector="other" productID="460">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="HO 4-6-2 K4" numOuts="2" numFns="14" connector="other" productID="462">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="HO 4-8-2 USRA Heavy" numOuts="2" numFns="14" connector="other" productID="482">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="HO 4-8-4 J Class" numOuts="2" numFns="14" connector="other" productID="484">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="HO 3 Truck Climax" numOuts="2" numFns="14" connector="other" productID="3climax">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="HO 3 Truck Shay" numOuts="2" numFns="14" connector="other" productID="3shay">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="On30 0-4-0 Porter" numOuts="2" numFns="14" connector="other" productID="o040">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="On30 0-4-2 Porter" numOuts="2" numFns="14" connector="other" productID="o042">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="On30 2-4-4 Forney" numOuts="2" numFns="14" connector="other" productID="o244">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="On30 2-4-4-2" numOuts="2" numFns="14" connector="other" productID="o2442">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="On30 2-6-6-2" numOuts="2" numFns="14" connector="other" productID="2662">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="On30 4-6-0" numOuts="2" numFns="14" connector="other" productID="o460">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="On30 Climax" numOuts="2" numFns="14" connector="other" productID="o2climax">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="On30 Heisler" numOuts="2" numFns="14" connector="other" productID="oheisler">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="On30 2 Truck T Boiler Shay" numOuts="2" numFns="14" connector="other" productID="o2shay">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="Fn3 2 Truck Climax" numOuts="2" numFns="14" connector="other" productID="f2climax">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="Fn3 3 Truck Shay" numOuts="2" numFns="14" connector="other" productID="f3shay">
           <versionCV lowVersionID="80" />
-          <output name="Whistle" />
-          <output name="Bell" />
           <output name="FX5" label=" Rule 17" />
           <output name="FX6" label="Mode" />
+          <output name="Whistle" />
+          <output name="Bell" />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
-          <output name="Brake-Squeal" />
+          <output name="Injector" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <functionlabels>
@@ -8932,14 +9099,17 @@
           <functionlabel num="2" lockable="false">Whistle</functionlabel>
           <functionlabel num="3" lockable="true">Short Whistle</functionlabel>
           <functionlabel num="4" lockable="true">Steam Release</functionlabel>
-          <functionlabel num="5" lockable="true">FX5 Light</functionlabel>
-          <functionlabel num="6" lockable="true">FX6 Light</functionlabel>
+          <functionlabel num="6" lockable="true">Smoke</functionlabel>
           <functionlabel num="7" lockable="true">Dimmer</functionlabel>
           <functionlabel num="8" lockable="true">Mute</functionlabel>
-          <functionlabel num="9" lockable="true">Water Stop</functionlabel>
-          <functionlabel num="10" lockable="true">Injectors</functionlabel>
-          <functionlabel num="11" lockable="true">Brake Squeal</functionlabel>
-          <functionlabel num="12" lockable="true">Coupler</functionlabel>
+          <!-- regular Soundtraxx functions, not used for Bachmann  
+        <functionlabel num="5" lockable="true">FX5 Light</functionlabel>
+        <functionlabel num="6" lockable="true">FX6 Light</functionlabel>
+        <functionlabel num="9" lockable="true">Water Stop</functionlabel>
+        <functionlabel num="10" lockable="true">Injectors</functionlabel>
+        <functionlabel num="11" lockable="true">Brake Squeal</functionlabel>
+        <functionlabel num="12" lockable="true">Coupler</functionlabel>
+      -->
         </functionlabels>
       </family>
       <family name="Tsunami Steam Genesis OEM" mfg="Throttle-Up (SoundTraxx)" comment="These are OEM for Athearn Genesis Tsunami steam decoders" file="SoundTraxx_Tsu_Steam_Genesis.xml">
@@ -8950,13 +9120,13 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="Challenger 4-6-6-4" numOuts="4" numFns="14" connector="other" productID="chal">
@@ -8966,13 +9136,13 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="FEF-3 4-8-4" numOuts="4" numFns="14" connector="other" productID="FEF">
@@ -8982,13 +9152,13 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="MT-4 4-8-2" numOuts="4" numFns="14" connector="other" productID="MT4">
@@ -8998,13 +9168,13 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <model model="N Challenger" numOuts="4" numFns="14" connector="other" productID="N_Chal">
@@ -9014,13 +9184,13 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <functionlabels>
@@ -9030,13 +9200,13 @@
           <functionlabel num="3" lockable="true">Short Whistle</functionlabel>
           <functionlabel num="4" lockable="true">Steam Release</functionlabel>
           <functionlabel num="5" lockable="true">FX5 Light</functionlabel>
-          <functionlabel num="6" lockable="true">FX6 Light</functionlabel>
+          <functionlabel num="6" lockable="true">FX6/# Board Light</functionlabel>
           <functionlabel num="7" lockable="true">Dimmer</functionlabel>
           <functionlabel num="8" lockable="true">Mute</functionlabel>
-          <functionlabel num="9" lockable="true">Water Stop</functionlabel>
-          <functionlabel num="10" lockable="true">Injectors</functionlabel>
-          <functionlabel num="11" lockable="true">Brake Squeal</functionlabel>
-          <functionlabel num="12" lockable="true">Coupler</functionlabel>
+          <functionlabel num="9" lockable="true">Brake Squeal</functionlabel>
+          <functionlabel num="10" lockable="true">Coupler</functionlabel>
+          <functionlabel num="11" lockable="true">Injectors</functionlabel>
+          <functionlabel num="12" lockable="true">Water Stop</functionlabel>
         </functionlabels>
       </family>
       <family name="Tsunami Steam Intermountain OEM" mfg="Throttle-Up (SoundTraxx)" file="SoundTraxx_Tsu_Steam_IMRC.xml">
@@ -9047,29 +9217,29 @@
           <output name="3" label="  FX5  " />
           <output name="4" label="  FX6  " />
           <output name="Dynamo" />
-          <output name="Short-Whistle" />
-          <output name="Steam-Release" />
-          <output name="Water-Stop" />
+          <output name="Short" label="Whistle" />
+          <output name="Steam" label="Release" />
+          <output name="Water" label="Stop" />
           <output name="Dimming" />
           <output name="Mute" />
           <output name="Injector" />
-          <output name="Brake-Squeal" />
+          <output name="Brake" label="Squeal" />
           <output name="Coupler" />
         </model>
         <functionlabels>
           <functionlabel num="0" lockable="true">Headlight</functionlabel>
           <functionlabel num="1" lockable="true">Bell</functionlabel>
           <functionlabel num="2" lockable="false">Whistle</functionlabel>
-          <functionlabel num="3" lockable="true">Short Whistle</functionlabel>
+          <functionlabel num="3" lockable="true">Toggle Switch</functionlabel>
           <functionlabel num="4" lockable="true">Steam Release</functionlabel>
-          <functionlabel num="5" lockable="true">FX5 Light</functionlabel>
-          <functionlabel num="6" lockable="true">FX6 Light</functionlabel>
+          <functionlabel num="5" lockable="true">Brake Squeal</functionlabel>
+          <functionlabel num="6" lockable="true">Coupler</functionlabel>
           <functionlabel num="7" lockable="true">Dimmer</functionlabel>
           <functionlabel num="8" lockable="true">Mute</functionlabel>
-          <functionlabel num="9" lockable="true">Water Stop</functionlabel>
-          <functionlabel num="10" lockable="true">Injectors</functionlabel>
-          <functionlabel num="11" lockable="true">Brake Squeal</functionlabel>
-          <functionlabel num="12" lockable="true">Coupler</functionlabel>
+          <functionlabel num="9" lockable="true">Effect Lighting</functionlabel>
+          <functionlabel num="10" lockable="true">Effect Lighting</functionlabel>
+          <functionlabel num="11" lockable="true">Water Stop</functionlabel>
+          <functionlabel num="12" lockable="true">Injector</functionlabel>
         </functionlabels>
       </family>
       <family name="AC1" mfg="Spectrum Engineering" comment="AC1 is an animation accessory decoder with secondary OPS access as a LOCO" file="Spectrum_AC8824.xml">
@@ -15630,6 +15800,19 @@
           <output name="10" label="FO 8 (+5v)" />
           <output name="11" label="FO 9 (+5v)" />
           <size length="32" width="15.5" height="6" units="mm" />
+        </model>
+      </family>
+      <family name="Zimo Unified software (version 32+)" mfg="Zimo" file="Zimo_Unified_software_v32_MX644.xml">
+        <model model="MX644 version 32+" lowVersionID="32" highVersionID="35" maxInputVolts="35V" maxMotorCurrent="1.2A, peak=2.5A" maxTotalCurrent="1.2A" formFactor="HO" connector="21MTC" numOuts="8" numFns="14" productID="222">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5" />
+          <output name="8" label="FO 6" />
+          <size length="30" width="15" height="4" units="mm" />
         </model>
       </family>
       <family name="Zimo Unified software (version 32+)" mfg="Zimo" file="Zimo_Unified_software_v32_MX645.xml">
