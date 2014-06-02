@@ -381,7 +381,7 @@ public class MrcPacketizer extends MrcTrafficController {
                                                                         mCurrentState = IDLESTATE;
                                                                         xmtHandler.notify();
                                                                       }*/
-                                                                      log.info("Gd Cmd");
+                                                                      //log.info("Gd Cmd");
                                                                       break;
                             case MrcPackets.BADCMDRECIEVEDCODE  :     mCurrentState = BADCOMMAND;
                                                                       msg = new MrcMessage(4);
@@ -512,11 +512,12 @@ public class MrcPacketizer extends MrcTrafficController {
                         messageTransmited(m);
                         //xmtWindow = false;
                         //log.info("State Set and wait");
-                        if (fulldebug) log.debug("end write to stream: "+jmri.util.StringUtil.hexStringFromBytes(msg));
-                        log.info("wait : " + m.getTimeout() + " : " + x);
+                        if (fulldebug){ 
+                            log.debug("end write to stream: "+jmri.util.StringUtil.hexStringFromBytes(msg));
+                            log.info("wait : " + m.getTimeout() + " : " + x);
+                        }
                         transmitWait(m.getTimeout(), WAITFORCMDRECEIVED, "transmitLoop interrupted", x);
                         x++;
-                        log.info("Passed");
                     }
                     
                     if(mCurrentState == WAITFORCMDRECEIVED){

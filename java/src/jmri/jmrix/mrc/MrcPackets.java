@@ -237,12 +237,41 @@ public class MrcPackets {
 	            	txt.append("Loco (S)");
 	        	}
 	        	txt.append(Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))));
-	        	if ((m.getElement(8) & 0x80) == 0x80) {
-	        		txt.append(" Fwd ");
-	        	} else {
-	        		txt.append(" Rev ");
-	        	}
-	        	txt.append(" Speed: " + Integer.toString((m.getElement(8) ^ 0x80)));
+                if(m.getElement(10) == 0x02){
+                    txt.append(" 128ss");
+                    //128 speed step
+                    if ((m.getElement(8) & 0x80) == 0x80) {
+                        txt.append(" Fwd ");
+                    } else {
+                        txt.append(" Rev ");
+                    }
+                    txt.append(" Speed: " + Integer.toString((m.getElement(8) ^ 0x80)));                
+                } else if (m.getElement(10) == 0x00){
+                    int value = m.getElement(8);
+                    txt.append(" 28ss");
+                    //28 Speed Steps
+                    if((m.getElement(8)& 0x60)==0x60){
+                        //Forward
+                        value = value - 0x60;
+                        txt.append(" Fwd ");
+                    } else {
+                        value = value - 0x40;
+                        txt.append(" Rev ");
+                    }
+                    if(((value>>4)&0x01)==0x01){
+                        value = value - 0x10;
+                        value = (value<<1)+1;
+                    } else {
+                        value = value<<1;
+                    }
+                    value = value -1; //Turn into user expected 0-28
+                    if(value==-1){
+                        txt.append("Emergency Stop");
+                    } else {
+                        txt.append(" Speed: " + Integer.toString(value));
+                    }
+                }
+
 	    		break;
 	        case FUNCTIONGROUP1PACKETCMD:
 	        	txt.append("Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))) + " Group 1");

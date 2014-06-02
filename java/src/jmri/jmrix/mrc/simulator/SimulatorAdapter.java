@@ -148,8 +148,17 @@ public class SimulatorAdapter extends MrcPortController implements
 				log.debug(buf.toString());
 			}
 			if (m != null) {
-				MrcMessage r = generateReply(m);
-				writeReply(r);
+                //Send a default good reply message
+                MrcMessage r = new MrcMessage(4);
+                r.setElement(0, MrcPackets.GOODCMDRECIEVEDCODE);
+                r.setElement(1, 0x0);
+                r.setElement(2, MrcPackets.GOODCMDRECIEVEDCODE);
+                r.setElement(3, 0x0);
+                writeReply(r);
+                if(m.isReplyExpected()){
+                    r = generateReply(m);
+                    writeReply(r);
+                }
 				if (log.isDebugEnabled() && r != null) {
 					StringBuffer buf = new StringBuffer();
 					buf.append("Mrc Simulator Thread sent reply: ");
@@ -227,6 +236,12 @@ public class SimulatorAdapter extends MrcPortController implements
 		case MrcPackets.SETCLOCKTIMECMD:	// Set clock
 			break;
 		case MrcPackets.SETCLOCKAMPMCMD:	// Set clock mode
+			break;
+		case MrcPackets.THROTTLEPACKETCMD:	// Set clock mode
+            reply.setElement(0, MrcPackets.LOCOSOLECONTROLCODE);
+            reply.setElement(1, 0x00);
+            reply.setElement(2, MrcPackets.LOCOSOLECONTROLCODE);
+            reply.setElement(3, 0x00);
 			break;
 //		case MrcMessage.READ_REG_CMD:
 //			reply.setElement(0, 0xff);			// dummy data

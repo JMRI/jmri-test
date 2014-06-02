@@ -117,7 +117,7 @@ public class MrcMessage {
         return MrcPackets.toString(this);
     }
     
-    static public MrcMessage getSendSpeed(int addressLo, int addressHi, int speed){
+    static public MrcMessage getSendSpeed128(int addressLo, int addressHi, int speed){
         MrcMessage m = new MrcMessage(MrcPackets.getThrottlePacketLength());
         m.setMessageClass(MrcInterface.THROTTLEINFO);
         int i = m.putHeader(MrcPackets.THROTTLEPACKETHEADER);
@@ -129,6 +129,30 @@ public class MrcMessage {
         m.setElement(i++,speed);
         m.setElement(i++,0x00);
         m.setElement(i++,0x02);
+        m.setElement(i++,0x00);
+        m.setElement(i++,getCheckSum(addressHi, addressLo, speed, 0x02));
+        m.setElement(i++,0x00);
+    //    m.setTimeout(100);
+        return m;
+    }
+    
+    static public MrcMessage getSendSpeed28(int addressLo, int addressHi, int speed, boolean fwd){
+        MrcMessage m = new MrcMessage(MrcPackets.getThrottlePacketLength());
+        m.setMessageClass(MrcInterface.THROTTLEINFO);
+        int i = m.putHeader(MrcPackets.THROTTLEPACKETHEADER);
+        
+        int speedC = (speed&0x1E) >> 1;
+        int c = (speed&0x01) << 4;
+        speedC = speedC + c;
+        speedC = (fwd ? 0x60 : 0x40)| speedC;
+        
+        m.setElement(i++,addressHi);
+        m.setElement(i++, 0x00);
+        m.setElement(i++,addressLo);
+        m.setElement(i++,0x00);
+        m.setElement(i++,speedC);
+        m.setElement(i++,0x00);
+        m.setElement(i++,0x00);
         m.setElement(i++,0x00);
         m.setElement(i++,getCheckSum(addressHi, addressLo, speed, 0x02));
         m.setElement(i++,0x00);

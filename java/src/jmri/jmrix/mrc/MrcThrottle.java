@@ -204,16 +204,26 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
     public void setSpeedSetting(float speed) {
         float oldSpeed = this.speedSetting;
 		this.speedSetting = speed;
-        log.debug("setSpeedSetting= {}", speed);
-        //MRC use a value between 0-127 no matter what the controller is set to
-        int value = (int)((127-1)*speed);     // -1 for rescale to avoid estop
-        if (value>0) value = value+1;  // skip estop
-        if (value>127) value = 127;    // max possible speed
-        if (value<0) value = 1;        // emergency stop
-        if(isForward){
-            value = value+128;
+        MrcMessage m;
+        int value;
+        if(super.speedStepMode == SpeedStepMode128) {
+            log.debug("setSpeedSetting= {}", speed);
+            //MRC use a value between 0-127 no matter what the controller is set to
+            value = (int)((127-1)*speed);     // -1 for rescale to avoid estop
+            if (value>0) value = value+1;  // skip estop
+            if (value>127) value = 127;    // max possible speed
+            if (value<0) value = 1;        // emergency stop
+            if(isForward){
+                value = value+128;
+            }
+            m = MrcMessage.getSendSpeed128(addressLo, addressHi, value);
+        } else {
+            value = (int) ((28) * speed); // -1 for rescale to avoid estop
+            if (value > 0) value = value + 1; // skip estop
+            if (value > 28) value = 28; // max possible speed
+            if (value < 0)	value = 1; // emergency stop
+            m = MrcMessage.getSendSpeed28(addressLo, addressHi, value, isForward);
         }
-        MrcMessage m = MrcMessage.getSendSpeed(addressLo, addressHi, value);
         tc.sendMrcMessage(m);
 
         if (oldSpeed != this.speedSetting)
@@ -244,12 +254,13 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
 	        if (i>0) raw+=" ";
             raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
         }
-        log.info(raw);
         if(m.getNumDataElements()>8 && m.getElement(4)==addressHi && m.getElement(6)==addressLo){
             log.info(raw);
             if(!MrcPackets.validCheckSum(m)) {log.info("invalid check sum"); return;}
             //message potentially matches our loco
             if(MrcPackets.startsWith(m, MrcPackets.THROTTLEPACKETHEADER)){
+                if(m.getElement(10) == 0x02){
+                    //128
                     log.info("speed Packet from another controller for our loco");
                     int speed = 0;
                     if((m.getElement(8) & 0x80) == 0x80){
@@ -271,6 +282,33 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
                         this.speedSetting = val;
                         record(val);
                     }
+                } else if (m.getElement(10) == 0x00){
+                    int value = m.getElement(8);
+                    //28 Speed Steps
+                    if((m.getElement(8)& 0x60)==0x60){
+                        //Forward
+                        value = value - 0x60;
+                    } else {
+                        value = value - 0x40;
+                    }
+                    if(((value>>4)&0x01)==0x01){
+                        value = value - 0x10;
+                        value = (value<<1)+1;
+                    } else {
+                        value = value<<1;
+                    }
+                    value = value -1; //Turn into user expected 0-28
+                    float val = -1;
+                    if(value!=-1){
+                        val = value/28.0f;
+                    }
+                        
+                    if (val != this.speedSetting){
+                        notifyPropertyChangeListener("SpeedSetting", this.speedSetting, val );
+                        this.speedSetting = val;
+                        record(val);
+                    }
+                }
             } else if (MrcPackets.startsWith(m, MrcPackets.FUNCTIONGROUP1PACKETHEADER)){
                     log.info("function Packet 1 from another controller for our loco");
                     int data = m.getElement(8)&0xff;
