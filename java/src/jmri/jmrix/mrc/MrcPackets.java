@@ -57,7 +57,7 @@ public class MrcPackets {
     
     public static final int ACCESSORYPACKETCMD = 115;
     static final int[] ACCESSORYPACKETHEADER = new int[]{ACCESSORYPACKETCMD, 0, ACCESSORYPACKETCMD, 0};
-    static final int ACCESSORYPACKETLENGTH = 6;
+    static final int ACCESSORYPACKETLENGTH = 10;
     
     public static final int WRITECVPOMCMD = 86;
     static final int[] WRITECVPOMHEADER = new int[]{WRITECVPOMCMD, 0, WRITECVPOMCMD, 0};

@@ -77,8 +77,8 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
             return true;
         if (type.equals(jmri.PowerManager.class))
             return true;
-        /*if (type.equals(jmri.TurnoutManager.class))
-            return true;*/
+        if (type.equals(jmri.TurnoutManager.class))
+            return true;
         if (type.equals(jmri.ClockControl.class))
             return true;
         /*if (type.equals(jmri.CommandStation.class))
@@ -101,8 +101,8 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
             return (T)getThrottleManager();
         if (T.equals(jmri.PowerManager.class))
             return (T)getPowerManager();
-        /*if (T.equals(jmri.TurnoutManager.class))
-            return (T)getTurnoutManager();*/
+        if (T.equals(jmri.TurnoutManager.class))
+            return (T)getTurnoutManager();
         if (T.equals(jmri.ClockControl.class))
             return (T)getClockControl();
         /*if (T.equals(jmri.CommandStation.class))
@@ -113,7 +113,7 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
     }
 
     private MrcPowerManager powerManager;
-    /*private MrcTurnoutManager turnoutManager;*/
+    private MrcTurnoutManager turnoutManager;
     private MrcThrottleManager throttleManager;
     private MrcClockControl clockManager;
     /*private MrcConsistManager consistManager;*/
@@ -127,8 +127,8 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
     	powerManager = new jmri.jmrix.mrc.MrcPowerManager(this);
         InstanceManager.setPowerManager(powerManager);
 
-        /*turnoutManager = new jmri.jmrix.mrc.MrcTurnoutManager(getMrcTrafficController(), getSystemPrefix());
-        InstanceManager.setTurnoutManager(turnoutManager);  */
+        turnoutManager = new jmri.jmrix.mrc.MrcTurnoutManager(getMrcTrafficController(), getSystemPrefix());
+        InstanceManager.setTurnoutManager(turnoutManager);
 
         throttleManager = new jmri.jmrix.mrc.MrcThrottleManager(this);
         InstanceManager.setThrottleManager(throttleManager);
@@ -145,7 +145,7 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
     }
 
     public MrcPowerManager getPowerManager() { return powerManager; }
-   /* public MrcTurnoutManager  getTurnoutManager() { return turnoutManager; }*/
+    public MrcTurnoutManager  getTurnoutManager() { return turnoutManager; }
     public MrcThrottleManager  getThrottleManager() { return throttleManager; }
     public MrcClockControl  getClockControl() { return clockManager; }
     /*public MrcConsistManager  getConsistManager() { return consistManager; }*/
@@ -161,8 +161,8 @@ public class MrcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
             InstanceManager.deregister(componentFactory, jmri.jmrix.swing.ComponentFactory.class);
         if (powerManager != null) 
             InstanceManager.deregister(powerManager, jmri.jmrix.mrc.MrcPowerManager.class);
-        /*if (turnoutManager != null) 
-            InstanceManager.deregister(turnoutManager, jmri.jmrix.mrc.MrcTurnoutManager.class);*/
+        if (turnoutManager != null) 
+            InstanceManager.deregister(turnoutManager, jmri.jmrix.mrc.MrcTurnoutManager.class);
         if (throttleManager != null)
             InstanceManager.deregister(throttleManager, jmri.jmrix.mrc.MrcThrottleManager.class);
         if (clockManager != null) 

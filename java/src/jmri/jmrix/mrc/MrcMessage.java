@@ -367,8 +367,31 @@ public class MrcMessage {
         return m;
     }
     
-    
-    
+    /**
+       Get a message for a "Switch Possition Normal" command
+       to a specific accessory decoder on the layout.
+    */
+    static MrcMessage getSwitchMsg(int address, boolean closed){
+        MrcMessage m = new MrcMessage(MrcPackets.getAccessoryPacketLength());
+        m.setMessageClass(MrcInterface.TURNOUTS);
+        m.putHeader(MrcPackets.ACCESSORYPACKETHEADER);
+        byte[] packet = jmri.NmraPacket.accDecoderPkt(address, closed);
+        if(packet==null){
+            return null;
+        }
+        //placeholder until code is written
+        m.setElement(4,packet[0]);
+        m.setElement(5,0x00);
+        m.setElement(6,packet[1]);
+        m.setElement(7,0x00);
+        m.setElement(8,packet[2]);
+        m.setElement(9,0x00);
+        m.setTimeout(0); 
+        m.setRetries(0);
+        m.setByteStream();
+	return m;
+    }
+
     static public MrcMessage setNoData(){
         MrcMessage m = new MrcMessage(4);
         m.setMessageClass(MrcInterface.POLL);
