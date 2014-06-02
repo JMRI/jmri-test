@@ -290,6 +290,41 @@ public class MrcMessage {
 		return val;
     }
     
+    public int getLocoAddress(){
+        if(getMessageClass()!=MrcInterface.THROTTLEINFO && getMessageClass()!=MrcInterface.PROGRAMMING)
+            return -1;
+        int hi = getElement(4);
+        int lo = getElement(6);
+        if (hi == 0) {
+            return lo;
+        } else {
+            hi = (((hi & 255) - 192) << 8);
+            hi = hi + (lo & 255);
+            return hi;
+        }
+    }
+    
+    public int getAccAddress(){
+        if(getMessageClass()!=MrcInterface.TURNOUTS)
+            return -1;
+        int lowbyte = getElement(4)&0x3f;
+        int highbyte = (getElement(6)&0x70)>>4;
+        highbyte = (~highbyte & 0x07);
+        highbyte=(highbyte<<6);
+        int address = lowbyte+highbyte;
+        return address;
+    }
+    
+    public int getAccState(){
+        int dBits = (( (getAccAddress()-1) & 0x03) << 1 ); 
+        if((getElement(6)&0x07)==dBits){
+            return jmri.Turnout.THROWN;
+        } else if((getElement(6)&0x07)==(dBits | 1)){
+            return jmri.Turnout.CLOSED;
+        }
+        return jmri.Turnout.UNKNOWN;
+    }
+    
         /**
      * set the fast clock ratio
      * ratio is integer and max of 60 and min of 1

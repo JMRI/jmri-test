@@ -195,15 +195,7 @@ public class MrcPackets {
         return true;
     }
     
-    static protected int provideLocoId(int hi, int lo) {
-        if (hi == 0) {
-            return lo;
-        } else {
-            hi = (((hi & 255) - 192) << 8);
-            hi = hi + (lo & 255);
-            return hi;
-        }
-    }
+
     
         //Need to test toString() for POM
     static public String toString(MrcMessage m){
@@ -236,7 +228,7 @@ public class MrcPackets {
 	        	} else {
 	            	txt.append("Loco (S)");
 	        	}
-	        	txt.append(Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))));
+	        	txt.append(Integer.toString(m.getLocoAddress()));
                 if(m.getElement(10) == 0x02){
                     txt.append(" 128ss");
                     //128 speed step
@@ -274,43 +266,43 @@ public class MrcPackets {
 
 	    		break;
 	        case FUNCTIONGROUP1PACKETCMD:
-	        	txt.append("Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))) + " Group 1");
+	        	txt.append("Loco " + Integer.toString(m.getLocoAddress()) + " Group 1");
+	        	txt.append(" F0 " + Integer.toString(m.getElement(8) & 0x10));
 	        	txt.append(" F1 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F2 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F3 " + Integer.toString(m.getElement(8) & 0x04));
 	        	txt.append(" F4 " + Integer.toString(m.getElement(8) & 0x08));
-	        	txt.append(" F0 " + Integer.toString(m.getElement(8) & 0x10));
 	    		break;
 	        case FUNCTIONGROUP2PACKETCMD:
-	        	txt.append("Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))) + " Group 2");
+	        	txt.append("Loco " + Integer.toString(m.getLocoAddress()) + " Group 2");
 	        	txt.append(" F5 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F6 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F7 " + Integer.toString(m.getElement(8) & 0x04));
 	        	txt.append(" F8 " + Integer.toString(m.getElement(8) & 0x08));
 	    		break;
 	        case FUNCTIONGROUP3PACKETCMD:
-	        	txt.append("Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))) + " Group 3");
+	        	txt.append("Loco " + Integer.toString(m.getLocoAddress()) + " Group 3");
 	        	txt.append(" F9 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F10 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F11 " + Integer.toString(m.getElement(8) & 0x04));
 	        	txt.append(" F12 " + Integer.toString(m.getElement(8) & 0x08));
 	    		break;
 	        case FUNCTIONGROUP4PACKETCMD:
-	        	txt.append("Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))) + " Group 4");
+	        	txt.append("Loco " + Integer.toString(m.getLocoAddress()) + " Group 4");
 	        	txt.append(" F13 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F14 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F15 " + Integer.toString(m.getElement(8) & 0x04));
 	        	txt.append(" F16" + Integer.toString(m.getElement(8) & 0x08));
 	    		break;
 	        case FUNCTIONGROUP5PACKETCMD:
-	        	txt.append("Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))) + " Group 5");
+	        	txt.append("Loco " + Integer.toString(m.getLocoAddress()) + " Group 5");
 	        	txt.append(" F17 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F18 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F19 " + Integer.toString(m.getElement(8) & 0x04));
 	        	txt.append(" F20 " + Integer.toString(m.getElement(8) & 0x08));
 	    		break;
 	        case FUNCTIONGROUP6PACKETCMD:
-	        	txt.append("Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))) + " Group 6");
+	        	txt.append("Loco " + Integer.toString(m.getLocoAddress()) + " Group 6");
 	        	txt.append(" F21 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F22 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F23 " + Integer.toString(m.getElement(8) & 0x04));
@@ -328,7 +320,7 @@ public class MrcPackets {
 	        	txt.append("Read Decoder Address ");
 	    		break;
 	        case WRITECVPOMCMD:
-	        	txt.append("Write POM CV Loco " + Integer.toString(provideLocoId(m.getElement(4), m.getElement(6))));
+	        	txt.append("Write POM CV Loco " + Integer.toString(m.getLocoAddress()));
 	        	txt.append(Integer.toString(m.getElement(10)&0xff));
 	        	txt.append("=");
 	        	txt.append(Integer.toString(m.getElement(8)&0xff));
@@ -380,7 +372,16 @@ public class MrcPackets {
                 txt.append("Route Added");
                 break;
             case ACCESSORYPACKETCMD:
-                txt.append("Accessory Controlled");
+                txt.append("Accessory ");
+                int add = m.getAccAddress();
+                txt.append(Integer.toString(add));
+                switch (m.getAccState()){
+                    case jmri.Turnout.CLOSED : txt.append(" Closed");
+                                     break;
+                    case jmri.Turnout.THROWN : txt.append(" Thrown");
+                                     break;
+                    default : txt.append(" Unknown");
+                }
                 break;
 	        default:
                 if(m.getNumDataElements()==6){

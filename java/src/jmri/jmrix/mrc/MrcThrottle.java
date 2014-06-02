@@ -247,16 +247,11 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
     public void notifyRcv(Date timestamp, MrcMessage m) {
         if(m.getMessageClass()!=MrcInterface.THROTTLEINFO)
             return;
-        /*if(m.isPollMessage())
-            return;*/
         String raw = "";
-        for (int i=0;i<m.getNumDataElements(); i++) {
-	        if (i>0) raw+=" ";
-            raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
+        if(m.getLocoAddress()==address.getNumber()){
+            log.info("Match on loco address");
         }
         if(m.getNumDataElements()>8 && m.getElement(4)==addressHi && m.getElement(6)==addressLo){
-            log.info(raw);
-            if(!MrcPackets.validCheckSum(m)) {log.info("invalid check sum"); return;}
             //message potentially matches our loco
             if(MrcPackets.startsWith(m, MrcPackets.THROTTLEPACKETHEADER)){
                 if(m.getElement(10) == 0x02){

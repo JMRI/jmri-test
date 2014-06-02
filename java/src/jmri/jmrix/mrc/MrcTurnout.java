@@ -28,7 +28,7 @@ public class MrcTurnout extends AbstractTurnout implements MrcTrafficListener{
      * Mrc turnouts use any address allowed as an accessory decoder address 
      * on the particular command station.
      */
-    public MrcTurnout(MrcTrafficController tc, String p, int number) {
+    public MrcTurnout(int number, MrcTrafficController tc, String p) {
         super(p+"T"+number);
         _number = number;
         this.tc = tc;
@@ -62,7 +62,16 @@ public class MrcTurnout extends AbstractTurnout implements MrcTrafficListener{
 
     }
     
-    public void notifyRcv(Date timestamp, MrcMessage m) { /*message(m);*/ }
+    public void notifyRcv(Date timestamp, MrcMessage m) {
+        if(m.getMessageClass()!=MrcInterface.TURNOUTS)
+            return;
+        if(m.getAccAddress()!=getNumber()){
+            return;
+        }
+        
+    
+    
+    }
     public void notifyXmit(Date timestamp, MrcMessage m) {/* message(m); */}
     public void notifyFailedXmit(Date timestamp, MrcMessage m) { /*message(m);*/ }
 
