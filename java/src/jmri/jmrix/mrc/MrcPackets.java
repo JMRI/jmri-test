@@ -57,7 +57,7 @@ public class MrcPackets {
     
     public static final int ACCESSORYPACKETCMD = 115;
     static final int[] ACCESSORYPACKETHEADER = new int[]{ACCESSORYPACKETCMD, 0, ACCESSORYPACKETCMD, 0};
-    static final int ACCESSORYPACKETLENGTH = 10;
+    static final int ACCESSORYPACKETLENGTH = 6;
     
     public static final int WRITECVPOMCMD = 86;
     static final int[] WRITECVPOMHEADER = new int[]{WRITECVPOMCMD, 0, WRITECVPOMCMD, 0};
@@ -256,10 +256,11 @@ public class MrcPackets {
                     } else {
                         value = value<<1;
                     }
-                    value = value -1; //Turn into user expected 0-28
+                    value = value -3; //Turn into user expected 0-28
                     if(value==-1){
                         txt.append("Emergency Stop");
                     } else {
+                        if(value<0) value = 0;
                         txt.append(" Speed: " + Integer.toString(value));
                     }
                 }

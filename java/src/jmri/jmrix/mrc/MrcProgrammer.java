@@ -30,11 +30,13 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
     public MrcProgrammer(MrcTrafficController tc) {
     	this.tc = tc;
         super.SHORT_TIMEOUT = 15000;
+        super.LONG_TIMEOUT = 700000;
     }
 
     // handle mode
     protected int _mode = Programmer.PAGEMODE;
     int PACKET_TIMEOUT = 5000;
+    int PACKET_READTIMEOUT = 650000;
 
     /**
      * Switch to a new programming mode.  Note that MRC 

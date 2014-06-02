@@ -245,9 +245,11 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
     //Might need to look at other packets from handsets to see if they also have control of our loco and adjust from that.
     
     public void notifyRcv(Date timestamp, MrcMessage m) {
-        if(m.getMessageClass()!=MrcInterface.THROTTLEINFO)
+        if(m.getMessageClass()!=MrcInterface.THROTTLEINFO 
+            || m.getElement(0)!=MrcPackets.LOCOSOLECONTROLCODE 
+                || m.getElement(0)!=MrcPackets.LOCODBLCONTROLCODE){
             return;
-        String raw = "";
+        }
         if(m.getLocoAddress()==address.getNumber()){
             log.info("Match on loco address");
         }
@@ -292,9 +294,10 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
                     } else {
                         value = value<<1;
                     }
-                    value = value -1; //Turn into user expected 0-28
+                    value = value -3; //Turn into user expected 0-28
                     float val = -1;
                     if(value!=-1){
+                        if(val<1) val = 0;
                         val = value/28.0f;
                     }
                         
