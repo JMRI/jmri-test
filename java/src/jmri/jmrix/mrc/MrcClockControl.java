@@ -99,35 +99,17 @@ public class MrcClockControl extends DefaultClockControl implements /*MrcListene
     DecimalFormat threeDigits = new DecimalFormat("0.000");
     DecimalFormat twoDigits = new DecimalFormat("0.00");
     
-    private int waiting = 0;
     private int clockMode = SYNCMODE_OFF;
-    private boolean waitingForCmdRead = false;
-    private boolean waitingForCmdStop = false;
-    private boolean waitingForCmdStart = false;
-    private boolean waitingForCmdRatio = false;
-    private boolean waitingForCmdTime = false;
-    private boolean waitingForCmd1224 = false;
     private MrcMessage lastClockReadPacket = null;
     //private Date lastClockReadAtTime;
     private int	mrcLastHour;
     private int mrcLastMinute;
-//    private int mrcLastSecond;
     private int mrcLastRatio;
     private boolean mrcLastAmPm;
     private boolean mrcLast1224;
-    //private boolean mrcLastRunning;
-    //private double internalLastRatio;
-    //private boolean internalLastRunning;
-    //private double syncInterval = TARGET_SYNC_DELAY;
-    //private int internalSyncInitStateCounter = 0;
-    //private int internalSyncRunStateCounter = 0;
-//    private boolean issueDeferredGetTime = false;
-    //private boolean issueDeferredGetRate = false;
-    //private boolean initNeverCalledBefore = true;
     
     private int mrcSyncInitStateCounter = 0;	// MRC master sync initialzation state machine
     private int	mrcSyncRunStateCounter = 0;	// MRC master sync runtime state machine
-    //private int	alarmDisplayStateCounter = 0;	// manages the display update from the alarm
     
     Timebase internalClock ;
     javax.swing.Timer alarmSyncUpdate = null;
@@ -144,58 +126,10 @@ public class MrcClockControl extends DefaultClockControl implements /*MrcListene
     		// not a clock packet
     		return;
     	}
-        log.debug("MrcReply(len {}) waiting: {} watingForRead: {} waitingForCmdTime: {} waitingForCmd1224: {} waitingForCmdRatio: {} waitingForCmdStop: {} waitingForCmdStart: {}",
-        		r.getNumDataElements(), waiting, waitingForCmdRead, waitingForCmdTime,
-        		waitingForCmd1224, waitingForCmdRatio, waitingForCmdStop, waitingForCmdStart
-    	);
+        log.debug("MrcReply(len {})", r.getNumDataElements());
 
         readClockPacket(r);
 
-//        if (waitingForCmdTime) {
-//            if (r.getNumDataElements() != CMD_CLOCK_SET_REPLY_SIZE) {
-//                log.error(rb.getString("LogMrcClockReplySizeError") + r.getNumDataElements());
-//                return;
-//            } else {
-//                waitingForCmdTime = false;
-//                if (r.getElement(0) != '!') {
-//                    log.error("MRC set clock replied: " + r.getElement(0));
-//                }
-//                return;
-//            }
-//        }
-//        if (r.getNumDataElements() != CMD_CLOCK_SET_REPLY_SIZE) {
-//            log.error(rb.getString("LogMrcClockReplySizeError") + r.getNumDataElements());
-//            return;
-//        } else {
-//            if (waitingForCmd1224) {
-//                waitingForCmd1224 = false;
-//                if (r.getElement(0) != '!') {
-//                    log.error(rb.getString("LogMrcClock1224CmdError") + r.getElement(0));
-//                }
-//                return;
-//            }
-//            if (waitingForCmdRatio) {
-//                waitingForCmdRatio = false;
-//                if (r.getElement(0) != '!') {
-//                    log.error(rb.getString("LogMrcClockRatioCmdError") + r.getElement(0));
-//                }
-//                return;
-//            }
-//            if (waitingForCmdStop) {
-//                waitingForCmdStop = false;
-//                if (r.getElement(0) != '!') {
-//                    log.error(rb.getString("LogMrcClockStopCmdError") + r.getElement(0));
-//                }
-//                return;
-//            }
-//            if (waitingForCmdStart) {
-//                waitingForCmdStart = false;
-//                if (r.getElement(0) != '!') {
-//                    log.error(rb.getString("LogMrcClockStartCmdError") + r.getElement(0));
-//                }
-//                return;
-//            }
-//        }
         return;
     }
     
@@ -256,8 +190,6 @@ public class MrcClockControl extends DefaultClockControl implements /*MrcListene
 	
 	/** last known ratio from Mrc clock */
 	public double getRate() {
-//		issueReadOnlyRequest();	// get the current rate
-		//issueDeferredGetRate = true;
 		if (DEBUG_SHOW_PUBLIC_CALLS){
 			log.debug("getRate: {}", mrcLastRatio);
 		}
@@ -276,8 +208,6 @@ public class MrcClockControl extends DefaultClockControl implements /*MrcListene
 	/** returns the current Mrc time, does not have a date component */
     @SuppressWarnings("deprecation")
 	public Date getTime() {
-//		issueReadOnlyRequest();	// go get the current time value
-//		issueDeferredGetTime = true;
         Date now = internalClock.getTime();
         if (lastClockReadPacket != null) {
 			if (mrcLast1224) {	// is 24 hour mode
@@ -386,8 +316,6 @@ public class MrcClockControl extends DefaultClockControl implements /*MrcListene
     private void issueClockRatio(int r) {
     	log.debug("sending ratio " + r + " to mrc cmd station");
         MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.setClockRatio(r);
-        waiting++;
-        waitingForCmdRatio = true;
         tc.sendMrcMessage(cmdMrc);
     }
     
@@ -395,8 +323,6 @@ public class MrcClockControl extends DefaultClockControl implements /*MrcListene
 	private void issueClock1224(boolean mode) {
     	if (mode != mrcLast1224) {
         	MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.setClockAmPm();
-        	waiting++;
-    		waitingForCmd1224 = true;
     		tc.sendMrcMessage(cmdMrc);
     	}
     }
@@ -404,34 +330,18 @@ public class MrcClockControl extends DefaultClockControl implements /*MrcListene
 //    private void issueClockStop() {
 //        byte [] cmd = jmri.jmrix.mrc.MrcMessage.accStopClock();
 //        MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.createBinaryMessage(tc, cmd, CMD_CLOCK_SET_REPLY_SIZE);
-//        waiting++;
-//        waitingForCmdStop = true;
 //        tc.sendMrcMessage(cmdMrc, this);
 //    }
 //    
 //    private void issueClockStart() {
 //        byte [] cmd = jmri.jmrix.mrc.MrcMessage.accStartClock();
 //        MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.createBinaryMessage(tc, cmd, CMD_CLOCK_SET_REPLY_SIZE);
-//        waiting++;
-//        waitingForCmdStart = true;
 //        tc.sendMrcMessage(cmdMrc, this);
 //    }
 //
-//    private void issueReadOnlyRequest() {
-//        if (!waitingForCmdRead){
-//            byte [] cmd = jmri.jmrix.mrc.MrcMessage.accMemoryRead(CS_CLOCK_MEM_ADDR);
-//            MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.createBinaryMessage(tc, cmd, CS_CLOCK_MEM_SIZE);
-//            waiting++;
-//            waitingForCmdRead = true;
-//            tc.sendMrcMessage(cmdMrc, this);
-//            //			log.debug("issueReadOnlyRequest at " + internalClock.getTime());
-//        }
-//    }
 
     private void issueClockTime(int hh, int mm){
         MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.setClockTime(hh, mm);
-        waiting++;
-        waitingForCmdTime = true;
         tc.sendMrcMessage(cmdMrc);
     }
    
@@ -455,19 +365,6 @@ public class MrcClockControl extends DefaultClockControl implements /*MrcListene
         }
         return(mrcTime);
     }
-
-//    @SuppressWarnings({ "deprecation", "unused" })
-//    private double getIntTime() {
-//        Date now = internalClock.getTime();
-//        int ms = (int)(now.getTime() % 1000);
-//        int ss = now.getSeconds();
-//        int mm = now.getMinutes();
-//        int hh = now.getHours();
-//        if (false) {
-//            log.debug("getIntTime: {}:{}:{}.{}", hh, mm, ss, ms);
-//        }
-//        return((hh * 60 * 60) + (mm * 60) + ss + (ms / 1000));
-//    }
     
     static Logger log = LoggerFactory.getLogger(MrcClockControl.class.getName());
 }
