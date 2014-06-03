@@ -413,8 +413,10 @@ public class MrcPacketizer extends MrcTrafficController {
                     }
 
                     if ((msg.getMessageClass() & MrcInterface.POLL) != MrcInterface.POLL && msg.getNumDataElements()>6 && !msg.validCheckSum()) {
-                        log.warn("Ignore Mrc packet with bad checksum: "+msg.toString());
-                        throw new MrcMessageException();
+                        /*if(msg.getElement(0)!=MrcPackets.SETCLOCKRATIOCMD){*/
+                            log.warn("Ignore Mrc packet with bad checksum: "+msg.toString());
+                            throw new MrcMessageException();
+                        //}
                     }
                     // message is complete, dispatch it !!
                     {

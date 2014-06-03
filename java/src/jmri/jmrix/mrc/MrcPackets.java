@@ -83,15 +83,15 @@ public class MrcPackets {
     
     public static final int SETCLOCKRATIOCMD = 18;
     static final int[] SETCLOCKRATIOHEADER = new int[]{SETCLOCKRATIOCMD, 0, SETCLOCKRATIOCMD, 0};
-    private static final int SETCLOCKRATIOLENGTH = 10;
+    private static final int SETCLOCKRATIOLENGTH = 4;
     
     public static final int SETCLOCKTIMECMD = 19;
     static final int[] SETCLOCKTIMEHEADER = new int[]{SETCLOCKTIMECMD, 0, SETCLOCKTIMECMD, 0};
-    private static final int SETCLOCKTIMELENGTH = 10;
+    private static final int SETCLOCKTIMELENGTH = 6;
     
     public static final int SETCLOCKAMPMCMD = 50;
     static final int[] SETCLOCKAMPMHEADER = new int[]{SETCLOCKAMPMCMD, 0, SETCLOCKAMPMCMD, 0};
-    private static final int SETCLOCKAMPMLENGTH = 10;
+    private static final int SETCLOCKAMPMLENGTH = 4;
     
     public static final int LOCOSOLECONTROLCODE = 34;
     static final int[] LOCOSOLECONTROL = new int[]{LOCOSOLECONTROLCODE, 0, LOCOSOLECONTROLCODE, 0}; //Reply indicates that we are the sole controller of the loco
@@ -144,11 +144,11 @@ public class MrcPackets {
     }
 
     public static int getSetClockRatioPacketLength() {
-        return SETCLOCKRATIOLENGTH;
+        return SETCLOCKRATIOHEADER.length+SETCLOCKRATIOLENGTH;
     }
 
     public static int getSetClockAmPmPacketLength() {
-        return SETCLOCKAMPMLENGTH;
+        return SETCLOCKAMPMHEADER.length+SETCLOCKAMPMLENGTH;
     }
 
     public static int getFunctionPacketLength() {
@@ -160,7 +160,7 @@ public class MrcPackets {
     }
 
     public static int getSetClockTimePacketLength() {
-        return SETCLOCKTIMELENGTH;
+        return SETCLOCKTIMEHEADER.length+SETCLOCKTIMELENGTH;
     }
     
     public static int getThrottlePacketLength() {
