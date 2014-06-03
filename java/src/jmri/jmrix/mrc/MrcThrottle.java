@@ -273,6 +273,8 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
                         notifyPropertyChangeListener("IsForward", !isForward, isForward );
                         speed = m.getElement(8);
                     }
+                    speed = speed -1;
+                    if(speed<0) speed = 0;
                     float val = speed/126.0f;
                     if (val != this.speedSetting){
                         notifyPropertyChangeListener("SpeedSetting", this.speedSetting, val );

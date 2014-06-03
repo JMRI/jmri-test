@@ -237,7 +237,14 @@ public class MrcPackets {
                     } else {
                         txt.append(" Rev ");
                     }
-                    txt.append(" Speed: " + Integer.toString((m.getElement(8) ^ 0x80)));                
+                    txt.append(" Speed: ");                
+                    int speed = (m.getElement(8) ^ 0x80)-1;
+                    if(speed==0)
+                        txt.append("Emergency Stop");
+                    else if (speed ==-1)
+                        txt.append("Stop");
+                    else
+                        txt.append(Integer.toString(speed));
                 } else if (m.getElement(10) == 0x00){
                     int value = m.getElement(8);
                     txt.append(" 28ss");
