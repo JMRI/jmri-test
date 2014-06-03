@@ -307,22 +307,22 @@ public class MrcMessage {
     public int getAccAddress(){
         if(getMessageClass()!=MrcInterface.TURNOUTS)
             return -1;
-        int lowbyte = getElement(4)&0x3f;
-        int highbyte = (getElement(6)&0x70)>>4;
-        highbyte = (~highbyte & 0x07);
-        highbyte=(highbyte<<6);
-        int address = lowbyte+highbyte;
+        int lowbyte = (getElement(4)&0xFF)&0x3f;
+        int highbyte = ((getElement(6)&0xFF)&0x70)>>4;
+        highbyte = ((~highbyte & 0x07)<<6);
+        
+        int address = (((lowbyte+highbyte)-1)<<2)+1;
+        
+        address +=((getElement(6)&0xFF) &0x07)>>1;
         return address;
     }
     
     public int getAccState(){
-        int dBits = (( (getAccAddress()-1) & 0x03) << 1 ); 
-        if((getElement(6)&0x07)==dBits){
-            return jmri.Turnout.THROWN;
-        } else if((getElement(6)&0x07)==(dBits | 1)){
+        if(((getElement(6)&0x07) &0x01)==0x01) {
             return jmri.Turnout.CLOSED;
+        } else {
+            return jmri.Turnout.THROWN;
         }
-        return jmri.Turnout.UNKNOWN;
     }
     
         /**
