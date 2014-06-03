@@ -238,7 +238,7 @@ public class MrcPackets {
                         txt.append(" Rev ");
                     }
                     txt.append(" Speed: ");                
-                    int speed = (m.getElement(8) ^ 0x80)-1;
+                    int speed = (m.getElement(8) & 0x7F)-1;
                     if(speed==0)
                         txt.append("Emergency Stop");
                     else if (speed ==-1)

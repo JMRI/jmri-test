@@ -251,29 +251,25 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
             return;
         }
         if(m.getLocoAddress()==address.getNumber()){
-            log.info("Match on loco address");
-        }
-        if(m.getNumDataElements()>8 && m.getElement(4)==addressHi && m.getElement(6)==addressLo){
-            //message potentially matches our loco
             if(MrcPackets.startsWith(m, MrcPackets.THROTTLEPACKETHEADER)){
                 if(m.getElement(10) == 0x02){
                     //128
                     log.info("speed Packet from another controller for our loco");
-                    int speed = 0;
+                    int speed = m.getElement(8);
                     if((m.getElement(8) & 0x80) == 0x80){
                         //Forward
                         if(!this.isForward){
                             this.isForward = true;
                             notifyPropertyChangeListener("IsForward", !isForward, isForward );
                         }
-                        speed = m.getElement(8) - 0x80;
+                        //speed = m.getElement(8);
                     } else if(this.isForward){
                         //reverse
                         this.isForward = false;
                         notifyPropertyChangeListener("IsForward", !isForward, isForward );
-                        speed = m.getElement(8);
+                        //speed = m.getElement(8);
                     }
-                    speed = speed -1;
+                    speed = (speed &0x7f) -1;
                     if(speed<0) speed = 0;
                     float val = speed/126.0f;
                     if (val != this.speedSetting){
@@ -310,61 +306,50 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
                     }
                 }
             } else if (MrcPackets.startsWith(m, MrcPackets.FUNCTIONGROUP1PACKETHEADER)){
-                    log.info("function Packet 1 from another controller for our loco");
                     int data = m.getElement(8)&0xff;
                     data = data - 0x80;
                     if((data&0x10)==0x10){
-                        log.info("Function 0 on");
                         if(!this.f0) {
                             notifyPropertyChangeListener(Throttle.F0, this.f0, true);
                             this.f0 = true;
                         }
                     } else if (this.f0){
-                        log.info("Function 0 off");
                         notifyPropertyChangeListener(Throttle.F0, this.f0, false);
                         this.f0 = false;
                     }
                     if((data&0x01)==0x01){
-                        log.info("Function 1 on");
                         if(!this.f1){
                             notifyPropertyChangeListener(Throttle.F1, this.f1, true);
                             this.f1 = true;
                         }
                     } else if (this.f1){
-                        log.info("Function 1 off");
                         notifyPropertyChangeListener(Throttle.F1, this.f1, false);
                         this.f1 = false;
                     }
                     if((data&0x02)==0x02){
-                        log.info("Function 2 on");
                         if(!this.f2){
                             notifyPropertyChangeListener(Throttle.F2, this.f2, true);
                             this.f2 = true;
                         }
                     } else if (this.f2){
-                        log.info("Function 2 off");
-                        notifyPropertyChangeListener(Throttle.F2, this.f2, false);
+                         notifyPropertyChangeListener(Throttle.F2, this.f2, false);
                         this.f2 = false;
                     }
                     if((data&0x04)==0x04){
-                        log.info("Function 3 on");
                         if(!this.f3){
                             notifyPropertyChangeListener(Throttle.F3, this.f3, true);
                             this.f3 = true;
                         }
                     } else if (this.f3){
-                        log.info("Function 3 off");
-                        notifyPropertyChangeListener(Throttle.F3, this.f3, false);
+                         notifyPropertyChangeListener(Throttle.F3, this.f3, false);
                         this.f3 = false;       
                     }
                     if((data&0x08)==0x08){
-                        log.info("Function 4 on");
                         if(!this.f4){
                             notifyPropertyChangeListener(Throttle.F4, this.f4, true);
                             this.f4 = true;
                         }
                     } else if (this.f4){
-                        log.info("Function 4 off");
                         notifyPropertyChangeListener(Throttle.F4, this.f4, false);
                         this.f4 = false;
                     }
