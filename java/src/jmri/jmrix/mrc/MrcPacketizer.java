@@ -411,12 +411,19 @@ public class MrcPacketizer extends MrcTrafficController {
                             xmtHandler.notify(); //This will notify the xmt to send a message, even if it is only "no Data" reply
                         }
                     }
-
-                    if ((msg.getMessageClass() & MrcInterface.POLL) != MrcInterface.POLL && msg.getNumDataElements()>6 && !msg.validCheckSum()) {
-                        /*if(msg.getElement(0)!=MrcPackets.SETCLOCKRATIOCMD){*/
+                    
+                    if((msg.getMessageClass() & MrcInterface.POLL) != MrcInterface.POLL && msg.getNumDataElements()>6){
+                        if (!msg.validCheckSum()) {
                             log.warn("Ignore Mrc packet with bad checksum: "+msg.toString());
                             throw new MrcMessageException();
-                        //}
+                        } else {
+                            for(int i=1;i<msg.getNumDataElements();i+=2){
+                                if(msg.getElement(i)!=0x00){
+                                    log.warn("Ignore Mrc packet with bad 9bit: "+msg.toString());
+                                    throw new MrcMessageException();
+                                }
+                            }
+                        }
                     }
                     // message is complete, dispatch it !!
                     {
