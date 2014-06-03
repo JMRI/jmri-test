@@ -154,7 +154,7 @@ public class MrcMessage {
         m.setElement(i++,0x00);
         m.setElement(i++,0x00);
         m.setElement(i++,0x00);
-        m.setElement(i++,getCheckSum(addressHi, addressLo, speed, 0x02));
+        m.setElement(i++,getCheckSum(addressHi, addressLo, speedC, 0x00));
         m.setElement(i++,0x00);
     //    m.setTimeout(100);
         return m;

@@ -219,9 +219,9 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
             m = MrcMessage.getSendSpeed128(addressLo, addressHi, value);
         } else {
             value = (int) ((28) * speed); // -1 for rescale to avoid estop
-            if (value > 0) value = value + 1; // skip estop
-            if (value > 28) value = 28; // max possible speed
-            if (value < 0)	value = 1; // emergency stop
+            if (value > 0) value = value + 3; // skip estop
+            if (value > 32) value = 31; // max possible speed
+            if (value < 0)	value = 2; // emergency stop
             m = MrcMessage.getSendSpeed28(addressLo, addressHi, value, isForward);
         }
         tc.sendMrcMessage(m);
@@ -245,9 +245,9 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
     //Might need to look at other packets from handsets to see if they also have control of our loco and adjust from that.
     
     public void notifyRcv(Date timestamp, MrcMessage m) {
-        if(m.getMessageClass()!=MrcInterface.THROTTLEINFO 
-            || m.getElement(0)!=MrcPackets.LOCOSOLECONTROLCODE 
-                || m.getElement(0)!=MrcPackets.LOCODBLCONTROLCODE){
+        if(m.getMessageClass()!=MrcInterface.THROTTLEINFO
+            || (m.getMessageClass()==MrcInterface.THROTTLEINFO && (m.getElement(0)==MrcPackets.LOCOSOLECONTROLCODE 
+                || m.getElement(0)==MrcPackets.LOCODBLCONTROLCODE))){
             return;
         }
         if(m.getLocoAddress()==address.getNumber()){
@@ -280,7 +280,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
                         record(val);
                     }
                 } else if (m.getElement(10) == 0x00){
-                    int value = m.getElement(8);
+                    int value = m.getElement(8)&0xff;
                     //28 Speed Steps
                     if((m.getElement(8)& 0x60)==0x60){
                         //Forward
@@ -297,7 +297,7 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
                     value = value -3; //Turn into user expected 0-28
                     float val = -1;
                     if(value!=-1){
-                        if(val<1) val = 0;
+                        if(value<1) value = 0;
                         val = value/28.0f;
                     }
                         
