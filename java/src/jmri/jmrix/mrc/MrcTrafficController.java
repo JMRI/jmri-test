@@ -82,7 +82,7 @@ public abstract class MrcTrafficController implements MrcInterface{
         synchronized(this) {
             v = (Vector<MrcTrafficListenerFilter>) trafficListeners.clone();
         }
-        if (log.isDebugEnabled()) log.debug("notify of incoming LocoNet packet: " + m.toString());
+        if (log.isDebugEnabled()) log.debug("notify of incoming Mrc packet: " + m.toString());
         
         // forward to all listeners
         for (MrcTrafficListenerFilter adapter : v) {
@@ -98,7 +98,7 @@ public abstract class MrcTrafficController implements MrcInterface{
         synchronized(this) {
             v = (Vector<MrcTrafficListenerFilter>) trafficListeners.clone();
         }
-        if (log.isDebugEnabled()) log.debug("notify of send LocoNet packet: " + m.toString());
+        if (log.isDebugEnabled()) log.debug("notify of send Mrc packet: " + m.toString());
         
         // forward to all listeners
         for (MrcTrafficListenerFilter adapter : v) {

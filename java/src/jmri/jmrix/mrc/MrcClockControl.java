@@ -38,7 +38,7 @@ import java.util.ResourceBundle;
  * @author		Bob Jacobsen, Alex Shepherd
  * @version     $Revision: 22887 $
  */
-public class MrcClockControl extends DefaultClockControl implements /*MrcListener,*/  MrcTrafficListener
+public class MrcClockControl extends DefaultClockControl implements MrcTrafficListener
 {
     ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.mrc.MrcClockControlBundle");
 
@@ -90,7 +90,7 @@ public class MrcClockControl extends DefaultClockControl implements /*MrcListene
     public static final int MAX_ERROR_ARRAY = 4;
     public static final double TARGET_SYNC_DELAY = 55;
     public static final int SYNCMODE_OFF = 0;				//0 - clocks independent
-    public static final int SYNCMODE_Mrc_MASTER = 1;		//1 - Mrc sets Internal
+    public static final int SYNCMODE_MRC_MASTER = 1;		//1 - Mrc sets Internal
     public static final int SYNCMODE_INTERNAL_MASTER = 2;	//2 - Internal sets Mrc
     public static final int WAIT_CMD_EXECUTION = 1000;
     

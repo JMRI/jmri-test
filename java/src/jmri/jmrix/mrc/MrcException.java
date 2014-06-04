@@ -1,4 +1,4 @@
-// LocoNetException.java
+// MrcException.java
 
 package jmri.jmrix.mrc;
 

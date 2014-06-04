@@ -143,8 +143,12 @@ public class SimulatorAdapter extends MrcPortController implements
 			if (log.isDebugEnabled()) {
 				StringBuffer buf = new StringBuffer();
 				buf.append("Mrc Simulator Thread received message: ");
-				for (int i = 0; i < m.getNumDataElements(); i++)
-					buf.append(Integer.toHexString(0xFF & m.getElement(i)) + " ");
+				if (m != null) {
+					for (int i = 0; i < m.getNumDataElements(); i++)
+						buf.append(Integer.toHexString(0xFF & m.getElement(i)) + " ");
+				} else {
+					buf.append("null message buffer");
+				}
 				log.debug(buf.toString());
 			}
 			if (m != null) {

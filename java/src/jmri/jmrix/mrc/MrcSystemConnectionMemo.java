@@ -1,4 +1,4 @@
-// LocoNetSystemConnectionMemo.java
+// MrcSystemConnectionMemo.java
 
 package jmri.jmrix.mrc;
 

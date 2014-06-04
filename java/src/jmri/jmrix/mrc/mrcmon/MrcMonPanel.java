@@ -144,7 +144,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTraffi
     	logMessage(timestamp, m, "Rx:");
     }
     
-    private void logMessage(Date timestamp, MrcMessage m, String src) {  // receive a LocoNet message and log it
+    private void logMessage(Date timestamp, MrcMessage m, String src) {  // receive a Mrc message and log it
         // send the raw data, to display if requested
         //String raw = src + " - " + l.toString();
         String raw = "";
