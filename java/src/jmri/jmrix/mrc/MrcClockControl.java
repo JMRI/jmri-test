@@ -4,6 +4,7 @@ package jmri.jmrix.mrc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import jmri.implementation.DefaultClockControl;
 import jmri.InstanceManager;
 import jmri.Timebase;
@@ -167,7 +168,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcTrafficLi
 		return true;
 	}
 	
-	/** sets Mrc clock speed, must be 1 to 15 */
+	/** sets Mrc clock speed, must be 1 to 60 */
 	public void setRate(double newRate) {
 		if (DEBUG_SHOW_PUBLIC_CALLS){
 			log.debug("setRate: " + newRate);
@@ -234,28 +235,27 @@ public class MrcClockControl extends DefaultClockControl implements MrcTrafficLi
 		if (DEBUG_SHOW_PUBLIC_CALLS){
 			log.debug("startHardwareClock: {}", now);
 		}
-		if (!internalClock.getInternalMaster() && internalClock.getMasterName().equals(getHardwareClockName())){
-			
-		}
 		issueClockTime(now.getHours(), now.getMinutes());
-//		issueClockStart();
 	}
-	
-//	/** stops the Mrc Clock */
-//	public void stopHardwareClock() {
-//		if (DEBUG_SHOW_PUBLIC_CALLS){
-//			log.debug("stopHardwareClock");
-//		}
-//		issueClockStop();
-//	}
-//	
-//	/** not sure when or if this gets called, but will issue a read to get latest time */
-//	public void initiateRead() {
-//		if (DEBUG_SHOW_PUBLIC_CALLS){
-//			log.debug("initiateRead");
-//		}
-//		issueReadOnlyRequest();
-//	}
+
+    @SuppressWarnings("deprecation")
+	public void initializeHardwareClock(double rate, Date now, boolean getTime) {
+    	// clockMode controls what we are doing: SYNCMODE_OFF, SYNCMODE_INTERNAL_MASTER, SYNCMODE_MRC_MASTER
+		boolean synchronizeWithInternalClock = internalClock.getSynchronize();
+		boolean correctFastClock = internalClock.getCorrectHardware();
+		boolean setInternal = !internalClock.getInternalMaster();
+		if (!setInternal && !synchronizeWithInternalClock && !correctFastClock) {
+			// No request to interact with hardware fast clock - ignore call
+			return;
+		}
+		int newRate = (int)rate;
+		if (newRate != getRate()) {
+			setRate(rate);
+		}
+		if (!getTime) {
+			setTime(now);
+		}
+	}
 	
 	/** stops any sync, removes listeners */
     public void dispose() {
@@ -276,16 +276,17 @@ public class MrcClockControl extends DefaultClockControl implements MrcTrafficLi
         	log.debug("newInternalMinute clockMode: {} mrcInit: {} mrcRun: {}",
         			clockMode, mrcSyncInitStateCounter, mrcSyncRunStateCounter);
         }
+        // if sync and Internal is master
+        // clockMode - SYNCMODE_OFF, SYNCMODE_INTERNAL_MASTER, SYNCMODE_MRC_MASTER
+        if (clockMode == SYNCMODE_INTERNAL_MASTER) {
+        	Date now = internalClock.getTime();
+        	setTime(now);
+        }
     }
     
     @SuppressWarnings("deprecation")
     private void readClockPacket (MrcMessage r) {
-    	//MrcReply priorClockReadPacket = lastClockReadPacket;
-    	//int priorMrcRatio = mrcLastRatio;
-    	//boolean priorMrcRunning = mrcLastRunning;
         lastClockReadPacket = r;
-        //lastClockReadAtTime = internalClock.getTime();
-        //log.debug("readClockPacket - at time: " + lastClockReadAtTime);
         mrcLastHour = r.getElement(2) & 0x1F;
         mrcLastMinute = r.getElement(4) & 0xFF;
         if ((r.getElement(2) & 0xC0) == 0x80) {
@@ -327,19 +328,6 @@ public class MrcClockControl extends DefaultClockControl implements MrcTrafficLi
     	}
     }
     
-//    private void issueClockStop() {
-//        byte [] cmd = jmri.jmrix.mrc.MrcMessage.accStopClock();
-//        MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.createBinaryMessage(tc, cmd, CMD_CLOCK_SET_REPLY_SIZE);
-//        tc.sendMrcMessage(cmdMrc, this);
-//    }
-//    
-//    private void issueClockStart() {
-//        byte [] cmd = jmri.jmrix.mrc.MrcMessage.accStartClock();
-//        MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.createBinaryMessage(tc, cmd, CMD_CLOCK_SET_REPLY_SIZE);
-//        tc.sendMrcMessage(cmdMrc, this);
-//    }
-//
-
     private void issueClockTime(int hh, int mm){
         MrcMessage cmdMrc = jmri.jmrix.mrc.MrcMessage.setClockTime(hh, mm);
         tc.sendMrcMessage(cmdMrc);
