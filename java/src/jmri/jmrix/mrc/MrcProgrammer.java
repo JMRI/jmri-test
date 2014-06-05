@@ -106,7 +106,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
 
     // programming interface
     public synchronized void writeCV(int CV, int val, jmri.ProgListener p) throws jmri.ProgrammerException {
-        log.info("writeCV {} listens {}", CV, p);
+        log.debug("writeCV {} listens {}", CV, p);
         useProgrammer(p);
         _progRead = false;
         // set state
@@ -131,7 +131,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
     }
 
     public synchronized void readCV(int CV, jmri.ProgListener p) throws jmri.ProgrammerException {
-        log.info("readCV {} listens {}", CV, p);
+        log.debug("readCV {} listens {}", CV, p);
         useProgrammer(p);
         _progRead = true;
 
@@ -189,7 +189,6 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
         if(progState == NOTPROGRAMMING && m.getMessageClass()!=MrcInterface.PROGRAMMING){
             return;
         }
-        log.info("Error occured in programming command");
         timeout();
     }
 
@@ -210,17 +209,17 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
             progState = NOTPROGRAMMING;
             //Currently we have no way to know if the write was sucessful or not.
             if (_progRead) {
-                log.info("prog Read " + _cv);
+                log.debug("prog Read " + _cv);
                 // read was in progress - get return value
                 _val = m.value();
             }
             // if this was a read, we retrieved the value above.  If its a
             // write, we're to return the original write value
-            log.info("Has value " + _val);
+            log.debug("Has value " + _val);
             notifyProgListenerEnd(_val, jmri.ProgListener.OK);
         
         } else {
-            log.info("reply in un-decoded state cv:" + _cv + " " + m.toString());
+            log.debug("reply in un-decoded state cv:" + _cv + " " + m.toString());
         }
     }
 
@@ -230,7 +229,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
     protected synchronized void timeout() {
         if (progState != NOTPROGRAMMING) {
             // we're programming, time to stop
-            log.info("timeout!" + _cv);
+            log.debug("timeout!" + _cv);
             // perhaps no loco present? Fail back to end of programming
             progState = NOTPROGRAMMING;
             cleanup();

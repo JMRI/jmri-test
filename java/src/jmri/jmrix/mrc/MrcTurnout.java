@@ -33,6 +33,7 @@ public class MrcTurnout extends AbstractTurnout implements MrcTrafficListener{
         _number = number;
         this.tc = tc;
     	this.prefix = p + "T";
+        tc.addTrafficListener(MrcInterface.TURNOUTS, this);
     }
     
 

@@ -8,6 +8,7 @@ package jmri.jmrix.mrc;
  * contact Mrc Inc for separate permission.
  *
  * @author Kevin Dickerson 2014
+ * @author Ken Cameron 2014
  */
 public class MrcPackets {
     
@@ -237,7 +238,7 @@ public class MrcPackets {
                     } else {
                         txt.append(" Rev ");
                     }
-                    txt.append(" Speed: ");                
+                    txt.append(" Speed: ");
                     int speed = (m.getElement(8) & 0x7F)-1;
                     if(speed==0)
                         txt.append("Emergency Stop");

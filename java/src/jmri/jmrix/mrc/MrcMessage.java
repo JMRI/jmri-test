@@ -6,11 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Encodes a message to an MRC command station.  The MrcReply
- * class handles the response from the command station.
- * <P>
- * The {@link MrcReply}
- * class handles the response from the command station.
+ * Encodes and decoders messages to an MRC command station.
  * <p>
  * Some of the message formats used in this class are Copyright MRC, Inc.
  * and used with permission as part of the JMRI project.  That permission
@@ -80,7 +76,6 @@ public class MrcMessage {
     
     int SHORT_TIMEOUT = 150;
     int SHORT_PROG_TIMEOUT = 4000;
-    //int LONG_TIMEOUT = 4000;
     
     int timeout = SHORT_TIMEOUT;
     
@@ -90,12 +85,6 @@ public class MrcMessage {
     int retries = 3;
     public int getRetries() { return retries; }
     public void setRetries(int i) { retries=i; }
-    /*protected int lengthOfByteStream(AbstractMRMessage m) {
-        int len = m.getNumDataElements();
-        int cr = 0;
-        if (! m.isBinary()) cr = 1;  // space for return
-        return len+cr;
-    }*/
     
     boolean inError = false;
     
@@ -279,12 +268,10 @@ public class MrcMessage {
         if(MrcPackets.startsWith(this, MrcPackets.READCVHEADERREPLY)){
             if(getElement(4)==getElement(6)){
                 val = getElement(4)&0xff;
-                log.info("good reply " + val);
             }
             else
                 log.error("Error in format of the returned CV value");
         } else {
-            log.info(toString());
             log.error("Not a CV Read formated packet");
         }
 		return val;
@@ -414,7 +401,6 @@ public class MrcMessage {
         if(packet==null){
             return null;
         }
-        //placeholder until code is written
         m.setElement(4,packet[0]);
         m.setElement(5,0x00);
         m.setElement(6,packet[1]);
@@ -453,13 +439,13 @@ public class MrcMessage {
     
     byte[] getByteStream(){ return byteStream; }
     
-    public int getElement(int n) {        return _dataChars[n];}
+    public int getElement(int n) { return _dataChars[n];}
 
 
     // accessors to the bulk data
-    public int getNumDataElements() {        return _nDataChars;}
+    public int getNumDataElements() { return _nDataChars;}
 
-    public void setElement(int n, int v) {         _dataChars[n] = v;  }
+    public void setElement(int n, int v) {_dataChars[n] = v;  }
     
     // contents (private)
     private int _nDataChars = 0;

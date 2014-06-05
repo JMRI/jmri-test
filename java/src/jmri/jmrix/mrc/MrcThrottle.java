@@ -163,9 +163,9 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
         
         data = 0x00 |
         (f20 ? 0x08 : 0) |
-        (f19 ? 0x04 : 0)	|
+        (f19 ? 0x04 : 0) |
         (f18 ? 0x02 : 0) |
-        (f17 ? 0x01 : 0);        
+        (f17 ? 0x01 : 0);
         data = data + 0xC0;
         
         m = MrcMessage.getSendFunction(5, addressLo, addressHi, data);
@@ -180,11 +180,11 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
     protected void sendFunctionGroup5() {
     	int data = 0x00 |
     			(f28 ? 0x80 : 0) |
-    			(f27 ? 0x40 : 0)	|
+    			(f27 ? 0x40 : 0) |
     			(f26 ? 0x20 : 0) |
     			(f25 ? 0x10 : 0) |
     			(f24 ? 0x08 : 0) |
-    			(f23 ? 0x04 : 0)	|
+    			(f23 ? 0x04 : 0) |
     			(f22 ? 0x02 : 0) |
     			(f21 ? 0x01 : 0);
 
@@ -306,70 +306,279 @@ public class MrcThrottle extends AbstractThrottle implements MrcTrafficListener{
                     }
                 }
             } else if (MrcPackets.startsWith(m, MrcPackets.FUNCTIONGROUP1PACKETHEADER)){
-                    int data = m.getElement(8)&0xff;
-                    data = data - 0x80;
-                    if((data&0x10)==0x10){
-                        if(!this.f0) {
-                            notifyPropertyChangeListener(Throttle.F0, this.f0, true);
-                            this.f0 = true;
-                        }
-                    } else if (this.f0){
-                        notifyPropertyChangeListener(Throttle.F0, this.f0, false);
-                        this.f0 = false;
+                int data = m.getElement(8)&0xff;
+                if((data&0x10)==0x10){
+                    if(!this.f0) {
+                        notifyPropertyChangeListener(Throttle.F0, this.f0, true);
+                        this.f0 = true;
                     }
-                    if((data&0x01)==0x01){
-                        if(!this.f1){
-                            notifyPropertyChangeListener(Throttle.F1, this.f1, true);
-                            this.f1 = true;
-                        }
-                    } else if (this.f1){
-                        notifyPropertyChangeListener(Throttle.F1, this.f1, false);
-                        this.f1 = false;
+                } else if (this.f0){
+                    notifyPropertyChangeListener(Throttle.F0, this.f0, false);
+                    this.f0 = false;
+                }
+                if((data&0x01)==0x01){
+                    if(!this.f1){
+                        notifyPropertyChangeListener(Throttle.F1, this.f1, true);
+                        this.f1 = true;
                     }
-                    if((data&0x02)==0x02){
-                        if(!this.f2){
-                            notifyPropertyChangeListener(Throttle.F2, this.f2, true);
-                            this.f2 = true;
-                        }
-                    } else if (this.f2){
-                         notifyPropertyChangeListener(Throttle.F2, this.f2, false);
-                        this.f2 = false;
+                } else if (this.f1){
+                    notifyPropertyChangeListener(Throttle.F1, this.f1, false);
+                    this.f1 = false;
+                }
+                if((data&0x02)==0x02){
+                    if(!this.f2){
+                        notifyPropertyChangeListener(Throttle.F2, this.f2, true);
+                        this.f2 = true;
                     }
-                    if((data&0x04)==0x04){
-                        if(!this.f3){
-                            notifyPropertyChangeListener(Throttle.F3, this.f3, true);
-                            this.f3 = true;
-                        }
-                    } else if (this.f3){
-                         notifyPropertyChangeListener(Throttle.F3, this.f3, false);
-                        this.f3 = false;       
+                } else if (this.f2){
+                     notifyPropertyChangeListener(Throttle.F2, this.f2, false);
+                    this.f2 = false;
+                }
+                if((data&0x04)==0x04){
+                    if(!this.f3){
+                        notifyPropertyChangeListener(Throttle.F3, this.f3, true);
+                        this.f3 = true;
                     }
-                    if((data&0x08)==0x08){
-                        if(!this.f4){
-                            notifyPropertyChangeListener(Throttle.F4, this.f4, true);
-                            this.f4 = true;
-                        }
-                    } else if (this.f4){
-                        notifyPropertyChangeListener(Throttle.F4, this.f4, false);
-                        this.f4 = false;
+                } else if (this.f3){
+                     notifyPropertyChangeListener(Throttle.F3, this.f3, false);
+                    this.f3 = false;       
+                }
+                if((data&0x08)==0x08){
+                    if(!this.f4){
+                        notifyPropertyChangeListener(Throttle.F4, this.f4, true);
+                        this.f4 = true;
                     }
-                    
+                } else if (this.f4){
+                    notifyPropertyChangeListener(Throttle.F4, this.f4, false);
+                    this.f4 = false;
+                }
                     //reverse engineer the function
             }  else if (MrcPackets.startsWith(m, MrcPackets.FUNCTIONGROUP2PACKETHEADER)){
-                    log.info("function Packet 2 from another controller for our loco");
-                    //reverse engineer the function
+                int data = m.getElement(8)&0xff;
+                if((data&0x01)==0x01){
+                    if(!this.f5){
+                        notifyPropertyChangeListener(Throttle.F5, this.f5, true);
+                        this.f5 = true;
+                    }
+                } else if (this.f5){
+                    notifyPropertyChangeListener(Throttle.F5, this.f5, false);
+                    this.f5 = false;
+                }
+                if((data&0x02)==0x02){
+                    if(!this.f6){
+                        notifyPropertyChangeListener(Throttle.F6, this.f6, true);
+                        this.f6 = true;
+                    }
+                } else if (this.f6){
+                     notifyPropertyChangeListener(Throttle.F6, this.f6, false);
+                    this.f6 = false;
+                }
+                if((data&0x04)==0x04){
+                    if(!this.f7){
+                        notifyPropertyChangeListener(Throttle.F7, this.f7, true);
+                        this.f7 = true;
+                    }
+                } else if (this.f7){
+                     notifyPropertyChangeListener(Throttle.F7, this.f7, false);
+                    this.f7 = false;       
+                }
+                if((data&0x08)==0x08){
+                    if(!this.f8){
+                        notifyPropertyChangeListener(Throttle.F8, this.f8, true);
+                        this.f8 = true;
+                    }
+                } else if (this.f8){
+                    notifyPropertyChangeListener(Throttle.F8, this.f8, false);
+                    this.f8 = false;
+                }
             }  else if (MrcPackets.startsWith(m, MrcPackets.FUNCTIONGROUP3PACKETHEADER)){
-                    log.info("function Packet 3 from another controller for our loco");
-                    //reverse engineer the function
+                int data = m.getElement(8)&0xff;
+                if((data&0x01)==0x01){
+                    if(!this.f9){
+                        notifyPropertyChangeListener(Throttle.F9, this.f9, true);
+                        this.f9 = true;
+                    }
+                } else if (this.f9){
+                    notifyPropertyChangeListener(Throttle.F9, this.f9, false);
+                    this.f9 = false;
+                }
+                if((data&0x02)==0x02){
+                    if(!this.f10){
+                        notifyPropertyChangeListener(Throttle.F10, this.f10, true);
+                        this.f10 = true;
+                    }
+                } else if (this.f10){
+                     notifyPropertyChangeListener(Throttle.F10, this.f10, false);
+                    this.f10 = false;
+                }
+                if((data&0x04)==0x04){
+                    if(!this.f11){
+                        notifyPropertyChangeListener(Throttle.F11, this.f11, true);
+                        this.f11 = true;
+                    }
+                } else if (this.f11){
+                     notifyPropertyChangeListener(Throttle.F11, this.f11, false);
+                    this.f11 = false;       
+                }
+                if((data&0x08)==0x08){
+                    if(!this.f12){
+                        notifyPropertyChangeListener(Throttle.F12, this.f12, true);
+                        this.f12 = true;
+                    }
+                } else if (this.f12){
+                    notifyPropertyChangeListener(Throttle.F12, this.f12, false);
+                    this.f12 = false;
+                }
             }  else if (MrcPackets.startsWith(m, MrcPackets.FUNCTIONGROUP4PACKETHEADER)){
-                    log.info("function Packet 4 from another controller for our loco");
-                    //reverse engineer the function
+                int data = m.getElement(8)&0xff;
+                if((data&0x01)==0x01){
+                    if(!this.f13){
+                        notifyPropertyChangeListener(Throttle.F13, this.f13, true);
+                        this.f13 = true;
+                    }
+                } else if (this.f13){
+                    notifyPropertyChangeListener(Throttle.F13, this.f13, false);
+                    this.f13 = false;
+                }
+                if((data&0x02)==0x02){
+                    if(!this.f14){
+                        notifyPropertyChangeListener(Throttle.F14, this.f14, true);
+                        this.f14 = true;
+                    }
+                } else if (this.f14){
+                     notifyPropertyChangeListener(Throttle.F14, this.f14, false);
+                    this.f14 = false;
+                }
+                if((data&0x04)==0x04){
+                    if(!this.f15){
+                        notifyPropertyChangeListener(Throttle.F15, this.f15, true);
+                        this.f15 = true;
+                    }
+                } else if (this.f15){
+                     notifyPropertyChangeListener(Throttle.F15, this.f15, false);
+                    this.f15 = false;       
+                }
+                if((data&0x08)==0x08){
+                    if(!this.f16){
+                        notifyPropertyChangeListener(Throttle.F16, this.f16, true);
+                        this.f16 = true;
+                    }
+                } else if (this.f16){
+                    notifyPropertyChangeListener(Throttle.F16, this.f16, false);
+                    this.f16 = false;
+                }
             }  else if (MrcPackets.startsWith(m, MrcPackets.FUNCTIONGROUP5PACKETHEADER)){
-                    log.info("function Packet 5 from another controller for our loco");
-                    //reverse engineer the function
+                int data = m.getElement(8)&0xff;
+                if((data&0x01)==0x01){
+                    if(!this.f17){
+                        notifyPropertyChangeListener(Throttle.F17, this.f17, true);
+                        this.f17 = true;
+                    }
+                } else if (this.f17){
+                    notifyPropertyChangeListener(Throttle.F17, this.f17, false);
+                    this.f17 = false;
+                }
+                if((data&0x02)==0x02){
+                    if(!this.f18){
+                        notifyPropertyChangeListener(Throttle.F18, this.f18, true);
+                        this.f18 = true;
+                    }
+                } else if (this.f18){
+                     notifyPropertyChangeListener(Throttle.F18, this.f18, false);
+                    this.f18 = false;
+                }
+                if((data&0x04)==0x04){
+                    if(!this.f19){
+                        notifyPropertyChangeListener(Throttle.F19, this.f19, true);
+                        this.f19 = true;
+                    }
+                } else if (this.f19){
+                     notifyPropertyChangeListener(Throttle.F19, this.f19, false);
+                    this.f19 = false;       
+                }
+                if((data&0x08)==0x08){
+                    if(!this.f20){
+                        notifyPropertyChangeListener(Throttle.F20, this.f20, true);
+                        this.f20 = true;
+                    }
+                } else if (this.f20){
+                    notifyPropertyChangeListener(Throttle.F20, this.f20, false);
+                    this.f20 = false;
+                }
             }  else if (MrcPackets.startsWith(m, MrcPackets.FUNCTIONGROUP6PACKETHEADER)){
-                    log.info("function Packet 6 from another controller for our loco");
-                    //reverse engineer the function
+                int data = m.getElement(8)&0xff;
+                if((data&0x01)==0x01){
+                    if(!this.f21){
+                        notifyPropertyChangeListener(Throttle.F21, this.f21, true);
+                        this.f21 = true;
+                    }
+                } else if (this.f21){
+                    notifyPropertyChangeListener(Throttle.F21, this.f21, false);
+                    this.f21 = false;
+                }
+                if((data&0x02)==0x02){
+                    if(!this.f22){
+                        notifyPropertyChangeListener(Throttle.F22, this.f22, true);
+                        this.f22 = true;
+                    }
+                } else if (this.f22){
+                     notifyPropertyChangeListener(Throttle.F22, this.f22, false);
+                    this.f22 = false;
+                }
+                if((data&0x04)==0x04){
+                    if(!this.f23){
+                        notifyPropertyChangeListener(Throttle.F23, this.f23, true);
+                        this.f23 = true;
+                    }
+                } else if (this.f23){
+                     notifyPropertyChangeListener(Throttle.F23, this.f23, false);
+                    this.f23 = false;       
+                }
+                if((data&0x08)==0x08){
+                    if(!this.f24){
+                        notifyPropertyChangeListener(Throttle.F24, this.f24, true);
+                        this.f24 = true;
+                    }
+                } else if (this.f24){
+                    notifyPropertyChangeListener(Throttle.F24, this.f24, false);
+                    this.f24 = false;
+                }
+                if((data&0x10)==0x10){
+                    if(!this.f25){
+                        notifyPropertyChangeListener(Throttle.F25, this.f25, true);
+                        this.f25 = true;
+                    }
+                } else if (this.f25){
+                    notifyPropertyChangeListener(Throttle.F25, this.f25, false);
+                    this.f25 = false;
+                }
+                if((data&0x20)==0x20){
+                    if(!this.f26){
+                        notifyPropertyChangeListener(Throttle.F26, this.f26, true);
+                        this.f26 = true;
+                    }
+                } else if (this.f26){
+                     notifyPropertyChangeListener(Throttle.F26, this.f26, false);
+                    this.f26 = false;
+                }
+                if((data&0x40)==0x40){
+                    if(!this.f27){
+                        notifyPropertyChangeListener(Throttle.F27, this.f27, true);
+                        this.f27 = true;
+                    }
+                } else if (this.f27){
+                     notifyPropertyChangeListener(Throttle.F27, this.f27, false);
+                    this.f27 = false;       
+                }
+                if((data&0x80)==0x80){
+                    if(!this.f28){
+                        notifyPropertyChangeListener(Throttle.F28, this.f28, true);
+                        this.f28 = true;
+                    }
+                } else if (this.f28){
+                    notifyPropertyChangeListener(Throttle.F28, this.f28, false);
+                    this.f28 = false;
+                }
             } else {
                 return;
             }

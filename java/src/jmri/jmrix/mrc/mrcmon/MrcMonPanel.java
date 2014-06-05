@@ -81,72 +81,47 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTraffi
         }
         memo.getMrcTrafficController().addTrafficListener(trafficFilter, this);
     }
-
-    public synchronized void message(MrcMessage m) {  // receive a message and log it
-	    String raw = "";
-	    for (int i=0;i<m.getNumDataElements(); i++) {
-	        if (i>0) raw+=" ";
-            raw = jmri.util.StringUtil.appendTwoHexFromInt(m.getElement(i)&0xFF, raw);
-        }
-        
-        // send the raw data, to display if requested
-        //String raw = m.toString();
-
-        // display the decoded data
-        // we use Llnmon to format, expect it to provide consistent \n after each line
-        //nextLine( raw );
-        //nextLine("cmd: \""+m.toString()+"\"\n", raw);
-	}
     
     MrcMessage previousPollMessage;
+    Date previousTimeStamp;
     
     @Override
     public synchronized void notifyXmit(Date timestamp, MrcMessage m) {
     	if(excludePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
             return;
         }
-    	//if (useSimpleLogging) return;
     	
     	logMessage(timestamp, m, "Tx:");
     }
     
     public synchronized void notifyFailedXmit(Date timestamp, MrcMessage m) {
     	
-    	//if (useSimpleLogging) return;
-    	
-    	//logMessage(timestamp, m, "Tx");
-    	//lastLoggedTxMessage = m;
+    	logMessage(timestamp, m, "FAILED:");
     }
     
     @Override
     public synchronized void notifyRcv(Date timestamp, MrcMessage m) {
-    	
-    	//if (useSimpleLogging) return;
-
+        
         String raw = "";
         if(excludePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
             //Do not show poll messages
             previousPollMessage = m;
+            previousTimeStamp = timestamp;
             return;
         } else if (previousPollMessage!=null) {
             if((m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
                 previousPollMessage = null;
                 return;
             }
-            for (int i=0;i<previousPollMessage.getNumDataElements(); i++) {
-                if (i>0) raw+=" ";
-                raw = jmri.util.StringUtil.appendTwoHexFromInt(previousPollMessage.getElement(i)&0xFF, raw);
-            }
-            nextLine("msg: \""+previousPollMessage.toString()+"\"\n", raw);
-            raw = "";
+            logMessage(previousTimeStamp, previousPollMessage, "Rx:");
             previousPollMessage = null;
+            previousTimeStamp = null;
         }
     	logMessage(timestamp, m, "Rx:");
     }
     
     private void logMessage(Date timestamp, MrcMessage m, String src) {  // receive a Mrc message and log it
         // send the raw data, to display if requested
-        //String raw = src + " - " + l.toString();
         String raw = "";
         for (int i=0;i<m.getNumDataElements(); i++) {
 	        if (i>0) raw+=" ";
