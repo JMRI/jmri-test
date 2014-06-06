@@ -22,9 +22,14 @@ public class TamsSensorManager extends jmri.managers.AbstractSensorManager
     public TamsSensorManager(TamsSystemConnectionMemo memo) {
         this.memo = memo;
         tc = memo.getTrafficController();
+        //Send a message to tell the s88 to auto reset.
+        TamsMessage m = new TamsMessage(new byte[] {(byte)0x78,(byte)0x53,(byte)0x52,(byte)0x31});
+        tc.sendTamsMessage(m, null);
+        m = new TamsMessage(new byte[] {(byte)0x78,(byte)0x53,(byte)0x52,(byte)0x30});
+        tc.sendTamsMessage(m, null);
+        m = new TamsMessage(new byte[] {(byte)0x99});
+        tc.sendTamsMessage(m, null);
         startPolling();
-        // connect to the TrafficManager
-        //tc.addTamsListener(this);
     }
     
     TamsSystemConnectionMemo memo;
