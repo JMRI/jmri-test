@@ -22,7 +22,11 @@ import jmri.jmrit.operations.trains.JsonManifest;
 import jmri.jmrit.operations.trains.Train;
 import jmri.jmrit.operations.trains.TrainManager;
 import jmri.util.FileUtil;
+import jmri.web.server.WebServer;
 import jmri.web.servlet.ServletUtil;
+import static jmri.web.servlet.ServletUtil.APPLICATION_JSON;
+import static jmri.web.servlet.ServletUtil.UTF8_APPLICATION_JSON;
+import static jmri.web.servlet.ServletUtil.UTF8_TEXT_HTML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,18 +58,25 @@ public class OperationsServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String[] pathInfo = request.getPathInfo().substring(1).split("/");
         response.setHeader("Connection", "Keep-Alive"); // NOI18N
-        if (pathInfo[0].equals("") || pathInfo[0].equals("trains")) {
+        if (pathInfo[0].equals("") || (pathInfo[0].equals(JSON.TRAINS) && pathInfo.length == 1)) {
             this.processTrains(request, response);
         } else {
             if (pathInfo.length == 1) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             } else {
                 String id = pathInfo[1];
-                log.debug("Handling {} with id {}", pathInfo[0], id);
-                if (pathInfo[0].equals("manifest")) {
+                String report = pathInfo[0];
+                if (report.equals(JSON.TRAINS) && pathInfo.length == 3) {
+                    report = pathInfo[2];
+                }
+                log.debug("Handling {} with id {}", report, id);
+                if (report.equals("manifest")) {
                     this.processManifest(id, request, response);
-                } else if (pathInfo[0].equals("conductor")) {
+                } else if (report.equals("conductor")) {
                     this.processConductor(id, request, response);
+                } else if (report.equals("trains")) {
+                    // TODO: allow for editing/building/reseting train
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST);
                 } else {
                     // Don't know what to do
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -76,8 +87,8 @@ public class OperationsServlet extends HttpServlet {
 
     protected void processTrains(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (JSON.JSON.equals(request.getParameter("format"))) {
-            response.setContentType("application/json"); // NOI18N
-            ServletUtil.getHelper().setNonCachingHeaders(response);
+            response.setContentType(UTF8_APPLICATION_JSON);
+            ServletUtil.getInstance().setNonCachingHeaders(response);
             try {
                 response.getWriter().print(JsonUtil.getTrains(request.getLocale()));
             } catch (JsonException ex) {
@@ -85,8 +96,8 @@ public class OperationsServlet extends HttpServlet {
                 response.sendError(code, (new ObjectMapper()).writeValueAsString(ex.getJsonMessage()));
             }
         } else if ("html".equals(request.getParameter("format"))) {
-            response.setContentType("text/html"); // NOI18N
-            ServletUtil.getHelper().setNonCachingHeaders(response);
+            response.setContentType(UTF8_TEXT_HTML);
+            ServletUtil.getInstance().setNonCachingHeaders(response);
             boolean showAll = ("all".equals(request.getParameter("show")));
             StringBuilder html = new StringBuilder();
             String format = FileUtil.readURL(FileUtil.findURL(Bundle.getMessage(request.getLocale(), "TrainsSnippet.html")));
@@ -108,17 +119,17 @@ public class OperationsServlet extends HttpServlet {
             }
             response.getWriter().print(html.toString());
         } else {
-            response.setContentType("text/html"); // NOI18N
+            response.setContentType(UTF8_TEXT_HTML);
             response.getWriter().print(String.format(request.getLocale(),
                     FileUtil.readURL(FileUtil.findURL(Bundle.getMessage(request.getLocale(), "Operations.html"))),
                     String.format(request.getLocale(),
                             Bundle.getMessage(request.getLocale(), "HtmlTitle"),
-                            ServletUtil.getHelper().getRailroadName(false),
+                            ServletUtil.getInstance().getRailroadName(false),
                             Bundle.getMessage(request.getLocale(), "TrainsTitle")
                     ),
-                    ServletUtil.getHelper().getNavBar(request.getLocale(), request.getContextPath()),
-                    ServletUtil.getHelper().getRailroadName(false),
-                    ServletUtil.getHelper().getFooter(request.getLocale(), request.getContextPath()),
+                    ServletUtil.getInstance().getNavBar(request.getLocale(), request.getContextPath()),
+                    ServletUtil.getInstance().getRailroadName(false),
+                    ServletUtil.getInstance().getFooter(request.getLocale(), request.getContextPath()),
                     "" // no train Id
             ));
         }
@@ -128,9 +139,9 @@ public class OperationsServlet extends HttpServlet {
         Train train = TrainManager.instance().getTrainById(id);
         if ("html".equals(request.getParameter("format"))) {
             log.debug("Getting manifest HTML code for train {}", id);
-            Manifest manifest = new Manifest(request.getLocale(), train);
-            ServletUtil.getHelper().setNonCachingHeaders(response);
-            response.setContentType("text/html"); // NOI18N
+            HtmlManifest manifest = new HtmlManifest(request.getLocale(), train);
+            ServletUtil.getInstance().setNonCachingHeaders(response);
+            response.setContentType(UTF8_TEXT_HTML);
             response.getWriter().print(String.format(request.getLocale(),
                     FileUtil.readURL(FileUtil.findURL(Bundle.getMessage(request.getLocale(), "ManifestSnippet.html"))),
                     train.getIconName(),
@@ -142,23 +153,31 @@ public class OperationsServlet extends HttpServlet {
             ));
             train.setModified(false);
         } else if (JSON.JSON.equals(request.getParameter("format"))) {
-            ServletUtil.getHelper().writeFile(response, new JsonManifest(train).getFile(), ServletUtil.APPLICATION_JSON);
+            log.debug("Getting manifest JSON code for train {}", id);
+            JsonNode manifest = this.mapper.readTree(new JsonManifest(train).getFile());
+            if (manifest.path(JSON.IMAGE_FILE_NAME).isTextual()) {
+                ((ObjectNode) manifest).put(JSON.IMAGE_FILE_NAME, WebServer.URIforPortablePath(FileUtil.getPortableFilename(manifest.path(JSON.IMAGE_FILE_NAME).asText())));
+            }
+            String content = this.mapper.writeValueAsString(manifest);
+            response.setContentType(ServletUtil.UTF8_APPLICATION_JSON);
+            response.setContentLength(content.length());
+            response.getWriter().print(content);
         } else {
-            response.setContentType("text/html"); // NOI18N
+            response.setContentType(UTF8_TEXT_HTML);
             response.getWriter().print(String.format(request.getLocale(),
                     FileUtil.readURL(FileUtil.findURL(Bundle.getMessage(request.getLocale(), "Operations.html"))),
                     String.format(request.getLocale(),
                             Bundle.getMessage(request.getLocale(), "HtmlTitle"),
-                            ServletUtil.getHelper().getRailroadName(false),
+                            ServletUtil.getInstance().getRailroadName(false),
                             String.format(request.getLocale(),
                                     Bundle.getMessage(request.getLocale(), "ManifestTitle"),
                                     train.getIconName(),
                                     train.getDescription()
                             )
                     ),
-                    ServletUtil.getHelper().getNavBar(request.getLocale(), request.getContextPath()),
-                    !train.getRailroadName().equals("") ? train.getRailroadName() : ServletUtil.getHelper().getRailroadName(false),
-                    ServletUtil.getHelper().getFooter(request.getLocale(), request.getContextPath()),
+                    ServletUtil.getInstance().getNavBar(request.getLocale(), request.getContextPath()),
+                    !train.getRailroadName().equals("") ? train.getRailroadName() : ServletUtil.getInstance().getRailroadName(false),
+                    ServletUtil.getInstance().getFooter(request.getLocale(), request.getContextPath()),
                     train.getId()
             ));
         }
@@ -167,7 +186,7 @@ public class OperationsServlet extends HttpServlet {
     private void processConductor(String id, HttpServletRequest request, HttpServletResponse response) throws IOException {
         Train train = TrainManager.instance().getTrainById(id);
         JsonNode data;
-        if (request.getContentType() != null && request.getContentType().contains("application/json")) {
+        if (request.getContentType() != null && request.getContentType().contains(APPLICATION_JSON)) {
             data = this.mapper.readTree(request.getReader());
             if (!data.path(DATA).isMissingNode()) {
                 data = data.path(DATA);
@@ -186,26 +205,26 @@ public class OperationsServlet extends HttpServlet {
                 }
             }
             log.debug("Getting conductor HTML code for train {}", id);
-            Conductor conductor = new Conductor(request.getLocale(), train);
-            ServletUtil.getHelper().setNonCachingHeaders(response);
-            response.setContentType("text/html"); // NOI18N
+            HtmlConductor conductor = new HtmlConductor(request.getLocale(), train);
+            ServletUtil.getInstance().setNonCachingHeaders(response);
+            response.setContentType(UTF8_TEXT_HTML);
             response.getWriter().print(conductor.getLocation());
         } else {
-            response.setContentType("text/html"); // NOI18N
+            response.setContentType(UTF8_TEXT_HTML);
             response.getWriter().print(String.format(request.getLocale(),
                     FileUtil.readURL(FileUtil.findURL(Bundle.getMessage(request.getLocale(), "Operations.html"))),
                     String.format(request.getLocale(),
                             Bundle.getMessage(request.getLocale(), "HtmlTitle"),
-                            ServletUtil.getHelper().getRailroadName(false),
+                            ServletUtil.getInstance().getRailroadName(false),
                             String.format(request.getLocale(),
                                     Bundle.getMessage(request.getLocale(), "ConductorTitle"),
                                     train.getIconName(),
                                     train.getDescription()
                             )
                     ),
-                    ServletUtil.getHelper().getNavBar(request.getLocale(), request.getContextPath()),
-                    !train.getRailroadName().equals("") ? train.getRailroadName() : ServletUtil.getHelper().getRailroadName(false),
-                    ServletUtil.getHelper().getFooter(request.getLocale(), request.getContextPath()),
+                    ServletUtil.getInstance().getNavBar(request.getLocale(), request.getContextPath()),
+                    !train.getRailroadName().equals("") ? train.getRailroadName() : ServletUtil.getInstance().getRailroadName(false),
+                    ServletUtil.getInstance().getFooter(request.getLocale(), request.getContextPath()),
                     train.getId()
             ));
         }

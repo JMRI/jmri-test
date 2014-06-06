@@ -43,6 +43,8 @@ public class XBeeTurnoutManager extends AbstractTurnoutManager {
               // if there was a number format exception, we couldn't
               // find the node.
               curNode = null;
+              log.debug("failed to create turnout " +systemName);
+              return null;
             }
         int pin = pinFromSystemName(systemName);
         int pin2 = pin2FromSystemName(systemName);
@@ -143,7 +145,6 @@ public class XBeeTurnoutManager extends AbstractTurnoutManager {
 
     private int pin2FromSystemName(String systemName) {
         int input = 0;
-        int iName = 0;
 
         if(systemName.contains(":")){
             //Address format passed is in the form of encoderAddress:input or T:turnout address

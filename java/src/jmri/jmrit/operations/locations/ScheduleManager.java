@@ -54,7 +54,7 @@ public class ScheduleManager implements java.beans.PropertyChangeListener {
 	}
 
 	// stores known Schedule instances by id
-	protected Hashtable<String, Schedule> _scheduleHashTable = new Hashtable<String, Schedule>(); 
+	protected Hashtable<String, Schedule> _scheduleHashTable = new Hashtable<String, Schedule>();
 
 	/**
 	 * @return Number of schedules
@@ -185,6 +185,12 @@ public class ScheduleManager implements java.beans.PropertyChangeListener {
 			out.add(en.nextElement());
 		}
 		return out;
+	}
+
+	public void resetHitCounts() {
+		for (Schedule schedule : getList()) {
+			schedule.resetHitCounts();
+		}
 	}
 
 	/**
@@ -348,8 +354,9 @@ public class ScheduleManager implements java.beans.PropertyChangeListener {
 	 * 
 	 */
 	public void propertyChange(java.beans.PropertyChangeEvent e) {
-		log.debug("ScheduleManager sees property change: " + e.getPropertyName() + " old: " + e.getOldValue()
-				+ " new " + e.getNewValue());	// NOI18N
+		if (Control.showProperty && log.isDebugEnabled())
+			log.debug("Property change: ({}) old: ({}) new: ({})", e.getPropertyName(), e.getOldValue(), e
+					.getNewValue());
 		if (e.getPropertyName().equals(CarTypes.CARTYPES_NAME_CHANGED_PROPERTY)) {
 			replaceType((String) e.getOldValue(), (String) e.getNewValue());
 		}

@@ -473,6 +473,7 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
                         	}
                     	}
                         msg = Bundle.getMessage("Aborted", blockName, cmdIdx);
+                        break;
                     case Warrant.WAIT_FOR_CLEAR:
                     	msg = Bundle.getMessage("WaitForClear", _trainName, blockName);
                         break;
@@ -1149,7 +1150,7 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
 
     private boolean moveIntoNextBlock() {
         OBlock block = getBlockAt(_idxCurrentOrder);
-        if ((block.getState() & OBlock.OCCUPIED)==0) {
+        if ((block.getState() & (OBlock.OCCUPIED | OBlock.DARK))==0) {
             firePropertyChange("blockChange", block, null);                        	
         	return false;
         }
@@ -1162,9 +1163,9 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
         }
         if (_engineer!=null) {
 			OBlock nextBlock = getBlockAt(_idxCurrentOrder+1);
-			if ((nextBlock.getState() & OBlock.DARK) > 0 || _tempRunBlind) {
+			if (((nextBlock.getState() & OBlock.DARK) != 0) || _tempRunBlind) {
 				_engineer.setRunOnET(true);
-			} else {
+			} else if (!_tempRunBlind) {
 				_engineer.setRunOnET(false);
 			}
 			// notify engineer of control point
@@ -1218,7 +1219,7 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
             	_message = Bundle.getMessage("BlockRougeOccupied", block.getDisplayName());
                 return;
             } else {
-                log.info("Train "+_trainName+" entering Block "+block.getDisplayName()+" on warrant= "+getDisplayName());
+                // log.info("Train "+_trainName+" entering Block "+block.getDisplayName()+" on warrant= "+getDisplayName());
                 // if we are moving we assume it is our train entering the block
                 //  - cannot guarantee it, but what else?
                 _idxCurrentOrder = activeIdx;
@@ -1335,10 +1336,11 @@ public class Warrant extends jmri.implementation.AbstractNamedBean
             // Train not visible if current block goes inactive
         	if (_idxCurrentOrder+1<_orders.size()) {
                	OBlock nextBlock = getBlockAt(_idxCurrentOrder+1);
-               	if ((nextBlock.getState() & OBlock.DARK) > 0) {
+               	if ((nextBlock.getState() & OBlock.DARK) != 0) {
                		if (_engineer!=null) {
            				_idxCurrentOrder++;		// assume train has moved into the dark block
-                   		_engineer.setRunOnET(true);               				
+                   		_engineer.setRunOnET(true);
+                   		goingActive(nextBlock);	// fake occupancy
                     } else{
                			if (_runMode==MODE_LEARN) {
                				_idxCurrentOrder++;		// assume train has moved into the dark block

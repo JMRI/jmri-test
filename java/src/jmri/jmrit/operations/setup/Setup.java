@@ -296,6 +296,7 @@ public class Setup {
 	private static boolean use12hrFormat = false; // when true use 12hr rather than 24hr format
 	private static boolean printValid = true; // when true print out the valid time and date
 	private static boolean sortByTrack = false; // when true manifest work is sorted by track names
+	private static boolean printHeaders = false; // when true add headers to manifest and switch lists
 
 	public static boolean isMainMenuEnabled() {
 		OperationsSetupXml.instance(); // load file
@@ -784,6 +785,14 @@ public class Setup {
 
 	public static boolean isSortByTrackEnabled() {
 		return sortByTrack;
+	}
+
+	public static void setPrintHeadersEnabled(boolean enable) {
+		printHeaders = enable;
+	}
+
+	public static boolean isPrintHeadersEnabled() {
+		return printHeaders;
 	}
 
 	public static void setSwitchTime(int minutes) {
@@ -1584,6 +1593,7 @@ public class Setup {
 		values.setAttribute(Xml.USE12HR_FORMAT, is12hrFormatEnabled() ? Xml.TRUE : Xml.FALSE);
 		values.setAttribute(Xml.PRINT_VALID, isPrintValidEnabled() ? Xml.TRUE : Xml.FALSE);
 		values.setAttribute(Xml.SORT_BY_TRACK, isSortByTrackEnabled() ? Xml.TRUE : Xml.FALSE);
+		values.setAttribute(Xml.PRINT_HEADERS, isPrintHeadersEnabled() ? Xml.TRUE : Xml.FALSE);
 		// next three logger attributes for backward compatibility TODO remove in future release 2014
 		values.setAttribute(Xml.CAR_LOGGER, isCarLoggerEnabled() ? Xml.TRUE : Xml.FALSE);
 		values.setAttribute(Xml.ENGINE_LOGGER, isEngineLoggerEnabled() ? Xml.TRUE : Xml.FALSE);
@@ -1900,6 +1910,12 @@ public class Setup {
 					log.debug("sortByTrack: " + enable);
 				setSortByTrackEnabled(enable.equals(Xml.TRUE));
 			}
+			if ((a = operations.getChild(Xml.SETTINGS).getAttribute(Xml.PRINT_HEADERS)) != null) {
+				String enable = a.getValue();
+				if (log.isDebugEnabled())
+					log.debug("printHeaders: " + enable);
+				setPrintHeadersEnabled(enable.equals(Xml.TRUE));
+		}
 		}
 		if (operations.getChild(Xml.PICKUP_ENG_FORMAT) != null) {
 			if ((a = operations.getChild(Xml.PICKUP_ENG_FORMAT).getAttribute(Xml.PREFIX)) != null)
@@ -2539,7 +2555,7 @@ public class Setup {
 	 */
 	private static void keyToStringConversion(String[] keys) {
 		for (int i = 0; i < keys.length; i++) {
-			if (keys[i].equals(" "))
+			if (keys[i].equals(NONE))
 				continue;
 			try {
 				keys[i] = Bundle.getMessage(keys[i]);
@@ -2562,7 +2578,7 @@ public class Setup {
 		Locale locale = Locale.ROOT;
 		for (int i = 0; i < strings.length; i++) {
 			String old = strings[i];
-			if (old.equals(" "))
+			if (old.equals(NONE))
 				continue;
 			for (String attribute : attributtes) {
 				if (strings[i].equals(Bundle.getMessage(attribute))) {

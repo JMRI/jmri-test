@@ -58,7 +58,7 @@ public class Car extends RollingStock {
 
 	public Car(String road, String number) {
 		super(road, number);
-		log.debug("New car " + road + " " + number);
+		log.debug("New car ({} {})", road, number);
 		addPropertyChangeListeners();
 	}
 	
@@ -169,7 +169,7 @@ public class Car extends RollingStock {
 	 * @param id
 	 */
 	public void setScheduleId(String id) {
-		// log.debug("set schedule id ("+id+") for car ("+toString()+")");
+		log.debug("set schedule id ({}) for car ({})", id, toString());
 		String old = _scheduleId;
 		_scheduleId = id;
 		if (!old.equals(id))

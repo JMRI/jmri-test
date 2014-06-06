@@ -22,6 +22,9 @@ public class ServletUtil {
     public static final String APPLICATION_XML = "application/xml"; // NOI18N
     public static final String IMAGE_PNG = "image/png"; // NOI18N
     public static final String TEXT_HTML = "text/html"; // NOI18N
+    public static final String UTF8_APPLICATION_JSON = APPLICATION_JSON + "; charset=utf-8"; // NOI18N
+    public static final String UTF8_APPLICATION_XML = APPLICATION_XML + "; charset=utf-8"; // NOI18N
+    public static final String UTF8_TEXT_HTML = TEXT_HTML + "; charset=utf-8"; // NOI18N
 
     public String getRailroadName(boolean inComments) {
         if (inComments) {
@@ -58,16 +61,19 @@ public class ServletUtil {
         // replace class "context-<this-context>" with class "active"
         navBar = navBar.replace(context, "active"); // NOI18N
         if (WebServerManager.getWebServerPreferences().allowRemoteConfig()) {
-            navBar = navBar.replace("config-enabled-only", "show");
-            navBar = navBar.replace("config-disabled-only", "hidden");
+            navBar = navBar.replace("config-enabled-only", "show"); // NOI18N
+            navBar = navBar.replace("config-disabled-only", "hidden"); // NOI18N
         } else {
-            navBar = navBar.replace("config-enabled-only", "hidden");
-            navBar = navBar.replace("config-disabled-only", "show");
+            navBar = navBar.replace("config-enabled-only", "hidden"); // NOI18N
+            navBar = navBar.replace("config-disabled-only", "show"); // NOI18N
+        }
+        if (!WebServerManager.getWebServerPreferences().isReadonlyPower()) {
+            navBar = navBar.replace("data-power=\"readonly\"", "data-power=\"readwrite\""); // NOI18N
         }
         return navBar;
     }
 
-    public static ServletUtil getHelper() {
+    public static ServletUtil getInstance() {
         if (ServletUtil.instance == null) {
             ServletUtil.instance = new ServletUtil();
         }

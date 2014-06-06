@@ -25,6 +25,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.*;
 import javax.swing.table.*;
+import jmri.jmrit.decoderdefn.DecoderFile;
 import jmri.jmrit.roster.RosterEntry;
 import jmri.jmrit.symbolicprog.*;
 import jmri.util.davidflanagan.HardcopyWriter;
@@ -62,6 +63,7 @@ import org.jdom.Element;
  * @author    Bob Jacobsen   Copyright (C) 2001, 2003, 2004, 2005, 2006
  * @author    D Miller Copyright 2003
  * @author    Howard G. Penny   Copyright (C) 2005
+ * @author    Dave Heap   Copyright (C) 2014
  * @version   $Revision$
  * @see       jmri.jmrit.symbolicprog.VariableValue#isChanged
  *
@@ -156,6 +158,12 @@ public class PaneProgPane extends javax.swing.JPanel
         for (int i=0; i<gridList.size(); i++) {
             // load each grid
             p.add(newGrid( ((gridList.get(i))), showItem, modelElem));
+        }
+        // for all "group" elements ...
+        List<Element> groupList = pane.getChildren("group");
+        for (int i=0; i<groupList.size(); i++) {
+            // load each group
+            p.add(newGroup( ((groupList.get(i))), showItem, modelElem));
         }
 
         // add glue to the right to allow resize - but this isn't working as expected? Alignment?
@@ -549,12 +557,10 @@ public class PaneProgPane extends javax.swing.JPanel
                 if (justChanges) {
                     if (var.isChanged()) {
                         var.setToRead(startProcess);
-                    }
-                    else {
+                    } else {
                         var.setToRead(false);
                     }
-                }
-                else {
+                } else {
                     var.setToRead(startProcess);
                 }
             }
@@ -565,12 +571,10 @@ public class PaneProgPane extends javax.swing.JPanel
                 if (justChanges) {
                     if (VariableValue.considerChanged(cv)) {
                         cv.setToRead(startProcess);
-                    }
-                    else {
+                    } else {
                         cv.setToRead(false);
                     }
-                }
-                else {
+                } else {
                     cv.setToRead(startProcess);
                 }
             }
@@ -580,12 +584,10 @@ public class PaneProgPane extends javax.swing.JPanel
                 if (justChanges) {
                     if (VariableValue.considerChanged(icv)) {
                         icv.setToRead(startProcess);
-                    }
-                    else {
+                    } else {
                         icv.setToRead(false);
                     }
-                }
-                else {
+                } else {
                     icv.setToRead(startProcess);
                 }
             }
@@ -608,12 +610,10 @@ public class PaneProgPane extends javax.swing.JPanel
                if (justChanges) {
                    if (var.isChanged()) {
                        var.setToWrite(startProcess);
-                   }
-                   else {
+                   } else {
                        var.setToWrite(false);
                    }
-               }
-               else {
+               } else {
                    var.setToWrite(startProcess);
                }
            }
@@ -625,12 +625,10 @@ public class PaneProgPane extends javax.swing.JPanel
                if (justChanges) {
                    if (VariableValue.considerChanged(cv)) {
                        cv.setToWrite(startProcess);
-                   }
-                   else {
+                   } else {
                        cv.setToWrite(false);
                    }
-               }
-               else {
+               } else {
                    cv.setToWrite(startProcess);
                }
            }
@@ -641,12 +639,10 @@ public class PaneProgPane extends javax.swing.JPanel
                if (justChanges) {
                    if (VariableValue.considerChanged(icv)) {
                        icv.setToWrite(startProcess);
-                   }
-                   else {
+                   } else {
                        icv.setToWrite(false);
                    }
-               }
-               else {
+               } else {
                    icv.setToWrite(startProcess);
                }
            }
@@ -1195,17 +1191,22 @@ public class PaneProgPane extends javax.swing.JPanel
     }
 
     /**
-     * Create a single column from the JDOM column Element
+     * Create a new group from the JDOM group Element
      */
     @SuppressWarnings("unchecked")
-	public JPanel newColumn(Element element, boolean showStdName, Element modelElem) {
+    protected JPanel newGroup(Element element, boolean showStdName, Element modelElem) {
 
         // create a panel to add as a new column or row
-        JPanel c = new JPanel();
+        final JPanel c = new JPanel();
         panelList.add(c);
         GridBagLayout g = new GridBagLayout();
         GridBagConstraints cs = new GridBagConstraints();
         c.setLayout(g);
+
+        // handle include/exclude
+        if ( !PaneProgFrame.isIncludedFE(element, modelElem, rosterEntry, "", "") ) {
+            return c;
+        }
 
         // handle the xml definition
         // for all elements in the column or row
@@ -1213,38 +1214,29 @@ public class PaneProgPane extends javax.swing.JPanel
         if (log.isDebugEnabled()) log.debug("newColumn starting with "+elemList.size()+" elements");
         for (int i=0; i<elemList.size(); i++) {
 
-            // update the grid position
-            cs.gridy++;
-            cs.gridx = 0;
-
             Element e = (elemList.get(i));
             String name = e.getName();
-            if (log.isDebugEnabled()) log.debug("newColumn processing "+name+" element");
+            if (log.isDebugEnabled()) log.debug("newGroup processing "+name+" element");
             // decode the type
             if (name.equals("display")) { // its a variable
                                 // load the variable
                 newVariable( e, c, g, cs, showStdName);
-            }
-            else if (name.equals("separator")) { // its a separator
+            } else if (name.equals("separator")) { // its a separator
                 JSeparator j = new JSeparator(javax.swing.SwingConstants.HORIZONTAL);
                 cs.fill = GridBagConstraints.BOTH;
                 cs.gridwidth = GridBagConstraints.REMAINDER;
                 g.setConstraints(j, cs);
                 c.add(j);
                 cs.gridwidth = 1;
-            }
-            else if (name.equals("label")) {
+            } else if (name.equals("label")) {
                 cs.gridwidth = GridBagConstraints.REMAINDER;
                 makeLabel(e, c, g, cs);
-            }
-            else if (name.equals("soundlabel")) {
+            } else if (name.equals("soundlabel")) {
                 cs.gridwidth = GridBagConstraints.REMAINDER;
                 makeSoundLabel(e, c, g, cs);
-            }
-            else if (name.equals("cvtable")) {
+            } else if (name.equals("cvtable")) {
                 makeCvTable(cs, g, c);
-            }
-            else if (name.equals("indxcvtable")) {
+            } else if (name.equals("indxcvtable")) {
                 log.debug("starting to build IndexedCvTable pane");
                 JTable indxcvTable   = new JTable(_indexedCvModel);
                 JScrollPane cvScroll = new JScrollPane(indxcvTable);
@@ -1272,43 +1264,724 @@ public class PaneProgPane extends javax.swing.JPanel
 
                 _cvTable = true;
                 log.debug("end of building IndexedCvTable pane");
-
-            }
-            else if (name.equals("fnmapping")) {
+            } else if (name.equals("fnmapping")) {
                 pickFnMapPanel(c, g, cs, modelElem);
-            }
-            else if (name.equals("dccaddress")) {
+            } else if (name.equals("dccaddress")) {
                 JPanel l = addDccAddressPanel(e);
+                if (l.getComponentCount() > 0) {
                 cs.gridwidth = GridBagConstraints.REMAINDER;
                 g.setConstraints(l, cs);
                 c.add(l);
                 cs.gridwidth = 1;
             }
-            else if (name.equals("row")) {
+            } else if (name.equals("column")) {
+                // nested "column" elements ...
+                cs.gridheight = GridBagConstraints.REMAINDER;
+                JPanel l = newColumn(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridheight = 1;
+                }
+            } else if (name.equals("row")) {
                                 // nested "row" elements ...
                 cs.gridwidth = GridBagConstraints.REMAINDER;
                 JPanel l = newRow(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
                 panelList.add(l);
                 g.setConstraints(l, cs);
                 c.add(l);
                 cs.gridwidth = 1;
             }
-            else if (name.equals("grid")) {
+            } else if (name.equals("grid")) {
                                 // nested "grid" elements ...
                 cs.gridwidth = GridBagConstraints.REMAINDER;
                 JPanel l = newGrid(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
                 panelList.add(l);
                 g.setConstraints(l, cs);
                 c.add(l);
                 cs.gridwidth = 1;
             }
-            else { // its a mistake
+            } else if (name.equals("group")) {
+                                // nested "group" elements ...
+                JPanel l = newGroup(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+            }
+            } else if (!name.equals("qualifier")) { // its a mistake
                 log.error("No code to handle element of type "+e.getName()+" in newColumn");
             }
         }
         // add glue to the bottom to allow resize
+        if (c.getComponentCount() > 0) {
         c.add(Box.createVerticalGlue());
+        }
 
+        
+        // handle qualification if any
+        QualifierAdder qa = new QualifierAdder() {
+            protected Qualifier createQualifier(VariableValue var, String relation, String value) {
+                return new JComponentQualifier(c, var, Integer.parseInt(value), relation);
+            }
+            protected void addListener(java.beans.PropertyChangeListener qc) {
+                c.addPropertyChangeListener(qc);
+            }
+        };
+        
+        qa.processModifierElements(element, _varModel);
+        return c;
+    }
+
+    /**
+     * Create a new grid group from the JDOM group Element
+     */
+    @SuppressWarnings("unchecked")
+    protected void newGridGroup(Element element, final JPanel c, GridBagLayout g, GridGlobals globs, boolean showStdName, Element modelElem) {
+
+        // handle include/exclude
+        if ( !PaneProgFrame.isIncludedFE(element, modelElem, rosterEntry, "", "") ) {
+            return;
+        }
+
+        // handle the xml definition
+        // for all elements in the column or row
+        List<Element> elemList = element.getChildren();
+        if (log.isDebugEnabled()) log.debug("newColumn starting with "+elemList.size()+" elements");
+        for (int i=0; i<elemList.size(); i++) {
+
+            Element e = (elemList.get(i));
+            String name = e.getName();
+            if (log.isDebugEnabled()) log.debug("newGroup processing "+name+" element");
+            // decode the type
+            if (name.equals("griditem")) {                    
+                final JPanel l = newGridItem(e, showStdName, modelElem, globs);
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, globs.gridConstraints);
+        c.add(l);
+//                     globs.gridConstraints.gridwidth = 1;
+        // handle qualification if any
+        QualifierAdder qa = new QualifierAdder() {
+            protected Qualifier createQualifier(VariableValue var, String relation, String value) {
+                return new JComponentQualifier(l, var, Integer.parseInt(value), relation);
+            }
+            protected void addListener(java.beans.PropertyChangeListener qc) {
+                l.addPropertyChangeListener(qc);
+            }
+        };
+        
+        qa.processModifierElements(e, _varModel);
+    }
+            } else if (name.equals("group")) {
+                                // nested "group" elements ...
+                newGridGroup(e, c, g, globs, showStdName, modelElem);
+            } else if (!name.equals("qualifier")) { // its a mistake
+                log.error("No code to handle element of type "+e.getName()+" in newColumn");
+            }
+        }
+        // add glue to the bottom to allow resize
+//         if (c.getComponentCount() > 0) {
+//             c.add(Box.createVerticalGlue());
+//         }
+
+        
+    }
+
+    /**
+     * Create a single column from the JDOM column Element
+     */
+    @SuppressWarnings("unchecked")
+    public JPanel newColumn(Element element, boolean showStdName, Element modelElem) {
+
+        // create a panel to add as a new column or row
+        final JPanel c = new JPanel();
+        panelList.add(c);
+        GridBagLayout g = new GridBagLayout();
+        GridBagConstraints cs = new GridBagConstraints();
+        c.setLayout(g);
+
+        // handle the xml definition
+        // for all elements in the column or row
+        List<Element> elemList = element.getChildren();
+        if (log.isDebugEnabled()) log.debug("newColumn starting with "+elemList.size()+" elements");
+        for (int i=0; i<elemList.size(); i++) {
+
+            // update the grid position
+            cs.gridy++;
+            cs.gridx = 0;
+
+            Element e = (elemList.get(i));
+            String name = e.getName();
+            if (log.isDebugEnabled()) log.debug("newColumn processing "+name+" element");
+            // decode the type
+            if (name.equals("display")) { // its a variable
+                                // load the variable
+                newVariable( e, c, g, cs, showStdName);
+            } else if (name.equals("separator")) { // its a separator
+                JSeparator j = new JSeparator(javax.swing.SwingConstants.HORIZONTAL);
+        cs.fill = GridBagConstraints.BOTH;
+                cs.gridwidth = GridBagConstraints.REMAINDER;
+                g.setConstraints(j, cs);
+                c.add(j);
+                cs.gridwidth = 1;
+            } else if (name.equals("label")) {
+                cs.gridwidth = GridBagConstraints.REMAINDER;
+                makeLabel(e, c, g, cs);
+            } else if (name.equals("soundlabel")) {
+                cs.gridwidth = GridBagConstraints.REMAINDER;
+                makeSoundLabel(e, c, g, cs);
+            } else if (name.equals("cvtable")) {
+                makeCvTable(cs, g, c);
+            } else if (name.equals("indxcvtable")) {
+                log.debug("starting to build IndexedCvTable pane");
+                JTable indxcvTable = new JTable(_indexedCvModel);
+                JScrollPane cvScroll = new JScrollPane(indxcvTable);
+                indxcvTable.setDefaultRenderer(JTextField.class, new ValueRenderer());
+                indxcvTable.setDefaultRenderer(JButton.class, new ValueRenderer());
+                indxcvTable.setDefaultEditor(JTextField.class, new ValueEditor());
+                indxcvTable.setDefaultEditor(JButton.class, new ValueEditor());
+                indxcvTable.setRowHeight(new JButton("X").getPreferredSize().height);
+                indxcvTable.setPreferredScrollableViewportSize(new Dimension(700, indxcvTable.getRowHeight()*14));
+                cvScroll.setColumnHeaderView(indxcvTable.getTableHeader());
+                // don't want a horizontal scroll bar
+                // Need to see the whole row at one time
+//                indxcvTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                cs.gridwidth = GridBagConstraints.REMAINDER;
+                g.setConstraints(cvScroll, cs);
+                c.add(cvScroll);
+                cs.gridwidth = 1;
+
+                // remember which indexed CVs to read/write
+                for (int j=0; j<_indexedCvModel.getRowCount(); j++) {
+                    String sz = "CV" +_indexedCvModel.getName(j);
+                    int in = _varModel.findVarIndex(sz);
+                    indexedCvList.add(Integer.valueOf(in));
+        }
+
+                _cvTable = true;
+                log.debug("end of building IndexedCvTable pane");
+            } else if (name.equals("fnmapping")) {
+                pickFnMapPanel(c, g, cs, modelElem);
+            } else if (name.equals("dccaddress")) {
+                JPanel l = addDccAddressPanel(e);
+                if (l.getComponentCount() > 0) {
+                    cs.gridwidth = GridBagConstraints.REMAINDER;
+        g.setConstraints(l, cs);
+        c.add(l);
+        cs.gridwidth = 1;
+                }
+            } else if (name.equals("column")) {
+                // nested "column" elements ...
+                cs.gridheight = GridBagConstraints.REMAINDER;
+                JPanel l = newColumn(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+        cs.gridheight = 1;
+                }
+            } else if (name.equals("row")) {
+                                // nested "row" elements ...
+                cs.gridwidth = GridBagConstraints.REMAINDER;
+                JPanel l = newRow(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridwidth = 1;
+                }
+            } else if (name.equals("grid")) {
+                                // nested "grid" elements ...
+                cs.gridwidth = GridBagConstraints.REMAINDER;
+                JPanel l = newGrid(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridwidth = 1;
+                }
+            } else if (name.equals("group")) {
+                                // nested "group" elements ...
+                JPanel l = newGroup(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+            }
+            } else if (!name.equals("qualifier")) { // its a mistake
+                log.error("No code to handle element of type "+e.getName()+" in newColumn");
+            }
+        }
+        // add glue to the bottom to allow resize
+        if (c.getComponentCount() > 0) {
+            c.add(Box.createVerticalGlue());
+        }
+
+        
+        // handle qualification if any
+        QualifierAdder qa = new QualifierAdder() {
+            protected Qualifier createQualifier(VariableValue var, String relation, String value) {
+                return new JComponentQualifier(c, var, Integer.parseInt(value), relation);
+            }
+            protected void addListener(java.beans.PropertyChangeListener qc) {
+                c.addPropertyChangeListener(qc);
+            }
+        };
+        
+        qa.processModifierElements(element, _varModel);
+        return c;
+    }
+
+    /**
+     * Create a single row from the JDOM column Element
+     */
+    @SuppressWarnings("unchecked")
+	public JPanel newRow(Element element, boolean showStdName, Element modelElem) {
+
+        // create a panel to add as a new column or row
+        final JPanel c = new JPanel();
+        panelList.add(c);
+        GridBagLayout g = new GridBagLayout();
+        GridBagConstraints cs = new GridBagConstraints();
+        c.setLayout(g);
+
+        // handle the xml definition
+        // for all elements in the column or row
+        List<Element> elemList = element.getChildren();
+        if (log.isDebugEnabled()) log.debug("newRow starting with "+elemList.size()+" elements");
+        for (int i=0; i<elemList.size(); i++) {
+
+            // update the grid position
+            cs.gridy = 0;
+            cs.gridx++;
+
+            Element e = elemList.get(i);
+            String name = e.getName();
+            if (log.isDebugEnabled()) log.debug("newRow processing "+name+" element");
+            // decode the type
+            if (name.equals("display")) { // its a variable
+                // load the variable
+                newVariable( e, c, g, cs, showStdName);
+            } else if (name.equals("separator")) { // its a separator
+                JSeparator j = new JSeparator(javax.swing.SwingConstants.VERTICAL);
+                cs.fill = GridBagConstraints.BOTH;
+                cs.gridheight = GridBagConstraints.REMAINDER;
+                g.setConstraints(j, cs);
+                c.add(j);
+                cs.fill = GridBagConstraints.NONE;
+                cs.gridheight = 1;
+            } else if (name.equals("label")) {
+                cs.gridheight = GridBagConstraints.REMAINDER;
+                makeLabel(e, c, g, cs);
+            } else if (name.equals("soundlabel")) {
+                cs.gridheight = GridBagConstraints.REMAINDER;
+                makeSoundLabel(e, c, g, cs);
+            } else if (name.equals("cvtable")) {
+                makeCvTable(cs, g, c);
+            } else if (name.equals("indxcvtable")) {
+                log.debug("starting to build IndexedCvTable pane");
+                JTable	indxcvTable	= new JTable(_indexedCvModel);
+                JScrollPane cvScroll = new JScrollPane(indxcvTable);
+                indxcvTable.setDefaultRenderer(JTextField.class, new ValueRenderer());
+                indxcvTable.setDefaultRenderer(JButton.class, new ValueRenderer());
+                indxcvTable.setDefaultEditor(JTextField.class, new ValueEditor());
+                indxcvTable.setDefaultEditor(JButton.class, new ValueEditor());
+                indxcvTable.setRowHeight(new JButton("X").getPreferredSize().height);
+                indxcvTable.setPreferredScrollableViewportSize(new Dimension(700, indxcvTable.getRowHeight()*14));
+                cvScroll.setColumnHeaderView(indxcvTable.getTableHeader());
+                // don't want a horizontal scroll bar
+                // Need to see the whole row at one time
+//                indxcvTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                cs.gridwidth = GridBagConstraints.REMAINDER;
+                g.setConstraints(cvScroll, cs);
+                c.add(cvScroll);
+                cs.gridwidth = 1;
+
+                // remember which indexed CVs to read/write
+                for (int j=0; j<_indexedCvModel.getRowCount(); j++) {
+                    String sz = "CV" +_indexedCvModel.getName(j);
+                    int in = _varModel.findVarIndex(sz);
+                    indexedCvList.add(Integer.valueOf(in));
+                }
+
+                _cvTable = true;
+                log.debug("end of building IndexedCvTable pane");
+            } else if (name.equals("fnmapping")) {
+                pickFnMapPanel(c, g, cs, modelElem);
+            } else if (name.equals("dccaddress")) {
+                JPanel l = addDccAddressPanel(e);
+                if (l.getComponentCount() > 0) {
+                cs.gridheight = GridBagConstraints.REMAINDER;
+                g.setConstraints(l, cs);
+                c.add(l);
+                cs.gridheight = 1;
+            }
+            } else if (name.equals("column")) {
+                // nested "column" elements ...
+                cs.gridheight = GridBagConstraints.REMAINDER;
+                JPanel l = newColumn(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                panelList.add(l);
+                g.setConstraints(l, cs);
+                c.add(l);
+                cs.gridheight = 1;
+            }
+            } else if (name.equals("row")) {
+                                // nested "row" elements ...
+                cs.gridwidth = GridBagConstraints.REMAINDER;
+                JPanel l = newRow(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+                    cs.gridwidth = 1;
+                }
+            } else if (name.equals("grid")) {
+                                // nested "grid" elements ...
+                cs.gridwidth = GridBagConstraints.REMAINDER;
+                JPanel l = newGrid(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                panelList.add(l);
+                g.setConstraints(l, cs);
+                c.add(l);
+                cs.gridwidth = 1;
+            }
+            } else if (name.equals("group")) {
+                                // nested "group" elements ...
+                JPanel l = newGroup(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+            }
+            } else if (!name.equals("qualifier")) { // its a mistake
+                log.error("No code to handle element of type "+e.getName()+" in newRow");
+            }
+        }
+        // add glue to the bottom to allow resize
+        if (c.getComponentCount() > 0) {
+        c.add(Box.createVerticalGlue());
+        }
+        
+        // handle qualification if any
+        QualifierAdder qa = new QualifierAdder() {
+            protected Qualifier createQualifier(VariableValue var, String relation, String value) {
+                return new JComponentQualifier(c, var, Integer.parseInt(value), relation);
+            }
+            protected void addListener(java.beans.PropertyChangeListener qc) {
+                c.addPropertyChangeListener(qc);
+            }
+        };
+        
+        qa.processModifierElements(element, _varModel);
+        return c;
+    }
+
+    /**
+     * Create a grid from the JDOM  Element
+     */
+    @SuppressWarnings("unchecked")
+	public JPanel newGrid(Element element, boolean showStdName, Element modelElem) {
+
+        // create a panel to add as a new grid
+        final JPanel c = new JPanel();
+        panelList.add(c);
+        GridBagLayout g = new GridBagLayout();
+        c.setLayout(g);
+        
+        GridGlobals globs = new GridGlobals();        
+
+        // handle the xml definition
+        // for all elements in the grid
+        List<Element> elemList = element.getChildren();
+        globs.gridAttList = element.getAttributes(); // get grid-level attributes
+        if (log.isDebugEnabled()) log.debug("newGrid starting with "+elemList.size()+" elements");
+        for (int i=0; i<elemList.size(); i++) {
+            globs.gridConstraints = new GridBagConstraints();
+            Element e = elemList.get(i);
+            String name = e.getName();
+            if (log.isDebugEnabled()) log.debug("newGrid processing "+name+" element");
+            // decode the type
+            if (name.equals("griditem")) {                    
+                JPanel l = newGridItem(e, showStdName, modelElem, globs);
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, globs.gridConstraints);
+                    c.add(l);
+//                     globs.gridConstraints.gridwidth = 1;
+                }
+            } else if (name.equals("group")) {
+                                // nested "group" elements ...
+                newGridGroup(e, c, g, globs, showStdName, modelElem);
+            } else if (!name.equals("qualifier")) { // its a mistake
+                log.error("No code to handle element of type "+e.getName()+" in newGrid");
+            }
+        }
+        
+        // add glue to the bottom to allow resize
+        if (c.getComponentCount() > 0) {
+            c.add(Box.createVerticalGlue());
+        }
+        
+        // handle qualification if any
+        QualifierAdder qa = new QualifierAdder() {
+            protected Qualifier createQualifier(VariableValue var, String relation, String value) {
+                return new JComponentQualifier(c, var, Integer.parseInt(value), relation);
+            }
+            protected void addListener(java.beans.PropertyChangeListener qc) {
+                c.addPropertyChangeListener(qc);
+            }
+        };
+        
+        qa.processModifierElements(element, _varModel);
+        return c;
+    }
+
+    class GridGlobals {
+    public int gridxCurrent = -1;
+    public int gridyCurrent = -1;
+    public List<Attribute> gridAttList;
+    public GridBagConstraints gridConstraints;
+    }
+
+    /**
+     * Create a griditem from the JDOM  Element
+     */
+    @SuppressWarnings("unchecked")
+    public JPanel newGridItem(Element element, boolean showStdName, Element modelElem, GridGlobals globs) {
+
+                List<Attribute> itemAttList = element.getAttributes(); // get item-level attributes
+                List<Attribute> attList = new ArrayList<Attribute>(globs.gridAttList);
+                attList.addAll(itemAttList); // merge grid and item-level attributes
+//                log.info("Attribute list:"+attList);
+//                log.info("Previous gridxCurrent="+globs.gridxCurrent+";gridyCurrent="+globs.gridyCurrent);
+                for (int j = 0; j < attList.size(); j++) {
+                    Attribute attrib = attList.get(j);
+                    String attribName = attrib.getName();
+                    String attribRawValue = attrib.getValue();
+                    Field constraint = null;
+                    String constraintType = null;
+                    if ( ( attribName.equals("gridx") || attribName.equals("gridy") ) && attribRawValue.equals("RELATIVE") ) {
+                        attribRawValue = "NEXT"; // NEXT is a synonym for Relative
+                    }
+                    if ( attribName.equals("gridx")  && attribRawValue.equals("CURRENT") ) {
+                        attribRawValue = String.valueOf(Math.max(0,globs.gridxCurrent));
+                    }
+                    if ( attribName.equals("gridy")  && attribRawValue.equals("CURRENT") ) {
+                        attribRawValue = String.valueOf(Math.max(0,globs.gridyCurrent));
+                    }
+                    if ( attribName.equals("gridx")  && attribRawValue.equals("NEXT") ) {
+                        attribRawValue = String.valueOf(++globs.gridxCurrent);
+                    }
+                    if ( attribName.equals("gridy")  && attribRawValue.equals("NEXT") ) {
+                        attribRawValue = String.valueOf(++globs.gridyCurrent);
+                    }
+                    try {
+                        constraint = globs.gridConstraints.getClass().getDeclaredField(attribName);
+                        constraintType = constraint.getType().toString();
+                        constraint.setAccessible(true);
+                        } catch (NoSuchFieldException ex) {
+                        log.error("Unrecognised attribute \""+attribName+"\", skipping");
+                        continue;
+                    }
+                    if ( constraintType.equals("int") ) {
+                        int attribValue;
+                        try {
+                            attribValue = Integer.valueOf(attribRawValue);
+                            constraint.set(globs.gridConstraints,attribValue);
+                       } catch (IllegalAccessException ey) {
+                            log.error("Unable to set constraint \""+attribName+". IllegalAccessException error thrown.");
+                        } catch (NumberFormatException ex) {
+                            try {
+                                Field constant = globs.gridConstraints.getClass().getDeclaredField(attribRawValue);
+                                constant.setAccessible(true);
+                                attribValue = (Integer) GridBagConstraints.class.getField(attribRawValue).get(constant);
+                                constraint.set(globs.gridConstraints,attribValue);
+                            } catch (NoSuchFieldException ey) {
+                        log.error("Invalid value \""+attribRawValue+"\" for attribute \""+attribName+"\"");
+                            } catch (IllegalAccessException ey) {
+                            log.error("Unable to set constraint \""+attribName+". IllegalAccessException error thrown.");
+                            }
+                        }
+                    } else if ( constraintType.equals("double") ) {
+                        double attribValue;
+                        try {
+                            attribValue = Double.valueOf(attribRawValue);
+                            constraint.set(globs.gridConstraints,attribValue);
+                       } catch (IllegalAccessException ey) {
+                            log.error("Unable to set constraint \""+attribName+". IllegalAccessException error thrown.");
+                        } catch (NumberFormatException ex) {
+                            log.error("Invalid value \""+attribRawValue+"\" for attribute \""+attribName+"\"");
+                        }
+                    } else if ( constraintType.equals("class java.awt.Insets") ) {
+                        try {
+                            String[] insetStrings = attribRawValue.split(",");
+                            if ( insetStrings.length == 4) {
+                                Insets attribValue = new Insets(Integer.valueOf(insetStrings[0]),Integer.valueOf(insetStrings[1]),Integer.valueOf(insetStrings[2]),Integer.valueOf(insetStrings[3]));
+                                constraint.set(globs.gridConstraints,attribValue);
+                            } else {
+                                log.error("Invalid value \""+attribRawValue+"\" for attribute \""+attribName+"\"");
+                                log.error("Value should be four integers of the form \"top,left,bottom,right\"");
+                            }
+                       } catch (IllegalAccessException ey) {
+                            log.error("Unable to set constraint \""+attribName+". IllegalAccessException error thrown.");
+                        } catch (NumberFormatException ex) {
+                            log.error("Invalid value \""+attribRawValue+"\" for attribute \""+attribName+"\"");
+                            log.error("Value should be four integers of the form \"top,left,bottom,right\"");
+                        }
+                    } else {
+                        log.error("Required \""+constraintType+"\" handler for attribute \""+attribName+"\" not defined in JMRI code");
+                        log.error("Please file a JMRI bug report at https://sourceforge.net/p/jmri/bugs/new/");
+                    }
+                }
+//                log.info("Updated globs.GridBagConstraints.gridx="+globs.gridConstraints.gridx+";globs.GridBagConstraints.gridy="+globs.gridConstraints.gridy);
+
+
+        // create a panel to add as a new grid item
+        final JPanel c = new JPanel();
+        panelList.add(c);
+        GridBagLayout g = new GridBagLayout();
+        GridBagConstraints cs = new GridBagConstraints();
+        c.setLayout(g);
+
+        // handle the xml definition
+        // for all elements in the grid item
+        List<Element> elemList = element.getChildren();
+        if (log.isDebugEnabled()) log.debug("newGridItem starting with "+elemList.size()+" elements");
+        for (int i=0; i<elemList.size(); i++) {
+
+            // update the grid position
+            cs.gridy = 0;
+            cs.gridx++;
+
+            Element e = elemList.get(i);
+            String name = e.getName();
+            if (log.isDebugEnabled()) log.debug("newGridItem processing "+name+" element");
+            // decode the type
+            if (name.equals("display")) { // its a variable
+                // load the variable
+                newVariable( e, c, g, cs, showStdName);
+            } else if (name.equals("separator")) { // its a separator
+                JSeparator j = new JSeparator(javax.swing.SwingConstants.VERTICAL);
+                cs.fill = GridBagConstraints.BOTH;
+                cs.gridheight = GridBagConstraints.REMAINDER;
+                g.setConstraints(j, cs);
+                c.add(j);
+                cs.fill = GridBagConstraints.NONE;
+                cs.gridheight = 1;
+            } else if (name.equals("label")) {
+                cs.gridheight = GridBagConstraints.REMAINDER;
+                makeLabel(e, c, g, cs);
+            } else if (name.equals("soundlabel")) {
+                cs.gridheight = GridBagConstraints.REMAINDER;
+                makeSoundLabel(e, c, g, cs);
+            } else if (name.equals("cvtable")) {
+                makeCvTable(cs, g, c);
+            } else if (name.equals("indxcvtable")) {
+                log.debug("starting to build IndexedCvTable pane");
+                JTable	indxcvTable	= new JTable(_indexedCvModel);
+                JScrollPane cvScroll = new JScrollPane(indxcvTable);
+                indxcvTable.setDefaultRenderer(JTextField.class, new ValueRenderer());
+                indxcvTable.setDefaultRenderer(JButton.class, new ValueRenderer());
+                indxcvTable.setDefaultEditor(JTextField.class, new ValueEditor());
+                indxcvTable.setDefaultEditor(JButton.class, new ValueEditor());
+                indxcvTable.setRowHeight(new JButton("X").getPreferredSize().height);
+                indxcvTable.setPreferredScrollableViewportSize(new Dimension(700, indxcvTable.getRowHeight()*14));
+                cvScroll.setColumnHeaderView(indxcvTable.getTableHeader());
+                // don't want a horizontal scroll bar
+                // Need to see the whole row at one time
+//                indxcvTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                cs.gridwidth = GridBagConstraints.REMAINDER;
+                g.setConstraints(cvScroll, cs);
+                c.add(cvScroll);
+                cs.gridwidth = 1;
+
+                // remember which indexed CVs to read/write
+                for (int j=0; j<_indexedCvModel.getRowCount(); j++) {
+                    String sz = "CV" +_indexedCvModel.getName(j);
+                    int in = _varModel.findVarIndex(sz);
+                    indexedCvList.add(Integer.valueOf(in));
+                }
+
+                _cvTable = true;
+                log.debug("end of building IndexedCvTable pane");
+            } else if (name.equals("fnmapping")) {
+                pickFnMapPanel(c, g, cs, modelElem);
+            } else if (name.equals("dccaddress")) {
+                JPanel l = addDccAddressPanel(e);
+                if (l.getComponentCount() > 0) {
+                cs.gridheight = GridBagConstraints.REMAINDER;
+                g.setConstraints(l, cs);
+                c.add(l);
+                cs.gridheight = 1;
+            }
+            } else if (name.equals("column")) {
+                // nested "column" elements ...
+                cs.gridheight = GridBagConstraints.REMAINDER;
+                JPanel l = newColumn(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                panelList.add(l);
+                g.setConstraints(l, cs);
+                c.add(l);
+                cs.gridheight = 1;
+            }
+            } else if (name.equals("row")) {
+                                // nested "row" elements ...
+                cs.gridwidth = GridBagConstraints.REMAINDER;
+                JPanel l = newRow(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                panelList.add(l);
+                g.setConstraints(l, cs);
+                c.add(l);
+                cs.gridwidth = 1;
+            }
+            } else if (name.equals("grid")) {
+                                // nested "grid" elements ...
+                cs.gridwidth = GridBagConstraints.REMAINDER;
+                JPanel l = newGrid(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                panelList.add(l);
+                g.setConstraints(l, cs);
+                c.add(l);
+                cs.gridwidth = 1;
+            }
+            } else if (name.equals("group")) {
+                                // nested "group" elements ...
+                JPanel l = newGroup(e, showStdName, modelElem);
+                if (l.getComponentCount() > 0) {
+                    panelList.add(l);
+                    g.setConstraints(l, cs);
+                    c.add(l);
+            }
+            } else if (!name.equals("qualifier")) { // its a mistake
+                log.error("No code to handle element of type "+e.getName()+" in newGridItem");
+            }
+        }
+
+            globs.gridxCurrent = globs.gridConstraints.gridx;
+            globs.gridyCurrent = globs.gridConstraints.gridy;
+//                log.info("Updated gridxCurrent="+globs.gridxCurrent+";gridyCurrent="+globs.gridyCurrent);
+
+        // add glue to the bottom to allow resize
+        if (c.getComponentCount() > 0) {
+        c.add(Box.createVerticalGlue());
+        }
+        
+        // handle qualification if any
+        QualifierAdder qa = new QualifierAdder() {
+            protected Qualifier createQualifier(VariableValue var, String relation, String value) {
+                return new JComponentQualifier(c, var, Integer.parseInt(value), relation);
+            }
+            protected void addListener(java.beans.PropertyChangeListener qc) {
+                c.addPropertyChangeListener(qc);
+            }
+        };
+        
+        qa.processModifierElements(element, _varModel);
         return c;
     }
 
@@ -1316,7 +1989,9 @@ public class PaneProgPane extends javax.swing.JPanel
      * Create label from Element
      */
     protected void makeLabel(Element e, JPanel c, GridBagLayout g, GridBagConstraints cs) {
-        final JLabel l = new JLabel(LocaleSelector.getAttribute(e,"label"));
+        String text = LocaleSelector.getAttribute(e,"text");
+        if (text==null || text.equals("")) text = LocaleSelector.getAttribute(e,"label"); // label subelement deprecated 3.7.5
+        final JLabel l = new JLabel(text);
         l.setAlignmentX(1.0f);
         cs.fill = GridBagConstraints.BOTH;
         if (log.isDebugEnabled()) {
@@ -1374,358 +2049,6 @@ public class PaneProgPane extends javax.swing.JPanel
         
         qa.processModifierElements(e, _varModel);
     }
-    
-    /**
-     * Create a single row from the JDOM column Element
-     */
-    @SuppressWarnings("unchecked")
-	public JPanel newRow(Element element, boolean showStdName, Element modelElem) {
-
-        // create a panel to add as a new column or row
-        JPanel c = new JPanel();
-        panelList.add(c);
-        GridBagLayout g = new GridBagLayout();
-        GridBagConstraints cs = new GridBagConstraints();
-        c.setLayout(g);
-
-        // handle the xml definition
-        // for all elements in the column or row
-        List<Element> elemList = element.getChildren();
-        if (log.isDebugEnabled()) log.debug("newRow starting with "+elemList.size()+" elements");
-        for (int i=0; i<elemList.size(); i++) {
-
-            // update the grid position
-            cs.gridy = 0;
-            cs.gridx++;
-
-            Element e = elemList.get(i);
-            String name = e.getName();
-            if (log.isDebugEnabled()) log.debug("newRow processing "+name+" element");
-            // decode the type
-            if (name.equals("display")) { // its a variable
-                // load the variable
-                newVariable( e, c, g, cs, showStdName);
-            }
-            else if (name.equals("separator")) { // its a separator
-                JSeparator j = new JSeparator(javax.swing.SwingConstants.VERTICAL);
-                cs.fill = GridBagConstraints.BOTH;
-                cs.gridheight = GridBagConstraints.REMAINDER;
-                g.setConstraints(j, cs);
-                c.add(j);
-                cs.fill = GridBagConstraints.NONE;
-                cs.gridheight = 1;
-            }
-            else if (name.equals("label")) { // its  a label
-                cs.gridheight = GridBagConstraints.REMAINDER;
-                makeLabel(e, c, g, cs);
-            }
-            else if (name.equals("soundlabel")) { // its  a sound label
-                cs.gridheight = GridBagConstraints.REMAINDER;
-                makeSoundLabel(e, c, g, cs);
-            }
-            else if (name.equals("cvtable")) {
-                makeCvTable(cs, g, c);
-            }
-            else if (name.equals("indxcvtable")) {
-                log.debug("starting to build IndexedCvTable pane");
-                JTable	indxcvTable	= new JTable(_indexedCvModel);
-                JScrollPane cvScroll = new JScrollPane(indxcvTable);
-                indxcvTable.setDefaultRenderer(JTextField.class, new ValueRenderer());
-                indxcvTable.setDefaultRenderer(JButton.class, new ValueRenderer());
-                indxcvTable.setDefaultEditor(JTextField.class, new ValueEditor());
-                indxcvTable.setDefaultEditor(JButton.class, new ValueEditor());
-                indxcvTable.setRowHeight(new JButton("X").getPreferredSize().height);
-                indxcvTable.setPreferredScrollableViewportSize(new Dimension(700, indxcvTable.getRowHeight()*14));
-                cvScroll.setColumnHeaderView(indxcvTable.getTableHeader());
-                // don't want a horizontal scroll bar
-                // Need to see the whole row at one time
-//                indxcvTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-                cs.gridwidth = GridBagConstraints.REMAINDER;
-                g.setConstraints(cvScroll, cs);
-                c.add(cvScroll);
-                cs.gridwidth = 1;
-
-                // remember which indexed CVs to read/write
-                for (int j=0; j<_indexedCvModel.getRowCount(); j++) {
-                    String sz = "CV" +_indexedCvModel.getName(j);
-                    int in = _varModel.findVarIndex(sz);
-                    indexedCvList.add(Integer.valueOf(in));
-                }
-
-                _cvTable = true;
-                log.debug("end of building IndexedCvTable pane");
-            }
-            else if (name.equals("fnmapping")) {
-                pickFnMapPanel(c, g, cs, modelElem);
-            }
-            else if (name.equals("dccaddress")) {
-                JPanel l = addDccAddressPanel(e);
-                cs.gridheight = GridBagConstraints.REMAINDER;
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridheight = 1;
-            }
-            else if (name.equals("column")) {
-                // nested "column" elements ...
-                cs.gridheight = GridBagConstraints.REMAINDER;
-                JPanel l = newColumn(e, showStdName, modelElem);
-                panelList.add(l);
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridheight = 1;
-            }
-            else if (name.equals("grid")) {
-                                // nested "grid" elements ...
-                cs.gridwidth = GridBagConstraints.REMAINDER;
-                JPanel l = newGrid(e, showStdName, modelElem);
-                panelList.add(l);
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridwidth = 1;
-            }
-            else { // its a mistake
-                log.error("No code to handle element of type "+e.getName()+" in newRow");
-            }
-        }
-        // add glue to the bottom to allow resize
-        c.add(Box.createVerticalGlue());
-
-        return c;
-    }
-
-    /**
-     * Create a grid from the JDOM  Element
-     */
-    @SuppressWarnings("unchecked")
-	public JPanel newGrid(Element element, boolean showStdName, Element modelElem) {
-
-        // create a panel to add as a new grid
-        JPanel c = new JPanel();
-        panelList.add(c);
-        GridBagLayout g = new GridBagLayout();
-        c.setLayout(g);
-
-        // handle the xml definition
-        // for all elements in the grid
-        List<Element> elemList = element.getChildren();
-        List<Attribute> gridAttList = element.getAttributes(); // get grid-level attributes
-        if (log.isDebugEnabled()) log.debug("newGrid starting with "+elemList.size()+" elements");
-        for (int i=0; i<elemList.size(); i++) {
-            GridBagConstraints cs = new GridBagConstraints();
-            Element e = elemList.get(i);
-            String name = e.getName();
-            if (log.isDebugEnabled()) log.debug("newGrid processing "+name+" element");
-            // decode the type
-            if (name.equals("griditem")) {
-                List<Attribute> itemAttList = e.getAttributes(); // get item-level attributes
-                List<Attribute> attList = new ArrayList<Attribute>(gridAttList);
-                attList.addAll(itemAttList); // merge grid and item-level attributes
-//                 log.info("attribute list="+attList);
-                for (int j = 0; j < attList.size(); j++) {
-                    Attribute attrib = attList.get(j);
-                    String attribName = attrib.getName();
-                    String attribRawValue = attrib.getValue();
-                    Field constraint = null;
-                    String constraintType = null;
-                    try {
-                        constraint = cs.getClass().getDeclaredField(attribName);
-                        constraintType = constraint.getType().toString();
-                        constraint.setAccessible(true);
-                        } catch (NoSuchFieldException ex) {
-                        log.error("Unrecognised attribute \""+attribName+"\"");
-                    }
-                    if ( constraintType.equals("int")) {
-                        int attribValue;
-                        try {
-                            attribValue = Integer.valueOf(attribRawValue);
-                            constraint.set(cs,attribValue);
-                       } catch (IllegalAccessException ey) {
-                            log.error("Unable to set constraint \""+attribName+". IllegalAccessException error thrown.");
-                        } catch (NumberFormatException ex) {
-                            try {
-                                Field constant = cs.getClass().getDeclaredField(attribRawValue);
-                                constant.setAccessible(true);
-                                attribValue = (Integer) GridBagConstraints.class.getField(attribRawValue).get(constant);
-                                constraint.set(cs,attribValue);
-                            } catch (NoSuchFieldException ey) {
-                        log.error("Invalid value \""+attribRawValue+"\" for attribute \""+attribName+"\"");
-                            } catch (IllegalAccessException ey) {
-                            log.error("Unable to set constraint \""+attribName+". IllegalAccessException error thrown.");
-                            }
-                        }
-                    } else if ( constraintType.equals("double")) {
-                        double attribValue;
-                        try {
-                            attribValue = Double.valueOf(attribRawValue);
-                            constraint.set(cs,attribValue);
-                       } catch (IllegalAccessException ey) {
-                            log.error("Unable to set constraint \""+attribName+". IllegalAccessException error thrown.");
-                        } catch (NumberFormatException ex) {
-                            log.error("Invalid value \""+attribRawValue+"\" for attribute \""+attribName+"\"");
-                        }
-                    } else if ( constraintType.equals("class java.awt.Insets")) {
-                        try {
-                            String[] insetStrings = attribRawValue.split(",");
-                            if ( insetStrings.length == 4) {
-                                Insets attribValue = new Insets(Integer.valueOf(insetStrings[0]),Integer.valueOf(insetStrings[1]),Integer.valueOf(insetStrings[2]),Integer.valueOf(insetStrings[3]));
-                                constraint.set(cs,attribValue);
-                            } else {
-                                log.error("Invalid value \""+attribRawValue+"\" for attribute \""+attribName+"\"");
-                                log.error("Value should be four integers of the form \"top,left,bottom,right\"");
-                            }
-                       } catch (IllegalAccessException ey) {
-                            log.error("Unable to set constraint \""+attribName+". IllegalAccessException error thrown.");
-                        } catch (NumberFormatException ex) {
-                            log.error("Invalid value \""+attribRawValue+"\" for attribute \""+attribName+"\"");
-                            log.error("Value should be four integers of the form \"top,left,bottom,right\"");
-                        }
-                    } else {
-                        log.error("Required \""+constraintType+"\" handler for attribute \""+attribName+"\" not defined in JMRI code");
-                        log.error("Please file a JMRI bug report at https://sourceforge.net/p/jmri/bugs/new/");
-                    }
-                }
-                JPanel l = newGridItem(e, showStdName, modelElem);
-                panelList.add(l);
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridwidth = 1;
-            }
-            else { // its a mistake
-                log.error("No code to handle element of type "+e.getName()+" in newGrid");
-            }
-        }
-        // add glue to the bottom to allow resize
-        c.add(Box.createVerticalGlue());
-
-        return c;
-    }
-
-    /**
-     * Create a grid from the JDOM  Element
-     */
-    @SuppressWarnings("unchecked")
-	public JPanel newGridItem(Element element, boolean showStdName, Element modelElem) {
-
-        // create a panel to add as a new grid item
-        JPanel c = new JPanel();
-        panelList.add(c);
-        GridBagLayout g = new GridBagLayout();
-        GridBagConstraints cs = new GridBagConstraints();
-        c.setLayout(g);
-
-        // handle the xml definition
-        // for all elements in the column or row
-        List<Element> elemList = element.getChildren();
-        if (log.isDebugEnabled()) log.debug("newGridItem starting with "+elemList.size()+" elements");
-        for (int i=0; i<elemList.size(); i++) {
-
-            // update the grid position
-            cs.gridy = 0;
-            cs.gridx++;
-
-            Element e = elemList.get(i);
-            String name = e.getName();
-            if (log.isDebugEnabled()) log.debug("newGridItem processing "+name+" element");
-            // decode the type
-            if (name.equals("display")) { // its a variable
-                // load the variable
-                newVariable( e, c, g, cs, showStdName);
-            }
-            else if (name.equals("separator")) { // its a separator
-                JSeparator j = new JSeparator(javax.swing.SwingConstants.VERTICAL);
-                cs.fill = GridBagConstraints.BOTH;
-                cs.gridheight = GridBagConstraints.REMAINDER;
-                g.setConstraints(j, cs);
-                c.add(j);
-                cs.fill = GridBagConstraints.NONE;
-                cs.gridheight = 1;
-            }
-            else if (name.equals("label")) { // its  a label
-                cs.gridheight = GridBagConstraints.REMAINDER;
-                makeLabel(e, c, g, cs);
-            }
-            else if (name.equals("soundlabel")) { // its  a sound label
-                cs.gridheight = GridBagConstraints.REMAINDER;
-                makeSoundLabel(e, c, g, cs);
-            }
-            else if (name.equals("cvtable")) {
-                makeCvTable(cs, g, c);
-            }
-            else if (name.equals("indxcvtable")) {
-                log.debug("starting to build IndexedCvTable pane");
-                JTable	indxcvTable	= new JTable(_indexedCvModel);
-                JScrollPane cvScroll = new JScrollPane(indxcvTable);
-                indxcvTable.setDefaultRenderer(JTextField.class, new ValueRenderer());
-                indxcvTable.setDefaultRenderer(JButton.class, new ValueRenderer());
-                indxcvTable.setDefaultEditor(JTextField.class, new ValueEditor());
-                indxcvTable.setDefaultEditor(JButton.class, new ValueEditor());
-                indxcvTable.setRowHeight(new JButton("X").getPreferredSize().height);
-                indxcvTable.setPreferredScrollableViewportSize(new Dimension(700, indxcvTable.getRowHeight()*14));
-                cvScroll.setColumnHeaderView(indxcvTable.getTableHeader());
-                // don't want a horizontal scroll bar
-                // Need to see the whole row at one time
-//                indxcvTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-                cs.gridwidth = GridBagConstraints.REMAINDER;
-                g.setConstraints(cvScroll, cs);
-                c.add(cvScroll);
-                cs.gridwidth = 1;
-
-                // remember which indexed CVs to read/write
-                for (int j=0; j<_indexedCvModel.getRowCount(); j++) {
-                    String sz = "CV" +_indexedCvModel.getName(j);
-                    int in = _varModel.findVarIndex(sz);
-                    indexedCvList.add(Integer.valueOf(in));
-                }
-
-                _cvTable = true;
-                log.debug("end of building IndexedCvTable pane");
-            }
-            else if (name.equals("fnmapping")) {
-                pickFnMapPanel(c, g, cs, modelElem);
-            }
-            else if (name.equals("dccaddress")) {
-                JPanel l = addDccAddressPanel(e);
-                cs.gridheight = GridBagConstraints.REMAINDER;
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridheight = 1;
-            }
-            else if (name.equals("column")) {
-                // nested "column" elements ...
-                cs.gridheight = GridBagConstraints.REMAINDER;
-                JPanel l = newColumn(e, showStdName, modelElem);
-                panelList.add(l);
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridheight = 1;
-            }
-            else if (name.equals("row")) {
-                                // nested "row" elements ...
-                cs.gridwidth = GridBagConstraints.REMAINDER;
-                JPanel l = newRow(e, showStdName, modelElem);
-                panelList.add(l);
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridwidth = 1;
-            }
-            else if (name.equals("grid")) {
-                                // nested "grid" elements ...
-                cs.gridwidth = GridBagConstraints.REMAINDER;
-                JPanel l = newGrid(e, showStdName, modelElem);
-                panelList.add(l);
-                g.setConstraints(l, cs);
-                c.add(l);
-                cs.gridwidth = 1;
-            }
-            else { // its a mistake
-                log.error("No code to handle element of type "+e.getName()+" in newGridItem");
-            }
-        }
-        // add glue to the bottom to allow resize
-        c.add(Box.createVerticalGlue());
-
-        return c;
-    }
 
     void makeCvTable(GridBagConstraints cs, GridBagLayout g, JPanel c) {
         log.debug("starting to build CvTable pane");
@@ -1770,7 +2093,6 @@ public class PaneProgPane extends javax.swing.JPanel
     
     void setCvListFromTable() {
         // remember which CVs to read/write
-        System.out.println("found "+_cvModel.getRowCount()+" rows");
         for (int j=0; j<_cvModel.getRowCount(); j++) {
             cvList.add(Integer.valueOf(j));
         }
@@ -1792,7 +2114,7 @@ public class PaneProgPane extends javax.swing.JPanel
         try { if (a!=null) extFnsESU = (a.getValue()).equalsIgnoreCase("yes");}
         catch (Exception ex) {log.error("error handling decoder's extFnsESU value");}        
         if (extFnsESU) {
-            FnMapPanelESU l = new FnMapPanelESU(_varModel, varList, modelElem, rosterEntry);
+            FnMapPanelESU l = new FnMapPanelESU(_varModel, varList, modelElem, rosterEntry, _cvModel);
             fnMapListESU.add(l); // remember for deletion
             cs.gridwidth = GridBagConstraints.REMAINDER;
             g.setConstraints(l, cs);
@@ -1824,6 +2146,7 @@ public class PaneProgPane extends javax.swing.JPanel
             if (log.isDebugEnabled()) log.debug("Variable \""+name+"\" not found, omitted");
             return;
         }
+//        log.info("Display item="+name);
 
         // check label orientation
         Attribute attr;
@@ -1855,7 +2178,7 @@ public class PaneProgPane extends javax.swing.JPanel
             g.setConstraints(l, cs);
             col.add(l);
 
-            cs.gridx = GridBagConstraints.RELATIVE;
+            cs.gridx++;
             cs.anchor= GridBagConstraints.WEST;
             g.setConstraints(rep, cs);
             col.add(rep);
@@ -1865,7 +2188,7 @@ public class PaneProgPane extends javax.swing.JPanel
             g.setConstraints(rep, cs);
             col.add(rep);
 
-            cs.gridx = GridBagConstraints.RELATIVE;
+            cs.gridx++;
             cs.anchor= GridBagConstraints.WEST;
             g.setConstraints(l, cs);
             col.add(l);
@@ -2183,8 +2506,7 @@ public class PaneProgPane extends javax.swing.JPanel
                     nameLeftIndex = nameRightIndex;
                     int space = spaces.length()- trimmedName.length();
                     s = "   " + trimmedName + spaces.substring(0,space);
-                  }
-                  else {
+                  } else {
                     trimmedName = name.substring(nameLeftIndex);
                     int space = spaces.length() - trimmedName.length();
                     s = "   " + trimmedName + spaces.substring(0,space);
@@ -2203,8 +2525,7 @@ public class PaneProgPane extends javax.swing.JPanel
                     trimmedValue = value.substring(valueLeftIndex,valueRightIndex);
                     valueLeftIndex = valueRightIndex;
                     s= s + "   " + trimmedValue;
-                  }
-                  else {
+                  } else {
                     trimmedValue = value.substring(valueLeftIndex);
                     s = s + "   " + trimmedValue;
                     valueLeftIndex = 0;
@@ -2391,12 +2712,7 @@ public class PaneProgPane extends javax.swing.JPanel
     }
 
     private JPanel addDccAddressPanel(Element e) {
-        JPanel l;
-        String at = LocaleSelector.getAttribute(e, "label");
-        if (at!=null)
-            l = new DccAddressPanel(_varModel, at);
-        else
-            l = new DccAddressPanel(_varModel);
+        JPanel l = new DccAddressPanel(_varModel);
         panelList.add(l);
         // make sure this will get read/written, even if real vars not on pane
         int iVar;

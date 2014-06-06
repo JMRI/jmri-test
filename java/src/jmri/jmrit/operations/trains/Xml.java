@@ -82,7 +82,7 @@ public class Xml {
 	static final String SWITCH_LIST_STATUS = "switchListStatus"; // NOI18N
 	static final String LEAD_ENGINE = "leadEngine"; // NOI18N
 	static final String STATUS = "status"; // NOI18N
-    static final String STATUS_CODE = "statusCode"; // NOI18N
+	static final String STATUS_CODE = "statusCode"; // NOI18N
     static final String TERMINATION_DATE = "TerminationDate"; // NOI18N
     static final String REQUESTED_CARS = "RequestedCars"; // NOI18N
 	
@@ -146,6 +146,7 @@ public class Xml {
 	static final String WORK_DEPARTURE_TIME = "workDepartureTime"; // NOI18N
 	static final String WORK_ARRIVAL_TIME = "workArrivalTime"; // NOI18N
 	static final String NO_SCHEDULED_WORK = "noScheduledWork"; // NOI18N
+	static final String NO_SCHEDULED_WORK_ROUTE_COMMENT = "noScheduledWorkRouteComment"; // NOI18N
 	static final String DEPART_TIME = "departTime"; // NOI18N
 	static final String TRAIN_DEPARTS_CARS = "trainDepartsCars"; // NOI18N
 	static final String TRAIN_DEPARTS_LOADS = "trainDepartsLoads"; // NOI18N
@@ -182,5 +183,30 @@ public class Xml {
 	static final String NO_CAR_PICK_UPS = "noCarPickUps"; // NOI18N
 	static final String NO_CAR_SET_OUTS = "noCarSetOuts"; // NOI18N
 	static final String TRAIN_DONE = "trainDone"; // NOI18N
+	
+	// TrainManifestHeaderText.jafa
+	static final String MANIFEST_HEADER_TEXT_STRINGS = "manifestHeaderTextStrings"; // NOI18N
+	static final String ROAD = "road"; // the supported message format options NOI18N 
+	static final String NUMBER = "number"; // NOI18N
+	static final String ENGINE_NUMBER = "engineNumber"; // NOI18N
+	static final String TYPE = "type"; // NOI18N
+	static final String MODEL = "model"; // NOI18N
+	static final String LENGTH = "length"; // NOI18N
+	static final String LOAD = "load"; // NOI18N
+	static final String COLOR = "color"; // NOI18N
+	static final String TRACK = "track"; // NOI18N
+	//static final String DESTINATION = "destination"; // NOI18N
+	static final String DEST_TRACK = "dest_Track"; // NOI18N
+	//static final String FINAL_DEST = "Final_Dest"; // NOI18N
+	static final String FINAL_DEST_TRACK = "fd_Track"; // NOI18N
+	//static final String LOCATION = "location"; // NOI18N
+	static final String CONSIST = "consist"; // NOI18N
+	static final String KERNEL = "kernel"; // NOI18N
+	static final String OWNER = "owner"; // NOI18N
+	static final String RWE = "rwe"; // NOI18N
+	//static final String COMMENT = "Comment"; // NOI18N
+	static final String DROP_COMMENT = "setOut_msg"; // NOI18N
+	static final String PICKUP_COMMENT = "pickUp_msg"; // NOI18N
+	static final String HAZARDOUS = "hazardous"; // NOI18N
 	
 }

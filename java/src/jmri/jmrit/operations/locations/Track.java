@@ -144,7 +144,7 @@ public class Track {
 	public static final String TYPE = Bundle.getMessage("type");
 	public static final String ROAD = Bundle.getMessage("road");
 	public static final String LOAD = Bundle.getMessage("load");
-//	public static final String CAPACITY = Bundle.getMessage("capacity");
+	public static final String CAPACITY = Bundle.getMessage("capacity");
 	public static final String SCHEDULE = Bundle.getMessage("schedule");
 	public static final String CUSTOM = Bundle.getMessage("custom");
 	public static final String DESTINATION = Bundle.getMessage("carDestination");
@@ -172,7 +172,7 @@ public class Track {
 	public static final String SERVICE_ORDER_CHANGED_PROPERTY = "trackServiceOrder"; // NOI18N
 
 	public Track(String id, String name, String type, Location location) {
-		log.debug("New track " + name + " " + id);
+		log.debug("New ({}) track ({}) id: {}", type, name, id);
 		_location = location;
 		_trackType = type;
 		_name = name;
@@ -438,11 +438,14 @@ public class Track {
 		int carLength = car.getTotalLength();
 		if (car.getKernel() != null)
 			carLength = car.getKernel().getTotalLength();
+		int trackLength = getLength();
+		// is the car or kernel too long for the track?
+		if (trackLength < carLength)
+			return false;
 		// ignore reservation factor unless car is departing staging
 		if (car.getTrack() != null && car.getTrack().getTrackType().equals(STAGING))
 			return (getLength() * getReservationFactor() / 100 - (getReservedInRoute() + carLength) >= 0);
 		// if there's alternate, include that length in the calculation
-		int trackLength = getLength();
 		if (getAlternateTrack() != null)
 			trackLength = trackLength + getAlternateTrack().getLength();
 		return (trackLength - (getReservedInRoute() + carLength) >= 0);
@@ -691,7 +694,7 @@ public class Track {
 		if (type == null || _typeList.contains(type))
 			return;
 		_typeList.add(0, type);
-		log.debug("track (" + getName() + ") add rolling stock type " + type);
+		log.debug("Track ({}) add rolling stock type ({})",  getName() , type);
 		setDirtyAndFirePropertyChange(TYPES_CHANGED_PROPERTY, _typeList.size() - 1,
 				_typeList.size());
 	}
@@ -700,7 +703,7 @@ public class Track {
 		if (!_typeList.contains(type))
 			return;
 		_typeList.remove(type);
-		log.debug("track (" + getName() + ") delete rolling stock type " + type);
+		log.debug("Track ({}) delete rolling stock type ({})" , getName() , type);
 		setDirtyAndFirePropertyChange(TYPES_CHANGED_PROPERTY, _typeList.size() + 1,
 				_typeList.size());
 	}
@@ -770,14 +773,14 @@ public class Track {
 		if (_roadList.contains(road))
 			return;
 		_roadList.add(road);
-		log.debug("track (" + getName() + ") add car road " + road);
+		log.debug("Track ({}) add car road ({})", getName(), road);
 		setDirtyAndFirePropertyChange(ROADS_CHANGED_PROPERTY, _roadList.size() - 1,
 				_roadList.size());
 	}
 
 	public void deleteRoadName(String road) {
 		_roadList.remove(road);
-		log.debug("track (" + getName() + ") delete car road " + road);
+		log.debug("Track ({}) delete car road ({})", getName(), road);
 		setDirtyAndFirePropertyChange(ROADS_CHANGED_PROPERTY, _roadList.size() + 1,
 				_roadList.size());
 	}
@@ -1086,13 +1089,13 @@ public class Track {
 		if (_dropList.contains(id))
 			return;
 		_dropList.add(id);
-		log.debug("track " + getName() + " add drop id " + id);
+		log.debug("Track ({}) add drop id: {}", getName(), id);
 		setDirtyAndFirePropertyChange(DROP_CHANGED_PROPERTY, null, id);
 	}
 
 	public void deleteDropId(String id) {
 		_dropList.remove(id);
-		log.debug("track " + getName() + " delete drop id " + id);
+		log.debug("Track ({}) delete drop id: {}", getName(), id);
 		setDirtyAndFirePropertyChange(DROP_CHANGED_PROPERTY, id, null);
 	}
 
@@ -1292,19 +1295,13 @@ public class Track {
 					return OKAY;
 			// Note that a lot of the code checks for track length being an issue, therefore it has to be the last
 			// check.
+			// Is rolling stock too long for this track?
+			if (getLength() < length)
+				return CAPACITY + " (" + length + ") " + Setup.getLengthUnit().toLowerCase();// NOI18N
 			log.debug("Rolling stock (" + rs.toString() + ") not accepted at location (" + getLocation().getName()
 					+ ", " + getName() + ") no room!"); // NOI18N
 			return LENGTH + " (" + length + ") " + Setup.getLengthUnit().toLowerCase();// NOI18N
 		}
-		// a spur with a schedule can overload in aggressive mode, check track capacity
-//		if (Setup.isBuildAggressive() && !getScheduleId().equals("") && getUsedLength() + getReserved() > getLength()) {
-//			// ignore used length option?
-//			if (checkPlannedPickUps(length))
-//				return OKAY;
-//			log.debug("Can't set (" + rs.toString() + ") due to exceeding maximum capacity for track (" + getName()
-//					+ ")"); // NOI18N
-//			return CAPACITY;
-//		}
 		return OKAY;
 	}
 	
@@ -1421,7 +1418,7 @@ public class Track {
 	}
 
 	public void setScheduleItemId(String id) {
-		log.debug("set schedule item id: " + id + " for track (" + getName() + ")");
+		log.debug("set schedule item id: {} for track ({})",  id, getName());
 		String old = _scheduleItemId;
 		_scheduleItemId = id;
 		setDirtyAndFirePropertyChange(SCHEDULE_CHANGED_PROPERTY, old, id);
@@ -1634,6 +1631,11 @@ public class Track {
 		if (debugFlag)
 			log.debug("Search match for car " + toString() + " type (" + car.getTypeName() + ") load (" + car.getLoadName()
 					+ ")");
+		if (!car.getScheduleId().equals("")) {
+			ScheduleItem si = getSchedule().getItemById(car.getScheduleId());
+			if (si != null && checkScheduleItem(si, car).equals(OKAY))
+				return OKAY;
+		}
 		for (int i = 0; i < getSchedule().getSize(); i++) {
 			ScheduleItem si = getNextScheduleItem();
 			if (debugFlag)
@@ -1708,7 +1710,7 @@ public class Track {
 		// a car has a schedule id if the schedule was in match mode
 		if (!car.getScheduleId().equals("")) {
 			String id = car.getScheduleId();
-			log.debug("Car ({}) has schedule id {}", car.toString(), car.getScheduleId());
+			log.debug("Car ({}) has schedule id ({})", car.toString(), car.getScheduleId());
 			Schedule sch = getSchedule();
 			if (sch != null) {
 				ScheduleItem si = sch.getItemById(id);
