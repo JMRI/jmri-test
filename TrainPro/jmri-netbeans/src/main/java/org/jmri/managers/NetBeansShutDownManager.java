@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.jmri.managers;
 
 import java.util.ArrayList;
@@ -13,12 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * JMRI Shutdown manager that triggers restart or shutdown using the OpenIDE
+ * LifecycleManager for integration into the NetBeans Platform.
  *
- * @author rhwood
+ * @author Randall Wood
  */
 public class NetBeansShutDownManager implements ShutDownManager {
 
-    private final ArrayList<ShutDownTask> tasks = new ArrayList<ShutDownTask>();
+    private final ArrayList<ShutDownTask> tasks = new ArrayList<>();
     static Boolean shuttingDown = false;
     static Logger log = LoggerFactory.getLogger(NetBeansShutDownManager.class);
 
@@ -57,7 +55,7 @@ public class NetBeansShutDownManager implements ShutDownManager {
             shuttingDown = true;
             // Copy this.tasks so a ConcurrentModificationException is not thrown when a task deregisters itself.
             // Use a ListIterator starting at the end of the list to iterate backwards.
-            ListIterator<ShutDownTask> li = (new ArrayList<ShutDownTask>(this.tasks)).listIterator(this.tasks.size());
+            ListIterator<ShutDownTask> li = (new ArrayList<>(this.tasks)).listIterator(this.tasks.size());
             while (li.hasPrevious()) {
                 ShutDownTask task = li.previous();
                 try {
