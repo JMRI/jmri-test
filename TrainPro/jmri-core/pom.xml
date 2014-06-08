@@ -20,6 +20,10 @@
                     <exclude>**/*.form</exclude>
                 </excludes>
             </resource>
+            <!-- NetBeans module resources directory -->
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
             <!-- if all non-java stuff shipped with JMRI were in a single 
             subdirectory of the project, all these resources would be a single line -->
             <resource>
