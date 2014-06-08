@@ -102,22 +102,23 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTraffi
     @Override
     public synchronized void notifyRcv(Date timestamp, MrcMessage m) {
         
-        String raw = "";
-        if(excludePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
+        String prefix = "Rx:";
+        if(excludePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL && m.getElement(1)==0x01){
             //Do not show poll messages
             previousPollMessage = m;
-            previousTimeStamp = timestamp;
+            //previousTimeStamp = timestamp;
             return;
         } else if (previousPollMessage!=null) {
             if((m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
                 previousPollMessage = null;
                 return;
             }
-            logMessage(previousTimeStamp, previousPollMessage, "Rx:");
+            prefix = "Rx: From Cab - " + Integer.toString(previousPollMessage.getElement(0));
+            /*logMessage(previousTimeStamp, previousPollMessage, prefix);*/
             previousPollMessage = null;
-            previousTimeStamp = null;
+            //previousTimeStamp = null;
         }
-    	logMessage(timestamp, m, "Rx:");
+    	logMessage(timestamp, m, prefix);
     }
     
     private void logMessage(Date timestamp, MrcMessage m, String src) {  // receive a Mrc message and log it

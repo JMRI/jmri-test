@@ -408,6 +408,7 @@ public class MrcMessage {
         m.setElement(8,packet[2]);
         m.setElement(9,0x00);
         m.setRetries(2);
+        m.replyNotExpected();
         m.setByteStream();
 	return m;
     }
@@ -420,13 +421,13 @@ public class MrcMessage {
         int i = m.putHeader(MrcPackets.ROUTECONTROLPACKETHEADER);
         m.setElement(i++,address);
         m.setElement(i++, 0x00);
-        int state = closed ? 0x00 : 0x80;
+        int state = closed ? 0x80 : 0x00;
         m.setElement(i++, state);
         m.setElement(i++,0x00);
-        m.setElement(i++, getCheckSum(state, 0x00, 0x00, 0x00));
+        m.setElement(i++, getCheckSum(address, 0x00, state, 0x00));
         m.setElement(i++,0x00);
-        
         m.setRetries(2);
+        m.replyNotExpected();
         m.setByteStream();
 	return m;
     }

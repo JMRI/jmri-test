@@ -64,7 +64,7 @@ public class MrcTurnout extends AbstractTurnout implements MrcTrafficListener{
         if(_number<1000)
             m=MrcMessage.getSwitchMsg(_number, state);
         else
-            m=MrcMessage.getRouteMsg(_number, state);
+            m=MrcMessage.getRouteMsg((_number-1000), state);
         tc.sendMrcMessage(m);
     }
     
@@ -72,8 +72,20 @@ public class MrcTurnout extends AbstractTurnout implements MrcTrafficListener{
         if(m.getMessageClass()!=MrcInterface.TURNOUTS)
             return;
         if(m.getAccAddress()!=getNumber()){
+            if(m.getElement(0)==MrcPackets.ROUTECONTROLPACKETCMD){
+                if((m.getElement(4)+1000)==getNumber()){
+                    if(m.getElement(6)==0x00){
+                        newKnownState(jmri.Turnout.THROWN);
+                    } else if (m.getElement(6)==0x80) {
+                        newKnownState(jmri.Turnout.CLOSED);
+                    } else {
+                        newKnownState(jmri.Turnout.UNKNOWN);
+                    }
+                }
+            }
             return;
         }
+        newKnownState(m.getAccState());
     }
     
     public void notifyXmit(Date timestamp, MrcMessage m) {/* message(m); */}

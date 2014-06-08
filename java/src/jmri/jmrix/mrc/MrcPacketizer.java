@@ -370,6 +370,12 @@ public class MrcPacketizer extends MrcTrafficController {
                                                                       }
                                                                       break;
                             case MrcPackets.GOODCMDRECIEVEDCODE :      //Possibly shouldn't change the state, as we wait for further confirmation.
+                                                                      if(mCurrentState == CONFIRMATIONONLY){
+                                                                            synchronized(transmitLock) {
+                                                                              mCurrentState = IDLESTATE;
+                                                                              transmitLock.notify();
+                                                                            }
+                                                                      }
                                                                       msg = new MrcMessage(4);
                                                                       break;
                             case MrcPackets.BADCMDRECIEVEDCODE  :     mCurrentState = BADCOMMAND;
@@ -461,6 +467,7 @@ public class MrcPacketizer extends MrcTrafficController {
     final static int DOUBLELOCOCONTROL = 0x02;
     final static int MISSEDPOLL = 0x04;
     final static int BADCOMMAND = 0x08;
+    final static int CONFIRMATIONONLY = 0x10;
     int mCurrentState=IDLESTATE;
     
     int consecutiveMissedPolls = 0;
@@ -478,6 +485,7 @@ public class MrcPacketizer extends MrcTrafficController {
             byte msg[];
             MrcMessage m;
             int x = 0;
+            int state = WAITFORCMDRECEIVED;
             while (true) {   // loop permanently
                 m = noData;
                 msg = noDataMsg;
@@ -498,23 +506,31 @@ public class MrcPacketizer extends MrcTrafficController {
                     }
                 }
                 try {
+                    if(m.getMessageClass()!=MrcInterface.POLL){
+                        mCurrentState = WAITFORCMDRECEIVED;
+                        /* We set the current state before transmitting the message otherwise 
+                        the reply to the message may be recieved before the state is set
+                        and the message will timeout and be retransmitted */
+                        if(!m.isReplyExpected()){
+                            mCurrentState = CONFIRMATIONONLY;
+                        }
+                        state = mCurrentState;
+                    }
                     ostream.write(msg);
                     ostream.flush();
-                    if(m.getMessageClass()==MrcInterface.POLL || !m.isReplyExpected()){
-                        mCurrentState = IDLESTATE;
-                        messageTransmited(m);
-                    } else {
-                        mCurrentState = WAITFORCMDRECEIVED;
-                        messageTransmited(m);
+                    messageTransmited(m);
+                    if(m.getMessageClass()!=MrcInterface.POLL){
                         if (fulldebug){ 
                             log.debug("end write to stream: "+jmri.util.StringUtil.hexStringFromBytes(msg));
                             log.info("wait : " + m.getTimeout() + " : " + x);
                         }
-                        transmitWait(m.getTimeout(), WAITFORCMDRECEIVED, "transmitLoop interrupted", x);
+                        transmitWait(m.getTimeout(), state, "transmitLoop interrupted", x);
                         x++;
-                    }
+                    } else {
+                        mCurrentState = IDLESTATE;
+                   }
                     
-                    if(mCurrentState == WAITFORCMDRECEIVED){
+                    if(mCurrentState == WAITFORCMDRECEIVED || mCurrentState == CONFIRMATIONONLY){
                         if(debug) log.debug("Timed out");
                         if(m.getRetries()>=0){
                             m.setRetries(m.getRetries() - 1);
@@ -590,7 +606,7 @@ public class MrcPacketizer extends MrcTrafficController {
 				log.error(InterruptMessage); 
 			}
 		}
-		log.debug("Timeout in transmitWait " + x + ", mCurrentState:" + mCurrentState);
+		log.debug("Timeout in transmitWait " + x + ", mCurrentState:" + mCurrentState + " after " + waitTime);
     }
 
     protected void messageFailed(MrcMessage m) {
@@ -655,7 +671,7 @@ public class MrcPacketizer extends MrcTrafficController {
                   " min available = "+Thread.MIN_PRIORITY);
 
         // make sure that the xmt priority is no lower than the current priority
-        int xmtpriority = (Thread.MAX_PRIORITY-1>priority ? Thread.MAX_PRIORITY-1 : Thread.MAX_PRIORITY);
+        int xmtpriority = (Thread.MAX_PRIORITY-1>priority ? Thread.MAX_PRIORITY : Thread.MAX_PRIORITY-1);
         // start the XmtHandler in a thread of its own
         if( xmtHandler == null )
           xmtHandler = new XmtHandler();

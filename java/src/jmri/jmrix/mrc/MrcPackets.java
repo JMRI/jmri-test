@@ -372,7 +372,9 @@ public class MrcPackets {
                 txt.append("Consist Cleared");
                 break;
             case ROUTECONTROLPACKETCMD:
-                txt.append("Route Control");
+                txt.append("Route ");
+                txt.append(Integer.toString(m.getElement(4)));
+                txt.append(" Set");
                 break;
             case CLEARROUTEPACKETCMD:
                 txt.append("Route Cleared");
@@ -382,8 +384,7 @@ public class MrcPackets {
                 break;
             case ACCESSORYPACKETCMD:
                 txt.append("Accessory ");
-                int add = m.getAccAddress();
-                txt.append(Integer.toString(add));
+                txt.append(Integer.toString(m.getAccAddress()));
                 switch (m.getAccState()){
                     case jmri.Turnout.CLOSED : txt.append(" Closed");
                                      break;
