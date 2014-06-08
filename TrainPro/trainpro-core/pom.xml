@@ -33,7 +33,17 @@
         <dependency>
             <groupId>org.jmri</groupId>
             <artifactId>jmri-core</artifactId>
-            <version>3.99.0-SNAPSHOT</version>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jmri</groupId>
+            <artifactId>jmri-netbeans</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jmri</groupId>
+            <artifactId>jmri-logging</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
     <properties>
