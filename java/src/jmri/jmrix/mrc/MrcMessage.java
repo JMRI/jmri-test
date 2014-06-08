@@ -316,7 +316,7 @@ public class MrcMessage {
      * set the fast clock ratio
      * ratio is integer and max of 60 and min of 1
      * @param ratio
-     * @return
+     * @return MrcMessage
      */
     static public MrcMessage setClockRatio(int ratio) {
         if (ratio < 0 || ratio > 60) log.error("ratio number too large: "+ratio);
@@ -335,7 +335,7 @@ public class MrcMessage {
      * set the fast time clock
      * @param hour
      * @param minute
-     * @return
+     * @return MrcMessage
      */
     static public MrcMessage setClockTime(int hour, int minute) {
         if (hour < 0 || hour > 23) log.error("hour number out of range : " + hour);
@@ -355,7 +355,7 @@ public class MrcMessage {
 
     /**
      * Toggle the AM/PM vs 24 hour mode
-     * @return
+     * @return MrcMessage
      */
     static public MrcMessage setClockAmPm() {
         MrcMessage m = new MrcMessage(MrcPackets.getSetClockAmPmPacketLength());
@@ -371,7 +371,7 @@ public class MrcMessage {
     
     /**
      * Set Track Power Off/Emergency Stop
-     * @return
+     * @return MrcMessage
      */
     static public MrcMessage setPowerOff() {
         MrcMessage m = new MrcMessage(MrcPackets.getPowerOffPacketLength());

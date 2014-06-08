@@ -15,7 +15,7 @@ import jmri.*;
  * @see             jmri.Programmer
  * @author			Bob Jacobsen Copyright (C) 2002
  * @author	Ken Cameron Copyright (C) 2014
- * @auther  Kevin Dickerson Copyright (C) 2014
+ * @author  Kevin Dickerson Copyright (C) 2014
  * @version			$Revision: 24270 $
  */
 public class MrcOpsModeProgrammer extends MrcProgrammer  {

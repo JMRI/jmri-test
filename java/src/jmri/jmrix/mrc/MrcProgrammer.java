@@ -20,7 +20,7 @@ import java.util.Date;
  * to and from programming mode are now handled in the TrafficController code.
  * @author			Bob Jacobsen Copyright (C) 2002
  * @author	Ken Cameron Copyright (C) 2014
- * @auther  Kevin Dickerson Copyright (C) 2014
+ * @author  Kevin Dickerson Copyright (C) 2014
  * @version     $Revision: 24290 $
  */
 public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListener {

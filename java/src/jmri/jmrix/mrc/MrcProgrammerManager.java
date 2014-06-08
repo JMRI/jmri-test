@@ -11,7 +11,7 @@ import jmri.Programmer;
  * @see         jmri.ProgrammerManager
  * @author	Bob Jacobsen Copyright (C) 2002
  * @author	Ken Cameron Copyright (C) 2014
- * @auther  Kevin Dickerson Copyright (C) 2014
+ * @author  Kevin Dickerson Copyright (C) 2014
  * @version	$Revision: 23001 $
  */
 public class MrcProgrammerManager  extends DefaultProgrammerManager {
