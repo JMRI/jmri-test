@@ -11,7 +11,7 @@
     <artifactId>trainpro-app</artifactId>
     <packaging>nbm-application</packaging>
 
-    <name>TrainPro Application</name>
+    <name>JMRI TrainPro</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,7 +27,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>TrainPro-branding</artifactId>
+            <artifactId>trainpro-branding</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!-- NbModuleSuite functional in RELEASE70 or later: -->
@@ -101,4 +101,6 @@
             </build>
         </profile>
     </profiles>
+    <description>JMRI TrainPro allows for the computerized management of digital
+ command and control (DCC) equipped model railroads.</description>
 </project>
