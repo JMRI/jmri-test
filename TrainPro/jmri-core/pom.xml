@@ -10,8 +10,50 @@
     <artifactId>jmri-core</artifactId>
     <packaging>nbm</packaging>
     <build>
-        <sourceDirectory>../../java/src</sourceDirectory>
-        <testSourceDirectory>../../java/test</testSourceDirectory>
+        <sourceDirectory>${project.basedir}/../../java/src</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>${project.build.sourceDirectory}</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                    <exclude>**/*.jjt</exclude>
+                    <exclude>**/*.form</exclude>
+                </excludes>
+            </resource>
+            <!-- if all non-java stuff shipped with JMRI were in a single 
+            subdirectory of the project, all these resources would be a single line -->
+            <resource>
+                <directory>${project.basedir}/../../xml</directory>
+                <targetPath>xml</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/../../resources</directory>
+                <targetPath>resources</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/../../web</directory>
+                <targetPath>web</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/../../jython</directory>
+                <targetPath>jython</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/../../help</directory>
+                <targetPath>help</targetPath>
+            </resource>
+        </resources>
+        <!-- temporarily disable tests
+        <testSourceDirectory>${project.basedir}/../../java/test</testSourceDirectory>
+        <testResources>
+            <testResource>
+                <directory>${project.build.testSourceDirectory}</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+        -->
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -24,7 +66,7 @@
                             <goal>jjtree-javacc</goal>
                         </goals>
                         <configuration>
-                            <sourceDirectory>../../java/src</sourceDirectory>
+                            <sourceDirectory>${project.basedir}/../../java/src</sourceDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -57,24 +99,8 @@
                         <configuration>
                             <target>
                                 <echo message="Executing ant clean..." />
-                                <ant antfile="${basedir}/../../build.xml"
+                                <ant antfile="${project.basedir}/../../build.xml"
                                      target="clean"
-                                     inheritAll="false">
-                                </ant>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <phase>compile</phase>
-                        <id>jmri-ant-debug</id>
-                        <configuration>
-                            <target>
-                                <echo message="Executing ant debug..." />
-                                <ant antfile="${basedir}/../../build.xml"
-                                     target="debug"
                                      inheritAll="false">
                                 </ant>
                             </target>
@@ -94,13 +120,161 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.1</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <groupId>org.jmri.third-party</groupId>
+                            <artifactId>xbee-api</artifactId>
+                            <version>0.9</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/../../lib/xbee-api-0.9.jar</file>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <id>install-jar-lib-xbee-api</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <!-- note that due to http://jira.codehaus.org/browse/MNG-5082
+                        you may need to run "ant maven-init" from the JMRI
+                        root directory to successfully install this jar -->
+                        <phase>validate</phase>
+                    </execution>
+                    <execution>
+                        <configuration>
+                            <groupId>org.jmri.third-party</groupId>
+                            <artifactId>win-registry</artifactId>
+                            <version>4.4</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/../../lib/WinRegistry-4.4.jar</file>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <id>install-jar-lib-win-registry</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <!-- note that due to http://jira.codehaus.org/browse/MNG-5082
+                        you may need to run "ant maven-init" from the JMRI
+                        root directory to successfully install this jar -->
+                        <phase>validate</phase>
+                    </execution>
+                    <!-- Joal versions 2+ are in maven central, this is needed
+                    only for Joal 1.1.2 -->
+                    <execution>
+                        <configuration>
+                            <groupId>org.jmri.third-party</groupId>
+                            <artifactId>joal</artifactId>
+                            <version>1.1.2</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/../../lib/joal.jar</file>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <id>install-jar-lib-joal</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <!-- note that due to http://jira.codehaus.org/browse/MNG-5082
+                        you may need to run "ant maven-init" from the JMRI
+                        root directory to successfully install this jar -->
+                        <phase>validate</phase>
+                    </execution>
+                    <execution>
+                        <configuration>
+                            <groupId>org.jmri.third-party</groupId>
+                            <artifactId>openlcb</artifactId>
+                            <version>0.6.3</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/../../lib/openlcb.jar</file>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <id>install-jar-lib-openlcb</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <!-- note that due to http://jira.codehaus.org/browse/MNG-5082
+                        you may need to run "ant maven-init" from the JMRI
+                        root directory to successfully install this jar -->
+                        <phase>validate</phase>
+                    </execution>
+                    <execution>
+                        <configuration>
+                            <groupId>org.jmri.third-party</groupId>
+                            <artifactId>serialio</artifactId>
+                            <version>UNKNOWN</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/../../lib/Serialio.jar</file>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <id>install-jar-lib-serialio</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <!-- note that due to http://jira.codehaus.org/browse/MNG-5082
+                        you may need to run "ant maven-init" from the JMRI
+                        root directory to successfully install this jar -->
+                        <phase>validate</phase>
+                    </execution>
+                    <execution>
+                        <configuration>
+                            <groupId>org.jmri.third-party</groupId>
+                            <artifactId>usb-view</artifactId>
+                            <version>0.5.7</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/../../lib/ch.ntb.usb.jar</file>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <id>install-jar-lib-usb-view</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <!-- note that due to http://jira.codehaus.org/browse/MNG-5082
+                        you may need to run "ant maven-init" from the JMRI
+                        root directory to successfully install this jar -->
+                        <phase>validate</phase>
+                    </execution>
+                </executions>
+            </plugin>        
         </plugins>
     </build>
     <dependencies>
         <dependency>
+            <groupId>org.jmri.third-party</groupId>
+            <artifactId>xbee-api</artifactId>
+            <version>0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jmri.third-party</groupId>
+            <artifactId>win-registry</artifactId>
+            <version>4.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jmri.third-party</groupId>
+            <artifactId>joal</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jmri.third-party</groupId>
+            <artifactId>openlcb</artifactId>
+            <version>0.6.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jmri.third-party</groupId>
+            <artifactId>serialio</artifactId>
+            <version>UNKNOWN</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jmri.third-party</groupId>
+            <artifactId>usb-view</artifactId>
+            <version>0.5.7</version>
+        </dependency>
+        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-annotations-common</artifactId>
             <version>${netbeans.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -232,6 +406,12 @@
             <groupId>org.jogamp.joal</groupId>
             <artifactId>joal</artifactId>
             <version>2.1.5-01</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jfcunit</groupId>
+            <artifactId>jfcunit</artifactId>
+            <version>2.08</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <properties>
