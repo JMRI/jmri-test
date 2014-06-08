@@ -186,8 +186,8 @@ public class CarTypes {
 					maxNameLength = name.length();
 			}
 		}
-			return maxNameLength;
-		}
+		return maxNameLength;
+	}
 
 	private int maxNameLengthSubType = 0;
 

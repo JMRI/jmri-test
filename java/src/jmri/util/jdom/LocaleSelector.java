@@ -52,7 +52,7 @@ public class LocaleSelector {
             if (retval != null) {
                 if (testLocale) return retval.toUpperCase(); // the I18N test case, return string in upper case
                 return retval;
-        }
+            }
         }
 
         // try default element
@@ -65,7 +65,7 @@ public class LocaleSelector {
                 return e.getText();                
             }
         }
-        
+                
         // failed, go back to original attribute
         Attribute a = el.getAttribute(name);
         if (a == null) return null;

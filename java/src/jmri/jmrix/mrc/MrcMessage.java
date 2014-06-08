@@ -407,8 +407,26 @@ public class MrcMessage {
         m.setElement(7,0x00);
         m.setElement(8,packet[2]);
         m.setElement(9,0x00);
-        m.setTimeout(0); 
-        m.setRetries(0);
+        m.setRetries(2);
+        m.setByteStream();
+	return m;
+    }
+    
+    static MrcMessage getRouteMsg(int address, boolean closed){
+        MrcMessage m = new MrcMessage(MrcPackets.getRouteControlPacketLength());
+        m.setMessageClass(MrcInterface.TURNOUTS);
+        m.putHeader(MrcPackets.ROUTECONTROLPACKETHEADER);
+
+        int i = m.putHeader(MrcPackets.ROUTECONTROLPACKETHEADER);
+        m.setElement(i++,address);
+        m.setElement(i++, 0x00);
+        int state = closed ? 0x00 : 0x80;
+        m.setElement(i++, state);
+        m.setElement(i++,0x00);
+        m.setElement(i++, getCheckSum(state, 0x00, 0x00, 0x00));
+        m.setElement(i++,0x00);
+        
+        m.setRetries(2);
         m.setByteStream();
 	return m;
     }

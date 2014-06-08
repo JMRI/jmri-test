@@ -409,10 +409,10 @@ abstract public class PaneProgFrame extends JmriJFrame
 
                     // handle include/exclude
                     if ( isIncludedFE(paneList.get(i), modelElem, _rosterEntry, "", "") ) {
-                    newPane( pname, paneList.get(i), modelElem, true);  // show even if empty??
+                        newPane( pname, paneList.get(i), modelElem, true);  // show even if empty??
+                    }
                 }
             }
-        }
         }
         
         // set the programming mode
@@ -772,9 +772,9 @@ abstract public class PaneProgFrame extends JmriJFrame
 
             // handle include/exclude
             if ( isIncludedFE(paneList.get(i), modelElem, _rosterEntry, "", "") ) {
-            newPane( name, paneList.get(i), modelElem, false);  // dont force showing if empty
+                newPane( name, paneList.get(i), modelElem, false);  // dont force showing if empty
+            }
         }
-    }
     }
 
     /**
@@ -888,6 +888,9 @@ abstract public class PaneProgFrame extends JmriJFrame
         if (addMode==null) log.debug("DCC Address monitor didnt find an Address Format variable");
         else addMode.addPropertyChangeListener(dccNews);
 
+        // get right address to start
+        updateDccAddress();
+        
         return outer;
     }
 

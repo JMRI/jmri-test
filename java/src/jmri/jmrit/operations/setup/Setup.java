@@ -1915,7 +1915,7 @@ public class Setup {
 				if (log.isDebugEnabled())
 					log.debug("printHeaders: " + enable);
 				setPrintHeadersEnabled(enable.equals(Xml.TRUE));
-		}
+			}
 		}
 		if (operations.getChild(Xml.PICKUP_ENG_FORMAT) != null) {
 			if ((a = operations.getChild(Xml.PICKUP_ENG_FORMAT).getAttribute(Xml.PREFIX)) != null)

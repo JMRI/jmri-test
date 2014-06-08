@@ -129,8 +129,8 @@ public class CarRoads {
 					maxNameLength = name.length();
 			}
 		}
-			return maxNameLength;
-		}
+		return maxNameLength;
+	}
 	
 	/**
 	 * Create an XML element to represent this Entry. This member has to remain synchronized with the detailed DTD in

@@ -33,7 +33,7 @@ public class WebServerPreferences extends Bean {
     public static final String AllowRemoteConfig = "allowRemoteConfig"; // NOI18N
     public static final String ReadonlyPower = "readonlyPower"; // NOI18N
 
-    //  Flag that prefs have not been saved:
+    // Flag that prefs have not been saved:
     private boolean isDirty = false;
     // initial defaults if prefs not found
     private int clickDelay = 1;

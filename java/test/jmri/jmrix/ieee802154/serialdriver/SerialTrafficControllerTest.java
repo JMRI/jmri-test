@@ -26,7 +26,7 @@ public class SerialTrafficControllerTest extends TestCase {
            SerialTrafficController m = new SerialTrafficController();
            IEEE802154Node node = m.newNode();
 	   Assert.assertNotNull("node create failed", node);
-        }
+       }
 
         public void testGetNodeFromAddressTest() {
            // test the code to get an IEEE802154 node from its address

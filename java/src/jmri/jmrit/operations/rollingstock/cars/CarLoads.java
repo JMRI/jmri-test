@@ -418,8 +418,8 @@ public class CarLoads {
 				}
 			}
 		}
-			return maxNameLength;
-		}
+		return maxNameLength;
+	}
 
 	private List<CarLoad> getSortedList(String type) {
 		List<CarLoad> loads = list.get(type);

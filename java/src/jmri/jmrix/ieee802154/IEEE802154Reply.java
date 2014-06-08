@@ -96,7 +96,7 @@ public class IEEE802154Reply extends jmri.jmrix.AbstractMRReply {
                          break;
               case 0x11: offset += 8; // 64 bit address
                          break;
-    }
+        }
         switch(sourceMode){
               case 0x00: return null; // no source address.
               case 0x01: return null; // this value is reserved.
@@ -120,7 +120,7 @@ public class IEEE802154Reply extends jmri.jmrix.AbstractMRReply {
         return address;
     }
 
-   /*
+    /*
      * @return the payload associated with the reply.  The position
      * of the data is determined from the control byte.
      */

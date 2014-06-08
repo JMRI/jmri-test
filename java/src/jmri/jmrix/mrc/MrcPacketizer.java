@@ -340,7 +340,7 @@ public class MrcPacketizer extends MrcTrafficController {
                                                                       break;
                             case MrcPackets.ROUTECONTROLPACKETCMD:    mCurrentState = IDLESTATE;
                                                                       msg = new MrcMessage(routeControlLength);
-                                                                      msg.setMessageClass(MrcInterface.THROTTLEINFO);
+                                                                      msg.setMessageClass(MrcInterface.TURNOUTS);
                                                                       break;
                             case MrcPackets.CLEARROUTEPACKETCMD:      mCurrentState = IDLESTATE;
                                                                       msg = new MrcMessage(clearRouteLength);

@@ -368,7 +368,7 @@ public class Engineer extends Thread implements Runnable, java.beans.PropertyCha
             _throttle.setSpeedSetting(0.0f);
             setFunction(2, false);
             setFunction(0, false);
-            try {
+           try {
                 InstanceManager.throttleManagerInstance().releaseThrottle(_throttle, _warrant);
             } catch (Exception e) {
                 // null pointer catch and maybe other such.

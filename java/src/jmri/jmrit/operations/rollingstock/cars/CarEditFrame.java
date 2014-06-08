@@ -338,7 +338,7 @@ public class CarEditFrame extends OperationsFrame implements java.beans.Property
 		// JMenu toolMenu = new JMenu("Tools");
 		// menuBar.add(toolMenu);
 		// setJMenuBar(menuBar);
-		addHelpMenu("package.jmri.jmrit.operations.Operations_CarsEdit", true);	// NOI18N
+		addHelpMenu("package.jmri.jmrit.operations.Operations_CarsEdit", true); // NOI18N
 
 		// get notified if combo box gets modified
 		CarRoads.instance().addPropertyChangeListener(this);

@@ -676,7 +676,7 @@ public class Router extends TrainCommon {
 								Train middleTrain4 = TrainManager.instance().getTrainForCar(testCar, null); // don't add
 																											// to report
 								if (middleTrain4 != null) {
-									log.debug("Found 5 train route, setting car destination ({}, {})", nlt
+								log.debug("Found 5 train route, setting car destination ({}, {})", nlt
 											.getLocation().getName(), nlt.getName());
 									foundRoute = true;
 									// show the car's route
