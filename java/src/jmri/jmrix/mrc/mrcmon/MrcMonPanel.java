@@ -24,7 +24,7 @@ import javax.swing.JCheckBox;
 
 public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTrafficListener, MrcPanelInterface{
 
-	private static final long serialVersionUID = 6106790197336170348L;
+	private static final long serialVersionUID = 6106790197336170372L;
 
 	public MrcMonPanel() {
         super();
@@ -47,7 +47,6 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTraffi
     @Override
     public void dispose() {
         if(memo.getMrcTrafficController()!=null){
-        // disconnect from the LnTrafficController
             memo.getMrcTrafficController().removeTrafficListener(trafficFilter, this);
         }
         // and unwind swing
@@ -66,14 +65,14 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTraffi
         }
     }
     
-    JCheckBox excludePoll = new JCheckBox("Exclude Poll Messages");
+    JCheckBox includePoll = new JCheckBox("Include Poll Messages");
     
     private int trafficFilter = MrcInterface.ALL;
     
     @Override
     public void initComponents(MrcSystemConnectionMemo memo) {
         this.memo = memo;
-        add(excludePoll);
+        add(includePoll);
         // connect to the LnTrafficController
         if(memo.getMrcTrafficController()==null){
             log.error("No traffic controller is available");
@@ -87,7 +86,7 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTraffi
     
     @Override
     public synchronized void notifyXmit(Date timestamp, MrcMessage m) {
-    	if(excludePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
+    	if(!includePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
             return;
         }
     	
@@ -103,10 +102,9 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTraffi
     public synchronized void notifyRcv(Date timestamp, MrcMessage m) {
         
         String prefix = "Rx:";
-        if(excludePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL && m.getElement(1)==0x01){
+        if(!includePoll.isSelected() && (m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL && m.getElement(1)==0x01){
             //Do not show poll messages
             previousPollMessage = m;
-            //previousTimeStamp = timestamp;
             return;
         } else if (previousPollMessage!=null) {
             if((m.getMessageClass() & MrcInterface.POLL) == MrcInterface.POLL){
@@ -114,15 +112,12 @@ public class MrcMonPanel extends jmri.jmrix.AbstractMonPane implements MrcTraffi
                 return;
             }
             prefix = "Rx: From Cab - " + Integer.toString(previousPollMessage.getElement(0));
-            /*logMessage(previousTimeStamp, previousPollMessage, prefix);*/
             previousPollMessage = null;
-            //previousTimeStamp = null;
         }
     	logMessage(timestamp, m, prefix);
     }
     
     private void logMessage(Date timestamp, MrcMessage m, String src) {  // receive a Mrc message and log it
-        // send the raw data, to display if requested
         String raw = "";
         for (int i=0;i<m.getNumDataElements(); i++) {
 	        if (i>0) raw+=" ";
