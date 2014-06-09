@@ -41,7 +41,6 @@ public class MrcTurnout extends AbstractTurnout implements MrcTrafficListener{
 
     // Handle a request to change state by sending a formatted DCC packet
     protected void forwardCommandChangeToLayout(int s) {
-        MrcMessage m=null;
         // sort out states
         if ( (s & Turnout.CLOSED) > 0) {
             // first look for the double case, which we can't handle
