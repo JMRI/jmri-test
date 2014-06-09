@@ -24,6 +24,15 @@
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
             </resource>
+            <!-- Version.properties -->
+            <resource>
+                <directory>${project.basedir}/../../java/tmp</directory>
+                <!-- exclude results of jjtree/javacc from ant if any exist -->
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                    <exclude>**/*.jj</exclude>
+                </excludes>
+            </resource>
             <!-- if all non-java stuff shipped with JMRI were in a single 
             subdirectory of the project, all these resources would be a single line -->
             <resource>
@@ -107,6 +116,24 @@
                                 <echo message="Executing ant clean..." />
                                 <ant antfile="${project.basedir}/../../build.xml"
                                      target="clean"
+                                     inheritAll="false">
+                                </ant>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <id>jmri-ant-generate-version</id>
+                        <configuration>
+                            <target>
+                                <echo message="Executing ant compile-generated-source..." />
+                                <!-- need to edit build.xml to be able to build
+                                Version.properties w/o compiling JJT code -->
+                                <ant antfile="${project.basedir}/../../build.xml"
+                                     target="compile-generated-source"
                                      inheritAll="false">
                                 </ant>
                             </target>
