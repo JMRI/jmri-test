@@ -1,7 +1,9 @@
 package org.jmri.app.trainpro;
 
 import java.awt.GraphicsEnvironment;
+import org.jmri.application.JmriApplication;
 import org.openide.modules.OnStart;
+import org.openide.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +23,14 @@ public class TrainProHeadless implements Runnable {
         // when the splash screen is displayed
         if (GraphicsEnvironment.isHeadless()) {
             log.info("Running in a headless environment.");
+            try {
             // Do interesting things here
+            JmriApplication.getApplication("JMRI TrainPro").start();
+        } catch (IllegalAccessException | IllegalArgumentException ex) {
+            log.error("Unable to start JMRI.", ex);
+            Exceptions.printStackTrace(ex);
+            // TODO: display error and initiate shutdown
+        }
         }
     }
 }
