@@ -17,6 +17,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
+                        <publicPackage>org.jmri.application</publicPackage>
                         <publicPackage>org.jmri.managers</publicPackage>
                     </publicPackages>
                 </configuration>
