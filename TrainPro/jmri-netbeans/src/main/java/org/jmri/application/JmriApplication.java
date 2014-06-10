@@ -25,6 +25,7 @@ import jmri.profile.Profile;
 import jmri.profile.ProfileManager;
 import jmri.profile.ProfileManagerDialog;
 import jmri.util.FileUtil;
+import jmri.web.server.WebServerManager;
 import org.jmri.managers.NetBeansShutDownManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,9 +90,10 @@ public class JmriApplication {
     public void start() {
         if (!started) {
             started = true;
-            // get profiles
+            this.getProfile();
             this.startManagers();
-            // start web server
+            // Always run the WebServer
+            WebServerManager.getWebServer().start();
         }
     }
 
@@ -137,31 +139,46 @@ public class JmriApplication {
                 if (ProfileManager.defaultManager().migrateToProfiles(configFilename)) { // migration or first use
                     // notify user of change only if migration occured
                     // TODO: a real migration message
-                    JOptionPane.showMessageDialog(null,
-                            "WhyWontNetbeansLetMeUseBundle?",
-                            //Bundle.getMessage("ConfigMigratedToProfile"),
-                            jmri.Application.getApplicationName(),
-                            JOptionPane.INFORMATION_MESSAGE);
+                    if (this.isHeadless()) {
+                        log.info("WhyWontNetbeansLetMeUseBundle?");
+                        //log.info(Bundle.getMessage("ConfigMigratedToProfile"));
+                    } else {
+                        JOptionPane.showMessageDialog(null,
+                                "WhyWontNetbeansLetMeUseBundle?",
+                                //Bundle.getMessage("ConfigMigratedToProfile"),
+                                jmri.Application.getApplicationName(),
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
                 }
             } catch (IOException | IllegalArgumentException ex) {
-                JOptionPane.showMessageDialog(null,
-                        ex.getLocalizedMessage(),
-                        jmri.Application.getApplicationName(),
-                        JOptionPane.ERROR_MESSAGE);
+                if (!this.isHeadless()) {
+                    JOptionPane.showMessageDialog(null,
+                            ex.getLocalizedMessage(),
+                            jmri.Application.getApplicationName(),
+                            JOptionPane.ERROR_MESSAGE);
+                }
                 log.error(ex.getMessage());
             }
         }
         try {
-            ProfileManagerDialog.getStartingProfile(null);
-            // Manually setting the configFilename property since calling
-            // Apps.setConfigFilename() does not reset the system property
-            configFilename = FileUtil.getProfilePath() + Profile.CONFIG_FILENAME;
-            System.setProperty("org.jmri.Apps.configFilename", Profile.CONFIG_FILENAME);
-            log.info("Starting with profile {}", ProfileManager.defaultManager().getActiveProfile().getId());
+            if (!this.isHeadless()) {
+                ProfileManagerDialog.getStartingProfile(null);
+            }
+            if (ProfileManager.getStartingProfile() != null) {
+                configFilename = FileUtil.getProfilePath() + Profile.CONFIG_FILENAME;
+                System.setProperty("org.jmri.Apps.configFilename", Profile.CONFIG_FILENAME);
+                log.info("Starting with profile {}", ProfileManager.defaultManager().getActiveProfile().getId());
+            } else {
+                log.error("Specify profile to use as command line argument.");
+                log.error("If starting with saved profile configuration, ensure the autoStart property is set to \"true\"");
+                log.error("Profiles not configurable. Using fallback per-application configuration.");
+                // TODO: abort execution
+            }
         } catch (IOException ex) {
             log.info("Profiles not configurable. Using fallback per-application configuration. Error: {}", ex.getMessage());
         }
     }
+
     protected void startManagers() {
         // TODO: run this in a seperate thread if GUI -- it blocks the splash screen
         // Get base configuration
