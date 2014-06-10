@@ -256,8 +256,11 @@ public class TamsSensorManager extends jmri.managers.AbstractSensorManager
     private void decodeSensorState(TamsReply r){
         String sensorprefix = getSystemPrefix()+"S"+board+":";
         //First byte represents board 1, ports 1 to 8, second byte represents ports 9 to 16.
-        if(!stopPolling)
-            pollHandler.notify();
+        if(!stopPolling){
+            synchronized(pollHandler) {
+                pollHandler.notify();
+            }
+        }
         for(int board: _ttams.keySet()){
             Hashtable<Integer, TamsSensor> sensorList = _ttams.get(board);
             int startElement = (board*2)-2;
