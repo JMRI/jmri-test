@@ -23,12 +23,6 @@ public class TamsSensorManager extends jmri.managers.AbstractSensorManager
         this.memo = memo;
         tc = memo.getTrafficController();
         //Send a message to tell the s88 to auto reset.
-        TamsMessage m = new TamsMessage(new byte[] {(byte)0x78,(byte)0x53,(byte)0x52,(byte)0x31});
-        tc.sendTamsMessage(m, null);
-        m = new TamsMessage(new byte[] {(byte)0x78,(byte)0x53,(byte)0x52,(byte)0x30});
-        tc.sendTamsMessage(m, null);
-        m = new TamsMessage(new byte[] {(byte)0x99});
-        tc.sendTamsMessage(m, null);
         startPolling();
     }
     
@@ -166,16 +160,17 @@ public class TamsSensorManager extends jmri.managers.AbstractSensorManager
 
     // to listen for status changes from Tams system
     public void reply(TamsReply r) {
-        log.info("Sensor massage Reply " + r.toString());
-        if(r.getElement(0)==0x00){
+        log.info("Sensor message Reply " + r.toString());
+        /*if(r.getElement(0)==0x00){
             int status = r.getElement(1);
             status = (status<<8) + (r.getElement(2));
             decodeSensorState(boardRequest, status);
-        }
-        synchronized (this) {
+        }*/
+        /*synchronized (this) {
             awaitingReply = false;
             this.notify();
-        }
+        }*/
+        decodeSensorState(r);
     }
     
     Thread pollThread;
@@ -204,7 +199,13 @@ public class TamsSensorManager extends jmri.managers.AbstractSensorManager
     
     void pollManager(){
         while(!stopPolling){
-            for(int board: _ttams.keySet()){
+            TamsMessage m = new TamsMessage(new byte[] {(byte)0x78,(byte)0x53,(byte)0x52,(byte)0x31});
+            tc.sendTamsMessage(m, null);
+            m = new TamsMessage(new byte[] {(byte)0x78,(byte)0x53,(byte)0x52,(byte)0x30});
+            tc.sendTamsMessage(m, null);
+            m = new TamsMessage(new byte[] {(byte)0x99});
+            tc.sendTamsMessage(m, this);
+            /*for(int board: _ttams.keySet()){
                 if(log.isDebugEnabled())
                     log.debug("Poll board " + board);
                 TamsMessage m = new TamsMessage(new byte[] {(byte)0x78,(byte)0x53,(byte)0x53,(byte)board});  //Did have (byte)0x31 before board.
@@ -234,11 +235,11 @@ public class TamsSensorManager extends jmri.managers.AbstractSensorManager
                         }
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt(); // retain if needed later
-                    } finally { /*awaitingDelay = false;*/ }
+                    } finally { /*awaitingDelay = false;*//*}
                 }
                 if(stopPolling)
                     return;
-    		}
+    		}*/
             try {
                 Thread.sleep(100);
             } catch (java.lang.InterruptedException e){
@@ -266,7 +267,60 @@ public class TamsSensorManager extends jmri.managers.AbstractSensorManager
         // messages are ignored
     }
     
-    private void decodeSensorState(int board, int intState){
+    
+    private void decodeSensorState(TamsReply r){
+        String sensorprefix = getSystemPrefix()+"S"+board+":";
+        //First byte represents board 1, ports 1 to 8, second byte represents ports 9 to 16.
+        for(int board: _ttams.keySet()){
+            Hashtable<Integer, TamsSensor> sensorList = _ttams.get(board);
+            int startElement = (board*2)-2;
+            int i = (r.getElement(startElement)&0xff)<<8;
+            i = i + r.getElement(startElement+1)&0xff;
+            int mask = 32768;
+            for(int port = 1; port<16; port++){
+                int result = i & mask;
+                TamsSensor ms= sensorList.get(port);
+                if(ms==null){
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(sensorprefix);
+                    //Little work around to pad single digit address out.
+                    padPortNumber(port, sb);
+                    ms = (TamsSensor)provideSensor(sb.toString());
+                }
+                if(ms!=null){
+                    if (result==0)
+                        ms.setOwnState(Sensor.INACTIVE);
+                    else {
+                        ms.setOwnState(Sensor.ACTIVE);
+                    }
+                }
+                mask = mask/2;
+            }
+            /*i = r.getElement(startElement+1);
+            mask = 128;
+            for(int port = 9; port<16; port++){
+                int result = i & mask;
+                ms= sensorList.get(port);
+                if(ms==null){
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(sensorprefix);
+                    //Little work around to pad single digit address out.
+                    padPortNumber(port, sb);
+                    ms = (TamsSensor)provideSensor(sb.toString());
+                }
+                if(ms!=null){
+                    if (result==0)
+                        ms.setOwnState(Sensor.INACTIVE);
+                    else {
+                        ms.setOwnState(Sensor.ACTIVE);
+                    }
+                }
+                mask = mask/2;
+            }*/
+        }
+    }
+    
+    private void decodeSensorStateOld(int board, int intState){
         log.info("Decoder Sensor State for board " + board + " state " + intState);
         TamsSensor ms;
         int k = 1;
