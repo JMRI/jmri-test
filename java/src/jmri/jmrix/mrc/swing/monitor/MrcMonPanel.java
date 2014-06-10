@@ -12,7 +12,7 @@
  *  added human readable format
  */
 
-package jmri.jmrix.mrc.mrcmon;
+package jmri.jmrix.mrc.swing.mrcmon;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

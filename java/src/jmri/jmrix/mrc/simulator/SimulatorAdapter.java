@@ -151,7 +151,7 @@ public class SimulatorAdapter extends MrcPortController implements
 				}
 				log.debug(buf.toString());
 			}
-			if (m != null) {
+			if (m != null && m.getNumDataElements()>4) {
                 //Send a default good reply message
                 MrcMessage r = new MrcMessage(4);
                 r.setElement(0, MrcPackets.GOODCMDRECIEVEDCODE);

@@ -1,6 +1,6 @@
 // Bundle.java
 
-package jmri.jmrix.mrc.packetgen;
+package jmri.jmrix.mrc.swing.packetgen;
 
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.DefaultAnnotation;
@@ -23,7 +23,7 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  * @version     $Revision: 17977 $
  * @since       3.3.1
  */
-public class Bundle extends jmri.jmrix.mrc.Bundle {
+public class Bundle extends jmri.jmrix.mrc.swing.Bundle {
 
     private final static String name = "jmri.jmrix.mrc.packetgen.MrcPacketGenBundle"; // NOI18N
 
