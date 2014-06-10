@@ -209,6 +209,31 @@ public class TamsTrafficController extends AbstractMRTrafficController implement
         return len+1;
     }*/
     
+    /**
+     * Add trailer to the outgoing byte stream.
+     * @param msg  The output byte stream
+     * @param offset the first byte not yet used
+     */
+    protected void addTrailerToOutput(byte[] msg, int offset, AbstractMRMessage m) {
+        //if (m.isBinary()){
+        log.info("Add 0x0d");
+        msg[offset] = 0x0d;
+        //}
+    }
+    
+    /**
+     * Determine how much many bytes the entire
+     * message will take, including space for header and trailer
+     * @param m  The message to be sent
+     * @return Number of bytes
+     */
+    protected int lengthOfByteStream(AbstractMRMessage m) {
+        int len = m.getNumDataElements();
+        int cr = 1;
+        //if (! m.isBinary()) cr = 1;  // space for return
+        return len+cr;
+    }
+    
     protected AbstractMRReply newReply() { 
         TamsReply reply = new TamsReply();
         return reply;

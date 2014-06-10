@@ -45,8 +45,12 @@ public class TamsSensorManager extends jmri.managers.AbstractSensorManager
                 board = Integer.valueOf(curAddress.substring(0,seperator)).intValue();
                 if(!_ttams.containsKey(board)){
                     _ttams.put(board, new Hashtable<Integer, TamsSensor>());
-                    if(_ttams.size()==1)
-                        startPolling();
+                    if(_ttams.size()==1){
+                        synchronized(pollHandler) {
+                            pollHandler.notify();
+                        }
+                        //startPolling();
+                    }
                 }
             } catch (NumberFormatException ex) { 
                 log.error("Unable to convert " + curAddress + " into the Module and port format of nn:xx");
@@ -176,19 +180,23 @@ public class TamsSensorManager extends jmri.managers.AbstractSensorManager
     Thread pollThread;
     boolean stopPolling = true;
     
+    protected Runnable pollHandler ;
+    
     protected void startPolling(){
         stopPolling = false;
         log.debug("Completed build of active readers " + _ttams.size());
-        if (_ttams.size()>0) {
-            
-            if (pollThread==null) {
-                pollThread = new Thread(new Runnable()
-                        { public void run() { pollManager(); }},"Tams Sensor Poll");
-                pollThread.start();
-            }
-        } else {
+        //if (_ttams.size()>0) {
+            if( pollHandler == null )
+              pollHandler = new PollHandler(this);
+            Thread pollThread = new Thread(pollHandler, "TAMS Sensor Poll handler");
+            //log.debug("Poll Handler thread starts at priority "+xmtpriority);
+            pollThread.setDaemon(true);
+            pollThread.setPriority(Thread.MAX_PRIORITY-1);
+            pollThread.start();
+            //pollHandler.notify();
+        /*} else {
             log.debug("No active boards found");
-        }
+        }*/
     }
     
     private final int shortCycleInterval = 550;
@@ -197,54 +205,28 @@ public class TamsSensorManager extends jmri.managers.AbstractSensorManager
     private int boardRequest;
     private boolean processing;
     
-    void pollManager(){
-        while(!stopPolling){
-            TamsMessage m = new TamsMessage(new byte[] {(byte)0x78,(byte)0x53,(byte)0x52,(byte)0x31});
-            tc.sendTamsMessage(m, null);
-            m = new TamsMessage(new byte[] {(byte)0x78,(byte)0x53,(byte)0x52,(byte)0x30});
-            tc.sendTamsMessage(m, null);
-            m = new TamsMessage(new byte[] {(byte)0x99});
-            tc.sendTamsMessage(m, this);
-            /*for(int board: _ttams.keySet()){
-                if(log.isDebugEnabled())
-                    log.debug("Poll board " + board);
-                TamsMessage m = new TamsMessage(new byte[] {(byte)0x78,(byte)0x53,(byte)0x53,(byte)board});  //Did have (byte)0x31 before board.
-                m.setTimeout(500);
-                boardRequest = board;
-                synchronized (this) {
-                    log.debug("queueing poll request for board "+board);
-                    tc.sendTamsMessage(m, this);
-                    awaitingReply = true;
-                    try {
-                        wait(pollTimeout);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt(); // retain if needed later
-                    }
-                }
-                int delay = shortCycleInterval;
-                synchronized (this){
-                    if (awaitingReply) {
-                        log.warn("timeout awaiting poll response for board "+board);
-                        delay = pollTimeout;
-                    }
-                    try {
-                        wait(delay);
-                        while(processing){
-                            processing=false;
-                            wait(20);
-                        }
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt(); // retain if needed later
-                    } finally { /*awaitingDelay = false;*//*}
-                }
-                if(stopPolling)
-                    return;
-    		}*/
-            try {
-                Thread.sleep(100);
-            } catch (java.lang.InterruptedException e){
+    class PollHandler implements Runnable{
+        TamsSensorManager sm = null;
+        PollHandler(TamsSensorManager m){
+            sm = m;
+        }
+        public void run() {
+            while(true){
+                log.info("Need to wait");
+                new jmri.util.WaitHandler(this);
+                log.info("Past Wait");
+                TamsMessage m = new TamsMessage(new byte[] {(byte)0x78,(byte)0x53,(byte)0x52,(byte)0x31});
+                tc.sendTamsMessage(m, null);
+                m = new TamsMessage(new byte[] {(byte)0x78,(byte)0x53,(byte)0x52,(byte)0x30});
+                tc.sendTamsMessage(m, null);
+                m = new TamsMessage(new byte[] {(byte)0x99});
+                tc.sendTamsMessage(m, sm);
+                try {
+                    Thread.sleep(100);
+                } catch (java.lang.InterruptedException e){
 
-            } 
+                } 
+            }
         }
     }
     
@@ -253,12 +235,15 @@ public class TamsSensorManager extends jmri.managers.AbstractSensorManager
             log.debug("timeout recieved to our last message " + m.toString());
 
         if(!stopPolling){
+            synchronized(pollHandler) {
+                pollHandler.notify();
+            }
             if(log.isDebugEnabled())
                 log.debug("time out to board message : " + boardRequest);
-            synchronized (this) {
+            /*synchronized (this) {
                 awaitingReply = false;
                 this.notify();
-            }
+            }*/
         }
     }
     
@@ -271,6 +256,8 @@ public class TamsSensorManager extends jmri.managers.AbstractSensorManager
     private void decodeSensorState(TamsReply r){
         String sensorprefix = getSystemPrefix()+"S"+board+":";
         //First byte represents board 1, ports 1 to 8, second byte represents ports 9 to 16.
+        if(!stopPolling)
+            pollHandler.notify();
         for(int board: _ttams.keySet()){
             Hashtable<Integer, TamsSensor> sensorList = _ttams.get(board);
             int startElement = (board*2)-2;
