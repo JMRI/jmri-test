@@ -247,7 +247,24 @@ public class TamsTrafficController extends AbstractMRTrafficController implement
         }
         //Binary Reply has no end character.
         try {
+            
             if(controller.getInputStream().available()==0){
+                int i = 0;
+                //Wait for upto 100ms just in case the Intellibox hasn't quite sending all the data out.
+                //As a binary message will not have an end of command byte set in the same way an Ascii does.
+                while(i<=10){
+                    i++;
+                    try {
+                        wait(10);
+                    } catch (InterruptedException e) { 
+                        Thread.currentThread().interrupt(); // retain if needed later
+                        //log.error(InterruptMessage); 
+                    }
+                    if(controller.getInputStream().available()>0)
+                        return false;
+                    //msg.setBinary(true);
+                    //return true;
+                }
                 msg.setBinary(true);
                 return true;
             }

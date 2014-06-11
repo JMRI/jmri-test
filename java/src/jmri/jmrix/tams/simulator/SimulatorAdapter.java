@@ -209,13 +209,43 @@ public class SimulatorAdapter extends TamsPortController implements
         log.debug("Rec " + m.toString());
         if(m.toString().startsWith("xY")){
             reply.setElement(i++, 0x00);
+        } else if(m.toString().startsWith("xSR")){
+            reply.setElement(i++, 0x53);
+            reply.setElement(i++, 0x52);
+            reply.setElement(i++, 0x20);
+            reply.setElement(i++, m.getElement(3));
         } else if (m.getElement(0)==0x99){// && m.getElement(1)==0x53 && m.getElement(2)=0x52 && m.getElement(3)==0x30){
-            reply.setElement(i++, 0x55);
-            reply.setElement(i++, 0x55);
-            reply.setElement(i++, 0xAA);
-            reply.setElement(i++, 0xAA);
-            reply.setElement(i++, 0x00);
-            reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x55); reply.setElement(i++, 0x55);
+            reply.setElement(i++, 0xAA); reply.setElement(i++, 0xAA);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00); 
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
+            reply.setElement(i++, 0x00); reply.setElement(i++, 0x00);
         }
         reply.setElement(i++, 0x0d);
         reply.setElement(i++, 0x5d);
