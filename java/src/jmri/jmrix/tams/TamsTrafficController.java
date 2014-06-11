@@ -255,7 +255,9 @@ public class TamsTrafficController extends AbstractMRTrafficController implement
                 while(i<=10){
                     i++;
                     try {
-                        wait(10);
+                        synchronized(this){
+                            wait(10);
+                        }
                     } catch (InterruptedException e) { 
                         Thread.currentThread().interrupt(); // retain if needed later
                         //log.error(InterruptMessage); 
