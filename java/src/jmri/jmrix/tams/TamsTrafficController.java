@@ -216,7 +216,6 @@ public class TamsTrafficController extends AbstractMRTrafficController implement
      */
     protected void addTrailerToOutput(byte[] msg, int offset, AbstractMRMessage m) {
         //if (m.isBinary()){
-        log.info("Add 0x0d");
         msg[offset] = 0x0d;
         //}
     }

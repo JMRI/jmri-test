@@ -41,7 +41,6 @@ public class TamsMessage extends jmri.jmrix.AbstractMRMessage {
     
     public TamsMessage(byte [] packet ) {
     	this((packet.length));
-        log.info("New binary");
         int i = 0; // counter of byte in output message
         int j = 0; // counter of byte in input packet
         setBinary(true);
