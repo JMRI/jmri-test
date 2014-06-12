@@ -199,7 +199,11 @@ public class TamsSensorManager extends jmri.managers.AbstractSensorManager
         public void run() {
             while(true){
                 new jmri.util.WaitHandler(this);
-                wait(200); //Wait for 200ms after we are given the all clear to poll again.
+                try{
+                    wait(200); //Wait for 200ms after we are given the all clear to poll again.
+                } catch (InterruptedException e) { 
+                		Thread.currentThread().interrupt(); // retain if needed later
+                	}
                 TamsMessage m = new TamsMessage(new byte[] {(byte)0x78,(byte)0x53,(byte)0x52,(byte)0x31});
                 tc.sendTamsMessage(m, null);
                 m = new TamsMessage(new byte[] {(byte)0x78,(byte)0x53,(byte)0x52,(byte)0x30});
