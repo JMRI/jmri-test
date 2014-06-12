@@ -33,7 +33,7 @@ public class SerialDriverAdapter extends MrcPortController  implements jmri.jmri
     
     public SerialDriverAdapter() {
         setManufacturer(jmri.jmrix.DCCManufacturerList.MRC);
-        options.put("CabAddress", new Option("Cab Address:", validOption1));
+        options.put("CabAddress", new Option("Cab Address:", validOption1, false));
         adaptermemo = new MrcSystemConnectionMemo();
     }
 
