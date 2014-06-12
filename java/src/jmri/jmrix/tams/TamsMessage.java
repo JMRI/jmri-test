@@ -27,6 +27,7 @@ public class TamsMessage extends jmri.jmrix.AbstractMRMessage {
     // create a new one
     public  TamsMessage(int i) {
         super(i);
+        setTimeout(200);
     }
 
     // copy one
@@ -49,7 +50,7 @@ public class TamsMessage extends jmri.jmrix.AbstractMRMessage {
             this.setElement(i, packet[i]);
             i++;
         }
-        setRetries(1);
+        setRetries(2);
     }
 
     static public final int POLLTIMEOUT = 100;
