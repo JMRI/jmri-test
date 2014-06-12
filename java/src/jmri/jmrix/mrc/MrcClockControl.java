@@ -311,7 +311,9 @@ public class MrcClockControl extends DefaultClockControl implements MrcTrafficLi
 		}
         now.setMinutes(mrcLastMinute);
         now.setSeconds(0);
-        internalClock.userSetTime(now);
+        if (clockMode == SYNCMODE_MRC_MASTER) {
+        	internalClock.userSetTime(now);
+        }
     }
         
     private void issueClockRatio(int r) {
