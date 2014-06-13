@@ -1,5 +1,7 @@
 package jmri.jmrix.mrc;
 
+import java.text.DecimalFormat;
+
 /**
  * Some of the message formats used in this class are Copyright MRC, Inc.
  * and used with permission as part of the JMRI project.  That permission
@@ -197,7 +199,8 @@ public class MrcPackets {
     }
     
 
-    
+
+    static private DecimalFormat twoDigits = new DecimalFormat("00");
         //Need to test toString() for POM
     static public String toString(MrcMessage m){
         StringBuilder txt = new StringBuilder();
@@ -399,7 +402,23 @@ public class MrcPackets {
                         txt.append("Poll to Cab ");
                         txt.append(m.getElement(0));
                     } else if (m.getElement(0)==0 && m.getElement(1)==0x01){
-                        txt.append("Clock Update");
+                        txt.append("Clock Update ");
+                        int clockModeBits = m.getElement(2) & 0xC0;
+                        switch (clockModeBits) {
+                        case 0x00:	// AM format
+                        	txt.append((m.getElement(2) & 0x1F) + ":" + twoDigits.format(m.getElement(4)) + " AM");
+                        	break;
+                        case 0x40:	// PM format
+                        	txt.append((m.getElement(2) & 0x1F) + ":" + twoDigits.format(m.getElement(4)) + " PM");
+                        	break;
+                        case 0x80:	// 24 hour format
+                        	txt.append(twoDigits.format(m.getElement(2) & 0x1F) + ":" + twoDigits.format(m.getElement(4)) + " 24H");
+                        	break;
+                        case 0xC0:	// Unk format
+                        	txt.append(twoDigits.format(m.getElement(2) & 0x1F) + ":" + twoDigits.format(m.getElement(4)) + " UNK");
+                        	break;
+                        }
+                        txt.append(" ");
                     }
                 } else if(m.getNumDataElements()==4 && m.getElement(0)==0x00 && m.getElement(1)==0x00){
                     txt.append("No Data From Last Cab");
