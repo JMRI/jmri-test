@@ -4,9 +4,12 @@ package jmri.jmrix.mrc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import jmri.PowerManager;
 import jmri.JmriException;
+
 import java.util.Date;
+import java.util.ResourceBundle;
 
 /**
  * PowerManager implementation for controlling layout power
@@ -23,12 +26,14 @@ import java.util.Date;
 public class MrcPowerManager
         extends jmri.managers.AbstractPowerManager
         implements PowerManager, MrcTrafficListener {
+	
+    static ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.mrc.MrcPowerManagerBundle");
 
     public MrcPowerManager(MrcSystemConnectionMemo memo) {
         super(memo);
         // standard Mrc - connect
         if(memo.getMrcTrafficController()==null){
-            log.error("Power Manager Created, yet there is no Traffic Controller");
+            log.error(rb.getString("LogMrcPowerManagerMissingTCError"));
             return;
         }
         this.tc = memo.getMrcTrafficController();

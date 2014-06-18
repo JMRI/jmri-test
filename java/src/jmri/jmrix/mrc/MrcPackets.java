@@ -1,6 +1,7 @@
 package jmri.jmrix.mrc;
 
 import java.text.DecimalFormat;
+import java.util.ResourceBundle;
 
 /**
  * Some of the message formats used in this class are Copyright MRC, Inc.
@@ -13,6 +14,8 @@ import java.text.DecimalFormat;
  * @author Ken Cameron 2014
  */
 public class MrcPackets {
+	
+    static ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.mrc.MrcPacketsBundle");
     
     public static final int THROTTLEPACKETCMD = 37;
     static final int[] THROTTLEPACKETHEADER = new int[]{THROTTLEPACKETCMD, 0, THROTTLEPACKETCMD, 0};
@@ -207,9 +210,9 @@ public class MrcPackets {
         if((m.getNumDataElements() <4) || (m.getNumDataElements()>=4 && m.getElement(0)!=m.getElement(2) && m.getElement(1)!=0x01)){
             //byte 0 and byte 2 should always be the same except for a clock update packet.
         	if (m.getNumDataElements() < 4) {
-        		txt.append("Short Packet");
+        		txt.append(rb.getString("MrcPacketsShort"));
         	} else {
-        		txt.append("Error in Packet");
+        		txt.append(rb.getString("MrcPacketsError"));
         	}
             for (int i=0;i<m.getNumDataElements(); i++) {
                 txt.append(" ");
@@ -218,48 +221,49 @@ public class MrcPackets {
         } else {
 	        switch (m.getElement(0)&0xFF) {
 	        case SETCLOCKRATIOCMD:
-	        	txt.append("Set Clock Ratio: " + m.getElement(4));
+	        	txt.append(rb.getString("MrcPacketsSetClockRatio") + m.getElement(4));
 	        	break;
 	        case SETCLOCKTIMECMD:
-	        	txt.append("Set Clock Time: " + m.getElement(4) + ":" + m.getElement(6));
+	        	txt.append(rb.getString("MrcPacketsSetClockTime") + m.getElement(4) 
+	        			+ rb.getString("MrcPacketsClockTimeSep") + m.getElement(6));
 	        	break;
 	        case SETCLOCKAMPMCMD:
-	        	txt.append("Set Clock AM/PM");
+	        	txt.append(rb.getString("MrcPacketsSetClockMode"));
 	        	break;
 	        case MrcPackets.THROTTLEPACKETCMD:
 	        	if (m.getElement(4) != 0) {
-	            	txt.append("Loco (L)");
+	            	txt.append(rb.getString("MrcPacketsLoco") + rb.getString("MrcPacketsLocoLong"));
 	        	} else {
-	            	txt.append("Loco (S)");
+	            	txt.append(rb.getString("MrcPacketsLoco") + rb.getString("MrcPacketsLocoShort"));
 	        	}
 	        	txt.append(Integer.toString(m.getLocoAddress()));
                 if(m.getElement(10) == 0x02){
-                    txt.append(" 128ss");
+                    txt.append(rb.getString("MrcPackets128ss"));
                     //128 speed step
                     if ((m.getElement(8) & 0x80) == 0x80) {
-                        txt.append(" Fwd ");
+                        txt.append(rb.getString("MrcPacketsForward"));
                     } else {
-                        txt.append(" Rev ");
+                        txt.append(rb.getString("MrcPacketsReverse"));
                     }
-                    txt.append(" Speed: ");
+                    txt.append(rb.getString("MrcPacketsSpeed"));
                     int speed = (m.getElement(8) & 0x7F)-1;
                     if(speed==0)
-                        txt.append("Emergency Stop");
+                        txt.append(rb.getString("MrcPacketsEStop"));
                     else if (speed ==-1)
-                        txt.append("Stop");
+                        txt.append(rb.getString("MrcPacketsStop"));
                     else
                         txt.append(Integer.toString(speed));
                 } else if (m.getElement(10) == 0x00){
                     int value = m.getElement(8);
-                    txt.append(" 28ss");
+                    txt.append(rb.getString("MrcPackets28ss"));
                     //28 Speed Steps
                     if((m.getElement(8)& 0x60)==0x60){
                         //Forward
                         value = value - 0x60;
-                        txt.append(" Fwd ");
+                        txt.append(rb.getString("MrcPacketsForward"));
                     } else {
                         value = value - 0x40;
-                        txt.append(" Rev ");
+                        txt.append(rb.getString("MrcPacketsReverse"));
                     }
                     if(((value>>4)&0x01)==0x01){
                         value = value - 0x10;
@@ -269,16 +273,17 @@ public class MrcPackets {
                     }
                     value = value -3; //Turn into user expected 0-28
                     if(value==-1){
-                        txt.append("Emergency Stop");
+                        txt.append(rb.getString("MrcPacketsEStop"));
                     } else {
                         if(value<0) value = 0;
-                        txt.append(" Speed: " + Integer.toString(value));
+                        txt.append(rb.getString("MrcPacketsSpeed") + Integer.toString(value));
                     }
                 }
 
 	    		break;
 	        case FUNCTIONGROUP1PACKETCMD:
-	        	txt.append("Loco " + Integer.toString(m.getLocoAddress()) + " Group 1");
+	        	txt.append(rb.getString("MrcPacketsLoco") + Integer.toString(m.getLocoAddress()) 
+	        			+ rb.getString("MrcPacketsGroup1"));
 	        	txt.append(" F0 " + Integer.toString(m.getElement(8) & 0x10));
 	        	txt.append(" F1 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F2 " + Integer.toString(m.getElement(8) & 0x02));
@@ -286,35 +291,40 @@ public class MrcPackets {
 	        	txt.append(" F4 " + Integer.toString(m.getElement(8) & 0x08));
 	    		break;
 	        case FUNCTIONGROUP2PACKETCMD:
-	        	txt.append("Loco " + Integer.toString(m.getLocoAddress()) + " Group 2");
+	        	txt.append(rb.getString("MrcPacketsLoco") + Integer.toString(m.getLocoAddress()) 
+	        			+ rb.getString("MrcPacketsGroup2"));
 	        	txt.append(" F5 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F6 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F7 " + Integer.toString(m.getElement(8) & 0x04));
 	        	txt.append(" F8 " + Integer.toString(m.getElement(8) & 0x08));
 	    		break;
 	        case FUNCTIONGROUP3PACKETCMD:
-	        	txt.append("Loco " + Integer.toString(m.getLocoAddress()) + " Group 3");
+	        	txt.append(rb.getString("MrcPacketsLoco") + Integer.toString(m.getLocoAddress()) 
+	        			+ rb.getString("MrcPacketsGroup3"));
 	        	txt.append(" F9 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F10 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F11 " + Integer.toString(m.getElement(8) & 0x04));
 	        	txt.append(" F12 " + Integer.toString(m.getElement(8) & 0x08));
 	    		break;
 	        case FUNCTIONGROUP4PACKETCMD:
-	        	txt.append("Loco " + Integer.toString(m.getLocoAddress()) + " Group 4");
+	        	txt.append(rb.getString("MrcPacketsLoco") + Integer.toString(m.getLocoAddress()) 
+	        			+ rb.getString("MrcPacketsGroup4"));
 	        	txt.append(" F13 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F14 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F15 " + Integer.toString(m.getElement(8) & 0x04));
 	        	txt.append(" F16" + Integer.toString(m.getElement(8) & 0x08));
 	    		break;
 	        case FUNCTIONGROUP5PACKETCMD:
-	        	txt.append("Loco " + Integer.toString(m.getLocoAddress()) + " Group 5");
+	        	txt.append(rb.getString("MrcPacketsLoco") + Integer.toString(m.getLocoAddress()) 
+	        			+ rb.getString("MrcPacketsGroup5"));
 	        	txt.append(" F17 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F18 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F19 " + Integer.toString(m.getElement(8) & 0x04));
 	        	txt.append(" F20 " + Integer.toString(m.getElement(8) & 0x08));
 	    		break;
 	        case FUNCTIONGROUP6PACKETCMD:
-	        	txt.append("Loco " + Integer.toString(m.getLocoAddress()) + " Group 6");
+	        	txt.append(rb.getString("MrcPacketsLoco") + Integer.toString(m.getLocoAddress()) 
+	        			+ rb.getString("MrcPacketsGroup6"));
 	        	txt.append(" F21 " + Integer.toString(m.getElement(8) & 0x01));
 	        	txt.append(" F22 " + Integer.toString(m.getElement(8) & 0x02));
 	        	txt.append(" F23 " + Integer.toString(m.getElement(8) & 0x04));
@@ -326,96 +336,108 @@ public class MrcPackets {
 	    		break;
 	        case READCVCMD:
 	        	int cv = ((m.getElement(4)&0xff) << 8) + (m.getElement(6)&0xff);
-	        	txt.append("Read CV " + Integer.toString(cv));
+	        	txt.append(rb.getString("MrcPacketsReadCv") + Integer.toString(cv));
 	    		break;
 	        case READDECODERADDRESSCMD:
-	        	txt.append("Read Decoder Address ");
+	        	txt.append(rb.getString("MrcPacketsReadLocoAddr"));
 	    		break;
 	        case WRITECVPOMCMD:
-	        	txt.append("Write POM CV Loco " + Integer.toString(m.getLocoAddress()));
+	        	txt.append(rb.getString("MrcPacketsWriteOpsCvLoco") + Integer.toString(m.getLocoAddress()));
 	        	txt.append(Integer.toString(m.getElement(10)&0xff));
 	        	txt.append("=");
 	        	txt.append(Integer.toString(m.getElement(8)&0xff));
 	    		break;
 	        case WRITECVPROGCMD:
-	        	txt.append("Write PROG CV ");
+	        	txt.append(rb.getString("MrcPacketsWriteSvrCv"));
 	        	txt.append(Integer.toString(m.getElement(4) << 8) + m.getElement(6));
 	        	txt.append("=");
 	        	txt.append(Integer.toString(m.getElement(8)&0xff));
 	    		break;
             case READCVHEADERREPLYCODE:
-                txt.append("Read CV Value of:");
+                txt.append(rb.getString("MrcPacketsReadCv"));
                 txt.append(Integer.toString(m.value()));
                 break;
             case BADCMDRECIEVEDCODE:
-                txt.append("Bad Cmd Ack");
+                txt.append(rb.getString("MrcPacketBadCmdAck"));
                 break;
             case GOODCMDRECIEVEDCODE:
-                txt.append("Good Cmd Ack");
+                txt.append(rb.getString("MrcPacketGoodCmdAck"));
                 break;
             case PROGCMDSENTCODE:
-                txt.append("Pgm Cmd Sent");
+                txt.append(rb.getString("MrcPacketsPgmCmdSent"));
                 break;
             case LOCOSOLECONTROLCODE:
-                txt.append("Single Throttle");
+                txt.append(rb.getString("MrcPacketsSingleThrottle"));
                 break;
             case LOCODBLCONTROLCODE:
-                txt.append("Multiple Throttle");
+                txt.append(rb.getString("MrcPacketsMultipleThrottle"));
                 break;
             case POWERONCMD:
-                txt.append("Track Power On");
+                txt.append(rb.getString("MrcPacketsTrkPwrOn"));
                 break;
             case POWEROFFCMD:
-                txt.append("Track Power Off");
+                txt.append(rb.getString("MrcPacketsTrkPwrOff"));
                 break;
             case ADDTOCONSISTPACKETCMD:
-                txt.append("Loco Added to Consist");
+                txt.append(rb.getString("MrcPacketsLocoAddConsist"));
                 break;
             case CLEARCONSISTPACKETCMD:
-                txt.append("Consist Cleared");
+                txt.append(rb.getString("MrcPacketsClearedConsist"));
                 break;
             case ROUTECONTROLPACKETCMD:
-                txt.append("Route ");
+                txt.append(rb.getString("MrcPacketsRoute"));
                 txt.append(Integer.toString(m.getElement(4)));
-                txt.append(" Set");
+                txt.append(rb.getString("MrcPacketsRouteSet"));
                 break;
             case CLEARROUTEPACKETCMD:
-                txt.append("Route Cleared");
+                txt.append(rb.getString("MrcPacketsClearedRoute"));
                 break;
             case ADDTOROUTEPACKETCMD:
-                txt.append("Route Added");
+                txt.append(rb.getString("MrcPacketsAddedRoute"));
                 break;
             case ACCESSORYPACKETCMD:
-                txt.append("Accessory ");
+                txt.append(rb.getString("MrcPacketsAccy"));
                 txt.append(Integer.toString(m.getAccAddress()));
                 switch (m.getAccState()){
-                    case jmri.Turnout.CLOSED : txt.append(" Closed");
+                    case jmri.Turnout.CLOSED : txt.append(rb.getString("MrcPacketsAccyClosed"));
                                      break;
-                    case jmri.Turnout.THROWN : txt.append(" Thrown");
+                    case jmri.Turnout.THROWN : txt.append(rb.getString("MrcPacketsAccyThrown"));
                                      break;
-                    default : txt.append(" Unknown");
+                    default : txt.append(rb.getString("MrcPacketsAccyUnk"));
                 }
                 break;
 	        default:
                 if(m.getNumDataElements()==6){
                     if(m.getElement(0)==m.getElement(2)&&m.getElement(0)==m.getElement(4)){
-                        txt.append("Poll to Cab ");
+                        txt.append(rb.getString("MrcPacketsPollToCab"));
                         txt.append(m.getElement(0));
                     } else if (m.getElement(0)==0 && m.getElement(1)==0x01){
-                        txt.append("Clock Update ");
+                        txt.append(rb.getString("MrcPacketsClockUpdate"));
                         int clockModeBits = m.getElement(2) & 0xC0;
                         switch (clockModeBits) {
                         case 0x00:	// AM format
-                        	txt.append((m.getElement(2) & 0x1F) + ":" + twoDigits.format(m.getElement(4)) + " AM");
+                        	txt.append((m.getElement(2) & 0x1F) 
+                        			+ rb.getString("MrcPacketsClockTimeSep") 
+                        			+ twoDigits.format(m.getElement(4)) 
+                        			+ rb.getString("MrcPacketsClockModeAm"));
                         	break;
                         case 0x40:	// PM format
-                        	txt.append((m.getElement(2) & 0x1F) + ":" + twoDigits.format(m.getElement(4)) + " PM");
+                        	txt.append((m.getElement(2) & 0x1F) 
+                        			+ rb.getString("MrcPacketsClockTimeSep") 
+                        			+ twoDigits.format(m.getElement(4)) 
+                        			+ rb.getString("MrcPacketsClockModePm"));
                         	break;
                         case 0x80:	// 24 hour format
-                        	txt.append(twoDigits.format(m.getElement(2) & 0x1F) + ":" + twoDigits.format(m.getElement(4)) + " 24H");
+                        	txt.append(twoDigits.format(m.getElement(2) & 0x1F) 
+                        			+ rb.getString("MrcPacketsClockTimeSep") 
+                        			+ twoDigits.format(m.getElement(4)) 
+                        			+ rb.getString("MrcPacketsClockMode24"));
                         	break;
                         case 0xC0:	// Unk format
-                        	txt.append(twoDigits.format(m.getElement(2) & 0x1F) + ":" + twoDigits.format(m.getElement(4)) + " UNK");
+                        	txt.append(twoDigits.format(m.getElement(2) & 0x1F) 
+                        			+ rb.getString("MrcPacketsClockTimeSep") 
+                        			+ twoDigits.format(m.getElement(4)) 
+                        			+ rb.getString("MrcPacketsClockModeUnk"));
                         	break;
                         }
                         txt.append(" ");

@@ -55,7 +55,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcTrafficLi
         // Create a Timebase listener for the Minute change events
         internalClock = InstanceManager.timebaseInstance();
         if (internalClock == null){
-            log.error("No Timebase Instance");
+            log.error(rb.getString("LogMrcNoInternalTimebaseInstanceError"));
             return;
         }
         minuteChangeListener = new java.beans.PropertyChangeListener() {
@@ -109,15 +109,14 @@ public class MrcClockControl extends DefaultClockControl implements MrcTrafficLi
     private boolean mrcLastAmPm;
     private boolean mrcLast1224;
     
-    private int mrcSyncInitStateCounter = 0;	// MRC master sync initialzation state machine
+    private int mrcSyncInitStateCounter = 0;	// MRC master sync initialization state machine
     private int	mrcSyncRunStateCounter = 0;	// MRC master sync runtime state machine
     
     Timebase internalClock ;
     javax.swing.Timer alarmSyncUpdate = null;
     java.beans.PropertyChangeListener minuteChangeListener;
 
-    //  ignore replies
-    
+    //  Filter reply messages for the clock poll
     public void message(MrcMessage r) {
         if((r.getMessageClass()& MrcInterface.CLOCK)!=MrcInterface.CLOCK){
             return;
@@ -149,7 +148,7 @@ public class MrcClockControl extends DefaultClockControl implements MrcTrafficLi
 		if (DEBUG_SHOW_PUBLIC_CALLS){
 			log.debug("getHardwareClockName");
 		}
-		return ("Mrc Fast Clock");
+		return (rb.getString("MrcClockName"));
 	}
 	
 	/** Mrc clock runs stable enough */
@@ -238,7 +237,6 @@ public class MrcClockControl extends DefaultClockControl implements MrcTrafficLi
 		issueClockTime(now.getHours(), now.getMinutes());
 	}
 
-    @SuppressWarnings("deprecation")
 	public void initializeHardwareClock(double rate, Date now, boolean getTime) {
     	// clockMode controls what we are doing: SYNCMODE_OFF, SYNCMODE_INTERNAL_MASTER, SYNCMODE_MRC_MASTER
 		boolean synchronizeWithInternalClock = internalClock.getSynchronize();

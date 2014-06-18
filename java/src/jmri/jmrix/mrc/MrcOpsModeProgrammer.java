@@ -2,8 +2,11 @@
 
 package jmri.jmrix.mrc;
 
+import java.util.ResourceBundle;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import jmri.*;
 
 /**
@@ -19,6 +22,8 @@ import jmri.*;
  * @version			$Revision: 24270 $
  */
 public class MrcOpsModeProgrammer extends MrcProgrammer  {
+	
+    static ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.mrc.MrcOpsModeProgrammerBundle");
 
     int mAddress;
     boolean mLongAddr;
@@ -59,13 +64,13 @@ public class MrcOpsModeProgrammer extends MrcProgrammer  {
 
     public synchronized void readCV(int CV, ProgListener p) throws ProgrammerException {
         log.debug("read CV={}", CV);
-        log.error("readCV not available in this protocol");
+        log.error(rb.getString("LogMrcOpsModePgmReadCvModeError"));
         throw new ProgrammerException();
     }
 
     public synchronized void confirmCV(int CV, int val, ProgListener p) throws ProgrammerException {
         log.debug("confirm CV={}", CV);
-        log.error("confirmCV not available in this protocol");
+        log.error(rb.getString("LogMrcOpsModeProgrammerConfirmCvModeError"));
         throw new ProgrammerException();
     }
     
@@ -82,7 +87,7 @@ public class MrcOpsModeProgrammer extends MrcProgrammer  {
 
     public void setMode(int mode) {
         if (mode!=Programmer.OPSBYTEMODE)
-            log.error("Can't switch to mode "+mode);
+            log.error(rb.getString("LogMrcOpsModeProgrammerModeSwitchError"), mode);
     }
 
     public int  getMode() {

@@ -4,6 +4,7 @@ package jmri.jmrix.mrc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.DataInputStream;
 import java.io.OutputStream;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.LinkedList;
 import java.util.Calendar;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 /**
  * Converts Stream-based I/O to/from Mrc messages.  The "MrcInterface"
@@ -50,6 +52,8 @@ import java.util.Iterator;
  *
  */
 public class MrcPacketizer extends MrcTrafficController {
+	
+    static ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.mrc.MrcPacketizerBundle");
 
     final static boolean fulldebug = false;
   
@@ -117,7 +121,7 @@ public class MrcPacketizer extends MrcTrafficController {
             } 
         }
         catch (Exception e) {
-            log.warn("passing to xmit: unexpected exception: "+e);
+            log.warn(rb.getString("LogMrcPacketizerPassXmitError"), e);
         }
     }
 
@@ -145,7 +149,7 @@ public class MrcPacketizer extends MrcTrafficController {
         istream = p.getInputStream();
         ostream = p.getOutputStream();
         if (controller != null)
-            log.warn("connectPort: connect called while connected");
+            log.warn(rb.getString("LogMrcPacketizerConnectWarn"));
         controller = p;
     }
 
@@ -158,7 +162,7 @@ public class MrcPacketizer extends MrcTrafficController {
         istream = null;
         ostream = null;
         if (controller != p)
-            log.warn("disconnectPort: disconnect called from non-connected MrcPortController");
+            log.warn(rb.getString("LogMrcPacketizerDisconnectWarn"));
         controller = null;
     }
 
@@ -409,12 +413,12 @@ public class MrcPacketizer extends MrcTrafficController {
                     
                     if((msg.getMessageClass() & MrcInterface.POLL) != MrcInterface.POLL && msg.getNumDataElements()>6){
                         if (!msg.validCheckSum()) {
-                            log.warn("Ignore Mrc packet with bad checksum: "+msg.toString());
+                            log.warn(rb.getString("LogMrcPacketizerIgnorBadCkSumWarn"), msg.toString());
                             throw new MrcMessageException();
                         } else {
                             for(int i=1;i<msg.getNumDataElements();i+=2){
                                 if(msg.getElement(i)!=0x00){
-                                    log.warn("Ignore Mrc packet with bad bit: "+msg.toString());
+                                    log.warn(rb.getString("LogMrcPacketizerIgnoreBadBitWarn"), msg.toString());
                                     throw new MrcMessageException();
                                 }
                             }
@@ -439,7 +443,7 @@ public class MrcPacketizer extends MrcTrafficController {
             	}
                 catch (MrcMessageException e) {
                     // just let it ride for now
-                    log.warn("run: unexpected MrcMessageException: "+e);
+                    log.warn(rb.getString("LogMrcPacketizerMsgExceptionWarn"), e);
                 }
                 catch (java.io.EOFException e) {
                     // posted from idle port when enableReceiveTimeout used
@@ -454,7 +458,7 @@ public class MrcPacketizer extends MrcTrafficController {
                 // normally, we don't catch the unnamed Exception, but in this
                 // permanently running loop it seems wise.
                 catch (Exception e) {
-                    log.warn("run: unexpected Exception: "+e); //Simulator produceds these.
+                    log.warn(rb.getString("LogMrcPacketizerUnkExceptionWarn"), e); //Simulator produceds these.
                     e.printStackTrace();
                 }
             } // end of permanent loop
@@ -509,7 +513,7 @@ public class MrcPacketizer extends MrcTrafficController {
                     if(m.getMessageClass()!=MrcInterface.POLL){
                         mCurrentState = WAITFORCMDRECEIVED;
                         /* We set the current state before transmitting the message otherwise 
-                        the reply to the message may be recieved before the state is set
+                        the reply to the message may be received before the state is set
                         and the message will timeout and be retransmitted */
                         if(!m.isReplyExpected()){
                             mCurrentState = CONFIRMATIONONLY;
@@ -522,9 +526,9 @@ public class MrcPacketizer extends MrcTrafficController {
                     if(m.getMessageClass()!=MrcInterface.POLL){
                         if (fulldebug){ 
                             log.debug("end write to stream: "+jmri.util.StringUtil.hexStringFromBytes(msg));
-                            log.info("wait : " + m.getTimeout() + " : " + x);
+                            log.info(rb.getString("LogMrcPacketizerWaitInfo"), m.getTimeout(), x);
                         }
-                        transmitWait(m.getTimeout(), state, "transmitLoop interrupted", x);
+                        transmitWait(m.getTimeout(), state, rb.getString("LogMrcPacketizerXmitLoopError"), x);
                         x++;
                     } else {
                         mCurrentState = IDLESTATE;
@@ -558,7 +562,7 @@ public class MrcPacketizer extends MrcTrafficController {
                                 }
                             }
                         } else {
-                            log.warn("Message missed " + consecutiveMissedPolls + " polls for message " + m.toString());
+                            log.warn(rb.getString("LogMrcPacketizerMsgMissedPollsWarn"), consecutiveMissedPolls, m.toString());
                             consecutiveMissedPolls = 0;
                         }
                     } else if (mCurrentState == DOUBLELOCOCONTROL && m.getRetries()>=0) {
@@ -577,7 +581,7 @@ public class MrcPacketizer extends MrcTrafficController {
                     }
                 }
                 catch (java.io.IOException e) {
-                    log.warn("sendMrcMessage: IOException: "+e.toString());
+                    log.warn(rb.getString("LogMrcPacketizerSendMsgExWarn"), e.toString());
                 }
             }
         }

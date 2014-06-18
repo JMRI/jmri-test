@@ -2,6 +2,8 @@
 
 package jmri.jmrix.mrc;
 
+import java.util.ResourceBundle;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +23,12 @@ import org.slf4j.LoggerFactory;
  */
 public class MrcMessage {
 
+    static ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.mrc.MrcMessageBundle");
+
     // create a new one
     public  MrcMessage(int len) {
         if (len<1)
-            log.error("invalid length in call to ctor: "+len);
+            log.error(rb.getString("LogMrcMessageLengthError"), len);
         _nDataChars = len;
         _dataChars = new int[len];
     }
@@ -167,7 +171,7 @@ public class MrcMessage {
                     break;
             case 6: i = m.putHeader(MrcPackets.FUNCTIONGROUP6PACKETHEADER);
                     break;
-            default: log.error("Invalid function group " + group);
+            default: log.error(rb.getString("LogMrcMessageInvalidFunctionGroupError"), group);
                     return null;
         }
 
@@ -270,9 +274,9 @@ public class MrcMessage {
                 val = getElement(4)&0xff;
             }
             else
-                log.error("Error in format of the returned CV value");
+                log.error(rb.getString("LogMrcMessageReturnedCvFormatError"));
         } else {
-            log.error("Not a CV Read formated packet");
+            log.error(rb.getString("LogMrcMessageNotCvReadFormatPacketError"));
         }
 		return val;
     }
@@ -319,7 +323,9 @@ public class MrcMessage {
      * @return MrcMessage
      */
     static public MrcMessage setClockRatio(int ratio) {
-        if (ratio < 0 || ratio > 60) log.error("ratio number too large: "+ratio);
+        if (ratio < 0 || ratio > 60) {
+        	log.error(rb.getString("LogMrcMessageClockRatioRangeError"), ratio);
+        }
         MrcMessage m = new MrcMessage(MrcPackets.getSetClockRatioPacketLength());
         m.setMessageClass(MrcInterface.CLOCK);
         int i = m.putHeader(MrcPackets.SETCLOCKRATIOHEADER);
@@ -338,8 +344,12 @@ public class MrcMessage {
      * @return MrcMessage
      */
     static public MrcMessage setClockTime(int hour, int minute) {
-        if (hour < 0 || hour > 23) log.error("hour number out of range : " + hour);
-        if (minute < 0 || minute > 59) log.error("hour minute out of range : " + minute);
+        if (hour < 0 || hour > 23) {
+        	log.error(rb.getString("LogMrcMessageClockHourRangeError"), hour);
+        }
+        if (minute < 0 || minute > 59) {
+        	log.error(rb.getString("LogMrcMessageClockMinuteRangeError"), minute);
+        }
         MrcMessage m = new MrcMessage(MrcPackets.getSetClockTimePacketLength());
         m.setMessageClass(MrcInterface.CLOCK);
         int i = m.putHeader(MrcPackets.SETCLOCKTIMEHEADER);
@@ -390,7 +400,7 @@ public class MrcMessage {
     }
     
     /**
-       Get a message for a "Switch Possition Normal" command
+       Get a message for a "Switch Position Normal" command
        to a specific accessory decoder on the layout.
     */
     static MrcMessage getSwitchMsg(int address, boolean closed){
