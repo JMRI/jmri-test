@@ -317,7 +317,11 @@ public class PositionablePoint
     public void setEastBoundSignalMast(String signalMast) {
         SignalMast mast = null;
         if(signalMast!=null && !signalMast.equals("")){
-            mast = InstanceManager.signalMastManagerInstance().provideSignalMast(signalMast);
+            mast = InstanceManager.signalMastManagerInstance().getSignalMast(signalMast);
+            if(mast==null){
+                log.error("Unable to find Signal Mast " + signalMast);
+                return;
+            }
         }
         if(getType()==EDGE_CONNECTOR){
             int dir = getConnect1Dir();
@@ -369,7 +373,11 @@ public class PositionablePoint
     public void setWestBoundSignalMast(String signalMast) {
         SignalMast mast = null;
         if(signalMast!=null && !signalMast.equals("")){
-            mast = InstanceManager.signalMastManagerInstance().provideSignalMast(signalMast);
+            mast = InstanceManager.signalMastManagerInstance().getSignalMast(signalMast);
+            if(mast==null){
+                log.error("Unable to find Signal Mast " + signalMast);
+                return;
+            }
         }
         if(getType()==EDGE_CONNECTOR){
             int dir = getConnect1Dir();
@@ -417,9 +425,9 @@ public class PositionablePoint
 	/**
 	 * Setup and remove connections to track
 	 */
-	public void setTrackConnection (TrackSegment track) {
+	public boolean setTrackConnection (TrackSegment track) {
 		if (track==null) {
-			return;
+			return false;
 		}
 		if ( (connect1!=track) && (connect2!=track) ) {
 			// not connected to this track
@@ -437,8 +445,10 @@ public class PositionablePoint
 			}
 			else {
 				log.error ("Attempt to assign more than allowed number of connections");
+                return false;
 			}
 		}
+        return true;
 	}
     
 	public void removeTrackConnection (TrackSegment track) {

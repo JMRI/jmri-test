@@ -395,11 +395,12 @@ public class LayoutTurnout
             return;
         }
         
-        SignalMast mast = InstanceManager.signalMastManagerInstance().provideSignalMast(signalMast);
+        SignalMast mast = InstanceManager.signalMastManagerInstance().getSignalMast(signalMast);
         if (mast != null) {
             signalAMastNamed = InstanceManager.getDefault(jmri.NamedBeanHandleManager.class).getNamedBeanHandle(signalMast, mast);
         } else {
             signalAMastNamed=null;
+            log.error("Signal Mast " + signalMast + " Not found for turnout " + getTurnoutName());
         }
     }
     
@@ -421,11 +422,12 @@ public class LayoutTurnout
             return;
         }
         
-        SignalMast mast = InstanceManager.signalMastManagerInstance().provideSignalMast(signalMast);
+        SignalMast mast = InstanceManager.signalMastManagerInstance().getSignalMast(signalMast);
         if (mast != null) {
             signalBMastNamed = InstanceManager.getDefault(jmri.NamedBeanHandleManager.class).getNamedBeanHandle(signalMast, mast);
         } else {
             signalBMastNamed=null;
+            log.error("Signal Mast " + signalMast + " Not found for turnout " + getTurnoutName());
         }
     }
     
@@ -447,10 +449,11 @@ public class LayoutTurnout
             return;
         }
         
-        SignalMast mast = InstanceManager.signalMastManagerInstance().provideSignalMast(signalMast);
+        SignalMast mast = InstanceManager.signalMastManagerInstance().getSignalMast(signalMast);
         if (mast != null) {
             signalCMastNamed = InstanceManager.getDefault(jmri.NamedBeanHandleManager.class).getNamedBeanHandle(signalMast, mast);
         } else {
+            log.error("Signal Mast " + signalMast + " Not found for turnout " + getTurnoutName());
             signalCMastNamed=null;
         }
     }
@@ -473,10 +476,11 @@ public class LayoutTurnout
             return;
         }
         
-        SignalMast mast = InstanceManager.signalMastManagerInstance().provideSignalMast(signalMast);
+        SignalMast mast = InstanceManager.signalMastManagerInstance().getSignalMast(signalMast);
         if (mast != null) {
             signalDMastNamed = InstanceManager.getDefault(jmri.NamedBeanHandleManager.class).getNamedBeanHandle(signalMast, mast);
         } else {
+            log.error("Signal Mast " + signalMast + " Not found for turnout " + getTurnoutName());
             signalDMastNamed=null;
         }
     }
@@ -684,6 +688,37 @@ public class LayoutTurnout
     
     public void setDisableWhenOccupied(boolean state) {disableWhenOccupied = state;}
 	public boolean isDisabledWhenOccupied() {return disableWhenOccupied;}
+    
+    public Object getConnection(int location) throws jmri.JmriException {
+        switch (location) {
+            case LayoutEditor.TURNOUT_A: return connectA;
+            case LayoutEditor.TURNOUT_B: return connectB;
+            case LayoutEditor.TURNOUT_C: return connectC;
+            case LayoutEditor.TURNOUT_D: return connectD;
+        }
+        log.error("Invalid Point Type " + location); //I18IN
+        throw new jmri.JmriException("Invalid Point");
+    }
+    
+    public void setConnection(int location, Object o, int type) throws jmri.JmriException {
+        if ( (type!=LayoutEditor.TRACK) && (type!=LayoutEditor.NONE) ) {
+			log.error("unexpected type of connection to layoutturnout - "+type);
+            throw new jmri.JmriException("unexpected type of connection to layoutturnout - "+type);
+		}
+        switch (location) {
+            case LayoutEditor.TURNOUT_A: connectA = o;
+                                         break;
+            case LayoutEditor.TURNOUT_B: connectB = o;
+                                        break;
+            case LayoutEditor.TURNOUT_C: connectC=o;
+                                        break;
+            case LayoutEditor.TURNOUT_D: connectD=o;
+                                        break;
+            default : log.error("Invalid Point Type " + location); //I18IN
+                throw new jmri.JmriException("Invalid Point");
+        }
+    }
+    
 	public void setConnectA(Object o,int type) {
 		connectA = o;
 		if ( (type!=LayoutEditor.TRACK) && (type!=LayoutEditor.NONE) ) {
@@ -1286,6 +1321,21 @@ public class LayoutTurnout
 	 *    not disabled
 	 */
 	public void toggleTurnout() {
+        // toggle turnout
+        if (getTurnout().getKnownState()==jmri.Turnout.CLOSED){
+            setState(jmri.Turnout.THROWN);
+            /*if(getSecondTurnout()!=null)
+                getSecondTurnout().setState(jmri.Turnout.THROWN);*/
+        }
+        else {
+            setState(jmri.Turnout.CLOSED);
+            /*if(getSecondTurnout()!=null)
+                getSecondTurnout().setState(jmri.Turnout.CLOSED);*/
+            
+        }
+    }
+    
+    public void setState(int state){
         if ((getTurnout()!=null) && (!disabled)) {
             if (disableWhenOccupied){
                 if(disableOccupiedTurnout()){
@@ -1293,19 +1343,13 @@ public class LayoutTurnout
                     return;
                 }
             }
-			// toggle turnout
-			if (getTurnout().getKnownState()==jmri.Turnout.CLOSED){
-				getTurnout().setCommandedState(jmri.Turnout.THROWN);
-                if(getSecondTurnout()!=null)
-                    getSecondTurnout().setCommandedState(jmri.Turnout.THROWN);
-			}
-            else {
-				getTurnout().setCommandedState(jmri.Turnout.CLOSED);
-                if(getSecondTurnout()!=null)
-                    getSecondTurnout().setCommandedState(jmri.Turnout.CLOSED);
-                
+            getTurnout().setCommandedState(state);
+            if(getSecondTurnout()!=null){
+                getSecondTurnout().setCommandedState(state);
             }
-		}
+            
+            
+        }
     }
     
     private boolean disableOccupiedTurnout(){
