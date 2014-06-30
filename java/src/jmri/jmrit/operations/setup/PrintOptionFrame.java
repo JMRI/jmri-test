@@ -4,10 +4,13 @@ package jmri.jmrit.operations.setup;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -62,7 +65,6 @@ public class PrintOptionFrame extends OperationsFrame {
 
 	// check boxes
 	JCheckBox tabFormatCheckBox = new JCheckBox(Bundle.getMessage("TabFormat"));
-//	JCheckBox twoColumnFormatCheckBox = new JCheckBox(Bundle.getMessage("TwoColumn"));
 	JCheckBox formatSwitchListCheckBox = new JCheckBox(Bundle.getMessage("SameAsManifest"));
 	JCheckBox editManifestCheckBox = new JCheckBox(Bundle.getMessage("UseTextEditor"));
 	JCheckBox printLocCommentsCheckBox = new JCheckBox(Bundle.getMessage("PrintLocationComments"));
@@ -75,6 +77,7 @@ public class PrintOptionFrame extends OperationsFrame {
 	JCheckBox printHeadersCheckBox = new JCheckBox(Bundle.getMessage("PrintHeaders"));
 	JCheckBox truncateCheckBox = new JCheckBox(Bundle.getMessage("Truncate"));
 	JCheckBox departureTimeCheckBox = new JCheckBox(Bundle.getMessage("DepartureTime"));
+	JCheckBox routeLocationCheckBox = new JCheckBox(Bundle.getMessage("RouteLocation"));
 
 	// text field
 	JTextField pickupEngPrefix = new JTextField(10);
@@ -140,7 +143,6 @@ public class PrintOptionFrame extends OperationsFrame {
 		addLogoButton.setToolTipText(Bundle.getMessage("AddLogoToolTip"));
 		removeLogoButton.setToolTipText(Bundle.getMessage("RemoveLogoToolTip"));
 		tabFormatCheckBox.setToolTipText(Bundle.getMessage("TabComment"));
-//		twoColumnFormatCheckBox.setToolTipText(Bundle.getMessage("TwoColumnTip"));
 		printLocCommentsCheckBox.setToolTipText(Bundle.getMessage("AddLocationComments"));
 		printRouteCommentsCheckBox.setToolTipText(Bundle.getMessage("AddRouteComments"));
 		printLoadsEmptiesCheckBox.setToolTipText(Bundle.getMessage("LoadsEmptiesComment"));
@@ -151,6 +153,7 @@ public class PrintOptionFrame extends OperationsFrame {
 		printHeadersCheckBox.setToolTipText(Bundle.getMessage("PrintHeadersTip"));
 		truncateCheckBox.setToolTipText(Bundle.getMessage("TruncateTip"));
 		departureTimeCheckBox.setToolTipText(Bundle.getMessage("DepartureTimeTip"));
+		routeLocationCheckBox.setToolTipText(Bundle.getMessage("RouteLocationTip"));
 		editManifestCheckBox.setToolTipText(Bundle.getMessage("UseTextEditorTip"));
 
 		addEngPickupComboboxButton.setToolTipText(Bundle.getMessage("AddMessageComboboxTip"));
@@ -219,11 +222,6 @@ public class PrintOptionFrame extends OperationsFrame {
 				.getMessage("BorderLayoutLocalColor")));
 		pLocalColor.add(localComboBox);
 
-		JPanel pSwitchFormat = new JPanel();
-		pSwitchFormat.setBorder(BorderFactory.createTitledBorder(Bundle
-				.getMessage("BorderLayoutSwitchListFormat")));
-		pSwitchFormat.add(formatSwitchListCheckBox);
-
 		p1.add(pFont);
 		p1.add(pFontSize);
 		p1.add(pFormat);
@@ -238,17 +236,27 @@ public class PrintOptionFrame extends OperationsFrame {
 		// Optional Switch List Panel
 		JPanel pSl = new JPanel();
 		pSl.setLayout(new BoxLayout(pSl, BoxLayout.X_AXIS));
+		
+		JPanel pSwitchFormat = new JPanel();
+		pSwitchFormat.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("BorderLayoutSwitchListFormat")));
+		pSwitchFormat.add(formatSwitchListCheckBox);
 
 		pSwitchListOrientation.setLayout(new GridBagLayout());
 		pSwitchListOrientation.setBorder(BorderFactory.createTitledBorder(Bundle
 				.getMessage("BorderLayoutSwitchListOrientation")));
+		pSwitchListOrientation.setMaximumSize(new Dimension(8000, 100));
 		addItem(pSwitchListOrientation, switchListOrientationComboBox, 0, 0);
 		addItem(pSwitchListOrientation, new JLabel(" "), 1, 0); // pad
 		addItem(pSwitchListOrientation, new JLabel(" "), 2, 0); // pad
 		addItem(pSwitchListOrientation, new JLabel(" "), 3, 0); // pad
+		
+		JPanel pSwitchOptions = new JPanel();
+		pSwitchOptions.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("BorderLayoutSwitchListOptions")));
+		pSwitchOptions.add(routeLocationCheckBox);
 
 		pSl.add(pSwitchFormat);
 		pSl.add(pSwitchListOrientation);
+		pSl.add(pSwitchOptions);
 
 		// Manifest comments
 		JPanel pManifestOptions = new JPanel();
@@ -331,7 +339,6 @@ public class PrintOptionFrame extends OperationsFrame {
 		switchListOrientationComboBox.setSelectedItem(Setup.getSwitchListOrientation());
 
 		tabFormatCheckBox.setSelected(Setup.isTabEnabled());
-//		twoColumnFormatCheckBox.setSelected(Setup.isTwoColumnFormatEnabled());
 		formatSwitchListCheckBox.setSelected(Setup.isSwitchListFormatSameAsManifest());
 		printLocCommentsCheckBox.setSelected(Setup.isPrintLocationCommentsEnabled());
 		printRouteCommentsCheckBox.setSelected(Setup.isPrintRouteCommentsEnabled());
@@ -343,6 +350,7 @@ public class PrintOptionFrame extends OperationsFrame {
 		printHeadersCheckBox.setSelected(Setup.isPrintHeadersEnabled());
 		truncateCheckBox.setSelected(Setup.isTruncateManifestEnabled());
 		departureTimeCheckBox.setSelected(Setup.isUseDepartureTimeEnabled());
+		routeLocationCheckBox.setSelected(Setup.isSwitchListRouteLocationCommentEnabled());
 		editManifestCheckBox.setSelected(Setup.isManifestEditorEnabled());
 
 		hazardousTextField.setText(Setup.getHazardousMsg());
@@ -552,7 +560,7 @@ public class PrintOptionFrame extends OperationsFrame {
 			Setup.setTruncateManifestEnabled(truncateCheckBox.isSelected());
 			Setup.setUseDepartureTimeEnabled(departureTimeCheckBox.isSelected());
 			Setup.setManifestEditorEnabled(editManifestCheckBox.isSelected());
-//			Setup.setTwoColumnFormatEnabled(twoColumnFormatCheckBox.isSelected());
+			Setup.setSwitchListRouteLocationCommentEnabled(routeLocationCheckBox.isSelected());
 			
 			// reload combo boxes if tab changed
 			boolean oldTabEnabled = Setup.isTabEnabled();
