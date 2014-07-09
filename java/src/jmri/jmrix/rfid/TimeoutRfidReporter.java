@@ -1,16 +1,15 @@
-// CoreIdRfidReporter.java
+// TimeoutRfidReporter.java
 
-package jmri.jmrix.rfid.coreid;
+package jmri.jmrix.rfid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jmri.IdTag;
-import jmri.jmrix.rfid.RfidReporter;
 
 /**
- * CORE-ID specific implementation of an RfidReporter.
+ * Timeout specific implementation of an RfidReporter.
  * <p>
- * The CORE-ID RFID readers only send a message when an RFID tag is within
+ * Certain RFID readers only send a message when an RFID tag is within
  * the proximity of the reader - no message is sent when it leaves.
  * <p>
  * As a result, this implementation simulates this message using a timeout
@@ -30,11 +29,11 @@ import jmri.jmrix.rfid.RfidReporter;
  * for more details.
  * <P>
  *
- * @author      Matthew Harris  Copyright (C) 2011
+ * @author      Matthew Harris  Copyright (C) 2014
  * @version     $Revision$
- * @since       2.11.4
+ * @since       3.9.2
  */
-public class CoreIdRfidReporter extends RfidReporter {
+public class TimeoutRfidReporter extends RfidReporter {
     
     /**
      * Timeout in ms
@@ -51,13 +50,13 @@ public class CoreIdRfidReporter extends RfidReporter {
      */
     private transient TimeoutThread timeoutThread = null;
 
-    private boolean logDebug = log.isDebugEnabled();
+    private final boolean logDebug = log.isDebugEnabled();
 
-    public CoreIdRfidReporter(String systemName) {
+    public TimeoutRfidReporter(String systemName) {
         super(systemName);
     }
 
-    public CoreIdRfidReporter(String systemName, String userName) {
+    public TimeoutRfidReporter(String systemName, String userName) {
         super(systemName, userName);
     }
 
@@ -82,13 +81,14 @@ public class CoreIdRfidReporter extends RfidReporter {
         }
 
         @Override
+        @SuppressWarnings("SleepWhileInLoop")
         public void run() {
             while((whenLastReported+timeout)>System.currentTimeMillis()) {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException ex) { }
             }
-            CoreIdRfidReporter.super.notify(null);
+            TimeoutRfidReporter.super.notify(null);
             if (logDebug) log.debug("Timeout-"+mSystemName);
             cleanUpTimeout();
         }
@@ -96,8 +96,8 @@ public class CoreIdRfidReporter extends RfidReporter {
 
     static final long serialVersionUID = 929511727191807608L;
 
-    private static final Logger log = LoggerFactory.getLogger(CoreIdRfidReporter.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TimeoutRfidReporter.class.getName());
 
 }
 
-/* @(#)CoreIdRfidReporter.java */
+/* @(#)TimeoutRfidReporter.java */

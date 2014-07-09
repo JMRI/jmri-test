@@ -150,7 +150,7 @@ public class ConditionalVariable {
                     _namedBean = nbhm.getNamedBeanHandle(_name, w);
                     break;
                 case Conditional.ITEM_TYPE_OBLOCK:
-                    OBlock b = InstanceManager.oBlockManagerInstance().getOBlock(_name);
+                    OBlock b = InstanceManager.getDefault(jmri.jmrit.logix.OBlockManager.class).getOBlock(_name);
                     if(b == null){
                         log.error("invalid block name= \""+_name+"\" in state variable");
                         return;
@@ -243,7 +243,7 @@ public class ConditionalVariable {
                 bean = InstanceManager.getDefault(WarrantManager.class).getWarrant(_name);
                 break;
             case Conditional.ITEM_TYPE_OBLOCK:
-                bean = InstanceManager.oBlockManagerInstance().getOBlock(_name);
+                bean = InstanceManager.getDefault(jmri.jmrit.logix.OBlockManager.class).getOBlock(_name);
                 break;
             case Conditional.ITEM_TYPE_ENTRYEXIT:
                 bean = jmri.InstanceManager.getDefault(jmri.jmrit.signalling.EntryExitPairs.class).getBySystemName(_name);
@@ -274,7 +274,8 @@ public class ConditionalVariable {
     }
 
     public String getDataString() {
-        if(Conditional.TEST_TO_ITEM[_type]==Conditional.ITEM_TYPE_MEMORY){
+        if(Conditional.TEST_TO_ITEM[_type]==Conditional.ITEM_TYPE_MEMORY
+        		&& _namedBeanData!=null){
             return _namedBeanData.getName();
         }
         return _dataString;
@@ -498,7 +499,12 @@ public class ConditionalVariable {
                                             (_type == Conditional.TYPE_MEMORY_COMPARE_INSENSITIVE));
                 if ((_type == Conditional.TYPE_MEMORY_COMPARE) || 
                         (_type == Conditional.TYPE_MEMORY_COMPARE_INSENSITIVE)) {
-                    Memory m2 = (Memory) _namedBeanData.getBean();//InstanceManager.memoryManagerInstance().provideMemory(_dataString);
+                	Memory m2;
+                	if (_namedBeanData!=null) {
+                		m2 = (Memory)_namedBeanData.getBean();               		
+                	} else {
+                		m2 = InstanceManager.memoryManagerInstance().provideMemory(_dataString); 
+                	}                	
                     if (m2 == null) {
                         log.error("invalid data memory name= \""+_dataString+"\" in state variable");
                         return (false);
@@ -575,7 +581,7 @@ public class ConditionalVariable {
 				}
 				break;
             case Conditional.ITEM_TYPE_OBLOCK:
-                OBlock b = InstanceManager.oBlockManagerInstance().getOBlock(getName());
+                OBlock b = InstanceManager.getDefault(jmri.jmrit.logix.OBlockManager.class).getOBlock(getName());
 				if (b == null) {
 					log.error("invalid OBlock name= \""+getName()+"\" in state variable");
 					return (false);

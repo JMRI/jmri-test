@@ -1,16 +1,15 @@
 // MergRfidReporter.java
 
-package jmri.jmrix.rfid.coreid;
+package jmri.jmrix.rfid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jmri.IdTag;
-import jmri.jmrix.rfid.RfidSensor;
 
 /**
- * CORE-ID specific implementation of an RfidSensor.
+ * Timeout specific implementation of an RfidSensor.
  * <p>
- * The CORE-ID RFID readers only send a message when an RFID tag is within
+ * Certain RFID readers only send a message when an RFID tag is within
  * the proximity of the reader - no message is sent when it leaves.
  * <p>
  * As a result, this implementation simulates this message using a timeout
@@ -30,11 +29,11 @@ import jmri.jmrix.rfid.RfidSensor;
  * for more details.
  * <P>
  *
- * @author      Matthew Harris  Copyright (C) 2011
+ * @author      Matthew Harris  Copyright (C) 2014
  * @version     $Revision$
- * @since       2.11.4
+ * @since       3.9.2
  */
-public class CoreIdRfidSensor extends RfidSensor {
+public class TimeoutRfidSensor extends RfidSensor {
     
     /**
      * Timeout in ms
@@ -51,13 +50,13 @@ public class CoreIdRfidSensor extends RfidSensor {
      */
     private transient TimeoutThread timeoutThread = null;
 
-    private boolean logDebug = log.isDebugEnabled();
+    private final boolean logDebug = log.isDebugEnabled();
 
-    public CoreIdRfidSensor(String systemName) {
+    public TimeoutRfidSensor(String systemName) {
         super(systemName);
     }
 
-    public CoreIdRfidSensor(String systemName, String userName) {
+    public TimeoutRfidSensor(String systemName, String userName) {
         super(systemName, userName);
     }
 
@@ -82,13 +81,14 @@ public class CoreIdRfidSensor extends RfidSensor {
         }
 
         @Override
+        @SuppressWarnings("SleepWhileInLoop")
         public void run() {
             while((whenLastSensed+timeout)>System.currentTimeMillis()) {
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException ex) { }
             }
-            CoreIdRfidSensor.super.notify(null);
+            TimeoutRfidSensor.super.notify(null);
             if (logDebug) log.debug("Timeout-"+mSystemName);
             cleanUpTimeout();
         }
@@ -97,8 +97,8 @@ public class CoreIdRfidSensor extends RfidSensor {
 
     static final long serialVersionUID = 5290531989069550265L;
 
-    private static final Logger log = LoggerFactory.getLogger(CoreIdRfidSensor.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TimeoutRfidSensor.class.getName());
 
 }
 
-/* @(#)CoreIdRfidSensor.java */
+/* @(#)TimeoutRfidSensor.java */
