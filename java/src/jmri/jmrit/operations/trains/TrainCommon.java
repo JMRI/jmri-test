@@ -109,8 +109,8 @@ public class TrainCommon {
 	}
 
 	private void pickupEngine(PrintWriter file, Engine engine, boolean isManifest) {
-		StringBuffer buf = new StringBuffer(padAndTruncateString(Setup.getPickupEnginePrefix(), Setup
-				.getManifestPrefixLength()));
+		StringBuffer buf = new StringBuffer(padAndTruncateString(Setup.getPickupEnginePrefix(), isManifest ? Setup
+				.getManifestPrefixLength() : Setup.getSwitchListPrefixLength()));
 		String[] format = Setup.getPickupEngineMessageFormat();
 		for (String attribute : format) {
 			String s = getEngineAttribute(engine, attribute, PICKUP);
@@ -145,8 +145,8 @@ public class TrainCommon {
 	}
 
 	private void dropEngine(PrintWriter file, Engine engine, boolean isManifest) {
-		StringBuffer buf = new StringBuffer(padAndTruncateString(Setup.getDropEnginePrefix(), Setup
-				.getManifestPrefixLength()));
+		StringBuffer buf = new StringBuffer(padAndTruncateString(Setup.getDropEnginePrefix(), isManifest? Setup
+				.getManifestPrefixLength() : Setup.getSwitchListPrefixLength()));
 		String[] format = Setup.getDropEngineMessageFormat();
 		for (String attribute : format) {
 			String s = getEngineAttribute(engine, attribute, !PICKUP);
@@ -1245,10 +1245,18 @@ public class TrainCommon {
 			return " " + padAndTruncateString("", CarRoads.instance().getCurMaxNameLength());
 		else if (attribute.equals(Setup.NO_COLOR))
 			return " " + padAndTruncateString("", CarColors.instance().getCurMaxNameLength());
-		// the three truncated manifest attributes
-		else if (attribute.equals(Setup.NO_DESTINATION) || attribute.equals(Setup.NO_DEST_TRACK)
-				|| attribute.equals(Setup.NO_LOCATION))
-			return "";
+		// there are four truncated manifest attributes
+		else if (attribute.equals(Setup.NO_DEST_TRACK))
+			return Setup.isPrintHeadersEnabled() ? padAndTruncateString("", locationManager
+					.getMaxLocationAndTrackNameLength() + 2) : "";
+		else if ((attribute.equals(Setup.NO_LOCATION) && !isPickup)
+				|| (attribute.equals(Setup.NO_DESTINATION) && isPickup))
+			return Setup.isPrintHeadersEnabled() ? padAndTruncateString("",
+					locationManager.getMaxLocationNameLength() + 1) : "";
+		else if (attribute.equals(Setup.NO_TRACK) || attribute.equals(Setup.NO_LOCATION)
+				|| attribute.equals(Setup.NO_DESTINATION))
+			return Setup.isPrintHeadersEnabled() ? padAndTruncateString("", locationManager.getMaxTrackNameLength() + 1)
+					: "";
 		else if (attribute.equals(Setup.TAB))
 			return tabString("", Setup.getTab1Length());
 		else if (attribute.equals(Setup.TAB2))

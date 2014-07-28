@@ -1376,6 +1376,7 @@ public class TrainBuilder extends TrainCommon {
 							new Object[] { car.toString(), car.getTypeName(),
 									(car.getLocationName() + ", " + car.getTrackName()), car.getWait() }));
 					car.setWait(car.getWait() - 1); // decrement wait count
+					car.updateLoad(); // has the wait count reached 0?
 					_carList.remove(car);
 					_carIndex--;
 					continue;
@@ -1535,7 +1536,7 @@ public class TrainBuilder extends TrainCommon {
 			return;
 		}
 		
-		addLine(_buildReport, THREE, BLANK_LINE); // add line when in very detailed report mode
+		addLine(_buildReport, THREE, BLANK_LINE);
 		addLine(_buildReport, THREE, MessageFormat.format(Bundle.getMessage("blockDepartureHasBlocks"), new Object[] {
 				_departStageTrack.getName(), _numOfBlocks.size() }));
 
@@ -1813,7 +1814,7 @@ public class TrainBuilder extends TrainCommon {
 			}
 			// can this car be picked up?
 			if (!checkPickUpTrainDirection(car, rl)) {
-				addLine(_buildReport, SEVEN, BLANK_LINE); // add line when in very detailed report mode
+				addLine(_buildReport, FIVE, BLANK_LINE); // add line when in detailed report mode
 				continue; // no
 			}
 			// check for car order?
@@ -1825,7 +1826,7 @@ public class TrainBuilder extends TrainCommon {
 					// build failure car departing staging with a restricted load
 					addLine(_buildReport, ONE, MessageFormat.format(Bundle.getMessage("buildErrorCarStageLoad"),
 							new Object[] { car.toString(), car.getLoadName(), _departStageTrack.getName() }));
-					addLine(_buildReport, SEVEN, BLANK_LINE); // add line when in very detailed report mode
+					addLine(_buildReport, FIVE, BLANK_LINE); // add line when in detailed report mode
 					continue;
 				}
 			}
@@ -1834,7 +1835,7 @@ public class TrainBuilder extends TrainCommon {
 			if (findFinalDestinationForCarLoad(car) && car.getDestination() == null
 					&& car.getTrack() != _departStageTrack) {
 				// done with this car, it has a custom load, and there are spurs/schedules, but no destination found
-				addLine(_buildReport, SEVEN, BLANK_LINE); // add line when in very detailed report mode
+				addLine(_buildReport, FIVE, BLANK_LINE); // add line when in detailed report mode
 				continue;
 			}
 			// does car have a final destination, but no destination
@@ -1845,7 +1846,7 @@ public class TrainBuilder extends TrainCommon {
 						&& car.getTrack() != _departStageTrack) {
 					addLine(_buildReport, FIVE, MessageFormat.format(Bundle.getMessage("buildCarHasFinalDestNoMove"),
 							new Object[] { car.toString(), car.getFinalDestinationName() }));
-					addLine(_buildReport, SEVEN, BLANK_LINE); // add line when in very detailed report mode
+					addLine(_buildReport, FIVE, BLANK_LINE); // add line when in detailed report mode
 					log.debug("Removing car ({}) from list", car.toString());
 					_carList.remove(car);
 					_carIndex--;
@@ -1870,7 +1871,7 @@ public class TrainBuilder extends TrainCommon {
 						_carList.remove(car);
 						_carIndex--;
 					}
-					addLine(_buildReport, SEVEN, BLANK_LINE); // add line when in very detailed report mode
+					addLine(_buildReport, FIVE, BLANK_LINE); // add line when in detailed report mode
 					continue;
 				}
 				addLine(_buildReport, FIVE, MessageFormat
@@ -1903,7 +1904,7 @@ public class TrainBuilder extends TrainCommon {
 							_carList.remove(car);
 							_carIndex--;
 						}
-						addLine(_buildReport, SEVEN, BLANK_LINE); // add line when in very detailed report mode
+						addLine(_buildReport, FIVE, BLANK_LINE); // add line when in detailed report mode
 						continue;
 					}
 				}
@@ -1919,12 +1920,14 @@ public class TrainBuilder extends TrainCommon {
 						// move this car, routing failed!
 						findDestinationAndTrack(car, rl, routeIndex, _routeList.size());
 					else
-						addLine(_buildReport, SEVEN, BLANK_LINE); // add line when in very detailed report mode
+						addLine(_buildReport, FIVE, BLANK_LINE); // add line when in detailed report mode
 				} else {
 					// did the router assign a destination?
 					if (!checkCarForDestinationAndTrack(car, rl, routeIndex) && car.getTrack() != _departStageTrack) {
 						log.debug("Skipping car ({}) no car destination", car.toString()); // NOI18N
-						addLine(_buildReport, SEVEN, BLANK_LINE); // add line when in very detailed report mode
+						addLine(_buildReport, FIVE, MessageFormat.format(Bundle.getMessage("buildNoDestForCar"), new Object[] { car
+							.toString() }));
+						addLine(_buildReport, FIVE, BLANK_LINE); // add line when in detailed report mode
 						continue;
 					} else {
 						// if departing staging try and find a destination for this car
@@ -3164,7 +3167,7 @@ public class TrainBuilder extends TrainCommon {
 			log.debug("Car ({}) found a destination in train's route", car.toString());
 			// are drops allows at this location?
 			if (!rld.isDropAllowed()) {
-				addLine(_buildReport, THREE, MessageFormat.format(Bundle.getMessage("buildRouteNoDropsStop"),
+				addLine(_buildReport, FIVE, MessageFormat.format(Bundle.getMessage("buildRouteNoDropsStop"),
 						new Object[] { _train.getRoute().getName(), rld.getName(), rld.getId(), locCount }));
 				continue;
 			}

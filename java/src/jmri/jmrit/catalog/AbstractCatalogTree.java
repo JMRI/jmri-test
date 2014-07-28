@@ -44,6 +44,10 @@ public abstract class AbstractCatalogTree extends DefaultTreeModel implements Ca
     public AbstractCatalogTree(String sysname) {
         this(sysname, "root");
     }
+    
+    public String getBeanType(){
+        return Bundle.getMessage("BeanNameCatalog");
+    }
 
     /**
      * Recursively add nodes to the tree
@@ -174,11 +178,11 @@ public abstract class AbstractCatalogTree extends DefaultTreeModel implements Ca
     public synchronized String getListenerRef(java.beans.PropertyChangeListener l) {
         return listenerRefs.get(l);
     }
-
+    
     public String getSystemName() {return mSystemName;}
-
+    
     public String getUserName() {return mUserName;}
-
+    
     public void   setUserName(String s) {
         String old = mUserName;
         mUserName = s;
@@ -186,11 +190,11 @@ public abstract class AbstractCatalogTree extends DefaultTreeModel implements Ca
     }
     
     protected void firePropertyChange(String p, Object old, Object n) { pcs.firePropertyChange(p,old,n);}
-
+    
     public void dispose() { pcs = null; }
-
+    
     public int getState(){ return 0; }
-
+    
     public void setState(int s) throws jmri.JmriException{}
     
     public void addDeleteLock(jmri.NamedBean lock) { }
@@ -198,7 +202,9 @@ public abstract class AbstractCatalogTree extends DefaultTreeModel implements Ca
     public void removeDeleteLock(jmri.NamedBean lock) { }
     
     public boolean isDeleteAllowed() { return true; }
-
+    
+    public void vetoableChange(java.beans.PropertyChangeEvent evt) throws java.beans.PropertyVetoException { }
+    
     static Logger log = LoggerFactory.getLogger(AbstractCatalogTree.class.getName());
 
 }

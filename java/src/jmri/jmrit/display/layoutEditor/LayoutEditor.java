@@ -8,6 +8,7 @@ import jmri.Sensor;
 import jmri.Turnout;
 import jmri.Memory;
 import jmri.Reporter;
+import jmri.NamedBean;
 import jmri.SignalHead;
 import jmri.SignalMast;
 import jmri.jmrit.catalog.NamedIcon;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
 
 import java.util.ResourceBundle;
 import jmri.util.SystemType;
@@ -310,7 +312,8 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
 	public ArrayList<BlockContentsIcon> blockContentsLabelList = new ArrayList<BlockContentsIcon>(); // BlockContentsIcon Label List
     public ArrayList<SensorIcon> sensorList = new ArrayList<SensorIcon>();  // Sensor Icons
     public ArrayList<SignalMastIcon> signalMastList = new ArrayList<SignalMastIcon>();  // Signal Head Icons
-    
+    public LayoutEditorFindItems finder = new LayoutEditorFindItems(this);
+    public LayoutEditorFindItems getFinder() { return finder; }
     // persistent instance variables - saved to disk with Save Panel
 	private int windowWidth = 0;
 	private int windowHeight = 0;
@@ -363,8 +366,6 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
     
     public LayoutEditor(String name) {
         super(name);
-        jmri.InstanceManager.signalHeadManagerInstance().addVetoableChangeListener(this);
-        jmri.InstanceManager.turnoutManagerInstance().addVetoableChangeListener(this);
         layoutName = name;
         // initialize frame
         Container contentPane = getContentPane();
@@ -2617,7 +2618,7 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
 		boolean duplicate = true;
 		while (duplicate) {
 			name = "TUR"+numLayoutTurntables;
-			if (findLayoutTurntableByName(name)==null) duplicate = false;
+			if (finder.findLayoutTurntableByName(name)==null) duplicate = false;
 			if (duplicate) numLayoutTurntables ++;
 		}
 		LayoutTurntable x = new LayoutTurntable(name,pt,this);		
@@ -5389,7 +5390,7 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
                             }
                             break;
                         case TRACK_CIRCLE_CENTRE: TrackSegment t = (TrackSegment)selectedObject;
-                                                    reCalculateTrackSegmentAngle(t, newPos.getX(), newPos.getY());
+                                                    t.reCalculateTrackSegmentAngle(newPos.getX(), newPos.getY());
                                                 break;
                         default:
                             if (selectedPointType>=TURNTABLE_RAY_OFFSET) {
@@ -5498,7 +5499,7 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
 		boolean duplicate = true;
 		while (duplicate) {
 			name = "A"+numAnchors;
-			if (findPositionablePointByName(name)==null) duplicate = false;
+			if (finder.findPositionablePointByName(name)==null) duplicate = false;
 			if (duplicate) numAnchors ++;
 		}
 		// create object
@@ -5521,7 +5522,7 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
 		boolean duplicate = true;
 		while (duplicate) {
 			name = "EB"+numEndBumpers;
-			if (findPositionablePointByName(name)==null) duplicate = false;
+			if (finder.findPositionablePointByName(name)==null) duplicate = false;
 			if (duplicate) numEndBumpers ++;
 		}
 		// create object
@@ -5543,7 +5544,7 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
 		boolean duplicate = true;
 		while (duplicate) {
 			name = "EC"+numEdgeConnectors;
-			if (findPositionablePointByName(name)==null) duplicate = false;
+			if (finder.findPositionablePointByName(name)==null) duplicate = false;
 			if (duplicate) numEdgeConnectors ++;
 		}
 		// create object
@@ -5565,7 +5566,7 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
 		boolean duplicate = true;
 		while (duplicate) {
 			name = "T"+numTrackSegments;
-			if (findTrackSegmentByName(name)==null) duplicate = false;
+			if (finder.findTrackSegmentByName(name)==null) duplicate = false;
 			if (duplicate) numTrackSegments ++;
 		}
 		// create object
@@ -5612,7 +5613,7 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
 		boolean duplicate = true;
 		while (duplicate) {
 			name = "X"+numLevelXings;
-			if (findLevelXingByName(name)==null) duplicate = false;
+			if (finder.findLevelXingByName(name)==null) duplicate = false;
 			if (duplicate) numLevelXings ++;
 		}
 		// create object
@@ -5664,7 +5665,7 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
 		boolean duplicate = true;
 		while (duplicate) {
 			name = "SL"+numLayoutSlips;
-			if (findLayoutSlipByName(name)==null) duplicate = false;
+			if (finder.findLayoutSlipByName(name)==null) duplicate = false;
 			if (duplicate) numLayoutSlips ++;
 		}
 		// create object
@@ -5739,7 +5740,7 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
 		boolean duplicate = true;
 		while (duplicate) {
 			name = "TO"+numLayoutTurnouts;
-			if (findLayoutTurnoutByName(name)==null) duplicate = false;
+			if (finder.findLayoutTurnoutByName(name)==null) duplicate = false;
 			if (duplicate) numLayoutTurnouts ++;
 		}
 		// create object
@@ -6108,84 +6109,113 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
         return remove(l);
     }
     
-    private boolean removeSignalMast(SignalMastIcon si){
-        SignalMast sm = si.getSignalMast();
+    private String findBeanUsage(NamedBean sm){
         PositionablePoint pe;
         PositionablePoint pw;
         LayoutTurnout lt;
         LevelXing lx;
         LayoutSlip ls;
         boolean found = false;
-        String usage = "This Signal Mast is linked to the following items\n do you want to remove those references";
-        if(InstanceManager.signalMastLogicManagerInstance().isSignalMastUsed(sm)){
-            jmri.SignalMastLogic sml = InstanceManager.signalMastLogicManagerInstance().getSignalMastLogic(sm);
-            if(sml!=null && sml.useLayoutEditor(sml.getDestinationList().get(0))){
-                usage = usage + " and any SignalMast Logic associated with it";
+        StringBuilder sb = new StringBuilder();
+        sb.append("This ");
+        if(sm instanceof SignalMast){
+            sb.append("Signal Mast");
+            sb.append(" is linked to the following items<br> do you want to remove those references");
+            if(InstanceManager.signalMastLogicManagerInstance().isSignalMastUsed((SignalMast)sm)){
+                jmri.SignalMastLogic sml = InstanceManager.getDefault(jmri.SignalMastLogicManager.class).getSignalMastLogic((SignalMast)sm);
+                //jmri.SignalMastLogic sml = InstanceManager.signalMastLogicManagerInstance().getSignalMastLogic((SignalMast)sm);
+                if(sml!=null && sml.useLayoutEditor(sml.getDestinationList().get(0))){
+                    sb.append(" and any SignalMast Logic associated with it");
+                }
             }
+        } else if (sm instanceof Sensor){
+            sb.append("Sensor");
+            sb.append(" is linked to the following items<br> do you want to remove those references");
+        } else if (sm instanceof SignalHead){
+            sb.append("SignalHead");
+            sb.append(" is linked to the following items<br> do you want to remove those references");
         }
         
-        if((pw=findPositionablePointByWestBoundBean(sm))!=null){
-            usage = usage + "\n Point of ";
+        if((pw=finder.findPositionablePointByWestBoundBean(sm))!=null){
+            sb.append("<br>Point of ");
             TrackSegment t = pw.getConnect1();
             if(t!=null) {
-                usage = usage + t.getBlockName() + " and ";
+                sb.append(t.getBlockName() + " and ");
             }
             t = pw.getConnect2();
             if(t!=null) {
-                usage = usage + t.getBlockName();
+                sb.append(t.getBlockName());
             }            
             found = true;
         }
-        if((pe=findPositionablePointByEastBoundBean(sm))!=null){
-            usage = usage + "\n Point of ";
+        if((pe=finder.findPositionablePointByEastBoundBean(sm))!=null){
+            sb.append("<br>Point of ");
             TrackSegment t = pe.getConnect1();
             if(t!=null) {
-                usage = usage + t.getBlockName() + " and ";
+                sb.append(t.getBlockName() + " and ");
             }
             t = pe.getConnect2();
             if(t!=null) {
-                usage = usage + t.getBlockName();
+                sb.append(t.getBlockName());
             }            
             found = true;
         }
-        if((lt=findLayoutTurnoutByBean(sm))!=null){
-            usage = usage + "\n Turnout " + lt.getTurnoutName();
+        if((lt=finder.findLayoutTurnoutByBean(sm))!=null){
+            sb.append("<br>Turnout " + lt.getTurnoutName());
             found = true;
         }
-        if((lx=findLevelXingByBean(sm))!=null){
-            usage = usage + "\n Level Crossing " + lx.getID();
+        if((lx=finder.findLevelXingByBean(sm))!=null){
+            sb.append("<br>Level Crossing " + lx.getID());
             found = true;
         }
-        if((ls=findLayoutSlipByBean(sm))!=null){
-            usage = usage + "\n Level Crossing " + ls.getTurnoutName();
+        if((ls=finder.findLayoutSlipByBean(sm))!=null){
+            sb.append("<br>Slip " + ls.getTurnoutName());
             found = true;
         }
-        if(found){
+        if(!found) return null;
+        return sb.toString();
+    }
+    
+    private boolean removeSignalMast(SignalMastIcon si){
+        SignalMast sm = si.getSignalMast();
+        String usage = findBeanUsage(sm);
+        if(usage!=null){
+            usage = "<html>" + usage + "</html>";
             int selectedValue = JOptionPane.showOptionDialog(this,
                        usage,rb.getString("WarningTitle"),
                         JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE,null,
                         new Object[]{rb.getString("ButtonYes"),rb.getString("ButtonNo"),rb.getString("ButtonCancel")},rb.getString("ButtonYes"));
                 if (selectedValue == 1) return(true); // return leaving the references in place but allow the icon to be deleted.
                 if (selectedValue == 2) return(false); // do not delete the item
-                if(pe!=null){
-                    pe.setEastBoundSignalMast(null);
-                }
-                if(pw!=null){
-                    pw.setWestBoundSignalMast(null);
-                }
-                if(lt!=null){
-                    lt.removeSignalMast(sm);
-                }
-                if(ls!=null){
-                    ls.removeSignalMast(sm);
-                }
-                if(lx!=null){
-                    lx.removeSignalMast(sm);
-                }
+                removeBeanRefs(sm);
         }
         return true;
     }
-
+    
+    private void removeBeanRefs(NamedBean sm){
+        PositionablePoint pe;
+        PositionablePoint pw;
+        LayoutTurnout lt;
+        LevelXing lx;
+        LayoutSlip ls;
+        
+        if((pw=finder.findPositionablePointByWestBoundBean(sm))!=null){
+            pw.removeBeanReference(sm);
+        }
+        if((pe=finder.findPositionablePointByEastBoundBean(sm))!=null){
+            pe.removeBeanReference(sm);
+        }
+        if((lt=finder.findLayoutTurnoutByBean(sm))!=null){
+            lt.removeBeanReference(sm);
+        }
+        if((lx=finder.findLevelXingByBean(sm))!=null){
+            lx.removeBeanReference(sm);
+        }
+        if((ls=finder.findLayoutSlipByBean(sm))!=null){
+            ls.removeBeanReference(sm);
+        }
+    }
+    
 	boolean noWarnPositionablePoint = false;
 	
     /**
@@ -6737,6 +6767,14 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
         if (sh == null) sh = InstanceManager.signalMastManagerInstance().getByUserName(name);
         if (sh == null) log.warn("did not find a SignalMast named "+name);
         return sh;
+    }
+    
+    public boolean containsSignalMast(SignalMast mast){
+        for(SignalMastIcon h:signalMastList){
+            if(h.getSignalMast()==mast)
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -7317,466 +7355,206 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
 		log.error("unknown color text '"+string+"' sent to stringToColor");
 		return Color.black;
 	}
+    
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
 	public TrackSegment findTrackSegmentByName(String name) {
-		if (name.length()<=0) return null;
-		for (int i = 0; i<trackList.size(); i++) {
-			TrackSegment t = trackList.get(i);
-			if (t.getID().equals(name)) {
-				return t;
-			}
-		}
-		return null;
+        return finder.findTrackSegmentByName(name);
 	}
+    
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
 	public PositionablePoint findPositionablePointByName(String name) {
-		if (name.length()<=0) return null;
-		for (int i = 0; i<pointList.size(); i++) {
-			PositionablePoint p = pointList.get(i);
-			if (p.getID().equals(name)) {
-				return p;
-			}
-		}
-		return null;
+		return finder.findPositionablePointByName(name);
 	}
     
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
 	public PositionablePoint findPositionablePointAtTrackSegments(TrackSegment tr1, TrackSegment tr2) {
-		for (int i = 0; i<pointList.size(); i++) {
-			PositionablePoint p = pointList.get(i);
-			if ( ( (p.getConnect1()==tr1) && (p.getConnect2()==tr2) ) ||
-					( (p.getConnect1()==tr2) && (p.getConnect2()==tr1) ) ) {
-				return p;
-			}
-		}
-		return null;
+		return finder.findPositionablePointAtTrackSegments(tr1, tr2);
 	}
     
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
     public PositionablePoint findPositionableLinkPoint(LayoutBlock blk1){
-        for (PositionablePoint p:pointList) {
-            if(p.getType()==PositionablePoint.EDGE_CONNECTOR){
-                if((p.getConnect1()!=null && p.getConnect1().getLayoutBlock()==blk1) ||
-                    (p.getConnect2()!=null && p.getConnect2().getLayoutBlock()==blk1)){
-                        return p;
-                 }
-            }
-        }
-        return null;
+        return finder.findPositionableLinkPoint(blk1);
     }
 
     /**
-    * Returns an array list of track segments matching the block name.
+    * @deprecated As of 3.9.2, ... use getFinder().find...
     */
+    @Deprecated
     public ArrayList<TrackSegment> findTrackSegmentByBlock(String name) {
-		if (name.length()<=0) return null;
-        ArrayList<TrackSegment> ts = new ArrayList<TrackSegment>();
-		for (int i = 0; i<trackList.size(); i++) {
-			TrackSegment t = trackList.get(i);
-			if (t.getBlockName().equals(name)) {
-				ts.add(t);
-			}
-		}
-		return ts;
+		return finder.findTrackSegmentByBlock(name);
 	}
-    
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
     public PositionablePoint findPositionablePointByEastBoundSignal(String signalName){
-        for (int i = 0; i<pointList.size(); i++) {
-            PositionablePoint p = pointList.get(i);
-            if (p.getEastBoundSignal().equals(signalName))
-                return p;
-        }
-        return null;
+        return finder.findPositionablePointByEastBoundSignal(signalName);
     }
-
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
     public PositionablePoint findPositionablePointByWestBoundSignal(String signalName){
-        for (int i = 0; i<pointList.size(); i++) {
-            PositionablePoint p = pointList.get(i);
-            if (p.getWestBoundSignal().equals(signalName))
-                return p;
-        }
-        return null;
+        return finder.findPositionablePointByWestBoundSignal(signalName);
     }
-    
-    public PositionablePoint findPositionablePointByWestBoundBean(jmri.NamedBean bean){
-        if(bean instanceof SignalMast){
-            for(PositionablePoint p:pointList){
-                if(p.getWestBoundSignalMast()==bean)
-                    return p;
-            }
-        } else if (bean instanceof Sensor){
-            for(PositionablePoint p:pointList){
-                if(p.getWestBoundSensor()==bean)
-                    return p;
-            }
-        }  else if (bean instanceof SignalHead){
-            for(PositionablePoint p:pointList){
-                if(p.getWestBoundSignal().equals(bean.getSystemName()) ||
-                    p.getWestBoundSignal().equals(bean.getSystemName())){
-                  return p;
-                }
-            }
-        }
-        return null;
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
+    public PositionablePoint findPositionablePointByWestBoundBean(NamedBean bean){
+        return finder.findPositionablePointByWestBoundBean(bean);
     }
-
-    public PositionablePoint findPositionablePointByEastBoundBean(jmri.NamedBean bean){
-        if(bean instanceof SignalMast){
-            for(PositionablePoint p:pointList){
-                if(p.getEastBoundSignalMast()==bean)
-                    return p;
-            }
-        } else if (bean instanceof Sensor){
-            for(PositionablePoint p:pointList){
-                if(p.getEastBoundSensor()==bean)
-                    return p;
-            }
-        }  else if (bean instanceof SignalHead){
-            for(PositionablePoint p:pointList){
-                if(p.getEastBoundSignal().equals(bean.getSystemName()) ||
-                      p.getEastBoundSignal().equals(bean.getSystemName())){
-                    return p;
-                }
-            }
-        }
-        return null;
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
+    public PositionablePoint findPositionablePointByEastBoundBean(NamedBean bean){
+        return finder.findPositionablePointByEastBoundBean(bean);
     }
-
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
     public PositionablePoint findPositionablePointByWestBoundSignalMast(String signalMastName){
-        for (int i = 0; i<pointList.size(); i++) {
-            PositionablePoint p = pointList.get(i);
-            if (p.getWestBoundSignalMastName().equals(signalMastName))
-                return p;
-        }
-        return null;
+        return finder.findPositionablePointByWestBoundSignalMast(signalMastName);
     }
-    
-    public PositionablePoint findPositionablePointByBean(jmri.NamedBean bean){
-        if(bean instanceof SignalMast){
-            for(PositionablePoint p:pointList){
-                if(p.getWestBoundSignalMast()==bean ||
-                    p.getEastBoundSignalMast()==bean)
-                    return p;
-            }
-        } else if (bean instanceof Sensor){
-            for(PositionablePoint p:pointList){
-                if(p.getWestBoundSensor()==bean ||
-                    p.getEastBoundSensor()==bean)
-                    return p;
-            }
-        } else if (bean instanceof SignalHead){
-            for(PositionablePoint p:pointList){
-                if(p.getEastBoundSignal().equals(bean.getSystemName()) ||
-                    p.getWestBoundSignal().equals(bean.getSystemName())){
-                    
-                    return p;
-                }
-                if(bean.getUserName()!=null && (p.getEastBoundSignal().equals(bean.getSystemName()) ||
-                        p.getWestBoundSignal().equals(bean.getSystemName()))){
-                    return p;
-                }
-            }
-        }
-        return null;
-    
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
+    public PositionablePoint findPositionablePointByBean(NamedBean bean){
+        return finder.findPositionablePointByBean(bean);
     }
-    
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
     public LayoutTurnout findLayoutTurnoutBySignalMast(String signalMastName){
         return findLayoutTurnoutByBean(InstanceManager.signalMastManagerInstance().provideSignalMast(signalMastName));
     }
-    
-    public LayoutTurnout findLayoutTurnoutByBean(jmri.NamedBean bean){
-        if(bean instanceof SignalMast){
-            for(LayoutTurnout t:turnoutList){
-                if(t.getSignalAMast()==bean ||
-                    t.getSignalBMast()==bean ||
-                    t.getSignalCMast()==bean ||
-                    t.getSignalDMast()==bean)
-                    return t;
-            }
-        } else if (bean instanceof Sensor){
-            for(LayoutTurnout t:turnoutList){
-                if(t.getSensorA()==bean ||
-                    t.getSensorB()==bean ||
-                    t.getSensorC()==bean ||
-                    t.getSensorD()==bean)
-                    return t;
-            }
-        } else if (bean instanceof SignalHead){
-            for(LayoutTurnout t:turnoutList){
-                if(t.getSignalA1Name().equals(bean.getSystemName()) ||
-                    t.getSignalA2Name().equals(bean.getSystemName()) ||
-                      t.getSignalA3Name().equals(bean.getSystemName())){
-                        return t;
-                    }
-                
-                if(t.getSignalB1Name().equals(bean.getSystemName()) ||
-                    t.getSignalB2Name().equals(bean.getSystemName()) ){
-                        return t;
-                    }
-                if(t.getSignalC1Name().equals(bean.getSystemName()) ||
-                    t.getSignalC2Name().equals(bean.getSystemName()) ){
-                        return t;
-                    }
-                if(t.getSignalD1Name().equals(bean.getSystemName()) ||
-                    t.getSignalD2Name().equals(bean.getSystemName()) ){
-                        return t;
-                    }
-                if(bean.getUserName()!=null){
-                    if(t.getSignalA1Name().equals(bean.getUserName()) ||
-                        t.getSignalA2Name().equals(bean.getUserName()) ||
-                          t.getSignalA3Name().equals(bean.getUserName())){
-                            return t;
-                        }
-                    
-                    if(t.getSignalB1Name().equals(bean.getUserName()) ||
-                        t.getSignalB2Name().equals(bean.getUserName()) ){
-                            return t;
-                        }
-                    if(t.getSignalC1Name().equals(bean.getUserName()) ||
-                        t.getSignalC2Name().equals(bean.getUserName()) ){
-                            return t;
-                        }
-                    if(t.getSignalD1Name().equals(bean.getUserName()) ||
-                        t.getSignalD2Name().equals(bean.getUserName()) ){
-                            return t;
-                        }
-                }
-            }
-        } else if (bean instanceof Turnout){
-            for(LayoutTurnout t:turnoutList){
-                if(bean.equals(t.getTurnout())){
-                    return t;
-                }
-            }
-        }
-        return null;
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
+    public LayoutTurnout findLayoutTurnoutByBean(NamedBean bean){
+        return finder.findLayoutTurnoutByBean(bean);
     }
-    
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
     public LayoutTurnout findLayoutTurnoutBySensor(String sensorName){
         return findLayoutTurnoutByBean(InstanceManager.sensorManagerInstance().provideSensor(sensorName));
     }
-    
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
     public LevelXing findLevelXingBySignalMast(String signalMastName){
         return findLevelXingByBean(InstanceManager.signalMastManagerInstance().provideSignalMast(signalMastName));
     }
-    
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
     public LevelXing findLevelXingBySensor(String sensorName){
         return findLevelXingByBean(InstanceManager.sensorManagerInstance().provideSensor(sensorName));
     }
-    
-    public LevelXing findLevelXingByBean(jmri.NamedBean bean){
-        if(bean instanceof SignalMast){
-            for(LevelXing l: xingList){
-                if(l.getSignalAMast()==bean ||
-                    l.getSignalBMast()==bean ||
-                    l.getSignalCMast()==bean ||
-                    l.getSignalDMast()==bean)
-                    return l;
-            }
-        } else if (bean instanceof Sensor){
-            for(LevelXing l: xingList){
-                if(l.getSensorA()==bean ||
-                    l.getSensorB()==bean ||
-                    l.getSensorC()==bean ||
-                    l.getSensorD()==bean)
-                    return l;
-            }
-        
-        } else if (bean instanceof SignalHead){
-            for(LevelXing l: xingList){
-                if(l.getSignalAName().equals(bean.getSystemName()) ||
-                    l.getSignalBName().equals(bean.getSystemName()) ||
-                      l.getSignalCName().equals(bean.getSystemName()) || 
-                      l.getSignalDName().equals(bean.getSystemName())) {
-                        return l;
-                }
-                if(bean.getUserName()!=null && (l.getSignalAName().equals(bean.getUserName()) ||
-                    l.getSignalBName().equals(bean.getUserName()) ||
-                      l.getSignalCName().equals(bean.getUserName()) || 
-                      l.getSignalDName().equals(bean.getUserName()))) {
-                        return l;
-                }
-            }
-        }
-        return null;
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
+    public LevelXing findLevelXingByBean(NamedBean bean){
+        return finder.findLevelXingByBean(bean);
     }
-    
-    public LayoutSlip findLayoutSlipByBean(jmri.NamedBean bean){
-        if(bean instanceof SignalMast){
-            for(LayoutSlip l: slipList){
-                if(l.getSignalAMast()==bean ||
-                    l.getSignalBMast()==bean ||
-                    l.getSignalCMast()==bean ||
-                    l.getSignalDMast()==bean)
-                    return l;
-            }
-        } else if (bean instanceof Sensor){
-            for(LayoutSlip l: slipList){
-                if(l.getSensorA()==bean ||
-                    l.getSensorB()==bean ||
-                    l.getSensorC()==bean ||
-                    l.getSensorD()==bean)
-                    return l;
-            }
-        } else if (bean instanceof SignalHead){
-            for(LayoutSlip l: slipList){
-                if(l.getSignalA1Name().equals(bean.getSystemName()) ||
-                    l.getSignalA2Name().equals(bean.getSystemName()) ||
-                      l.getSignalA3Name().equals(bean.getSystemName())){
-                        return l;
-                    }
-                
-                if(l.getSignalB1Name().equals(bean.getSystemName()) ||
-                    l.getSignalB2Name().equals(bean.getSystemName()) ){
-                        return l;
-                    }
-                if(l.getSignalC1Name().equals(bean.getSystemName()) ||
-                    l.getSignalC2Name().equals(bean.getSystemName()) ){
-                        return l;
-                    }
-                if(l.getSignalD1Name().equals(bean.getSystemName()) ||
-                    l.getSignalD2Name().equals(bean.getSystemName()) ){
-                        return l;
-                    }
-                if(l.getSignalA1Name().equals(bean.getUserName()) ||
-                    l.getSignalA2Name().equals(bean.getUserName()) ||
-                      l.getSignalA3Name().equals(bean.getUserName())){
-                        return l;
-                    }
-                if(bean.getUserName()!=null){
-                    if(l.getSignalB1Name().equals(bean.getUserName()) ||
-                        l.getSignalB2Name().equals(bean.getUserName()) ){
-                            return l;
-                        }
-                    if(l.getSignalC1Name().equals(bean.getUserName()) ||
-                        l.getSignalC2Name().equals(bean.getUserName()) ){
-                            return l;
-                        }
-                    if(l.getSignalD1Name().equals(bean.getUserName()) ||
-                        l.getSignalD2Name().equals(bean.getUserName()) ){
-                            return l;
-                        }
-                }
-            }
-        } else if (bean instanceof Turnout){
-            for(LayoutSlip l: slipList){
-                if(bean.equals(l.getTurnout()))
-                    return l;
-                if(bean.equals(l.getTurnoutB()))
-                    return l;
-            }
-        }
-        return null;
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
+    public LayoutSlip findLayoutSlipByBean(NamedBean bean){
+        return finder.findLayoutSlipByBean(bean);
     }
-
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
     public LayoutSlip findLayoutSlipBySignalMast(String signalMastName){
         return findLayoutSlipByBean(InstanceManager.signalMastManagerInstance().provideSignalMast(signalMastName));
     }
-    
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
     public LayoutSlip findLayoutSlipBySensor(String sensorName){
         return findLayoutSlipByBean(InstanceManager.sensorManagerInstance().provideSensor(sensorName));
     }
-    
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
     public PositionablePoint findPositionablePointByEastBoundSensor(String sensorName){
-        for (int i = 0; i<pointList.size(); i++) {
-            PositionablePoint p = pointList.get(i);
-            if (p.getEastBoundSensorName().equals(sensorName))
-                return p;
-        }
-        return null;
+        return finder.findPositionablePointByEastBoundSensor(sensorName);
     }
-
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
     public PositionablePoint findPositionablePointByWestBoundSensor(String sensorName){
-        for (int i = 0; i<pointList.size(); i++) {
-            PositionablePoint p = pointList.get(i);
-            if (p.getWestBoundSensorName().equals(sensorName))
-                return p;
-
-        }
-        return null;
+        return finder.findPositionablePointByWestBoundSensor(sensorName);
     }
-
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
 	public LayoutTurnout findLayoutTurnoutByName(String name) {
-		if (name.length()<=0) return null;
-		for (int i = 0; i<turnoutList.size(); i++) {
-			LayoutTurnout t = turnoutList.get(i);
-			if (t.getName().equals(name)) {
-				return t;
-			}
-		}
-		return null;
+		return finder.findLayoutTurnoutByName(name);
 	}
-    
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
     public LayoutTurnout findLayoutTurnoutByTurnoutName(String name) {
-		if (name.length()<=0) return null;
-		for (int i = 0; i<turnoutList.size(); i++) {
-			LayoutTurnout t = turnoutList.get(i);
-			if (t.getTurnoutName().equals(name)) {
-				return t;
-			}
-		}
-		return null;
+		return finder.findLayoutTurnoutByTurnoutName(name);
 	}
-    
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
 	public LevelXing findLevelXingByName(String name) {
-		if (name.length()<=0) return null;
-		for (int i = 0; i<xingList.size(); i++) {
-			LevelXing x = xingList.get(i);
-			if (x.getID().equals(name)) {
-				return x;
-			}
-		}
-		return null;
+		return finder.findLevelXingByName(name);
 	}
-    
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
     public LayoutSlip findLayoutSlipByName(String name) {
-		if (name.length()<=0) return null;
-		for (int i = 0; i<slipList.size(); i++) {
-			LayoutSlip x = slipList.get(i);
-			if (x.getName().equals(name)) {
-				return x;
-			}
-		}
-		return null;
+		return finder.findLayoutSlipByName(name);
 	}
-    
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
 	public LayoutTurntable findLayoutTurntableByName(String name) {
-		if (name.length()<=0) return null;
-		for (int i = 0; i<turntableList.size(); i++) {
-			LayoutTurntable x = turntableList.get(i);
-			if (x.getID().equals(name)) {
-				return x;
-			}
-		}
-		return null;
+		return finder.findLayoutTurntableByName(name);
 	}
+    /**
+    * @deprecated As of 3.9.2, ... use getFinder().find...
+    */
+    @Deprecated
 	public Object findObjectByTypeAndName(int type,String name) {
-		if (name.length()<=0) return null;
-		switch (type) {
-			case NONE:
-				return null;
-			case POS_POINT:
-				return findPositionablePointByName(name);
-			case TURNOUT_A:
-			case TURNOUT_B:
-			case TURNOUT_C:
-			case TURNOUT_D:
-				return findLayoutTurnoutByName(name);
-			case LEVEL_XING_A:
-			case LEVEL_XING_B:
-			case LEVEL_XING_C:
-			case LEVEL_XING_D:
-				return findLevelXingByName(name);
-			case SLIP_A:
-			case SLIP_B:
-			case SLIP_C:
-			case SLIP_D:
-				return findLayoutSlipByName(name);
-			case TRACK:
-				return findTrackSegmentByName(name);
-			default:
-				if (type>=TURNTABLE_RAY_OFFSET)
-					return findLayoutTurntableByName(name);
-		}
-		log.error("did not find Object '"+name+"' of type "+type);
-		return null;
+		return finder.findObjectByTypeAndName(type, name);
 	}
 
     /**
@@ -8785,7 +8563,7 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
 				else g2.setColor(defaultTrackColor);
 				setTrackStrokeWidth(g2,mainline);
                 if (t.getArc()){
-                    CalculateTrackSegmentAngle(t);
+                    t.calculateTrackSegmentAngle();
                     Stroke drawingStroke;
                     Stroke originalStroke = g2.getStroke();
                     if (mainline)
@@ -8832,7 +8610,7 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
 				else g2.setColor(defaultTrackColor);
 				//setTrackStrokeWidth(g2,mainline);
                 if(t.getArc()){
-                    CalculateTrackSegmentAngle(t);
+                    t.calculateTrackSegmentAngle();
                     g2.draw(new Arc2D.Double(t.getCX(), t.getCY(), t.getCW(), t.getCH(), t.getStartadj(), t.getTmpAngle(), Arc2D.OPEN));
                 } else {
                     Point2D end1 = getCoords(t.getConnect1(),t.getType1());
@@ -8844,125 +8622,6 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
 		}
 	}
     
-    /*
-     * Calculates the initally parameters for drawing a circular track segment.
-     */
-    private void CalculateTrackSegmentAngle(TrackSegment t){
-        Point2D pt1 = getCoords(t.getConnect1(),t.getType1());
-        Point2D pt2 = getCoords(t.getConnect2(),t.getType2());
-        if (t.getFlip()){
-            pt1 = getCoords(t.getConnect2(),t.getType2());
-            pt2 = getCoords(t.getConnect1(),t.getType1());
-        }
-        if((t.getTmpPt1()!=pt1) || (t.getTmpPt2()!=pt2) || t.trackNeedsRedraw()){
-            t.setTmpPt1(pt1);
-            t.setTmpPt2(pt2);
-            //setTrackStrokeWidth(g2,false);
-            double pt2x;
-            double pt2y;
-            double pt1x;
-            double pt1y;
-            pt2x = pt2.getX();
-            pt2y = pt2.getY();
-            pt1x = pt1.getX();
-            pt1y = pt1.getY();
-
-            if (t.getAngle() == 0.0D)
-                t.setTmpAngle(90.0D);
-            else
-                t.setTmpAngle(t.getAngle());
-            // Convert angle to radiants in order to speed up maths
-            double halfAngle = java.lang.Math.toRadians(t.getTmpAngle())/2.0D;
-            double chord;
-            double a;
-            double o;
-            double radius;
-            // Compute arc's chord
-            a = pt2x - pt1x;
-            o = pt2y - pt1y;
-            chord=java.lang.Math.sqrt(((a*a)+(o*o)));
-            t.setChordLength(chord);
-            // Make sure chord is not null 
-            // In such a case (pt1 == pt2), there is no arc to draw
-            if (chord > 0.0D) {
-                radius = (chord/2)/(java.lang.Math.sin(halfAngle));
-                // Circle
-                double startRad = java.lang.Math.atan2(a, o) - halfAngle;
-                t.setStartadj(java.lang.Math.toDegrees(startRad));
-                if(t.getCircle()){
-                    // Circle - Compute center
-                    t.setCentreX(pt2x - java.lang.Math.cos(startRad) * radius);
-                    t.setCentreY(pt2y + java.lang.Math.sin(startRad) * radius);
-                    
-                    // Circle - Compute rectangle required by Arc2D.Double
-                    t.setCW(radius * 2.0D);
-                    t.setCH(radius * 2.0D);
-                    t.setCX(t.getCentreX()-(radius));
-                    t.setCY(t.getCentreY()-(radius));
-                    
-                    //Compute the vlues for locating the circle
-                    
-                    t.setCentreSegX(t.getCentreX() + radius*java.lang.Math.cos(startRad+halfAngle));
-                    t.setCentreSegY(t.getCentreY() - java.lang.Math.sin(startRad+halfAngle) * radius);
-                    
-                } 
-                else {
-                    // Elipse - Round start angle to the closest multiple of 90
-                    t.setStartadj(java.lang.Math.round(t.getStartadj() / 90.0D) * 90.0D);
-                    // Elipse - Compute rectangle required by Arc2D.Double
-                    t.setCW(java.lang.Math.abs(a)*2.0D);
-                    t.setCH(java.lang.Math.abs(o)*2.0D);
-                    // Elipse - Adjust rectangle corner, depending on quadrant
-                    if (o * a < 0.0D)
-                        a = -a;
-                    else
-                        o = -o;
-                    t.setCX(java.lang.Math.min(pt1x, pt2x)-java.lang.Math.max(a, 0.0D));
-                    t.setCY(java.lang.Math.min(pt1y, pt2y)-java.lang.Math.max(o, 0.0D));
-                }
-            }
-        }
-    }
-    /*
-     * The recalculation method is used when the user changes the angle dynamically in edit mode
-     * by dragging the centre of the cirle
-     */
-    private void reCalculateTrackSegmentAngle(TrackSegment t, double x, double y){
-        
-        double pt2x;
-        double pt2y;
-        double pt1x;
-        double pt1y;
-
-        pt2x = t.getTmpPt2().getX();
-        pt2y = t.getTmpPt2().getY();
-        pt1x = t.getTmpPt1().getX();
-        pt1y = t.getTmpPt1().getY();
-        if (t.getFlip()){
-            pt1x = t.getTmpPt2().getX();
-            pt1y = t.getTmpPt2().getY();
-            pt2x = t.getTmpPt1().getX();
-            pt2y = t.getTmpPt1().getY();
-        }
-        //Point 1 to new point length
-        double a;
-        double o;
-        double la;
-        // Compute arc's chord
-        a = pt2x - x;
-        o = pt2y - y;
-        la=java.lang.Math.sqrt(((a*a)+(o*o)));
-        
-        double lb;
-        a = pt1x - x;
-        o = pt1y - y;
-        lb=java.lang.Math.sqrt(((a*a)+(o*o)));
-
-        double newangle=Math.toDegrees(Math.acos((-t.getChordLength()*t.getChordLength()+la*la+lb*lb)/(2*la*lb)));
-        t.setAngle(newangle);
-        
-    }
-	
     /*
      * Draws a square at the circles centre, that then allows the user to dynamically change
      * the angle by dragging the mouse.
@@ -9197,7 +8856,7 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
     }
     
     @Override
-    public void addToPopUpMenu(jmri.NamedBean nb, JMenuItem item, int menu){
+    public void addToPopUpMenu(NamedBean nb, JMenuItem item, int menu){
         if(nb==null || item==null){
             return;
         }
@@ -9288,7 +8947,7 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
     }
     
     public void vetoableChange(java.beans.PropertyChangeEvent evt) throws java.beans.PropertyVetoException {
-        jmri.NamedBean nb = (jmri.NamedBean) evt.getOldValue();
+        NamedBean nb = (NamedBean) evt.getOldValue();
         if("CanDelete".equals(evt.getPropertyName())){ //IN18N
             StringBuilder message = new StringBuilder();
             message.append(Bundle.getMessage("VetoInUseLayoutEditorHeader", toString())); //IN18N
@@ -9300,34 +8959,34 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
                     message.append("<li>");
                     message.append(Bundle.getMessage("VetoSignalHeadIconFound"));
                     message.append("</li>");
-                    LayoutTurnout lt = findLayoutTurnoutByBean(nb);
-                    if(lt!=null){
-                        message.append("<li>");
-                        message.append(Bundle.getMessage("VetoSignalHeadAssignedToTurnout", lt.getTurnoutName()));
-                        message.append("</li>");
-                    }
-                    PositionablePoint p = findPositionablePointByBean(nb);
-                    if(p!=null){
-                        message.append("<li>");
-                        message.append(Bundle.getMessage("VetoSignalHeadAssignedToPoint")); //Need to expand to get the names of blocks
-                        message.append("</li>");
-                    }
-                    LevelXing lx = findLevelXingByBean(nb);
-                    if(lx!=null){
-                        message.append("<li>");
-                        message.append(Bundle.getMessage("VetoSignalHeadAssignedToLevelXing")); //Need to expand to get the names of blocks
-                        message.append("</li>");
-                    }
-                    LayoutSlip ls = findLayoutSlipByBean(nb);
-                    if(ls!=null){
-                        message.append("<li>");
-                        message.append(Bundle.getMessage("VetoSignalHeadAssignedToLayoutSlip", ls.getTurnoutName()));
-                        message.append("</li>");
-                    }
+                }
+                LayoutTurnout lt = finder.findLayoutTurnoutByBean(nb);
+                if(lt!=null){
+                    message.append("<li>");
+                    message.append(Bundle.getMessage("VetoSignalHeadAssignedToTurnout", lt.getTurnoutName()));
+                    message.append("</li>");
+                }
+                PositionablePoint p = finder.findPositionablePointByBean(nb);
+                if(p!=null){
+                    message.append("<li>");
+                    message.append(Bundle.getMessage("VetoSignalHeadAssignedToPoint")); //Need to expand to get the names of blocks
+                    message.append("</li>");
+                }
+                LevelXing lx = finder.findLevelXingByBean(nb);
+                if(lx!=null){
+                    message.append("<li>");
+                    message.append(Bundle.getMessage("VetoSignalHeadAssignedToLevelXing")); //Need to expand to get the names of blocks
+                    message.append("</li>");
+                }
+                LayoutSlip ls = finder.findLayoutSlipByBean(nb);
+                if(ls!=null){
+                    message.append("<li>");
+                    message.append(Bundle.getMessage("VetoSignalHeadAssignedToLayoutSlip", ls.getTurnoutName()));
+                    message.append("</li>");
                 }
             }
             else if(nb instanceof Turnout){
-                LayoutTurnout lt = findLayoutTurnoutByBean(nb);
+                LayoutTurnout lt = finder.findLayoutTurnoutByBean(nb);
                 if (lt!=null){
                     found = true;
                     message.append("<li>");
@@ -9351,7 +9010,7 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
                         message.append("</li>");
                     }
                 }
-                LayoutSlip ls = findLayoutSlipByBean(nb);
+                LayoutSlip ls = finder.findLayoutSlipByBean(nb);
                 if(ls!=null){
                     found = true;
                     message.append("<li>");
@@ -9372,35 +9031,62 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
                     }
                 }
             }
+            if(nb instanceof SignalMast){
+                if(containsSignalMast((SignalMast)nb)){
+                    message.append("<li>");
+                    message.append("As an Icon");
+                    message.append("</li>");
+                    found = true;
+                }
+                String foundelsewhere = findBeanUsage(nb);
+                if(foundelsewhere!=null){
+                    message.append(foundelsewhere);
+                    found = true;
+                }
+            }
+            if(nb instanceof Sensor){
+                int count = 0;
+                for(SensorIcon si:sensorList){
+                    if(nb.equals(si.getNamedBean())){
+                        count++;
+                        found = true;
+                    }
+                }
+                if(count>0){
+                    message.append("<li>");
+                    message.append("As an Icon " + count + " times");
+                    message.append("</li>");
+                }
+                String foundelsewhere = findBeanUsage(nb);
+                if(foundelsewhere!=null){
+                    message.append(foundelsewhere);
+                    found = true;
+                }
+            }
+            if (nb instanceof Memory){
+                for(MemoryIcon si: memoryLabelList){
+                    if(nb.equals(si.getMemory())){
+                        found = true;
+                        message.append("<li>");
+                        message.append(Bundle.getMessage("VetoMemoryIconFound"));
+                        message.append("</li>");
+                    }
+                }
+            }
             if(found){
                 message.append("</ul>");
                 message.append(Bundle.getMessage("VetoReferencesWillBeRemoved")); //IN18N
                 throw new java.beans.PropertyVetoException(message.toString(), evt);
             }
+
         } else if ("DoDelete".equals(evt.getPropertyName())){ //IN18N
-            if(nb instanceof SignalHead && containsSignalHead((SignalHead)nb)){
-                LayoutTurnout lt = findLayoutTurnoutByBean(nb);
-                if(lt!=null){
-                    lt.removeSignalHead((SignalHead)nb);
-                }
-                PositionablePoint p = findPositionablePointByBean(nb);
-                if(p!=null){
-                    p.removeSignalHead((SignalHead)nb);
-                }
-                
-                LevelXing lx = findLevelXingByBean(nb);
-                if(lx!=null){
-                    lx.removeSignalHead((SignalHead)nb);
-                }
-                LayoutSlip ls = findLayoutSlipByBean(nb);
-                if(ls!=null){
-                    ls.removeSignalHead((SignalHead)nb);
-                }
+            if(nb instanceof SignalHead){
                 removeSignalHead((SignalHead)nb);
+                removeBeanRefs(nb);
             }
             
             if(nb instanceof Turnout){
-                LayoutTurnout lt = findLayoutTurnoutByBean(nb);
+                LayoutTurnout lt = finder.findLayoutTurnoutByBean(nb);
                 if(lt!=null)
                     lt.setTurnout(null);
                 for(LayoutTurnout t:turnoutList){
@@ -9426,9 +9112,47 @@ public class LayoutEditor extends jmri.jmrit.display.panelEditor.PanelEditor imp
                     if(lx.isTurnoutControlled()){
                         for(int i = 0; i<lx.getNumberRays(); i++){
                             if(nb.equals(lx.getRayTurnout(i))){
-                                lx.setRayTurnout(i, null, jmri.NamedBean.UNKNOWN);
+                                lx.setRayTurnout(i, null, NamedBean.UNKNOWN);
                             }
                         }
+                    }
+                }
+            }
+            if(nb instanceof SignalMast){
+                removeBeanRefs(nb);
+                if(containsSignalMast((SignalMast)nb)){
+                    Iterator<SignalMastIcon> icon = signalMastList.iterator();
+                    while (icon.hasNext()){
+                        SignalMastIcon i = icon.next();
+                        if(i.getSignalMast().equals(nb)){
+                            icon.remove();
+                            super.removeFromContents(i);
+                        }
+                    }
+                    setDirty(true);
+                    repaint();
+                }
+            }
+            if(nb instanceof Sensor){
+                removeBeanRefs(nb);
+                Iterator<SensorIcon> icon = sensorImage.iterator();
+                while (icon.hasNext()){
+                    SensorIcon i = icon.next();
+                    if(nb.equals(i.getSensor())){
+                        icon.remove();
+                        super.removeFromContents(i);
+                    }
+                }
+                setDirty(true);
+                repaint();
+            }
+            if (nb instanceof Memory){
+                Iterator<MemoryIcon> icon = memoryLabelList.iterator();
+                while (icon.hasNext()){
+                    MemoryIcon i = icon.next();
+                    if(nb.equals(i.getMemory())){
+                        icon.remove();
+                        super.removeFromContents(i);
                     }
                 }
             }

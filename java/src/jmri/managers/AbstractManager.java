@@ -22,7 +22,7 @@ import jmri.*;
  * @version	$Revision$
  */
 abstract public class AbstractManager
-    implements Manager, java.beans.PropertyChangeListener {
+    implements Manager, java.beans.PropertyChangeListener, java.beans.VetoableChangeListener {
 
     public AbstractManager(){
         registerSelf();
@@ -231,6 +231,8 @@ abstract public class AbstractManager
     public List<NamedBean> getNamedBeanList() {
         return new ArrayList<NamedBean>(_tsys.values());
     }
+    
+    abstract public String getBeanTypeHandled();
 
     java.beans.PropertyChangeSupport pcs = new java.beans.PropertyChangeSupport(this);
     public synchronized void addPropertyChangeListener(java.beans.PropertyChangeListener l) {
@@ -269,7 +271,6 @@ abstract public class AbstractManager
         if(p.equals("CanDelete")){ //IN18N
             StringBuilder message = new StringBuilder();
             for(java.beans.VetoableChangeListener vc : vcs.getVetoableChangeListeners()){
-                log.info(""+vc);
                 try {
                     vc.vetoableChange(evt);
                 } catch (java.beans.PropertyVetoException e) {
@@ -278,7 +279,7 @@ abstract public class AbstractManager
                         throw e;
                     }
                     message.append(e.getMessage());
-                    message.append("<br><br>"); //IN18N
+                    message.append("<hr>"); //IN18N
                 }
             }
             throw new java.beans.PropertyVetoException(message.toString(), evt);
@@ -287,6 +288,39 @@ abstract public class AbstractManager
                 vcs.fireVetoableChange(evt);
             } catch (java.beans.PropertyVetoException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+    
+    public void vetoableChange(java.beans.PropertyChangeEvent evt) throws java.beans.PropertyVetoException {
+
+        if("CanDelete".equals(evt.getPropertyName())){ //IN18N
+            StringBuilder message = new StringBuilder();
+            message.append(Bundle.getMessage("VetoFoundIn", getBeanTypeHandled()));
+            message.append("<ul>");
+            boolean found = false;
+            for(NamedBean nb:_tsys.values()){
+                try {
+                    nb.vetoableChange(evt);
+                } catch (java.beans.PropertyVetoException e) {
+                    if(e.getPropertyChangeEvent().getPropertyName().equals("DoNotDelete")){ //IN18N
+                        throw e;
+                    }
+                    found = true;
+                    message.append("<li>" + e.getMessage() + "</li>");
+                }
+            }
+            message.append("</ul>");
+            message.append(Bundle.getMessage("VetoWillBeRemovedFrom", getBeanTypeHandled()));
+            if(found)
+                throw new java.beans.PropertyVetoException(message.toString(), evt);
+        } else {
+            for(NamedBean nb:_tsys.values()){
+                try {
+                    nb.vetoableChange(evt);
+                } catch (java.beans.PropertyVetoException e) {
+                    throw e;
+                }
             }
         }
     }

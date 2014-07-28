@@ -199,8 +199,10 @@ public abstract class AbstractSignalMast extends AbstractNamedBean
         return allowUnLit;
     }
     
-    public void vetoableChange(java.beans.PropertyChangeEvent evt) throws java.beans.PropertyVetoException {
-        log.info("vetoable Change Called");
+    public void vetoableChange(java.beans.PropertyChangeEvent evt) throws java.beans.PropertyVetoException {  }
+    
+    public String getBeanType(){
+        return Bundle.getMessage("BeanNameSignalMast");
     }
 
 }
