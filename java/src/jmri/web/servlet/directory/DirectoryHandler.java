@@ -13,6 +13,30 @@ import org.eclipse.jetty.util.resource.Resource;
  */
 public class DirectoryHandler extends ResourceHandler {
 
+    /**
+     * Construct a DirectoryHandler for the named resourceBase with common
+     * default settings.
+     *
+     * This constructor sets directory listings to true and returns the contents
+     * of index.html within the directory instead of listing the contents of the
+     * directory if index.html exists.
+     *
+     * @param resourceBase
+     */
+    public DirectoryHandler(String resourceBase) {
+        this();
+        this.setDirectoriesListed(true);
+        this.setWelcomeFiles(new String[]{"index.html"}); // NOI18N
+        this.setResourceBase(resourceBase);
+    }
+
+    /**
+     * Default handler constructor.
+     */
+    public DirectoryHandler() {
+        super();
+    }
+
     @Override
     protected void doDirectory(HttpServletRequest request, HttpServletResponse response, Resource resource) throws IOException {
         if (this.isDirectoriesListed()) {

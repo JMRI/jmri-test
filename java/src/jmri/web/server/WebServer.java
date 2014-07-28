@@ -12,6 +12,7 @@ import static jmri.jmris.json.JSON.JSON_PROTOCOL_VERSION;
 import jmri.util.FileUtil;
 import jmri.util.zeroconf.ZeroConfService;
 import jmri.web.servlet.directory.DirectoryHandler;
+import jmri.web.servlet.directory.JarDirectoryHandler;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -94,26 +95,18 @@ public final class WebServer implements LifeCycle.Listener {
                     if (filePaths.getProperty(path).startsWith("program:web")) { // NOI18N
                         log.debug("Setting up handler chain for {}", path);
                         // make it possible to override anything under program:web/ with an identical path under preference:web/
-                        ResourceHandler preferenceHandler = new DirectoryHandler();
-                        preferenceHandler.setDirectoriesListed(true);
-                        preferenceHandler.setWelcomeFiles(new String[]{"index.html"}); // NOI18N
-                        preferenceHandler.setResourceBase(FileUtil.getAbsoluteFilename(filePaths.getProperty(path).replace("program:", "preference:"))); // NOI18N
-                        ResourceHandler programHandler = new DirectoryHandler();
-                        programHandler.setDirectoriesListed(true);
-                        programHandler.setWelcomeFiles(new String[]{"index.html"}); // NOI18N
-                        programHandler.setResourceBase(FileUtil.getAbsoluteFilename(filePaths.getProperty(path)));
+                        ResourceHandler preferenceHandler = new DirectoryHandler(FileUtil.getAbsoluteFilename(filePaths.getProperty(path).replace("program:", "preference:"))); // NOI18N
+                        ResourceHandler programHandler = new DirectoryHandler(FileUtil.getAbsoluteFilename(filePaths.getProperty(path)));
+                        ResourceHandler jarHandler = new JarDirectoryHandler(filePaths.getProperty(path).substring(filePaths.getProperty(path).indexOf(":"))); // NOI18N
                         HandlerList handlers = new HandlerList();
-                        handlers.setHandlers(new Handler[]{preferenceHandler, programHandler, new DefaultHandler()});
+                        handlers.setHandlers(new Handler[]{preferenceHandler, jarHandler, programHandler, new DefaultHandler()});
                         ContextHandler handlerContext = new ContextHandler();
                         handlerContext.setContextPath(path);
                         handlerContext.setHandler(handlers);
                         contexts.addHandler(handlerContext);
                         continue;
                     }
-                    ResourceHandler handler = new DirectoryHandler();
-                    handler.setDirectoriesListed(true);
-                    handler.setWelcomeFiles(new String[]{"index.html"});
-                    handler.setResourceBase(FileUtil.getAbsoluteFilename(filePaths.getProperty(path)));
+                    ResourceHandler handler = new DirectoryHandler(FileUtil.getAbsoluteFilename(filePaths.getProperty(path)));
                     HandlerList handlers = new HandlerList();
                     handlers.setHandlers(new Handler[]{handler, new DefaultHandler()});
                     ContextHandler handlerContext = new ContextHandler();
