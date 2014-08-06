@@ -183,7 +183,7 @@ public class OffsetHighCvProgrammerFacade extends AbstractProgrammerFacade imple
     public boolean getCanWrite(String addr) { return Integer.parseInt(addr)<=1024; }
     public boolean getCanWrite(int mode, String addr)  { return getCanWrite(addr); }
 
-    static Logger log = LoggerFactory.getLogger(AddressedHighCvProgrammerFacade.class.getName());
+    static Logger log = LoggerFactory.getLogger(OffsetHighCvProgrammerFacade.class.getName());
 
 }
 

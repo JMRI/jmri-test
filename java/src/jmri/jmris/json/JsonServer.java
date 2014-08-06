@@ -9,6 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
 import jmri.implementation.QuietShutDownTask;
 import jmri.jmris.JmriConnection;
 import jmri.jmris.JmriServer;
@@ -16,6 +17,7 @@ import static jmri.jmris.json.JSON.GOODBYE;
 import static jmri.jmris.json.JSON.JSON;
 import static jmri.jmris.json.JSON.JSON_PROTOCOL_VERSION;
 import static jmri.jmris.json.JSON.TYPE;
+import static jmri.jmris.json.JSON.ZEROCONF_SERVICE_TYPE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +72,7 @@ public class JsonServer extends JmriServer {
     protected void advertise() {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(JSON, JSON_PROTOCOL_VERSION);
-        this.advertise("_jmri-json._tcp.local.", properties); // NOI18N
+        this.advertise(ZEROCONF_SERVICE_TYPE, properties);
     }
 
     // Handle communication to a client through inStream and outStream
@@ -102,5 +104,14 @@ public class JsonServer extends JmriServer {
     @Override
     public void stopClient(DataInputStream inStream, DataOutputStream outStream) throws IOException {
         outStream.writeBytes(this.mapper.writeValueAsString(this.mapper.createObjectNode().put(TYPE, GOODBYE)));
+        try {
+            // without this delay, the output stream could be closed before the
+            // preparing to disconnect message is sent
+            TimeUnit.MILLISECONDS.sleep(100);
+        } catch (InterruptedException ex) {
+            // log for debugging only, since we are most likely shutting down the
+            // server or the program entirely at this point, so it doesn't matter
+            log.debug("Wait to send clean shutdown message interrupted.");
+        }
     }
 }

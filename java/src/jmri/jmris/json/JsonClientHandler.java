@@ -44,6 +44,7 @@ import static jmri.jmris.json.JSON.SIGNAL_HEAD;
 import static jmri.jmris.json.JSON.SIGNAL_HEADS;
 import static jmri.jmris.json.JSON.SIGNAL_MAST;
 import static jmri.jmris.json.JSON.SIGNAL_MASTS;
+import static jmri.jmris.json.JSON.SYSTEM_CONNECTIONS;
 import static jmri.jmris.json.JSON.THROTTLE;
 import static jmri.jmris.json.JSON.TIME;
 import static jmri.jmris.json.JSON.TRAIN;
@@ -214,6 +215,8 @@ public class JsonClientHandler {
                     reply = JsonUtil.getTurnouts(this.connection.getLocale());
                 } else if (list.equals(NETWORK_SERVICES)) {
                     reply = JsonUtil.getNetworkServices(this.connection.getLocale());
+                } else if (list.equals(SYSTEM_CONNECTIONS)) {
+                    reply = JsonUtil.getSystemConnections();
                 } else {
                     this.sendErrorMessage(404, Bundle.getMessage(this.connection.getLocale(), "ErrorUnknownList", list));
                     return;
@@ -271,7 +274,7 @@ public class JsonClientHandler {
     private void receiveHello(JsonNode data) {
         if (!data.path(LOCALE).isMissingNode()) {
             // the following would be a one liner in Java 1.7:
-            // this.connection.getLocale() = Locale.forLanguageTag(data.path(LOCALE).asText();
+            // this.connection.setLocale(Locale.forLanguageTag(data.path(LOCALE).asText()));
             String[] parts = data.path(LOCALE).asText().split("-", 3);
             switch (parts.length) {
                 case 3:

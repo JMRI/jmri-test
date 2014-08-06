@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -23,6 +22,7 @@ import jmri.jmrix.AbstractMRListener;
 import jmri.jmrix.AbstractMRMessage;
 import jmri.jmrix.AbstractMRReply;
 import jmri.jmrix.AbstractMRTrafficController;
+import jmri.jmrix.AbstractPortController;
 import jmri.jmrix.ConnectionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +49,21 @@ public class JsonClientTrafficController extends AbstractMRTrafficController imp
 
     @Override
     protected void terminate() {
+        log.debug("Cleanup Starts");
+        if (ostream == null) {
+            return;    // no connection to terminate
+        }
+        this.forwardToPort(new JsonClientMessage(mapper.createObjectNode().put(JSON.TYPE, JSON.GOODBYE)), null);
+        this.disconnectPort(this.controller);
+    }
+
+    @Override
+    public void disconnectPort(AbstractPortController controller) {
         if (this.heartbeat != null) {
             this.heartbeat.cancel();
             this.heartbeat = null;
         }
+        super.disconnectPort(controller);
     }
 
     @Override
@@ -129,7 +140,8 @@ public class JsonClientTrafficController extends AbstractMRTrafficController imp
                 JsonNode data = root.path(DATA);
                 log.debug("Processing {} with {}", type, data);
                 if (type.equals(GOODBYE)) {
-                    // TODO: close port connection
+                    log.info("Connection closing from server.");
+                    break;
                 } else if (type.equals(HELLO)) {
                     this.receiveHello(data);
                 } else if (type.equals(LOCALE)) {
@@ -162,10 +174,17 @@ public class JsonClientTrafficController extends AbstractMRTrafficController imp
         this.recovery();
     }
 
-    protected void receiveHello(JsonNode data) {
+    protected void receiveHello(JsonNode helloData) {
         this.heartbeat = new Timer();
-        this.heartbeat.schedule(new Heartbeat(), 0, data.path(JSON.HEARTBEAT).asInt());
-        // TODO: request power status
+        this.heartbeat.schedule(new Heartbeat(), 0, helloData.path(JSON.HEARTBEAT).asInt());
+        // Send LOCALE message
+        /* Comment out following until Java 7 can be used.
+         ObjectNode root = this.mapper.createObjectNode();
+         ObjectNode data = root.putObject(JSON.DATA);
+         root.put(JSON.TYPE, JSON.LOCALE);
+         data.put(JSON.LOCALE, Locale.getDefault().toLanguageTag());
+         this.sendMessage(new JsonClientMessage(root), null);
+         */
     }
 
     @Override
@@ -199,10 +218,7 @@ public class JsonClientTrafficController extends AbstractMRTrafficController imp
 
         @Override
         public void run() {
-            ObjectNode root = mapper.createObjectNode();
-            root.put(JSON.TYPE, JSON.PING);
-            JsonClientMessage message = new JsonClientMessage(root);
-            sendMessage(message, null);
+            sendMessage(new JsonClientMessage(mapper.createObjectNode().put(JSON.TYPE, JSON.PING)), null);
         }
     }
 }
