@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<!-- Copyright ($Author$) 2009 -->
+<!-- $Id$ -->
+	<title>JMRI: Add/Edit Signal Groups</title>
+<meta name="Author" content="Bob Jacobsen, Egbert Broerse">
+<meta name="Date.Modified" content="20140615">
+<!-- Style -->
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="/css/default.css" media="screen">
+<link rel="stylesheet" type="text/css" href="/css/print.css" media="print">
+<link rel="icon" href="/images/jmri.ico" TYPE="image/png">
+<link rel="home" title="Home" href="/">
+<!-- /Style -->
+</head>
+
+<body>
+<!--#include virtual="/Header" -->
+  <div class="nomenu" id="mBody">
+    <div id="mainContent">
+
+<h1> 
+Adding &amp; Editing a Signal Group
+</h1>
+
+<a href="SignalGroupAdd.png">
+   <img src="SignalGroupAdd.png" align="right" width="306" height="274" >
+</a>
+		When you click on the <b>Add...</b> button below the <a href="SignalGroupTable.shtml">Signal Groups Table</a>, the <b>Add/Edit Signal Group</b> panel appears.</p>
+<p>Start by entering a System and User name for the Signal Group. Once a Signal Group is created, you can't change the System Name.<br/>
+		Next enter the following:
+<ul>
+	<li>The Signal Mast to which this Signal Group is attached.<br>
+		<li>A list of Appearances that can be valid for the Signal Group to become active eg. the Signal Mast must be set for Proceed or Caution, but not Danger.<br/>
+			Click "Done" and re-open the panel to refresh the list of available Appearances for the selected Signal Mast.
+	<li>In the second list, check the Include box of the Signal Heads that make up each indication of the Signal Group.<br/>
+Signal Heads within the Signal Group are made up from Signal Heads from the Signal Heads Table, created using the Single Output connection type. Other types don't show up in the list.
+		<li>Each Signal Head has a set of criteria that have to be met before that Signal Head is illuminated. These are made up from Turnouts and/or Sensor states and can be changed by clicking on one of the <b>Edit</b> buttons.<br/>
+	</ul>
+
+		<a href="SignalGroupAddEditHead.png">
+   <img src="SignalGroupAddEditHead.png" width="351" height="236" >
+</a>
+	
+<h2>Example - Junction Indicator</h2>
+<p>Consider the following track diagram, where you have 6 possible junctions off the main running line.<br>
+
+<a href="SignalGroupTrackDiagram.png">
+   <img src="SignalGroupTrackDiagram.png" 
+        height="90" width="233">
+</a>
+
+<p>The signal facing this junction will have a junction indicator attached, with each possible route having it own indication.  When the route is set for straight through, then no indicator is shown.  If the route is set for position 1, then the position 1 indicator will be shown.<br>
+<a href="SignalGroupTrackDiagram1.png">
+   <img src="SignalGroupTrackDiagram1.png" 
+        height="90" width="262">
+</a>
+
+<p>With this configuration, you would create a single turnout Signal Head for each position, configured with a Dark and Lunar appearances. You can use any two combinations of colours you like, however Dark and Lunar are more suitable for this situation.
+
+	<p> Within the Signal Group, you would then select each of the Signal Heads that are used to create the junction indicator. The logic for each Signal Head is then configured as follows:
+<table>
+ <tr>
+	 <td width=200 valign=top>
+  <p>Position 1 - Set Turnouts</p>
+  <p>IT1 set Thrown,</p>
+  <p>IT2 set Thrown.</p>
+  </td>
+  <td width=200>
+  <p>Position 2 - Set Turnouts</p>
+  <p>IT1 set Thrown,</p>
+  <p>IT2 set Closed,</p>
+  <p>IT3 set Thrown.</p>
+  </td>
+ </tr>
+ <tr>
+	 <td width=200>
+  <p>Position 3 - Set Turnouts</p>
+  <p>IT1 set Thrown,</p>
+  <p>IT2 set Closed,</p>
+  <p>IT3 set Closed.</p>
+  </td>
+  <td width=200>
+  <p>Position 4 - Set Turnouts</p>
+  <p>IT1 set Closed</p>
+  <p>IT4 set Thrown</p>
+  <p>IT5 set Thrown</p>
+  </td>
+ </tr>
+<tr>  <td width=200>
+  <p>Position 5 - Set Turnouts</p>
+  <p>IT1 set Closed</p>
+  <p>IT4 set Thrown</p>
+  <p>IT5 set Closed</p>
+  <p>IT6 set Thrown</p>
+  </td>
+  <td width=200>
+  <p>Position 6 - Set Turnouts</p>
+  <p>IT1 set Closed</p>
+  <p>IT4 set Thrown</p>
+  <p>IT5 set Closed</p>
+  <p>IT6 set Closed</p>
+  </td>
+ </tr>
+</table>
+
+	<h2>Saving changes</h2>
+To permanently save changes to the Signal Groups Table, use one of the "Store to file" options in the "File"
+	menu before quitting JMRI.
+
+<p>Back to the <a href="SignalGroupTable.shtml">Signal Groups Table help page</a>.
+
+</div>
+</div>
+		
+<!--#include virtual="/Footer" -->
+</body>
+</html>
