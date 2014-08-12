@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.jmri.util.zeroconf
+OpenIDE-Module-Localizing-Bundle: org/jmri/util/zeroconf/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
