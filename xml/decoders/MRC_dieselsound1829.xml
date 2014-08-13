@@ -31,37 +31,37 @@
       <variable CV="3" item="Accel" default="0" tooltip="Acceleration" comment="Range 0-32">
         <decVal max="32"/>
         <label>Acceleration</label>
+        <label xml:lang="it">Accellerazione (0-32)</label>
+        <label xml:lang="fr">Accelération (0-32)</label>
+        <label xml:lang="de">Anfahrverzögerung (0-32)</label>
         <comment>Range 0-32</comment>
       </variable>
       <variable CV="4" item="Decel" default="0" tooltip="Deceleration" comment="Range 0-32">
         <decVal max="32"/>
         <label>Deceleration</label>
+        <label xml:lang="it">Decellerazione (1-32)</label>
+        <label xml:lang="fr">Décélération (1-32)</label>
+        <label xml:lang="de">Bremszeit (1-32)</label>
         <comment>Range 0-32</comment>
       </variable>
       <variable CV="2" item="Vstart" default="12" tooltip="Start Voltage" comment="Range 0-32">
         <decVal max="32"/>
         <label>Start Voltage</label>
+        <label xml:lang="it">Volt Partenza</label>
+        <label xml:lang="fr">V démarr.</label>
+        <label xml:lang="de">Anfahrspannung</label>
         <comment>Range 0-32</comment>
       </variable>
       <variable CV="5" item="Vhigh" default="32" tooltip="Maximum Voltage" comment="Range 0-32">
         <decVal max="32"/>
         <label>Top Voltage</label>
+        <label xml:lang="it">Volt Massimi (0-32):</label>
+        <label xml:lang="de">Höchstgeschwindigkeit</label>
         <comment>Range 0-32</comment>
       </variable>
-      <variable CV="65" item="Kick Start" default="63" tooltip="Kick Start Voltage" comment="Range 0-63">
-        <decVal max="63"/>
-        <label>Kick Start</label>
-        <comment>Range 0-63</comment>
-      </variable>
+      <xi:include href="http://jmri.org/xml/decoders/nmra/kickStart_63.xml"/>
       <variable CV="124" item="EMF Option 1" default="0" tooltip="Back EMF Load Control, on/off, 1=on">
-        <enumVal>
-          <enumChoice choice="Off">
-            <choice>Off</choice>
-          </enumChoice>
-          <enumChoice choice="On">
-            <choice>On</choice>
-          </enumChoice>
-        </enumVal>
+        <xi:include href="http://jmri.org/xml/decoders/parts/enum-OffOn.xml"/>
         <label>Back EMF Load Control on/off</label>
       </variable>
       <!-- Version 1.1 Modified CV6-->
@@ -81,47 +81,25 @@
       </variable>
       <variable CV="7" readOnly="yes" item="Decoder Version" default="29" tooltip="Decoder Version">
         <decVal/>
-        <label>Version ID</label>
+        <label xml:lang="it">Versione Decoder: </label>
+        <label xml:lang="fr">Version décodeur: </label>
+        <label xml:lang="de">Decoder Version: </label>
+        <label>Manufacturer Version No: </label>
       </variable>
       <variable CV="8" readOnly="yes" item="Manufacturer" default="143" tooltip="Manufacture">
         <decVal/>
-        <label>Manufacturer ID</label>
+        <label xml:lang="it">ID Costruttore: </label>
+        <label xml:lang="fr">ID constructeur: </label>
+        <label xml:lang="de">Hersteller ID: </label>
+        <label>Manufacturer ID: </label>
       </variable>
-      <variable CV="19" mask="XVVVVVVV" item="Consist Address" tooltip="Consist Address">
-        <decVal/>
-        <label>Consist Address</label>
-      </variable>
-      <variable item="Consist Direction" CV="19" mask="VXXXXXXX" tooltip="Consist Direction">
-        <enumVal>
-          <enumChoice choice="Normal">
-            <choice>Normal</choice>
-          </enumChoice>
-          <enumChoice choice="Reversed">
-            <choice>Reversed</choice>
-          </enumChoice>
-        </enumVal>
-        <label>Consist Direction</label>
-      </variable>
+      <xi:include href="http://jmri.org/xml/decoders/nmra/consistAddrDirection.xml"/>
       <variable CV="21" mask="XXXXXXXV" item="Consist Address Active For FL in Forward" tooltip="Functions Respond To Address">
-        <enumVal>
-          <enumChoice choice="Locomotive Address Only">
-            <choice>Locomotive Address Only</choice>
-          </enumChoice>
-          <enumChoice choice="Respond to Consist Address">
-            <choice>Respond to Consist Address</choice>
-          </enumChoice>
-        </enumVal>
+        <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
         <label>Functions Respond To Address</label>
       </variable>
       <variable CV="29" mask="XXXXXXXV" item="Locomotive Direction" tooltip="Normal Direction of motion">
-        <enumVal>
-          <enumChoice choice="Forward">
-            <choice>Forward</choice>
-          </enumChoice>
-          <enumChoice choice="Reverse">
-            <choice>Reverse</choice>
-          </enumChoice>
-        </enumVal>
+        <xi:include href="http://jmri.org/xml/decoders/parts/enum-FwdRev.xml"/>
         <label>Normal direction of motion</label>
       </variable>
       <variable CV="29" mask="XXXXXXVX" item="Speed Step Mode" default="1" tooltip="Speed Steps">
@@ -136,14 +114,7 @@
         <label>Speed Steps</label>
       </variable>
       <variable CV="29" mask="XXXXXVXX" default="0" item="Analog (DC) Operation" tooltip="Analog conversion mode">
-        <enumVal>
-          <enumChoice choice="Off">
-            <choice>Off</choice>
-          </enumChoice>
-          <enumChoice choice="On">
-            <choice>On</choice>
-          </enumChoice>
-        </enumVal>
+        <xi:include href="http://jmri.org/xml/decoders/parts/enum-OffOn.xml"/>
         <label>Analog conversion mode</label>
       </variable>
       <variable CV="29" mask="XXXVXXXX" item="Speed Table Definition" tooltip="Use speed table">
@@ -158,14 +129,7 @@
         <label>Use Speed Table</label>
       </variable>
       <variable CV="49" item="Sound Option 1" default="1" tooltip="Sound on or off (except horn)">
-        <enumVal>
-          <enumChoice choice="Off">
-            <choice>Off</choice>
-          </enumChoice>
-          <enumChoice choice="On">
-            <choice>On</choice>
-          </enumChoice>
-        </enumVal>
+        <xi:include href="http://jmri.org/xml/decoders/parts/enum-OffOn.xml"/>
         <label>Sound On/Off</label>
       </variable>
       <variable CV="50" item="Sound Option 2" default="17" tooltip="range 0-33, F19 also selects horn type" comment="Range 0-33">
@@ -184,14 +148,7 @@
         <label>Speed Table</label>
       </variable>
       <variable CV="115" item="Sound Option 4" default="1" tooltip="Auto Brake Squeal, range 0-1, 1=enable">
-        <enumVal>
-          <enumChoice choice="Disable">
-            <choice>Disable</choice>
-          </enumChoice>
-          <enumChoice choice="Enable">
-            <choice>Enable</choice>
-          </enumChoice>
-        </enumVal>
+        <xi:include href="http://jmri.org/xml/decoders/parts/enum-disabledEnabled.xml"/>
         <label>Auto Brake Squeal</label>
       </variable>
       <variable CV="123" item="Sound Option 5" default="3" tooltip="Prime Mover, range 0-4, 4=off">
@@ -303,14 +260,7 @@
         <comment>Range 0-3</comment>
       </variable>
       <variable CV="63" item="Global lighting option 1" default="1" tooltip="Ditch lights will automatically flash with horn">
-        <enumVal>
-          <enumChoice choice="Disable">
-            <choice>Disable</choice>
-          </enumChoice>
-          <enumChoice choice="Enable">
-            <choice>Enable</choice>
-          </enumChoice>
-        </enumVal>
+        <xi:include href="http://jmri.org/xml/decoders/parts/enum-disabledEnabled.xml"/>
         <label>Auto Ditch Lights Flash With Horn</label>
       </variable>
       <variable CV="117" item="Global lighting option 2" default="0" tooltip="Light Mode">

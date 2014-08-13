@@ -31,6 +31,9 @@
       <variable item="Vstart" CV="2" comment="A value of 255 corresponds to 100%">
         <decVal/>
         <label>Vstart</label>
+        <label xml:lang="it">Volt Partenza</label>
+        <label xml:lang="fr">V démarr.</label>
+        <label xml:lang="de">Startspannung</label>
         <comment>A value of 255 corresponds to 100%</comment>
       </variable>
       <xi:include href="http://jmri.org/xml/decoders/nmra/accelDecel.xml"/>
@@ -46,14 +49,7 @@
       <xi:include href="http://jmri.org/xml/decoders/nmra/cv29speedSteps.xml"/>
       <xi:include href="http://jmri.org/xml/decoders/nmra/cv29analog.xml"/>
       <variable CV="29" mask="XXXXVXXX" item="Advanced Ack">
-        <enumVal>
-          <enumChoice choice="disabled">
-            <choice>disabled</choice>
-          </enumChoice>
-          <enumChoice choice="enabled">
-            <choice>enabled</choice>
-          </enumChoice>
-        </enumVal>
+        <xi:include href="http://jmri.org/xml/decoders/parts/enum-disabledEnabled.xml"/>
         <label>Advanced Decoder Acknowledgement</label>
       </variable>
       <xi:include href="http://jmri.org/xml/decoders/nmra/cv29table1-28.xml"/>
