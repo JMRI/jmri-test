@@ -28,6 +28,8 @@ import jmri.profile.ProfileManagerDialog;
 import jmri.util.FileUtil;
 import jmri.web.server.WebServerManager;
 import org.jmri.managers.NetBeansShutDownManager;
+import org.openide.filesystems.FileObject;
+import org.openide.modules.Places;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +54,24 @@ public class JmriApplication {
 
     private JmriApplication(String title) throws IllegalAccessException, IllegalArgumentException {
         Application.setApplicationName(title);
+        // configure logging first
+        try {
+            // TODO allow log file to specified on CLI
+            FileObject logConfig = org.openide.filesystems.FileUtil.toFileObject(new File(Places.getUserDirectory(), "logging.properties"));
+            if (logConfig != null) {
+                logConfig = org.openide.filesystems.FileUtil.getConfigFile("logging.properties");
+            }
+            if (logConfig != null) {
+                logConfig = org.openide.filesystems.FileUtil.toFileObject((new File("logging.properties")).getCanonicalFile());
+            }
+            if (logConfig != null) {
+                LogManager.getLogManager().readConfiguration(logConfig.getInputStream());
+            } else {
+                LogManager.getLogManager().readConfiguration();
+            }
+        } catch (IOException | SecurityException ex) {
+            log.error("Unable to configure logging.", ex);
+        }
         // need to watch CLI arguments as well
         if (System.getProperty("org.jmri.Apps.configFilename") != null) {
             this.configFilename = System.getProperty("org.jmri.Apps.configFilename");
@@ -60,12 +80,6 @@ public class JmriApplication {
             this.configFilename = title.replaceAll(" ", "") + "Config.xml";
         }
         log.info("Using config file {}", this.configFilename);
-        // TODO: better logging handling
-        try {
-            LogManager.getLogManager().readConfiguration();
-        } catch (IOException | SecurityException ex) {
-            log.error("Unable to configure logging.", ex);
-        }
     }
 
     public static JmriApplication getApplication(String title) throws IllegalAccessException, IllegalArgumentException {
