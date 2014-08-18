@@ -20,9 +20,10 @@ public class TrainPro implements Runnable {
     public void run() {
         log.info("Running in a GUI environment.");
         try {
+            // Application name was set in TrainProHeadless.run()
+            JmriApplication.getApplication().show();
             // Do interesting things here
-            JmriApplication.getApplication("JMRI TrainPro").show();
-        } catch (IllegalAccessException | IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             log.error("Unable to start JMRI.", ex);
             Exceptions.printStackTrace(ex);
             // TODO: display error and initiate shutdown

@@ -19,18 +19,18 @@ public class TrainProHeadless implements Runnable {
 
     @Override
     public void run() {
-        // Only take action if headless, otherwise TrainPro will take action
-        // when the splash screen is displayed
-        if (GraphicsEnvironment.isHeadless()) {
-            log.info("Running in a headless environment.");
-            try {
+        try {
+            // Get the profiles before @OnShowing is triggered, so that
+            // when the main window is openned, we can begin populating it
+            JmriApplication.getApplication("JMRI TrainPro").start();
+            if (GraphicsEnvironment.isHeadless()) {
+                log.info("Running in a headless environment.");
                 // Do interesting things here
-                JmriApplication.getApplication("JMRI TrainPro").start();
-            } catch (IllegalAccessException | IllegalArgumentException ex) {
-                log.error("Unable to start JMRI.", ex);
-                Exceptions.printStackTrace(ex);
-                // TODO: display error and initiate shutdown
             }
+        } catch (IllegalAccessException | IllegalArgumentException ex) {
+            log.error("Unable to start JMRI.", ex);
+            Exceptions.printStackTrace(ex);
+            // TODO: display error and initiate shutdown
         }
     }
 }
