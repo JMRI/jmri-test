@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="../XSLT/decoder.xsl"?>
 <!-- Copyright (C) JMRI 2001, 2005, 2007, 2-009, 2010 All rights reserved -->
-<!-- $Id: Atlas_VO1000.xml 22091 2012-12-29 02:38:59Z jacobsen $ -->
+<!-- $Id$ -->
 <!--                                                                        -->
 <!-- JMRI is free software; you can redistribute it and/or modify it under  -->
 <!-- the terms of version 2 of the GNU General Public License as published  -->
@@ -69,39 +69,9 @@
         </enumVal>
         <label>Consist Direction</label>
       </variable>
-      <variable CV="29" mask="XXXXXXXV" item="Locomotive Direction">
-        <enumVal>
-          <enumChoice choice="Forward">
-            <choice>Forward</choice>
-          </enumChoice>
-          <enumChoice choice="Reverse">
-            <choice>Reverse</choice>
-          </enumChoice>
-        </enumVal>
-        <label>Normal direction of motion</label>
-      </variable>
-      <variable CV="29" mask="XXXXXXVX" item="Speed Step Mode" default="1">
-        <enumVal>
-          <enumChoice choice="14">
-            <choice>14</choice>
-          </enumChoice>
-          <enumChoice choice="28/128 (recommended)">
-            <choice>28/128 (recommended)</choice>
-          </enumChoice>
-        </enumVal>
-        <label>Speed Steps</label>
-      </variable>
-      <variable CV="29" mask="XXXXXVXX" default="1" item="Analog (DC) Operation">
-        <enumVal>
-          <enumChoice choice="Off">
-            <choice>Off</choice>
-          </enumChoice>
-          <enumChoice choice="On">
-            <choice>On</choice>
-          </enumChoice>
-        </enumVal>
-        <label>Analog conversion mode</label>
-      </variable>
+      <xi:include href="http://jmri.org/xml/decoders/nmra/cv29direction.xml"/>
+      <xi:include href="http://jmri.org/xml/decoders/nmra/cv29speedSteps.xml"/>
+      <xi:include href="http://jmri.org/xml/decoders/nmra/cv29analog.xml"/>
       <variable CV="50" item="DC Brake Momentum" mask="XXXXXVXX" comment="Governs how loco acts in DC track block">
         <enumVal>
           <enumChoice choice="Loco runs under DC analog voltage control">

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="../XSLT/decoder.xsl"?>
 <!-- Copyright (C) JMRI 2001, 2005, 2007, 2-009, 2010 All rights reserved -->
-<!-- $Id: ANE_LC201.xml,v 1.0 2012/01/27 03:38:51 bradshaw Exp $ -->
+<!-- $Id$ -->
 <!--                         cmosEng07@yahoo.com                            -->
 <!--                                                                        -->
 <!-- JMRI is free software; you can redistribute it and/or modify it under  -->
@@ -83,39 +83,9 @@
         </enumVal>
         <label>Consist Direction</label>
       </variable>
-      <variable CV="29" mask="XXXXXXXV" item="Locomotive Direction">
-        <enumVal>
-          <enumChoice choice="Forward">
-            <choice>Forward</choice>
-          </enumChoice>
-          <enumChoice choice="Reverse">
-            <choice>Reverse</choice>
-          </enumChoice>
-        </enumVal>
-        <label>Normal direction of motion</label>
-      </variable>
-      <variable CV="29" mask="XXXXXVXX" item="Speed Step Mode" default="1">
-        <enumVal>
-          <enumChoice choice="14">
-            <choice>14</choice>
-          </enumChoice>
-          <enumChoice choice="28/128 (recommended)">
-            <choice>28/128 (recommended)</choice>
-          </enumChoice>
-        </enumVal>
-        <label>Speed Steps</label>
-      </variable>
-      <variable CV="29" mask="XXXVXXXX" item="Speed Table Definition">
-        <enumVal>
-          <enumChoice choice="Don't use Speed Table">
-            <choice>Don't use Speed Table</choice>
-          </enumChoice>
-          <enumChoice choice="Use Speed Table">
-            <choice>Use Speed Table</choice>
-          </enumChoice>
-        </enumVal>
-        <label>Use Speed Table</label>
-      </variable>
+      <xi:include href="http://jmri.org/xml/decoders/nmra/cv29direction.xml"/>
+      <xi:include href="http://jmri.org/xml/decoders/nmra/cv29speedSteps.xml"/>
+      <xi:include href="http://jmri.org/xml/decoders/nmra/cv29table1-28.xml"/>
       <!-- Define the fixed Function-Output mapping -->
       <variable item="FL(f) controls output 1" CV="33" mask="XXXXXXXV" minOut="1" default="1">
         <enumVal>

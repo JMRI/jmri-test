@@ -230,9 +230,6 @@ any .xml, .jhm files or the web*.shtml files in the top directory, as they
 are automatically produced.
 </ul>
 
-
-
-
 <a name="dev"><h2>Internationalization for Developers</h2>
 
 For internationalization to work, you have to do a few things in the code 
@@ -240,10 +237,11 @@ you write.
 <p>
 Some web references on how to do this:
 <UL>
-<li><A HREF="http://java.sun.com/docs/books/tutorial/i18n/index.html">Sun internationalization tutorial</a>(highly recommended)
-<LI><A HREF="http://java.sun.com/j2se/1.3/docs/guide/intl/faq.html">Sun internationalization FAQ</a>
+<li><A HREF="http://docs.oracle.com/javase/6/docs/technotes/guides/intl/">Java Internationalization main page</a>
+<li><A HREF="http://docs.oracle.com/javase/tutorial/i18n/index.html">Sun internationalization tutorial</a>(highly recommended)
 </UL>
-
+(Note: Those are Java 6 links.  There are some nice I18N features in Java 7, but JMRI doesn't 
+use Java 7 yet)
 <P>
 JMRI is moving toward a set of conventions on how to structure and
 use the large amount of I18N information required.  
@@ -375,6 +373,35 @@ String choice = LocaleSelector.getAttribute(choiceElement, "choice")
 </pre></code>
 where "choiceElement" is a JDOM Element object containing a (possible translated)
 "choice" attribute.  Null will be returned if nothing is found.
+
+<a id="numbers">
+<h3>Numbers</h3>
+The number "10*10*10+2+3/10" is written in different ways in different places:
+"1002.3",
+"1,002.3", 
+"1.002,3" and perhaps other ways.
+<p>
+JMRI provides a helpful utility for handling this on input:
+
+<code><pre>
+   double d = jmri.util.IntlUtilities.doubleValue("1,002.3");
+   float  f = jmri.util.IntlUtilities.floatValue("1,002.3");
+</pre></code>
+
+Note that this can throw a java.text.ParseException if the input is unparsable, so 
+handling that is part of your user-error handling.
+
+<p>
+For output:
+
+<code><pre>
+   String s = jmri.util.IntlUtilities.valueOf(1002.3);
+</pre></code>
+
+<p>
+Note:  You should still store and load values in XML files in Java's default coding,
+without using these formatting tools.  That way, the files can be moved
+from one user to another without worrying about whether they are using the same Locale.
 
 <a id="testing">
 <h3>Testing</h3>
