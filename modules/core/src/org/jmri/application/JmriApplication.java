@@ -1,6 +1,7 @@
 package org.jmri.application;
 
 import apps.CreateButtonModel;
+import apps.gui3.TabbedPreferences;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import jmri.Application;
 import jmri.ConfigureManager;
 import jmri.IdTagManager;
 import jmri.InstanceManager;
+import jmri.JmriException;
 import jmri.NamedBeanHandleManager;
 import jmri.ShutDownManager;
 import jmri.UserPreferencesManager;
@@ -46,6 +48,7 @@ public class JmriApplication {
 
     private static JmriApplication application = null;
     private String configFilename;
+    private Boolean configLoaded = false;
     private String profileFilename;
     private Boolean started = false;
     private Boolean shown = false;
@@ -107,6 +110,10 @@ public class JmriApplication {
             started = true;
             this.getProfile();
             this.startManagers();
+            if (!this.loadConfiguration() && this.isHeadless()) {
+                // TODO handle failure to load configuration when headless at this point
+                // should we log an error, write it to STDOUT, and quit now?
+            }
             // Always run the WebServer
             WebServerManager.getWebServer().start();
         }
@@ -116,7 +123,13 @@ public class JmriApplication {
         if (!shown) {
             shown = true;
             this.start();
+            // TODO add user's buttons to toolbar
+            this.initilizePreferencesUI();
             // do any other GUI things that we might need to do
+            if (!this.configLoaded) {
+                // TODO handle failure to load configuration by displaying a
+                // first time use wizard and the options
+            }
         }
     }
 
@@ -217,6 +230,8 @@ public class JmriApplication {
         InstanceManager.getDefault(FileHistory.class).addOperation("app", Application.getApplicationName(), null);
         // Start a user preferences manager
         InstanceManager.store(DefaultUserMessagePreferences.getInstance(), UserPreferencesManager.class);
+        // Start a preferences UI manager
+        InstanceManager.store(new TabbedPreferences(), TabbedPreferences.class);
         // Start the abstract action model that allows items to be added to the, both
         // CreateButton and Perform Action Model use a common Abstract class
         InstanceManager.store(new CreateButtonModel(), CreateButtonModel.class);
@@ -248,5 +263,46 @@ public class JmriApplication {
                 return true;
             }
         });
+    }
+
+    private boolean loadConfiguration() {
+        // find preference file and set location in configuration manager
+        // Needs to be declared final as we might need to
+        // refer to this on the Swing thread
+        final File file = new File(this.configFilename);
+        // load config file if it exists
+        if (file.exists()) {
+            if (log.isDebugEnabled()) {
+                log.debug("start load config file {}", file.getPath());
+            }
+            try {
+                this.configLoaded = InstanceManager.configureManagerInstance().load(file, true);
+            } catch (JmriException e) {
+                log.error("Unhandled problem loading configuration", e);
+                this.configLoaded = false;
+            }
+            log.debug("end load config file, OK={}", this.configLoaded);
+        } else {
+            log.info("No saved preferences, will open preferences window. Searched for {}", file.getPath());
+            this.configLoaded = false;
+        }
+        return this.configLoaded;
+    }
+
+    private void initilizePreferencesUI() {
+        // Once all preferences have been loaded, initialize the preferences UI
+        // Doing it in a thread now means we can let it work in the background
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    InstanceManager.tabbedPreferencesInstance().init();
+                } catch (Exception ex) {
+                    log.error("Error trying to setup preferences {}", ex.getLocalizedMessage(), ex);
+                }
+            }
+        };
+        Thread thr = new Thread(r, "initialize preferences");
+        thr.start();
     }
 }
