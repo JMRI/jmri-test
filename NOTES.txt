@@ -1,0 +1,31 @@
+# README for Porting JMRI to use NetBeans
+
+The following notes outline changes that need to happen within the JMRI code to successfully and completely port JMRI to the NetBeans platform. This is an incomplete list.
+
+Most of these changes should only happen when we are comfortable either that:
+1. The NetBeans branch can be merged into trunk.
+2. Changes in JMRI trunk are unlikely to conflict with changes in the NetBeans branch.
+
+## Start up Buttons Preferences
+Since the TrainPro main window will have a ToolBar, and NetBeans provides ToolBar item handling "for free", start up buttons will be replaced with ToolBar items and removed from the Preferences dialog.
+
+To turn an AbstractAction or a JmriAbstractAction into a ToolBar button, the following annotations need to be added to the class:
+	@ActionID(
+		category = "JMRI",
+		id = "org.jmri.toolbar.SomeAction"
+	)
+	@ActionRegistration(
+		iconBase = "org/jmri/toolbar/through.png",
+		displayName = "#CTL_SomeAction"
+	)
+	@ActionReference(path = "Toolbars/File", position = 300)
+	@Messages("CTL_SomeAction=My Button")
+In this example, the class is SomeAction in the package org.jmri.toolbar.
+
+After adding the above code to the class, the NetBeans platform will ensure the action can be added to any ToolBar in the application.
+
+## Localization
+
+Items in `@Messages` annotations should be included in Bundle.properties in the same package where they are declared.
+
+Use the [Markdown syntax](http://daringfireball.net/projects/markdown/) when editing this file.
