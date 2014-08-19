@@ -85,15 +85,33 @@ public class JmriApplication {
         log.info("Using config file {}", this.configFilename);
     }
 
-    public static JmriApplication getApplication(String title) throws IllegalAccessException, IllegalArgumentException {
+    /**
+     * Get the application object, creating it if needed.
+     *
+     * @param name - The application name
+     * @return The object responsible for a JMRI application's life cycle
+     * management.
+     * @throws IllegalAccessException if the application object has been created
+     * and title does not equal the application's current name.
+     * @throws IllegalArgumentException if title is null
+     * @see jmri.Application
+     */
+    public static JmriApplication getApplication(String name) throws IllegalAccessException, IllegalArgumentException {
         if (application == null) {
-            application = new JmriApplication(title);
-        } else {
+            application = new JmriApplication(name);
+        } else if (name == null || !name.equals(Application.getApplicationName())) {
             throw new IllegalAccessException();
         }
         return application;
     }
 
+    /**
+     * Get the application object without attempting to create it if needed.
+     *
+     * @return The object responsible for a JMRI application's life cycle
+     * management.
+     * @throws NullPointerException if the application has not been created.
+     */
     public static JmriApplication getApplication() throws NullPointerException {
         if (application == null) {
             throw new NullPointerException();
@@ -101,45 +119,86 @@ public class JmriApplication {
         return application;
     }
 
+    /**
+     * Check if application is running in a headless environment.
+     *
+     * @return true if in a headless environment.
+     * @see java.awt.GraphicsEnvironment#isHeadless()
+     */
     public boolean isHeadless() {
         return GraphicsEnvironment.isHeadless();
     }
 
+    /**
+     * Triggered when the application is started.
+     *
+     * Any actions taken by this method, or by objects called in this method
+     * must succeed in a headless environment, since there is no guarantee that
+     * this method will be called in a GUI environment.
+     *
+     * Since this method is triggered before the main window is available,
+     * overriding subclasses should note that the only thing this method does in
+     * a GUI environment is get the current {@link jmri.profile.Profile}, and
+     * that {@link #show() } performs all initialization in a GUI environment.
+     *
+     * @see #show()
+     * @see org.openide.modules.OnStart
+     */
     public void start() {
         if (!started) {
             started = true;
             this.getProfile();
-            this.startManagers();
-            if (!this.loadConfiguration() && this.isHeadless()) {
-                // TODO handle failure to load configuration when headless at this point
-                // should we log an error, write it to STDOUT, and quit now?
+            if (this.isHeadless()) {
+                this.startManagers();
+                if (!this.loadConfiguration()) {
+                    // TODO handle failure to load configuration when headless at this point
+                    // should we log an error, write it to STDOUT, and quit now?
+                }
+                // Always run the WebServer when headless
+                WebServerManager.getWebServer().start();
             }
-            // Always run the WebServer
-            WebServerManager.getWebServer().start();
         }
     }
 
+    /**
+     * Triggered when the application's main window is drawn.
+     *
+     * Actions taken by this method are in a GUI environment.
+     *
+     * @see #start()
+     * @see org.openide.windows.OnShowing
+     */
     public void show() {
         if (!shown) {
             shown = true;
             this.start();
+            this.startManagers();
             // TODO add user's buttons to toolbar
-            this.initilizePreferencesUI();
-            // do any other GUI things that we might need to do
-            if (!this.configLoaded) {
+            if (!this.loadConfiguration()) {
                 // TODO handle failure to load configuration by displaying a
                 // first time use wizard and the options
             }
+            this.initilizePreferencesUI();
+            // do any other GUI things that we might need to do
         }
     }
 
+    /**
+     * Triggered when the application is exiting.
+     *
+     * Any actions taken by this method, or by objects called in this method
+     * must succeed in a headless environment, since there is no guarantee that
+     * this method will be called in a GUI environment.
+     *
+     * @see org.openide.modules.OnStop
+     */
     public void stop() {
         if (!stopped) {
             stopped = true;
         }
     }
 
-    protected void getProfile() {
+    private void getProfile() {
         // Get configuration profile
         // Needs to be done before loading a ConfigManager or UserPreferencesManager
         FileUtil.createDirectory(FileUtil.getPreferencesPath());
