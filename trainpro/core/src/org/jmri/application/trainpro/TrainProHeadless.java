@@ -21,7 +21,7 @@ public class TrainProHeadless implements Runnable {
     public void run() {
         try {
             // Get the profiles before @OnShowing is triggered, so that
-            // when the main window is openned, we can begin populating it
+            // when the main window is opened, we can begin populating it
             JmriApplication.getApplication("JMRI TrainPro").start();
             if (GraphicsEnvironment.isHeadless()) {
                 log.info("Running in a headless environment.");
