@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-AutoUpdate-Show-In-Client: false
+AutoUpdate-Show-In-Client: true
 OpenIDE-Module: org.jmri.server.web
 OpenIDE-Module-Localizing-Bundle: org/jmri/server/web/Bundle.properties
 OpenIDE-Module-Specification-Version: 1.0
