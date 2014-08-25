@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.apisupport.project</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
+            <code-name-base>org.jmri.system.jinput</code-name-base>
+            <suite-component/>
+            <module-dependencies/>
+            <public-packages>
+                <package>ch.ntb.usb.usbView</package>
+                <package>net.java.games.input</package>
+            </public-packages>
+            <class-path-extension>
+                <runtime-relative-path>ext/jinput.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jinput.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/ch.ntb.usb.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/ch.ntb.usb.jar</binary-origin>
+            </class-path-extension>
+        </data>
+    </configuration>
+</project>
