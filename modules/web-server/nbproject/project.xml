@@ -11,6 +11,7 @@
                 <package>javax.servlet.annotation</package>
                 <package>javax.servlet.descriptor</package>
                 <package>javax.servlet.http</package>
+                <package>org.apache.commons.lang3</package>
                 <package>org.eclipse.jetty.continuation</package>
                 <package>org.eclipse.jetty.http</package>
                 <package>org.eclipse.jetty.http.gzip</package>
@@ -47,6 +48,10 @@
             <class-path-extension>
                 <runtime-relative-path>ext/jetty-websocket-8.1.11.v20130520.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jetty-websocket-8.1.11.v20130520.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/commons-lang3-3.2.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-lang3-3.2.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jetty-continuation-8.1.11.v20130520.jar</runtime-relative-path>
