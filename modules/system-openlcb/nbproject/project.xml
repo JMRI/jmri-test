@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.apisupport.project</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
+            <code-name-base>org.jmri.system.openlcb</code-name-base>
+            <suite-component/>
+            <module-dependencies/>
+            <public-packages>
+                <package>org.openlcb</package>
+                <package>org.openlcb.can</package>
+                <package>org.openlcb.cdi</package>
+                <package>org.openlcb.cdi.jdom</package>
+                <package>org.openlcb.cdi.swing</package>
+                <package>org.openlcb.hub</package>
+                <package>org.openlcb.implementations</package>
+                <package>org.openlcb.implementations.throttle</package>
+                <package>org.openlcb.implementations.throttle.dcc</package>
+                <package>org.openlcb.swing</package>
+                <package>org.openlcb.swing.memconfig</package>
+                <package>org.openlcb.swing.networktree</package>
+            </public-packages>
+            <class-path-extension>
+                <runtime-relative-path>ext/jlfgr-1_0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jlfgr-1_0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/openlcb.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/openlcb.jar</binary-origin>
+            </class-path-extension>
+        </data>
+    </configuration>
+</project>
