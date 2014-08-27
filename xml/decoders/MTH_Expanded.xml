@@ -30,28 +30,19 @@
     <label xml:lang="fr">PWM V démarr.</label>
     <label xml:lang="de">PWM Anfahrspannung</label>
       </variable>
-      <variable CV="3" item="Accel" tooltip="PWM mode only">
-        <decVal max="255"/>
-        <label>PWM Acceleration Rate</label>
-        <label xml:lang="it">Accellerazione (0-255)</label>
-        <label xml:lang="fr">Accelération (0-255)</label>
-        <label xml:lang="de">Anfahrverzögerung (0-255)</label>
-      </variable>
-      <variable CV="4" item="Decel" tooltip="PWM mode only">
-        <decVal max="255"/>
-        <label>PWM Deceleration Rate</label>
-        <label xml:lang="it">Decellerazione (1-255)</label>
-        <label xml:lang="fr">Décélération (1-255)</label>
-        <label xml:lang="de">Bremszeit (1-255)</label>
-      </variable>
+      <!-- CV 3-4 -->
+     <xi:include href="http://jmri.org/xml/decoders/nmra/accelDecel_255.xml"/>
       <variable CV="5" item="Vhigh" tooltip="PWM mode only">
         <decVal/>
         <label>PWM max voltage</label>
         <label xml:lang="it">PWM Volt Massimi (0-255):</label>
         <label xml:lang="de">PWM Höchstgeschwindigkeit</label>
       </variable>
+      <!-- CV 7-8 -->
       <xi:include href="http://jmri.org/xml/decoders/nmra/mfgVersionId.xml"/>
+      <!-- CV=19 -->
       <xi:include href="http://jmri.org/xml/decoders/nmra/consistAddrDirection.xml"/>
+       <!-- CV=21 -->
       <xi:include href="http://jmri.org/xml/decoders/nmra/cv21.22.xml"/>
       <variable item="Consist Address Active For F9" CV="22" mask="XXXXXVXX">
         <xi:include href="http://jmri.org/xml/decoders/parts/enum-LocoAddrConsistAddr.xml"/>
@@ -155,17 +146,7 @@
       </variable>
       <!-- CV=29 -->
      <xi:include href="http://jmri.org/xml/decoders/nmra/cv29speedSteps.xml"/>
-      <variable item="Speed Table Definition" CV="29" mask="XXXVXXXX" tooltip="PWM mode only">
-        <enumVal>
-          <enumChoice choice="Use PWM Start and Max Voltage">
-            <choice>Use PWM Start and Max Voltage</choice>
-          </enumChoice>
-          <enumChoice choice="Use PWM Speed Table Selection">
-            <choice>Use PWM Speed Table Selection</choice>
-          </enumChoice>
-        </enumVal>
-        <label>Speed Table Definition</label>
-      </variable>
+      <xi:include href="http://jmri.org/xml/decoders/nmra/cv29table1-28.xml"/>
       <variable CV="52" mask="XXXXXXXV" item="Motor Option 1">
         <enumVal>
           <enumChoice choice="sMPH">
@@ -320,10 +301,18 @@
       </variable>
     </variables>
     <resets>
-      <factReset label="Reset All CVs" CV="8" default="8"/>
-      <factReset label="Reset All CVs except user speed table" CV="8" default="192"/>
-      <factReset label="Reset volumes, smoke and light settings" CV="8" default="64"/>
-      <factReset label="Reset address" CV="8" default="128"/>
+      <factReset label="Reset All CVs" CV="8" default="8">
+        <label xml:lang="it">Reset delle CV ai valori di fabbrica</label>
+      </factReset>
+      <factReset label="Reset All CVs except user speed table" CV="8" default="192">
+        <label xml:lang="it">Reset delle CV salvo Tabella Velocità ai valori di fabbrica</label>
+      </factReset>
+      <factReset label="Reset volumes, smoke and light settings" CV="8" default="64">
+       <label xml:lang="it">Reset volume, fumo e luci ai valori di fabbrica</label>
+      </factReset>
+      <factReset label="Reset address" CV="8" default="128">
+        <label xml:lang="it">Reset indirizzo ai valori di fabbrica</label>
+      </factReset>
     </resets>
   </decoder>
   <pane>

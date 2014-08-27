@@ -41,11 +41,11 @@
   </revhistory>
   <variable CV="29" mask="XXXVXXXX" item="Speed Table Definition" default="0">
     <enumVal>
-      <enumChoice choice="Use Start Voltage (Vstart)">
-        <choice>Use Start Voltage (Vstart)</choice>
-        <choice xml:lang="it">Usa Tensione Iniziale (Vstart)</choice>
-        <choice xml:lang="fr">Utiliser V démarrage (Vstart)</choice>
-        <choice xml:lang="de">Anfahrspannung (Vstart) nutzen</choice>
+      <enumChoice choice="Don't use Speed Table, use Start Voltage (Vstart)">
+        <choice>Don't use Speed Table, use Start Voltage (Vstart and Vmax)</choice>
+        <choice xml:lang="it">Non usare Tabella, usa Tensione Iniziale (Vstart e Vmax)</choice>
+        <choice xml:lang="fr">Utiliser V démarrage (Vstart-Vmax)</choice>
+        <choice xml:lang="de">Anfahrspannung (Vstart-Vmax) nutzen</choice>
       </enumChoice>
       <enumChoice choice="Use Speed Table">
         <choice>Use Speed Table</choice>

@@ -30,12 +30,16 @@
       <variable CV="7" readOnly="yes" item="Decoder Version">
         <decVal/>
         <label>Version ID</label>
-        <label xml:lang="de">Decoder Version</label>
+        <label xml:lang="it">Versione Decoder: </label>
+        <label xml:lang="fr">Version décodeur: </label>
+        <label xml:lang="de">Decoder Version: </label>
       </variable>
       <variable CV="8" readOnly="yes" item="Manufacturer" default="99">
         <decVal/>
         <label>Manufacturer ID</label>
-        <label xml:lang="de">Manufacturer</label>
+        <label xml:lang="it">ID Costruttore: </label>
+        <label xml:lang="fr">ID constructeur: </label>
+        <label xml:lang="de">Hersteller ID: </label>
       </variable>
       <variable item="Manufacturer ID - Reset" CV="8">
         <decVal/>
@@ -137,22 +141,8 @@
         <label>F12 controls output 2</label>
         <label xml:lang="de">F12 controls output 2</label>
       </variable>
-      <variable item="Directional Headlights" CV="51" comment="output A" mask="XXXXXXXV">
-        <enumVal>
-          <enumChoice choice="Headlights are directional and operate automatically">
-            <choice>Headlights are directional and operate automatically</choice>
-            <choice xml:lang="de">Headlights are directional and operate automatically</choice>
-          </enumChoice>
-          <enumChoice choice="Headlights are independantly controlled (F0-Front, F1-Rear)">
-            <choice>Headlights are independantly controlled (F0-Front, F1-Rear)</choice>
-            <choice xml:lang="de">Headlights are independantly controlled (F0-Front, F1-Rear)</choice>
-          </enumChoice>
-        </enumVal>
-        <label>Directional Headlights</label>
-        <comment>output A</comment>
-        <label xml:lang="de">Directional Headlights</label>
-        <comment xml:lang="de">output A</comment>
-      </variable>
+     <!-- CV=51 -->
+     <xi:include href="http://jmri.org/xml/decoders/nmra/cv51_DirectionalHeadlights.xml"/>
       <variable item="Output A dimming control" CV="51" comment="Controls how headlight dims (CV 52 controls amount)" mask="XXXXXXVX">
         <enumVal>
           <enumChoice choice="Always dim">
