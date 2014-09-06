@@ -15,6 +15,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import jmri.Version;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -82,7 +83,7 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
 
     public void loadPage() {
         try {
-            URL startUrl = new URL(NbBundle.getMessage(WelcomeTopComponent.class, "WelcomeTopComponent.http.link"));
+            URL startUrl = new URL(NbBundle.getMessage(WelcomeTopComponent.class, "WelcomeTopComponent.http.link", Version.getCanonicalVersion()));
             long lastMod = getModified(startUrl);
             NbPreferences.forModule(getClass()).putLong("LAST_PAGE_UPDATE", lastMod);
             if (lastMod == 0) {
@@ -107,7 +108,7 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
         try {
             log.info("Checking open...");
             long lastCheck = NbPreferences.forModule(WelcomeTopComponent.class).getLong("LAST_PAGE_UPDATE", 0);
-            URL startUrl = new URL(NbBundle.getMessage(WelcomeTopComponent.class, "WelcomeTopComponent.http.link"));
+            URL startUrl = new URL(NbBundle.getMessage(WelcomeTopComponent.class, "WelcomeTopComponent.http.link", Version.getCanonicalVersion()));
             if (lastMod == 0) {
                 lastMod = getModified(startUrl);
             }
@@ -133,12 +134,8 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
             if (Desktop.isDesktopSupported()) {
                 try {
                     Desktop.getDesktop().browse(he.getURL().toURI());
-                } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                } catch (URISyntaxException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                } catch (IOException | URISyntaxException e) {
+                    log.error("Unable to open {} in desktop browser: {}", he.getURL(), e.getMessage());
                 }
             }
         }
