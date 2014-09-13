@@ -6,12 +6,15 @@
     <description>Builds, tests, and runs the project jmri.</description>
     <import file="nbproject/build-impl.xml"/>
 
+    <!-- need to remove -pre-jar-prep once real debug target is overridden -->
+    <!--
     <target name="-pre-jar-prep">
         <ant antfile="${basedir}/../../build.xml" target="jar-resources" useNativeBasedir="true">
         </ant>
         <copy file="${basedir}/../../jmri.jar" todir="${basedir}/release/modules/ext"/>
     </target>
     <target name="jar-prep" depends="-pre-jar-prep,projectized-common.jar-prep"/>
+    -->
 </project>
 <!--
 NOTES:
