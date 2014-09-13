@@ -24,8 +24,10 @@ In this example, the class is SomeAction in the package org.jmri.toolbar.
 
 After adding the above code to the class, the NetBeans platform will ensure the action can be added to any ToolBar in the application.
 
+Following [How to Migrate a Toolbar to the NetBeans Platform (Part 1)](https://blogs.oracle.com/geertjan/entry/how_to_migrate_a_toolbar), existing actions in JMRI Library can be added to the tool bar without modification.
+
 ## Localization
 
-Items in `@Messages` annotations should be included in Bundle.properties in the same package where they are declared.
+Items in `@Messages` annotations will automatically be included in Bundle.properties in the same package where they are declared, and classes using the `@Messages` annotation can refer to the localization keys using `NbBundle.key()` where _key_ is the key used in the annotation.
 
 Use the [Markdown syntax](http://daringfireball.net/projects/markdown/) when editing this file.
