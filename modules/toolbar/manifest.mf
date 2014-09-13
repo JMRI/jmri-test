@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.jmri.core.ui.toolbar
+OpenIDE-Module-Layer: org/jmri/core/ui/toolbar/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/jmri/core/ui/toolbar/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
