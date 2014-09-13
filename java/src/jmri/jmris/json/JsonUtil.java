@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
-import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -68,10 +67,10 @@ import static jmri.jmris.json.JSON.GROUP;
 import static jmri.jmris.json.JSON.HAZARDOUS;
 import static jmri.jmris.json.JSON.HEARTBEAT;
 import static jmri.jmris.json.JSON.HELLO;
+import static jmri.jmris.json.JSON.ICON;
 import static jmri.jmris.json.JSON.ICON_NAME;
 import static jmri.jmris.json.JSON.ID;
-import static jmri.jmris.json.JSON.IMAGE_FILE_NAME;
-import static jmri.jmris.json.JSON.IMAGE_ICON_NAME;
+import static jmri.jmris.json.JSON.IMAGE;
 import static jmri.jmris.json.JSON.INACTIVE;
 import static jmri.jmris.json.JSON.INCONSISTENT;
 import static jmri.jmris.json.JSON.INVERTED;
@@ -119,13 +118,16 @@ import static jmri.jmris.json.JSON.REPORT;
 import static jmri.jmris.json.JSON.REPORTER;
 import static jmri.jmris.json.JSON.RETURN_WHEN_EMPTY;
 import static jmri.jmris.json.JSON.ROAD;
+import static jmri.jmris.json.JSON.ROSTER;
 import static jmri.jmris.json.JSON.ROSTER_ENTRY;
 import static jmri.jmris.json.JSON.ROSTER_GROUP;
 import static jmri.jmris.json.JSON.ROSTER_GROUPS;
 import static jmri.jmris.json.JSON.ROUTE;
 import static jmri.jmris.json.JSON.ROUTE_ID;
+import static jmri.jmris.json.JSON.SELECTED_ICON;
 import static jmri.jmris.json.JSON.SENSOR;
 import static jmri.jmris.json.JSON.SEQUENCE;
+import static jmri.jmris.json.JSON.SHUNTING_FUNCTION;
 import static jmri.jmris.json.JSON.SIGNAL_HEAD;
 import static jmri.jmris.json.JSON.SIGNAL_MAST;
 import static jmri.jmris.json.JSON.SIZE_LIMIT;
@@ -168,6 +170,8 @@ import jmri.jmrit.operations.trains.TrainManager;
 import jmri.jmrit.roster.Roster;
 import jmri.jmrit.roster.RosterEntry;
 import jmri.jmrix.ConnectionConfig;
+import jmri.jmrix.SystemConnectionMemo;
+import jmri.util.ConnectionNameFromSystemName;
 import jmri.util.JmriJFrame;
 import jmri.util.node.NodeIdentity;
 import jmri.util.zeroconf.ZeroConfService;
@@ -740,11 +744,36 @@ public class JsonUtil {
         }
     }
 
+    /**
+     * Returns the JSON representation of a roster entry.
+     *
+     * Note that this returns, for images and icons, a URL relative to the root
+     * folder of the JMRI server. It is expected that clients will fill in the
+     * server IP address and port as they know it to be.
+     *
+     * @param locale
+     * @param id The id of an entry in the roster.
+     * @return a roster entry in JSON notation
+     */
     static public JsonNode getRosterEntry(Locale locale, String id) {
+        return JsonUtil.getRosterEntry(locale, Roster.instance().getEntryForId(id));
+    }
+
+    /**
+     * Returns the JSON representation of a roster entry.
+     *
+     * Note that this returns, for images and icons, a URL relative to the root
+     * folder of the JMRI server. It is expected that clients will fill in the
+     * server IP address and port as they know it to be.
+     *
+     * @param locale
+     * @param re A RosterEntry that may or may not be in the roster.
+     * @return a roster entry in JSON notation
+     */
+    static public JsonNode getRosterEntry(Locale locale, RosterEntry re) {
         ObjectNode root = mapper.createObjectNode();
         root.put(TYPE, ROSTER_ENTRY);
         ObjectNode entry = root.putObject(DATA);
-        RosterEntry re = Roster.instance().getEntryForId(id);
         entry.put(NAME, re.getId());
         entry.put(ADDRESS, re.getDccAddress());
         entry.put(IS_LONG_ADDRESS, re.isLongAddress());
@@ -756,21 +785,22 @@ public class JsonUtil {
         entry.put(MODEL, re.getModel());
         entry.put(COMMENT, re.getComment());
         entry.put(MAX_SPD_PCT, Integer.toString(re.getMaxSpeedPCT()));
-        File file = new File(re.getImagePath());
-        entry.put(IMAGE_FILE_NAME, file.getName());
-        file = new File(re.getIconPath());
-        entry.put(IMAGE_ICON_NAME, file.getName());
+        entry.put(IMAGE, (re.getImagePath() != null) ? "/" + ROSTER + "/" + re.getId() + "/" + IMAGE : (String) null);
+        entry.put(ICON, (re.getIconPath() != null) ? "/" + ROSTER + "/" + re.getId() + "/" + ICON : (String) null);
+        entry.put(SHUNTING_FUNCTION, re.getShuntingFunction());
         ArrayNode labels = entry.putArray(FUNCTION_KEYS);
-        for (int i = 0; i < re.getMAXFNNUM(); i++) {
+        for (int i = 0; i <= re.getMAXFNNUM(); i++) {
             ObjectNode label = mapper.createObjectNode();
             label.put(NAME, F + i);
-            label.put(LABEL, (re.getFunctionLabel(i) != null) ? re.getFunctionLabel(i) : F + i);
+            label.put(LABEL, re.getFunctionLabel(i));
             label.put(LOCKABLE, re.getFunctionLockable(i));
+            label.put(ICON, (re.getFunctionImage(i) != null) ? "/" + ROSTER + "/" + re.getId() + "/" + F + i + "/" + ICON : (String) null);
+            label.put(SELECTED_ICON, (re.getFunctionSelectedImage(i) != null) ? "/" + ROSTER + "/" + re.getId() + "/" + F + i + "/" + SELECTED_ICON : (String) null);
             labels.add(label);
         }
         ArrayNode rga = entry.putArray(ROSTER_GROUPS);
         for (int i = 0; i < re.getGroups().size(); i++) {
-        	rga.add(re.getGroups().get(i));
+            rga.add(re.getGroups().get(i));
         }
         return root;
     }
@@ -802,6 +832,7 @@ public class JsonUtil {
         }
         return root;
     }
+
     static public JsonNode getRosterGroup(Locale locale, String name) {
         ObjectNode root = mapper.createObjectNode();
         root.put(TYPE, ROSTER_GROUP);
@@ -1103,8 +1134,9 @@ public class JsonUtil {
         }
     }
 
-    static public JsonNode getSystemConnections() {
+    static public JsonNode getSystemConnections(Locale locale) {
         ArrayNode root = mapper.createArrayNode();
+        ArrayList<String> prefixes = new ArrayList<String>();
         for (Object instance : InstanceManager.configureManagerInstance().getInstanceList(ConnectionConfig.class)) {
             ConnectionConfig config = (ConnectionConfig) instance;
             if (!config.getDisabled()) {
@@ -1113,8 +1145,33 @@ public class JsonUtil {
                 data.put(NAME, config.getConnectionName());
                 data.put(MFG, config.getManufacturer());
                 data.put(PREFIX, config.getAdapter().getSystemConnectionMemo().getSystemPrefix());
+                prefixes.add(config.getAdapter().getSystemConnectionMemo().getSystemPrefix());
                 root.add(connection);
             }
+        }
+        for (Object instance : InstanceManager.getList(SystemConnectionMemo.class)) {
+            SystemConnectionMemo memo = (SystemConnectionMemo) instance;
+            if (!memo.getDisabled() && !prefixes.contains(memo.getSystemPrefix())) {
+                ObjectNode connection = mapper.createObjectNode().put(TYPE, SYSTEM_CONNECTION);
+                ObjectNode data = connection.putObject(DATA);
+                data.put(NAME, memo.getUserName());
+                data.put(PREFIX, memo.getSystemPrefix());
+                data.putNull(MFG);
+                prefixes.add(memo.getSystemPrefix());
+                root.add(connection);
+            }
+        }
+        // Following is required because despite there being a SystemConnectionMemo
+        // for the default internal connection, it is not used for the default internal
+        // connection. This allows a client to map the server's internal objects.
+        String prefix = "I";
+        if (!prefixes.contains(prefix)) {
+            ObjectNode connection = mapper.createObjectNode().put(TYPE, SYSTEM_CONNECTION);
+            ObjectNode data = connection.putObject(DATA);
+            data.put(NAME, ConnectionNameFromSystemName.getConnectionName(prefix));
+            data.put(PREFIX, prefix);
+            data.putNull(MFG);
+            root.add(connection);
         }
         return root;
     }

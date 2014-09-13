@@ -482,17 +482,27 @@ public final class JSON {
      */
     public static final String MAX_SPD_PCT = "maxSpeedPct"; // NOI18N
     /**
-     * {@value #IMAGE_FILE_NAME}
-     */
-    public static final String IMAGE_FILE_NAME = "imageFileName"; // NOI18N
-    /**
-     * {@value #IMAGE_ICON_NAME}
-     */
-    public static final String IMAGE_ICON_NAME = "imageFileName"; // NOI18N
-    /**
      * {@value #FUNCTION_KEYS}
      */
     public static final String FUNCTION_KEYS = "functionKeys"; // NOI18N
+    /**
+     * {@value #IMAGE}
+     *
+     * @since 2.0
+     */
+    public static final String IMAGE = "image"; // NOI18N
+    /**
+     * {@value #ICON}
+     *
+     * @since 2.0
+     */
+    public static final String ICON = "icon"; // NOI18N
+    /**
+     * {@value #SELECTED_ICON}
+     *
+     * @since 2.0
+     */
+    public static final String SELECTED_ICON = "selectedIcon"; // NOI18N
     /**
      * {@value #LABEL}
      */
@@ -511,6 +521,12 @@ public final class JSON {
      * @since 1.1
      */
     public static final String OWNER = "owner"; // NOI18N
+    /**
+     * {@value #SHUNTING_FUNCTION}
+     *
+     * @since 2.0
+     */
+    public static final String SHUNTING_FUNCTION = "shuntingFunction"; // NOI18N
 
     /* JSON route (operations) tokens */
     /**
@@ -624,6 +640,9 @@ public final class JSON {
     /**
      * {@value #ADD}
      *
+     * As an attribute of a {@link #ROSTER}, this is an entry that has been
+     * added to the roster.
+     *
      * @since 1.1
      */
     public static final String ADD = "add";
@@ -632,6 +651,9 @@ public final class JSON {
      *
      * In operations, this indicates the dropping or setting out of a car or
      * engine.
+     *
+     * As an attribute of a {@link #ROSTER}, this is an entry that has been
+     * removed from the roster.
      *
      * @since 1.1
      */
@@ -742,6 +764,15 @@ public final class JSON {
      * {@value #F}
      */
     public static final String F = "F"; // NOI18N
+    /**
+     * Used by a {@link jmri.jmris.json.JsonThrottle} to notify clients of the
+     * number of clients controlling the same throttle.
+     * <p>
+     * {@value #CLIENTS}
+     *
+     * @since 2.0
+     */
+    public static final String CLIENTS = "clients"; // NOI18N
 
     /* JSON Sensor and Turnout Tokens */
     /**

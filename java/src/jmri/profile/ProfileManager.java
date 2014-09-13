@@ -363,9 +363,7 @@ public class ProfileManager extends Bean {
                 File pp = FileUtil.getFile(FileUtil.getExternalFilename(e.getAttributeValue(Profile.PATH)));
                 try {
                     Profile p = new Profile(pp);
-//                    if (p.isComplete()) {
                     this.addProfile(p);
-//                    }
                 } catch (FileNotFoundException ex) {
                     log.info("Cataloged profile \"{}\" not in expected location\nSearching for it in {}", e.getAttributeValue(Profile.ID), pp.getParentFile());
                     this.findProfiles(pp.getParentFile());
@@ -441,12 +439,14 @@ public class ProfileManager extends Bean {
                 return (pathname.isDirectory() && Arrays.asList(pathname.list()).contains(Profile.PROPERTIES));
             }
         });
+        if (profilePaths == null) {
+            log.error("There was an error reading directory {}.", searchPath.getPath());
+            return;
+        }
         for (File pp : profilePaths) {
             try {
                 Profile p = new Profile(pp);
-//                if (p.isComplete()) {
                 this.addProfile(p);
-//                }
             } catch (IOException ex) {
                 log.error("Error attempting to read Profile at {}", pp, ex);
             }

@@ -227,46 +227,69 @@ public class TrainBuilder extends TrainCommon {
 				addLine(_buildReport, ONE, MessageFormat.format(Bundle.getMessage("buildLocStaging"), new Object[] { rl
 						.getName() }));
 				rl.setCarMoves(rl.getMaxCarMoves()); // don't allow car moves for this location
-			}
-			// if a location is skipped, no car drops or pick ups
-			else if (_train.skipsLocation(rl.getId())) {
+				// if a location is skipped, no car drops or pick ups
+			} else if (_train.skipsLocation(rl.getId())) {
 				addLine(_buildReport, THREE, MessageFormat.format(Bundle.getMessage("buildLocSkippedMaxTrain"),
 						new Object[] { rl.getName(), _train.getName(), rl.getMaxTrainLength(),
 								Setup.getLengthUnit().toLowerCase() }));
+				rl.setCarMoves(rl.getMaxCarMoves()); // don't allow car moves for this location
+			} else if (!rl.isDropAllowed() && !rl.isPickUpAllowed()) {
+				addLine(_buildReport, THREE, MessageFormat.format(Bundle.getMessage("buildLocNoDropsOrPickups"),
+						new Object[] { rl.getName(), rl.getMaxTrainLength(), Setup.getLengthUnit().toLowerCase() }));
 				rl.setCarMoves(rl.getMaxCarMoves()); // don't allow car moves for this location
 			} else {
 				// we're going to use this location, so initialize the location
 				rl.setCarMoves(0); // clear the number of moves
 				// show the type of moves allowed at this location
-				if (!rl.isDropAllowed() && !rl.isPickUpAllowed()) {
-					addLine(_buildReport, THREE, MessageFormat.format(Bundle.getMessage("buildLocNoDropsOrPickups"),
-							new Object[] { rl.getName(), rl.getMaxTrainLength(), Setup.getLengthUnit().toLowerCase() }));
-				} else {
-					requested = requested + rl.getMaxCarMoves(); // add up the total number of car moves requested
-					if (rl.isDropAllowed() && rl.isPickUpAllowed())
-						addLine(_buildReport, THREE, MessageFormat.format(Bundle.getMessage("buildLocRequestMoves"),
-								new Object[] { rl.getName(), rl.getMaxCarMoves(), rl.getMaxTrainLength(),
-										Setup.getLengthUnit().toLowerCase() }));
-					else if (!rl.isDropAllowed())
-						addLine(_buildReport, THREE, MessageFormat.format(Bundle.getMessage("buildLocRequestPickups"),
-								new Object[] { rl.getName(), rl.getMaxCarMoves(), rl.getMaxTrainLength(),
-										Setup.getLengthUnit().toLowerCase() }));
-					else
-						addLine(_buildReport, THREE, MessageFormat.format(Bundle.getMessage("buildLocRequestDrops"),
-								new Object[] { rl.getName(), rl.getMaxCarMoves(), rl.getMaxTrainLength(),
-										Setup.getLengthUnit().toLowerCase() }));
-				}
+				requested = requested + rl.getMaxCarMoves(); // add up the total number of car moves requested
+				if (rl.isDropAllowed() && rl.isPickUpAllowed())
+					addLine(_buildReport, THREE, MessageFormat.format(Bundle.getMessage("buildLocRequestMoves"),
+							new Object[] { rl.getName(), rl.getMaxCarMoves(), rl.getMaxTrainLength(),
+									Setup.getLengthUnit().toLowerCase() }));
+				else if (!rl.isDropAllowed())
+					addLine(_buildReport, THREE, MessageFormat.format(Bundle.getMessage("buildLocRequestPickups"),
+							new Object[] { rl.getName(), rl.getMaxCarMoves(), rl.getMaxTrainLength(),
+									Setup.getLengthUnit().toLowerCase() }));
+				else
+					addLine(_buildReport, THREE, MessageFormat.format(Bundle.getMessage("buildLocRequestDrops"),
+							new Object[] { rl.getName(), rl.getMaxCarMoves(), rl.getMaxTrainLength(),
+									Setup.getLengthUnit().toLowerCase() }));
 			}
 			rl.setTrainWeight(0); // clear the total train weight
 			rl.setTrainLength(0); // and length
 		}
+		
+		// check for random controls
+		for (RouteLocation rl :  _routeList) {
+			if (rl.getRandomControl().equals(RouteLocation.DISABLED))
+				continue;
+			if (rl.getCarMoves() == 0 && rl.getMaxCarMoves() > 0) {
+				log.debug("Location ({}) has random control value {} and maximum moves {}", rl.getName(), rl.getRandomControl(), rl.getMaxCarMoves());
+				try {
+					int value = Integer.parseInt(rl.getRandomControl());
+					// now adjust the number of available moves for this location
+					double random = Math.random();
+					log.debug("random {}", random);
+					int moves = (int) (random * ((rl.getMaxCarMoves() * value / 100) + 1));
+					log.debug("Reducing number of moves for location ({}) by {}", rl.getName(), moves);
+					rl.setCarMoves(moves);
+					requested = requested - moves;
+					addLine(_buildReport, FIVE, MessageFormat.format(Bundle.getMessage("buildRouteRandomControl"), new Object[] {
+						rl.getName(), rl.getId(), rl.getRandomControl(), rl.getMaxCarMoves(), rl.getMaxCarMoves() - moves }));
+			} catch (NumberFormatException e) {
+					throw new BuildFailedException(MessageFormat.format(Bundle.getMessage("buildErrorRandomControl"),
+							new Object[] { _train.getRoute().getName(), rl.getName(), rl.getRandomControl() }));
+				}				
+			}
+		}
+		
 		int numMoves = requested; // number of car moves
 		if (_routeList.size() > 1)
 			requested = requested / 2; // only need half as many cars to meet requests
 		addLine(_buildReport, ONE, MessageFormat.format(Bundle.getMessage("buildRouteRequest"), new Object[] {
 				_train.getRoute().getName(), Integer.toString(requested), Integer.toString(numMoves) }));
 		_train.setNumberCarsRequested(requested); // save number of car requested
-
+		
 		// get engine requirements for this train
 		if (_train.getNumberEngines().equals(Train.AUTO)) {
 			_reqNumEngines = getAutoEngines();
@@ -2849,6 +2872,12 @@ public class TrainBuilder extends TrainCommon {
 		}
 		addLine(_buildReport, FIVE, MessageFormat.format(Bundle.getMessage("buildSearchTrackNewLoad"), new Object[] {
 				car.toString(), car.getTypeName(), car.getLoadName(), car.getLocationName(), car.getTrackName() }));
+		// check to see if car type has custom loads
+		if (CarLoads.instance().getNames(car.getTypeName()).size() == 2) {
+			addLine(_buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("buildCarNoCustomLoad"), new Object[] { car
+				.toString(), car.getTypeName() }));
+			return false;
+		}
 		if (car.getKernel() != null) {
 			addLine(_buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("buildCarPartOfKernel"),
 					new Object[] { car.toString(), car.getKernelName(), car.getKernel().getSize(),
@@ -2895,7 +2924,7 @@ public class TrainBuilder extends TrainCommon {
 				car.setLoadGeneratedFromStaging(true);
 				// is car part of kernel?
 				car.updateKernel();
-//				track.bumpSchedule();
+				track.bumpSchedule();
 				return true; // done, car now has a custom load
 			}
 			addLine(_buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("buildCanNotRouteCar"), new Object[] {
@@ -3787,7 +3816,7 @@ public class TrainBuilder extends TrainCommon {
 		loads.remove(CarLoads.instance().getDefaultEmptyName());
 		loads.remove(CarLoads.instance().getDefaultLoadName());
 		if (loads.size() == 0) {
-			log.debug("No custom loads for staging track {}", stageTrack.getName());
+			log.debug("No custom loads for car type ({}) ignoring staging track ({})", car.getTypeName(), stageTrack.getName());
 			return false;
 		}
 		addLine(_buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("buildSearchTrackLoadStaging"),

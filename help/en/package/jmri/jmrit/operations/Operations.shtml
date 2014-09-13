@@ -2379,7 +2379,8 @@
    <H3>Import Locomotives</H3>
 
    If you already have a list of locomotives in your JMRI roster or in a database, you can import
-   the locomotives into the program. To get your locomotives from your JMRI roster, select "Import
+   the locomotives into the program. The program will only import locomotives from your JMRI roster
+   that have a road name and number. To get your locomotives from your JMRI roster, select "Import
    from JMRI roster" from the Tools-&gt;Operations-&gt;Locomotives-&gt;Tools menu. Only locomotives
    that don't exist will be added to the programs locomotive roster. This way you can use this tool
    any time you add locomotives to your JMRI locomotive roster. The JMRI locomotive roster doesn't
@@ -2548,6 +2549,20 @@
     value for the move count for the last location in your train's route. Entering "0" moves means
     no car pick ups or set outs at the location.
    </P>
+
+   <P>You can also request that the program randomly reduce the number of desired car moves for
+    a location. Use this feature if you find that the program is consistently generating the same
+    amount of work for your train, and you want some variety. It is recommend that not use this
+    feature until you find that is is needed. The "Random" column allows you to select a value
+    between 10 and 100 and has a default of "Off" which disables this feature. The value is the
+    percentage you want the move count reduced. For example, if you requested 20 moves for a
+    location, and selected a random value of 10%, the program could reduce the desired move count by
+    2, which works out to desired car moves of 18, 19 or 20. A random value of 50% would reduce the
+    moves by up to 10, or 10 to 20 desired car moves, and a value of 100% would generate desired car
+    moves between 0 and 20. Note that small car moves need large random values to work properly. For
+    example a desired car move of 1 will always be 1 unless you select 100% in the random column. A
+    desired move count of 2 needs a random value equal or greater than 50% to reduce the move count
+    by one, and 100% if you wanted the move count to be reduced by 2.</P>
 
    <P>If you want to delay the departure of the train from a location or increase the train's
     travel time, enter the number of minutes desired in the "Wait" cell. Another choice is to

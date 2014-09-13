@@ -1002,20 +1002,23 @@ public class TrainCommon {
 	 *            set true for manifest page orientation, false for switch list orientation
 	 */
 	protected void newLine(PrintWriter file, String string, boolean isManifest) {
-		String[] words = string.split(SPACE);
-		StringBuffer sb = new StringBuffer();
-		for (String word : words) {
-			if (checkStringLength(sb.toString() + word, isManifest)) {
-				sb.append(word + SPACE);
-			} else {
-				sb.setLength(sb.length() - 1); // remove last space added to string
-				addLine(file, sb.toString());
-				sb = new StringBuffer(word + SPACE);
+		String[] lines = string.split(NEW_LINE);
+		for (String line : lines) {
+			String[] words = line.split(SPACE);
+			StringBuffer sb = new StringBuffer();
+			for (String word : words) {
+				if (checkStringLength(sb.toString() + word, isManifest)) {
+					sb.append(word + SPACE);
+				} else {
+					sb.setLength(sb.length() - 1); // remove last space added to string
+					addLine(file, sb.toString());
+					sb = new StringBuffer(word + SPACE);
+				}
 			}
+			if (sb.length() > 0)
+				sb.setLength(sb.length() - 1); // remove last space added to string
+			addLine(file, sb.toString());
 		}
-		if (sb.length() > 0)
-			sb.setLength(sb.length() - 1); // remove last space added to string
-		addLine(file, sb.toString());
 	}
 
 	/**
@@ -1698,7 +1701,7 @@ public class TrainCommon {
 	 * @param orientation
 	 * @param fontName
 	 * @param fontSize
-	 * @return true if string length is longer than page width
+	 * @return false if string length is longer than page width.
 	 */
 	private boolean checkStringLength(String string, String orientation, String fontName, int fontSize) {
 		Font font = new Font(fontName, Font.PLAIN, fontSize); // NOI18N

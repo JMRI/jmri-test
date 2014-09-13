@@ -38,8 +38,8 @@ var $gPts = {}; 	//array of all points, key="pointname.pointtype" (used for layo
 var $gBlks = {}; 	//array of all blocks, key="blockname" (used for layoutEditor panels)
 var $gCtx;  		//persistent context of canvas layer   
 var $gDashArray = [12, 12]; //on,off of dashed lines
-var	DOWNEVENT = 'touchstart mousedown';  //check both touch and mouse events
-var  UPEVENT         = 'touchend mouseup';
+var DOWNEVENT = 'touchstart mousedown';  //check both touch and mouse events
+var UPEVENT = 'touchend mouseup';
 var SIZE = 3;  		//default factor for circles
 var UNKNOWN = '0';  //constants to match JSON Server state names
 var ACTIVE = '2';
@@ -549,10 +549,12 @@ function processPanelXML($returnedData, $success, $xhr) {
 
     //momentary widgets always go active on mousedown, and inactive on mouseup, current state is ignored
     $('.clickable.momentary').bind(DOWNEVENT, function(e) {
-    	e.stopPropagation();  e.preventDefault(); //prevent double-firing (touch + click)
+        e.stopPropagation();
+        e.preventDefault(); //prevent double-firing (touch + click)
         sendElementChange($gWidgets[this.id].jsonType, $gWidgets[this.id].systemName, ACTIVE);  //send active on down
     }).bind(UPEVENT, function(e) {
-    	e.stopPropagation();  e.preventDefault(); //prevent double-firing (touch + click)
+        e.stopPropagation();
+        e.preventDefault(); //prevent double-firing (touch + click)
         sendElementChange($gWidgets[this.id].jsonType, $gWidgets[this.id].systemName, INACTIVE);  //send inactive on up
     });
 
@@ -563,22 +565,24 @@ function processPanelXML($returnedData, $success, $xhr) {
 //		$drawAllIconWidgets();  //TODO: not working, as non-FF browsers will scale objects _again_
 //	}, 3000);
 
-};
+}
 
 //perform regular click-handling, bound to click event for clickable, non-momentary widgets, except for multisensor and linkinglabel.
 function $handleClick(e) {
-	e.stopPropagation();  e.preventDefault(); //prevent double-firing (touch + click)
+    e.stopPropagation();
+    e.preventDefault(); //prevent double-firing (touch + click)
     var $widget = $gWidgets[this.id];
     var $newState = $getNextState($widget);  //determine next state from current state
     sendElementChange($widget.jsonType, $widget.systemName, $newState);  //send new value to JMRI
     if (typeof $widget.secondturnoutname !== "undefined") {  //TODO: put this in a more logical place?
         sendElementChange($widget.jsonType, $widget.secondturnoutname, $newState);  //also send 2nd turnout
     }
-};
+}
 
 //perform multisensor click-handling, bound to click event for clickable multisensor widgets.
 function $handleMultiClick(e) {
-	e.stopPropagation();  e.preventDefault(); //prevent double-firing (touch + click)
+    e.stopPropagation();
+    e.preventDefault(); //prevent double-firing (touch + click)
     var $widget = $gWidgets[this.id];
     var clickX = e.pageX - $(this).parent().offset().left - this.offsetLeft;  //get click location on widget
     var clickY = e.pageY - $(this).parent().offset().top - this.offsetTop;
@@ -596,7 +600,7 @@ function $handleMultiClick(e) {
         if ($gWidgets[$widget.siblings[i]].state == ACTIVE) {
             displaying = i; //flag the current active sibling
         }
-    };
+    }
     var next;  //determine which is the next one which should be set to active
     if (dec) {
         next = displaying - 1;
@@ -617,27 +621,26 @@ function $handleMultiClick(e) {
                 sendElementChange('sensor', $gWidgets[$widget.siblings[i]].name, INACTIVE);  //set all other siblings to inactive if not already
             }
         }
-    };
-};
+    }
+}
 
 //perform click-handling of linkinglabel widgets (3 cases: complete url or frame:<name> where name is a panel or a frame)
 function $handleLinkingLabelClick(e) {
-	e.stopPropagation();  e.preventDefault(); //prevent double-firing (touch + click)
+    e.stopPropagation();
+    e.preventDefault(); //prevent double-firing (touch + click)
     var $widget = $gWidgets[this.id];
     var $url = $widget.url;
     if ($url.toLowerCase().indexOf("frame:") == 0) {
         $frameName = $url.substring(6); //if "frame" found, remove it
-        $frameType = $gPanelList[$frameName];  //find panel type in panel list
-        if (typeof $frameType == "undefined") {
+        $frameUrl = $gPanelList[$frameName];  //find panel in panel list
+        if (typeof $frameUrl == "undefined") {
             $url = "/frame/" + $frameName + ".html"; //not in list, open using frameserver
         } else {
-            $url = "?name=" + $frameType + "/" + $frameName; //format for panel server
+            $url = "/panel/" + $frameUrl; //format for panel server
         }
     }
     window.location = $url;  //navigate to the specified url
 }
-;
-
 
 //draw a Circle (color and width are optional)
 function $drawCircle($ptx, $pty, $radius, $color, $width) {
@@ -653,7 +656,7 @@ function $drawCircle($ptx, $pty, $radius, $color, $width) {
     // put color and widths back to default
     $gCtx.lineWidth = $savLineWidth;
     $gCtx.strokeStyle = $savStrokeStyle;
-};
+}
 
 //draw a Tracksegment (pass in widget)
 function $drawTrackSegment($widget) {
@@ -709,7 +712,7 @@ function $drawTrackSegment($widget) {
         }
     }
 }
-;
+
 //drawLine, passing in values from xml
 function $drawDashedLine($pt1x, $pt1y, $pt2x, $pt2y, $color, $width, dashArray) {
     var $savLineWidth = $gCtx.lineWidth;
@@ -726,7 +729,6 @@ function $drawDashedLine($pt1x, $pt1y, $pt2x, $pt2y, $color, $width, dashArray) 
     $gCtx.strokeStyle = $savStrokeStyle;
     $gCtx.lineWidth = $savLineWidth;
 }
-;
 
 //dashed line code copied from: http://stackoverflow.com/questions/4576724/dotted-stroke-in-canvas
 var CP = window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype;
@@ -802,10 +804,10 @@ function $drawIcon($widget) {
         }
     } else {
         if (window.console)
-        	console.log("ERROR: image not defined for " + $widget.widgetType + " " +$widget.id+", state=" + $widget.state+", occ=" +$widget.occupancystate);
+            console.log("ERROR: image not defined for " + $widget.widgetType + " " + $widget.id + ", state=" + $widget.state + ", occ=" + $widget.occupancystate);
     }
     $setWidgetPosition($("#panel-area #" + $widget.id));
-};
+}
 
 //draw a LevelXing (pass in widget)
 function $drawLevelXing($widget) {
@@ -852,7 +854,6 @@ function $drawLevelXing($widget) {
     $drawLine(ax, ay, cx, cy, $color, $width); //A to B
     $drawLine(dx, dy, bx, by, $color, $width); //D to B
 }
-;
 
 //draw a Turnout (pass in widget)
 //  see LayoutEditor.drawTurnouts()
@@ -962,7 +963,6 @@ function $drawTurnout($widget) {
         $drawCircle($widget.xcen, $widget.ycen, $gPanel.turnoutcirclesize * SIZE, $gPanel.turnoutcirclecolor, 1);
     }
 }
-;
 
 //store the various points defined with a Turnout (pass in widget)
 //see jmri.jmrit.display.layoutEditor.LayoutTurnout.java for background
@@ -996,7 +996,6 @@ function $storeTurnoutPoints($widget) {
         $gPts[$t.ident] = $t;
     }
 }
-;
 
 //store the various points defined with a LevelXing (pass in widget)
 //see jmri.jmrit.display.layoutEditor.LevelXing.java for background
@@ -1022,7 +1021,6 @@ function $storeLevelXingPoints($widget) {
     $t['y'] = $widget.ycen - ($widget.yb - $widget.ycen);
     $gPts[$t.ident] = $t;
 }
-;
 
 //drawLine, passing in values from xml
 function $drawLine($pt1x, $pt1y, $pt2x, $pt2y, $color, $width) {
@@ -1041,7 +1039,6 @@ function $drawLine($pt1x, $pt1y, $pt2x, $pt2y, $color, $width) {
     $gCtx.strokeStyle = $savStrokeStyle;
     $gCtx.lineWidth = $savLineWidth;
 }
-;
 
 //drawArc, passing in values from xml
 function $drawArc(pt1x, pt1y, pt2x, pt2y, degrees, $color, $width) {
@@ -1213,10 +1210,10 @@ var $reDrawIcon = function($widget) {
     //additional naming for indicator*icon widgets to reflect occupancy
     $indicator = ($widget.occupancysensor && $widget.occupancystate == ACTIVE ? "Occupied" : "");
     if ($widget['icon' + $indicator + ($widget.state + "").replace(/ /g, "_")]) {
-    	$('img#' + $widget.id).attr('src', $widget['icon' + $indicator + ($widget.state + "").replace(/ /g, "_")]);  //set image src to next state's image
+        $('img#' + $widget.id).attr('src', $widget['icon' + $indicator + ($widget.state + "").replace(/ /g, "_")]);  //set image src to next state's image
     } else {
-    	if (window.console)
-    		console.log("ERROR: image not defined for " + $widget.widgetType + " " +$widget.id+", state=" + $widget.state+", occ=" +$widget.occupancystate);
+        if (window.console)
+            console.log("ERROR: image not defined for " + $widget.widgetType + " " + $widget.id + ", state=" + $widget.state + ", occ=" + $widget.occupancystate);
     }
 };
 
@@ -1225,18 +1222,18 @@ var $setWidgetState = function($id, $newState) {
     var $widget = $gWidgets[$id];
     if ($widget.state !== $newState) {  //don't bother if already this value
         if (window.console)
-            console.log("setting "+$id+" for "+$widget.jsonType+" "+$widget.name+", '" + $widget.state+ "' --> '"+$newState+"'");
+            console.log("setting " + $id + " for " + $widget.jsonType + " " + $widget.name + ", '" + $widget.state + "' --> '" + $newState + "'");
         $widget.state = $newState;
         switch ($widget.widgetFamily) {
             case "icon" :
-            	$reDrawIcon($widget)
-            	break;
+                $reDrawIcon($widget)
+                break;
             case "text" :
                 if ($widget.jsonType == "memory") {
                     if ($widget.widgetType == "fastclock") {
                         $drawClock($widget);
                     } else {
-                    		$('div#' + $id).text($newState);  //set memory text to new value from server
+                        $('div#' + $id).text($newState);  //set memory text to new value from server
                     }
                 } else {
                     if (typeof $widget['text' + $newState] !== "undefined") {
@@ -1359,7 +1356,7 @@ var $getNextState = function($widget) {
                         if (window.console)
                             console.log('key: ' + k + " first=" + $firstState);
                     }
-                };
+                }
                 if (typeof $nextState == "undefined")
                     $nextState = $firstState;  //if still not set, start over
         } //end of switch 
@@ -1415,11 +1412,11 @@ var requestPanelXML = function(panelName) {
 
 //preload all images referred to by the widget
 var $preloadWidgetImages = function($widget) {
-	for (k in $widget) {
-		if (k.indexOf('icon') == 0 && typeof $widget[k] !== "undefined" && $widget[k] != "yes") { //if attribute names starts with 'icon', it's an image, so preload it
-			$("<img src='" + $widget[k] + "'/>");
-		}
-	};
+    for (k in $widget) {
+        if (k.indexOf('icon') == 0 && typeof $widget[k] !== "undefined" && $widget[k] != "yes") { //if attribute names starts with 'icon', it's an image, so preload it
+            $("<img src='" + $widget[k] + "'/>");
+        }
+    }
 };
 
 //determine widget "family" for broadly grouping behaviors
@@ -1463,7 +1460,6 @@ var $getWidgetFamily = function($widget) {
             return "drawn";
             break;
     }
-    ;
 
     return; //unrecognized widget returns undefined
 };
@@ -1507,9 +1503,9 @@ function updateWidgets(systemName, state) {
 }
 
 function updateOccupancy(occupancyName, state) {
-	if (occupancyNames[occupancyName]) {
-		if (window.console)
-			console.log("setting occupancies for sensor"+ occupancyName + " to " + state);
+    if (occupancyNames[occupancyName]) {
+        if (window.console)
+            console.log("setting occupancies for sensor" + occupancyName + " to " + state);
         $.each(occupancyNames[occupancyName], function(index, widgetId) {
             $widget = $gWidgets[widgetId];
             if ($widget.blockname) {
@@ -1532,34 +1528,41 @@ function updateOccupancy(occupancyName, state) {
     }
 }
 
-function listPanels() {
+function listPanels(name) {
     $.ajax({
         url: "/panel/?format=json",
         data: {},
         success: function(data, textStatus, jqXHR) {
             if (data.length !== 0) {
-                $("#panel-list").empty();
-                $("#activity-alert").addClass("hidden").removeClass("show");
-                $("#panel-list").addClass("show").removeClass("hidden");
                 $.each(data, function(index, value) {
-                    $("#panel-list").append("<div class=\"col-sm-6 col-md-4 col-lg-3\"><div class=\"thumbnail\"><a href=\"/panel/" + value.name + "\"><div class=\"thumbnail-image\"><img src=\"/panel/" + value.name + "?format=png\" style=\"width: 100%;\"></div><div class=\"caption\">" + value.userName + "</div></a></div></div>");
-                    // (12 / col-lg-#) % index + 1
-                    if (4 % (index + 1)) {
-                        $("#panel-list").append("<div class=\"clearfix visible-lg\"></div>");
-                    }
-                    // (12 / col-md-#) % index + 1
-                    if (3 % (index + 1)) {
-                        $("#panel-list").append("<div class=\"clearfix visible-md\"></div>");
-                    }
-                    // (12 / col-sm-#) % index + 1
-                    if (2 % (index + 1)) {
-                        $("#panel-list").append("<div class=\"clearfix visible-sm\"></div>");
-                    }
+                    $gPanelList[value.userName] = value.name;
                 });
-                // resizeThumbnails(); // sometimes gets .thumbnail sizes too small under image. Why?
-            } else {
-                $("#activity-alert").addClass("hidden").removeClass("show");
-                $("#warning-no-panels").addClass("show").removeClass("hidden");
+            }
+            if (name === null || typeof (panelName) === undefined) {
+                if (data.length !== 0) {
+                    $("#panel-list").empty();
+                    $("#activity-alert").addClass("hidden").removeClass("show");
+                    $("#panel-list").addClass("show").removeClass("hidden");
+                    $.each(data, function(index, value) {
+                        $("#panel-list").append("<div class=\"col-sm-6 col-md-4 col-lg-3\"><div class=\"thumbnail\"><a href=\"/panel/" + value.name + "\"><div class=\"thumbnail-image\"><img src=\"/panel/" + value.name + "?format=png\" style=\"width: 100%;\"></div><div class=\"caption\">" + value.userName + "</div></a></div></div>");
+                        // (12 / col-lg-#) % index + 1
+                        if (4 % (index + 1)) {
+                            $("#panel-list").append("<div class=\"clearfix visible-lg\"></div>");
+                        }
+                        // (12 / col-md-#) % index + 1
+                        if (3 % (index + 1)) {
+                            $("#panel-list").append("<div class=\"clearfix visible-md\"></div>");
+                        }
+                        // (12 / col-sm-#) % index + 1
+                        if (2 % (index + 1)) {
+                            $("#panel-list").append("<div class=\"clearfix visible-sm\"></div>");
+                        }
+                    });
+                    // resizeThumbnails(); // sometimes gets .thumbnail sizes too small under image. Why?
+                } else {
+                    $("#activity-alert").addClass("hidden").removeClass("show");
+                    $("#warning-no-panels").addClass("show").removeClass("hidden");
+                }
             }
         }
     });
@@ -1598,10 +1601,12 @@ $(document).ready(function() {
     $("#navbar-panel-reload > a").attr("href", location.href);
     $("#navbar-panel-xml > a").attr("href", location.href + "?format=xml");
     // show panel thumbnails if no panel name
+    listPanels(panelName);
     if (panelName === null || typeof (panelName) === undefined) {
-        listPanels();
         $("#panel-list").addClass("show").removeClass("hidden");
         $("#panel-area").addClass("hidden").removeClass("show");
+        // hide the Show XML menu when listing panels
+        $("#navbar-panel-xml").addClass("hidden").removeClass("show");
     } else {
         jmri = $.JMRI({
             didReconnect: function() {
@@ -1644,18 +1649,20 @@ $(document).ready(function() {
         // include name of panel in page title. Will be updated to userName later
         setTitle(panelName);
 
-        //add a widget to retrieve current fastclock rate
-        //TODO: replace with websocket timer
+        // Add a widget to retrieve current fastclock rate
+        // this is a widget so special logic for retrieving this information
+        // is not required
         $widget = new Array();
         $widget.jsonType = "memory";
-        $widget['name'] = "IMRATEFACTOR";  //already defined in JMRI
+        $widget['name'] = "IMRATEFACTOR";  // already defined in JMRI
         $widget['id'] = $widget['name'];
         $widget['safeName'] = $widget['name'];
         $widget['state'] = "1.0";
         $gWidgets[$widget.id] = $widget;
 
-        //request actual xml of panel, and process it on return
-        // NOTE: uses settimeout simply to release control and allow panel list to populate
+        // request actual xml of panel, and process it on return
+        // uses setTimeout simply to not block other JavaScript since
+        // requestPanelXML has a long timeout
         setTimeout(function() {
             requestPanelXML(panelName);
         },
