@@ -62,7 +62,6 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
         setName(Bundle.CTL_WelcomeTopComponent());
         setToolTipText(Bundle.HINT_WelcomeTopComponent());
         jScrollPane1.getViewport().setOpaque(false);
-        this.jCheckBox1.setSelected(NbPreferences.forModule(this.getClass()).getBoolean("SHOW_ON_STARTUP", true)); // NOI18N
     }
 
     private static long getModified(URL url) {
@@ -183,7 +182,6 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
     private void initComponents() {
 
         jPanel1 = new org.jmri.application.trainpro.welcome.GradientPanel();
-        jCheckBox1 = new javax.swing.JCheckBox();
         jScrollPane1 = new javax.swing.JScrollPane();
         jEditorPane1 = new javax.swing.JEditorPane();
         jLabel1 = new javax.swing.JLabel();
@@ -191,13 +189,6 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
 
         jPanel1.setBackground(new java.awt.Color(170, 170, 204));
         jPanel1.setForeground(new java.awt.Color(255, 255, 255));
-
-        org.openide.awt.Mnemonics.setLocalizedText(jCheckBox1, org.openide.util.NbBundle.getMessage(WelcomeTopComponent.class, "WelcomeTopComponent.jCheckBox1.text")); // NOI18N
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
-            }
-        });
 
         jScrollPane1.setBorder(null);
         jScrollPane1.setOpaque(false);
@@ -224,9 +215,7 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 174, Short.MAX_VALUE)
-                        .addComponent(jCheckBox1)
-                        .addContainerGap())
+                        .addContainerGap(314, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)))
         );
         jPanel1Layout.setVerticalGroup(
@@ -235,9 +224,7 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2)
-                        .addComponent(jCheckBox1)))
+                    .addComponent(jLabel2))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE))
         );
@@ -254,12 +241,7 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        NbPreferences.forModule(this.getClass()).putBoolean("SHOW_ON_STARTUP", this.jCheckBox1.isSelected()); // NOI18N
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -275,13 +257,6 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
     @Override
     public void componentClosed() {
         // TODO add custom code on component closing
-    }
-
-    @Override
-    public void componentShowing() {
-        if (!NbPreferences.forModule(this.getClass()).getBoolean("SHOW_ON_STARTUP", true)) {
-            this.close();
-        }
     }
 
     void writeProperties(java.util.Properties p) {
