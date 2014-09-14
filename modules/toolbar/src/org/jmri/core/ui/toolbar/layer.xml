@@ -6,9 +6,5 @@
             <attr name="displayName" bundlevalue="org.jmri.core.ui.toolbar.Bundle#Toolbars/JMRI"/>
             <attr name="position" intvalue="400"/>
         </folder>
-        <folder name="Startup Items">
-            <attr name="displayName" bundlevalue="org.jmri.core.ui.toolbar.Bundle#Toolbars/StartupItems"/>
-            <attr name="position" intvalue="500"/>
-        </folder>
     </folder>
 </filesystem>

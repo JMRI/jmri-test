@@ -12,7 +12,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author rhwood
  */
 @ServiceProvider(service = ButtonActionConnector.class, position = 100)
-public class StartupButtonConnector implements ButtonActionConnector {
+public class ToolbarButtonConnector implements ButtonActionConnector {
 
     @Override
     public boolean connect(AbstractButton button, Action action) {
