@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.MessageFormat;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import jmri.Version;
@@ -133,7 +134,11 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
         if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             if (Desktop.isDesktopSupported()) {
                 try {
-                    Desktop.getDesktop().browse(he.getURL().toURI());
+                    try {
+                        Desktop.getDesktop().browse((new URL(MessageFormat.format(he.getURL().toString(), Version.getCanonicalVersion()))).toURI());
+                    } catch (IllegalArgumentException e) {
+                        Desktop.getDesktop().browse(he.getURL().toURI());
+                    }
                 } catch (IOException | URISyntaxException e) {
                     log.error("Unable to open {} in desktop browser: {}", he.getURL(), e.getMessage());
                 }
@@ -233,7 +238,7 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
                         .addComponent(jLabel2)
                         .addComponent(jCheckBox1)))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
