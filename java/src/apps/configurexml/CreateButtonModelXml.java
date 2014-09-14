@@ -1,15 +1,13 @@
 package apps.configurexml;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import apps.Apps;
-import apps.gui3.Apps3;
 import apps.CreateButtonModel;
-
+import apps.gui3.Apps3;
 import javax.swing.Action;
 import javax.swing.JButton;
-
 import org.jdom.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handle XML persistance of CreateButtonModel objects.
@@ -66,6 +64,8 @@ public class CreateButtonModelXml extends jmri.configurexml.AbstractXmlAdapter {
             } else if (Apps3.buttonSpace()!=null) {
                 JButton b = new JButton(action);
                 Apps3.buttonSpace().add(b);
+            } else {
+
             }
             //} else if (DecoderPro3.get)
         } catch (ClassNotFoundException ex1) {
