@@ -1,5 +1,6 @@
 Manifest-Version: 1.0
 OpenIDE-Module: jmri
+OpenIDE-Module-Layer: jmri/layer.xml
 OpenIDE-Module-Localizing-Bundle: jmri/Bundle.properties
 OpenIDE-Module-Specification-Version: 1.0
 

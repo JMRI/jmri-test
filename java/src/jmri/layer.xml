@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="JMRI">
+            <!-- Every action in apps.ActionListBundle is here. This is the lazy way
+            to register these actions for use in the NetBeans toolbar lazily
+            with a generic icon.
+            To use a specific icon, remove the action from here and create an
+            action in the appropriate module using the NetBeans Action wizard
+            and have that new action subclass the original action.
+            -->
+            <file name="jmri-jmrit-throttle-ThrottleCreationAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.throttle.ThrottleCreationAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.throttle.ThrottleCreationAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="401"/>
+            </file>
+            <file name="jmri-jmrix-loconet-locormi-LnMessageServerAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.loconet.locormi.LnMessageServerAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.loconet.locormi.LnMessageServerAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="402"/>
+            </file>
+            <file name="jmri-jmrit-throttle-LoadDefaultXmlThrottlesLayoutAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.throttle.LoadDefaultXmlThrottlesLayoutAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.throttle.LoadDefaultXmlThrottlesLayoutAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="403"/>
+            </file>
+            <file name="jmri-jmrit-simpleprog-SimpleProgAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.simpleprog.SimpleProgAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.simpleprog.SimpleProgAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="404"/>
+            </file>
+            <file name="jmri-jmrit-symbolicprog-tabbedframe-PaneProgAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.symbolicprog.tabbedframe.PaneProgAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.symbolicprog.tabbedframe.PaneProgAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="405"/>
+            </file>
+            <file name="jmri-jmrit-symbolicprog-tabbedframe-PaneOpsProgAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.symbolicprog.tabbedframe.PaneOpsProgAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.symbolicprog.tabbedframe.PaneOpsProgAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="406"/>
+            </file>
+            <file name="jmri-jmrit-powerpanel-PowerPanelAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.powerpanel.PowerPanelAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.powerpanel.PowerPanelAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="407"/>
+            </file>
+            <file name="jmri-jmrit-powerpanel-PowerButtonAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.powerpanel.PowerButtonAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.powerpanel.PowerButtonAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="408"/>
+            </file>
+            <file name="jmri-jmrit-speedometer-SpeedometerAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.speedometer.SpeedometerAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.speedometer.SpeedometerAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="409"/>
+            </file>
+            <file name="jmri-jmrit-simplelightctrl-SimpleLightCtrlAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.simplelightctrl.SimpleLightCtrlAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.simplelightctrl.SimpleLightCtrlAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="410"/>
+            </file>
+            <file name="jmri-jmrit-simpleturnoutctrl-SimpleTurnoutCtrlAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.simpleturnoutctrl.SimpleTurnoutCtrlAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.simpleturnoutctrl.SimpleTurnoutCtrlAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="411"/>
+            </file>
+            <file name="jmri-jmrit-beantable-ListedTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.ListedTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.ListedTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="412"/>
+            </file>
+            <file name="jmri-jmrit-beantable-TurnoutTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.TurnoutTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.TurnoutTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="413"/>
+            </file>
+            <file name="jmri-jmrit-beantable-SensorTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.SensorTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.SensorTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="414"/>
+            </file>
+            <file name="jmri-jmrit-beantable-SignalHeadTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.SignalHeadTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.SignalHeadTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="415"/>
+            </file>
+            <file name="jmri-jmrit-beantable-SignalMastTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.SignalMastTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.SignalMastTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="416"/>
+            </file>
+            <file name="jmri-jmrit-beantable-ReporterTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.ReporterTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.ReporterTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="417"/>
+            </file>
+            <file name="jmri-jmrit-beantable-MemoryTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.MemoryTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.MemoryTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="418"/>
+            </file>
+            <file name="jmri-jmrit-beantable-RouteTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.RouteTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.RouteTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="419"/>
+            </file>
+            <file name="jmri-jmrit-beantable-LightTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.LightTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.LightTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="420"/>
+            </file>
+            <file name="jmri-jmrit-beantable-BlockTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.BlockTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.BlockTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="421"/>
+            </file>
+            <file name="jmri-jmrit-beantable-LogixTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.LogixTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.LogixTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="422"/>
+            </file>
+            <file name="jmri-jmrit-beantable-OBlockTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.OBlockTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.OBlockTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="423"/>
+            </file>
+            <file name="jmri-jmrit-beantable-SectionTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.SectionTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.SectionTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="424"/>
+            </file>
+            <file name="jmri-jmrit-beantable-TransitTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.TransitTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.TransitTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="425"/>
+            </file>
+            <file name="jmri-jmrit-beantable-AudioTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.AudioTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.AudioTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="426"/>
+            </file>
+            <file name="jmri-jmrit-beantable-IdTagTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.beantable.IdTagTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.IdTagTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="427"/>
+            </file>
+            <file name="jmri-jmrit-blockboss-BlockBossAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.blockboss.BlockBossAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.blockboss.BlockBossAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="428"/>
+            </file>
+            <file name="jmri-jmrit-consisttool-ConsistToolAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.consisttool.ConsistToolAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.consisttool.ConsistToolAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="429"/>
+            </file>
+            <file name="jmri-jmrit-sendpacket-SendPacketAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.sendpacket.SendPacketAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.sendpacket.SendPacketAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="430"/>
+            </file>
+            <file name="jmri-jmrit-nixieclock-NixieClockAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.nixieclock.NixieClockAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.nixieclock.NixieClockAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="431"/>
+            </file>
+            <file name="jmri-jmrit-lcdclock-LcdClockAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.lcdclock.LcdClockAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.lcdclock.LcdClockAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="432"/>
+            </file>
+            <file name="jmri-jmrit-analogclock-AnalogClockAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.analogclock.AnalogClockAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.analogclock.AnalogClockAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="433"/>
+            </file>
+            <file name="jmri-jmrit-simpleclock-SimpleClockAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.simpleclock.SimpleClockAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.simpleclock.SimpleClockAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="434"/>
+            </file>
+            <file name="jmri-jmrit-operations-setup-OperationsSetupAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.operations.setup.OperationsSetupAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.operations.setup.OperationsSetupAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="434"/>
+            </file>
+            <file name="jmri-jmrit-operations-locations-LocationsTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.operations.locations.LocationsTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.operations.locations.LocationsTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="435"/>
+            </file>
+            <file name="jmri-jmrit-operations-rollingstock-cars-CarsTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.operations.rollingstock.cars.CarsTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.operations.rollingstock.cars.CarsTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="436"/>
+            </file>
+            <file name="jmri-jmrit-operations-rollingstock-engines-EnginesTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.operations.rollingstock.engines.EnginesTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.operations.rollingstock.engines.EnginesTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="437"/>
+            </file>
+            <file name="jmri-jmrit-operations-routes-RoutesTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.operations.routes.RoutesTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.operations.routes.RoutesTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="438"/>
+            </file>
+            <file name="jmri-jmrit-operations-trains-TrainsTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.operations.trains.TrainsTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.operations.trains.TrainsTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="439"/>
+            </file>
+            <file name="jmri-jmrit-display-PanelEditorAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.display.PanelEditorAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.display.PanelEditorAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="440"/>
+            </file>
+            <file name="jmri-configurexml-LoadXmlConfigAction.instance">
+                <attr name="delegate" newvalue="jmri.configurexml.LoadXmlConfigAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.configurexml.LoadXmlConfigAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="441"/>
+            </file>
+            <file name="jmri-jmrit-automat-monitor-AutomatTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.automat.monitor.AutomatTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.automat.monitor.AutomatTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="442"/>
+            </file>
+            <file name="jmri-jmrit-jython-JythonWindow.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.jython.JythonWindow"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.jython.JythonWindow"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="443"/>
+            </file>
+            <file name="jmri-jmrit-jython-InputWindowAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.jython.InputWindowAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.jython.InputWindowAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="444"/>
+            </file>
+            <file name="jmri-jmrix-acela-acelamon-AcelaMonAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.acela.acelamon.AcelaMonAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.acela.acelamon.AcelaMonAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="445"/>
+            </file>
+            <file name="jmri-jmrix-can-cbus-swing-console-CbusConsolePane$Default.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.can.cbus.swing.console.CbusConsolePane$Default"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.can.cbus.swing.console.CbusConsolePane$Default"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="446"/>
+            </file>
+            <file name="jmri-jmrix-can-cbus-swing-configtool-ConfigToolPane$Default.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.can.cbus.swing.configtool.ConfigToolPane$Default"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.can.cbus.swing.configtool.ConfigToolPane$Default"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="447"/>
+            </file>
+            <file name="jmri-jmrix-can-swing-monitor-MonitorPane$Default.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.can.swing.monitor.MonitorPane$Default"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.can.swing.monitor.MonitorPane$Default"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="448"/>
+            </file>
+            <file name="jmri-jmrix-cmri-serial-serialmon-SerialMonAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.cmri.serial.serialmon.SerialMonAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.cmri.serial.serialmon.SerialMonAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="449"/>
+            </file>
+            <file name="jmri-jmrix-easydcc-easydccmon-EasyDccMonAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.easydcc.easydccmon.EasyDccMonAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.easydcc.easydccmon.EasyDccMonAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="451"/>
+            </file>
+            <file name="jmri-jmrix-ecos-swing-monitor-EcosMonPane$Default.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.ecos.swing.monitor.EcosMonPane$Default"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.ecos.swing.monitor.EcosMonPane$Default"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="452"/>
+            </file>
+            <file name="jmri-jmrix-ecos-swing-statusframe-StatusPanel$Default.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.ecos.swing.statusframe.StatusPanel$Default"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.ecos.swing.statusframe.StatusPanel$Default"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="453"/>
+            </file>
+            <file name="jmri-jmrix-grapevine-serialmon-SerialMonAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.grapevine.serialmon.SerialMonAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.grapevine.serialmon.SerialMonAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="454"/>
+            </file>
+            <file name="jmri-jmrix-grapevine-nodetable-NodeTableAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.grapevine.nodetable.NodeTableAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.grapevine.nodetable.NodeTableAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="455"/>
+            </file>
+            <file name="jmri-jmrix-grapevine-packetgen-SerialPacketGenAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.grapevine.packetgen.SerialPacketGenAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.grapevine.packetgen.SerialPacketGenAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="456"/>
+            </file>
+            <file name="jmri-jmrix-lenz-swing-mon-XNetMonAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.lenz.swing.mon.XNetMonAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.lenz.swing.mon.XNetMonAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="457"/>
+            </file>
+            <file name="jmri-jmrix-loconet-locomon-LocoMonPane$Default.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.loconet.locomon.LocoMonPane$Default"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.loconet.locomon.LocoMonPane$Default"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="458"/>
+            </file>
+            <file name="jmri-jmrix-loconet-slotmon-SlotMonPane$Default.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.loconet.slotmon.SlotMonPane$Default"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.loconet.slotmon.SlotMonPane$Default"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="459"/>
+            </file>
+            <file name="jmri-jmrix-loconet-clockmon-ClockMonPane$Default.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.loconet.clockmon.ClockMonPane$Default"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.loconet.clockmon.ClockMonPane$Default"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="460"/>
+            </file>
+            <file name="jmri-jmrix-loconet-locostats-LocoStatsPanel$Default.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.loconet.locostats.LocoStatsPanel$Default"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.loconet.locostats.LocoStatsPanel$Default"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="461"/>
+            </file>
+            <file name="jmri-jmrix-loconet-pr3-swing-Pr3SelectPane$Default.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.loconet.pr3.swing.Pr3SelectPane$Default"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.loconet.pr3.swing.Pr3SelectPane$Default"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="462"/>
+            </file>
+            <file name="jmri-jmrix-nce-ncemon-NceMonPanel$Default.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.nce.ncemon.NceMonPanel$Default"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.nce.ncemon.NceMonPanel$Default"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="463"/>
+            </file>
+            <file name="jmri-jmrix-powerline-swing-serialmon-SerialMonPane$Default.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.powerline.swing.serialmon.SerialMonPane$Default"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.powerline.swing.serialmon.SerialMonPane$Default"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="464"/>
+            </file>
+            <file name="jmri-jmrix-qsi-qsimon-QsiMonAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.qsi.qsimon.QsiMonAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.qsi.qsimon.QsiMonAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="465"/>
+            </file>
+            <file name="jmri-jmrix-qsi-packetgen-PacketGenAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.qsi.packetgen.PacketGenAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.qsi.packetgen.PacketGenAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="466"/>
+            </file>
+            <file name="jmri-jmrix-rfid-swing-serialmon-SerialMonPane.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.rfid.swing.serialmon.SerialMonPane"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.rfid.swing.serialmon.SerialMonPane"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="467"/>
+            </file>
+            <file name="jmri-jmrix-srcp-srcpmon-SRCPMonAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.srcp.srcpmon.SRCPMonAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.srcp.srcpmon.SRCPMonAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="468"/>
+            </file>
+            <file name="jmri-jmrix-srcp-packetgen-PacketGenAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.srcp.packetgen.PacketGenAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.srcp.packetgen.PacketGenAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="469"/>
+            </file>
+            <file name="jmri-jmrix-zimo-zimomon-Mx1MonAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.zimo.zimomon.Mx1MonAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.zimo.zimomon.Mx1MonAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="470"/>
+            </file>
+            <file name="jmri-jmrix-jinput-treecontrol-TreeAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.jinput.treecontrol.TreeAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.jinput.treecontrol.TreeAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="471"/>
+            </file>
+            <file name="jmri-jmrix-libusb-UsbViewAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.libusb.UsbViewAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.libusb.UsbViewAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="472"/>
+            </file>
+            <file name="jmri-web-server-WebServerAction.instance">
+                <attr name="delegate" newvalue="jmri.web.server.WebServerAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.web.server.WebServerAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="473"/>
+            </file>
+            <file name="jmri-jmrit-MemoryFrameAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.MemoryFrameAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.MemoryFrameAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="474"/>
+            </file>
+            <file name="jmri-jmrit-withrottle-WiThrottleCreationAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.withrottle.WiThrottleCreationAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.withrottle.WiThrottleCreationAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="475"/>
+            </file>
+            <file name="jmri-jmris-json-JsonServerAction.instance">
+                <attr name="delegate" newvalue="jmri.jmris.json.JsonServerAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmris.json.JsonServerAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="476"/>
+            </file>
+            <file name="jmri-jmris-srcp-JmriSRCPServerAction.instance">
+                <attr name="delegate" newvalue="jmri.jmris.srcp.JmriSRCPServerAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmris.srcp.JmriSRCPServerAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="477"/>
+            </file>
+            <file name="jmri-jmris-simpleserver-SimpleServerAction.instance">
+                <attr name="delegate" newvalue="jmri.jmris.simpleserver.SimpleServerAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmris.simpleserver.SimpleServerAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="478"/>
+            </file>
+            <file name="apps.SystemConsoleAction.instance">
+                <attr name="delegate" newvalue="apps.SystemConsoleAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#apps.SystemConsoleAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="479"/>
+            </file>
+            <file name="apps.RestartAction.instance">
+                <attr name="delegate" newvalue="apps.RestartAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#apps.RestartAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="480"/>
+            </file>
+            <file name="apps.CheckForUpdateAction.instance">
+                <attr name="delegate" newvalue="apps.CheckForUpdateAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#apps.CheckForUpdateAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="481"/>
+            </file>
+            <file name="jmri-jmrit-roster-swing-RosterFrameAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.roster.swing.RosterFrameAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.roster.swing.RosterFrameAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="482"/>
+            </file>
+            <file name="jmri-jmrit-roster-RecreateRosterAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.roster.RecreateRosterAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.roster.RecreateRosterAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="483"/>
+            </file>
+            <file name="jmri-jmrit-dispatcher-DispatcherAction.instance">
+                <attr name="delegate" newvalue="jmri.jmrit.dispatcher.DispatcherAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.dispatcher.DispatcherAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="484"/>
+            </file>
+            <file name="apps-gui3-TabbedPreferencesAction.instance">
+                <attr name="delegate" newvalue="apps.gui3.TabbedPreferencesAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#apps.gui3.TabbedPreferencesAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="485"/>
+            </file>
+            <file name="apps-gui3-TabbedPreferencesProfileAction.instance">
+                <attr name="delegate" newvalue="apps.gui3.TabbedPreferencesProfileAction"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#apps.gui3.TabbedPreferencesProfileAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="position" intvalue="486"/>
+            </file>
+        </folder>
+    </folder>
+</filesystem>
