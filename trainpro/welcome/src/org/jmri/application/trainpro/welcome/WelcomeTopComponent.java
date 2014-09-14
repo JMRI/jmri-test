@@ -62,6 +62,7 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
         setName(Bundle.CTL_WelcomeTopComponent());
         setToolTipText(Bundle.HINT_WelcomeTopComponent());
         jScrollPane1.getViewport().setOpaque(false);
+        this.jCheckBox1.setSelected(NbPreferences.forModule(this.getClass()).getBoolean("SHOW_ON_STARTUP", true)); // NOI18N
     }
 
     private static long getModified(URL url) {
@@ -254,7 +255,7 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
     }// </editor-fold>//GEN-END:initComponents
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        // TODO add your handling code here:
+        NbPreferences.forModule(this.getClass()).putBoolean("SHOW_ON_STARTUP", this.jCheckBox1.isSelected()); // NOI18N
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -274,6 +275,13 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
     @Override
     public void componentClosed() {
         // TODO add custom code on component closing
+    }
+
+    @Override
+    public void componentShowing() {
+        if (!NbPreferences.forModule(this.getClass()).getBoolean("SHOW_ON_STARTUP", true)) {
+            this.close();
+        }
     }
 
     void writeProperties(java.util.Properties p) {
