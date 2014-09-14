@@ -59,7 +59,7 @@ public class JmriApplication {
         Application.setApplicationName(title);
         // configure logging first
         try {
-            // TODO allow log file to specified on CLI
+            // TODO allow log file to be specified on CLI
             FileObject logConfig = org.openide.filesystems.FileUtil.toFileObject(new File(Places.getUserDirectory(), "logging.properties"));
             if (logConfig != null) {
                 logConfig = org.openide.filesystems.FileUtil.getConfigFile("logging.properties");
@@ -277,8 +277,8 @@ public class JmriApplication {
         // Set the Config Manager error handler
         ConfigXmlManager.setErrorHandler(
                 (this.isHeadless())
-                ? new ErrorHandler()
-                : new DialogErrorHandler()
+                        ? new ErrorHandler()
+                        : new DialogErrorHandler()
         );
         // Start a shutdown manager
         InstanceManager.store(new NetBeansShutDownManager(), ShutDownManager.class);
@@ -294,9 +294,6 @@ public class JmriApplication {
         // Start the abstract action model that allows items to be added to the, both
         // CreateButton and Perform Action Model use a common Abstract class
         InstanceManager.store(new CreateButtonModel(), CreateButtonModel.class);
-        // Start preference manager
-        // NOTE replace with NBM/JMRI-based model
-        // InstanceManager.setTabbedPreferences(new TabbedPreferences());
         // Start the named bean handler
         InstanceManager.store(new NamedBeanHandleManager(), NamedBeanHandleManager.class);
         // Start an IdTag manager
@@ -336,14 +333,22 @@ public class JmriApplication {
             }
             try {
                 this.configLoaded = InstanceManager.configureManagerInstance().load(file, true);
-            } catch (JmriException e) {
-                log.error("Unhandled problem loading configuration", e);
+            } catch (JmriException ex) {
+                log.error("Unhandled problem loading configuration", ex);
                 this.configLoaded = false;
             }
             log.debug("end load config file, OK={}", this.configLoaded);
         } else {
             log.info("No saved preferences, will open preferences window. Searched for {}", file.getPath());
             this.configLoaded = false;
+        }
+        if (this.configLoaded) {
+            try {
+                this.configLoaded = InstanceManager.configureManagerInstance().loadDeferred(file);
+            } catch (JmriException ex) {
+                log.error("Unhandled problem loading configuration", ex);
+                this.configLoaded = false;
+            }
         }
         return this.configLoaded;
     }
