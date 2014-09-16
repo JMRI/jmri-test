@@ -5,22 +5,4 @@
 <project name="jmri" default="netbeans" basedir=".">
     <description>Builds, tests, and runs the project jmri.</description>
     <import file="nbproject/build-impl.xml"/>
-
-    <!-- need to remove -pre-jar-prep once real debug target is overridden -->
-    <!--
-    <target name="-pre-jar-prep">
-        <ant antfile="${basedir}/../../build.xml" target="jar-resources" useNativeBasedir="true">
-        </ant>
-        <copy file="${basedir}/../../jmri.jar" todir="${basedir}/release/modules/ext"/>
-    </target>
-    <target name="jar-prep" depends="-pre-jar-prep,projectized-common.jar-prep"/>
-    -->
 </project>
-<!--
-NOTES:
-Need to override jar-prep (or define -pre-jar-prep) to call normal JMRI build.xml netbeans-jar target to build jmri.jar
-Need to also ensure that all libs jmri.jar requires are correctly copied at that point as well
-I'm not positive that I would not want to override an earlier target in the process instead of jar-prep; it just seems
-to be the most likely target to this in.
-Note that any libs that need to be available to code outsite jmri.* needs its own module
--->
