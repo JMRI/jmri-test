@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See harness/README in the NetBeans platform -->
+<!-- for some information on what you could do (e.g. targets to override). -->
+<!-- If you delete this file and reopen the project it will be recreated. -->
+<project name="org.jmri.protocol.srcp" default="netbeans" basedir=".">
+    <description>Builds, tests, and runs the project org.jmri.protocol.srcp.</description>
+    <import file="nbproject/build-impl.xml"/>
+
+    <target name="jjtree"
+            description="Run JJTree related actions"
+            depends="init">
+        <!-- Run JJTree -->
+        <!-- Create the build directory structure used by compiler -->
+        <!-- javacc.src is defined in project.properties -->
+        <!-- cp.extra.libdir is defined in project.properties -->
+        <mkdir dir="${src.dir}/jmri/jmris/srcp/parser"/>
+        <jjtree
+            target="${javacc.src}/jmri/jmris/srcp/SRCPParser.jjt"
+            outputdirectory="${src.dir}/jmri/jmris/srcp/parser"
+            javacchome="${cp.extra.libdir}"/>
+        <mkdir dir="${src.dir}/jmri/jmrix/srcp/parser"/>
+        <jjtree
+            target="${javacc.src}/jmri/jmrix/srcp/SRCPClientParser.jjt"
+            outputdirectory="${src.dir}/jmri/jmrix/srcp/parser"
+            javacchome="${cp.extra.libdir}"/>
+    </target>
+
+    <!-- not functional yet -->
+    <target name="jjdoc"
+            description="create JJDoc BNF documentation"
+            depends="init, javacc">
+        <mkdir dir="${doctarget}/jmri/jmris/srcp/"/>
+        <jjdoc target="${src.dir}/jmri/jmris/srcp/parser/SRCPParser.jj"
+               javacchome="${cp.extra.libdir}"
+               outputfile="${doctarget}/jmri/jmris/srcp/SRCPParser.html"/>
+    </target>
+
+    <target name="javacc"
+            description="JavaCC related actions"
+            depends="jjtree">
+        <!-- Run JavaCC -->
+        <javacc
+            target="${src.dir}/jmri/jmris/srcp/parser/SRCPParser.jj"
+            outputdirectory="${src.dir}/jmri/jmris/srcp/parser"
+            javacchome="${cp.extra.libdir}"/>
+        <javacc
+            target="${src.dir}/jmri/jmrix/srcp/parser/SRCPClientParser.jj"
+            outputdirectory="${src.dir}/jmri/jmrix/srcp/parser"
+            javacchome="${cp.extra.libdir}"/>
+    </target>
+
+    <target name="-pre-clean" depends="files-init">
+        <!-- src.dir is not defined when cleaning, so use ${basedir}/src -->
+        <delete includeemptydirs="true">
+            <fileset dir="${basedir}/src/jmri" defaultexcludes="false"/>
+        </delete>
+    </target>
+    
+    <target name="clean" depends="-pre-clean,projectized-common.clean">
+    </target>
+
+    <target name="compile" depends="javacc, projectized-common.compile">
+    </target>
+</project>
