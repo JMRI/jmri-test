@@ -1,5 +1,6 @@
 Manifest-Version: 1.0
 OpenIDE-Module: org.jmri
 OpenIDE-Module-Localizing-Bundle: org/jmri/Bundle.properties
+OpenIDE-Module-Requires: cnb.org.jmri.resources
 OpenIDE-Module-Specification-Version: 1.0
 
