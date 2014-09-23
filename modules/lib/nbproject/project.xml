@@ -690,10 +690,6 @@
                 <package>jmri.web.servlet.xmlio</package>
                 <package>jmri.web.xmlio</package>
             </public-packages>
-            <class-path-extension>
-                <runtime-relative-path>ext/jmri.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jmri.jar</binary-origin>
-            </class-path-extension>
         </data>
     </configuration>
 </project>
