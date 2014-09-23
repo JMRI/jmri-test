@@ -5,6 +5,7 @@ import apps.gui3.TabbedPreferences;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.util.ResourceBundle;
 import java.util.logging.LogManager;
 import javax.swing.JOptionPane;
 import jmri.Application;
@@ -342,6 +343,19 @@ public class JmriApplication {
             log.info("No saved preferences, will open preferences window. Searched for {}", file.getPath());
             this.configLoaded = false;
         }
+        // I'm really sure what this model does for JMRI
+        CreateButtonModel model = InstanceManager.getDefault(CreateButtonModel.class);
+        ResourceBundle actions = ResourceBundle.getBundle("apps.ActionListBundle"); // NOI18N
+        for (String action : actions.keySet()) {
+            try {
+                model.addAction(action, actions.getString(action));
+            } catch (ClassNotFoundException ex) {
+                log.error("Did not find class {}", action);
+            }
+        }
+        FileUtil.logFilePaths();
+        // here is where we need to respond to an interupted start (F8 for Logix)
+        // looking to see if there is a built in way to respond to that first
         if (this.configLoaded) {
             try {
                 this.configLoaded = InstanceManager.configureManagerInstance().loadDeferred(file);
@@ -349,6 +363,26 @@ public class JmriApplication {
                 log.error("Unhandled problem loading configuration", ex);
                 this.configLoaded = false;
             }
+            /* Does NetBeans offer a better way? Need to also trap Headless Exceptions
+            // To avoid possible locks, deferred load should be
+            // performed on the Swing thread
+            if (SwingUtilities.isEventDispatchThread()) {
+                configDeferredLoadOK = doDeferredLoad(file);
+            } else {
+                try {
+                    // Use invokeAndWait method as we don't want to
+                    // return until deferred load is completed
+                    SwingUtilities.invokeAndWait(new Runnable() {
+                        @Override
+                        public void run() {
+                            configDeferredLoadOK = doDeferredLoad(file);
+                        }
+                    });
+                } catch (Exception ex) {
+                    log.error("Exception creating system console frame", ex);
+                }
+            }
+                    */
         }
         return this.configLoaded;
     }
