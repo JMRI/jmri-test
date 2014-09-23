@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import jmri.jmrit.operations.OperationsFrame;
+import jmri.jmrit.operations.locations.LocationManager;
 import jmri.jmrit.operations.rollingstock.RollingStock;
 import jmri.jmrit.operations.setup.Control;
 import jmri.jmrit.operations.setup.Setup;
@@ -32,8 +33,6 @@ import jmri.jmrit.operations.setup.Setup;
  * @version $Revision$
  */
 public class PrintCarRosterAction extends AbstractAction {
-
-	CarManager manager = CarManager.instance();
 
 	public PrintCarRosterAction(String actionName, Frame frame, boolean preview, Component pWho) {
 		super(actionName);
@@ -62,8 +61,6 @@ public class PrintCarRosterAction extends AbstractAction {
 	}
 
 	int numberCharPerLine = 90;
-	int ownerMaxLen = CarOwners.instance().getCurMaxNameLength();
-	List<RollingStock> cars;
 
 	private void printCars() {
 
@@ -77,8 +74,8 @@ public class PrintCarRosterAction extends AbstractAction {
 		// obtain a HardcopyWriter to do this
 		HardcopyWriter writer = null;
 		try {
-			writer = new HardcopyWriter(mFrame, Bundle.getMessage("TitleCarRoster"), 10, .5, .5, .5, .5,
-					isPreview, "", landscape, true, null);
+			writer = new HardcopyWriter(mFrame, Bundle.getMessage("TitleCarRoster"), 10, .5, .5, .5, .5, isPreview, "",
+					landscape, true, null);
 		} catch (HardcopyWriter.PrintCanceledException ex) {
 			log.debug("Print cancelled");
 			return;
@@ -108,29 +105,24 @@ public class PrintCarRosterAction extends AbstractAction {
 		String schedule = "";
 		String comment = "";
 
-		ownerMaxLen = CarOwners.instance().getCurMaxNameLength();
-		if (printCarLoad.isSelected() || printCarKernel.isSelected() || printCarColor.isSelected())
-			ownerMaxLen = 5;
-
 		try {
 			printTitleLine(writer);
 			String previousLocation = "";
-			for (int i = 0; i < cars.size(); i++) {
-				Car car = (Car) cars.get(i);
+			List<RollingStock> cars = panel.carsTableModel.getCarList(sortByComboBox.getSelectedIndex());
+			for (RollingStock rs : cars) {
+				Car car = (Car) rs;
 				if (printCarsWithLocation.isSelected() && car.getLocation() == null)
 					continue; // car doesn't have a location skip
-				
+
 				location = "";
 				destination = "";
 				finalDestination = "";
 				returnWhenEmpty = "";
-				
+
 				if (printCarLocation.isSelected()) {
 					if (car.getLocation() != null)
 						location = car.getLocationName().trim() + " - " + car.getTrackName().trim();
-					// reduce location name by one half of the track name
-					location = padAttribute(location, Control.max_len_string_location_name
-							+ Control.max_len_string_track_name / 2);
+					location = padAttribute(location, LocationManager.instance().getMaxLocationAndTrackNameLength() + 3);
 				}
 				// Page break between locations?
 				if (!previousLocation.equals("") && !car.getLocationName().trim().equals(previousLocation)
@@ -139,8 +131,8 @@ public class PrintCarRosterAction extends AbstractAction {
 					printTitleLine(writer);
 				}
 				// Add a line between locations?
-				else if (!previousLocation.equals("")
-						&& !car.getLocationName().trim().equals(previousLocation) && printSpace.isSelected()) {
+				else if (!previousLocation.equals("") && !car.getLocationName().trim().equals(previousLocation)
+						&& printSpace.isSelected()) {
 					writer.write(NEW_LINE);
 				}
 				previousLocation = car.getLocationName().trim();
@@ -163,7 +155,7 @@ public class PrintCarRosterAction extends AbstractAction {
 				if (printCarKernel.isSelected())
 					kernel = padAttribute(car.getKernelName().trim(), Control.max_len_string_attibute);
 				if (printCarOwner.isSelected())
-					owner = padAttribute(car.getOwner().trim(), ownerMaxLen);
+					owner = padAttribute(car.getOwner().trim(), CarOwners.instance().getCurMaxNameLength());
 				if (printCarBuilt.isSelected())
 					built = padAttribute(car.getBuilt().trim(), Control.max_len_string_built_name);
 				if (printCarLast.isSelected())
@@ -182,19 +174,22 @@ public class PrintCarRosterAction extends AbstractAction {
 				if (printCarDestination.isSelected()) {
 					if (car.getDestination() != null)
 						destination = car.getDestinationName().trim() + " - " + car.getDestinationTrackName();
-					destination = padAttribute(destination, Control.max_len_string_location_name);
+					destination = padAttribute(destination, LocationManager.instance()
+							.getMaxLocationAndTrackNameLength() + 3);
 				}
 				if (printCarFinalDestination.isSelected()) {
 					if (car.getFinalDestination() != null)
 						finalDestination = car.getFinalDestinationName().trim() + " - "
 								+ car.getFinalDestinationTrackName().trim();
-					finalDestination = padAttribute(finalDestination, Control.max_len_string_location_name);
+					finalDestination = padAttribute(finalDestination, LocationManager.instance()
+							.getMaxLocationAndTrackNameLength() + 3);
 				}
 				if (printCarRWE.isSelected()) {
 					if (car.getReturnWhenEmptyDestination() != null)
 						returnWhenEmpty = car.getReturnWhenEmptyDestinationName().trim() + " - "
 								+ car.getReturnWhenEmptyDestTrackName().trim();
-					returnWhenEmpty = padAttribute(returnWhenEmpty, Control.max_len_string_location_name);
+					returnWhenEmpty = padAttribute(returnWhenEmpty, LocationManager.instance()
+							.getMaxLocationAndTrackNameLength() + 3);
 				}
 				if (printCarComment.isSelected())
 					comment = car.getComment().trim();
@@ -226,25 +221,24 @@ public class PrintCarRosterAction extends AbstractAction {
 						.getCurMaxNameLength()) : "")
 				+ (printCarLoad.isSelected() ? padAttribute(Bundle.getMessage("Load"), CarLoads.instance()
 						.getCurMaxNameLength()) : "")
-				+ (printCarKernel.isSelected() ? padAttribute(("Kernel"), Control.max_len_string_attibute)
-						: "")
-				+ (printCarOwner.isSelected() ? padAttribute(Bundle.getMessage("Owner"), ownerMaxLen) : "")
+				+ (printCarKernel.isSelected() ? padAttribute(("Kernel"), Control.max_len_string_attibute) : "")
+				+ (printCarOwner.isSelected() ? padAttribute(Bundle.getMessage("Owner"), CarOwners.instance().getCurMaxNameLength()) : "")
 				+ (printCarBuilt.isSelected() ? Bundle.getMessage("Built") + " " : "")
 				+ (printCarLast.isSelected() ? Bundle.getMessage("LastMoved") + " " : "")
 				+ (printCarWait.isSelected() ? Bundle.getMessage("Wait") + " " : "")
 				+ (printCarPickup.isSelected() ? padAttribute(Bundle.getMessage("Pickup"), 10) : "")
 				+ (printCarValue.isSelected() ? Setup.getValueLabel() + "        " : "")
 				+ (printCarRfid.isSelected() ? Setup.getRfidLabel() + "        " : "")
-				+ (printCarLocation.isSelected() ? padAttribute(Bundle.getMessage("Location"),
-						Control.max_len_string_location_name + Control.max_len_string_track_name / 2) : "")
+				+ (printCarLocation.isSelected() ? padAttribute(Bundle.getMessage("Location"), LocationManager
+						.instance().getMaxLocationAndTrackNameLength() + 3) : "")
 				+ (printCarTrain.isSelected() ? padAttribute(Bundle.getMessage("Train"),
 						Control.max_len_string_train_name / 2) : "")
-				+ (printCarDestination.isSelected() ? padAttribute(Bundle.getMessage("Destination"),
-						Control.max_len_string_location_name) : "")
-				+ (printCarFinalDestination.isSelected() ? padAttribute(
-						Bundle.getMessage("FinalDestination"), Control.max_len_string_location_name) : "")
-				+ (printCarRWE.isSelected() ? padAttribute(
-						Bundle.getMessage("ReturnWhenEmpty"), Control.max_len_string_location_name) : "")
+				+ (printCarDestination.isSelected() ? padAttribute(Bundle.getMessage("Destination"), LocationManager
+						.instance().getMaxLocationAndTrackNameLength() + 3) : "")
+				+ (printCarFinalDestination.isSelected() ? padAttribute(Bundle.getMessage("FinalDestination"),
+						LocationManager.instance().getMaxLocationAndTrackNameLength() + 3) : "")
+				+ (printCarRWE.isSelected() ? padAttribute(Bundle.getMessage("ReturnWhenEmpty"), LocationManager
+						.instance().getMaxLocationAndTrackNameLength() + 3) : "")
 				+ (printCarComment.isSelected() ? Bundle.getMessage("Comment") : "");
 		if (s.length() > numberCharPerLine)
 			s = s.substring(0, numberCharPerLine);
@@ -260,8 +254,7 @@ public class PrintCarRosterAction extends AbstractAction {
 		return buf.toString();
 	}
 
-	JLabel sort = new JLabel(" ");
-
+	JComboBox sortByComboBox = new JComboBox();
 	JComboBox manifestOrientationComboBox = Setup.getOrientationComboBox();
 
 	JCheckBox printCarsWithLocation = new JCheckBox(Bundle.getMessage("PrintCarsWithLocation"));
@@ -272,10 +265,10 @@ public class PrintCarRosterAction extends AbstractAction {
 	JCheckBox printCarBuilt = new JCheckBox(Bundle.getMessage("PrintCarBuilt"));
 	JCheckBox printCarLoad = new JCheckBox(Bundle.getMessage("PrintCarLoad"));
 	JCheckBox printCarKernel = new JCheckBox(Bundle.getMessage("PrintKernel"));
-	JCheckBox printCarValue = new JCheckBox(MessageFormat.format(Bundle.getMessage("PrintCar"),
-			new Object[] { Setup.getValueLabel() }));
-	JCheckBox printCarRfid = new JCheckBox(MessageFormat.format(Bundle.getMessage("PrintCar"),
-			new Object[] { Setup.getRfidLabel() }));
+	JCheckBox printCarValue = new JCheckBox(MessageFormat.format(Bundle.getMessage("PrintCar"), new Object[] { Setup
+			.getValueLabel() }));
+	JCheckBox printCarRfid = new JCheckBox(MessageFormat.format(Bundle.getMessage("PrintCar"), new Object[] { Setup
+			.getRfidLabel() }));
 	JCheckBox printCarLast = new JCheckBox(Bundle.getMessage("PrintCarLastMoved"));
 	JCheckBox printCarWait = new JCheckBox(Bundle.getMessage("PrintCarWait"));
 	JCheckBox printCarPickup = new JCheckBox(Bundle.getMessage("PrintCarPickup"));
@@ -301,11 +294,10 @@ public class PrintCarRosterAction extends AbstractAction {
 			// create panel
 			JPanel pSortBy = new JPanel();
 			pSortBy.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("SortBy")));
-			pSortBy.add(sort);
+			pSortBy.add(sortByComboBox);
 
 			JPanel pOrientation = new JPanel();
-			pOrientation.setBorder(BorderFactory.createTitledBorder(Bundle
-					.getMessage("BorderLayoutOrientation")));
+			pOrientation.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("BorderLayoutOrientation")));
 			pOrientation.add(manifestOrientationComboBox);
 
 			JPanel pPanel = new JPanel();
@@ -375,10 +367,7 @@ public class PrintCarRosterAction extends AbstractAction {
 			getContentPane().add(panePanel);
 			getContentPane().add(pButtons);
 			
-			setMinimumSize(new Dimension(200, Control.panelHeight));
-			
-			pack();
-			setVisible(true);
+			initMinimumSize(new Dimension(Control.smallPanelWidth, Control.panelHeight));
 		}
 
 		public void initComponents() {
@@ -386,14 +375,20 @@ public class PrintCarRosterAction extends AbstractAction {
 				cpof.setTitle(Bundle.getMessage("MenuItemPreview"));
 			else
 				cpof.setTitle(Bundle.getMessage("MenuItemPrint"));
-			sort.setText(panel.carsTableModel.getSortByName());
-			cars = panel.getSortByList();
+			loadSortByComboBox(sortByComboBox);
 			printSpace.setEnabled(panel.sortByLocation.isSelected());
 			printPage.setEnabled(panel.sortByLocation.isSelected());
 			if (!panel.sortByLocation.isSelected()) {
 				printSpace.setSelected(false);
 				printPage.setSelected(false);
 			}
+		}
+
+		private void loadSortByComboBox(JComboBox box) {
+			for (int i = panel.carsTableModel.SORTBY_NUMBER; i <= panel.carsTableModel.SORTBY_LAST; i++) {
+				box.addItem(panel.carsTableModel.getSortByName(i));
+			}
+			box.setSelectedItem(panel.carsTableModel.getSortByName());
 		}
 
 		public void buttonActionPerformed(java.awt.event.ActionEvent ae) {
