@@ -5,4 +5,35 @@
 <project name="jmri" default="netbeans" basedir=".">
     <description>Builds, tests, and runs the project jmri.</description>
     <import file="nbproject/build-impl.xml"/>
+
+    <property file="${basedir}/../../release.properties"/>
+
+    <condition property="release.revision_id"
+               value="${env.SVN_REVISION}"
+               else="unknown">
+        <isset property="env.SVN_REVISION"/>
+    </condition>
+
+    <condition property="release.official" value="true" else="false">
+      <isset property="RELEASED"/>
+    </condition>
+
+    <target name="version-properties">
+        <propertyfile
+            file="${build.classes.dir}/jmri/Version.properties"
+            comment="JMRI generated version information">
+            <entry key="release.major" value="${release.major}"/>
+            <entry key="release.minor" value="${release.minor}"/>
+            <entry key="release.build" value="${release.build}"/>
+            <entry key="release.build_user" value="${user.name}"/>
+            <entry key="release.revision_id" value="${release.revision_id}"/>
+            <!-- build date is in wrong time zone, so include offset -->
+            <entry key="release.build_date" type="date" value="now" pattern="yyyyMMdd-HHmm Z"/>
+            <entry key="release.official" value="${release.official}"/>
+            <entry key="release.is_branched" value="${release.is_branched}"/>
+            <entry key="jmri.copyright.year" type="date" value="now" pattern="1997-yyyy"/>
+        </propertyfile>
+    </target>
+
+    <target name="compile" depends="init,up-to-date,version-properties,projectized-common.compile" unless="is.jar.uptodate"></target>
 </project>
