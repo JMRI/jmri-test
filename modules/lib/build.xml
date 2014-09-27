@@ -19,6 +19,7 @@
     </condition>
 
     <target name="version-properties">
+        <touch file="${build.classes.dir}/jmri/Version.properties" mkdirs="true"/>
         <propertyfile
             file="${build.classes.dir}/jmri/Version.properties"
             comment="JMRI generated version information">
