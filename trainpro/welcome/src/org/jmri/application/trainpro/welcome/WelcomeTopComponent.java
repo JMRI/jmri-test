@@ -1,8 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*============================================================================*
+ * WARNING      This class contains automatically modified code.      WARNING *
+ *                                                                            *
+ * The method initComponents() and the variable declarations between the      *
+ * "// Variables declaration - do not modify" and                             *
+ * "// End of variables declaration" comments will be overwritten if modified *
+ * by hand. Using the NetBeans IDE to edit this file is strongly recommended. *
+ *                                                                            *
+ * See http://jmri.org/help/en/html/doc/Technical/NetBeansGUIEditor.shtml for *
+ * more information.                                                          *
+ *============================================================================*/
 package org.jmri.application.trainpro.welcome;
 
 import java.awt.Desktop;
@@ -16,10 +22,10 @@ import java.net.URLConnection;
 import java.text.MessageFormat;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import jmri.Version;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.modules.Modules;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
@@ -84,7 +90,8 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
 
     public void loadPage() {
         try {
-            URL startUrl = new URL(NbBundle.getMessage(WelcomeTopComponent.class, "WelcomeTopComponent.http.link", Version.getCanonicalVersion()));
+            URL startUrl = new URL(NbBundle.getMessage(WelcomeTopComponent.class, "WelcomeTopComponent.http.link",
+                    Modules.getDefault().findCodeNameBase("org.jmri.application.trainpro").getSpecificationVersion()));
             long lastMod = getModified(startUrl);
             NbPreferences.forModule(getClass()).putLong("LAST_PAGE_UPDATE", lastMod);
             if (lastMod == 0) {
@@ -109,7 +116,8 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
         try {
             log.info("Checking open...");
             long lastCheck = NbPreferences.forModule(WelcomeTopComponent.class).getLong("LAST_PAGE_UPDATE", 0);
-            URL startUrl = new URL(NbBundle.getMessage(WelcomeTopComponent.class, "WelcomeTopComponent.http.link", Version.getCanonicalVersion()));
+            URL startUrl = new URL(NbBundle.getMessage(WelcomeTopComponent.class, "WelcomeTopComponent.http.link",
+                    Modules.getDefault().findCodeNameBase("org.jmri.application.trainpro").getSpecificationVersion()));
             if (lastMod == 0) {
                 lastMod = getModified(startUrl);
             }
@@ -135,7 +143,8 @@ public final class WelcomeTopComponent extends TopComponent implements Hyperlink
             if (Desktop.isDesktopSupported()) {
                 try {
                     try {
-                        Desktop.getDesktop().browse((new URL(MessageFormat.format(he.getURL().toString(), Version.getCanonicalVersion()))).toURI());
+                        Desktop.getDesktop().browse((new URL(MessageFormat.format(he.getURL().toString(),
+                                Modules.getDefault().findCodeNameBase("org.jmri.application.trainpro").getSpecificationVersion()))).toURI()); // NOI18N
                     } catch (IllegalArgumentException e) {
                         Desktop.getDesktop().browse(he.getURL().toURI());
                     }
