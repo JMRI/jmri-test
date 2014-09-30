@@ -6,6 +6,7 @@
     <description>Builds, tests, and runs the project org.jmri.resources.</description>
     <import file="nbproject/build-impl.xml"/>
 
+    <!-- This task overrides task projectized-common.jar to include non-standard files in the jar -->
     <target name="jar" depends="init,compile,jar-prep" unless="is.jar.uptodate">
         <!-- This task adds some or all of: -Public-Packages, -Friends, Class-Path, -IDE-Dependencies, -Module-Dependencies, -Specification-Version, -Implementation-Version, -Build-Version, AutoUpdate-Show-In-Client -->
         <jarwithmoduleattributes jarfile="${cluster}/${module.jar}" compress="${build.package.compress}" index="${build.package.index}" manifest="${manifest.mf}" stamp="${cluster}/.lastModified">
