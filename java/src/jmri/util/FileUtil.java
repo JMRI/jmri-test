@@ -21,6 +21,7 @@ import java.security.CodeSource;
 import java.util.Arrays;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
+import org.openide.modules.InstalledFileLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -736,12 +737,18 @@ public final class FileUtil {
             if (file.exists()) {
                 return file.toURI().toURL();
             }
+            if (!path.startsWith(".")) {
+                file = InstalledFileLocator.getDefault().locate((path.startsWith("/")) ? path.substring(1) : path, null, true);
+                if (file != null && file.exists()) {
+                    return file.toURI().toURL();
+                }
+            }
         } catch (MalformedURLException ex) {
             log.warn("Unable to get URL for {}", path, ex);
             return null;
         }
         // return path if in jmri.jar or null
-        resource = FileUtil.class.getClassLoader().getResource(path);
+        resource = FileUtil.class.getResource(path);
         if (resource == null) {
             log.debug("Unable to to get URL for {}", path);
         }
@@ -1018,5 +1025,6 @@ public final class FileUtil {
     }
 
     /* Private default constructor to ensure it's not documented. */
-    private FileUtil() {}
+    private FileUtil() {
+    }
 }
