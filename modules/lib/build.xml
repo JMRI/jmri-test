@@ -36,5 +36,5 @@
         </propertyfile>
     </target>
 
-    <target name="compile" depends="init,up-to-date,version-properties,projectized-common.compile" unless="is.jar.uptodate"></target>
+    <target name="compile" depends="init,up-to-date,projectized-common.compile,version-properties" unless="is.jar.uptodate"></target>
 </project>
