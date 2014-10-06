@@ -3,12 +3,15 @@ package jmri.jmrit.symbolicprog;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import jmri.jmrit.XmlFile;
 import jmri.util.FileUtil;
 import jmri.util.XmlFilenameFilter;
+import org.openide.modules.InstalledFileLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,8 +56,14 @@ public class ProgDefault {
                 log.debug("Got " + nx + " programmers from " + fp.getPath());
             }
         } else {
-            // create an array of file names from jmri.jar!xml/programmers, count entries
+            // create an array of file names from nbinst:xml/programmers and jmri.jar!xml/programmers, count entries
             List<String> sr = new ArrayList<String>();
+            // add Programmers found in NetBeans modules
+            Set<File> paths = InstalledFileLocator.getDefault().locateAll("xml/programmers", null, true); // NOI18N
+            for (File path : paths) {
+                sr.addAll(Arrays.asList(path.list(filter)));
+            }
+            // add Programmers found in the JMRI.jar (probably no longer wanted)
             Enumeration<JarEntry> je = FileUtil.jmriJarFile().entries();
             while (je.hasMoreElements()) {
                 String name = je.nextElement().getName();
@@ -64,9 +73,7 @@ public class ProgDefault {
             }
             sx = sr.toArray(new String[sr.size()]);
             nx = sx.length;
-            if (log.isDebugEnabled()) {
-                log.debug("Got " + nx + " programmers from jmri.jar");
-            }
+            log.debug("Got {} programmers from modules", nx);
         }
         // copy the programmer entries to the final array
         // note: this results in duplicate entries if the same name is also local.
