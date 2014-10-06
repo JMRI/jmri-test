@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 )
 @TopComponent.Description(
         preferredID = "WelcomeTopComponent",
-        //iconBase="SET/PATH/TO/ICON/HERE",
+        iconBase = "org/jmri/application/trainpro/welcome/welcome.gif",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = true)
