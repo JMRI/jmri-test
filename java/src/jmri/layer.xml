@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
+    <folder name="Menu">
+        <folder name="Roster">
+            <file name="jmri-jmrit-roster-swing-RosterFrameAction.shadow">
+                <!--jmri.jmrit.roster.swing.RosterFrameAction-->
+                <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-roster-swing-RosterFrameAction.instance"/>
+                <attr intvalue="500" name="position"/>
+            </file>
+        </folder>
+    </folder>
     <folder name="Actions">
         <folder name="JMRI">
             <!-- Every action in apps.ActionListBundle is here. This is the lazy way
