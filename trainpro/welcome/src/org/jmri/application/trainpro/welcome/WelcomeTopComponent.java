@@ -23,8 +23,6 @@ import java.text.MessageFormat;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.modules.Modules;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
@@ -48,14 +46,7 @@ import org.slf4j.LoggerFactory;
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = true)
-@ActionID(category = "Help", id = "org.jmri.application.trainpro.welcome.WelcomeTopComponent")
-@ActionReference(path = "Menu/Help", position = 1400)
-@TopComponent.OpenActionRegistration(
-        displayName = "#CTL_WelcomeAction",
-        preferredID = "WelcomeTopComponent"
-)
 @Messages({
-    "CTL_WelcomeAction=Start &Page",
     "CTL_WelcomeTopComponent=Start Page",
     "HINT_WelcomeTopComponent=Welcome to JMRI TrainPro"
 })
