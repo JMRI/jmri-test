@@ -227,15 +227,15 @@ public class Schedule implements java.beans.PropertyChangeListener {
 		// now re-sort
 		List<ScheduleItem> out = new ArrayList<ScheduleItem>();
 
-		for (int i = 0; i < sortList.size(); i++) {
+		for (ScheduleItem si : sortList) {
 			for (int j = 0; j < out.size(); j++) {
-				if (sortList.get(i).getSequenceId() < out.get(j).getSequenceId()) {
-					out.add(j, sortList.get(i));
+				if (si.getSequenceId() < out.get(j).getSequenceId()) {
+					out.add(j, si);
 					break;
 				}
 			}
-			if (!out.contains(sortList.get(i))) {
-				out.add(sortList.get(i));
+			if (!out.contains(si)) {
+				out.add(si);
 			}
 		}
 		return out;
@@ -257,10 +257,8 @@ public class Schedule implements java.beans.PropertyChangeListener {
 		// now find and adjust the other item taken by this one
 		boolean found = false;
 		List<ScheduleItem> sortList = getItemsByIdList();
-		ScheduleItem siadjust;
 		while (!found) {
-			for (int i = 0; i < sortList.size(); i++) {
-				siadjust = sortList.get(i);
+			for (ScheduleItem siadjust : sortList) {
 				if (siadjust.getSequenceId() == searchId && siadjust != si) {
 					siadjust.setSequenceId(sequenceId);
 					found = true;
@@ -290,10 +288,8 @@ public class Schedule implements java.beans.PropertyChangeListener {
 		// now find and adjust the other item taken by this one
 		boolean found = false;
 		List<ScheduleItem> sortList = getItemsByIdList();
-		ScheduleItem siadjust;
 		while (!found) {
-			for (int i = 0; i < sortList.size(); i++) {
-				siadjust = sortList.get(i);
+			for (ScheduleItem siadjust : sortList) {
 				if (siadjust.getSequenceId() == searchId && siadjust != si) {
 					siadjust.setSequenceId(sequenceId);
 					found = true;
@@ -326,11 +322,11 @@ public class Schedule implements java.beans.PropertyChangeListener {
 			_comment = a.getValue();
 		if (e.getChildren(Xml.ITEM) != null) {
 			@SuppressWarnings("unchecked")
-			List<Element> l = e.getChildren(Xml.ITEM);
+			List<Element> eScheduleItems = e.getChildren(Xml.ITEM);
 			if (log.isDebugEnabled())
-				log.debug("schedule: " + getName() + " has " + l.size() + " items");
-			for (int i = 0; i < l.size(); i++) {
-				register(new ScheduleItem(l.get(i)));
+				log.debug("schedule: {} has {} items", getName(), eScheduleItems.size());
+			for (Element eScheduleItem : eScheduleItems) {
+				register(new ScheduleItem(eScheduleItem));
 			}
 		}
 	}
@@ -346,9 +342,8 @@ public class Schedule implements java.beans.PropertyChangeListener {
 		e.setAttribute(Xml.ID, getId());
 		e.setAttribute(Xml.NAME, getName());
 		e.setAttribute(Xml.COMMENT, getComment());
-		List<ScheduleItem> scheduleItems = getItemsBySequenceList();
-		for (int i = 0; i < scheduleItems.size(); i++) {
-			e.addContent(scheduleItems.get(i).store());
+		for (ScheduleItem si : getItemsBySequenceList()) {
+			e.addContent(si.store());
 		}
 
 		return e;

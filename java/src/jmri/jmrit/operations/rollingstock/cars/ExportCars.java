@@ -101,8 +101,8 @@ public class ExportCars extends XmlFile {
 		fileOut.println(header);
 
 		// store car number, road, type, length, weight, color, owner, built date, location and track
-		for (int i = 0; i < carList.size(); i++) {
-			Car car = (Car) carList.get(i);
+		for (RollingStock rs : carList) {
+			Car car = (Car) rs;
 			carType = car.getTypeName();
 			if (carType.contains(del)) {
 				log.debug("Car (" + car.getRoadName() + " " + car.getNumber() + ") has delimiter in type field: "
@@ -123,7 +123,7 @@ public class ExportCars extends XmlFile {
 			}
 			// only export value field if value has been set.
 			value = "";
-			if (!car.getValue().equals("")) {
+			if (!car.getValue().equals(Car.NONE)) {
 				value = del + ESC + car.getValue() + ESC;
 			}
 			line = car.getNumber() + del + car.getRoadName() + del + carType + del + car.getLength() + del

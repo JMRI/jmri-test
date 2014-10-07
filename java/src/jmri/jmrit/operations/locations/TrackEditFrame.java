@@ -386,7 +386,7 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 		if (ae.getSource() == addDropButton) {
 			String id = "";
 			if (trainDrop.isSelected() || excludeTrainDrop.isSelected()) {
-				if (comboBoxDropTrains.getSelectedItem().equals(""))
+				if (comboBoxDropTrains.getSelectedItem().equals(TrainManager.NONE))
 					return;
 				Train train = ((Train) comboBoxDropTrains.getSelectedItem());
 				Route route = train.getRoute();
@@ -398,7 +398,7 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 				}
 				selectNextItemComboBox(comboBoxDropTrains);
 			} else {
-				if (comboBoxDropRoutes.getSelectedItem().equals(""))
+				if (comboBoxDropRoutes.getSelectedItem().equals(RouteManager.NONE))
 					return;
 				Route route = ((Route) comboBoxDropRoutes.getSelectedItem());
 				id = route.getId();
@@ -414,12 +414,12 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 		if (ae.getSource() == deleteDropButton) {
 			String id = "";
 			if (trainDrop.isSelected() || excludeTrainDrop.isSelected()) {
-				if (comboBoxDropTrains.getSelectedItem().equals(""))
+				if (comboBoxDropTrains.getSelectedItem().equals(TrainManager.NONE))
 					return;
 				id = ((Train) comboBoxDropTrains.getSelectedItem()).getId();
 				selectNextItemComboBox(comboBoxDropTrains);
 			} else {
-				if (comboBoxDropRoutes.getSelectedItem().equals(""))
+				if (comboBoxDropRoutes.getSelectedItem().equals(RouteManager.NONE))
 					return;
 				id = ((Route) comboBoxDropRoutes.getSelectedItem()).getId();
 				selectNextItemComboBox(comboBoxDropRoutes);
@@ -429,7 +429,7 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 		if (ae.getSource() == addPickupButton) {
 			String id = "";
 			if (trainPickup.isSelected() || excludeTrainPickup.isSelected()) {
-				if (comboBoxPickupTrains.getSelectedItem().equals(""))
+				if (comboBoxPickupTrains.getSelectedItem().equals(TrainManager.NONE))
 					return;
 				Train train = ((Train) comboBoxPickupTrains.getSelectedItem());
 				Route route = train.getRoute();
@@ -441,7 +441,7 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 				}
 				selectNextItemComboBox(comboBoxPickupTrains);
 			} else {
-				if (comboBoxPickupRoutes.getSelectedItem().equals(""))
+				if (comboBoxPickupRoutes.getSelectedItem().equals(RouteManager.NONE))
 					return;
 				Route route = ((Route) comboBoxPickupRoutes.getSelectedItem());
 				id = route.getId();
@@ -457,12 +457,12 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 		if (ae.getSource() == deletePickupButton) {
 			String id = "";
 			if (trainPickup.isSelected() || excludeTrainPickup.isSelected()) {
-				if (comboBoxPickupTrains.getSelectedItem().equals(""))
+				if (comboBoxPickupTrains.getSelectedItem().equals(TrainManager.NONE))
 					return;
 				id = ((Train) comboBoxPickupTrains.getSelectedItem()).getId();
 				selectNextItemComboBox(comboBoxPickupTrains);
 			} else {
-				if (comboBoxPickupRoutes.getSelectedItem().equals(""))
+				if (comboBoxPickupRoutes.getSelectedItem().equals(RouteManager.NONE))
 					return;
 				id = ((Route) comboBoxPickupRoutes.getSelectedItem()).getId();
 				selectNextItemComboBox(comboBoxPickupRoutes);
@@ -756,7 +756,7 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 	// TODO only update comboBox when train or route list changes.
 	private void updateDropOptions() {
 		dropPanel.removeAll();
-		int numberOfCheckboxes = getNumberOfCheckboxes();
+		int numberOfCheckboxes = getNumberOfCheckboxesPerLine();
 
 		JPanel p = new JPanel();
 		p.setLayout(new GridBagLayout());
@@ -796,20 +796,20 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 
 				String[] dropIds = _track.getDropIds();
 				int x = 0;
-				for (int i = 0; i < dropIds.length; i++) {
+				for (String id : dropIds) {
 					JLabel names = new JLabel();
 					String name = "<deleted>"; // NOI18N
 					if (trainDrop.isSelected() || excludeTrainDrop.isSelected()) {
-						Train train = trainManager.getTrainById(dropIds[i]);
+						Train train = trainManager.getTrainById(id);
 						if (train != null)
 							name = train.getName();
 					} else {
-						Route route = routeManager.getRouteById(dropIds[i]);
+						Route route = routeManager.getRouteById(id);
 						if (route != null)
 							name = route.getName();
 					}
 					if (name.equals("<deleted>")) // NOI18N
-						_track.deleteDropId(dropIds[i]);
+						_track.deleteDropId(id);
 					names.setText(name);
 					addItem(dropPanel, names, x++, y);
 					if (x > numberOfCheckboxes) {
@@ -829,7 +829,7 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 	private void updatePickupOptions() {
 		log.debug("update pick up options");
 		pickupPanel.removeAll();
-		int numberOfCheckboxes = getNumberOfCheckboxes();
+		int numberOfCheckboxes = getNumberOfCheckboxesPerLine();
 
 		JPanel p = new JPanel();
 		p.setLayout(new GridBagLayout());
@@ -867,22 +867,21 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 				pickupPanel.add(p, gc);
 				y++;
 
-				String[] pickupIds = _track.getPickupIds();
 				int x = 0;
-				for (int i = 0; i < pickupIds.length; i++) {
+				for (String id : _track.getPickupIds()) {
 					JLabel names = new JLabel();
 					String name = "<deleted>"; // NOI18N
 					if (trainPickup.isSelected() || excludeTrainPickup.isSelected()) {
-						Train train = trainManager.getTrainById(pickupIds[i]);
+						Train train = trainManager.getTrainById(id);
 						if (train != null)
 							name = train.getName();
 					} else {
-						Route route = routeManager.getRouteById(pickupIds[i]);
+						Route route = routeManager.getRouteById(id);
 						if (route != null)
 							name = route.getName();
 					}
 					if (name.equals("<deleted>")) // NOI18N
-						_track.deletePickupId(pickupIds[i]);
+						_track.deletePickupId(id);
 					names.setText(name);
 					addItem(pickupPanel, names, x++, y);
 					if (x > numberOfCheckboxes) {
@@ -939,8 +938,7 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 
 	private void enableCheckboxes(boolean enable) {
 		for (int i = 0; i < checkBoxes.size(); i++) {
-			JCheckBox checkBox = checkBoxes.get(i);
-			checkBox.setEnabled(enable);
+			checkBoxes.get(i).setEnabled(enable);
 		}
 	}
 
@@ -949,12 +947,10 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 			JCheckBox checkBox = checkBoxes.get(i);
 			checkBox.setSelected(enable);
 			if (_track != null) {
-				// _track.removePropertyChangeListener(this);
 				if (enable)
 					_track.addTypeName(checkBox.getText());
 				else
 					_track.deleteTypeName(checkBox.getText());
-				// _track.addPropertyChangeListener(this);
 			}
 		}
 	}
@@ -973,7 +969,7 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 		p.add(clearButton);
 		p.add(setButton);
 		GridBagConstraints gc = new GridBagConstraints();
-		gc.gridwidth = getNumberOfCheckboxes() + 1;
+		gc.gridwidth = getNumberOfCheckboxesPerLine() + 1;
 		gc.gridy = ++y;
 		panelCheckBoxes.add(p, gc);
 
@@ -987,15 +983,15 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 	int y = 0; // vertical position in panel
 
 	private void loadTypes(String[] types) {
-		int numberOfCheckboxes = getNumberOfCheckboxes();
-		for (int i = 0; i < types.length; i++) {
-			if (_location.acceptsTypeName(types[i])) {
+		int numberOfCheckboxes = getNumberOfCheckboxesPerLine();
+		for (String type : types) {
+			if (_location.acceptsTypeName(type)) {
 				JCheckBox checkBox = new JCheckBox();
 				checkBoxes.add(checkBox);
-				checkBox.setText(types[i]);
+				checkBox.setText(type);
 				addCheckBoxAction(checkBox);
 				addItemLeft(panelCheckBoxes, checkBox, x++, y);
-				if (_track != null && _track.acceptsTypeName(types[i]))
+				if (_track != null && _track.acceptsTypeName(type))
 					checkBox.setSelected(true);
 			}
 			if (x > numberOfCheckboxes) {
@@ -1115,7 +1111,7 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 			log.debug("Property change: ({}) old: ({}) new: ({})", e.getPropertyName(), e.getOldValue(), e
 					.getNewValue());
 		if (e.getPropertyName().equals(Location.TYPES_CHANGED_PROPERTY)
-				|| e.getPropertyName().equals(CarTypes.CARTYPES_LENGTH_CHANGED_PROPERTY)
+				|| e.getPropertyName().equals(CarTypes.CARTYPES_CHANGED_PROPERTY)
 				|| e.getPropertyName().equals(Track.TYPES_CHANGED_PROPERTY)) {
 			updateCheckboxes();
 			updateTypeComboBoxes();
@@ -1124,7 +1120,7 @@ public class TrackEditFrame extends OperationsFrame implements java.beans.Proper
 				|| e.getPropertyName().equals(Track.TRAINDIRECTION_CHANGED_PROPERTY)) {
 			updateTrainDir();
 		}
-		if (e.getPropertyName().equals(CarTypes.CARTYPES_LENGTH_CHANGED_PROPERTY)) {
+		if (e.getPropertyName().equals(CarTypes.CARTYPES_CHANGED_PROPERTY)) {
 			updateTypeComboBoxes();
 		}
 		if (e.getPropertyName().equals(TrainManager.LISTLENGTH_CHANGED_PROPERTY)) {
