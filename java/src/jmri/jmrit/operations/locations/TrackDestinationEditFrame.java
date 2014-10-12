@@ -7,10 +7,16 @@ import org.slf4j.LoggerFactory;
 
 import jmri.jmrit.operations.OperationsFrame;
 import jmri.jmrit.operations.OperationsXml;
+import jmri.jmrit.operations.rollingstock.cars.CarLoad;
+import jmri.jmrit.operations.rollingstock.cars.CarLoads;
+import jmri.jmrit.operations.rollingstock.cars.CarRoads;
+import jmri.jmrit.operations.rollingstock.cars.CarTypes;
 import jmri.jmrit.operations.setup.Control;
 import jmri.jmrit.operations.setup.Setup;
 
 import java.awt.*;
+import java.text.MessageFormat;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.*;
@@ -154,6 +160,7 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
 			return;
 		if (ae.getSource() == saveTrackButton) {
 			log.debug("track save button activated");
+			checkDestinationsValid();
 			OperationsXml.save();
 			if (Setup.isCloseWindowOnSaveEnabled())
 				dispose();
@@ -217,6 +224,85 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
 				_track.addDestination(loc);
 			else
 				_track.deleteDestination(loc);
+		}
+	}
+
+	private void checkDestinationsValid() {
+		for (Location destination : locationManager.getLocationsByNameList()) {
+			if (_track.acceptsDestination(destination)) {
+				log.debug("Track ({}) accepts destination ({})", _track.getName(), destination.getName());
+				// now check to see if the track's rolling stock is accepted by the destination
+				checkTypes: for (String type : CarTypes.instance().getNames()) {
+					if (!_track.acceptsTypeName(type))
+						continue;
+					if (!destination.acceptsTypeName(type)) {
+						JOptionPane.showMessageDialog(this,
+								MessageFormat.format(Bundle.getMessage("WarningDestinationCarType"), new Object[] {
+										destination.getName(), type }), Bundle.getMessage("WarningCarMayNotMove"),
+								JOptionPane.WARNING_MESSAGE);
+						continue;
+					}
+					// now determine if there's a track willing to service car type
+					for (Track track : destination.getTrackList()) {
+						if (track.acceptsTypeName(type))
+							continue checkTypes; // yes there's a track
+					}
+					JOptionPane.showMessageDialog(this, MessageFormat
+							.format(Bundle.getMessage("WarningDestinationTrackCarType"), new Object[] {
+									destination.getName(), type }), Bundle.getMessage("WarningCarMayNotMove"),
+							JOptionPane.WARNING_MESSAGE);
+				}
+				// now check road names
+				checkRoads: for (String road : CarRoads.instance().getNames()) {
+					if (!_track.acceptsRoadName(road))
+						continue;
+					// now determine if there's a track willing to service this road
+					for (Track track : destination.getTrackList()) {
+						if (track.acceptsRoadName(road))
+							continue checkRoads; // yes there's a track
+					}
+					JOptionPane.showMessageDialog(this, MessageFormat
+							.format(Bundle.getMessage("WarningDestinationTrackCarRoad"), new Object[] {
+									destination.getName(), road }), Bundle.getMessage("WarningCarMayNotMove"),
+							JOptionPane.WARNING_MESSAGE);
+				}
+				Hashtable<String, List<CarLoad>> list = CarLoads.instance().getList();
+				for (String type : CarTypes.instance().getNames()) {
+					if (!_track.acceptsTypeName(type)) {
+						continue;
+					}
+					List<CarLoad> carLoads = list.get(type);
+					if (carLoads == null)
+						continue;
+					checkLoads: for (CarLoad carLoad : carLoads) {
+						if (!_track.acceptsLoadName(carLoad.getName()))
+							continue;
+						// now determine if there's a track willing to service this load
+						for (Track track : destination.getTrackList()) {
+							if (track.acceptsLoadName(carLoad.getName()))
+								continue checkLoads; // yes there's a track
+						}
+						JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle
+								.getMessage("WarningDestinationTrackCarLoad"), new Object[] { destination.getName(),
+								type, carLoad.getName() }), Bundle.getMessage("WarningCarMayNotMove"),
+								JOptionPane.WARNING_MESSAGE);
+					}
+					// now check car type and load combinations
+					checkLoads: for (CarLoad carLoad : carLoads) {
+						if (!_track.acceptsLoad(carLoad.getName(), type))
+							continue;
+						// now determine if there's a track willing to service this load
+						for (Track track : destination.getTrackList()) {
+							if (track.acceptsLoad(carLoad.getName(), type))
+								continue checkLoads; // yes there's a track
+						}
+						JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle
+								.getMessage("WarningDestinationTrackCarLoad"), new Object[] { destination.getName(),
+								type, carLoad.getName() }), Bundle.getMessage("WarningCarMayNotMove"),
+								JOptionPane.WARNING_MESSAGE);
+					}
+				}
+			}
 		}
 	}
 

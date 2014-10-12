@@ -36,6 +36,7 @@ public class PackageTest extends TestCase {
         TestSuite suite = new TestSuite("jmri.jmrix.sprog.PackageTest");
 
         suite.addTest(jmri.jmrix.sprog.SprogMessageTest.suite());
+        suite.addTest(jmri.jmrix.sprog.SprogCSStreamPortControllerTest.suite());
         
         return suite;
     }
