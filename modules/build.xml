@@ -5,4 +5,22 @@
 <project name="nbm" basedir=".">
     <description>Builds the module suite nbm.</description>
     <import file="nbproject/build-impl.xml"/>
+
+    <target name="-init" depends="suite.-init">
+        <mkdir dir="${nbplatform.active.dir}/extra" />
+        <get
+            src="http://dlc.sun.com.edgesuite.net/netbeans/updates/8.0.1/uc/final/certified/modules/extra/org-netbeans-libs-junit4.nbm"
+            dest="${nbplatform.active.dir}/extra"
+            usetimestamp="true"
+        />
+        <property name="tasks.jar" location="${java.io.tmpdir}/tasks.jar"/>
+        <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true"/>
+        <taskdef name="autoupdate" classname="org.netbeans.nbbuild.AutoUpdate" classpath="${tasks.jar}"/>
+        <autoupdate todir="${nbplatform.active.dir}/extra">
+            <nbms dir="${nbplatform.active.dir}/extra">
+                <include name="*.nbm"/>
+            </nbms>
+            <modules includes=".+"/>
+        </autoupdate>
+    </target>
 </project>
