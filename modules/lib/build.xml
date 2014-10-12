@@ -15,7 +15,7 @@
     </condition>
 
     <condition property="release.official" value="true" else="false">
-      <isset property="RELEASED"/>
+        <isset property="RELEASED"/>
     </condition>
 
     <target name="version-properties">
@@ -37,4 +37,10 @@
     </target>
 
     <target name="compile" depends="init,up-to-date,projectized-common.compile,version-properties" unless="is.jar.uptodate"></target>
+
+    <!-- because we use a non-standard (for NetBeans modules )source location
+        for tests, we need to ensure the test build location exists -->
+    <target name="test-init" depends="projectized-common.test-init">
+        <mkdir dir="${build.test.@{test.type}.dir}"/>
+    </target>
 </project>
