@@ -75,14 +75,6 @@
                 <attr name="noIconInMenu" boolvalue="false"/>
                 <attr name="position" intvalue="407"/>
             </file>
-            <file name="jmri-jmrit-powerpanel-PowerButtonAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.powerpanel.PowerButtonAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.powerpanel.PowerButtonAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="408"/>
-            </file>
             <file name="jmri-jmrit-speedometer-SpeedometerAction.instance">
                 <attr name="delegate" newvalue="jmri.jmrit.speedometer.SpeedometerAction"/>
                 <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.speedometer.SpeedometerAction"/>
