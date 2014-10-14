@@ -16,6 +16,7 @@ import jmri.JmriException;
 import jmri.NamedBeanHandleManager;
 import jmri.ShutDownManager;
 import jmri.UserPreferencesManager;
+import jmri.beans.Bean;
 import jmri.configurexml.ConfigXmlManager;
 import jmri.configurexml.ErrorHandler;
 import jmri.configurexml.swing.DialogErrorHandler;
@@ -45,8 +46,32 @@ import org.slf4j.LoggerFactory;
  *
  * @author Randall Wood 2014
  */
-public class JmriApplication {
+public class JmriApplication extends Bean {
 
+    /**
+     * {@link java.beans.PropertyChangeListener}s may listen to this value to be
+     * notified that the JMRI application has started.
+     *
+     * {@value #STARTED}
+     * @see #isStarted() 
+     */
+    public static final String STARTED = "STARTED";
+    /**
+     * {@link java.beans.PropertyChangeListener}s may listen to this value to be
+     * notified that the JMRI application UI has been shown.
+     *
+     * {@value #SHOWN}
+     * @see #isShown()
+     */
+    public static final String SHOWN = "SHOWN";
+    /**
+     * {@link java.beans.PropertyChangeListener}s may listen to this value to be
+     * notified that the JMRI application has stopped.
+     *
+     * {@value #STOPPED}
+     * @see #isStopped()
+     */
+    public static final String STOPPED = "STOPPED";
     private static JmriApplication application = null;
     private String configFilename;
     private Boolean configLoaded = false;
@@ -84,6 +109,16 @@ public class JmriApplication {
             this.configFilename = title.replaceAll(" ", "") + "Config.xml";
         }
         log.info("Using config file {}", this.configFilename);
+    }
+
+    /**
+     * Public default constructor so this can be used as a bean.
+     * 
+     * This constructor only logs that it has been used in error.
+     */
+    public JmriApplication() {
+        IllegalAccessException e = new IllegalAccessException();
+        log.error("Default constructor for JmriApplication called.", e);
     }
 
     /**
@@ -146,8 +181,7 @@ public class JmriApplication {
      * @see org.openide.modules.OnStart
      */
     public void start() {
-        if (!started) {
-            started = true;
+        if (!this.isStarted()) {
             this.getProfile();
             if (this.isHeadless()) {
                 this.startManagers();
@@ -158,6 +192,8 @@ public class JmriApplication {
                 // Always run the WebServer when headless
                 WebServerManager.getWebServer().start();
             }
+            this.started = true;
+            this.firePropertyChange(STARTED, false, true);
         }
     }
 
@@ -170,8 +206,7 @@ public class JmriApplication {
      * @see org.openide.windows.OnShowing
      */
     public void show() {
-        if (!shown) {
-            shown = true;
+        if (!this.isShown()) {
             this.start();
             this.startManagers();
             // TODO add user's buttons to toolbar
@@ -181,6 +216,8 @@ public class JmriApplication {
             }
             this.initilizePreferencesUI();
             // do any other GUI things that we might need to do
+            this.shown = true;
+            this.firePropertyChange(SHOWN, false, true);
         }
     }
 
@@ -194,8 +231,9 @@ public class JmriApplication {
      * @see org.openide.modules.OnStop
      */
     public void stop() {
-        if (!stopped) {
+        if (this.isStopped()) {
             stopped = true;
+            this.firePropertyChange(STOPPED, false, true);
         }
     }
 
@@ -364,25 +402,25 @@ public class JmriApplication {
                 this.configLoaded = false;
             }
             /* Does NetBeans offer a better way? Need to also trap Headless Exceptions
-            // To avoid possible locks, deferred load should be
-            // performed on the Swing thread
-            if (SwingUtilities.isEventDispatchThread()) {
-                configDeferredLoadOK = doDeferredLoad(file);
-            } else {
-                try {
-                    // Use invokeAndWait method as we don't want to
-                    // return until deferred load is completed
-                    SwingUtilities.invokeAndWait(new Runnable() {
-                        @Override
-                        public void run() {
-                            configDeferredLoadOK = doDeferredLoad(file);
-                        }
-                    });
-                } catch (Exception ex) {
-                    log.error("Exception creating system console frame", ex);
-                }
-            }
-                    */
+             // To avoid possible locks, deferred load should be
+             // performed on the Swing thread
+             if (SwingUtilities.isEventDispatchThread()) {
+             configDeferredLoadOK = doDeferredLoad(file);
+             } else {
+             try {
+             // Use invokeAndWait method as we don't want to
+             // return until deferred load is completed
+             SwingUtilities.invokeAndWait(new Runnable() {
+             @Override
+             public void run() {
+             configDeferredLoadOK = doDeferredLoad(file);
+             }
+             });
+             } catch (Exception ex) {
+             log.error("Exception creating system console frame", ex);
+             }
+             }
+             */
         }
         return this.configLoaded;
     }
@@ -402,5 +440,38 @@ public class JmriApplication {
         };
         Thread thr = new Thread(r, "initialize preferences");
         thr.start();
+    }
+
+    /**
+     * Test if application is started. This test should be used by modules and
+     * components that need to run or operate in headless mode.
+     *
+     * Listen to {
+     *
+     * @return true if application is started
+     * @see #isShown()
+     */
+    public Boolean isStarted() {
+        return started;
+    }
+
+    /**
+     * Test if an application is shown. This test should be used by modules and
+     * components that need to display graphical user interface elements.
+     *
+     * @return true if application is shown
+     * @see #isStarted()
+     */
+    public Boolean isShown() {
+        return shown;
+    }
+
+    /**
+     * Test is an application has stopped.
+     *
+     * @return true if application is stopped
+     */
+    public Boolean isStopped() {
+        return stopped;
     }
 }
