@@ -30,4 +30,10 @@ Following [How to Migrate a Toolbar to the NetBeans Platform (Part 1)](https://b
 
 Items in `@Messages` annotations will automatically be included in Bundle.properties in the same package where they are declared, and classes using the `@Messages` annotation can refer to the localization keys using `NbBundle.key()` where _key_ is the key used in the annotation.
 
+## Module Structure
+
+Currently there is a core module, __JMRI Library__, that mirrors the JMRI `java/src` and `java\test` code in trunk. This module depends on modules that wrap third party libraries. Ultimately, the wrapper modules should also contain the JMRI code that relies on the wrapped jars (unless a significant number of non-interdependent packages rely on the wrapped jars).
+
+* __JMRI Core__ - this module should depend on every module containing JMRI code that can (and should) be run in headless mode.
+
 Use the [Markdown syntax](http://daringfireball.net/projects/markdown/) when editing this file.
