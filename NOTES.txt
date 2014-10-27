@@ -6,6 +6,9 @@ Most of these changes should only happen when we are comfortable either that:
 1. The NetBeans branch can be merged into trunk.
 2. Changes in JMRI trunk are unlikely to conflict with changes in the NetBeans branch.
 
+## Tasks
+Tasks for this effort are being tracked at [Trello](https://trello.com/b/UupW5EFW/jmri-4).
+
 ## Start up Buttons Preferences
 Since the TrainPro main window will have a ToolBar, and NetBeans provides ToolBar item handling "for free", start up buttons will be replaced with ToolBar items and removed from the Preferences dialog.
 
