@@ -73,12 +73,14 @@ public class EditSwitchListTextFrame extends OperationsFrame {
 				.getString("SwitchListFor")));
 		pSwitchListForTextField.add(switchListForTextField);
 		switchListForTextField.setText(TrainSwitchListText.getStringSwitchListFor());
+		switchListForTextField.setToolTipText(rb.getString("ToolTipSwitchListFor"));
 		pSwitchList.add(pSwitchListForTextField);
 
 		JPanel pScheduledWorkTextField = new JPanel();
 		pScheduledWorkTextField.setBorder(BorderFactory.createTitledBorder(rb.getString("ScheduledWork")));
 		pScheduledWorkTextField.add(scheduledWorkTextField);
 		scheduledWorkTextField.setText(TrainSwitchListText.getStringScheduledWork());
+		scheduledWorkTextField.setToolTipText(rb.getString("ToolTipManifestForTrain"));
 		pSwitchList.add(pScheduledWorkTextField);
 		
 		JPanel pDepartsAtTextField = new JPanel();
@@ -86,6 +88,7 @@ public class EditSwitchListTextFrame extends OperationsFrame {
 				.getString("DepartsAt")));
 		pDepartsAtTextField.add(departsAtTextField);
 		departsAtTextField.setText(TrainSwitchListText.getStringDepartsAt());
+		departsAtTextField.setToolTipText(rb.getString("ToolTipDepartsAt"));
 		pSwitchList.add(pDepartsAtTextField);
 
 		JPanel pDepartsAtExpectedArrivalTextField = new JPanel();
@@ -106,12 +109,14 @@ public class EditSwitchListTextFrame extends OperationsFrame {
 		pVisitNumber.setBorder(BorderFactory.createTitledBorder(rb.getString("VisitNumber")));
 		pVisitNumber.add(visitNumberTextField);
 		visitNumberTextField.setText(TrainSwitchListText.getStringVisitNumber());
+		visitNumberTextField.setToolTipText(rb.getString("ToolTipVisitNumber"));
 		pSwitchList.add(pVisitNumber);
 		
 		JPanel pVisitNumberDeparted = new JPanel();
 		pVisitNumberDeparted.setBorder(BorderFactory.createTitledBorder(rb.getString("VisitNumberDeparted")));
 		pVisitNumberDeparted.add(visitNumberDepartedTextField);
 		visitNumberDepartedTextField.setText(TrainSwitchListText.getStringVisitNumberDeparted());
+		visitNumberDepartedTextField.setToolTipText(rb.getString("ToolTipVisitNumber"));
 		pSwitchList.add(pVisitNumberDeparted);
 
 		JPanel pVisitNumberTerminates = new JPanel();
@@ -143,18 +148,21 @@ public class EditSwitchListTextFrame extends OperationsFrame {
 		pNoCarPickUps.setBorder(BorderFactory.createTitledBorder(rb.getString("NoCarPickUps")));
 		pNoCarPickUps.add(noCarPickUpsTextField);
 		noCarPickUpsTextField.setText(TrainSwitchListText.getStringNoCarPickUps());
+		noCarPickUpsTextField.setToolTipText(rb.getString("ToolTipTrainDone"));
 		pSwitchList.add(pNoCarPickUps);
 
 		JPanel pNoCarDrops = new JPanel();
 		pNoCarDrops.setBorder(BorderFactory.createTitledBorder(rb.getString("NoCarDrops")));
 		pNoCarDrops.add(noCarDropsTextField);
 		noCarDropsTextField.setText(TrainSwitchListText.getStringNoCarDrops());
+		noCarDropsTextField.setToolTipText(rb.getString("ToolTipTrainDone"));
 		pSwitchList.add(pNoCarDrops);
 
 		JPanel pTrainDone = new JPanel();
 		pTrainDone.setBorder(BorderFactory.createTitledBorder(rb.getString("TrainDone")));
 		pTrainDone.add(trainDoneTextField);
 		trainDoneTextField.setText(TrainSwitchListText.getStringTrainDone());
+		trainDoneTextField.setToolTipText(rb.getString("ToolTipTrainDone"));
 		pSwitchList.add(pTrainDone);
 
 		// add tool tips

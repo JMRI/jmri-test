@@ -267,6 +267,7 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 		toolMenu.add(new TrackCopyAction(this));
 		toolMenu.add(new ChangeTracksTypeAction(this));
 		toolMenu.add(new ModifyLocationsAction(Bundle.getMessage("TitleModifyLocation"), _location));
+		toolMenu.add(new ModifyLocationsCarLoadsAction(_location));
 		toolMenu.add(new ShowTrainsServingLocationAction(Bundle.getMessage("MenuItemShowTrainsLocation"), _location,
 				null));
 		toolMenu.add(new ShowCarsByLocationAction(false, locationName, null));
@@ -600,7 +601,7 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 
 	public void checkBoxActionPerformed(java.awt.event.ActionEvent ae) {
 		JCheckBox b = (JCheckBox) ae.getSource();
-		log.debug("checkbox change " + b.getText());
+		log.debug("checkbox change {}", b.getText());
 		if (_location == null)
 			return;
 		_location.removePropertyChangeListener(this);

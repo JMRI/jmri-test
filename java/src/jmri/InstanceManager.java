@@ -126,7 +126,7 @@ public class InstanceManager {
      */
     @SuppressWarnings("unchecked")   // checked by construction
     static public <T> T getDefault(Class<T> type) {
-        log.debug("getDefault {}", type.getName());
+        log.trace("getDefault {}", type.getName());
         ArrayList<Object> l = managerLists.get(type);
         if (l == null || l.size()<1) {
             // see if can autocreate
@@ -219,7 +219,7 @@ public class InstanceManager {
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
                     justification="Only used during system initialization")
     protected void init() {
-        log.debug("running default init", new Exception());
+        log.trace("running default init");
         managerLists.clear();
     }
 

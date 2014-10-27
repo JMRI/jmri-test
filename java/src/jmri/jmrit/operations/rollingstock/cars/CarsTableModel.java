@@ -336,18 +336,14 @@ public class CarsTableModel extends javax.swing.table.AbstractTableModel impleme
 			}
 			// filter out cars that don't have a location name that matches
 			if (locationName != null) {
-				if (car.getLocationName().equals(locationName)) {
-					if (trackName != null) {
-						if (car.getTrackName().equals(trackName)) {
-							continue;
-						} else {
-							list.remove(i--);
-						}
-					} else {
-						continue;
-					}
-				} else {
+				if (!car.getLocationName().equals(locationName)) {
 					list.remove(i--);
+					continue;
+				}
+				if (trackName != null) {
+					if (!car.getTrackName().equals(trackName)) {
+						list.remove(i--);
+					}
 				}
 			}
 		}
@@ -697,7 +693,7 @@ public class CarsTableModel extends javax.swing.table.AbstractTableModel impleme
 			Car car = (Car) e.getSource();
 			int row = sysList.indexOf(car);
 			if (Control.showProperty && log.isDebugEnabled())
-				log.debug("Update car table row: " + row);
+				log.debug("Update car table row: {}", row);
 			if (row >= 0)
 				fireTableRowsUpdated(row, row);
 		}

@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -87,7 +86,7 @@ abstract class AbstractPanelServlet extends HttpServlet {
                 } else {
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.setContentLength(panel.length());
-                    response.getWriter().print(panel);
+                    response.getOutputStream().print(panel);
                 }
             }
         }
@@ -141,10 +140,9 @@ abstract class AbstractPanelServlet extends HttpServlet {
     abstract protected String getXmlPanel(String name);
 
     protected Editor getEditor(String name) {
-        List<JmriJFrame> frames = JmriJFrame.getFrameList(Editor.class);
-        for (JmriJFrame frame : frames) {
-            if (((JmriJFrame) ((Editor) frame).getTargetPanel().getTopLevelAncestor()).getTitle().equals(name)) {
-                return (Editor) frame;
+        for (Editor editor : Editor.getEditors()) {
+            if (((JmriJFrame) editor.getTargetPanel().getTopLevelAncestor()).getTitle().equals(name)) {
+                return editor;
             }
         }
         return null;

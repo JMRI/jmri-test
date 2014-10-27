@@ -7,16 +7,18 @@ import org.slf4j.LoggerFactory;
 
 import jmri.jmrit.operations.OperationsFrame;
 import jmri.jmrit.operations.OperationsXml;
-import jmri.jmrit.operations.rollingstock.cars.CarLoad;
+import jmri.jmrit.operations.rollingstock.RollingStock;
+import jmri.jmrit.operations.rollingstock.cars.Car;
 import jmri.jmrit.operations.rollingstock.cars.CarLoads;
+import jmri.jmrit.operations.rollingstock.cars.CarManager;
 import jmri.jmrit.operations.rollingstock.cars.CarRoads;
 import jmri.jmrit.operations.rollingstock.cars.CarTypes;
+import jmri.jmrit.operations.router.Router;
 import jmri.jmrit.operations.setup.Control;
 import jmri.jmrit.operations.setup.Setup;
 
 import java.awt.*;
 import java.text.MessageFormat;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.*;
@@ -41,6 +43,7 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
 
 	// major buttons
 	JButton saveTrackButton = new JButton(Bundle.getMessage("SaveTrack"));
+	JButton checkDestinationsButton = new JButton(Bundle.getMessage("CheckDestinations"));
 
 	// radio buttons
 	JRadioButton destinationsAll = new JRadioButton(Bundle.getMessage("AcceptAll"));
@@ -118,7 +121,8 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
 		panelButtons.setMaximumSize(new Dimension(2000, 200));
 
 		// row 13
-		addItem(panelButtons, saveTrackButton, 0, 0);
+		addItem(panelButtons, checkDestinationsButton, 0, 0);
+		addItem(panelButtons, saveTrackButton, 1, 0);
 
 		getContentPane().add(p1);
 		getContentPane().add(pane3);
@@ -126,6 +130,7 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
 		getContentPane().add(panelButtons);
 
 		// setup buttons
+		addButtonAction(checkDestinationsButton);
 		addButtonAction(saveTrackButton);
 
 		addRadioButtonAction(destinationsAll);
@@ -160,15 +165,20 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
 			return;
 		if (ae.getSource() == saveTrackButton) {
 			log.debug("track save button activated");
-			checkDestinationsValid();
 			OperationsXml.save();
 			if (Setup.isCloseWindowOnSaveEnabled())
 				dispose();
+		}
+		if (ae.getSource() == checkDestinationsButton) {
+			checkDestinationsButton.setEnabled(false); // testing can take awhile, so disable
+			checkDestinationsValid();
+			checkDestinationsButton.setEnabled(true);
 		}
 	}
 
 	protected void enableButtons(boolean enabled) {
 		saveTrackButton.setEnabled(enabled);
+		checkDestinationsButton.setEnabled(enabled);
 		destinationsAll.setEnabled(enabled);
 		destinationsInclude.setEnabled(enabled);
 		destinationsExclude.setEnabled(enabled);
@@ -215,7 +225,7 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
 
 	public void checkBoxActionPerformed(java.awt.event.ActionEvent ae) {
 		JCheckBox b = (JCheckBox) ae.getSource();
-		log.debug("checkbox change " + b.getText());
+		log.debug("checkbox change {}", b.getText());
 		if (_track == null)
 			return;
 		Location loc = locationManager.getLocationByName(b.getText());
@@ -240,7 +250,7 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
 								MessageFormat.format(Bundle.getMessage("WarningDestinationCarType"), new Object[] {
 										destination.getName(), type }), Bundle.getMessage("WarningCarMayNotMove"),
 								JOptionPane.WARNING_MESSAGE);
-						continue;
+						return; // done when first issue is found
 					}
 					// now determine if there's a track willing to service car type
 					for (Track track : destination.getTrackList()) {
@@ -251,6 +261,7 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
 							.format(Bundle.getMessage("WarningDestinationTrackCarType"), new Object[] {
 									destination.getName(), type }), Bundle.getMessage("WarningCarMayNotMove"),
 							JOptionPane.WARNING_MESSAGE);
+					return; // done when first issue is found
 				}
 				// now check road names
 				checkRoads: for (String road : CarRoads.instance().getNames()) {
@@ -265,45 +276,92 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
 							.format(Bundle.getMessage("WarningDestinationTrackCarRoad"), new Object[] {
 									destination.getName(), road }), Bundle.getMessage("WarningCarMayNotMove"),
 							JOptionPane.WARNING_MESSAGE);
+					return; // done when first issue is found
 				}
-				Hashtable<String, List<CarLoad>> list = CarLoads.instance().getList();
+				// now check load names
 				for (String type : CarTypes.instance().getNames()) {
 					if (!_track.acceptsTypeName(type)) {
 						continue;
 					}
-					List<CarLoad> carLoads = list.get(type);
-					if (carLoads == null)
-						continue;
-					checkLoads: for (CarLoad carLoad : carLoads) {
-						if (!_track.acceptsLoadName(carLoad.getName()))
+					List<String> loads = CarLoads.instance().getNames(type);
+					checkLoads: for (String load : loads) {
+						if (!_track.acceptsLoadName(load))
 							continue;
 						// now determine if there's a track willing to service this load
 						for (Track track : destination.getTrackList()) {
-							if (track.acceptsLoadName(carLoad.getName()))
-								continue checkLoads; // yes there's a track
+							if (track.acceptsLoadName(load))
+								continue checkLoads;
 						}
 						JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle
 								.getMessage("WarningDestinationTrackCarLoad"), new Object[] { destination.getName(),
-								type, carLoad.getName() }), Bundle.getMessage("WarningCarMayNotMove"),
-								JOptionPane.WARNING_MESSAGE);
+								type, load }), Bundle.getMessage("WarningCarMayNotMove"), JOptionPane.WARNING_MESSAGE);
+						return; // done when first issue is found
 					}
 					// now check car type and load combinations
-					checkLoads: for (CarLoad carLoad : carLoads) {
-						if (!_track.acceptsLoad(carLoad.getName(), type))
+					checkLoads: for (String load : loads) {
+						if (!_track.acceptsLoad(load, type))
 							continue;
 						// now determine if there's a track willing to service this load
 						for (Track track : destination.getTrackList()) {
-							if (track.acceptsLoad(carLoad.getName(), type))
-								continue checkLoads; // yes there's a track
+							if (track.acceptsLoad(load, type))
+								continue checkLoads;
 						}
 						JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle
 								.getMessage("WarningDestinationTrackCarLoad"), new Object[] { destination.getName(),
-								type, carLoad.getName() }), Bundle.getMessage("WarningCarMayNotMove"),
-								JOptionPane.WARNING_MESSAGE);
+								type, load }), Bundle.getMessage("WarningCarMayNotMove"), JOptionPane.WARNING_MESSAGE);
+						return; // done when first issue is found
+					}
+				}
+				// now determine if there's a train or trains that can move a car from this track to the destinations
+				// need to check all car types, loads, and roads that this track services
+				Car car = new Car();
+				car.setLength("0");
+				for (String type : CarTypes.instance().getNames()) {
+					if (!_track.acceptsTypeName(type)) {
+						continue;
+					}
+					List<String> loads = CarLoads.instance().getNames(type);
+					for (String load : loads) {
+						if (!_track.acceptsLoadName(load))
+							continue;
+						if (!_track.acceptsLoad(load, type))
+							continue;
+						for (String road : CarRoads.instance().getNames()) {
+							if (!_track.acceptsRoadName(road))
+								continue;
+							// is there a car with this road?
+							boolean foundCar = false;
+							for (RollingStock rs : CarManager.instance().getList()) {
+								if (rs.getTypeName().equals(type) && rs.getRoadName().equals(road)) {
+									foundCar = true;
+									break;
+								}
+							}
+							if (!foundCar)
+								continue; // no car with this road name
+							car.setTypeName(type);
+							car.setRoadName(road);
+							car.setLoadName(load);
+							car.setTrack(_track);
+							car.setFinalDestination(destination);
+							log.debug("Find train for car type ({}), road ({}), load ({})", type, road, load);
+							boolean results = Router.instance().setDestination(car, null, null);
+							car.setDestination(null, null); // clear destination if set by router
+							if (!results) {
+								JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle
+										.getMessage("WarningNoTrain"), new Object[] { type, road, load,
+										destination.getName() }), Bundle.getMessage("WarningCarMayNotMove"),
+										JOptionPane.WARNING_MESSAGE);
+								return; // done when the first problem is found
+							}
+							// TODO need to check owners and car built dates
+						}
+//						doneRoadNames = true; // only do all road names once
 					}
 				}
 			}
 		}
+		JOptionPane.showMessageDialog(this, Bundle.getMessage("OkayMessage"));
 	}
 
 	public void dispose() {
