@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import org.openide.modules.InstalledFileLocator;
+import org.openide.modules.ModuleInfo;
+import org.openide.modules.Modules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,6 +100,9 @@ public final class FileUtil {
     static private String userFilesPath = null;
     /* path to the current profile */
     static private String profilePath = null;
+
+    // get the default module for resources
+    private static ModuleInfo defaultModule = Modules.getDefault().findCodeNameBase("org.jmri.resources"); // NOI18N
     // initialize logging
     private static final Logger log = LoggerFactory.getLogger(FileUtil.class.getName());
 
@@ -676,7 +681,7 @@ public final class FileUtil {
     /**
      * Search for a file or JAR resource by name and return the
      * {@link java.net.URL} for that file. Search order is defined by
-     * {@link #findURL(java.lang.String, java.lang.String[])}.
+     * {@link #findURL(java.lang.String, java.lang.String...) }.
      *
      * @param path The relative path of the file or resource.
      * @return The URL or null.
@@ -699,7 +704,8 @@ public final class FileUtil {
      * <ol><li>As a {@link java.io.File} in the user preferences directory</li>
      * <li>As a File in the current working directory (usually, but not always
      * the JMRI distribution directory)</li> <li>As a File in the JMRI
-     * distribution directory</li> <li>As a resource in jmri.jar</li></ol></li>
+     * distribution directory</li> <li>As a resource in the JMRI Resources
+     * module</li> <li>As a resource in all modules</li></ol></li>
      * <li>If the file or resource has not been found in the searchPaths, search
      * in the four locations listed without prepending any path</li></ol>
      *
@@ -711,6 +717,36 @@ public final class FileUtil {
      * @see #findURL(java.lang.String)
      */
     static public URL findURL(String path, @NonNull String... searchPaths) {
+        return FileUtil.findURL(null, path, searchPaths); // NOI18N
+    }
+
+    /**
+     * Search for a file or JAR resource by name and return the
+     * {@link java.net.URL} for that file.
+     * <p>
+     * Search order is:
+     * <ol><li>For any provided searchPaths, iterate over the searchPaths by
+     * prepending each searchPath to the path and following the following search
+     * order:
+     * <ol><li>As a {@link java.io.File} in the user preferences directory</li>
+     * <li>As a File in the current working directory (usually, but not always
+     * the JMRI distribution directory)</li> <li>As a File in the JMRI
+     * distribution directory</li> <li>As a resource in the specified
+     * module</li> <li>As a resource in the JMRI Resources module</li> <li>As a
+     * resource in all modules</li></ol></li>
+     * <li>If the file or resource has not been found in the searchPaths, search
+     * in the six locations listed without prepending any path</li></ol>
+     *
+     * @param module The module with which the file or resource is distrubuted;
+     * bypassed if null
+     * @param path The relative path of the file or resource
+     * @param searchPaths a list of paths to search for the path in
+     * @return The URL or null
+     * @see #findInputStream(java.lang.String)
+     * @see #findInputStream(java.lang.String, java.lang.String[])
+     * @see #findURL(java.lang.String)
+     */
+    static public URL findURL(ModuleInfo module, String path, @NonNull String... searchPaths) {
         if (log.isDebugEnabled()) { // avoid the Arrays.toString call unless debugging
             log.debug("Attempting to find {} in {}", path, Arrays.toString(searchPaths));
         }
@@ -738,7 +774,23 @@ public final class FileUtil {
                 return file.toURI().toURL();
             }
             if (!path.startsWith(".")) {
-                file = InstalledFileLocator.getDefault().locate((path.startsWith("/")) ? path.substring(1) : path, null, true);
+                if (path.startsWith("/")) {
+                    path = path.substring(1);
+                }
+                // attempt to return path from specified module if specified module is not the JMRI Resources module
+                if (module != null) {
+                    file = InstalledFileLocator.getDefault().locate(path, module.getCodeNameBase(), true);
+                    if (file != null && file.exists()) {
+                        return file.toURI().toURL();
+                    }
+                }
+                // attempt to return path from JMRI Resources module
+                file = InstalledFileLocator.getDefault().locate(path, FileUtil.defaultModule.getCodeNameBase(), true);
+                if (file != null && file.exists()) {
+                    return file.toURI().toURL();
+                }
+                // attempt to return path from any module
+                file = InstalledFileLocator.getDefault().locate(path, null, true);
                 if (file != null && file.exists()) {
                     return file.toURI().toURL();
                 }
