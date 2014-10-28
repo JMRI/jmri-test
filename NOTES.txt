@@ -37,6 +37,6 @@ Items in `@Messages` annotations will automatically be included in Bundle.proper
 
 Currently there is a core module, __JMRI Library__, that mirrors the JMRI `java/src` and `java\test` code in trunk. This module depends on modules that wrap third party libraries. Ultimately, the wrapper modules should also contain the JMRI code that relies on the wrapped jars (unless a significant number of non-interdependent packages rely on the wrapped jars).
 
-* __JMRI Core__ - this module should depend on every module containing JMRI code that can (and should) be run in headless mode.
+* __JMRI Core__ - this module contain the core JMRI code required to successfully run JMRI in a headless mode. It should be possible for the JMRI code to be broken into otherwise independent modules if they listen to the isStarted() and isShown() properties of this modules's JmriApplication class to inform them when the JMRI core is ready.
 
 Use the [Markdown syntax](http://daringfireball.net/projects/markdown/) when editing this file.
