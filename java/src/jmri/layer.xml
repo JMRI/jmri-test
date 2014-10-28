@@ -2,12 +2,82 @@
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
     <folder name="Menu">
+        <!-- This is the lazy way to register these actions for use in the
+        main menu lazily with a generic icon and text.
+        To use a specific icon or text, remove the action shadow from here and
+        create an action in the appropriate module using the NetBeans Action
+        wizard and have that new action subclass the original action.
+        -->
         <folder name="Roster">
             <file name="jmri-jmrit-roster-swing-RosterFrameAction.shadow">
                 <!--jmri.jmrit.roster.swing.RosterFrameAction-->
                 <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-roster-swing-RosterFrameAction.instance"/>
                 <attr intvalue="500" name="position"/>
             </file>
+        </folder>
+        <folder name="Tools">
+            <folder name="Tables">
+                <file name="jmri-jmrit-beantable-AudioTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-AudioTableAction.instance"/>
+                    <attr intvalue="500" name="position"/>
+                </file>
+                <file name="jmri-jmrit-beantable-BlockTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-BlockTableAction.instance"/>
+                    <attr intvalue="510" name="position"/>
+                </file>
+                <file name="jmri-jmrit-beantable-IdTagTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-IdTagTableAction.instance"/>
+                    <attr intvalue="520" name="position"/>
+                </file>
+                <file name="jmri-jmrit-beantable-LightTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-LightTableAction.instance"/>
+                    <attr intvalue="530" name="position"/>
+                </file>
+                <file name="jmri-jmrit-beantable-LogixTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-LogixTableAction.instance"/>
+                    <attr intvalue="540" name="position"/>
+                </file>
+                <file name="jmri-jmrit-beantable-MemoryTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-MemoryTableAction.instance"/>
+                    <attr intvalue="550" name="position"/>
+                </file>
+                <file name="jmri-jmrit-beantable-OBlockTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-OBlockTableAction.instance"/>
+                    <attr intvalue="560" name="position"/>
+                </file>
+                <file name="jmri-jmrit-beantable-SensorTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-SensorTableAction.instance"/>
+                    <attr intvalue="570" name="position"/>
+                </file>
+                <file name="jmri-jmrit-beantable-SignalHeadTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-SignalHeadTableAction.instance"/>
+                    <attr intvalue="580" name="position"/>
+                </file>
+                <file name="jmri-jmrit-beantable-SignalMastTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-SignalMastTableAction.instance"/>
+                    <attr intvalue="590" name="position"/>
+                </file>
+                <file name="jmri-jmrit-beantable-ReporterTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-ReporterTableAction.instance"/>
+                    <attr intvalue="600" name="position"/>
+                </file>
+                <file name="jmri-jmrit-beantable-RouteTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-RouteTableAction.instance"/>
+                    <attr intvalue="610" name="position"/>
+                </file>
+                <file name="jmri-jmrit-beantable-SectionTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-SectionTableAction.instance"/>
+                    <attr intvalue="620" name="position"/>
+                </file>
+                <file name="jmri-jmrit-beantable-TransitTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-TransitTableAction.instance"/>
+                    <attr intvalue="630" name="position"/>
+                </file>
+                <file name="jmri-jmrit-beantable-TurnoutTableAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-TurnoutTableAction.instance"/>
+                    <attr intvalue="640" name="position"/>
+                </file>
+            </folder>
         </folder>
     </folder>
     <folder name="Actions">
