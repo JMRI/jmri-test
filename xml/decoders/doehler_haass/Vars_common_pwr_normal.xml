@@ -34,6 +34,12 @@
 		EXCEPT the low current DH06A that has different default values.
       </revremark>
     </revision>
+    <revision>
+      <revnumber>2</revnumber>
+      <date>2014-10-13</date>
+      <authorinitials>PB</authorinitials>
+      <revremark>CV49 exclude for combo sound decoders</revremark>
+    </revision>
   </revhistory>
   <!-- MOTOR SETTINGS -->
   <variable item="Vhigh" CV="5" default="92">
@@ -44,7 +50,7 @@
     <label xml:lang="fr">Vmax</label>
     <label xml:lang="de">Höchstgeschwindigkeit (Vmax)</label>
   </variable>
-  <variable CV="49" default="1" item="Motor Option 2" tooltip="0=1ms, 1=2ms, 2=4ms, 3=8ms">
+  <variable CV="49" default="1" item="Motor Option 2" tooltip="0=1ms, 1=2ms, 2=4ms, 3=8ms" exclude="Combo sound decoders">
     <decVal min="0" max="3"/>
     <label>Impulse width</label>
     <label xml:lang="it">Largh.Impulsi</label>
