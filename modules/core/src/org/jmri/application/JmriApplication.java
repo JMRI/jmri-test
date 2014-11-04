@@ -6,7 +6,6 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
-import java.util.logging.LogManager;
 import javax.swing.JOptionPane;
 import jmri.Application;
 import jmri.ConfigureManager;
@@ -32,8 +31,7 @@ import jmri.profile.ProfileManagerDialog;
 import jmri.util.FileUtil;
 import jmri.web.server.WebServerManager;
 import org.jmri.managers.NetBeansShutDownManager;
-import org.openide.filesystems.FileObject;
-import org.openide.modules.Places;
+import org.openide.util.NbBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +51,8 @@ public class JmriApplication extends Bean {
      * notified that the JMRI application has started.
      *
      * {@value #STARTED}
-     * @see #isStarted() 
+     *
+     * @see #isStarted()
      */
     public static final String STARTED = "STARTED";
     /**
@@ -61,6 +60,7 @@ public class JmriApplication extends Bean {
      * notified that the JMRI application UI has been shown.
      *
      * {@value #SHOWN}
+     *
      * @see #isShown()
      */
     public static final String SHOWN = "SHOWN";
@@ -69,6 +69,7 @@ public class JmriApplication extends Bean {
      * notified that the JMRI application has stopped.
      *
      * {@value #STOPPED}
+     *
      * @see #isStopped()
      */
     public static final String STOPPED = "STOPPED";
@@ -83,24 +84,6 @@ public class JmriApplication extends Bean {
 
     private JmriApplication(String title) throws IllegalAccessException, IllegalArgumentException {
         Application.setApplicationName(title);
-        // configure logging first
-        try {
-            // TODO allow log file to be specified on CLI
-            FileObject logConfig = org.openide.filesystems.FileUtil.toFileObject(new File(Places.getUserDirectory(), "logging.properties"));
-            if (logConfig != null) {
-                logConfig = org.openide.filesystems.FileUtil.getConfigFile("logging.properties");
-            }
-            if (logConfig != null) {
-                logConfig = org.openide.filesystems.FileUtil.toFileObject((new File("logging.properties")).getCanonicalFile());
-            }
-            if (logConfig != null) {
-                LogManager.getLogManager().readConfiguration(logConfig.getInputStream());
-            } else {
-                LogManager.getLogManager().readConfiguration();
-            }
-        } catch (IOException | SecurityException ex) {
-            log.error("Unable to configure logging.", ex);
-        }
         // need to watch CLI arguments as well
         if (System.getProperty("org.jmri.Apps.configFilename") != null) {
             this.configFilename = System.getProperty("org.jmri.Apps.configFilename");
@@ -113,7 +96,7 @@ public class JmriApplication extends Bean {
 
     /**
      * Public default constructor so this can be used as a bean.
-     * 
+     *
      * This constructor only logs that it has been used in error.
      */
     public JmriApplication() {
@@ -132,6 +115,7 @@ public class JmriApplication extends Bean {
      * @throws IllegalArgumentException if title is null
      * @see jmri.Application
      */
+    // TODO: replace with modular lookup, possibly by making JmriApplication a netbeans service provider
     public static JmriApplication getApplication(String name) throws IllegalAccessException, IllegalArgumentException {
         if (application == null) {
             application = new JmriApplication(name);
@@ -264,14 +248,11 @@ public class JmriApplication extends Bean {
             try {
                 if (ProfileManager.defaultManager().migrateToProfiles(configFilename)) { // migration or first use
                     // notify user of change only if migration occured
-                    // TODO: a real migration message
                     if (this.isHeadless()) {
-                        log.info("WhyWontNetbeansLetMeUseBundle?");
-                        //log.info(Bundle.getMessage("ConfigMigratedToProfile"));
+                        log.info(NbBundle.getMessage(JmriApplication.class, "ConfigMigratedToProfile")); // NOI18N
                     } else {
                         JOptionPane.showMessageDialog(null,
-                                "WhyWontNetbeansLetMeUseBundle?",
-                                //Bundle.getMessage("ConfigMigratedToProfile"),
+                                NbBundle.getMessage(JmriApplication.class, "ConfigMigratedToProfile"), // NOI18N
                                 jmri.Application.getApplicationName(),
                                 JOptionPane.INFORMATION_MESSAGE);
                     }
