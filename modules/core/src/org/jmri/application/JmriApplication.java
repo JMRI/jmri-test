@@ -5,7 +5,9 @@ import apps.gui3.TabbedPreferences;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.ResourceBundle;
+import java.util.Set;
 import javax.swing.JOptionPane;
 import jmri.Application;
 import jmri.ConfigureManager;
@@ -47,15 +49,27 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class JmriApplication extends Bean {
 
+    /**
+     * Property that can be listened to so that listeners are informed of
+     * changes in the application state.
+     *
+     * {@value #STATE}
+     *
+     * @see State
+     * @see #getState()
+     */
     public static final String STATE = "state";
 
+    /**
+     * Possible JMRI application states.
+     */
     public static enum State {
 
         LOADING, STARTING, STARTED, SHOWING, SHOWN, STOPPING, STOPPED
     }
 
     private State state = State.LOADING;
-
+    private HashMap<Runnable, State> deferredTasks = new HashMap<>();
     private String configFilename;
     private Boolean configLoaded = false;
     private String profileFilename;
@@ -152,6 +166,7 @@ public abstract class JmriApplication extends Bean {
                 this.setState(State.STARTING);
             }
             this.getProfile();
+            this.doDeferred();
             if (GraphicsEnvironment.isHeadless()) {
                 this.startManagers();
                 if (!this.loadConfiguration()) {
@@ -164,6 +179,7 @@ public abstract class JmriApplication extends Bean {
             if (setState) {
                 this.setState(State.STARTED);
             }
+            this.doDeferred();
         }
     }
 
@@ -209,6 +225,7 @@ public abstract class JmriApplication extends Bean {
             if (setState) {
                 this.setState(State.SHOWING);
             }
+            this.doDeferred();
             this.startManagers();
             // TODO add user's buttons to toolbar
             if (!this.loadConfiguration()) {
@@ -220,6 +237,7 @@ public abstract class JmriApplication extends Bean {
             if (setState) {
                 this.setState(State.SHOWN);
             }
+            this.doDeferred();
         }
     }
 
@@ -267,13 +285,42 @@ public abstract class JmriApplication extends Bean {
             if (setState) {
                 this.setState(State.STOPPING);
             }
+            this.doDeferred();
             if (setState) {
                 this.setState(State.STOPPED);
+            }
+            this.doDeferred();
+        }
+    }
+
+    /**
+     * Defer a task until a later state is reached.
+     *
+     * Deferring a task to the current state will immediately run the task. Note
+     * that a task deferred to an earlier state is not run and is not retained.
+     *
+     * @param state The state at which the task should be run
+     * @param task A task to run
+     */
+    public void defer(State state, Runnable task) {
+        if (state == this.state) {
+            task.run();
+        } else if (state.compareTo(this.state) > 0) {
+            this.deferredTasks.put(task, state);
+        }
+    }
+
+    protected void doDeferred() {
+        Set<Runnable> tasks = this.deferredTasks.keySet();
+        for (Runnable task : tasks) {
+            if (this.state == this.deferredTasks.get(task)) {
+                task.run();
+                this.deferredTasks.remove(task);
             }
         }
     }
 
-    private void getProfile() {
+    protected void getProfile() {
         // Get configuration profile
         // Needs to be done before loading a ConfigManager or UserPreferencesManager
         FileUtil.createDirectory(FileUtil.getPreferencesPath());
@@ -393,7 +440,7 @@ public abstract class JmriApplication extends Bean {
         });
     }
 
-    private boolean loadConfiguration() {
+    protected boolean loadConfiguration() {
         // find preference file and set location in configuration manager
         // Needs to be declared final as we might need to
         // refer to this on the Swing thread
@@ -458,7 +505,7 @@ public abstract class JmriApplication extends Bean {
         return this.configLoaded;
     }
 
-    private void initilizePreferencesUI() {
+    protected void initilizePreferencesUI() {
         // Once all preferences have been loaded, initialize the preferences UI
         // Doing it in a thread now means we can let it work in the background
         Runnable r = new Runnable() {
@@ -479,7 +526,9 @@ public abstract class JmriApplication extends Bean {
      * Test if application is started. This test should be used by modules and
      * components that need to run or operate in headless mode.
      *
-     * @return true if application is started
+     * Note this method returns true if the application is started or shown.
+     *
+     * @return true if application is started, showing, or shown
      * @see #isShown()
      */
     public Boolean isStarted() {
@@ -509,6 +558,12 @@ public abstract class JmriApplication extends Bean {
     }
 
     /**
+     * Get the application state.
+     *
+     * If a process is only interested in knowing if an application is started
+     * or is shown, the {@link #isStarted() } and {@link #isShown() } methods
+     * will be easier to use and more complete in most cases.
+     *
      * @return the application's state
      */
     public State getState() {
