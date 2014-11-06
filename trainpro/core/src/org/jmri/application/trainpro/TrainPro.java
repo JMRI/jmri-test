@@ -1,32 +1,16 @@
 package org.jmri.application.trainpro;
 
 import org.jmri.application.JmriApplication;
-import org.openide.util.Exceptions;
-import org.openide.windows.OnShowing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Initialize TrainPro when running with a full GUI.
  *
- * @author rhwood
+ * @author Randall Wood <randall.h.wood@alexandriasoftware.com>
  */
-@OnShowing
-public class TrainPro implements Runnable {
+@ServiceProvider(service = JmriApplication.class)
+public class TrainPro extends JmriApplication {
 
-    private final static Logger log = LoggerFactory.getLogger(TrainPro.class);
-
-    @Override
-    public void run() {
-        log.info("Running in a GUI environment.");
-        try {
-            // Application name was set in TrainProHeadless.run()
-            JmriApplication.getApplication().show();
-            // Do interesting things here
-        } catch (IllegalArgumentException ex) {
-            log.error("Unable to start JMRI.", ex);
-            Exceptions.printStackTrace(ex);
-            // TODO: display error and initiate shutdown
-        }
+    public TrainPro() {
+        super("JMRI TrainPro");
     }
 }

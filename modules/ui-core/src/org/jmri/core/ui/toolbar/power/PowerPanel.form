@@ -7,7 +7,7 @@
         <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="applicationPropertyChange"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="JmriApplication.getApplication()"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="Lookup.getDefault().lookup(JmriApplication.class)"/>
         <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="PowerPanel_application"/>
       </AuxValues>
     </Component>

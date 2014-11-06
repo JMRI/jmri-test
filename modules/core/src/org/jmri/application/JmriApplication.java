@@ -31,6 +31,7 @@ import jmri.profile.ProfileManagerDialog;
 import jmri.util.FileUtil;
 import jmri.web.server.WebServerManager;
 import org.jmri.managers.NetBeansShutDownManager;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,46 +45,28 @@ import org.slf4j.LoggerFactory;
  *
  * @author Randall Wood 2014
  */
-public class JmriApplication extends Bean {
+public abstract class JmriApplication extends Bean {
 
-    /**
-     * {@link java.beans.PropertyChangeListener}s may listen to this value to be
-     * notified that the JMRI application has started.
-     *
-     * {@value #STARTED}
-     *
-     * @see #isStarted()
-     */
-    public static final String STARTED = "STARTED";
-    /**
-     * {@link java.beans.PropertyChangeListener}s may listen to this value to be
-     * notified that the JMRI application UI has been shown.
-     *
-     * {@value #SHOWN}
-     *
-     * @see #isShown()
-     */
-    public static final String SHOWN = "SHOWN";
-    /**
-     * {@link java.beans.PropertyChangeListener}s may listen to this value to be
-     * notified that the JMRI application has stopped.
-     *
-     * {@value #STOPPED}
-     *
-     * @see #isStopped()
-     */
-    public static final String STOPPED = "STOPPED";
-    private static JmriApplication application = null;
+    public static final String STATE = "state";
+
+    public static enum State {
+
+        LOADING, STARTING, STARTED, SHOWING, SHOWN, STOPPING, STOPPED
+    }
+
+    private State state = State.LOADING;
+
     private String configFilename;
     private Boolean configLoaded = false;
     private String profileFilename;
-    private Boolean started = false;
-    private Boolean shown = false;
-    private Boolean stopped = false;
     private static final Logger log = LoggerFactory.getLogger(JmriApplication.class);
 
-    private JmriApplication(String title) throws IllegalAccessException, IllegalArgumentException {
-        Application.setApplicationName(title);
+    protected JmriApplication(String title) {
+        try {
+            Application.setApplicationName(title);
+        } catch (IllegalAccessException | IllegalArgumentException ex) {
+            log.error("Unable to set application name", ex);
+        }
         // need to watch CLI arguments as well
         if (System.getProperty("org.jmri.Apps.configFilename") != null) {
             this.configFilename = System.getProperty("org.jmri.Apps.configFilename");
@@ -105,52 +88,46 @@ public class JmriApplication extends Bean {
     }
 
     /**
-     * Get the application object, creating it if needed.
+     * Get the application object.
      *
-     * @param name - The application name
-     * @return The object responsible for a JMRI application's life cycle
-     * management.
-     * @throws IllegalAccessException if the application object has been created
-     * and title does not equal the application's current name.
-     * @throws IllegalArgumentException if title is null
-     * @see jmri.Application
+     * This is a convenience wrapper around
+     * <code>org.openide.util.Lookup.getDefault().lookup(org.jmri.application.JmriApplication.class);</code>
+     *
+     * @return The object managing the JMRI application's life cycle.
+     * @see org.openide.util.Lookup
      */
-    // TODO: replace with modular lookup, possibly by making JmriApplication a netbeans service provider
-    public static JmriApplication getApplication(String name) throws IllegalAccessException, IllegalArgumentException {
-        if (application == null) {
-            application = new JmriApplication(name);
-        } else if (name == null || !name.equals(Application.getApplicationName())) {
-            throw new IllegalAccessException();
-        }
-        return application;
+    public static JmriApplication getApplication() {
+        return Lookup.getDefault().lookup(JmriApplication.class);
     }
 
     /**
-     * Get the application object without attempting to create it if needed.
+     * Perform startup tasks.
      *
-     * @return The object responsible for a JMRI application's life cycle
-     * management.
-     * @throws NullPointerException if the application has not been created.
+     * The default implementation is <code>this.start(true);</code>
+     *
+     * Any actions taken by this method or its overriding implementation, or by
+     * objects called in this method or its overriding implementation, must
+     * succeed in a headless environment, since there is no guarantee that this
+     * method will be called in a GUI environment.
+     *
+     * Classes that wish to override this method should either re-implement
+     * {@link #start(java.lang.Boolean) } or call it in the following pattern: <code>
+     * this.setState(State.STARTING);
+     * // do something
+     * super.start(false);
+     * // do something else
+     * this.setState(State.STARTED);
+     * </code>
+     *
+     * @see #show()
+     * @see org.openide.modules.OnStart
      */
-    public static JmriApplication getApplication() throws NullPointerException {
-        if (application == null) {
-            throw new NullPointerException();
-        }
-        return application;
+    public void start() {
+        this.start(true);
     }
 
     /**
-     * Check if application is running in a headless environment.
-     *
-     * @return true if in a headless environment.
-     * @see java.awt.GraphicsEnvironment#isHeadless()
-     */
-    public boolean isHeadless() {
-        return GraphicsEnvironment.isHeadless();
-    }
-
-    /**
-     * Triggered when the application is started.
+     * Perform startup tasks.
      *
      * Any actions taken by this method, or by objects called in this method
      * must succeed in a headless environment, since there is no guarantee that
@@ -161,13 +138,21 @@ public class JmriApplication extends Bean {
      * a GUI environment is get the current {@link jmri.profile.Profile}, and
      * that {@link #show() } performs all initialization in a GUI environment.
      *
-     * @see #show()
+     * This method is final; classes needing to override this method should
+     * instead override {@link #start() }.
+     *
+     * @param setState true if this method should set the state or false if the
+     * calling method will set the state
+     * @see #show(java.lang.Boolean)
      * @see org.openide.modules.OnStart
      */
-    public void start() {
-        if (!this.isStarted()) {
+    protected final void start(Boolean setState) {
+        if (this.state == State.LOADING) {
+            if (setState) {
+                this.setState(State.STARTING);
+            }
             this.getProfile();
-            if (this.isHeadless()) {
+            if (GraphicsEnvironment.isHeadless()) {
                 this.startManagers();
                 if (!this.loadConfiguration()) {
                     // TODO handle failure to load configuration when headless at this point
@@ -176,22 +161,54 @@ public class JmriApplication extends Bean {
                 // Always run the WebServer when headless
                 WebServerManager.getWebServer().start();
             }
-            this.started = true;
-            this.firePropertyChange(STARTED, false, true);
+            if (setState) {
+                this.setState(State.STARTED);
+            }
         }
     }
 
     /**
-     * Triggered when the application's main window is drawn.
+     * Perform tasks when the application's main window is drawn.
      *
-     * Actions taken by this method are in a GUI environment.
+     * The default implementation is <code>this.show(true);</code>
+     *
+     * Actions taken by this method or its overriding implementation are in a
+     * GUI environment.
+     *
+     * Classes that wish to override this method should either re-implement
+     * {@link #show(java.lang.Boolean) } or call it in the following pattern: <code>
+     * this.setState(State.SHOWING);
+     * // do something
+     * super.show(false);
+     * // do something else
+     * this.setState(State.SHOWN);
+     * </code>
      *
      * @see #start()
      * @see org.openide.windows.OnShowing
      */
     public void show() {
-        if (!this.isShown()) {
-            this.start();
+        this.show(true);
+    }
+
+    /**
+     * Perform tasks when the application's main window is drawn.
+     *
+     * Actions taken by this method are in a GUI environment.
+     *
+     * This method is final; classes needing to override this method should
+     * instead override {@link #show() }.
+     *
+     * @param setState true if this method should set the state or false if the
+     * calling method will set the state
+     * @see #start(java.lang.Boolean)
+     * @see org.openide.windows.OnShowing
+     */
+    protected final void show(Boolean setState) {
+        if (this.state != State.SHOWING && this.state != State.SHOWN) {
+            if (setState) {
+                this.setState(State.SHOWING);
+            }
             this.startManagers();
             // TODO add user's buttons to toolbar
             if (!this.loadConfiguration()) {
@@ -200,24 +217,59 @@ public class JmriApplication extends Bean {
             }
             this.initilizePreferencesUI();
             // do any other GUI things that we might need to do
-            this.shown = true;
-            this.firePropertyChange(SHOWN, false, true);
+            if (setState) {
+                this.setState(State.SHOWN);
+            }
         }
     }
 
     /**
-     * Triggered when the application is exiting.
+     * Perform tasks when the application is exiting.
      *
-     * Any actions taken by this method, or by objects called in this method
-     * must succeed in a headless environment, since there is no guarantee that
-     * this method will be called in a GUI environment.
+     * The default implementation is <code>this.stop(true);</code>
+     *
+     * Any actions taken by this method or its overriding implementation, or by
+     * objects called in this method or its overriding implementation, must
+     * succeed in a headless environment, since there is no guarantee that this
+     * method will be called in a GUI environment.
+     *
+     * Classes that wish to override this method should either re-implement
+     * {@link #show(java.lang.Boolean) } or call it in the following pattern: <code>
+     * this.setState(State.STOPPING);
+     * // do something
+     * super.stop(false);
+     * // do something else
+     * this.setState(State.STOPPED);
+     * </code>
      *
      * @see org.openide.modules.OnStop
      */
     public void stop() {
-        if (this.isStopped()) {
-            stopped = true;
-            this.firePropertyChange(STOPPED, false, true);
+        this.stop(true);
+    }
+
+    /**
+     * Perform tasks when the application is exiting.
+     *
+     * Any actions taken by this method, or by objects called in this method,
+     * must succeed in a headless environment, since there is no guarantee that
+     * this method will be called in a GUI environment.
+     *
+     * This method is final; classes needing to override this method should
+     * instead override {@link #stop() }.
+     *
+     * @param setState true if this method should set the state or false if the
+     * calling method will set the state
+     * @see org.openide.modules.OnStop
+     */
+    protected void stop(Boolean setState) {
+        if (this.state != State.STOPPING && this.state != State.STOPPED) {
+            if (setState) {
+                this.setState(State.STOPPING);
+            }
+            if (setState) {
+                this.setState(State.STOPPED);
+            }
         }
     }
 
@@ -248,7 +300,7 @@ public class JmriApplication extends Bean {
             try {
                 if (ProfileManager.defaultManager().migrateToProfiles(configFilename)) { // migration or first use
                     // notify user of change only if migration occured
-                    if (this.isHeadless()) {
+                    if (GraphicsEnvironment.isHeadless()) {
                         log.info(NbBundle.getMessage(JmriApplication.class, "ConfigMigratedToProfile")); // NOI18N
                     } else {
                         JOptionPane.showMessageDialog(null,
@@ -258,7 +310,7 @@ public class JmriApplication extends Bean {
                     }
                 }
             } catch (IOException | IllegalArgumentException ex) {
-                if (!this.isHeadless()) {
+                if (!GraphicsEnvironment.isHeadless()) {
                     JOptionPane.showMessageDialog(null,
                             ex.getLocalizedMessage(),
                             jmri.Application.getApplicationName(),
@@ -268,7 +320,7 @@ public class JmriApplication extends Bean {
             }
         }
         try {
-            if (!this.isHeadless()) {
+            if (!GraphicsEnvironment.isHeadless()) {
                 ProfileManagerDialog.getStartingProfile(null);
             }
             if (ProfileManager.getStartingProfile() != null) {
@@ -296,7 +348,7 @@ public class JmriApplication extends Bean {
         log.debug("config manager started");
         // Set the Config Manager error handler
         ConfigXmlManager.setErrorHandler(
-                (this.isHeadless())
+                (GraphicsEnvironment.isHeadless())
                         ? new ErrorHandler()
                         : new DialogErrorHandler()
         );
@@ -427,13 +479,13 @@ public class JmriApplication extends Bean {
      * Test if application is started. This test should be used by modules and
      * components that need to run or operate in headless mode.
      *
-     * Listen to {
-     *
      * @return true if application is started
      * @see #isShown()
      */
     public Boolean isStarted() {
-        return started;
+        return this.state == State.STARTED
+                || this.state == State.SHOWING
+                || this.state == State.SHOWN;
     }
 
     /**
@@ -444,7 +496,7 @@ public class JmriApplication extends Bean {
      * @see #isStarted()
      */
     public Boolean isShown() {
-        return shown;
+        return this.state == State.SHOWN;
     }
 
     /**
@@ -453,6 +505,24 @@ public class JmriApplication extends Bean {
      * @return true if application is stopped
      */
     public Boolean isStopped() {
-        return stopped;
+        return this.state == State.STOPPED;
+    }
+
+    /**
+     * @return the application's state
+     */
+    public State getState() {
+        return state;
+    }
+
+    /**
+     * @param state the state to set
+     */
+    protected void setState(State state) {
+        if (this.state != state) {
+            State oldState = this.state;
+            this.state = state;
+            propertyChangeSupport.firePropertyChange(STATE, oldState, state);
+        }
     }
 }

@@ -21,6 +21,7 @@ import jmri.JmriException;
 import jmri.PowerManager;
 import org.jmri.application.JmriApplication;
 import org.openide.awt.ToolbarPool;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ public class PowerPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        application = JmriApplication.getApplication();
+        application = Lookup.getDefault().lookup(JmriApplication.class);
         btnPower = new javax.swing.JButton();
 
         application.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
