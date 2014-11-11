@@ -54,25 +54,25 @@
     <turnout systemName="IT4" feedback="DIRECT" inverted="false" automate="Default">
       <systemName>IT4</systemName>
     </turnout>
-    <turnout systemName="IT41" feedback="DIRECT" inverted="false" automate="Default">
+    <turnout systemName="IT41" feedback="DIRECT" inverted="false" automate="Off">
       <systemName>IT41</systemName>
     </turnout>
-    <turnout systemName="IT42" feedback="DIRECT" inverted="false" automate="Default">
+    <turnout systemName="IT42" feedback="DIRECT" inverted="false" automate="Off">
       <systemName>IT42</systemName>
     </turnout>
-    <turnout systemName="IT43" feedback="DIRECT" inverted="false" automate="Default">
+    <turnout systemName="IT43" feedback="DIRECT" inverted="false" automate="Off">
       <systemName>IT43</systemName>
     </turnout>
-    <turnout systemName="IT44" feedback="DIRECT" inverted="false" automate="Default">
+    <turnout systemName="IT44" feedback="DIRECT" inverted="false" automate="Off">
       <systemName>IT44</systemName>
     </turnout>
     <turnout systemName="IT5" feedback="DIRECT" inverted="false" automate="Default">
       <systemName>IT5</systemName>
     </turnout>
-    <turnout systemName="IT51" feedback="DIRECT" inverted="false" automate="Default">
+    <turnout systemName="IT51" feedback="DIRECT" inverted="false" automate="Off">
       <systemName>IT51</systemName>
     </turnout>
-    <turnout systemName="IT52" feedback="DIRECT" inverted="false" automate="Default">
+    <turnout systemName="IT52" feedback="DIRECT" inverted="false" automate="Off">
       <systemName>IT52</systemName>
     </turnout>
     <turnout systemName="IT6" feedback="DIRECT" inverted="false" automate="Default">

@@ -41,7 +41,7 @@
     <turnout systemName="IT8" feedback="DIRECT" inverted="false" automate="Default">
       <systemName>IT8</systemName>
     </turnout>
-    <turnout systemName="IT9" feedback="DIRECT" inverted="false" automate="Default">
+    <turnout systemName="IT9" feedback="DIRECT" inverted="false" automate="Defaul">
       <systemName>IT9</systemName>
     </turnout>
   </turnouts>
