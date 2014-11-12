@@ -16,6 +16,8 @@ import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import jmri.InstanceManager;
@@ -99,6 +101,7 @@ import static jmri.web.servlet.ServletUtil.APPLICATION_JSON;
 import static jmri.web.servlet.ServletUtil.UTF8_APPLICATION_JSON;
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketServlet;
+import org.openide.util.lookup.ServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,6 +126,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author rhwood Copyright (C) 2012, 2013
  */
+@WebServlet(name = "JsonServlet",
+        loadOnStartup = 1,
+        urlPatterns = {"/json"})
+// We need to be able to get rid of this @ServiceProvider notation, since it creates
+// an instance of JsonServlet that is otherwise unused
+@ServiceProvider(service = HttpServlet.class)
 public class JsonServlet extends WebSocketServlet {
 
     private static final long serialVersionUID = -671593634343578915L;

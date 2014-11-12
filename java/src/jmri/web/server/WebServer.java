@@ -2,8 +2,11 @@ package jmri.web.server;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Properties;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import jmri.InstanceManager;
 import jmri.ShutDownTask;
 import jmri.implementation.QuietShutDownTask;
@@ -22,8 +25,10 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.openide.util.Lookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,6 +126,24 @@ public final class WebServer implements LifeCycle.Listener {
                 }
                 contexts.addHandler(servletContext);
             }
+            // This loop needs to be replaced with a more dynamic mechanism for
+            // adding servlets, since it relies on a dummy instance of every
+            // servlet for the Lookup mechanism to be created
+            for (HttpServlet servlet : Lookup.getDefault().lookupAll(HttpServlet.class)) {
+                try {
+                    ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.NO_SECURITY);
+                    this.registerServlet(servletContext, servlet.getClass());
+                    contexts.addHandler(servletContext);
+                } catch (InstantiationException ex) {
+                    log.error("Unable to register servlet", ex);
+                } catch (IllegalAccessException ex) {
+                    log.error("Unable to register servlet", ex);
+                } catch (InvocationTargetException ex) {
+                    log.error("Unable to register servlet", ex);
+                } catch (NoSuchMethodException ex) {
+                    log.error("Unable to register servlet", ex);
+                }
+            }
             server.setHandler(contexts);
 
             server.addLifeCycleListener(this);
@@ -159,6 +182,32 @@ public final class WebServer implements LifeCycle.Listener {
 
     public int getPort() {
         return preferences.getPort();
+    }
+
+    public void registerServlet(Class<? extends HttpServlet> type) {
+        try {
+            ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SECURITY);
+            this.registerServlet(context, type);
+            ((ContextHandlerCollection) this.server.getHandler()).addHandler(context);
+        } catch (InstantiationException ex) {
+            log.error("Unable to register servlet", ex);
+        } catch (IllegalAccessException ex) {
+            log.error("Unable to register servlet", ex);
+        } catch (InvocationTargetException ex) {
+            log.error("Unable to register servlet", ex);
+        } catch (NoSuchMethodException ex) {
+            log.error("Unable to register servlet", ex);
+        }
+    }
+
+    private void registerServlet(ServletContextHandler context, Class<? extends HttpServlet> type)
+            throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        WebServlet info = type.getAnnotation(WebServlet.class);
+        for (String pattern : info.urlPatterns()) {
+            HttpServlet servlet = type.getConstructor().newInstance();
+            context.setContextPath(pattern);
+            context.addServlet(new ServletHolder(servlet), "/*");
+        }
     }
 
     @Override

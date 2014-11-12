@@ -12,6 +12,7 @@
                 <package>javax.servlet.descriptor</package>
                 <package>javax.servlet.http</package>
                 <package>org.apache.commons.lang3</package>
+                <package>org.eclipse.jetty.annotations</package>
                 <package>org.eclipse.jetty.continuation</package>
                 <package>org.eclipse.jetty.http</package>
                 <package>org.eclipse.jetty.http.gzip</package>
@@ -19,6 +20,14 @@
                 <package>org.eclipse.jetty.io</package>
                 <package>org.eclipse.jetty.io.bio</package>
                 <package>org.eclipse.jetty.io.nio</package>
+                <package>org.eclipse.jetty.plus.annotation</package>
+                <package>org.eclipse.jetty.plus.jaas</package>
+                <package>org.eclipse.jetty.plus.jaas.callback</package>
+                <package>org.eclipse.jetty.plus.jaas.spi</package>
+                <package>org.eclipse.jetty.plus.jndi</package>
+                <package>org.eclipse.jetty.plus.security</package>
+                <package>org.eclipse.jetty.plus.servlet</package>
+                <package>org.eclipse.jetty.plus.webapp</package>
                 <package>org.eclipse.jetty.security</package>
                 <package>org.eclipse.jetty.security.authentication</package>
                 <package>org.eclipse.jetty.server</package>
@@ -43,47 +52,69 @@
                 <package>org.eclipse.jetty.util.ssl</package>
                 <package>org.eclipse.jetty.util.statistic</package>
                 <package>org.eclipse.jetty.util.thread</package>
+                <package>org.eclipse.jetty.webapp</package>
                 <package>org.eclipse.jetty.websocket</package>
+                <package>org.eclipse.jetty.xml</package>
             </public-packages>
-            <class-path-extension>
-                <runtime-relative-path>ext/jetty-websocket-8.1.11.v20130520.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jetty-websocket-8.1.11.v20130520.jar</binary-origin>
-            </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-lang3-3.2.1.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-lang3-3.2.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jetty-continuation-8.1.11.v20130520.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jetty-continuation-8.1.11.v20130520.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jetty-security-8.1.11.v20130520.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jetty-security-8.1.11.v20130520.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jetty-io-8.1.11.v20130520.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jetty-io-8.1.11.v20130520.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jetty-http-8.1.11.v20130520.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jetty-http-8.1.11.v20130520.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/servlet-api-3.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/servlet-api-3.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jetty-util-8.1.11.v20130520.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jetty-util-8.1.11.v20130520.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jetty-servlet-8.1.11.v20130520.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jetty-servlet-8.1.11.v20130520.jar</binary-origin>
+                <runtime-relative-path>ext/jetty-io-8.1.11.v20130520.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jetty-io-8.1.11.v20130520.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jetty-security-8.1.11.v20130520.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jetty-security-8.1.11.v20130520.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jetty-webapp-8.1.11.v20130520.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jetty-webapp-8.1.11.v20130520.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/servlet-api-3.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/servlet-api-3.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jetty-server-8.1.11.v20130520.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jetty-server-8.1.11.v20130520.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jetty-annotations-8.1.11.v20130520.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jetty-annotations-8.1.11.v20130520.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jetty-http-8.1.11.v20130520.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jetty-http-8.1.11.v20130520.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/org.objectweb.asm-3.1.0.v200803061910.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/org.objectweb.asm-3.1.0.v200803061910.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jetty-websocket-8.1.11.v20130520.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jetty-websocket-8.1.11.v20130520.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jetty-xml-8.1.11.v20130520.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jetty-xml-8.1.11.v20130520.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jetty-plus-8.1.11.v20130520.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jetty-plus-8.1.11.v20130520.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jetty-continuation-8.1.11.v20130520.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jetty-continuation-8.1.11.v20130520.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jetty-servlet-8.1.11.v20130520.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jetty-servlet-8.1.11.v20130520.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>
