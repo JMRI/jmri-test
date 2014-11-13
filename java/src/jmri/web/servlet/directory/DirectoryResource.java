@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
@@ -15,6 +16,7 @@ import jmri.web.servlet.ServletUtil;
 import org.eclipse.jetty.util.StringUtil;
 import org.eclipse.jetty.util.URIUtil;
 import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.resource.ResourceCollection;
 
 /**
  * Override {@link org.eclipse.jetty.util.resource.Resource#getListHTML(java.lang.String, boolean)
@@ -41,7 +43,7 @@ public class DirectoryResource extends Resource {
             return null;
         }
 
-        String[] ls = list();
+        String[] ls = this.list();
         if (ls == null) {
             return null;
         }
@@ -225,7 +227,20 @@ public class DirectoryResource extends Resource {
 
     @Override
     public String[] list() {
-        return this.resource.list();
+        ArrayList<String> ls = new ArrayList<String>();
+        if (this.resource instanceof ResourceCollection) {
+            for (Resource singleResource : ((ResourceCollection) this.resource).getResources()) {
+                if (singleResource.list() != null) {
+                    ls.addAll(Arrays.asList(singleResource.list()));
+                }
+            }
+        } else {
+            ls.addAll(Arrays.asList(this.resource.list()));
+        }
+        if (ls.isEmpty()) {
+            return null;
+        }
+        return ls.toArray(new String[0]);
     }
 
     @Override

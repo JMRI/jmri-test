@@ -1,8 +1,11 @@
 package jmri.web.servlet.directory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.openide.modules.InstalledFileLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,12 +56,19 @@ public class ModuleDirectoryHandler extends DirectoryHandler {
             path = path.substring(0, path.length() - 1);
         }
         try {
-            resource = Resource.newResource(InstalledFileLocator.getDefault().locate(path, null, true));
+            ArrayList<File> files = new ArrayList<File>(InstalledFileLocator.getDefault().locateAll(path, null, true));
+            if (files.size() == 1) {
+                resource = Resource.newResource(files.get(0));
+            } else if (!files.isEmpty()) {
+                ArrayList<Resource> resources = new ArrayList<Resource>();
+                for (File file : files) {
+                    resources.add(Resource.newResource(file));
+                }
+                resource = new ResourceCollection();
+                ((ResourceCollection) resource).setResources(resources.toArray(new Resource[0]));
+            }
         } catch (IOException ex) {
             log.warn("Error locating \"{}\" in modules: {}", path, ex.getMessage());
-        }
-        if (resource == null || !resource.exists()) {
-            resource = null; // TODO: change to empty resource
         }
         return resource;
     }
