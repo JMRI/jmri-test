@@ -8,7 +8,15 @@
         create an action in the appropriate module using the NetBeans Action
         wizard and have that new action subclass the original action.
         -->
+        <folder name="Operations">
+            <!-- Since Operations is a good candidate to be placed entirely in
+            its own module, this menu would be defined within that module,
+            thereby ensuring it only appears when the Operations module is
+            enabled -->
+            <attr intvalue="600" name="position"/>
+        </folder>
         <folder name="Roster">
+            <attr intvalue="500" name="position"/>
             <file name="jmri-jmrit-roster-swing-RosterFrameAction.shadow">
                 <!--jmri.jmrit.roster.swing.RosterFrameAction-->
                 <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-roster-swing-RosterFrameAction.instance"/>
