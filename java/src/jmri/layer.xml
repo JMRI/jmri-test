@@ -361,54 +361,6 @@
                 <attr name="noIconInMenu" boolvalue="false"/>
                 <attr name="position" intvalue="434"/>
             </file>
-            <file name="jmri-jmrit-operations-setup-OperationsSetupAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.operations.setup.OperationsSetupAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.operations.setup.OperationsSetupAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="434"/>
-            </file>
-            <file name="jmri-jmrit-operations-locations-LocationsTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.operations.locations.LocationsTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.operations.locations.LocationsTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="435"/>
-            </file>
-            <file name="jmri-jmrit-operations-rollingstock-cars-CarsTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.operations.rollingstock.cars.CarsTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.operations.rollingstock.cars.CarsTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="436"/>
-            </file>
-            <file name="jmri-jmrit-operations-rollingstock-engines-EnginesTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.operations.rollingstock.engines.EnginesTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.operations.rollingstock.engines.EnginesTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="437"/>
-            </file>
-            <file name="jmri-jmrit-operations-routes-RoutesTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.operations.routes.RoutesTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.operations.routes.RoutesTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="438"/>
-            </file>
-            <file name="jmri-jmrit-operations-trains-TrainsTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.operations.trains.TrainsTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.operations.trains.TrainsTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="439"/>
-            </file>
             <file name="jmri-jmrit-display-PanelEditorAction.instance">
                 <attr name="delegate" newvalue="jmri.jmrit.display.PanelEditorAction"/>
                 <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.display.PanelEditorAction"/>

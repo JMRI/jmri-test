@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.Frame;
 
 import javax.swing.AbstractAction;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 
 
 /**
@@ -15,6 +18,13 @@ import javax.swing.AbstractAction;
  * @author Daniel Boudreau Copyright (C) 2008
  * @version $Revision$
  */
+@ActionID(id = "jmri.jmrit.operations.locations.LocationsTableAction",
+        category = "Operations")
+@ActionRegistration(iconInMenu = false, 
+        displayName = "jmri.jmrit.operations.JmritOperationsBundle#MenuLocations",
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif")
+@ActionReference(path = "Menu/Operations",
+        position = 4340)
 public class LocationsTableAction extends AbstractAction {
 
     public LocationsTableAction(String s) {

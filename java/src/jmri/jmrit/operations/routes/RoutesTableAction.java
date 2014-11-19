@@ -5,6 +5,9 @@ package jmri.jmrit.operations.routes;
 import java.awt.event.ActionEvent;
 import java.awt.Frame;
 import javax.swing.AbstractAction;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 
 /**
  * Swing action to create and register a
@@ -14,6 +17,13 @@ import javax.swing.AbstractAction;
  * @author 	Daniel Boudreau Copyright (C) 2008
  * @version         $Revision$
  */
+@ActionID(id = "jmri.jmrit.operations.routes.RoutesTableAction",
+        category = "Operations")
+@ActionRegistration(iconInMenu = false,
+        displayName = "jmri.jmrit.operations.JmritOperationsBundle#MenuRoutes",
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif")
+@ActionReference(path = "Menu/Operations",
+        position = 4370)
 public class RoutesTableAction extends AbstractAction {
 
     public RoutesTableAction(String s) {

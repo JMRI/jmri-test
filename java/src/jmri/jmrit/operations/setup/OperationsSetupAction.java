@@ -5,6 +5,9 @@ package jmri.jmrit.operations.setup;
 import java.awt.event.ActionEvent;
 import java.awt.Frame;
 import javax.swing.AbstractAction;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 
 /**
  * Swing action to create and register a OperationsSetupFrame object.
@@ -13,6 +16,14 @@ import javax.swing.AbstractAction;
  * @author Daniel Boudreau Copyright (C) 2008
  * @version $Revision$
  */
+@ActionID(id = "jmri.jmrit.operations.setup.OperationsSetupAction",
+        category = "Operations")
+@ActionRegistration(iconInMenu = false,
+        displayName = "jmri.jmrit.operations.JmritOperationsBundle#MenuSetup",
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif")
+@ActionReference(path = "Menu/Operations",
+        position = 4390,
+        separatorBefore = 4385)
 public class OperationsSetupAction extends AbstractAction {
 
     
