@@ -78,8 +78,11 @@ public class PrintLocationsAction extends AbstractAction {
 
 	public void printLocations() {
 		// obtain a HardcopyWriter
+		String title = Bundle.getMessage("TitleLocationsTable");
+		if (_location != null)
+			title = _location.getName();
 		try {
-			writer = new HardcopyWriter(new Frame(), Bundle.getMessage("TitleLocationsTable"), 10, .5, .5, .5, .5,
+			writer = new HardcopyWriter(new Frame(), title, 10, .5, .5, .5, .5,
 					_isPreview);
 		} catch (HardcopyWriter.PrintCanceledException ex) {
 			log.debug("Print cancelled");
@@ -98,8 +101,10 @@ public class PrintLocationsAction extends AbstractAction {
 			// print analysis?
 			if (printAnalysis.isSelected())
 				printAnalysisSelected();
-			// force completion of the printing
-			writer.close();
+			if (printLocations.isSelected() || printSchedules.isSelected() || printDetails.isSelected()
+					|| printAnalysis.isSelected()) // prevents NPE on close
+				// force completion of the printing
+				writer.close();
 		} catch (IOException we) {
 			log.error("Error printing PrintLocationAction: " + we);
 		}
@@ -794,12 +799,12 @@ public class PrintLocationsAction extends AbstractAction {
 			this.pla = pla;
 			// create panel
 			JPanel pPanel = new JPanel();
-			pPanel.setLayout(new BoxLayout(pPanel, BoxLayout.Y_AXIS));
+			pPanel.setLayout(new GridBagLayout());
 			pPanel.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("PrintOptions")));
-			pPanel.add(printLocations);
-			pPanel.add(printSchedules);
-			pPanel.add(printDetails);
-			pPanel.add(printAnalysis);
+			addItemLeft(pPanel, printLocations, 0, 0);
+			addItemLeft(pPanel, printSchedules, 0, 1);
+			addItemLeft(pPanel, printDetails, 0, 2);
+			addItemLeft(pPanel, printAnalysis, 0, 3);
 			// set defaults
 			printLocations.setSelected(true);
 			printSchedules.setSelected(true);
@@ -817,8 +822,11 @@ public class PrintLocationsAction extends AbstractAction {
 			getContentPane().add(pPanel);
 			getContentPane().add(pButtons);
 			setPreferredSize(null);
-			pack();
-			setVisible(true);
+			if (_isPreview)
+				setTitle(Bundle.getMessage("MenuItemPreview"));
+			else
+				setTitle(Bundle.getMessage("MenuItemPrint"));
+			initMinimumSize(new Dimension(Control.smallPanelWidth, Control.minPanelHeight));
 		}
 
 		public void initComponents() {

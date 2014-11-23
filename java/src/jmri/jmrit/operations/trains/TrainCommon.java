@@ -1696,7 +1696,10 @@ public class TrainCommon {
 		JLabel label = new JLabel();
 		FontMetrics metrics = label.getFontMetrics(font);
 		int charwidth = metrics.charWidth('m');
-
+		if (charwidth == 0) {
+			log.error("Line length charater width equal to zero. font size: {}, fontName: {}", fontSize, fontName);
+			charwidth = fontSize/2; // create a reasonable character width
+		}
 		// compute lines and columns within margins
 		return getPageSize(orientation).width / charwidth;
 	}

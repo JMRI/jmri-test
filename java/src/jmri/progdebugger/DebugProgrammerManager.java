@@ -5,7 +5,7 @@ package jmri.progdebugger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jmri.managers.DefaultProgrammerManager;
-import jmri.Programmer;
+import jmri.*;
 import java.util.Hashtable;
 
 /**
@@ -38,7 +38,7 @@ public class DebugProgrammerManager extends DefaultProgrammerManager {
     Hashtable<Integer,ProgDebugger> opsProgrammers = new Hashtable<Integer,ProgDebugger>();
 
 
-    public Programmer getAddressedProgrammer(boolean pLongAddress, int pAddress) {
+    public AddressedProgrammer getAddressedProgrammer(boolean pLongAddress, int pAddress) {
         int address = pAddress;
         if (!pLongAddress) address = -address;
         // look for an existing entry by getting something from hash table
@@ -49,13 +49,13 @@ public class DebugProgrammerManager extends DefaultProgrammerManager {
             return saw;
         }
         // if not, save a new one & return it
-        opsProgrammers.put(Integer.valueOf(address), saw = new ProgDebugger());
+        opsProgrammers.put(Integer.valueOf(address), saw = new ProgDebugger(pLongAddress, pAddress));
         if (log.isDebugEnabled()) log.debug("return new ops-mode programmer "
                                                 +pAddress+" "+pLongAddress);
         return saw;
     }
 
-    public Programmer reserveAddressedProgrammer(boolean pLongAddress, int pAddress) {
+    public AddressedProgrammer reserveAddressedProgrammer(boolean pLongAddress, int pAddress) {
         return null;
     }
 
