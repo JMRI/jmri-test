@@ -17,11 +17,6 @@
         </folder>
         <folder name="Roster">
             <attr intvalue="500" name="position"/>
-            <file name="jmri-jmrit-roster-swing-RosterFrameAction.shadow">
-                <!--jmri.jmrit.roster.swing.RosterFrameAction-->
-                <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-roster-swing-RosterFrameAction.instance"/>
-                <attr intvalue="500" name="position"/>
-            </file>
         </folder>
         <folder name="Tools">
             <folder name="Tables">
@@ -688,22 +683,6 @@
                 <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
                 <attr name="noIconInMenu" boolvalue="false"/>
                 <attr name="position" intvalue="481"/>
-            </file>
-            <file name="jmri-jmrit-roster-swing-RosterFrameAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.roster.swing.RosterFrameAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.roster.swing.RosterFrameAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="482"/>
-            </file>
-            <file name="jmri-jmrit-roster-RecreateRosterAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.roster.RecreateRosterAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.roster.RecreateRosterAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="483"/>
             </file>
             <file name="jmri-jmrit-dispatcher-DispatcherAction.instance">
                 <attr name="delegate" newvalue="jmri.jmrit.dispatcher.DispatcherAction"/>

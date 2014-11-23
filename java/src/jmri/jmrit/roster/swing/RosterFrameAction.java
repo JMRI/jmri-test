@@ -12,6 +12,9 @@ import jmri.UserPreferencesManager;
 import jmri.jmrit.roster.rostergroup.RosterGroupSelector;
 import jmri.util.swing.JmriAbstractAction;
 import jmri.util.swing.WindowInterface;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 
 /**
  * AbstractAction for the RosterFrane so that multiple windows can be opened
@@ -19,6 +22,19 @@ import jmri.util.swing.WindowInterface;
  * @author Kevin Dickerson Copyright (C) 2011
  * @author Randall Wood Copyright (C) 2012
  */
+@ActionID(
+        id = "jmri.jmrit.roster.swing.RosterFrameAction",
+        category = "Roster"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "apps.ActionListBundle#jmri.jmrit.roster.swing.RosterFrameAction",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Roster",
+        position = 500
+)
 public class RosterFrameAction extends JmriAbstractAction {
     
     public RosterFrameAction(String s, WindowInterface wi) {

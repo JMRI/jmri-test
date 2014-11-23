@@ -2,16 +2,16 @@
 
 package jmri.jmrit.roster;
 
-import jmri.util.swing.JmriAbstractAction;
-import jmri.util.swing.WindowInterface;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.awt.event.ActionEvent;
 import javax.swing.Icon;
-
+import jmri.util.swing.JmriAbstractAction;
+import jmri.util.swing.WindowInterface;
 import org.jdom.Element;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Recreate the roster index file if it's been damaged or lost.
@@ -21,6 +21,20 @@ import org.jdom.Element;
  * @author	Bob Jacobsen   Copyright (C) 2001
  * @version	$Revision$
  */
+@ActionID(
+        id = "jmri.jmrit.roster.RecreateRosterAction",
+        category = "Roster"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "apps.ActionListBundle#jmri.jmrit.roster.RecreateRosterAction",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Roster",
+        position = 595,
+        separatorBefore = 593
+)
 public class RecreateRosterAction extends JmriAbstractAction {
 
     public RecreateRosterAction(String s, WindowInterface wi) {
