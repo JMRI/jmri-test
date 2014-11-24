@@ -30,7 +30,7 @@ import org.openide.awt.ActionRegistration;
 
 @ActionID(
         id = "jmri.jmrit.beantable.OBlockTableAction",
-        category = "JMRI"
+        category = "Elements"
 )
 @ActionRegistration(
         iconBase = "org/jmri/core/ui/toolbar/generic.gif",

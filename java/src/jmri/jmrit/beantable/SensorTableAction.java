@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 @ActionID(
         id = "jmri.jmrit.beantable.SensorTableAction",
-        category = "JMRI"
+        category = "Elements"
 )
 @ActionRegistration(
         iconBase = "org/jmri/core/ui/toolbar/generic.gif",
