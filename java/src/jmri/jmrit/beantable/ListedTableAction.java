@@ -1,10 +1,12 @@
 package jmri.jmrit.beantable;
 
+import java.awt.event.ActionEvent;
+import java.util.ResourceBundle;
+import javax.swing.AbstractAction;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import java.util.ResourceBundle;
 
     /**
      * Table Action for dealing with all the tables in a single view
@@ -15,6 +17,15 @@ import java.util.ResourceBundle;
      * @version	$Revision$
      */
 
+@ActionID(
+        id = "jmri.jmrit.beantable.ListedTableAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleListedTable",
+        iconInMenu = true
+)
 public class ListedTableAction extends AbstractAction {
 
     String gotoListItem = null;

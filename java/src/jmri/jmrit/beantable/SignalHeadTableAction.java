@@ -15,48 +15,47 @@
 
 package jmri.jmrit.beantable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 import jmri.InstanceManager;
 import jmri.Manager;
 import jmri.NamedBean;
-import jmri.SignalHead;
-import jmri.implementation.SingleTurnoutSignalHead;
-import jmri.implementation.DoubleTurnoutSignalHead;
-import jmri.implementation.TripleTurnoutSignalHead;
-import jmri.implementation.TripleOutputSignalHead;
-import jmri.implementation.QuadOutputSignalHead;
-import jmri.implementation.DccSignalHead;
-import jmri.Turnout;
-
-import jmri.util.JmriJFrame;
-import jmri.util.swing.BeanSelectCreatePanel;
-import jmri.util.ConnectionNameFromSystemName;
 import jmri.NamedBeanHandle;
-
+import jmri.SignalHead;
+import jmri.Turnout;
+import jmri.implementation.DccSignalHead;
+import jmri.implementation.DoubleTurnoutSignalHead;
+import jmri.implementation.QuadOutputSignalHead;
+import jmri.implementation.SingleTurnoutSignalHead;
+import jmri.implementation.TripleOutputSignalHead;
+import jmri.implementation.TripleTurnoutSignalHead;
 import jmri.jmrix.acela.AcelaAddress;
 import jmri.jmrix.acela.AcelaNode;
-
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.Color;
-import java.awt.BorderLayout;
-
-import javax.swing.BoxLayout;
-import java.awt.GridLayout;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JComboBox;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JSeparator;
-import javax.swing.border.Border;
-import javax.swing.BorderFactory;
-import javax.swing.border.TitledBorder;
-import javax.swing.JScrollPane;
+import jmri.util.ConnectionNameFromSystemName;
+import jmri.util.JmriJFrame;
+import jmri.util.swing.BeanSelectCreatePanel;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to create and register a
@@ -67,6 +66,19 @@ import javax.swing.JScrollPane;
  * @version     $Revision$
  */
 
+@ActionID(
+        id = "jmri.jmrit.beantable.SignalHeadTableAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleSignalTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 580
+)
 public class SignalHeadTableAction extends AbstractTableAction {
 
     /**

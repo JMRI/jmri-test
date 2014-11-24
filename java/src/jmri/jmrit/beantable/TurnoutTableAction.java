@@ -2,50 +2,50 @@
 
 package jmri.jmrit.beantable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jmri.InstanceManager;
-import jmri.Manager;
-import jmri.NamedBean;
-import jmri.Turnout;
-import jmri.TurnoutManager;
-import jmri.TurnoutOperationManager;
-import jmri.TurnoutOperation;
-import jmri.jmrit.turnoutoperations.TurnoutOperationFrame;
-import jmri.jmrit.turnoutoperations.TurnoutOperationConfig;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.DefaultCellEditor;
-import jmri.util.com.sun.TableSorter;
-
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Component;
-
-import java.util.Vector;
-import java.util.List;
 import java.util.Hashtable;
-
-import javax.swing.BoxLayout;
+import java.util.List;
+import java.util.Vector;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JOptionPane;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import jmri.util.JmriJFrame;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import jmri.InstanceManager;
+import jmri.Manager;
+import jmri.NamedBean;
+import jmri.Turnout;
+import jmri.TurnoutManager;
+import jmri.TurnoutOperation;
+import jmri.TurnoutOperationManager;
+import jmri.jmrit.turnoutoperations.TurnoutOperationConfig;
+import jmri.jmrit.turnoutoperations.TurnoutOperationFrame;
 import jmri.util.ConnectionNameFromSystemName;
-import jmri.util.swing.XTableColumnModel;
+import jmri.util.JmriJFrame;
+import jmri.util.com.sun.TableSorter;
 import jmri.util.swing.JmriBeanComboBox;
+import jmri.util.swing.XTableColumnModel;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to create and register a
@@ -55,6 +55,18 @@ import jmri.util.swing.JmriBeanComboBox;
  * @version     $Revision$
  */
 
+@ActionID(
+        id = "jmri.jmrit.beantable.TurnoutTableAction",
+        category = "JMRI")
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleTurnoutTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 640
+)
 public class TurnoutTableAction extends AbstractTableAction {
 
     /**

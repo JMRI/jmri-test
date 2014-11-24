@@ -2,31 +2,30 @@
 
 package jmri.jmrit.beantable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jmri.util.JmriJFrame;
-import jmri.util.ConnectionNameFromSystemName;
-
-import jmri.Manager;
-import jmri.Sensor;
-import jmri.SensorManager;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JFrame;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import jmri.Manager;
+import jmri.Sensor;
+import jmri.SensorManager;
+import jmri.util.ConnectionNameFromSystemName;
+import jmri.util.JmriJFrame;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to create and register a
@@ -36,6 +35,19 @@ import javax.swing.JComboBox;
  * @version     $Revision$
  */
 
+@ActionID(
+        id = "jmri.jmrit.beantable.SensorTableAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleSensorTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 570
+)
 public class SensorTableAction extends AbstractTableAction {
 
     /**

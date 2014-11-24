@@ -1,26 +1,27 @@
 // IdTagTableAction.java
 package jmri.jmrit.beantable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jmri.InstanceManager;
-import jmri.Manager;
-import jmri.NamedBean;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
 import java.util.Date;
-
 import javax.swing.BoxLayout;
-import javax.swing.JTable;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JTable;
 import javax.swing.JTextField;
-import jmri.Reporter;
 import jmri.IdTag;
 import jmri.IdTagManager;
-
+import jmri.InstanceManager;
+import jmri.Manager;
+import jmri.NamedBean;
+import jmri.Reporter;
 import jmri.util.JmriJFrame;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to create and register a
@@ -31,6 +32,19 @@ import jmri.util.JmriJFrame;
  * @version     $Revision$
  * @since       2.11.4
  */
+@ActionID(
+        id = "jmri.jmrit.beantable.IdTagTableAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleIdTagTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 520
+)
 public class IdTagTableAction extends AbstractTableAction {
 
     /**

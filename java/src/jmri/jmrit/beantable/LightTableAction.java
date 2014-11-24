@@ -2,35 +2,46 @@
 
 package jmri.jmrit.beantable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jmri.InstanceManager;
-import jmri.Manager;
-import jmri.NamedBean;
-import jmri.Light;
-import jmri.LightManager;
-import jmri.Sensor;
-import jmri.Turnout;
-import jmri.implementation.LightControl;
-
-import java.awt.FlowLayout;
-import java.awt.Container;
 import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import jmri.InstanceManager;
+import jmri.Light;
+import jmri.LightManager;
+import jmri.Manager;
+import jmri.NamedBean;
+import jmri.Sensor;
+import jmri.Turnout;
+import jmri.implementation.LightControl;
+import jmri.util.ConnectionNameFromSystemName;
+import jmri.util.JmriJFrame;
 import jmri.util.table.ButtonEditor;
 import jmri.util.table.ButtonRenderer;
-
-import javax.swing.border.Border;
-
-import javax.swing.*;
-import javax.swing.table.*;
-
-import jmri.util.JmriJFrame;
-import jmri.util.ConnectionNameFromSystemName;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to create and register a
@@ -42,6 +53,19 @@ import jmri.util.ConnectionNameFromSystemName;
  * @version     $Revision$
  */
 
+@ActionID(
+        id = "jmri.jmrit.beantable.LightTableAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleLightTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 530
+)
 public class LightTableAction extends AbstractTableAction {
 	
     /**

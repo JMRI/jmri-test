@@ -2,86 +2,24 @@
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
     <folder name="Menu">
-        <!-- This is the lazy way to register these actions for use in the
-        main menu lazily with a generic icon and text.
-        To use a specific icon or text, remove the action shadow from here and
-        create an action in the appropriate module using the NetBeans Action
-        wizard and have that new action subclass the original action.
-        -->
+        <!-- Define JMRI-specific menus and submenus that do not require other
+        modules be loaded. -->
         <folder name="Operations">
-            <!-- Since Operations is a good candidate to be placed entirely in
-            its own module, this menu would be defined within that module,
-            thereby ensuring it only appears when the Operations module is
-            enabled -->
+            <!-- If an Operations UI module is created, this menu definition
+            would need to be migrated to that module. -->
             <attr intvalue="600" name="position"/>
         </folder>
         <folder name="Roster">
+            <!-- If a Roster UI module is created, this menu definition would
+            need to be migrated to that module. -->
             <attr intvalue="500" name="position"/>
         </folder>
-        <folder name="Tools">
-            <folder name="Tables">
-                <file name="jmri-jmrit-beantable-AudioTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-AudioTableAction.instance"/>
-                    <attr intvalue="500" name="position"/>
-                </file>
-                <file name="jmri-jmrit-beantable-BlockTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-BlockTableAction.instance"/>
-                    <attr intvalue="510" name="position"/>
-                </file>
-                <file name="jmri-jmrit-beantable-IdTagTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-IdTagTableAction.instance"/>
-                    <attr intvalue="520" name="position"/>
-                </file>
-                <file name="jmri-jmrit-beantable-LightTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-LightTableAction.instance"/>
-                    <attr intvalue="530" name="position"/>
-                </file>
-                <file name="jmri-jmrit-beantable-LogixTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-LogixTableAction.instance"/>
-                    <attr intvalue="540" name="position"/>
-                </file>
-                <file name="jmri-jmrit-beantable-MemoryTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-MemoryTableAction.instance"/>
-                    <attr intvalue="550" name="position"/>
-                </file>
-                <file name="jmri-jmrit-beantable-OBlockTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-OBlockTableAction.instance"/>
-                    <attr intvalue="560" name="position"/>
-                </file>
-                <file name="jmri-jmrit-beantable-SensorTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-SensorTableAction.instance"/>
-                    <attr intvalue="570" name="position"/>
-                </file>
-                <file name="jmri-jmrit-beantable-SignalHeadTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-SignalHeadTableAction.instance"/>
-                    <attr intvalue="580" name="position"/>
-                </file>
-                <file name="jmri-jmrit-beantable-SignalMastTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-SignalMastTableAction.instance"/>
-                    <attr intvalue="590" name="position"/>
-                </file>
-                <file name="jmri-jmrit-beantable-ReporterTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-ReporterTableAction.instance"/>
-                    <attr intvalue="600" name="position"/>
-                </file>
-                <file name="jmri-jmrit-beantable-RouteTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-RouteTableAction.instance"/>
-                    <attr intvalue="610" name="position"/>
-                </file>
-                <file name="jmri-jmrit-beantable-SectionTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-SectionTableAction.instance"/>
-                    <attr intvalue="620" name="position"/>
-                </file>
-                <file name="jmri-jmrit-beantable-TransitTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-TransitTableAction.instance"/>
-                    <attr intvalue="630" name="position"/>
-                </file>
-                <file name="jmri-jmrit-beantable-TurnoutTableAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/JMRI/jmri-jmrit-beantable-TurnoutTableAction.instance"/>
-                    <attr intvalue="640" name="position"/>
-                </file>
-            </folder>
+    <folder name="Tools">
+        <folder name="Tables">
+            <!-- Create a JMRI-specific submenu of a standard NetBeans menu. -->
+            <attr intvalue="650" name="position"/>
         </folder>
+    </folder>
     </folder>
     <folder name="Actions">
         <folder name="JMRI">
@@ -171,134 +109,6 @@
                 <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
                 <attr name="noIconInMenu" boolvalue="false"/>
                 <attr name="position" intvalue="411"/>
-            </file>
-            <file name="jmri-jmrit-beantable-ListedTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.ListedTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.ListedTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="412"/>
-            </file>
-            <file name="jmri-jmrit-beantable-TurnoutTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.TurnoutTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.TurnoutTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="413"/>
-            </file>
-            <file name="jmri-jmrit-beantable-SensorTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.SensorTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.SensorTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="414"/>
-            </file>
-            <file name="jmri-jmrit-beantable-SignalHeadTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.SignalHeadTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.SignalHeadTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="415"/>
-            </file>
-            <file name="jmri-jmrit-beantable-SignalMastTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.SignalMastTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.SignalMastTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="416"/>
-            </file>
-            <file name="jmri-jmrit-beantable-ReporterTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.ReporterTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.ReporterTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="417"/>
-            </file>
-            <file name="jmri-jmrit-beantable-MemoryTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.MemoryTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.MemoryTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="418"/>
-            </file>
-            <file name="jmri-jmrit-beantable-RouteTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.RouteTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.RouteTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="419"/>
-            </file>
-            <file name="jmri-jmrit-beantable-LightTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.LightTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.LightTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="420"/>
-            </file>
-            <file name="jmri-jmrit-beantable-BlockTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.BlockTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.BlockTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="421"/>
-            </file>
-            <file name="jmri-jmrit-beantable-LogixTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.LogixTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.LogixTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="422"/>
-            </file>
-            <file name="jmri-jmrit-beantable-OBlockTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.OBlockTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.OBlockTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="423"/>
-            </file>
-            <file name="jmri-jmrit-beantable-SectionTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.SectionTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.SectionTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="424"/>
-            </file>
-            <file name="jmri-jmrit-beantable-TransitTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.TransitTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.TransitTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="425"/>
-            </file>
-            <file name="jmri-jmrit-beantable-AudioTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.AudioTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.AudioTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="426"/>
-            </file>
-            <file name="jmri-jmrit-beantable-IdTagTableAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.beantable.IdTagTableAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.beantable.IdTagTableAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="427"/>
             </file>
             <file name="jmri-jmrit-blockboss-BlockBossAction.instance">
                 <attr name="delegate" newvalue="jmri.jmrit.blockboss.BlockBossAction"/>

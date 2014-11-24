@@ -2,12 +2,34 @@
 
 package jmri.jmrit.beantable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.ResourceBundle;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import jmri.Block;
+import jmri.EntryPoint;
 import jmri.InstanceManager;
 import jmri.Manager;
 import jmri.NamedBean;
-import jmri.EntryPoint;
 import jmri.Section;
 import jmri.SectionManager;
 import jmri.Sensor;
@@ -15,45 +37,30 @@ import jmri.Transit;
 import jmri.TransitManager;
 import jmri.TransitSection;
 import jmri.TransitSectionAction;
-import jmri.Block;
-import java.awt.FlowLayout;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.Container;
-import java.awt.event.ActionListener;
-
-import java.util.ResourceBundle;
+import jmri.util.JmriJFrame;
 import jmri.util.table.ButtonEditor;
 import jmri.util.table.ButtonRenderer;
-
-import javax.swing.*;
-import javax.swing.table.*;
-
-import jmri.util.JmriJFrame;
-import java.util.ArrayList;
-
-/**
- * Swing action to create and register a
- * TransitTable GUI.
- *
- * <P
- * This file is part of JMRI.
- * <P
- * JMRI is open source software; you can redistribute it and/or modify it 
- * under the terms of version 2 of the GNU General Public License as 
- * published by the Free Software Foundation. See the "COPYING" file for 
- * a copy of this license.
- * <P
- * JMRI is distributed in the hope that it will be useful, but WITHOUT 
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
- * for more details.
- *
- * @author	Dave Duchamp    Copyright (C) 2008, 2010, 2011
- * @version     $Revision$
- */
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
+
+@ActionID(
+        id = "jmri.jmrit.beantable.TransitTableAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleTransitTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 630
+)
 public class TransitTableAction extends AbstractTableAction {
 
     /**

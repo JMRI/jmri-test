@@ -2,32 +2,49 @@
 
 package jmri.jmrit.beantable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jmri.Manager;
-import jmri.NamedBean;
-import jmri.Section;
-import jmri.SectionManager;
-import jmri.Transit;
-import jmri.EntryPoint;
-import jmri.Block;
-import jmri.BlockManager;
-import jmri.Sensor;
-import jmri.Path;
-
-import java.awt.FlowLayout;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import java.util.ResourceBundle;
-
-import javax.swing.*;
-import javax.swing.table.*;
-
-import jmri.util.JmriJFrame;
-import jmri.jmrit.display.layoutEditor.LayoutEditor;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import jmri.Block;
+import jmri.BlockManager;
+import jmri.EntryPoint;
+import jmri.Manager;
+import jmri.NamedBean;
+import jmri.Path;
+import jmri.Section;
+import jmri.SectionManager;
+import jmri.Sensor;
+import jmri.Transit;
+import jmri.jmrit.display.layoutEditor.LayoutEditor;
+import jmri.util.JmriJFrame;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to create and register a
@@ -51,6 +68,19 @@ import java.util.ArrayList;
  */
 // GT - 12-Oct-2009 - Added "Entry Block" column in entryPointTable
 
+@ActionID(
+        id = "jmri.jmrit.beantable.SectionTableAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleSectionTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 620
+)
 public class SectionTableAction extends AbstractTableAction {
 
     /**

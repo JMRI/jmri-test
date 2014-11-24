@@ -2,24 +2,25 @@
 
 package jmri.jmrit.beantable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jmri.InstanceManager;
-import jmri.Manager;
-import jmri.NamedBean;
-import jmri.Memory;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.BoxLayout;
-import javax.swing.JTable;
 import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import jmri.InstanceManager;
+import jmri.Manager;
+import jmri.Memory;
+import jmri.NamedBean;
 import jmri.util.JmriJFrame;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to create and register a
@@ -29,6 +30,19 @@ import jmri.util.JmriJFrame;
  * @version     $Revision$
  */
 
+@ActionID(
+        id = "jmri.jmrit.beantable.MemoryTableAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleMemoryTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 550
+)
 public class MemoryTableAction extends AbstractTableAction {
 
     /**

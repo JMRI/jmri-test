@@ -2,30 +2,30 @@
 
 package jmri.jmrit.beantable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jmri.jmrit.audio.swing.AudioSourceFrame;
-import jmri.jmrit.audio.swing.AudioListenerFrame;
-import jmri.jmrit.audio.swing.AudioBufferFrame;
-import jmri.InstanceManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
-
 import java.beans.PropertyChangeListener;
+import java.util.ResourceBundle;
 import javax.swing.JButton;
-import javax.swing.JTable;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.MenuElement;
-
 import jmri.Audio;
 import jmri.AudioManager;
+import jmri.InstanceManager;
 import jmri.NamedBean;
+import jmri.jmrit.audio.swing.AudioBufferFrame;
+import jmri.jmrit.audio.swing.AudioListenerFrame;
+import jmri.jmrit.audio.swing.AudioSourceFrame;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to create and register an
@@ -50,6 +50,19 @@ import jmri.NamedBean;
  * @version     $Revision$
  */
 
+@ActionID(
+        id = "jmri.jmrit.beantable.AudioTableAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleAudioTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 500
+)
 public class AudioTableAction extends AbstractTableAction {
 
     AudioTableDataModel listener;

@@ -2,8 +2,10 @@ package jmri.jmrit.beantable;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
-
 import jmri.jmrit.beantable.oblock.TableFrames;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 
 /**
  * GUI to define OBlocks, OPaths and Portals 
@@ -26,6 +28,19 @@ import jmri.jmrit.beantable.oblock.TableFrames;
  * @version     $Revision$
  */
 
+@ActionID(
+        id = "jmri.jmrit.beantable.OBlockTableAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.beantable.OBlockTableBundle#TitleBlockTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 560
+)
 public class OBlockTableAction extends AbstractAction {
 
     public OBlockTableAction() {

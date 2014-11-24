@@ -2,39 +2,81 @@
 
 package jmri.jmrit.beantable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jmri.*;
-import jmri.implementation.*;
-import jmri.jmrit.logix.*;
-import jmri.jmrit.sensorgroup.SensorGroupFrame;
-
-import java.awt.FlowLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.awt.Font;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import jmri.util.table.ButtonEditor;
-import jmri.util.table.ButtonRenderer;
 import java.beans.PropertyChangeListener;
-
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.table.*;
-import java.awt.Component;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-
+import java.util.List;
+import java.util.ResourceBundle;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import jmri.Audio;
+import jmri.Conditional;
+import jmri.ConditionalAction;
+import jmri.ConditionalManager;
+import jmri.ConditionalVariable;
+import jmri.InstanceManager;
+import jmri.Light;
+import jmri.Logix;
+import jmri.LogixManager;
+import jmri.Manager;
+import jmri.Memory;
+import jmri.NamedBean;
+import jmri.Route;
+import jmri.Sensor;
+import jmri.SignalHead;
+import jmri.SignalMast;
+import jmri.Turnout;
+import jmri.implementation.DefaultConditional;
+import jmri.implementation.DefaultConditionalAction;
+import jmri.jmrit.logix.OBlock;
+import jmri.jmrit.logix.Warrant;
+import jmri.jmrit.logix.WarrantManager;
+import jmri.jmrit.sensorgroup.SensorGroupFrame;
 import jmri.util.FileUtil;
 import jmri.util.JmriJFrame;
+import jmri.util.table.ButtonEditor;
+import jmri.util.table.ButtonRenderer;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to create and register a Logix Table.
@@ -66,6 +108,19 @@ import jmri.util.JmriJFrame;
  * @version $Revision$
  */
 
+@ActionID(
+        id = "jmri.jmrit.beantable.LogixTableAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleLogixTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 540
+)
 public class LogixTableAction extends AbstractTableAction {
 
 	/**

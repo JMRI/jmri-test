@@ -2,40 +2,54 @@
 
 package jmri.jmrit.beantable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jmri.InstanceManager;
-import jmri.Manager;
-import jmri.NamedBean;
-import jmri.Route;
-import jmri.Turnout;
-import jmri.Sensor;
-import jmri.Conditional;
-import jmri.ConditionalAction;
-import jmri.implementation.DefaultConditionalAction;
-import jmri.ConditionalVariable;
-import jmri.Logix;
-
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import java.beans.PropertyChangeListener;
-
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.table.*;
 import java.awt.event.MouseEvent;
-
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import jmri.Conditional;
+import jmri.ConditionalAction;
+import jmri.ConditionalVariable;
+import jmri.InstanceManager;
+import jmri.Logix;
+import jmri.Manager;
+import jmri.NamedBean;
+import jmri.Route;
+import jmri.Sensor;
+import jmri.Turnout;
+import jmri.implementation.DefaultConditionalAction;
 import jmri.util.FileUtil;
-
 import jmri.util.JmriJFrame;
 import jmri.util.swing.JmriBeanComboBox;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to create and register a Route Table
@@ -50,6 +64,19 @@ import jmri.util.swing.JmriBeanComboBox;
  * @version     $Revision$
  */
 
+@ActionID(
+        id = "jmri.jmrit.beantable.RouteTableAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleRouteTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 610
+)
 public class RouteTableAction extends AbstractTableAction {
 
 	static final ResourceBundle rbx = ResourceBundle

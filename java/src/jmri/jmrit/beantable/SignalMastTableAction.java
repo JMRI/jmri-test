@@ -2,15 +2,24 @@
 
 package jmri.jmrit.beantable;
 
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Vector;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
+import jmri.util.com.sun.TableSorter;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-
-import javax.swing.*;
-import javax.swing.table.*;
-import jmri.util.com.sun.TableSorter;
 
 /**
  * Swing action to create and register a
@@ -20,6 +29,19 @@ import jmri.util.com.sun.TableSorter;
  * @version     $Revision$
  */
 
+@ActionID(
+        id = "jmri.jmrit.beantable.SignalMastTableAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleSignalMastTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 590
+)
 public class SignalMastTableAction extends AbstractTableAction {
 
     /**
