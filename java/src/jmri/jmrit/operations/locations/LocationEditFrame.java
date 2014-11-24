@@ -12,6 +12,8 @@ import jmri.jmrit.operations.rollingstock.engines.EngineTypes;
 import jmri.jmrit.operations.OperationsFrame;
 import jmri.jmrit.operations.OperationsXml;
 
+import jmri.Reporter;
+
 import java.awt.*;
 
 import javax.swing.*;
@@ -84,6 +86,10 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 			JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	Dimension minScrollerDim = new Dimension(800, 42);
 
+        // Reader selection dropdown.
+        JComboBox<String> readerSelector = new JComboBox<String>();
+        JLabel readerLabel = new JLabel();
+
 	public static final String NAME = Bundle.getMessage("Name");
 	public static final int MAX_NAME_LENGTH = Control.max_len_string_location_name;
 	public static final String DISPOSE = "dispose"; // NOI18N
@@ -155,6 +161,21 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 				stageRadioButton.setSelected(true);
 			}
 			setTrainDirectionBoxes();
+                       
+                        if( Setup.isRfidEnabled() ) { 
+                           // setup the Reader dropdown.
+                           readerSelector.addItem(""); // add an empty entry.
+                           for(jmri.NamedBean r:jmri.InstanceManager.reporterManagerInstance().getNamedBeanList()){
+                              readerSelector.addItem(((Reporter)r).getDisplayName());
+                           }
+
+                           try {
+                              readerSelector.setSelectedItem(_location.getReporter().getDisplayName()); 
+                           } catch(java.lang.NullPointerException e){
+                               // if there is no reader set, getReporter 
+                               // will return null, so set a blank.
+                           }
+                       }
 		} else {
 			enableButtons(false);
 			spurRadioButton.setSelected(true);
@@ -211,6 +232,13 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 		commentScroller.setMinimumSize(minScrollerDim);
 		addItem(pC, commentScroller, 0, 0);
 
+                // reader row
+                JPanel readerPanel = new JPanel();
+                readerPanel.setLayout(new GridBagLayout());
+                readerLabel.setText(Bundle.getMessage("idReader"));
+                addItem(readerPanel,readerLabel,0,0);
+                addItem(readerPanel,readerSelector,1,0);
+
 		// row 12
 		JPanel pB = new JPanel();
 		pB.setLayout(new GridBagLayout());
@@ -230,6 +258,7 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 		getContentPane().add(stagingPane);
 		getContentPane().add(addStagingButton);
 		getContentPane().add(pC);
+		getContentPane().add(readerPanel);
 		getContentPane().add(pB);
 
 		// setup buttons
@@ -419,6 +448,13 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 			return;
 		_location.setName(locationNameTextField.getText());
 		_location.setComment(commentTextArea.getText());
+                if(Setup.isRfidEnabled() && 
+                   readerSelector.getSelectedItem()!=null && 
+                   !((String)readerSelector.getSelectedItem()).equals("")) {
+		   _location.setReporter(
+                      jmri.InstanceManager.reporterManagerInstance()
+                        .getReporter((String)readerSelector.getSelectedItem()));
+                }
 		setLocationOps();
 		// save location file
 		OperationsXml.save();
@@ -480,6 +516,8 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 		stageRadioButton.setEnabled(enabled);
 		//
 		yardTable.setEnabled(enabled);
+                // enable readerSelect.
+                readerSelector.setEnabled(enabled && Setup.isRfidEnabled() );
 	}
 
 	public void radioButtonActionPerformed(java.awt.event.ActionEvent ae) {

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import jmri.jmrit.operations.locations.Location;
 import jmri.jmrit.operations.locations.LocationManager;
@@ -16,6 +17,10 @@ import jmri.jmrit.operations.setup.Setup;
 import jmri.jmrit.operations.trains.Train;
 import jmri.jmrit.operations.trains.TrainCommon;
 import jmri.jmrit.operations.trains.TrainManager;
+
+import jmri.InstanceManager;
+import jmri.IdTag;
+import jmri.IdTagManager;
 
 /**
  * Represents rolling stock, both powered (locomotives) and not powered (cars) on the layout.
@@ -730,6 +735,8 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 			firePropertyChange("rolling stock value", old, value); // NOI18N
 	}
 
+        private IdTag _tag = null;
+
 	public String getRfid() {
 		return _rfid;
 	}
@@ -743,8 +750,28 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 	public void setRfid(String id) {
 		String old = _rfid;
 		_rfid = id;
+                log.debug("Changing IdTag for {} to {}", toString(),id);  
 		if (!old.equals(id))
 			firePropertyChange("rolling stock rfid", old, id); // NOI18N
+                _tag = InstanceManager.getDefault(IdTagManager.class).getIdTag(id);
+                log.debug("Tag {} Found",_tag.toString() );
+                _tag.addPropertyChangeListener( new PropertyChangeListener(){
+                     @Override
+                     public void propertyChange(java.beans.PropertyChangeEvent e){
+                         if(e.getPropertyName().equals("whereLastSeen")){
+                              log.debug("Tag Reader Position update received for {}", toString());  
+                              // update the position of this piece of rolling
+                              // stock when it's IdTag is seen.
+                              if(e.getNewValue()!=null)
+                                 setLocation(locationManager
+                                          .getLocationByReporter(
+                                          (jmri.Reporter)e.getNewValue()),null);
+                         }
+                         if(e.getPropertyName().equals("whenLastSeen")){
+                              log.debug("Tag Reader Time at Location update received for {}", toString());  
+                         }
+                     }
+                });
 	}
 
 	/**
@@ -1001,7 +1028,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		if ((a = e.getAttribute(Xml.VALUE)) != null)
 			_value = a.getValue();
 		if ((a = e.getAttribute(Xml.RFID)) != null)
-			_rfid = a.getValue();
+			setRfid(a.getValue());
 		if ((a = e.getAttribute(Xml.LOC_UNKNOWN)) != null)
 			_locationUnknown = a.getValue().equals(Xml.TRUE);
 		if ((a = e.getAttribute(Xml.OUT_OF_SERVICE)) != null)

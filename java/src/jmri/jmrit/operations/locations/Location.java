@@ -23,6 +23,8 @@ import jmri.jmrit.operations.setup.Control;
 import jmri.jmrit.operations.setup.Setup;
 import jmri.util.PhysicalLocation;
 
+import jmri.Reporter;
+
 import org.jdom.Attribute;
 import org.jdom.Element;
 
@@ -65,6 +67,9 @@ public class Location implements java.beans.PropertyChangeListener {
 	// Pool
 	protected int _idPoolNumber = 0;
 	protected Hashtable<String, Pool> _poolHashTable = new Hashtable<String, Pool>();
+
+        // IdTag reader associated with this location.
+        protected Reporter reader = null;
 
 	public static final int NORMAL = 1; // types of track allowed at this location
 	public static final int STAGING = 2; // staging only
@@ -1212,6 +1217,14 @@ public class Location implements java.beans.PropertyChangeListener {
 				register(new Track(eTrack, this));
 			}
 		}
+		if (e.getAttribute(Xml.READER) != null){
+			@SuppressWarnings("unchecked")
+                        Reporter r = jmri.InstanceManager
+                                        .reporterManagerInstance()
+                                        .provideReporter(
+                                (String)e.getAttribute(Xml.READER).getValue());
+                        setReporter(r);
+                } 
 		addPropertyChangeListeners();
 	}
 
@@ -1249,6 +1262,8 @@ public class Location implements java.beans.PropertyChangeListener {
 			e.setAttribute(Xml.SOUTH_TRAIN_ICON_X, Integer.toString(getTrainIconSouth().x));
 			e.setAttribute(Xml.SOUTH_TRAIN_ICON_Y, Integer.toString(getTrainIconSouth().y));
 		}
+                if(reader!=null)
+			e.setAttribute(Xml.READER,reader.getDisplayName());
 		// build list of rolling stock types for this location
 		String[] types = getTypeNames();
 		// Old way of saving car types
@@ -1384,6 +1399,19 @@ public class Location implements java.beans.PropertyChangeListener {
 		LocationManagerXml.instance().setDirty(true);
 		pcs.firePropertyChange(p, old, n);
 	}
+
+        /*
+         * set the jmri.Reporter object associated with this location.
+         * @param reader jmri.Reporter object.
+         */
+        protected void setReporter(Reporter r){ reader = r; }
+
+        /*
+         * get the jmri.Reporter object associated with this location.
+         * @return jmri.Reporter object.
+         */
+        public Reporter getReporter(){ return reader; }
+
 
 	static Logger log = LoggerFactory.getLogger(Location.class.getName());
 
