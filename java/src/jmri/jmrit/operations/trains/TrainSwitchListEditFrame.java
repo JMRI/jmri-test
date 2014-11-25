@@ -66,15 +66,15 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 	JButton previewButton = new JButton(Bundle.getMessage("PreviewSwitchLists"));
 	JButton changeButton = new JButton(Bundle.getMessage("PrintChanges"));
 	JButton runButton = new JButton(Bundle.getMessage("RunFile"));
+	JButton runChangeButton = new JButton(Bundle.getMessage("RunFileChanges"));
 	JButton csvGenerateButton = new JButton(Bundle.getMessage("CsvGenerate"));
 	JButton csvChangeButton = new JButton(Bundle.getMessage("CsvChanges"));
 	JButton updateButton = new JButton(Bundle.getMessage("Update"));
 	JButton resetButton = new JButton(Bundle.getMessage("ResetSwitchLists"));
 	JButton saveButton = new JButton(Bundle.getMessage("Save"));
 
-	// text field
-
-	// combo boxes
+	// panels
+	JPanel customPanel;
 
 	public TrainSwitchListEditFrame() {
 		super(Bundle.getMessage("TitleSwitchLists"));
@@ -122,27 +122,35 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 		addItem(pSwitchListOptions, saveButton, 4, 0);
 
 		// buttons
-		JPanel controlpanel = new JPanel();
-		controlpanel.setLayout(new GridBagLayout());
+		JPanel controlPanel = new JPanel();
+		controlPanel.setLayout(new GridBagLayout());
+		controlPanel.setBorder(BorderFactory.createTitledBorder(""));
 
 		// row 3
-		addItem(controlpanel, previewButton, 0, 2);
-		addItem(controlpanel, printButton, 1, 2);
-		addItem(controlpanel, changeButton, 2, 2);
+		addItem(controlPanel, previewButton, 0, 2);
+		addItem(controlPanel, printButton, 1, 2);
+		addItem(controlPanel, changeButton, 2, 2);
 		// row 4
-		addItem(controlpanel, updateButton, 0, 3);
-		addItem(controlpanel, resetButton, 2, 3);
+		addItem(controlPanel, updateButton, 0, 3);
+		addItem(controlPanel, resetButton, 1, 3);
+		
 		// row 5
-		if (Setup.isGenerateCsvSwitchListEnabled()) {
-			addItem(controlpanel, runButton, 0, 4);
-			addItem(controlpanel, csvGenerateButton, 1, 4);
-			addItem(controlpanel, csvChangeButton, 2, 4);
-		}
+		customPanel = new JPanel();
+		customPanel.setLayout(new GridBagLayout());
+		customPanel.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("BorderLayoutCustomSwitchLists")));
+
+		addItem(customPanel, csvGenerateButton, 1, 4);
+		addItem(customPanel, csvChangeButton, 2, 4);
+		addItem(customPanel, runButton, 1, 5);
+		addItem(customPanel, runChangeButton, 2, 5);
 
 		getContentPane().add(switchPane);
 		getContentPane().add(pButtons);
 		getContentPane().add(pSwitchListOptions);
-		getContentPane().add(controlpanel);
+		getContentPane().add(controlPanel);
+		getContentPane().add(customPanel);
+		
+		customPanel.setVisible(Setup.isGenerateCsvSwitchListEnabled());
 
 		// Set the state
 		switchListRealTimeCheckBox.setSelected(Setup.isSwitchListRealTime());
@@ -160,6 +168,7 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 		addButtonAction(previewButton);
 		addButtonAction(changeButton);
 		addButtonAction(runButton);
+		addButtonAction(runChangeButton);
 		addButtonAction(csvGenerateButton);
 		addButtonAction(csvChangeButton);
 		addButtonAction(updateButton);
@@ -170,6 +179,9 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 		addCheckBoxAction(switchListRealTimeCheckBox);
 		addCheckBoxAction(switchListAllTrainsCheckBox);
 		addCheckBoxAction(switchListPageCheckBox);
+		
+		// property change
+		Setup.addPropertyChangeListener(this);
 
 		// build menu
 		JMenuBar menuBar = new JMenuBar();
@@ -181,7 +193,7 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 		// add help menu to window
 		addHelpMenu("package.jmri.jmrit.operations.Operations_SwitchList", true); // NOI18N
 		// set frame size and train for display
-		initMinimumSize(new Dimension(Control.panelWidth, Control.panelHeight));
+		initMinimumSize(new Dimension(Control.panelWidth500, Control.panelHeight500));
 	}
 
 	// Buttons
@@ -211,7 +223,10 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 			buildSwitchList(true, false, false, true);
 		}
 		if (ae.getSource() == runButton) {
-			runCustomSwitchLists();
+			runCustomSwitchLists(false);
+		}
+		if (ae.getSource() == runChangeButton) {
+			runCustomSwitchLists(true);
 		}
 		if (ae.getSource() == resetButton) {
 			reset();
@@ -344,10 +359,12 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 		Location mainLocation = null; // user can have multiple locations with the "same" name.
 
 		for (Location location : locations) {
-			if (location.getStatus().equals(Location.MODIFIED) && location.isSwitchListEnabled()) {
-				changeButton.setEnabled(true);
-				csvChangeButton.setEnabled(true);
-			}
+			//TODO not sure this is needed, see enableChangeButtons
+//			if (location.getStatus().equals(Location.MODIFIED) && location.isSwitchListEnabled()) {
+//				changeButton.setEnabled(true);
+//				csvChangeButton.setEnabled(true);
+//				runChangeButton.setEnabled(true);
+//			}
 			String name = TrainCommon.splitString(location.getName());
 			if (mainLocation != null && TrainCommon.splitString(mainLocation.getName()).equals(name)) {
 				location.setSwitchListEnabled(mainLocation.isSwitchListEnabled());
@@ -397,7 +414,7 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 		repaint();
 	}
 
-	private void runCustomSwitchLists() {
+	private void runCustomSwitchLists(boolean isChanged) {
 		if (!Setup.isGenerateCsvSwitchListEnabled())
 			return;
 		log.debug("run custom switch lists");
@@ -406,7 +423,8 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 		for (int i = 0; i < locationCheckBoxes.size(); i++) {
 			String locationName = locationCheckBoxes.get(i).getName();
 			Location location = locationManager.getLocationByName(locationName);
-			if (location.isSwitchListEnabled()) {
+			if (location.isSwitchListEnabled()
+					&& (!isChanged || isChanged && location.getStatus().equals(Location.MODIFIED))) {
 				// also build the regular switch lists so they can be used
 				if (!switchListRealTimeCheckBox.isSelected())
 					trainSwitchLists.buildSwitchList(location);
@@ -421,8 +439,8 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 		}
 		// Processes the CSV Manifest files using an external custom program.
 		if (!TrainCustomSwitchList.manifestCreatorFileExists()) {
-			log.warn("Manifest creator file not found!, directory name: " + TrainCustomSwitchList.getDirectoryName()
-					+ ", file name: " + TrainCustomSwitchList.getFileName()); // NOI18N
+			log.warn("Manifest creator file not found!, directory name: {}, file name: {}", TrainCustomSwitchList
+					.getDirectoryName(), TrainCustomSwitchList.getFileName());
 			JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle.getMessage("LoadDirectoryNameFileName"),
 					new Object[] { TrainCustomSwitchList.getDirectoryName(), TrainCustomSwitchList.getFileName() }),
 					Bundle.getMessage("ManifestCreatorNotFound"), JOptionPane.ERROR_MESSAGE);
@@ -446,10 +464,12 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 	private void enableChangeButtons() {
 		changeButton.setEnabled(false);
 		csvChangeButton.setEnabled(false);
+		runChangeButton.setEnabled(false);
 		for (Location location : locationManager.getLocationsByNameList()) {
 			if (location.getStatus().equals(Location.MODIFIED) && location.isSwitchListEnabled()) {
 				changeButton.setEnabled(true);
 				csvChangeButton.setEnabled(true);
+				runChangeButton.setEnabled(true);
 			}
 		}
 	}
@@ -505,6 +525,7 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 
 	public void dispose() {
 		locationManager.removePropertyChangeListener(this);
+		Setup.removePropertyChangeListener(this);
 		for (Location location : locationManager.getLocationsByNameList()) {
 			location.removePropertyChangeListener(this);
 		}
@@ -525,6 +546,9 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 				|| e.getPropertyName().equals(Location.SWITCHLIST_COMMENT_CHANGED_PROPERTY)) {
 			updateLocationCheckboxes();
 			enableChangeButtons();
+		}
+		if (e.getPropertyName().equals(Setup.SWITCH_LIST_CSV_PROPERTY_CHANGE)) {
+			customPanel.setVisible(Setup.isGenerateCsvSwitchListEnabled());
 		}
 	}
 
