@@ -101,8 +101,15 @@ import org.netbeans.api.options.OptionsDisplayer;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Create an instance of a pre-modular architecture JMRI application. Note that
+ * these applications:
+ * <ul>
+ * <li>have no UI for updating JMRI</li>
+ * <li>have no UI for installing, removing, or updating plugins</li>
+ * <li>only allow plugins that need no UI to function</li>
+ * </ul>
  *
- * @author rhwood
+ * @author Randall Wood
  */
 public class ClassicApplication extends JPanel implements PropertyChangeListener, java.awt.event.WindowListener {
 
@@ -557,7 +564,7 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
     }
 
     protected void operationsMenu(JMenuBar menuBar, WindowInterface wi) {
-        menuBar.add(new OperationsMenu(rb.getString("MenuOperations")));
+        menuBar.add(new OperationsMenu());
     }
 
     protected void rosterMenu(JMenuBar menuBar, WindowInterface wi) {
