@@ -86,6 +86,7 @@ import jmri.profile.ProfileManagerDialog;
 import jmri.util.FileUtil;
 import jmri.util.HelpUtil;
 import jmri.util.JmriJFrame;
+import jmri.util.PythonInterp;
 import jmri.util.SystemType;
 import jmri.util.WindowMenu;
 import jmri.util.exceptionhandler.AwtHandler;
@@ -342,18 +343,20 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
         Thread thr2 = new Thread(r, "initialize decoder index");
         thr2.start();
 
-        r = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    jmri.util.PythonInterp.getPythonInterpreter();
-                } catch (Exception ex) {
-                    log.error("Error in trying to initialize python interpreter " + ex.toString());
+        if (Boolean.getBoolean("org.jmri.python.preload")) {
+            r = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        PythonInterp.getPythonInterpreter();
+                    } catch (Exception ex) {
+                        log.error("Error in trying to initialize python interpreter " + ex.toString());
+                    }
                 }
-            }
-        };
-        Thread thr3 = new Thread(r, "initialize python interpreter");
-        thr3.start();
+            };
+            Thread thr3 = new Thread(r, "initialize python interpreter");
+            thr3.start();
+        }
         // if the configuration didn't complete OK, pop the prefs frame and help
         log.debug("Config go OK? " + (configOK || configDeferredLoadOK));
         if (!configOK || !configDeferredLoadOK) {

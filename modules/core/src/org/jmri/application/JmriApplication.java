@@ -22,6 +22,7 @@ import jmri.configurexml.ConfigXmlManager;
 import jmri.configurexml.ErrorHandler;
 import jmri.configurexml.swing.DialogErrorHandler;
 import jmri.implementation.AbstractShutDownTask;
+import jmri.jmrit.decoderdefn.DecoderIndexFile;
 import jmri.jmrit.display.layoutEditor.BlockValueFile;
 import jmri.jmrit.revhistory.FileHistory;
 import jmri.jmrit.signalling.EntryExitPairs;
@@ -31,6 +32,7 @@ import jmri.profile.Profile;
 import jmri.profile.ProfileManager;
 import jmri.profile.ProfileManagerDialog;
 import jmri.util.FileUtil;
+import jmri.util.PythonInterp;
 import jmri.web.server.WebServerManager;
 import org.jmri.managers.NetBeansShutDownManager;
 import org.openide.util.Lookup;
@@ -502,6 +504,39 @@ public abstract class JmriApplication extends Bean {
              }
              */
         }
+
+        // TODO: All these threads should eventually be pushed into Initialzers.
+        //Initialise the decoderindex file instance within a seperate thread to help improve first use perfomance
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DecoderIndexFile.instance();
+                } catch (Exception ex) {
+                    log.error("Error in trying to initialize decoder index file " + ex.toString());
+                }
+            }
+        };
+        Thread thr2 = new Thread(r, "initialize decoder index");
+        thr2.start();
+        // TODO: Move into @Start initializer in Python Scripting Support module.
+        // Once done, JMRI Core dependency on Python Scripting Support module
+        // can also be removed.
+        if (Boolean.getBoolean("org.jmri.python.preload")) {
+            r = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        PythonInterp.getPythonInterpreter();
+                    } catch (Exception ex) {
+                        log.error("Error in trying to initialize python interpreter " + ex.toString());
+                    }
+                }
+            };
+            Thread thr3 = new Thread(r, "initialize python interpreter");
+            thr3.start();
+        }
+
         return this.configLoaded;
     }
 
