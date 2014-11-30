@@ -124,15 +124,17 @@ public class PythonInterp {
             // get a list of directories containing every module
             Set<File> moduleDirs = new HashSet<File>();
             for (ModuleInfo moduleInfo : Lookup.getDefault().lookupAll(ModuleInfo.class)) {
-                File moduleDir = InstalledFileLocator.getDefault()
-                        .locate("modules", moduleInfo.getCodeNameBase(), false);
-                if (moduleDir != null && moduleDir.isDirectory()) {
-                    moduleDirs.add(moduleDir);
-                }
-                moduleDir = InstalledFileLocator.getDefault()
-                        .locate("modules/ext", moduleInfo.getCodeNameBase(), false);
-                if (moduleDir != null && moduleDir.isDirectory()) {
-                    moduleDirs.add(moduleDir);
+                if (moduleInfo.isEnabled()) {
+                    File moduleDir = InstalledFileLocator.getDefault()
+                            .locate("modules", moduleInfo.getCodeNameBase(), false);
+                    if (moduleDir != null && moduleDir.isDirectory()) {
+                        moduleDirs.add(moduleDir);
+                    }
+                    moduleDir = InstalledFileLocator.getDefault()
+                            .locate("modules/ext", moduleInfo.getCodeNameBase(), false);
+                    if (moduleDir != null && moduleDir.isDirectory()) {
+                        moduleDirs.add(moduleDir);
+                    }
                 }
             }
             // get all jars in every module except wrapped third-party jars
