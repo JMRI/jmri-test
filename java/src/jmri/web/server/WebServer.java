@@ -33,10 +33,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An HTTP server that handles requests for HTTPServlets.
+ * An HTTP server that handles requests for HttpServlets.
+ *
+ * This server loads HttpServlets that have registered themselves as
+ * {@link org.openide.util.lookup.ServiceProvider}s and that are annotated with
+ * the {@link javax.servlet.annotation.WebServlet} annotation.
  *
  * @author Bob Jacobsen Copyright 2005, 2006
- * @author Randall Wood Copyright 2012
+ * @author Randall Wood Copyright 2012, 2014
  * @version $Revision$
  */
 public final class WebServer implements LifeCycle.Listener {
@@ -126,14 +130,14 @@ public final class WebServer implements LifeCycle.Listener {
                 }
                 contexts.addHandler(servletContext);
             }
-            // This loop needs to be replaced with a more dynamic mechanism for
-            // adding servlets, since it relies on a dummy instance of every
-            // servlet for the Lookup mechanism to be created
+            // Load all servlets that provide the HttpServlet service.
             for (HttpServlet servlet : Lookup.getDefault().lookupAll(HttpServlet.class)) {
                 try {
-                    ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.NO_SECURITY);
-                    this.registerServlet(servletContext, servlet.getClass());
-                    contexts.addHandler(servletContext);
+                    contexts.addHandler(this.registerServlet(
+                            new ServletContextHandler(ServletContextHandler.NO_SECURITY),
+                            servlet.getClass(),
+                            servlet
+                    ));
                 } catch (InstantiationException ex) {
                     log.error("Unable to register servlet", ex);
                 } catch (IllegalAccessException ex) {
@@ -184,11 +188,41 @@ public final class WebServer implements LifeCycle.Listener {
         return preferences.getPort();
     }
 
+    /**
+     * Register a {@link javax.servlet.http.HttpServlet } that is annotated with
+     * the {@link javax.servlet.annotation.WebServlet } annotation.
+     *
+     * This method calls
+     * {@link #registerServlet(java.lang.Class, javax.servlet.http.HttpServlet)}
+     * with a null HttpServlet.
+     *
+     * @param type The actual class of the servlet.
+     */
     public void registerServlet(Class<? extends HttpServlet> type) {
+        this.registerServlet(type, null);
+    }
+
+    /**
+     * Register a {@link javax.servlet.http.HttpServlet } that is annotated with
+     * the {@link javax.servlet.annotation.WebServlet } annotation.
+     *
+     * Registration reads the WebServlet annotation to get the list of paths the
+     * servlet should handle and creates instances of the Servlet to handle each
+     * path.
+     *
+     * Note that all HttpServlets registered using this mechanism must have a
+     * default constructor.
+     *
+     * @param type The actual class of the servlet.
+     * @param instance An un-initialized, un-registered instance of the servlet.
+     */
+    public void registerServlet(Class<? extends HttpServlet> type, HttpServlet instance) {
         try {
-            ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SECURITY);
-            this.registerServlet(context, type);
-            ((ContextHandlerCollection) this.server.getHandler()).addHandler(context);
+            ((ContextHandlerCollection) this.server.getHandler()).addHandler(this.registerServlet(
+                    new ServletContextHandler(ServletContextHandler.NO_SECURITY),
+                    type,
+                    instance
+            ));
         } catch (InstantiationException ex) {
             log.error("Unable to register servlet", ex);
         } catch (IllegalAccessException ex) {
@@ -200,14 +234,20 @@ public final class WebServer implements LifeCycle.Listener {
         }
     }
 
-    private void registerServlet(ServletContextHandler context, Class<? extends HttpServlet> type)
+    private ServletContextHandler registerServlet(ServletContextHandler context, Class<? extends HttpServlet> type, HttpServlet instance)
             throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         WebServlet info = type.getAnnotation(WebServlet.class);
         for (String pattern : info.urlPatterns()) {
-            HttpServlet servlet = type.getConstructor().newInstance();
+            HttpServlet servlet = instance;
+            instance = null; // ensure instance is only used for the first URL pattern
+            if (servlet == null) {
+                log.debug("Creating new {} for URL pattern {}", type.getName(), pattern);
+                servlet = type.getConstructor().newInstance();
+            }
             context.setContextPath(pattern);
             context.addServlet(new ServletHolder(servlet), "/*");
         }
+        return context;
     }
 
     @Override
