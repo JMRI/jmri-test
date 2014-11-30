@@ -1,15 +1,21 @@
 // PythonInterp.java
 package jmri.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedReader;
 import java.io.PipedWriter;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import javax.swing.JTextArea;
+import org.openide.modules.InstalledFileLocator;
+import org.openide.modules.ModuleInfo;
+import org.openide.util.Lookup;
+import org.openide.util.Utilities;
 import org.python.core.PySystemState;
 import org.python.util.PythonInterpreter;
-import org.openide.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,14 +109,59 @@ public class PythonInterp {
         });
         if (is != null) {
             try {
-                properties = new Properties(System.getProperties());
                 properties.load(is);
             } catch (IOException ex) {
                 log.error("Found, but unable to read python.properties: {}", ex.getMessage());
-                properties = null;
             }
         }
 
+        if (!Boolean.getBoolean("python.cachedir.skip")) {
+            // Add all modules to python classpath if allowing package imports
+            String pythonPackagesPaths = "java.class.path,sun.boot.class.path,org.jmri.class.path";
+            properties.setProperty("python.packages.paths", pythonPackagesPaths);
+
+            StringBuilder modulesPath = null;
+            // get a list of directories containing every module
+            Set<File> moduleDirs = new HashSet<File>();
+            for (ModuleInfo moduleInfo : Lookup.getDefault().lookupAll(ModuleInfo.class)) {
+                File moduleDir = InstalledFileLocator.getDefault()
+                        .locate("modules", moduleInfo.getCodeNameBase(), false);
+                if (moduleDir != null && moduleDir.isDirectory()) {
+                    moduleDirs.add(moduleDir);
+                }
+                moduleDir = InstalledFileLocator.getDefault()
+                        .locate("modules/ext", moduleInfo.getCodeNameBase(), false);
+                if (moduleDir != null && moduleDir.isDirectory()) {
+                    moduleDirs.add(moduleDir);
+                }
+            }
+            // get all jars in every module except wrapped third-party jars
+            Set<File> moduleJars = new HashSet<File>();
+            for (File moduleDir : moduleDirs) {
+                for (File module : moduleDir.listFiles()) {
+                    if (module.getName().endsWith(".jar")) {
+                        module = module.getAbsoluteFile();
+                        log.debug("Adding {} to compile classpath", module);
+                        moduleJars.add(module);
+                    }
+                }
+            }
+            // create classpath
+            if (!moduleJars.isEmpty()) {
+                for (File module : moduleJars) {
+                    if (modulesPath == null) {
+                        modulesPath = new StringBuilder(module.getAbsolutePath());
+                    } else {
+                        modulesPath.append(File.pathSeparator).append(module.getAbsolutePath());
+                    }
+                }
+            }
+            if (modulesPath == null) {
+                modulesPath = new StringBuilder("");
+            }
+            log.debug("Setting org.jmri.class.path to {}", modulesPath);
+            properties.setProperty("org.jmri.class.path", modulesPath.toString());
+        }
         // must create one.
         try {
             log.debug("create interpreter");
