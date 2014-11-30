@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +28,7 @@ import jmri.web.servlet.ServletUtil;
 import static jmri.web.servlet.ServletUtil.APPLICATION_JSON;
 import static jmri.web.servlet.ServletUtil.UTF8_APPLICATION_JSON;
 import static jmri.web.servlet.ServletUtil.UTF8_TEXT_HTML;
+import org.openide.util.lookup.ServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,9 @@ import org.slf4j.LoggerFactory;
  * @author Randall Wood (C) 2014
  * @author Steve Todd (C) 2013
  */
+@WebServlet(name = "OperationsServlet",
+        urlPatterns = {"/operations"})
+@ServiceProvider(service = HttpServlet.class)
 public class OperationsServlet extends HttpServlet {
 
     private ObjectMapper mapper;

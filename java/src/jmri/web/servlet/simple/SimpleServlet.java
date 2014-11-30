@@ -4,6 +4,8 @@ package jmri.web.servlet.simple;
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import jmri.InstanceManager;
@@ -22,6 +24,7 @@ import jmri.web.server.WebServerManager;
 import jmri.web.servlet.ServletUtil;
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketServlet;
+import org.openide.util.lookup.ServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +32,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author rhwood
  */
+@WebServlet(name = "SimpleServlet",
+        urlPatterns = {"/simple"})
+@ServiceProvider(service = HttpServlet.class)
 public class SimpleServlet extends WebSocketServlet {
 
     private final Set<SimpleWebSocket> sockets = new CopyOnWriteArraySet<SimpleWebSocket>();

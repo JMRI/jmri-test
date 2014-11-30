@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +29,7 @@ import static jmri.jmris.json.JSON.URL;
 import jmri.util.JmriJFrame;
 import jmri.util.StringUtil;
 import jmri.web.server.WebServerManager;
+import org.openide.util.lookup.ServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +53,9 @@ import org.slf4j.LoggerFactory;
  * @author Modifications by Bob Jacobsen Copyright 2005, 2006, 2008
  * @version $Revision$
  */
+@WebServlet(name = "FrameImageServlet",
+        urlPatterns = {"/frame"})
+@ServiceProvider(service = HttpServlet.class)
 public class JmriJFrameServlet extends HttpServlet {
 
     static String clickRetryTime = Integer.toString(WebServerManager.getWebServerPreferences().getClickDelay());

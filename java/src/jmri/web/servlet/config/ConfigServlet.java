@@ -7,14 +7,19 @@ package jmri.web.servlet.config;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author rhwood
  */
+@WebServlet(name = "ConfigServlet",
+        urlPatterns = {"/config"})
+@ServiceProvider(service = HttpServlet.class)
 public class ConfigServlet extends HttpServlet {
 
     /**

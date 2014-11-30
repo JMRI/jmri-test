@@ -7,6 +7,7 @@ package jmri.web.servlet.xmlio;
 import java.io.IOException;
 import java.util.Enumeration;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,8 +21,9 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
 import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+import org.openide.util.lookup.ServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,9 @@ import org.slf4j.LoggerFactory;
  * @see jmri.web.servlet.json.JsonServlet
  * @author rhwood
  */
+@WebServlet(name = "XmlIOServlet",
+        urlPatterns = {"/xmlio"})
+@ServiceProvider(service = HttpServlet.class)
 public class XmlIOServlet extends HttpServlet implements XmlIORequestor {
 
     static XmlIOFactory factory = null;

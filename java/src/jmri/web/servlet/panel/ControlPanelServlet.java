@@ -5,6 +5,8 @@
 package jmri.web.servlet.panel;
 
 import java.util.List;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import jmri.configurexml.ConfigXmlManager;
@@ -15,11 +17,15 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author rhwood
  */
+@WebServlet(name = "ControlPanelServlet",
+        urlPatterns = {"/panel/ControlPanel"})
+@ServiceProvider(service = HttpServlet.class)
 public class ControlPanelServlet extends AbstractPanelServlet {
 
     private static final long serialVersionUID = -8086671279145186127L;

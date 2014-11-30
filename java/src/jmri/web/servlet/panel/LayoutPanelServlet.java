@@ -2,6 +2,8 @@ package jmri.web.servlet.panel;
 
 import java.awt.Color;
 import java.util.List;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import javax.swing.JComponent;
 import jmri.InstanceManager;
 import jmri.Sensor;
@@ -16,12 +18,16 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Return xml (for specified LayoutPanel) suitable for use by external clients
  *
  * @author mstevetodd -- based on PanelServlet.java by rhwood
  */
+@WebServlet(name = "LayoutPanelServlet",
+        urlPatterns = {"/panel/LayoutPanel"})
+@ServiceProvider(service = HttpServlet.class)
 public class LayoutPanelServlet extends AbstractPanelServlet {
 
     private static final long serialVersionUID = 3008424425552738898L;

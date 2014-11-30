@@ -127,10 +127,7 @@ import org.slf4j.LoggerFactory;
  * @author rhwood Copyright (C) 2012, 2013
  */
 @WebServlet(name = "JsonServlet",
-        loadOnStartup = 1,
         urlPatterns = {"/json"})
-// We need to be able to get rid of this @ServiceProvider notation, since it creates
-// an instance of JsonServlet that is otherwise unused
 @ServiceProvider(service = HttpServlet.class)
 public class JsonServlet extends WebSocketServlet {
 

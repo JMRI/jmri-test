@@ -14,6 +14,7 @@ import java.net.URLDecoder;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,6 +40,7 @@ import static jmri.web.servlet.ServletUtil.IMAGE_PNG;
 import static jmri.web.servlet.ServletUtil.UTF8;
 import static jmri.web.servlet.ServletUtil.UTF8_APPLICATION_JSON;
 import static jmri.web.servlet.ServletUtil.UTF8_TEXT_HTML;
+import org.openide.util.lookup.ServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +56,9 @@ import org.slf4j.LoggerFactory;
  * TODO: Include decoder defs and CVs in roster entry response.
  *
  */
+@WebServlet(name = "RosterServlet",
+        urlPatterns = {"/roster"})
+@ServiceProvider(service = HttpServlet.class)
 public class RosterServlet extends HttpServlet {
 
     private ObjectMapper mapper;

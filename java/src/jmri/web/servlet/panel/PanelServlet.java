@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.List;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import jmri.configurexml.ConfigXmlManager;
@@ -19,11 +21,18 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author rhwood
  */
+@WebServlet(name = "PanelServlet",
+        urlPatterns = {
+            "/panel",
+            "/panel/Panel"
+        })
+@ServiceProvider(service = HttpServlet.class)
 public class PanelServlet extends AbstractPanelServlet {
 
     private static final long serialVersionUID = -5898335055123037426L;
