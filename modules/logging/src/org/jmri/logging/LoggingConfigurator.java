@@ -103,7 +103,7 @@ public final class LoggingConfigurator implements ArgsProcessor, Runnable {
 
     @Override
     public void process(Env env) throws CommandException {
-        log.info("Processing log-config argument {}", this.logConfigPath);
+        log.info("Processing logging command line argument {}", this.logConfigPath);
         if (!this.logConfigPath.isEmpty()) {
             // get specified configuration
             try {
