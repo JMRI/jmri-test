@@ -3,7 +3,9 @@ package jmri.web.server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -133,11 +135,13 @@ public final class WebServer implements LifeCycle.Listener {
             // Load all servlets that provide the HttpServlet service.
             for (HttpServlet servlet : Lookup.getDefault().lookupAll(HttpServlet.class)) {
                 try {
-                    contexts.addHandler(this.registerServlet(
-                            new ServletContextHandler(ServletContextHandler.NO_SECURITY),
+                    for (ServletContextHandler handler : this.registerServlet(
+                            ServletContextHandler.NO_SECURITY,
                             servlet.getClass(),
                             servlet
-                    ));
+                    )) {
+                        contexts.addHandler(handler);
+                    }
                 } catch (InstantiationException ex) {
                     log.error("Unable to register servlet", ex);
                 } catch (IllegalAccessException ex) {
@@ -218,11 +222,13 @@ public final class WebServer implements LifeCycle.Listener {
      */
     public void registerServlet(Class<? extends HttpServlet> type, HttpServlet instance) {
         try {
-            ((ContextHandlerCollection) this.server.getHandler()).addHandler(this.registerServlet(
-                    new ServletContextHandler(ServletContextHandler.NO_SECURITY),
+            for (ServletContextHandler handler : this.registerServlet(
+                    ServletContextHandler.NO_SECURITY,
                     type,
                     instance
-            ));
+            )) {
+                ((ContextHandlerCollection) this.server.getHandler()).addHandler(handler);
+            }
         } catch (InstantiationException ex) {
             log.error("Unable to register servlet", ex);
         } catch (IllegalAccessException ex) {
@@ -234,20 +240,24 @@ public final class WebServer implements LifeCycle.Listener {
         }
     }
 
-    private ServletContextHandler registerServlet(ServletContextHandler context, Class<? extends HttpServlet> type, HttpServlet instance)
+    private List<ServletContextHandler> registerServlet(int options, Class<? extends HttpServlet> type, HttpServlet instance)
             throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         WebServlet info = type.getAnnotation(WebServlet.class);
+        List<ServletContextHandler> handlers = new ArrayList<ServletContextHandler>(info.urlPatterns().length);
         for (String pattern : info.urlPatterns()) {
-            HttpServlet servlet = instance;
-            instance = null; // ensure instance is only used for the first URL pattern
-            if (servlet == null) {
-                log.debug("Creating new {} for URL pattern {}", type.getName(), pattern);
-                servlet = type.getConstructor().newInstance();
-            }
+            ServletContextHandler context = new ServletContextHandler(options);
             context.setContextPath(pattern);
-            context.addServlet(new ServletHolder(servlet), "/*");
+            if (instance == null) {
+                log.debug("Creating new {} for URL pattern {}", type.getName(), pattern);
+                context.addServlet(type, pattern);
+            } else {
+                log.debug("Using existing {} for URL pattern {}", type.getName(), pattern);
+                context.addServlet(new ServletHolder(instance), "/*");
+                instance = null; // ensure instance is only used for the first URL pattern
+            }
+            handlers.add(context);
         }
-        return context;
+        return handlers;
     }
 
     @Override
