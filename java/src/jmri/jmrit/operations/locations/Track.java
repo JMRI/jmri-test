@@ -1310,19 +1310,26 @@ public class Track {
 		return OKAY;
 	}
 	
+	/**
+	 * 
+	 * @param length
+	 * @return true if the program should ignore some percentage of the car's length currently consuming track space.
+	 */
 	private boolean checkPlannedPickUps(int length) {
 		if (getIgnoreUsedLengthPercentage() > 0) {
-			int consumed = getUsedLength() * (100 - getIgnoreUsedLengthPercentage());
-			if (consumed > 0)
-				consumed = consumed / 100;
-			// two checks, number of inbound cars can't exceed the track length, and the total number of cars can't
-			// exceed track length plus the number of cars to ignore.
-			if (consumed + _reservedLengthDrops + length <= getLength()
+			// two checks, number of new set outs shouldn't exceed the track length. The second check protects against
+			// overloading, the total number of cars shouldn't exceed the track length plus the number of cars to
+			// ignore.
+			if (getUsedLength() * (100 - getIgnoreUsedLengthPercentage()) / 100 + getReservedLengthDrops() + length <= getLength()
 					&& getUsedLength() + getReserved() + length <= getLength()
 							+ (getLength() * getIgnoreUsedLengthPercentage() / 100))
 				return true;
 		}
 		return false;
+	}
+	
+	public int getReservedLengthDrops() {
+		return _reservedLengthDrops;
 	}
 
 	public int getMoves() {
