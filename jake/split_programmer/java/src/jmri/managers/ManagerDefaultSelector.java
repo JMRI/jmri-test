@@ -165,14 +165,13 @@ public class ManagerDefaultSelector {
     public Hashtable<Class<?>, String> defaults = new Hashtable<Class<?>, String>();
     
     final public Item[] knownManagers = new Item[] {
-//                new Item("Clock", ClockControl.class, true),
-//                new Item("Turnouts", TurnoutManager.class, true),
-//                new Item("Lights", LightManager.class, true),
-//                new Item("Sensors", SensorManager.class, true),
                 new Item("Throttles", ThrottleManager.class, false),
                 new Item("<html>Power<br>Control</html>", PowerManager.class, false),
                 new Item("<html>Command<br>Station</html>", CommandStation.class, false),
-                new Item("Programmer", ProgrammerManager.class, false)
+                new Item("Programmer", ProgrammerManager.class, false),
+                new Item("<html>Service<br>Programmer</html>", GlobalProgrammerManager.class, false),
+                new Item("<html>Ops Mode<br>Programmer</html>", AddressedProgrammerManager.class, false),
+                new Item( "Consists ", ConsistManager.class, false)
     };
     
     public static class Item {

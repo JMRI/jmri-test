@@ -636,8 +636,14 @@ public class InstanceManager {
     // deprecated.
     //
     static public void setProgrammerManager(ProgrammerManager p) {
+        System.out.println("setProgrammerManager invoked with "+p);
+        new Exception("setProgrammerManager call tree").printStackTrace();
         store(p, ProgrammerManager.class);
-
+ 		if(programmerManagerInstance().isAddressedModePossible() )
+ 		    store(p, AddressedProgrammerManager.class);
+ 		if(programmerManagerInstance().isGlobalProgrammerAvailable() )
+ 		    store(p, GlobalProgrammerManager.class);
+       
     	// Now that we have a programmer manager, install the default
         // Consist manager if Ops mode is possible, and there isn't a
         // consist manager already.

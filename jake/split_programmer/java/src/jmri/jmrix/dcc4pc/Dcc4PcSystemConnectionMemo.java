@@ -63,6 +63,10 @@ public class Dcc4PcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo 
                 return false;
             return true;
         }
+        if (type.equals(jmri.GlobalProgrammerManager.class) && provides(jmri.ProgrammerManager.class))
+            return getProgrammerManager().isGlobalProgrammerAvailable();
+        if (type.equals(jmri.AddressedProgrammerManager.class) && provides(jmri.ProgrammerManager.class))
+            return getProgrammerManager().isAddressedModePossible();
         return false; // nothing, by default
     }
 
@@ -76,6 +80,10 @@ public class Dcc4PcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo 
         if (T.equals(jmri.SensorManager.class))
             return (T)getSensorManager();
         if (T.equals(jmri.ProgrammerManager.class))
+            return (T)getProgrammerManager();
+        if (T.equals(jmri.GlobalProgrammerManager.class))
+            return (T)getProgrammerManager();
+        if (T.equals(jmri.AddressedProgrammerManager.class))
             return (T)getProgrammerManager();
         return null; // nothing, by default
     }
