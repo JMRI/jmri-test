@@ -6,12 +6,21 @@
     <description>Builds, tests, and runs the project org.jmri.resources.</description>
     <import file="nbproject/build-impl.xml"/>
 
-    <target name="release" depends="projectized-common.release">
-        <mkdir dir="${cluster}"/>
-        <copy todir="${cluster}" overwrite="true">
+    <target name="-pre-release">
+        <mkdir dir="${release.dir}"/>
+        <copy todir="${release.dir}" overwrite="true">
             <fileset dir="${basedir}/../.."
                      includes="xml/ resources/ help/ web/ jython/"
                      excludes="help/en/manual/** **/*.jar" />
         </copy>
+    </target>
+
+    <target name="release" depends="-pre-release, projectized-common.release" />
+
+    <target name="clean" depends="projectized-common.clean">
+        <delete includeemptydirs="true">
+            <fileset dir="${release.dir}"
+                     includes="xml/ resources/ help/ web/ jython/" />
+        </delete>
     </target>
 </project>
