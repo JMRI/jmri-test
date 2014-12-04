@@ -1573,4 +1573,67 @@
         <echo message="new release branch URL is ${repository.release-dir}/${release}"/>
     </target>
 
+    <target name="nbm-modules-build">
+        <ant dir="modules" target="build" inheritAll="false" />
+    </target>
+	
+    <target name="nbm-modules-clean">
+        <ant dir="modules" target="clean" inheritAll="false" />
+    </target>
+	
+    <target name="nbm-decoderpro-build" depends="nbm-modules-build">
+        <ant dir="decoderpro" target="build" inheritAll="false" />
+    </target>
+	
+    <target name="nbm-decoderpro-build-mac" depends="nbm-modules-build">
+        <ant dir="decoderpro" target="build-mac" inheritAll="false" />
+        <!-- TODO zip up decoderpro.app for redistribution -->
+    </target>
+	
+    <target name="nbm-decoderpro-build-zip" depends="nbm-modules-build">
+        <ant dir="decoderpro" target="build-zip" inheritAll="false" />
+    </target>
+	
+    <target name="nbm-decoderpro-clean">
+        <ant dir="modules" target="clean" inheritAll="false" />
+    </target>
+	
+    <target name="nbm-panelpro-build" depends="nbm-modules-build">
+        <ant dir="panelpro" target="build" inheritAll="false" />
+    </target>
+	
+    <target name="nbm-panelpro-build-mac" depends="nbm-modules-build">
+        <ant dir="panelpro" target="build-mac" inheritAll="false" />
+        <!-- TODO zip up panelpro.app for redistribution -->
+    </target>
+	
+    <target name="nbm-panelpro-build-zip" depends="nbm-modules-build">
+        <ant dir="panelpro" target="build-zip" inheritAll="false" />
+    </target>
+	
+    <target name="nbm-panelpro-clean">
+        <ant dir="modules" target="clean" inheritAll="false" />
+    </target>
+	
+    <target name="nbm-trainpro-build" depends="nbm-modules-build">
+        <ant dir="trainpro" target="build" inheritAll="false" />
+    </target>
+	
+    <target name="nbm-trainpro-build-mac" depends="nbm-modules-build">
+        <ant dir="trainpro" target="build-mac" inheritAll="false" />
+        <!-- TODO zip up trainpro.app for redistribution -->
+    </target>
+	
+    <target name="nbm-trainpro-build-zip" depends="nbm-modules-build">
+        <ant dir="trainpro" target="build-zip" inheritAll="false" />
+    </target>
+	
+    <target name="nbm-trainpro-clean">
+        <ant dir="modules" target="clean" inheritAll="false" />
+    </target>
+
+    <target name="nbm-clean-all" depends="nbm-decoderpro-clean,nbm-panelpro-clean,nbm-trainpro-clean,nbm-modules-clean" />
+
+    <target name="nbm-build-all" depends="nbm-decoderpro-build,nbm-panelpro-build,nbm-trainpro-build,nbm-modules-clean" />
+	
 </project>
