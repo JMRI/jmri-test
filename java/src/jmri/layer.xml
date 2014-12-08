@@ -7,21 +7,23 @@
         <folder name="Operations">
             <!-- If an Operations UI module is created, this menu definition
             would need to be migrated to that module. -->
-            <attr intvalue="600" name="position"/>
+            <attr name="displayName" bundlevalue="jmri.jmrit.operations.JmritOperationsBundle#OperationsMenu"/>
+            <attr name="position" intvalue="600"/>
         </folder>
         <folder name="Roster">
             <!-- If a Roster UI module is created, this menu definition would
             need to be migrated to that module. -->
-            <attr intvalue="500" name="position"/>
+            <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuRoster"/>
+            <attr name="position" intvalue="500"/>
         </folder>
         <folder name="Tools">
             <folder name="Tables">
                 <!-- Create a JMRI-specific submenu of a standard NetBeans menu. -->
                 <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuTables"/>
-                <attr intvalue="650" name="position"/>
+                <attr name="position" intvalue="650"/>
                 <folder name="Signals">
                     <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuSignals"/>
-                    <attr intvalue="630" name="position"/>
+                    <attr name="position" intvalue="630"/>
                 </folder>
             </folder>
         </folder>
