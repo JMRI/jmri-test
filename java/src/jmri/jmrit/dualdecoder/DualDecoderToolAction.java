@@ -2,8 +2,11 @@
 
 package jmri.jmrit.dualdecoder;
 
-import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 
 /**
  * Swing action to create and register a
@@ -12,7 +15,19 @@ import java.awt.event.ActionEvent;
  * @author    Bob Jacobsen    Copyright (C) 2001
  * @version   $Revision$
  */
-
+@ActionID(
+        id = "jmri.jmrit.dualdecoder.DualDecoderToolAction",
+        category = "Programmers"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemMultiDecoderControl",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Programmers",
+        position = 630
+)
 public class DualDecoderToolAction extends AbstractAction {
 
     public DualDecoderToolAction(String s) {

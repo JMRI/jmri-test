@@ -2,8 +2,6 @@
 
 package jmri.jmrit.symbolicprog.tabbedframe;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -21,6 +19,11 @@ import jmri.jmrit.roster.RosterEntry;
 import jmri.jmrit.symbolicprog.CombinedLocoSelTreePane;
 import jmri.jmrit.symbolicprog.SymbolicProgBundle;
 import jmri.util.JmriJFrame;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to create and register a
@@ -38,6 +41,19 @@ import jmri.util.JmriJFrame;
  * @author			Bob Jacobsen    Copyright (C) 2001
  * @version			$Revision$
  */
+@ActionID(
+        id = "jmri.jmrit.symbolicprog.tabbedframe.PaneProgAction",
+        category = "Programmers"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemDecoderProServiceProgrammer",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Programmers",
+        position = 610
+)
 public class PaneProgAction 			extends AbstractAction {
 
     Object o1, o2, o3, o4;

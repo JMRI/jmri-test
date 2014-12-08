@@ -5,6 +5,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.Icon;
 import jmri.util.swing.JmriAbstractAction;
 import jmri.util.swing.WindowInterface;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 
 /**
  * Swing action to create and register a SimpleProgAction object
@@ -12,6 +15,19 @@ import jmri.util.swing.WindowInterface;
  * @author	Bob Jacobsen Copyright (C) 2001, 2008
  * @version	$Revision$
  */
+@ActionID(
+        id = "jmri.jmrit.simpleprog.SimpleProgAction",
+        category = "Programmers"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemSingleCVProgrammer",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Programmers",
+        position = 600
+)
 public class SimpleProgAction extends JmriAbstractAction {
 
     public SimpleProgAction(String s, WindowInterface wi) {

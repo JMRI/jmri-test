@@ -21,6 +21,9 @@
                 <!-- Create a JMRI-specific submenu of a standard NetBeans menu. -->
                 <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuTables"/>
                 <attr name="position" intvalue="650"/>
+                <folder name="Programmers">
+                    <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuProgrammers"/>
+                    <attr name="position" intvalue="620"/>
                 <folder name="Signals">
                     <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuSignals"/>
                     <attr name="position" intvalue="630"/>
@@ -60,30 +63,6 @@
                 <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
                 <attr name="noIconInMenu" boolvalue="false"/>
                 <attr name="position" intvalue="403"/>
-            </file>
-            <file name="jmri-jmrit-simpleprog-SimpleProgAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.simpleprog.SimpleProgAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.simpleprog.SimpleProgAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="404"/>
-            </file>
-            <file name="jmri-jmrit-symbolicprog-tabbedframe-PaneProgAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.symbolicprog.tabbedframe.PaneProgAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.symbolicprog.tabbedframe.PaneProgAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="405"/>
-            </file>
-            <file name="jmri-jmrit-symbolicprog-tabbedframe-PaneOpsProgAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.symbolicprog.tabbedframe.PaneOpsProgAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.symbolicprog.tabbedframe.PaneOpsProgAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="406"/>
             </file>
             <file name="jmri-jmrit-powerpanel-PowerPanelAction.instance">
                 <attr name="delegate" newvalue="jmri.jmrit.powerpanel.PowerPanelAction"/>
