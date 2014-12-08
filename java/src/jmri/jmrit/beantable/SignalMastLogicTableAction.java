@@ -1,36 +1,50 @@
 package jmri.jmrit.beantable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import jmri.NamedBean;
-import jmri.SignalMast;
-import jmri.SignalMastLogic;
-import jmri.SignalMastLogicManager;
-import jmri.jmrit.display.layoutEditor.LayoutBlockManager;
-import jmri.InstanceManager;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.ArrayList;
-import jmri.util.JmriJFrame;
-
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JLabel;
-import javax.swing.JCheckBox;
-//import javax.swing.JComponent;
 import javax.swing.JTextField;
+import jmri.InstanceManager;
+import jmri.NamedBean;
+import jmri.SignalMast;
+import jmri.SignalMastLogic;
+import jmri.SignalMastLogicManager;
+import jmri.jmrit.display.layoutEditor.LayoutBlockManager;
+import jmri.util.JmriJFrame;
 import jmri.util.com.sun.TableSorter;
-import java.awt.event.MouseEvent;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+@ActionID(
+        id = "jmri.jmrit.beantable.SignalMastLogicTableAction",
+        category = "Elements/Signals"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemSignalMastLogicTable",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Tables/Signals",
+        position = 630
+)
 public class SignalMastLogicTableAction extends AbstractTableAction{
 
     /**

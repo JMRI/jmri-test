@@ -114,12 +114,12 @@ import org.slf4j.LoggerFactory;
 )
 @ActionRegistration(
         iconBase = "org/jmri/core/ui/toolbar/generic.gif",
-        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleLogixTable",
+        displayName = "jmri.jmrit.Bundle#MenuItemLogixTable",
         iconInMenu = true
 )
 @ActionReference(
         path = "Menu/Tools/Tables",
-        position = 540
+        position = 680
 )
 public class LogixTableAction extends AbstractTableAction {
 

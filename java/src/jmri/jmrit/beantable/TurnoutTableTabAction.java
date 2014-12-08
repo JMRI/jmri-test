@@ -1,9 +1,26 @@
 package jmri.jmrit.beantable;
 
+import jmri.InstanceManager;
+import jmri.Manager;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jmri.*;
 
+@ActionID(
+        id = "jmri.jmrit.beantable.TurnoutTableAction",
+        category = "Elements"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemTurnoutTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 600
+)
 public class TurnoutTableTabAction extends AbstractTableTabAction {
     
     public TurnoutTableTabAction(String s){

@@ -41,9 +41,6 @@ import jmri.util.JmriJFrame;
 import jmri.util.com.sun.TableSorter;
 import jmri.util.swing.JmriBeanComboBox;
 import jmri.util.swing.XTableColumnModel;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
-import org.openide.awt.ActionRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,20 +51,6 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen    Copyright (C) 2003, 2004, 2007
  * @version     $Revision$
  */
-
-@ActionID(
-        id = "jmri.jmrit.beantable.TurnoutTableAction",
-        category = "Elements"
-)
-@ActionRegistration(
-        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
-        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleTurnoutTable",
-        iconInMenu = true
-)
-@ActionReference(
-        path = "Menu/Tools/Tables",
-        position = 640
-)
 public class TurnoutTableAction extends AbstractTableAction {
 
     /**

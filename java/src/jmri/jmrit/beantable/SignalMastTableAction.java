@@ -31,16 +31,16 @@ import org.slf4j.LoggerFactory;
 
 @ActionID(
         id = "jmri.jmrit.beantable.SignalMastTableAction",
-        category = "Elements"
+        category = "Elements/Signals"
 )
 @ActionRegistration(
         iconBase = "org/jmri/core/ui/toolbar/generic.gif",
-        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleSignalMastTable",
-        iconInMenu = true
+        displayName = "jmri.jmrit.Bundle#MenuItemSignalMastTable",
+        iconInMenu = false
 )
 @ActionReference(
-        path = "Menu/Tools/Tables",
-        position = 590
+        path = "Menu/Tools/Tables/Signals",
+        position = 610
 )
 public class SignalMastTableAction extends AbstractTableAction {
 

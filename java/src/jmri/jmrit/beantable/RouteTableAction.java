@@ -70,12 +70,12 @@ import org.slf4j.LoggerFactory;
 )
 @ActionRegistration(
         iconBase = "org/jmri/core/ui/toolbar/generic.gif",
-        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleRouteTable",
+        displayName = "jmri.jmrit.Bundle#MenuItemRouteTable",
         iconInMenu = true
 )
 @ActionReference(
         path = "Menu/Tools/Tables",
-        position = 610
+        position = 660
 )
 public class RouteTableAction extends AbstractTableAction {
 

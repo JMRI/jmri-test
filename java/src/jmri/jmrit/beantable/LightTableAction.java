@@ -37,9 +37,6 @@ import jmri.util.ConnectionNameFromSystemName;
 import jmri.util.JmriJFrame;
 import jmri.util.table.ButtonEditor;
 import jmri.util.table.ButtonRenderer;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
-import org.openide.awt.ActionRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,20 +49,6 @@ import org.slf4j.LoggerFactory;
  * @author	Dave Duchamp    Copyright (C) 2004
  * @version     $Revision$
  */
-
-@ActionID(
-        id = "jmri.jmrit.beantable.LightTableAction",
-        category = "Elements"
-)
-@ActionRegistration(
-        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
-        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleLightTable",
-        iconInMenu = true
-)
-@ActionReference(
-        path = "Menu/Tools/Tables",
-        position = 530
-)
 public class LightTableAction extends AbstractTableAction {
 	
     /**

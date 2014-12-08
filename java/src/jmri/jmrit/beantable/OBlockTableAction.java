@@ -34,12 +34,12 @@ import org.openide.awt.ActionRegistration;
 )
 @ActionRegistration(
         iconBase = "org/jmri/core/ui/toolbar/generic.gif",
-        displayName = "jmri.jmrit.beantable.OBlockTableBundle#TitleBlockTable",
+        displayName = "jmri.jmrit.Bundle#MenuItemOBlockTable",
         iconInMenu = true
 )
 @ActionReference(
         path = "Menu/Tools/Tables",
-        position = 560
+        position = 690
 )
 public class OBlockTableAction extends AbstractAction {
 

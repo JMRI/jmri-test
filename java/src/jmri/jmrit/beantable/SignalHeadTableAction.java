@@ -68,16 +68,16 @@ import org.slf4j.LoggerFactory;
 
 @ActionID(
         id = "jmri.jmrit.beantable.SignalHeadTableAction",
-        category = "Elements"
+        category = "Elements/Signals"
 )
 @ActionRegistration(
         iconBase = "org/jmri/core/ui/toolbar/generic.gif",
-        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleSignalTable",
-        iconInMenu = true
+        displayName = "jmri.jmrit.Bundle#MenuItemSignalTable",
+        iconInMenu = false
 )
 @ActionReference(
-        path = "Menu/Tools/Tables",
-        position = 580
+        path = "Menu/Tools/Tables/Signals",
+        position = 600
 )
 public class SignalHeadTableAction extends AbstractTableAction {
 

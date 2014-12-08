@@ -54,12 +54,12 @@ import org.slf4j.LoggerFactory;
 )
 @ActionRegistration(
         iconBase = "org/jmri/core/ui/toolbar/generic.gif",
-        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleTransitTable",
+        displayName = "jmri.jmrit.Bundle#MenuItemTransitTable",
         iconInMenu = true
 )
 @ActionReference(
         path = "Menu/Tools/Tables",
-        position = 630
+        position = 720
 )
 public class TransitTableAction extends AbstractTableAction {
 

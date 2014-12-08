@@ -36,12 +36,12 @@ import org.slf4j.LoggerFactory;
 )
 @ActionRegistration(
         iconBase = "org/jmri/core/ui/toolbar/generic.gif",
-        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleMemoryTable",
+        displayName = "jmri.jmrit.Bundle#MenuItemMemoryTable",
         iconInMenu = true
 )
 @ActionReference(
         path = "Menu/Tools/Tables",
-        position = 550
+        position = 650
 )
 public class MemoryTableAction extends AbstractTableAction {
 

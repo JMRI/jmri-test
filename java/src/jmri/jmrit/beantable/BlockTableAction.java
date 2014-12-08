@@ -48,12 +48,12 @@ import org.slf4j.LoggerFactory;
 )
 @ActionRegistration(
         iconBase = "org/jmri/core/ui/toolbar/generic.gif",
-        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleBlockTable",
+        displayName = "jmri.jmrit.Bundle#MenuItemBlockTable",
         iconInMenu = true
 )
 @ActionReference(
         path = "Menu/Tools/Tables",
-        position = 510
+        position = 700
 )
 public class BlockTableAction extends AbstractTableAction {
 

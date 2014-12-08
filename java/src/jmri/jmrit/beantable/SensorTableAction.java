@@ -21,9 +21,6 @@ import jmri.Sensor;
 import jmri.SensorManager;
 import jmri.util.ConnectionNameFromSystemName;
 import jmri.util.JmriJFrame;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
-import org.openide.awt.ActionRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,20 +31,6 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen    Copyright (C) 2003, 2009
  * @version     $Revision$
  */
-
-@ActionID(
-        id = "jmri.jmrit.beantable.SensorTableAction",
-        category = "Elements"
-)
-@ActionRegistration(
-        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
-        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleSensorTable",
-        iconInMenu = true
-)
-@ActionReference(
-        path = "Menu/Tools/Tables",
-        position = 570
-)
 public class SensorTableAction extends AbstractTableAction {
 
     /**

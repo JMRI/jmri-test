@@ -14,12 +14,17 @@
             need to be migrated to that module. -->
             <attr intvalue="500" name="position"/>
         </folder>
-    <folder name="Tools">
-        <folder name="Tables">
-            <!-- Create a JMRI-specific submenu of a standard NetBeans menu. -->
-            <attr intvalue="650" name="position"/>
+        <folder name="Tools">
+            <folder name="Tables">
+                <!-- Create a JMRI-specific submenu of a standard NetBeans menu. -->
+                <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuTables"/>
+                <attr intvalue="650" name="position"/>
+                <folder name="Signals">
+                    <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuSignals"/>
+                    <attr intvalue="630" name="position"/>
+                </folder>
+            </folder>
         </folder>
-    </folder>
     </folder>
     <folder name="Actions">
         <folder name="JMRI">

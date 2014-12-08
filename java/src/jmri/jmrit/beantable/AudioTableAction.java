@@ -56,12 +56,12 @@ import org.slf4j.LoggerFactory;
 )
 @ActionRegistration(
         iconBase = "org/jmri/core/ui/toolbar/generic.gif",
-        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleAudioTable",
+        displayName = "jmri.jmrit.Bundle#MenuItemAudioTable",
         iconInMenu = true
 )
 @ActionReference(
         path = "Menu/Tools/Tables",
-        position = 500
+        position = 730
 )
 public class AudioTableAction extends AbstractTableAction {
 

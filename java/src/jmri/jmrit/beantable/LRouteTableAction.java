@@ -2,39 +2,24 @@
 
 package jmri.jmrit.beantable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jmri.InstanceManager;
-import jmri.Manager;
-import jmri.NamedBean;
-import jmri.Route;
-import jmri.Turnout;
-import jmri.Sensor;
-import jmri.Light;
-import jmri.SignalHead;
-import jmri.Conditional;
-import jmri.ConditionalAction;
-import jmri.implementation.DefaultConditionalAction;
-import jmri.ConditionalVariable;
-import jmri.ConditionalManager;
-import jmri.Logix;
-import jmri.LogixManager;
-
-import java.awt.Container;
-import java.awt.Component;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.beans.PropertyChangeListener;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.TreeSet;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -46,19 +31,32 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.TreeSet;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import jmri.Conditional;
+import jmri.ConditionalAction;
+import jmri.ConditionalManager;
+import jmri.ConditionalVariable;
+import jmri.InstanceManager;
+import jmri.Light;
+import jmri.Logix;
+import jmri.LogixManager;
+import jmri.Manager;
+import jmri.NamedBean;
+import jmri.Route;
+import jmri.Sensor;
+import jmri.SignalHead;
+import jmri.Turnout;
+import jmri.implementation.DefaultConditionalAction;
 import jmri.util.FileUtil;
-
-
 import jmri.util.JmriJFrame;
 import jmri.util.SystemNameComparator;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to create and register groups of Logix Condtionals
@@ -68,6 +66,19 @@ import jmri.util.SystemNameComparator;
  *
  */
 
+@ActionID(
+        id = "jmri.jmrit.beantable.LRouteTableAction",
+        category = "Elements"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemLRouteTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 670
+)
 public class LRouteTableAction extends AbstractTableAction {
 
 	static final ResourceBundle rbx = ResourceBundle

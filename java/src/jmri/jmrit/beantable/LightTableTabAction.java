@@ -1,9 +1,26 @@
 package jmri.jmrit.beantable;
 
+import jmri.InstanceManager;
+import jmri.Manager;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jmri.*;
 
+@ActionID(
+        id = "jmri.jmrit.beantable.LightTableAction",
+        category = "Elements"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemLightTable",
+        iconInMenu = true
+)
+@ActionReference(
+        path = "Menu/Tools/Tables",
+        position = 620
+)
 public class LightTableTabAction extends AbstractTableTabAction {
 
     public LightTableTabAction(String s){

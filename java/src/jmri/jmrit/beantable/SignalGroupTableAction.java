@@ -2,38 +2,49 @@
 
 package jmri.jmrit.beantable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ResourceBundle;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import jmri.InstanceManager;
 import jmri.Manager;
 import jmri.NamedBean;
 import jmri.SignalGroup;
 import jmri.SignalHead;
 import jmri.SignalMast;
+import jmri.util.JmriJFrame;
+import jmri.util.swing.JmriBeanComboBox;
 import jmri.util.table.ButtonEditor;
 import jmri.util.table.ButtonRenderer;
-import jmri.util.swing.JmriBeanComboBox;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-
-import java.awt.Container;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import java.beans.PropertyChangeListener;
-
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.table.*;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import jmri.util.JmriJFrame;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to create and register a SignalGroup Table
@@ -45,6 +56,19 @@ import jmri.util.JmriJFrame;
  * @version     $Revision$
  */
 
+@ActionID(
+        id = "jmri.jmrit.beantable.SignalGroupTableAction",
+        category = "Elements/Signals"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemSignalGroupTable",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Tables/Signals",
+        position = 620
+)
 public class SignalGroupTableAction extends AbstractTableAction implements PropertyChangeListener {
 
 	static final ResourceBundle rbx = ResourceBundle

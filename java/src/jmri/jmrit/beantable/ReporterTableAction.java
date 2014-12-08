@@ -39,12 +39,12 @@ import org.slf4j.LoggerFactory;
 )
 @ActionRegistration(
         iconBase = "org/jmri/core/ui/toolbar/generic.gif",
-        displayName = "jmri.jmrit.beantable.BeanTableBundle#TitleReporterTable",
+        displayName = "jmri.jmrit.Bundle#MenuItemReporterTable",
         iconInMenu = true
 )
 @ActionReference(
         path = "Menu/Tools/Tables",
-        position = 600
+        position = 640
 )
 public class ReporterTableAction extends AbstractTableAction {
 
