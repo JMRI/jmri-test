@@ -31,6 +31,28 @@ public class CoreIdRfidProtocol extends RfidProtocol {
 
     private static final int SPECIFICMAXSIZE = 16;
 
+    /**
+     * Constructor for CORE-ID RFID Protocol.
+     * Used when a single reader is connected directly to a port, not via a
+     * concentrator.
+     */
+    public CoreIdRfidProtocol() {
+        super();
+    }
+
+    /**
+     * Constructor for CORE-ID RFID Protocol.
+     * Supports the use of concentrators where a character range is used to
+     * determine the specific reader port.
+     * 
+     * @param concentratorFirst - character representing first concentrator port
+     * @param concentratorLast - character representing last concentrator port
+     * @param portPosition - position of port character in reply string
+     */
+    public CoreIdRfidProtocol(char concentratorFirst, char concentratorLast, int portPosition) {
+        super(concentratorFirst, concentratorLast, portPosition);
+    }
+
     public static final int getMaxSize() {
         return SPECIFICMAXSIZE;
     }
@@ -70,10 +92,12 @@ public class CoreIdRfidProtocol extends RfidProtocol {
 
     @Override
     public boolean isValid(AbstractMRReply msg) {
-        return ((msg.getElement(0)==0x02 ||
-                (msg.getElement(0)>=0x41 || msg.getElement(0)<=0x50)) &&
-                ((msg.getElement(SPECIFICMAXSIZE-1)&0xFF)==0x03 ||
-                 (msg.getElement(SPECIFICMAXSIZE-1)&0xFF)==0x3E ) &&
+        return ((!isConcentrator && msg.getElement(0)==0x02 && 
+                    (msg.getElement(SPECIFICMAXSIZE-1)&0xFF)==0x03) ||
+                 (isConcentrator && 
+                    msg.getElement(portPosition)>=concentratorFirst && 
+                    msg.getElement(portPosition)<=concentratorLast &&
+                    (msg.getElement(SPECIFICMAXSIZE-1)&0xFF)==0x3E ) &&
                 (msg.getElement(SPECIFICMAXSIZE-2)&0xFF)==0x0A &&
                 (msg.getElement(SPECIFICMAXSIZE-3)&0xFF)==0x0D);
     }
@@ -110,6 +134,10 @@ public class CoreIdRfidProtocol extends RfidProtocol {
         if (isValid(msg)) {
             StringBuilder sb = new StringBuilder();
             sb.append("Reply from CORE-ID reader.");
+            if (isConcentrator) {
+                sb.append(" Reply from port ");
+                sb.append(getReaderPort(msg));
+            }
             sb.append(" Tag read ");
             sb.append(getTag(msg));
             sb.append(" checksum ");
