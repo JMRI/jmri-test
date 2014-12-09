@@ -26,7 +26,7 @@ import jmri.jmrit.roster.RosterEntrySelector;
  * @see jmri.jmrit.roster.RosterEntry
  * @see javax.swing.JComboBox
  */
-public class RosterEntryComboBox extends JComboBox implements RosterEntrySelector {
+public class RosterEntryComboBox extends JComboBox<String> implements RosterEntrySelector {
 
     protected Roster _roster;
     protected String _group;
