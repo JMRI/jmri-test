@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * @version			$Revision$
  */
 @ActionID(
-        id = "jmri.jmrit.symbolicprog.tabbedframe.PaneProgAction",
+        id = "jmri.jmrit.symbolicprog.tabbedframe.PaneOpsProgAction",
         category = "Programmers"
 )
 @ActionRegistration(
