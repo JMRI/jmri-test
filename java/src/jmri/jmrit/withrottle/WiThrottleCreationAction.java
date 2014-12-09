@@ -8,15 +8,31 @@ package jmri.jmrit.withrottle;
  *
  */
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
-
+import javax.swing.Icon;
 import jmri.util.swing.JmriAbstractAction;
 import jmri.util.swing.WindowInterface;
-import javax.swing.Icon;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+@ActionID(
+        id = "jmri.jmrit.withrottle.WiThrottleCreationAction",
+        category = "Throttles"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemStartWiThrottle",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Throttles",
+        position = 660,
+        separatorBefore = 655
+)
 public class WiThrottleCreationAction extends JmriAbstractAction{
 
     public WiThrottleCreationAction(String s, WindowInterface wi) {

@@ -2,7 +2,23 @@ package jmri.jmrit.throttle;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 
+@ActionID(
+        id = "jmri.jmrit.throttle.ThrottlesListAction",
+        category = "Throttles"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemThrottlesList",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Throttles",
+        position = 610
+)
 public class ThrottlesListAction extends AbstractAction {
     /**
      * Constructor

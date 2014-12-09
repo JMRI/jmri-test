@@ -1,18 +1,24 @@
 package jmri.jmrit.throttle;
 
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Iterator;
+import javax.swing.AbstractAction;
+import javax.swing.JFileChooser;
+import jmri.configurexml.StoreXmlConfigAction;
+import jmri.jmrit.XmlFile;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jmri.configurexml.StoreXmlConfigAction;
-import jmri.jmrit.*;
-import java.awt.event.*;
-import java.io.*;
-
-import javax.swing.*;
-
-import java.util.*;
-
-import org.jdom.*;
-import org.jdom.output.*;
 
 /**
  * Save throttles to XML
@@ -21,6 +27,20 @@ import org.jdom.output.*;
  * @author Daniel Boudreau (C) Copyright 2008
  * @version     $Revision$
  */
+@ActionID(
+        id = "jmri.jmrit.throttle.StoreXmlThrottlesLayoutAction",
+        category = "Throttles"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemSaveThrottleLayout",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Throttles",
+        position = 620,
+        separatorBefore = 615
+)
 public class StoreXmlThrottlesLayoutAction extends AbstractAction {
 
 	/**

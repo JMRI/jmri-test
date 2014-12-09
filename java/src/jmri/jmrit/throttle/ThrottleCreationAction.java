@@ -1,10 +1,13 @@
 package jmri.jmrit.throttle;
 
 import java.awt.event.ActionEvent;
-import jmri.util.swing.JmriAbstractAction;
-import jmri.util.swing.WindowInterface;
 import javax.swing.Icon;
 import jmri.beans.Beans;
+import jmri.util.swing.JmriAbstractAction;
+import jmri.util.swing.WindowInterface;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 
 /**
  * Create a new throttle.
@@ -12,6 +15,19 @@ import jmri.beans.Beans;
  * @author			Glen Oberhauser
  * @version     $Revision$
  */
+@ActionID(
+        id = "jmri.jmrit.throttle.ThrottleCreationAction",
+        category = "Throttles"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemNewThrottle",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Throttles",
+        position = 600
+)
 public class ThrottleCreationAction extends JmriAbstractAction {
 
     public ThrottleCreationAction(String s, WindowInterface wi) {

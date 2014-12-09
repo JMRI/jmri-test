@@ -1,14 +1,16 @@
 package jmri.jmrit.throttle;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.awt.event.ActionEvent;
 import java.io.File;
-
 import javax.swing.Icon;
 import jmri.util.swing.JmriAbstractAction;
 import jmri.util.swing.JmriPanel;
 import jmri.util.swing.WindowInterface;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Create a new throttle.
@@ -16,6 +18,19 @@ import jmri.util.swing.WindowInterface;
  *  @author		Lionel Jeanson      Copyright 2009
  *  @version $Revision$
  */
+@ActionID(
+        id = "jmri.jmrit.throttle.LoadDefaultXmlThrottlesLayoutAction",
+        category = "Throttles"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemLoadDefaultThrottleLayout",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Throttles",
+        position = 650
+)
 public class LoadDefaultXmlThrottlesLayoutAction extends JmriAbstractAction {
 
     public LoadDefaultXmlThrottlesLayoutAction(String s, WindowInterface wi) {

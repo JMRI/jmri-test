@@ -1,18 +1,18 @@
 package jmri.jmrit.throttle;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jmri.jmrit.XmlFile;
 import java.awt.event.ActionEvent;
 import java.io.File;
-
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-
-import java.util.List;
-
+import jmri.jmrit.XmlFile;
 import org.jdom.Element;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  Load throttles from XML
@@ -20,6 +20,20 @@ import org.jdom.Element;
  * @author     Glen Oberhauser 2004
  * @version     $Revision$
  */
+@ActionID(
+        id = "jmri.jmrit.throttle.LoadXmlThrottlesLayoutAction",
+        category = "Throttles"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemLoadThrottleLayout",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Throttles",
+        position = 630,
+        separatorAfter = 635
+)
 public class LoadXmlThrottlesLayoutAction extends AbstractAction {
 
 	/**

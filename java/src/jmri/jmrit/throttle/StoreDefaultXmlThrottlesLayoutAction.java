@@ -1,11 +1,13 @@
 package jmri.jmrit.throttle;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.awt.event.ActionEvent;
 import java.io.File;
-
 import javax.swing.AbstractAction;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Save throttles to XML
@@ -13,6 +15,19 @@ import javax.swing.AbstractAction;
  *  @author		Lionel Jeanson      Copyright 2009
  *  @version $Revision$
  */
+@ActionID(
+        id = "jmri.jmrit.throttle.StoreDefaultXmlThrottlesLayoutAction",
+        category = "Throttles"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemSaveAsDefaultThrottleLayout",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Throttles",
+        position = 640
+)
 public class StoreDefaultXmlThrottlesLayoutAction extends AbstractAction {
 
 	/**

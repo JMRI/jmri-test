@@ -7,27 +7,34 @@
         <folder name="Operations">
             <!-- If an Operations UI module is created, this menu definition
             would need to be migrated to that module. -->
-            <attr name="displayName" bundlevalue="jmri.jmrit.operations.JmritOperationsBundle#OperationsMenu"/>
+            <attr name="displayName" bundlevalue="jmri.jmrit.operations.JmritOperationsBundle#MenuOperations"/>
             <attr name="position" intvalue="600"/>
         </folder>
         <folder name="Roster">
             <!-- If a Roster UI module is created, this menu definition would
             need to be migrated to that module. -->
-            <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuRoster"/>
+            <attr name="displayName" bundlevalue="apps.AppsBundle#MenuRoster"/>
             <attr name="position" intvalue="500"/>
         </folder>
         <folder name="Tools">
+            <folder name="Programmers">
+                <!-- Create a JMRI-specific submenu of a standard NetBeans menu. -->
+                <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuProgrammers"/>
+                <attr name="position" intvalue="600"/>
+            </folder>
             <folder name="Tables">
                 <!-- Create a JMRI-specific submenu of a standard NetBeans menu. -->
                 <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuTables"/>
-                <attr name="position" intvalue="650"/>
-                <folder name="Programmers">
-                    <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuProgrammers"/>
-                    <attr name="position" intvalue="620"/>
+                <attr name="position" intvalue="610"/>
                 <folder name="Signals">
                     <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuSignals"/>
                     <attr name="position" intvalue="630"/>
                 </folder>
+            </folder>
+            <folder name="Throttles">
+                <!-- Create a JMRI-specific submenu of a standard NetBeans menu. -->
+                <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuThrottles"/>
+                <attr name="position" intvalue="620"/>
             </folder>
         </folder>
     </folder>
@@ -40,14 +47,6 @@
             action in the appropriate module using the NetBeans Action wizard
             and have that new action subclass the original action.
             -->
-            <file name="jmri-jmrit-throttle-ThrottleCreationAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.throttle.ThrottleCreationAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.throttle.ThrottleCreationAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="401"/>
-            </file>
             <file name="jmri-jmrix-loconet-locormi-LnMessageServerAction.instance">
                 <attr name="delegate" newvalue="jmri.jmrix.loconet.locormi.LnMessageServerAction"/>
                 <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.loconet.locormi.LnMessageServerAction"/>
@@ -55,14 +54,6 @@
                 <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
                 <attr name="noIconInMenu" boolvalue="false"/>
                 <attr name="position" intvalue="402"/>
-            </file>
-            <file name="jmri-jmrit-throttle-LoadDefaultXmlThrottlesLayoutAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.throttle.LoadDefaultXmlThrottlesLayoutAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.throttle.LoadDefaultXmlThrottlesLayoutAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="403"/>
             </file>
             <file name="jmri-jmrit-powerpanel-PowerPanelAction.instance">
                 <attr name="delegate" newvalue="jmri.jmrit.powerpanel.PowerPanelAction"/>
@@ -423,14 +414,6 @@
                 <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
                 <attr name="noIconInMenu" boolvalue="false"/>
                 <attr name="position" intvalue="474"/>
-            </file>
-            <file name="jmri-jmrit-withrottle-WiThrottleCreationAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.withrottle.WiThrottleCreationAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.withrottle.WiThrottleCreationAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="475"/>
             </file>
             <file name="jmri-jmris-json-JsonServerAction.instance">
                 <attr name="delegate" newvalue="jmri.jmris.json.JsonServerAction"/>
