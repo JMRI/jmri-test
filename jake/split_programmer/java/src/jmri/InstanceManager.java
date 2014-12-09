@@ -92,8 +92,8 @@ public class InstanceManager {
      * registered with {@link #store}.
      * @param type The class Object for the items' type.
      */
-    static public <T> List<Object> getList(Class<T> type) {
-        return managerLists.get(type);
+    static public <T> List<T> getList(Class<T> type) {
+        return (List<T>)managerLists.get(type);
     }
     
     /**
@@ -174,7 +174,7 @@ public class InstanceManager {
      * see the {@link #getDefault} method
      */
     static public <T> void setDefault(Class<T> type, T val) {
-        List<Object> l = getList(type);
+        List<T> l = getList(type);
         if (l == null || (l.size()<1) ) {
             store(val, type);
             l = getList(type);

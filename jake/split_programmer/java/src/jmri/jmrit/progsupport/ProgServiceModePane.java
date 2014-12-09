@@ -109,22 +109,11 @@ public class ProgServiceModePane extends ProgModeSelector implements java.beans.
                 //setModes((jmri.GlobalProgrammerManager)progBox.getSelectedItem());
             }
         });
-        progBox.setSelectedIndex(progBox.getItemCount()-1); // default is last
+        progBox.setSelectedItem(InstanceManager.getDefault(jmri.GlobalProgrammerManager.class)); // set default
 
 
-        // if a programmer is available, disable buttons for unavailable modes
-        if (InstanceManager.programmerManagerInstance()!=null
-            && InstanceManager.getDefault(jmri.GlobalProgrammerManager.class).getGlobalProgrammer()!=null) {
-            Programmer p = InstanceManager.getDefault(jmri.GlobalProgrammerManager.class).getGlobalProgrammer();
-            if (!p.hasMode(Programmer.PAGEMODE)) pagedButton.setEnabled(false);
-            if (!p.hasMode(Programmer.DIRECTBYTEMODE)) directByteButton.setEnabled(false);
-            if (!p.hasMode(Programmer.DIRECTBITMODE)) directBitButton.setEnabled(false);
-            if (!p.hasMode(Programmer.REGISTERMODE)) registerButton.setEnabled(false);
-            if (!p.hasMode(Programmer.ADDRESSMODE)) addressButton.setEnabled(false);
-        } else {
-            log.info("No programmer available, so modes not set");
-        }
-
+        setModes();
+        
         // add listeners to buttons
         pagedButton.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -177,6 +166,21 @@ public class ProgServiceModePane extends ProgModeSelector implements java.beans.
         add(addressButton);
     }
 
+    void setModes() {
+        // if a programmer is available, disable buttons for unavailable modes
+        if (InstanceManager.programmerManagerInstance()!=null
+            && InstanceManager.getDefault(jmri.GlobalProgrammerManager.class).getGlobalProgrammer()!=null) {
+            Programmer p = InstanceManager.getDefault(jmri.GlobalProgrammerManager.class).getGlobalProgrammer();
+            if (!p.hasMode(Programmer.PAGEMODE)) pagedButton.setEnabled(false);
+            if (!p.hasMode(Programmer.DIRECTBYTEMODE)) directByteButton.setEnabled(false);
+            if (!p.hasMode(Programmer.DIRECTBITMODE)) directBitButton.setEnabled(false);
+            if (!p.hasMode(Programmer.REGISTERMODE)) registerButton.setEnabled(false);
+            if (!p.hasMode(Programmer.ADDRESSMODE)) addressButton.setEnabled(false);
+        } else {
+            log.info("No programmer available, so modes not set");
+        }
+    }
+    
     /**
      * Determine the mode selected by these buttons
      * @return A mode constant or 0 is no button selected

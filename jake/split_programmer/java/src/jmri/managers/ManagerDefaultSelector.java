@@ -10,6 +10,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Vector;
 
 import jmri.*;
+import jmri.jmrix.SystemConnectionMemo;
 
 /**
  * Records and executes a desired set of defaults
@@ -123,7 +124,7 @@ public class ManagerDefaultSelector {
      */
     @SuppressWarnings("unchecked")
     public void configure() {
-        List<Object> connList = jmri.InstanceManager.getList(jmri.jmrix.SystemConnectionMemo.class);
+        List<SystemConnectionMemo> connList = jmri.InstanceManager.getList(SystemConnectionMemo.class);
         if (connList == null) return; // nothing to do 
         
         for (Class c : defaults.keySet()) {
@@ -132,7 +133,7 @@ public class ManagerDefaultSelector {
             // have to find object of that type from proper connection
             boolean found = false;
             for (int x = 0; x<connList.size(); x++) {
-                jmri.jmrix.SystemConnectionMemo memo = (jmri.jmrix.SystemConnectionMemo)connList.get(x);
+                SystemConnectionMemo memo = connList.get(x);
                 String testName = memo.getUserName();
                 if (testName.equals(connectionName)) {
                     found = true;

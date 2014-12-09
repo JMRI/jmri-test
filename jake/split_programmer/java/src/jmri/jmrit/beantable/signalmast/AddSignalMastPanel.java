@@ -70,7 +70,7 @@ public class AddSignalMastPanel extends JPanel {
         //Only allow the creation of DCC SignalMast if a command station instance is present, otherwise it will not work, so no point in adding it.
         if(jmri.InstanceManager.getList(jmri.CommandStation.class)!=null){
             signalMastDriver.addItem(rb.getString("DCCMast"));
-            java.util.List<Object> connList = jmri.InstanceManager.getList(jmri.CommandStation.class);
+            java.util.List<jmri.CommandStation> connList = jmri.InstanceManager.getList(jmri.CommandStation.class);
             for(int x = 0; x < connList.size(); x++){
                 if(connList.get(x) instanceof jmri.jmrix.loconet.SlotManager){
                     signalMastDriver.addItem(rb.getString("LNCPMast"));
@@ -302,10 +302,10 @@ public class AddSignalMastPanel extends JPanel {
                     
                 }
             }
-            java.util.List<Object> connList = jmri.InstanceManager.getList(jmri.CommandStation.class);
+            java.util.List<jmri.CommandStation> connList = jmri.InstanceManager.getList(jmri.CommandStation.class);
             if(connList!=null){
                 for(int x = 0; x < connList.size(); x++){
-                    jmri.CommandStation station = (jmri.CommandStation) connList.get(x);
+                    jmri.CommandStation station = connList.get(x);
                     systemPrefixBox.addItem(station.getUserName());
                 }
             } else {
@@ -1006,11 +1006,11 @@ public class AddSignalMastPanel extends JPanel {
         if((!rb.getString("DCCMast").equals(signalMastDriver.getSelectedItem())) && (!rb.getString("LNCPMast").equals(signalMastDriver.getSelectedItem())))
             return;
         dccAspect = new HashMap<String, DCCAspectPanel>(10);
-        java.util.List<Object> connList = jmri.InstanceManager.getList(jmri.CommandStation.class);
+        java.util.List<jmri.CommandStation> connList = jmri.InstanceManager.getList(jmri.CommandStation.class);
         systemPrefixBox.removeAllItems();
         if(connList!=null){
             for(int x = 0; x < connList.size(); x++){
-                jmri.CommandStation station = (jmri.CommandStation) connList.get(x);
+                jmri.CommandStation station = connList.get(x);
                 if(rb.getString("LNCPMast").equals(signalMastDriver.getSelectedItem())){
                     if(station instanceof jmri.jmrix.loconet.SlotManager){
                         systemPrefixBox.addItem(station.getUserName());

@@ -25,7 +25,7 @@ public class ProgOpsModePane extends javax.swing.JPanel {
     JRadioButton mOpsByteButton  	= new JRadioButton();
     JTextField mAddrField           = new JTextField(4);
     JCheckBox mLongAddrCheck        = new JCheckBox("Long address");
-    JComboBox   progBox;
+    JComboBox<AddressedProgrammerManager>   progBox;
 
     public ProgOpsModePane(int direction) {
         this(direction, new javax.swing.ButtonGroup());
@@ -59,15 +59,15 @@ public class ProgOpsModePane extends javax.swing.JPanel {
         
         // create the display combo box
         java.util.Vector<AddressedProgrammerManager> v = new java.util.Vector<AddressedProgrammerManager>();
-        for (Object e : InstanceManager.getList(jmri.AddressedProgrammerManager.class))
-            v.add((AddressedProgrammerManager)e);
-        add(progBox = new JComboBox(v));
+        for (AddressedProgrammerManager e : InstanceManager.getList(jmri.AddressedProgrammerManager.class))
+            v.add(e);
+        add(progBox = new JComboBox<AddressedProgrammerManager>(v));
         // if only one, don't show
         if (progBox.getItemCount()<2) progBox.setVisible(false);
         progBox.addActionListener(new java.awt.event.ActionListener(){
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 // new selection
-                setModes((jmri.AddressedProgrammerManager)progBox.getSelectedItem());
+                setModes(progBox.getItemAt(progBox.getSelectedIndex()));
             }
         });
         progBox.setSelectedIndex(progBox.getItemCount()-1); // default is last

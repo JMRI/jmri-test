@@ -8,6 +8,8 @@ import jmri.InstanceManager;
 import jmri.managers.DefaultRailComManager;
 import jmri.RailComManager;
 import jmri.ProgrammerManager;
+import jmri.jmrix.SystemConnectionMemo;
+
 import java.util.ResourceBundle;
 import java.util.List;
 
@@ -143,12 +145,12 @@ public class Dcc4PcSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo 
         if(defaultProgrammer==null){
             if(progManager==null)
                 return null;
-            List<Object> connList = jmri.InstanceManager.getList(jmri.jmrix.SystemConnectionMemo.class);
+            List<SystemConnectionMemo> connList = jmri.InstanceManager.getList(SystemConnectionMemo.class);
             if(connList==null)
                 return null;
             for(int i = 0; i<connList.size(); i++){
-                if(((jmri.jmrix.SystemConnectionMemo)connList.get(i)).getUserName().equals(progManager)){
-                    defaultProgrammer = ((jmri.jmrix.SystemConnectionMemo)connList.get(i)).get(jmri.ProgrammerManager.class);
+                if(connList.get(i).getUserName().equals(progManager)){
+                    defaultProgrammer = connList.get(i).get(jmri.ProgrammerManager.class);
                     break;
                 }
             }
