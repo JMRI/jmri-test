@@ -95,14 +95,6 @@
                 <attr name="noIconInMenu" boolvalue="false"/>
                 <attr name="position" intvalue="428"/>
             </file>
-            <file name="jmri-jmrit-consisttool-ConsistToolAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.consisttool.ConsistToolAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.consisttool.ConsistToolAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="429"/>
-            </file>
             <file name="jmri-jmrit-sendpacket-SendPacketAction.instance">
                 <attr name="delegate" newvalue="jmri.jmrit.sendpacket.SendPacketAction"/>
                 <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.sendpacket.SendPacketAction"/>

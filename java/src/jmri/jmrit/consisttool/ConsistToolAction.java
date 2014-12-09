@@ -2,13 +2,15 @@
 
 package jmri.jmrit.consisttool;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.awt.event.ActionEvent;
+import javax.swing.Icon;
 import jmri.util.swing.JmriAbstractAction;
 import jmri.util.swing.WindowInterface;
-import javax.swing.Icon;
-
-import java.awt.event.ActionEvent;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to create and register a
@@ -17,7 +19,20 @@ import java.awt.event.ActionEvent;
  * @author              Paul Bender Copyright (C) 2003
  * @version             $Revision$
  */
- public class ConsistToolAction extends JmriAbstractAction {
+@ActionID(
+        id = "jmri.jmrit.consisttool.ConsistToolAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemConsistTool",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools",
+        position = 640
+)
+public class ConsistToolAction extends JmriAbstractAction {
 
  
     public ConsistToolAction(String s, WindowInterface wi) {
