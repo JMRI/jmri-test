@@ -2,8 +2,11 @@
 
  package jmri.jmrit.lcdclock;
 
-import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 
 /**
  * Swing action to create and register a
@@ -15,7 +18,19 @@ import java.awt.event.ActionEvent;
  * This was a direct steal form the Nixie clock code, ver 1.5.
  * Thank you Bob Jacobsen.
  */
-
+@ActionID(
+        id = "jmri.jmrit.lcdclock.LcdClockAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemLcdClock",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Clocks",
+        position = 620
+)
  public class LcdClockAction extends AbstractAction {
 	 
 	 public LcdClockAction() {

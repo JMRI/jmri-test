@@ -2,8 +2,12 @@
 
 package jmri.jmrit.analogclock;
 
-import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+
 /**
  * Swing action to create and register a
  *  AnalogClockFrame object
@@ -12,9 +16,19 @@ import java.awt.event.ActionEvent;
  * @author			Dennis Miller    Copyright (C) 2004
  * @version			$Revision$
  */
-
-
-
+@ActionID(
+        id = "jmri.jmrit.analogclock.AnalogClockAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemAnalogClock",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Clocks",
+        position = 630
+)
 public class AnalogClockAction extends AbstractAction {
 	
   public AnalogClockAction() {

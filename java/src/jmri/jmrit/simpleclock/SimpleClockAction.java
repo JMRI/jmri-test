@@ -2,10 +2,13 @@
 
  package jmri.jmrit.simpleclock;
 
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.swing.AbstractAction;
-import java.awt.event.ActionEvent;
 
 /**
  * Swing action to create and register a
@@ -14,7 +17,19 @@ import java.awt.event.ActionEvent;
  * @author			Dave Duchamp    Copyright (C) 2004
  * @version			$Revision$
  */
- 
+@ActionID(
+        id = "jmri.jmrit.simpleclock.SimpleClockAction",
+        category = "JMRI"
+)
+@ActionRegistration(
+        iconBase = "org/jmri/core/ui/toolbar/generic.gif",
+        displayName = "jmri.jmrit.Bundle#MenuItemSetupClock",
+        iconInMenu = false
+)
+@ActionReference(
+        path = "Menu/Tools/Clocks",
+        position = 600
+)
 public class SimpleClockAction extends AbstractAction {
 
  	public SimpleClockAction(String s) {

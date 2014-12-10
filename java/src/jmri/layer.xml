@@ -36,6 +36,11 @@
                 <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuThrottles"/>
                 <attr name="position" intvalue="620"/>
             </folder>
+            <folder name="Clocks">
+                <!-- Create a JMRI-specific submenu of a standard NetBeans menu. -->
+                <attr name="displayName" bundlevalue="jmri.jmrit.Bundle#MenuClocks"/>
+                <attr name="position" intvalue="650"/>
+            </folder>
         </folder>
     </folder>
     <folder name="Actions">
@@ -102,38 +107,6 @@
                 <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
                 <attr name="noIconInMenu" boolvalue="false"/>
                 <attr name="position" intvalue="430"/>
-            </file>
-            <file name="jmri-jmrit-nixieclock-NixieClockAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.nixieclock.NixieClockAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.nixieclock.NixieClockAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="431"/>
-            </file>
-            <file name="jmri-jmrit-lcdclock-LcdClockAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.lcdclock.LcdClockAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.lcdclock.LcdClockAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="432"/>
-            </file>
-            <file name="jmri-jmrit-analogclock-AnalogClockAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.analogclock.AnalogClockAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.analogclock.AnalogClockAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="433"/>
-            </file>
-            <file name="jmri-jmrit-simpleclock-SimpleClockAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrit.simpleclock.SimpleClockAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrit.simpleclock.SimpleClockAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="position" intvalue="434"/>
             </file>
             <file name="jmri-jmrit-display-PanelEditorAction.instance">
                 <attr name="delegate" newvalue="jmri.jmrit.display.PanelEditorAction"/>
