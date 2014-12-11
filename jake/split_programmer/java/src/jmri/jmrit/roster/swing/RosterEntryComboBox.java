@@ -354,17 +354,17 @@ public class RosterEntryComboBox extends JComboBox<String> implements RosterEntr
         _id = id;
         removeAllItems();
         if (_nonSelectedItem != null) {
-            this.insertItemAt(_nonSelectedItem, 0);
-            this.setSelectedItem(_nonSelectedItem);
+            insertItemAt(_nonSelectedItem, 0);
+            setSelectedItem(_nonSelectedItem);
         }
         for (RosterEntry r : l) {
             if (rosterGroup != null && !rosterGroup.equals(Roster.ALLENTRIES)) {
                 if (r.getAttribute(Roster.getRosterGroupProperty(rosterGroup)) != null
                         && r.getAttribute(Roster.getRosterGroupProperty(rosterGroup)).equals("yes")) {
-                    addItem(r);
+                    addItem(r.titleString());
                 }
             } else {
-                addItem(r);
+                addItem(r.titleString());
             }
             if (r.equals(selection)) {
                 this.setSelectedItem(r);
