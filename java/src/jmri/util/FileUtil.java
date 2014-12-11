@@ -72,12 +72,12 @@ public final class FileUtil {
      */
     @Deprecated
     static public final String RESOURCE = "resource:"; // NOI18N
-    @Deprecated
     /**
      * Replaced with {@link #PREFERENCES}.
      *
      * @see #PREFERENCES
      */
+    @Deprecated
     static public final String FILE = "file:"; // NOI18N
     /**
      * The portable file path component separator.
@@ -453,18 +453,18 @@ public final class FileUtil {
             return SETTINGS + filename.substring(getPreferencesPath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
         }
 
-        if (ignoreUserFilesPath || ignoreProfilePath) {
+        if (!ignoreUserFilesPath) {
             /*
              * The tests for any portatable path that could be within the
-             * UserFiles or Profile path locations needs to be within this
-             * block. This prevents the UserFiles or Profile path from being
-             * set to another portable path that is user settable.
+             * UserFiles locations needs to be within this block. This prevents
+             * the UserFiles or Profile path from being set to another portable
+             * path that is user settable.
              *
-             * Note that these tests should be after the UserFiles, Profile, and
+             * Note that this test should be after the UserFiles, Profile, and
              * Preferences tests.
              */
             // check for relative to scripts dir
-            if (filename.startsWith(getScriptsPath())) {
+            if (filename.startsWith(getScriptsPath()) && !filename.equals(getScriptsPath())) {
                 return SCRIPTS + filename.substring(getScriptsPath().length(), filename.length()).replace(File.separatorChar, SEPARATOR);
             }
         }
