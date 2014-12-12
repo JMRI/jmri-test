@@ -5,4 +5,40 @@
 <project name="trainpro" basedir=".">
     <description>Builds the module suite trainpro.</description>
     <import file="nbproject/build-impl.xml"/>
+
+    <!-- NetBeans internal build installers ant call
+    ant -f "/Applications/NetBeans/NetBeans 8.0.app/Contents/Resources/NetBeans/harness/nbi/stub/template.xml"
+ -Dsuite.nbi.product.uid=trainpro
+ "-Dnbi.stub.common.location=/Applications/NetBeans/NetBeans 8.0.app/Contents/Resources/NetBeans/harness/nbi/.common"
+ "-Dnbi.dock.icon.file=/Applications/NetBeans/NetBeans 8.0.app/Contents/Resources/NetBeans/harness/etc/applicationIcon.icns"
+ "-Dnbi.engine.jar=/Applications/NetBeans/NetBeans 8.0.app/Contents/Resources/NetBeans/harness/modules/ext/nbi-engine.jar"
+ "-Dnbi.ant.tasks.jar=/Applications/NetBeans/NetBeans 8.0.app/Contents/Resources/NetBeans/harness/modules/ext/nbi-ant-tasks.jar"
+ "-Dnbi.registries.management.jar=/Applications/NetBeans/NetBeans 8.0.app/Contents/Resources/NetBeans/harness/modules/ext/nbi-registries-management.jar"
+ -Dnbi.icon.file=/Users/rhwood/Developer/JMRI/JMRI/netbeans/trainpro/branding/core/core.jar/org/netbeans/core/startup/frame48.gif
+ -Dgenerator-jdk-location-forward-slashes=/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home
+ -Dpack200.enabled=true
+ -Dnbi.license.file=/var/folders/r1/0c9xdmfn4blbq3ncpd2v4ffr0000gn/T/license5079869024831691115.txt
+ "-Dnbi.stub.location=/Applications/NetBeans/NetBeans 8.0.app/Contents/Resources/NetBeans/harness/nbi/stub"
+ -Dsuite.location=/Users/rhwood/Developer/JMRI/JMRI/netbeans/trainpro
+ "-Dgenerate.installer.for.platforms=windows linux macosx" build
+    -->
+    <!-- missing some context required to fully function -->
+    <target name="build-installers">
+        <ant antfile="${harness.dir}/nbi/stub/template.xml" target="build">
+            <property name="suite.nbi.product.uid" value="${app.name}"/>
+            <property name="nbi.stub.common.location" value="${harness.dir}/nbi/.common"/>
+            <property name="nbi.dock.icon.file" value="${harness.dir}/etc/applicationIcon.icns"/>
+            <property name="nbi.engine.jar" value="${harness.dir}/modules/ext/nbi-engine.jar"/>
+            <property name="nbi.ant.tasks.jar" value="${harness.dir}/modules/ext/nbi-ant-tasks.jar"/>
+            <property name="nbi.registries.management.jar" value="${harness.dir}/modules/ext/nbi-registeries-management.jar"/>
+            <property name="nbi.icon.file" value="${suite.dir}/${app.icon}"/>
+            <property name="generator-jdk-location-forward-slashes" value="${java.home}"/>
+            <property name="pack200.enabled" value="${auxiliary.org-netbeans-modules-apisupport-installer.pack200-enabled}"/>
+            <property name="nbi.license.file" value="${base.dir}/${auxiliary.org-netbeans-modules-apisupport-installer.license-file}"/>
+            <property name="nbi.stub.location" value="${harness.dir}/nbi/stub"/>
+            <property name="suite.location" value="${suite.dir}"/>
+            <property name="generate.installer.for.platforms" value="windows linux macosx"/>
+        </ant>
+    </target>
+
 </project>
