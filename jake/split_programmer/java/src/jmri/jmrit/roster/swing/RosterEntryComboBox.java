@@ -15,7 +15,10 @@ import jmri.jmrit.roster.RosterEntry;
 import jmri.jmrit.roster.RosterEntrySelector;
 
 /**
- * A JComboBox containing roster entries
+ * A JComboBox containing roster entries or a string indicating that
+ * no roster entry is selected.
+ * <p>
+ * This is a JComboBox&lt;Object&gt; so that it can represent both.
  * <p>
  * This class has a self contained data model, and will automatically update the
  * display if a RosterEntry is added, removed, or changes.
@@ -26,7 +29,7 @@ import jmri.jmrit.roster.RosterEntrySelector;
  * @see jmri.jmrit.roster.RosterEntry
  * @see javax.swing.JComboBox
  */
-public class RosterEntryComboBox extends JComboBox<String> implements RosterEntrySelector {
+public class RosterEntryComboBox extends JComboBox<Object> implements RosterEntrySelector {
 
     protected Roster _roster;
     protected String _group;
@@ -361,10 +364,10 @@ public class RosterEntryComboBox extends JComboBox<String> implements RosterEntr
             if (rosterGroup != null && !rosterGroup.equals(Roster.ALLENTRIES)) {
                 if (r.getAttribute(Roster.getRosterGroupProperty(rosterGroup)) != null
                         && r.getAttribute(Roster.getRosterGroupProperty(rosterGroup)).equals("yes")) {
-                    addItem(r.titleString());
+                    addItem(r);
                 }
             } else {
-                addItem(r.titleString());
+                addItem(r);
             }
             if (r.equals(selection)) {
                 this.setSelectedItem(r);
