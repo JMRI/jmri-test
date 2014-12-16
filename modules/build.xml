@@ -9,7 +9,7 @@
     <target name="-init" depends="suite.-init">
         <mkdir dir="${nbplatform.active.dir}/extra" />
         <get
-            src="http://dlc.sun.com.edgesuite.net/netbeans/updates/8.0.1/uc/final/certified/modules/extra/org-netbeans-libs-junit4.nbm"
+            src="http://dlc.sun.com.edgesuite.net/netbeans/updates/8.0.2/uc/final/certified/802/extra/org-netbeans-libs-junit4.nbm"
             dest="${nbplatform.active.dir}/extra"
             usetimestamp="true"
         />
