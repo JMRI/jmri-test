@@ -127,7 +127,7 @@ public class BlockManagerTest extends TestCase {
         try {
             InstanceManager.blockManagerInstance().setDefaultSpeed("Faster");
         } catch (JmriException ex) {
-            if (ex instanceof jmri.JmriException && ex.getMessage().startsWith("Value of requested default block speed is not valid")) {
+            if (ex.getMessage().startsWith("Value of requested default block speed is not valid")) {
                 threw = true;
             } else {
                 Assert.fail("failed to set speed due to wrong reason: "+ex);
