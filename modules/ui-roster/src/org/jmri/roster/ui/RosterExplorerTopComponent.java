@@ -5,8 +5,10 @@
  */
 package org.jmri.roster.ui;
 
+import java.util.Locale;
 import javax.swing.GroupLayout;
 import jmri.jmrit.roster.Roster;
+import org.jmri.roster.AllEntries;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -39,7 +41,7 @@ import org.openide.windows.TopComponent;
 )
 @Messages({
     "CTL_RosterAction=Roster",
-    "CTL_RosterTopComponent=Roster Window",
+    "CTL_RosterTopComponent=Roster",
     "HINT_RosterTopComponent=This is a Roster window"
 })
 public final class RosterExplorerTopComponent extends TopComponent implements ExplorerManager.Provider {
@@ -50,9 +52,9 @@ public final class RosterExplorerTopComponent extends TopComponent implements Ex
         initComponents();
         setName(Bundle.CTL_RosterTopComponent());
         setToolTipText(Bundle.HINT_RosterTopComponent());
-        Children groups = Children.create(new RosterGroupFactory(Roster.ALLENTRIES), true);
+        Children groups = Children.create(new RosterObjectFactory(new AllEntries()), true);
         Node rootNode = new AbstractNode(groups);
-        rootNode.setDisplayName(Bundle.CTL_RosterAction());
+        rootNode.setDisplayName(Roster.AllEntries(Locale.getDefault()));
         explorerManager.setRootContext(rootNode);
     }
 

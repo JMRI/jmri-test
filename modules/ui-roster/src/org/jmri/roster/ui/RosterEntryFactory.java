@@ -2,8 +2,8 @@ package org.jmri.roster.ui;
 
 import java.beans.IntrospectionException;
 import java.util.List;
-import jmri.jmrit.roster.Roster;
 import jmri.jmrit.roster.RosterEntry;
+import jmri.jmrit.roster.rostergroup.RosterGroup;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Node;
 import org.slf4j.Logger;
@@ -15,16 +15,16 @@ import org.slf4j.LoggerFactory;
  */
 class RosterEntryFactory extends ChildFactory<RosterEntry> {
 
-    private final String rosterGroup;
+    private final RosterGroup rosterGroup;
     private static final Logger log = LoggerFactory.getLogger(RosterEntryFactory.class);
 
-    public RosterEntryFactory(String rosterGroup) {
+    public RosterEntryFactory(RosterGroup rosterGroup) {
         this.rosterGroup = rosterGroup;
     }
 
     @Override
     protected boolean createKeys(List<RosterEntry> list) {
-        list.addAll(Roster.instance().getEntriesInGroup(this.rosterGroup));
+        list.addAll(this.rosterGroup.getEntries());
         return true;
     }
 
