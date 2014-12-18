@@ -8,7 +8,7 @@ package org.jmri.roster.ui;
 import java.util.Locale;
 import javax.swing.GroupLayout;
 import jmri.jmrit.roster.Roster;
-import org.jmri.roster.AllEntries;
+import org.jmri.roster.AllRosterEntries;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -52,7 +52,7 @@ public final class RosterExplorerTopComponent extends TopComponent implements Ex
         initComponents();
         setName(Bundle.CTL_RosterTopComponent());
         setToolTipText(Bundle.HINT_RosterTopComponent());
-        Children groups = Children.create(new RosterObjectFactory(new AllEntries()), true);
+        Children groups = Children.create(new RosterObjectFactory(new AllRosterEntries()), true);
         Node rootNode = new AbstractNode(groups);
         rootNode.setDisplayName(Roster.AllEntries(Locale.getDefault()));
         explorerManager.setRootContext(rootNode);

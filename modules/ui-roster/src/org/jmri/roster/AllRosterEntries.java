@@ -12,9 +12,9 @@ import jmri.jmrit.roster.rostergroup.RosterGroup;
  *
  * @author Randall Wood <randall.h.wood@alexandriasoftware.com>
  */
-public class AllEntries extends RosterGroup {
+public class AllRosterEntries extends RosterGroup {
 
-    public AllEntries() {
+    public AllRosterEntries() {
         super(Roster.AllEntries(Locale.getDefault()));
     }
 
