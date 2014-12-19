@@ -29,12 +29,12 @@ import org.openide.windows.TopComponent;
 )
 @TopComponent.Description(
         preferredID = "RosterTopComponent",
-        //iconBase="SET/PATH/TO/ICON/HERE",
+        iconBase="org/jmri/roster/ui/RosterGroup.gif",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = true)
 @ActionID(category = "Roster", id = "org.jmri.roster.ui.RosterTopComponent")
-@ActionReference(path = "Menu/Roster" /*, position = 333 */)
+@ActionReference(path = "Menu/Window", position = 300)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_RosterAction",
         preferredID = "RosterTopComponent"
