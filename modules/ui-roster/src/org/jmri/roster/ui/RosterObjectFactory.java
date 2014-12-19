@@ -40,10 +40,13 @@ class RosterObjectFactory extends ChildFactory<RosterObject> {
     protected Node createNodeForKey(RosterObject key) {
         AbstractNode node = null;
         if (key instanceof RosterGroup) {
+            try {
             Children children = Children.create(new RosterEntryFactory((RosterGroup) key), true);
-            node = new AbstractNode(children);
-            node.setDisplayName(key.getDisplayName());
-            node.setIconBaseWithExtension("org/jmri/roster/ui/RosterGroup.png");
+            node = new RosterGroupNode((RosterGroup) key, children);
+            } catch (IntrospectionException ex) {
+                log.error("Unable to create node for RosterGroup {}.", ((RosterGroup) key).getName(), ex);
+                return null;
+            }
         } else if (key instanceof RosterEntry) {
             try {
                 node = new RosterEntryNode((RosterEntry) key);

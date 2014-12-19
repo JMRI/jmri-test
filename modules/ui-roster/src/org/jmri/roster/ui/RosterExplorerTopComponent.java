@@ -5,19 +5,20 @@
  */
 package org.jmri.roster.ui;
 
-import java.util.Locale;
+import java.beans.IntrospectionException;
 import javax.swing.GroupLayout;
-import jmri.jmrit.roster.Roster;
 import org.jmri.roster.AllRosterEntries;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.BeanTreeView;
-import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
+import org.openide.nodes.Node;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Top component which displays something.
@@ -28,7 +29,7 @@ import org.openide.windows.TopComponent;
 )
 @TopComponent.Description(
         preferredID = "RosterTopComponent",
-        iconBase="org/jmri/roster/ui/RosterGroup.png",
+        iconBase = "org/jmri/roster/ui/RosterGroup.png",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = true)
@@ -46,16 +47,19 @@ import org.openide.windows.TopComponent;
 public final class RosterExplorerTopComponent extends TopComponent implements ExplorerManager.Provider {
 
     private final ExplorerManager explorerManager = new ExplorerManager();
+    private static final Logger log = LoggerFactory.getLogger(RosterExplorerTopComponent.class);
 
     public RosterExplorerTopComponent() {
         initComponents();
         setName(Bundle.CTL_RosterTopComponent());
         setToolTipText(Bundle.HINT_RosterTopComponent());
-        Children groups = Children.create(new RosterObjectFactory(new AllRosterEntries()), true);
-        AbstractNode rootNode = new AbstractNode(groups);
-        rootNode.setDisplayName(Roster.AllEntries(Locale.getDefault()));
-        rootNode.setIconBaseWithExtension("org/jmri/roster/ui/RosterGroup.png");
-        explorerManager.setRootContext(rootNode);
+        try {
+            Children groups = Children.create(new RosterObjectFactory(new AllRosterEntries()), true);
+            Node rootNode = new RosterGroupNode(new AllRosterEntries(), groups);
+            explorerManager.setRootContext(rootNode);
+        } catch (IntrospectionException ex) {
+            log.error("Unable to introspect AllRosterEntries object.", ex);
+        }
     }
 
     /**
