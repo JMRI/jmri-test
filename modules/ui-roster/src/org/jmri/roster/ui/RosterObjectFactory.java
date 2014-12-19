@@ -43,6 +43,7 @@ class RosterObjectFactory extends ChildFactory<RosterObject> {
             Children children = Children.create(new RosterEntryFactory((RosterGroup) key), true);
             node = new AbstractNode(children);
             node.setDisplayName(key.getDisplayName());
+            node.setIconBaseWithExtension("org/jmri/roster/ui/RosterGroup.png");
         } else if (key instanceof RosterEntry) {
             try {
                 node = new RosterEntryNode((RosterEntry) key);

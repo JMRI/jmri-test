@@ -16,7 +16,6 @@ import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
-import org.openide.nodes.Node;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
 
@@ -29,7 +28,7 @@ import org.openide.windows.TopComponent;
 )
 @TopComponent.Description(
         preferredID = "RosterTopComponent",
-        iconBase="org/jmri/roster/ui/RosterGroup.gif",
+        iconBase="org/jmri/roster/ui/RosterGroup.png",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = true)
@@ -53,8 +52,9 @@ public final class RosterExplorerTopComponent extends TopComponent implements Ex
         setName(Bundle.CTL_RosterTopComponent());
         setToolTipText(Bundle.HINT_RosterTopComponent());
         Children groups = Children.create(new RosterObjectFactory(new AllRosterEntries()), true);
-        Node rootNode = new AbstractNode(groups);
+        AbstractNode rootNode = new AbstractNode(groups);
         rootNode.setDisplayName(Roster.AllEntries(Locale.getDefault()));
+        rootNode.setIconBaseWithExtension("org/jmri/roster/ui/RosterGroup.png");
         explorerManager.setRootContext(rootNode);
     }
 
