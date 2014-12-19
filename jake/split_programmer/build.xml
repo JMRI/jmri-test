@@ -396,9 +396,9 @@
                deprecation="${deprecation}"
                debug="${java.debugging}">
             <classpath refid="compile.class.path"/>
-            <compilerarg value="-Xlint:-serial"/>
-            <compilerarg value="-Xlint:-deprecation"/>
-            <compilerarg value="-Xlint:unchecked"/>
+            <!-- <compilerarg value="-Xlint:-serial"/>  off during 1.8 migration -->
+            <!-- <compilerarg value="-Xlint:-deprecation"/>  off during 1.8 migration -->
+            <!-- <compilerarg value="-Xlint:unchecked"/>  off during 1.8 migration -->
         </javac>
     </target>
 
