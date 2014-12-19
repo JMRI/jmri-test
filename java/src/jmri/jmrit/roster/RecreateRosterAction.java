@@ -79,15 +79,7 @@ public class RecreateRosterAction extends JmriAbstractAction {
                 // add to roster
                 roster.addEntry(toEntry);
                 //See if the entry is assigned to any roster groups or not this will add the group if missing.
-                String[] attributes = toEntry.getAttributeList();
-                if (attributes!=null){
-                    for(int x=0; x<attributes.length; x++){
-                        if(attributes[x].startsWith(roster.getRosterGroupPrefix())){
-                            //We don't bother checking to see if the group already exists as this is done by the addRosterGroupList.
-                            roster.addRosterGroupList(attributes[x].substring(roster.getRosterGroupPrefix().length()));
-                        }
-                    }
-                }
+                toEntry.getGroups();
             }
         }
 
