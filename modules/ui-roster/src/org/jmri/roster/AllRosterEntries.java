@@ -15,12 +15,17 @@ import jmri.jmrit.roster.rostergroup.RosterGroup;
 public class AllRosterEntries extends RosterGroup {
 
     public AllRosterEntries() {
-        super(Roster.AllEntries(Locale.getDefault()));
+        super(Roster.ALLENTRIES);
     }
 
     @Override
     public List<RosterEntry> getEntries() {
         return Roster.instance().getEntriesInGroup(Roster.ALLENTRIES);
+    }
+
+    @Override
+    public String getDisplayName() {
+        return Roster.AllEntries(Locale.getDefault());
     }
 
     @Override
