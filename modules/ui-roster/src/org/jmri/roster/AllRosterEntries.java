@@ -32,4 +32,19 @@ public class AllRosterEntries extends RosterGroup {
     public void setName(String name) {
         // Do nothing.
     }
+
+    @Override
+    public boolean canEdit() {
+        return false;
+    }
+
+    @Override
+    public boolean canDelete() {
+        return false;
+    }
+
+    @Override
+    public boolean canCopy() {
+        return false;
+    }
 }
