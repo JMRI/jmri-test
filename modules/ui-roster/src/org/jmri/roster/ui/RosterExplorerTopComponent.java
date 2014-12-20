@@ -12,6 +12,7 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.explorer.ExplorerManager;
+import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -50,13 +51,14 @@ public final class RosterExplorerTopComponent extends TopComponent implements Ex
     private static final Logger log = LoggerFactory.getLogger(RosterExplorerTopComponent.class);
 
     public RosterExplorerTopComponent() {
-        initComponents();
-        setName(Bundle.CTL_RosterTopComponent());
-        setToolTipText(Bundle.HINT_RosterTopComponent());
+        this.initComponents();
+        this.setName(Bundle.CTL_RosterTopComponent());
+        this.setToolTipText(Bundle.HINT_RosterTopComponent());
         try {
             Children groups = Children.create(new RosterObjectFactory(new AllRosterEntries()), true);
             Node rootNode = new RosterGroupNode(new AllRosterEntries(), groups);
             explorerManager.setRootContext(rootNode);
+            this.associateLookup(ExplorerUtils.createLookup(explorerManager, getActionMap()));
         } catch (IntrospectionException ex) {
             log.error("Unable to introspect AllRosterEntries object.", ex);
         }
