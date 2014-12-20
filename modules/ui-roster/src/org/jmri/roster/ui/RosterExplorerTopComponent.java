@@ -1,11 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*============================================================================*
+ * WARNING      This class contains automatically modified code.      WARNING *
+ *                                                                            *
+ * The method initComponents() and the variable declarations between the      *
+ * "// Variables declaration - do not modify" and                             *
+ * "// End of variables declaration" comments will be overwritten if modified *
+ * by hand. Using the NetBeans IDE to edit this file is strongly recommended. *
+ *                                                                            *
+ * See http://jmri.org/help/en/html/doc/Technical/NetBeansGUIEditor.shtml for *
+ * more information.                                                          *
+ *============================================================================*/
 package org.jmri.roster.ui;
 
 import java.beans.IntrospectionException;
+import javax.swing.ActionMap;
 import javax.swing.GroupLayout;
 import org.jmri.roster.AllRosterEntries;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -57,8 +64,10 @@ public final class RosterExplorerTopComponent extends TopComponent implements Ex
         try {
             Children groups = Children.create(new RosterObjectFactory(new AllRosterEntries()), true);
             Node rootNode = new RosterGroupNode(new AllRosterEntries(), groups);
-            explorerManager.setRootContext(rootNode);
-            this.associateLookup(ExplorerUtils.createLookup(explorerManager, getActionMap()));
+            ActionMap map = getActionMap();
+            this.explorerManager.setRootContext(rootNode);
+            map.put("delete", ExplorerUtils.actionDelete(this.explorerManager, true));
+            this.associateLookup(ExplorerUtils.createLookup(this.explorerManager, map));
         } catch (IntrospectionException ex) {
             log.error("Unable to introspect AllRosterEntries object.", ex);
         }

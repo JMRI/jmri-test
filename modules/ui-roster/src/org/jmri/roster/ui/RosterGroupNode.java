@@ -8,7 +8,9 @@ import java.util.List;
 import javax.swing.Action;
 import jmri.jmrit.roster.Roster;
 import jmri.jmrit.roster.rostergroup.RosterGroup;
+import org.openide.actions.DeleteAction;
 import org.openide.actions.NewAction;
+import org.openide.actions.RenameAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.Utilities;
@@ -40,6 +42,8 @@ public class RosterGroupNode extends AbstractNode {
         if (group.canChangeContents()) {
             actions.add(SystemAction.get(NewAction.class));
         }
+        actions.add(SystemAction.get(RenameAction.class));
+        actions.add(SystemAction.get(DeleteAction.class));
         actions.addAll(Utilities.actionsForPath("Actions/Roster/Group"));
         return actions.toArray(new Action[actions.size()]);
     }
@@ -76,5 +80,40 @@ public class RosterGroupNode extends AbstractNode {
             });
         }
         return types.toArray(new NewType[types.size()]);
+    }
+
+    @Override
+    public boolean canDestroy() {
+        return group.canDelete();
+    }
+
+    @Override
+    public void destroy() throws IOException {
+        Roster.instance().delRosterGroupList(group.getName());
+        this.fireNodeDestroyed();
+    }
+
+    @Override
+    public boolean canRename() {
+        return group.canEdit();
+    }
+
+    @Override
+    public String getName() {
+        return group.getName();
+    }
+
+    @Override
+    public void setName(String newName) {
+        String oldName = group.getName();
+        group.setName(newName);
+        if (!newName.equals(group.getName())) {
+            if (Roster.instance().getRosterGroups().containsKey(newName)) {
+                log.error("Unable to rename roster group from \"{}\" to \"{}\" since group with \"{}\" already exists.", oldName, newName, newName);
+            } else {
+                log.error("Unable to rename roster group from \"{}\" to \"{}\" for unknown reason.", oldName, newName);
+            }
+        }
+        this.fireNameChange(oldName, newName);
     }
 }
