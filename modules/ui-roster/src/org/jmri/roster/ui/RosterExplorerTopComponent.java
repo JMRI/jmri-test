@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
         autostore = false
 )
 @TopComponent.Description(
-        preferredID = "RosterTopComponent",
+        preferredID = "RosterExplorerTopComponent",
         iconBase = "org/jmri/roster/ui/RosterGroup.png",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 @ActionReference(path = "Menu/Window", position = 300)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_RosterAction",
-        preferredID = "RosterTopComponent"
+        preferredID = "RosterExplorerTopComponent"
 )
 @Messages({
     "CTL_RosterAction=Roster",
@@ -59,7 +59,7 @@ public final class RosterExplorerTopComponent extends TopComponent implements Ex
 
     public RosterExplorerTopComponent() {
         this.initComponents();
-        this.setName(Bundle.CTL_RosterTopComponent());
+        this.setDisplayName(Bundle.CTL_RosterTopComponent());
         this.setToolTipText(Bundle.HINT_RosterTopComponent());
         try {
             Children groups = Children.create(new RosterObjectFactory(new AllRosterEntries()), true);
