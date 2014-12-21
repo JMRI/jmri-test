@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import jmri.*;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.util.List;
 
@@ -20,7 +20,6 @@ import java.util.List;
  */
 public class ProgrammerFacadeSelector  {
 
-    @SuppressWarnings("unchecked") // needed because JDOM getChildren returns plain List, not List<Element>
     public static Programmer loadFacadeElements(Element element, Programmer programmer) {
         // iterate over any facades and add them
         List<Element> facades = element.getChildren("capability");

@@ -20,6 +20,13 @@ import org.openide.awt.ActionRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+
+import java.util.*;
+
+import org.jdom2.*;
+import org.jdom2.output.*;
+
 /**
  * Save throttles to XML
  *

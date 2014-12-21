@@ -7,7 +7,7 @@ import jmri.jmrix.configurexml.AbstractNetworkConnectionConfigXml;
 import jmri.jmrix.srcp.networkdriver.ConnectionConfig;
 import jmri.jmrix.srcp.networkdriver.NetworkDriverAdapter;
 
-/*import org.jdom.*;
+/*import org.jdom2.*;
 import javax.swing.*;*/
 
 /**
@@ -35,7 +35,7 @@ public class ConnectionConfigXml extends AbstractNetworkConnectionConfigXml {
     @Override
     protected void getInstance() {
         if(adapter == null)
-        adapter = adapter = new NetworkDriverAdapter();
+        adapter = new NetworkDriverAdapter();
     }
 
     @Override

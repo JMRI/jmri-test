@@ -7,7 +7,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import jmri.jmrit.XmlFile;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
@@ -127,7 +127,7 @@ public class LoadXmlThrottlesLayoutAction extends AbstractAction {
 					ThrottleFrameManager.instance().getThrottlesListPanel().setXml(tlp);
 				}
 			}
-		} catch (org.jdom.JDOMException ex) {
+		} catch (org.jdom2.JDOMException ex) {
 			log.warn("Loading Throttles exception",ex);
 			return false;
 		}

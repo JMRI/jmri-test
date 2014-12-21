@@ -22,7 +22,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import jmri.jmrit.decoderdefn.DecoderFile;
 import jmri.jmrit.decoderdefn.DecoderIndexFile;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import javax.swing.tree.TreePath;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -540,12 +540,12 @@ public class EcosLocoToRoster implements EcosListener {
         	String famComment = decoders.get(i).getFamilyComment();
         	String verString = decoders.get(i).getVersionsAsString();
         	String hoverText = "";
-        	if (famComment == null ? "" == null : famComment.equals("")) {
-        		if (verString == null ? "" != null : !verString.equals("")) {
+        	if (famComment == null || famComment.equals("")) {
+        		if (verString != null && !verString.equals("")) {
             		hoverText = "CV7=" + verString;
         		}
         	} else {
-        		if (verString == null ? "" == null : verString.equals("")) {
+        		if (verString == null || verString.equals("")) {
             		hoverText = famComment;
         		} else {
             		hoverText = famComment + "  CV7=" + verString;
@@ -788,7 +788,7 @@ public class EcosLocoToRoster implements EcosListener {
 
         try {
             decoderRoot = df.rootFromName(DecoderFile.fileLocation+df.getFilename());
-        } catch (org.jdom.JDOMException e) { log.error("JDOM Exception while loading decoder XML file: "+df.getFilename()); }
+        } catch (org.jdom2.JDOMException e) { log.error("JDOM Exception while loading decoder XML file: "+df.getFilename()); }
         catch (java.io.IOException e) { log.error("IO Exception while loading decoder XML file: "+df.getFilename()); }
         // load variables from decoder tree
         df.getProductID();

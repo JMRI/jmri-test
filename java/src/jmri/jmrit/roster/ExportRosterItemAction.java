@@ -4,7 +4,7 @@ package jmri.jmrit.roster;
 
 import java.awt.Component;
 import jmri.util.FileUtil;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +67,7 @@ public class ExportRosterItemAction extends AbstractRosterItemAction  {
         LocoFile lf = new LocoFile();  // used as a temporary
         Element lroot;
         try {
-            lroot = (Element)lf.rootFromName(mFullFromFilename).clone();
+            lroot = lf.rootFromName(mFullFromFilename).clone();
         } catch (Exception e) {
             log.error("Exception while loading loco XML file: "+mFullFromFilename+" exception: "+e);
             return false;

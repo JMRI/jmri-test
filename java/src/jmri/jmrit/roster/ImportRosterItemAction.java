@@ -7,7 +7,7 @@ import java.io.File;
 import javax.swing.Icon;
 import jmri.util.FileUtil;
 import jmri.util.swing.WindowInterface;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +70,7 @@ public class ImportRosterItemAction extends AbstractRosterItemAction  {
         LocoFile lf = new LocoFile();  // used as a temporary
         Element lroot;
         try {
-            lroot = (Element)lf.rootFromFile(mFromFile).clone();
+            lroot = lf.rootFromFile(mFromFile).clone();
         } catch (Exception e) {
             log.error("Exception while loading loco XML file: "+mFullFromFilename+" exception: "+e);
             return false;

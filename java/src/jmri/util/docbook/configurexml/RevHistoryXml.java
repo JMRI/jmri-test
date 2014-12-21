@@ -1,6 +1,6 @@
 package jmri.util.docbook.configurexml;
 
-import org.jdom.*;
+import org.jdom2.*;
 import java.util.ArrayList;
 
 import jmri.util.docbook.*;
@@ -32,7 +32,6 @@ public class RevHistoryXml extends jmri.configurexml.AbstractXmlAdapter {
     static public RevHistory loadRevHistory(Element e) {
         RevHistory r = new RevHistory();
         
-        @SuppressWarnings("unchecked")
         java.util.List<Element> list = e.getChildren("revision", Namespace.getNamespace("http://docbook.org/ns/docbook"));
         for (int i = 0; i<list.size(); i++) {
             loadRevision(r, list.get(i));
