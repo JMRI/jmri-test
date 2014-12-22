@@ -10,22 +10,15 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import jmri.configurexml.StoreXmlConfigAction;
 import jmri.jmrit.XmlFile;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-
-import java.util.*;
-
-import org.jdom2.*;
-import org.jdom2.output.*;
 
 /**
  * Save throttles to XML
