@@ -1,4 +1,4 @@
-// IBLnPacketizer.java
+// UhlenbrockPacketizer.java
 
 package jmri.jmrix.loconet.uhlenbrock;
 
@@ -41,13 +41,13 @@ import java.util.LinkedList;
  * @version 		$Revision: 17977 $
  *
  */
-public class IBLnPacketizer extends LnPacketizer implements LocoNetInterface {
+public class UhlenbrockPacketizer extends LnPacketizer implements LocoNetInterface {
 
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
                     justification="Only used during system initialization")
-    public IBLnPacketizer() {
-        log.debug("This one called");
-    //    self=this;
+    public UhlenbrockPacketizer() {
+        super();
+        log.debug("UhlenbrockPacketizer instantiated");
     }
     
     public static final int NOTIFIEDSTATE = 15;    // xmt notified, will next wake
@@ -123,10 +123,10 @@ public class IBLnPacketizer extends LnPacketizer implements LocoNetInterface {
            while (true) {   // loop permanently, program close will exit
                try {
                    // start by looking for command -  skip if bit not set
-                   int inbyte = istream.readByte()&0xFF;
+                   int inbyte = readByteProtected(istream)&0xFF;
                    while ( ((opCode = (inbyte)) & 0x80) == 0 )  {
                        if (debug) log.debug("Skipping: "+Integer.toHexString(opCode));
-                       inbyte = istream.readByte()&0xFF;
+                       inbyte = readByteProtected(istream)&0xFF;
                    }
                    // here opCode is OK. Create output message
                    if (debug) log.debug("Start message with opcode: "+Integer.toHexString(opCode));
@@ -134,7 +134,7 @@ public class IBLnPacketizer extends LnPacketizer implements LocoNetInterface {
                    while (msg == null) {
                        try {
                            // Capture 2nd byte, always present
-                           int byte2 = istream.readByte()&0xFF;
+                           int byte2 = readByteProtected(istream)&0xFF;
                            //log.debug("Byte2: "+Integer.toHexString(byte2));
                            // Decide length
                            switch((opCode & 0x60) >> 5) {
@@ -165,7 +165,7 @@ public class IBLnPacketizer extends LnPacketizer implements LocoNetInterface {
                            //log.debug("len: "+len);
                            for (int i = 2; i < len; i++)  {
                                // check for message-blocking error
-                               int b = istream.readByte()&0xFF;
+                               int b = readByteProtected(istream)&0xFF;
                                //log.debug("char "+i+" is: "+Integer.toHexString(b));
                                if ( (b&0x80) != 0) {
                                    log.warn("LocoNet message with opCode: "
@@ -203,6 +203,7 @@ public class IBLnPacketizer extends LnPacketizer implements LocoNetInterface {
                    // message is complete, dispatch it !!
                    {
                        if (debug) log.debug("queue message for notification");
+//log.info("-------------------Uhlenbrock IB-COM Loconet message RECEIVED: "+msg.toString());
                        final LocoNetMessage thisMsg = msg;
                        final LnPacketizer thisTC = trafficController;
                        // return a notification via the queue to ensure end
@@ -263,6 +264,7 @@ public class IBLnPacketizer extends LnPacketizer implements LocoNetInterface {
                         lastMessage = xmtLocoNetList.removeFirst();
                         msg = xmtList.removeFirst();
                     }
+//log.info("-------------------Uhlenbrock IB-COM Loconet message to SEND: "+msg.toString());
 
                     // input - now send
                     try {
@@ -367,7 +369,7 @@ public class IBLnPacketizer extends LnPacketizer implements LocoNetInterface {
     }
 
     
-    static Logger log = LoggerFactory.getLogger(IBLnPacketizer.class.getName());
+    static Logger log = LoggerFactory.getLogger(UhlenbrockPacketizer.class.getName());
 }
 
 /* @(#)LnPacketizer.java */

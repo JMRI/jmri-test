@@ -17,7 +17,11 @@ import java.awt.event.ActionEvent;
 
 public class PacketGenAction 			extends AbstractAction {
 
-    jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo _memo=null;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8964241715144652712L;
+	jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo _memo=null;
 
     public PacketGenAction(String s,jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo memo) { 
        super(s);
@@ -33,8 +37,8 @@ public class PacketGenAction 			extends AbstractAction {
          super(s);
          // If there is no system memo given, assume the system memo
          // is the first one in the instance list.
-         _memo=(jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo)(jmri.InstanceManager.
-               getList(jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo.class).get(0));
+         _memo= jmri.InstanceManager.
+               getList(jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo.class).get(0);
     }
 
     public PacketGenAction() {
