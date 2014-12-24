@@ -45,6 +45,11 @@ import org.slf4j.LoggerFactory;
 public class SignalMastTableAction extends AbstractTableAction {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -9004328747718013361L;
+
+	/**
      * Create an action with a specific title.
      * <P>
      * Note that the argument is the Action title, not the title of the
@@ -88,6 +93,11 @@ public class SignalMastTableAction extends AbstractTableAction {
         f = new BeanTableFrame(m, helpTarget(), dataTable){
     
             /**
+			 * 
+			 */
+			private static final long serialVersionUID = 151993526213329064L;
+
+			/**
              * Include an "add" button
              */
             void extras() {
@@ -133,7 +143,12 @@ public class SignalMastTableAction extends AbstractTableAction {
     static final Logger log = LoggerFactory.getLogger(SignalMastTableAction.class.getName());
 
     public static class MyComboBoxRenderer extends JComboBox implements TableCellRenderer {
-        public MyComboBoxRenderer(Vector<String> items) {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 2364477222809281572L;
+
+		public MyComboBoxRenderer(Vector<String> items) {
             super(items);
         }
     
@@ -154,7 +169,12 @@ public class SignalMastTableAction extends AbstractTableAction {
     }
     
     public static class MyComboBoxEditor extends DefaultCellEditor {
-        public MyComboBoxEditor(Vector<String> items) {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -7751205079226082780L;
+
+		public MyComboBoxEditor(Vector<String> items) {
             super(new JComboBox(items));
         }
     }

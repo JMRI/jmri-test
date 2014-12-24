@@ -35,7 +35,11 @@ import org.slf4j.LoggerFactory;
  */
 public class OperationsFrame extends JmriJFrame implements AncestorListener {
 
-    public static final String NEW_LINE = "\n"; // NOI18N
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8263240370517832287L;
+	public static final String NEW_LINE = "\n"; // NOI18N
     public static final String NONE = ""; // NOI18N
 
     public OperationsFrame(String s) {
@@ -60,7 +64,8 @@ public class OperationsFrame extends JmriJFrame implements AncestorListener {
 
     @Override
     public void initComponents() {
-        ((OperationsPanel) this.getContentPane()).initComponents();
+        // default method does nothing, but fail to call super.initComponents,
+        // so that Exception does not need to be caught
     }
 
     public void initMinimumSize() {

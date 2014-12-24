@@ -30,7 +30,12 @@ import org.openide.awt.ActionRegistration;
 )
 public class SimpleProgAction extends JmriAbstractAction {
 
-    public SimpleProgAction(String s, WindowInterface wi) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2613992237869747426L;
+
+	public SimpleProgAction(String s, WindowInterface wi) {
         super(s, wi);
     }
 

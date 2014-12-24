@@ -23,6 +23,11 @@ import org.openide.util.lookup.ServiceProvider;
 public class ConfigServlet extends HttpServlet {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6553518147779778004L;
+
+	/**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *

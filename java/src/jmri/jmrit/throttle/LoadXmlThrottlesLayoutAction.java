@@ -37,6 +37,11 @@ import org.slf4j.LoggerFactory;
 public class LoadXmlThrottlesLayoutAction extends AbstractAction {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 447922874340812542L;
+
+	/**
 	 *  Constructor
 	 *
 	 * @param  s  Name for the action.

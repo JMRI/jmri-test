@@ -32,7 +32,12 @@ import org.slf4j.LoggerFactory;
  */
 public class PrintOptionPanel extends OperationsPanel {
 
-    // labels
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2753161901627545371L;
+
+	// labels
     JLabel logoURL = new JLabel("");
 
     // major buttons
@@ -124,8 +129,7 @@ public class PrintOptionPanel extends OperationsPanel {
     JPanel pSwDrop = new JPanel();
     JPanel pSwLocal = new JPanel();
 
-    @Override
-    public void initComponents() {
+    public PrintOptionPanel() {
 
         // the following code sets the frame's initial state
         // add tool tips

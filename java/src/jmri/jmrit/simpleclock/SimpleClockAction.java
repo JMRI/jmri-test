@@ -32,7 +32,12 @@ import org.slf4j.LoggerFactory;
 )
 public class SimpleClockAction extends AbstractAction {
 
- 	public SimpleClockAction(String s) {
+ 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3576996090549666302L;
+
+	public SimpleClockAction(String s) {
     	super(s);
      }
  	public SimpleClockAction() {

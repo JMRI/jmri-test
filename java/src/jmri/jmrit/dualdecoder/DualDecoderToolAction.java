@@ -30,7 +30,12 @@ import org.openide.awt.ActionRegistration;
 )
 public class DualDecoderToolAction extends AbstractAction {
 
-    public DualDecoderToolAction(String s) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6247002513212825213L;
+
+	public DualDecoderToolAction(String s) {
         super(s);
 
         // disable ourself if programming is not possible

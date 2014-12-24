@@ -64,6 +64,11 @@ import org.slf4j.LoggerFactory;
 public class TransitTableAction extends AbstractTableAction {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6706323528016998482L;
+
+	/**
      * Create an action with a specific title.
      * <P
      * Note that the argument is the Action title, not the title of the
@@ -93,6 +98,10 @@ public class TransitTableAction extends AbstractTableAction {
     protected void createModel() {
         m = new BeanTableDataModel() {
 
+		/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1094887636602790173L;
 		static public final int EDITCOL = NUMCOLUMN;
 		static public final int DUPLICATECOL = EDITCOL+1;	
 
@@ -2149,6 +2158,10 @@ public class TransitTableAction extends AbstractTableAction {
 	public class SectionTableModel extends javax.swing.table.AbstractTableModel implements
 			java.beans.PropertyChangeListener {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -1304019961248020624L;
 		public static final int SEQUENCE_COLUMN = 0;
 		public static final int SECTIONNAME_COLUMN = 1;
 		public static final int ACTION_COLUMN = 2;
@@ -2261,6 +2274,10 @@ public class TransitTableAction extends AbstractTableAction {
 	public class SpecialActionTableModel extends javax.swing.table.AbstractTableModel implements
 			java.beans.PropertyChangeListener {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 6679856281556756994L;
 		public static final int WHEN_COLUMN = 0;
 		public static final int WHAT_COLUMN = 1;
 		public static final int EDIT_COLUMN = 2;

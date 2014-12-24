@@ -43,7 +43,12 @@ import org.openide.awt.ActionRegistration;
 )
 public class OBlockTableAction extends AbstractAction {
 
-    public OBlockTableAction() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6331453045183182013L;
+
+	public OBlockTableAction() {
         this("OBlock Table");
     }
     public OBlockTableAction(String actionName) {

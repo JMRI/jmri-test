@@ -31,6 +31,11 @@ import org.slf4j.LoggerFactory;
 public class StoreDefaultXmlThrottlesLayoutAction extends AbstractAction {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2009494965932977394L;
+
+	/**
 	 * Constructor
 	 * @param s Name for the action.
 	 */

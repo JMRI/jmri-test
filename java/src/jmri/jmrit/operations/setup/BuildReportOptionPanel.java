@@ -25,7 +25,12 @@ import org.slf4j.LoggerFactory;
  */
 public class BuildReportOptionPanel extends OperationsPanel {
 
-    // major buttons
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 755494379884398257L;
+
+	// major buttons
     JButton saveButton = new JButton(Bundle.getMessage("Save"));
 
     // radio buttons
@@ -46,8 +51,7 @@ public class BuildReportOptionPanel extends OperationsPanel {
     // combo boxes
     JComboBox fontSizeComboBox = new JComboBox();
 
-    @Override
-    public void initComponents() {
+    public BuildReportOptionPanel() {
 
 		// the following code sets the frame's initial state
         // add tool tips

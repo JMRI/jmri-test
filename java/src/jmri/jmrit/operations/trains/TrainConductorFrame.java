@@ -15,13 +15,13 @@ import org.slf4j.LoggerFactory;
  */
 public class TrainConductorFrame extends OperationsFrame {
 
-    public TrainConductorFrame() {
-        super(new TrainConductorPanel());
+    public TrainConductorFrame(Train train) {
+        super(new TrainConductorPanel(train));
+        this.initComponents(train);
     }
 
-    public void initComponents(Train train) {
+    private void initComponents(Train train) {
         super.initComponents();
-        ((TrainConductorPanel) this.getContentPane()).initComponents(train);
 
         if (train != null) {
             setTitle(Bundle.getMessage("TitleTrainConductor") + " (" + train.getName() + ")");

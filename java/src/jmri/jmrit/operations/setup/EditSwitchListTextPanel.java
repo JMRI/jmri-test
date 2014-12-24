@@ -22,7 +22,12 @@ import org.slf4j.LoggerFactory;
  */
 public class EditSwitchListTextPanel extends OperationsPanel {
 
-    protected static final ResourceBundle rb = ResourceBundle
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1972541065567773705L;
+
+	protected static final ResourceBundle rb = ResourceBundle
             .getBundle("jmri.jmrit.operations.trains.JmritOperationsTrainsBundle");
 
     // major buttons
@@ -48,8 +53,7 @@ public class EditSwitchListTextPanel extends OperationsPanel {
     JTextField noCarDropsTextField = new JTextField(60);
     JTextField trainDoneTextField = new JTextField(60);
 
-    @Override
-    public void initComponents() {
+    public EditSwitchListTextPanel() {
 
         // the following code sets the frame's initial state
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

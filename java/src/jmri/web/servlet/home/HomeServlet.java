@@ -20,7 +20,12 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = HttpServlet.class)
 public class HomeServlet extends HttpServlet {
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1852868042825396772L;
+
+	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (!request.getRequestURI().equals("/")) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;

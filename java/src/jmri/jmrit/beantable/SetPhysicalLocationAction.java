@@ -36,7 +36,12 @@ import org.slf4j.LoggerFactory;
  */
 public class SetPhysicalLocationAction extends AbstractAction {
 
-    Reporter _reporter;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4814083186968429295L;
+
+	Reporter _reporter;
 
     static ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrit.beantable.JmritBeantablePhysicalLocationBundle");
 
@@ -62,8 +67,8 @@ public class SetPhysicalLocationAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         // create a copy route frame
         if (f == null || !f.isVisible()) {
-            f = new SetPhysicalLocationFrame();
-            f.initComponents(_reporter);
+            f = new SetPhysicalLocationFrame(_reporter);
+            f.setVisible(true);
         }
         f.setExtendedState(Frame.NORMAL);
     }
@@ -79,27 +84,31 @@ public class SetPhysicalLocationAction extends AbstractAction {
     class SetPhysicalLocationFrame extends OperationsFrame {
 
         /**
+		 * 
+		 */
+		private static final long serialVersionUID = 6749008114407458542L;
+
+		/**
          * Frame Constructor
          */
-        public SetPhysicalLocationFrame() {
-            super(rb.getString("MenuSetPhysicalLocation"), new SetPhysicalLocationPanel());
-        }
-
-        public void initComponents(Reporter r) {
-            super.initComponents();
-            ((SetPhysicalLocationPanel) this.getContentPane()).initComponents(r);
+        public SetPhysicalLocationFrame(Reporter reporter) {
+            super(rb.getString("MenuSetPhysicalLocation"), new SetPhysicalLocationPanel(reporter));
 
             // add help menu to window
             addHelpMenu("package.jmri.jmrit.operations.Operations_SetTrainIconCoordinates", true); // fix this later
 
             pack();
-            this.setVisible(true);
         }
     }
 
     class SetPhysicalLocationPanel extends OperationsPanel {
 
-        Reporter _reporter;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -5054495048362448275L;
+
+		Reporter _reporter;
 
         String emptyReporterString = "(No Reporters)";
 
@@ -118,7 +127,7 @@ public class SetPhysicalLocationAction extends AbstractAction {
         // Spinners
         PhysicalLocationPanel physicalLocation;
 
-        public void initComponents(Reporter l) {
+        public SetPhysicalLocationPanel(Reporter l) {
 
             // Store the location (null if called from the list view)
             _reporter = l;

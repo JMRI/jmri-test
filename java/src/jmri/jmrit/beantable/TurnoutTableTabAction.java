@@ -23,7 +23,12 @@ import org.slf4j.LoggerFactory;
 )
 public class TurnoutTableTabAction extends AbstractTableTabAction {
     
-    public TurnoutTableTabAction(String s){
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5514320062139920106L;
+
+	public TurnoutTableTabAction(String s){
         super(s);
     }
     

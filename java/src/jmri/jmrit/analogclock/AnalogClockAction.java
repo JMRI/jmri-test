@@ -31,7 +31,11 @@ import org.openide.awt.ActionRegistration;
 )
 public class AnalogClockAction extends AbstractAction {
 	
-  public AnalogClockAction() {
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4819621738581568597L;
+public AnalogClockAction() {
     this("Analog Clock");
 }
 

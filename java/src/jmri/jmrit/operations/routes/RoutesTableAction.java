@@ -26,7 +26,11 @@ import org.openide.awt.ActionRegistration;
         position = 4370)
 public class RoutesTableAction extends AbstractAction {
 
-    public RoutesTableAction(String s) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5090064971975194515L;
+	public RoutesTableAction(String s) {
     	super(s);
     }
 

@@ -23,7 +23,12 @@ import org.slf4j.LoggerFactory;
  */
 public class EditManifestHeaderTextPanel extends OperationsPanel {
 
-    protected static final ResourceBundle rb = ResourceBundle
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3520403072636166571L;
+
+	protected static final ResourceBundle rb = ResourceBundle
             .getBundle("jmri.jmrit.operations.trains.JmritOperationsTrainsBundle");
 
     // major buttons
@@ -56,8 +61,7 @@ public class EditManifestHeaderTextPanel extends OperationsPanel {
     JTextField model_TextField = new JTextField(25);
     JTextField consist_TextField = new JTextField(25);
 
-    @Override
-    public void initComponents() {
+    public EditManifestHeaderTextPanel() {
 
         // the following code sets the frame's initial state
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

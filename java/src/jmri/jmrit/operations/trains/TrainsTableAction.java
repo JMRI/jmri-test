@@ -25,6 +25,11 @@ import org.openide.awt.ActionRegistration;
         position = 4380)
 public class TrainsTableAction extends AbstractAction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7608766876884479719L;
+
 	public TrainsTableAction(String s) {
 		super(s);
 	}

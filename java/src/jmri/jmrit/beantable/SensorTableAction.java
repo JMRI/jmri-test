@@ -34,6 +34,10 @@ import org.slf4j.LoggerFactory;
 public class SensorTableAction extends AbstractTableAction {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1577021703800089406L;
+	/**
      * Create an action with a specific title.
      * <P>
      * Note that the argument is the Action title, not the title of the

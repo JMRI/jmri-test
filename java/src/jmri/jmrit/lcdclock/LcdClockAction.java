@@ -33,7 +33,12 @@ import org.openide.awt.ActionRegistration;
 )
  public class LcdClockAction extends AbstractAction {
 	 
-	 public LcdClockAction() {
+	 /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2354784468892156228L;
+
+	public LcdClockAction() {
          this("LCD Clock");
      }
 

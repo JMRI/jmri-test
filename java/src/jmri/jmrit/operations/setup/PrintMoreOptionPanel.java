@@ -21,6 +21,11 @@ import org.slf4j.LoggerFactory;
  */
 public class PrintMoreOptionPanel extends OperationsPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5124421051550630914L;
+
 	// labels
     // major buttons
     JButton saveButton = new JButton(Bundle.getMessage("Save"));
@@ -34,8 +39,7 @@ public class PrintMoreOptionPanel extends OperationsPanel {
 
 	// text area
 	// combo boxes
-    @Override
-    public void initComponents() {
+    public PrintMoreOptionPanel() {
 
         // the following code sets the frame's initial state
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

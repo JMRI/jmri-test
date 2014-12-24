@@ -23,7 +23,12 @@ import org.slf4j.LoggerFactory;
 )
 public class LightTableTabAction extends AbstractTableTabAction {
 
-    public LightTableTabAction(String s){
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2814960247992024318L;
+
+	public LightTableTabAction(String s){
         super(s);
     }
     

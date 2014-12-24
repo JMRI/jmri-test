@@ -23,7 +23,12 @@ import org.slf4j.LoggerFactory;
  */
 public class EditManifestTextPanel extends OperationsPanel {
 
-    protected static final ResourceBundle rb = ResourceBundle
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4953082330888903645L;
+
+	protected static final ResourceBundle rb = ResourceBundle
             .getBundle("jmri.jmrit.operations.trains.JmritOperationsTrainsBundle");
 
     // major buttons
@@ -55,8 +60,7 @@ public class EditManifestTextPanel extends OperationsPanel {
     JTextField cabooseChangeAtTextField = new JTextField(60);
     JTextField locoAndCabooseChangeAtTextField = new JTextField(60);
 
-    @Override
-    public void initComponents() {
+    public EditManifestTextPanel() {
 
         // the following code sets the frame's initial state
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

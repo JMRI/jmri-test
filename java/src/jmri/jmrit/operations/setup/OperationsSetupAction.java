@@ -27,7 +27,11 @@ import org.openide.awt.ActionRegistration;
 public class OperationsSetupAction extends AbstractAction {
 
     
-    public OperationsSetupAction(String s) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1935343860582396704L;
+	public OperationsSetupAction(String s) {
     	super(s);
     }
 

@@ -30,7 +30,12 @@ import org.openide.awt.ActionRegistration;
 )
  public class NixieClockAction extends AbstractAction {
 	 
-	 public NixieClockAction() {
+	 /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5653182277242573672L;
+
+	public NixieClockAction() {
          this("Nixie Clock");
      }
 

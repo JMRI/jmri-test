@@ -37,7 +37,12 @@ import org.openide.awt.ActionRegistration;
 )
 public class RosterFrameAction extends JmriAbstractAction {
     
-    public RosterFrameAction(String s, WindowInterface wi) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3393320955672226931L;
+
+	public RosterFrameAction(String s, WindowInterface wi) {
         super(s, wi);
     }
     

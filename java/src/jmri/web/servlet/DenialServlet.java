@@ -28,7 +28,12 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = HttpServlet.class)
 public class DenialServlet extends HttpServlet {
 
-    @Override
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5496689594665029622L;
+
+	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(UTF8_TEXT_HTML);
         response.sendError(HttpServletResponse.SC_FORBIDDEN);

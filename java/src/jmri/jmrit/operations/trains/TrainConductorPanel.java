@@ -25,7 +25,12 @@ import org.slf4j.LoggerFactory;
  */
 public class TrainConductorPanel extends CommonConductorYardmasterPanel {
 
-    protected static final boolean isManifest = true;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7149077790256321679L;
+
+	protected static final boolean isManifest = true;
 
     // labels
     JLabel textTrainName = new JLabel();
@@ -36,12 +41,17 @@ public class TrainConductorPanel extends CommonConductorYardmasterPanel {
     JPanel pTrainDepartureTime = new JPanel();
 
     // major buttons
+
+    /**
+     * Default constructor required to use as JavaBean.
+     */
     public TrainConductorPanel() {
-        super();
+        this(null);
     }
 
-    public void initComponents(Train train) {
-        super.initComponents();
+    public TrainConductorPanel(Train train) {
+        super();
+        initComponents();
 
         _train = train;
 

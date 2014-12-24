@@ -23,7 +23,12 @@ import org.slf4j.LoggerFactory;
 )
 public class SensorTableTabAction extends AbstractTableTabAction {
     
-    public SensorTableTabAction(String s){
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8373953953343271566L;
+
+	public SensorTableTabAction(String s){
         super(s);
     }
     

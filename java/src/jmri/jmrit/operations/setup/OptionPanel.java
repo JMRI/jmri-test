@@ -26,6 +26,11 @@ import org.slf4j.LoggerFactory;
  */
 public class OptionPanel extends OperationsPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5466426954499681092L;
+
 	// labels
     // major buttons
     JButton saveButton = new JButton(Bundle.getMessage("Save"));
@@ -68,8 +73,7 @@ public class OptionPanel extends OperationsPanel {
     // combo boxes
     JComboBox numberPassesComboBox = new JComboBox();
 
-    @Override
-    public void initComponents() {
+    public OptionPanel() {
 
         // load checkboxes
         localInterchangeCheckBox.setSelected(Setup.isLocalInterchangeMovesEnabled());
