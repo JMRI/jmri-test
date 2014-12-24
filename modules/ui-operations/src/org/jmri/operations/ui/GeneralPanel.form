@@ -26,14 +26,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="jmri.jmrit.operations.setup.OperationsSetupPanel" name="operationsSetupPanel">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_LayoutCodePre" type="java.lang.String" value="operationsSetupPanel.initComponents();"/>
-      </AuxValues>
-
-      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
-        <Property name="useNullLayout" type="boolean" value="true"/>
-      </Layout>
-    </Container>
+    <Component class="jmri.jmrit.operations.setup.OperationsSetupPanel" name="operationsSetupPanel">
+    </Component>
   </SubComponents>
 </Form>

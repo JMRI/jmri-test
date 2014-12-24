@@ -34,9 +34,6 @@ final class GeneralPanel extends javax.swing.JPanel {
 
         operationsSetupPanel = new OperationsSetupPanel();
 
-        operationsSetupPanel.setLayout(null);
-        operationsSetupPanel.initComponents();
-
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
