@@ -58,6 +58,11 @@ import jmri.util.swing.JmriBeanComboBox;
 public class TurnoutTableAction extends AbstractTableAction {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8221584673872246104L;
+
+	/**
      * Create an action with a specific title.
      * <P>
      * Note that the argument is the Action title, not the title of the
@@ -144,7 +149,12 @@ public class TurnoutTableAction extends AbstractTableAction {
         // note that this is a class creation, and very long
         m = new BeanTableDataModel() {
                 
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = -8822546005900067212L;
+
+			@Override
     		public int getColumnCount(){
                 return DIVERGCOL+1;
      		}
@@ -255,7 +265,7 @@ public class TurnoutTableAction extends AbstractTableAction {
                     if (t.getKnownState()==Turnout.INCONSISTENT) return "Inconsistent";
                     else return "Unknown";
                 } else if (col==MODECOL ) {
-                    JComboBox c = new JComboBox(t.getValidFeedbackNames());
+                    JComboBox<String> c = new JComboBox<String>(t.getValidFeedbackNames());
                     c.setSelectedItem(t.getFeedbackModeName());
                     c.addActionListener(new ActionListener(){
                         public void actionPerformed(ActionEvent e) {
@@ -274,7 +284,7 @@ public class TurnoutTableAction extends AbstractTableAction {
                 } else if (col==EDITCOL ) {
                     return Bundle.getMessage("ButtonEdit");
                 }else if (col == LOCKDECCOL) {
-                    JComboBox c = new JComboBox(t.getValidDecoderNames());
+                    JComboBox<String> c = new JComboBox<String>(t.getValidDecoderNames());
                     c.setSelectedItem (t.getDecoderName());
                     c.addActionListener(new ActionListener(){
                         public void actionPerformed(ActionEvent e) {
@@ -283,7 +293,7 @@ public class TurnoutTableAction extends AbstractTableAction {
                     });
                     return c;
                 } else if (col == LOCKOPRCOL) {
-                    JComboBox c = new JComboBox(lockOperations);
+                    JComboBox<String> c = new JComboBox<String>(lockOperations);
                     if (t.canLock(Turnout.CABLOCKOUT) && t.canLock(Turnout.PUSHBUTTONLOCKOUT)){
                         c.setSelectedItem (bothText);
                     } else if (t.canLock(Turnout.PUSHBUTTONLOCKOUT)){
@@ -305,7 +315,7 @@ public class TurnoutTableAction extends AbstractTableAction {
                     if(!speedListClosed.contains(speed)){
                         speedListClosed.add(speed);
                     }
-                    JComboBox c = new JComboBox(speedListClosed);
+                    JComboBox<String> c = new JComboBox<String>(speedListClosed);
                     c.setEditable(true);
                     c.setSelectedItem(speed);
 
@@ -317,7 +327,7 @@ public class TurnoutTableAction extends AbstractTableAction {
                     if(!speedListThrown.contains(speed)){
                         speedListThrown.add(speed);
                     }
-                    JComboBox c = new JComboBox(speedListThrown);
+                    JComboBox<String> c = new JComboBox<String>(speedListThrown);
                     c.setEditable(true);
                     c.setSelectedItem(speed);
                     return c;
@@ -339,7 +349,7 @@ public class TurnoutTableAction extends AbstractTableAction {
                     boolean b = ((Boolean) value).booleanValue();
                     t.setLocked(Turnout.CABLOCKOUT + Turnout.PUSHBUTTONLOCKOUT,	b);
                 } else if (col == MODECOL ) {
-                    String modeName = (String)((JComboBox)value).getSelectedItem();
+                    String modeName = (String)((JComboBox<String>)value).getSelectedItem();
                     t.setFeedbackMode(modeName);
                 } else if (col==SENSOR1COL ) {
                     try {
@@ -359,7 +369,7 @@ public class TurnoutTableAction extends AbstractTableAction {
                     // do nothing as this is handled by the combo box listener
                 } else if (col==OPSEDITCOL ) {
                     t.setInhibitOperation(false);
-                    editTurnoutOperation(t, (JComboBox)getValueAt(row,OPSONOFFCOL));
+                    editTurnoutOperation(t, (JComboBox<String>)getValueAt(row,OPSONOFFCOL));
                 } else if (col==EDITCOL ) {
                     class WindowMaker implements Runnable {
                         Turnout t;
@@ -373,7 +383,7 @@ public class TurnoutTableAction extends AbstractTableAction {
                     WindowMaker w = new WindowMaker(t);
 					javax.swing.SwingUtilities.invokeLater(w);
                 } else if (col == LOCKOPRCOL) {
-                    String lockOpName = (String) ((JComboBox) value)
+                    String lockOpName = (String) ((JComboBox<String>) value)
                         .getSelectedItem();
                     if (lockOpName.equals(bothText)){
                         t.enableLockOperation(Turnout.CABLOCKOUT + Turnout.PUSHBUTTONLOCKOUT, true);
@@ -387,10 +397,10 @@ public class TurnoutTableAction extends AbstractTableAction {
                         t.enableLockOperation(Turnout.PUSHBUTTONLOCKOUT, true);
                     }
                 } else if (col == LOCKDECCOL){
-                    String decoderName = (String)((JComboBox)value).getSelectedItem();
+                    String decoderName = (String)((JComboBox<String>)value).getSelectedItem();
                     t.setDecoderName(decoderName);
                 } else if (col==STRAIGHTCOL){
-                    String speed = (String)((JComboBox)value).getSelectedItem();
+                    String speed = (String)((JComboBox<String>)value).getSelectedItem();
                     try {
                         t.setStraightSpeed(speed);
                     } catch (jmri.JmriException ex) {
@@ -403,7 +413,7 @@ public class TurnoutTableAction extends AbstractTableAction {
                     fireTableRowsUpdated(row,row);
                 } else if (col==DIVERGCOL) {
                     
-                    String speed = (String)((JComboBox)value).getSelectedItem();
+                    String speed = (String)((JComboBox<String>)value).getSelectedItem();
                     try {
                         t.setDivergingSpeed(speed);
                     } catch (jmri.JmriException ex) {
@@ -514,7 +524,12 @@ public class TurnoutTableAction extends AbstractTableAction {
                 this.sorter = srtr;
                 JTable table = new JTable(srtr)  {
                     
-                    public TableCellRenderer getCellRenderer(int row, int column) {
+                    /**
+					 * 
+					 */
+					private static final long serialVersionUID = -3082196412648458792L;
+
+					public TableCellRenderer getCellRenderer(int row, int column) {
                         //Convert the displayed index to the model index, rather than the displayed index
                         int modelColumn = getColumnModel().getColumn(column).getModelIndex();
                         if (modelColumn == SENSOR1COL || modelColumn == SENSOR2COL) {
@@ -626,7 +641,7 @@ public class TurnoutTableAction extends AbstractTableAction {
     JmriJFrame addFrame = null;
     JTextField sysName = new JTextField(40);
     JTextField userName = new JTextField(40);
-    JComboBox prefixBox = new JComboBox();
+    JComboBox<String> prefixBox = new JComboBox<String>();
     JTextField numberToAdd = new JTextField(5);
     JCheckBox range = new JCheckBox("Add a range");
     JLabel sysNameLabel = new JLabel("Hardware Address");
@@ -664,7 +679,7 @@ public class TurnoutTableAction extends AbstractTableAction {
                     Boolean addToPrefix = true;
                     //Simple test not to add a system with a duplicate System prefix
                     for (int i = 0; i<prefixBox.getItemCount(); i++){
-                        if(((String)prefixBox.getItemAt(i)).equals(manuName))
+                        if(prefixBox.getItemAt(i).equals(manuName))
                             addToPrefix=false;
                     }
                     if (addToPrefix)
@@ -687,14 +702,14 @@ public class TurnoutTableAction extends AbstractTableAction {
     }
     
     /**
-     * Create a JComboBox containing all the options for turnout automation parameters for
+     * Create a JComboBox<String> containing all the options for turnout automation parameters for
      * this turnout
      * @param t	the turnout
      * @return	the JComboBox
      */
-    protected JComboBox makeAutomationBox(Turnout t) {
+    protected JComboBox<String> makeAutomationBox(Turnout t) {
     	String[] str = new String[]{"empty"};
-    	final JComboBox cb = new JComboBox(str);
+    	final JComboBox<String> cb = new JComboBox<String>(str);
     	final Turnout myTurnout = t;
     	updateAutomationBox(t, cb);
     	cb.addActionListener(new ActionListener() {
@@ -724,7 +739,7 @@ public class TurnoutTableAction extends AbstractTableAction {
      * @param t	turnout
      * @param cb	the JComboBox
      */
-    public static void updateAutomationBox(Turnout t, JComboBox cb) {
+    public static void updateAutomationBox(Turnout t, JComboBox<String> cb) {
     	TurnoutOperation[] ops = TurnoutOperationManager.getInstance().getTurnoutOperations();
     	cb.removeAllItems();
     	Vector<String> strings = new Vector<String>(20);
@@ -777,7 +792,7 @@ public class TurnoutTableAction extends AbstractTableAction {
      * @param t	turnout
      * @param cb JComboBox
      */
-    protected void setTurnoutOperation(Turnout t, JComboBox cb) {
+    protected void setTurnoutOperation(Turnout t, JComboBox<String> cb) {
         switch (cb.getSelectedIndex())
             {
             case 0:			// Off
@@ -807,7 +822,7 @@ public class TurnoutTableAction extends AbstractTableAction {
      * @param t turnout
      * @param box JComboBox that triggered the edit
      */
-    protected void editTurnoutOperation(Turnout t, JComboBox box) {
+    protected void editTurnoutOperation(Turnout t, JComboBox<String> box) {
     	TurnoutOperation op = t.getTurnoutOperation();
     	if (op==null) {
             TurnoutOperation proto = TurnoutOperationManager.getInstance().getMatchingOperationAlways(t);
@@ -828,11 +843,15 @@ public class TurnoutTableAction extends AbstractTableAction {
     }
     
     protected static class TurnoutOperationEditor extends JDialog {
-    	TurnoutOperationConfig config;
+    	/**
+		 * 
+		 */
+		private static final long serialVersionUID = 3523604197678096714L;
+		TurnoutOperationConfig config;
     	TurnoutOperation myOp;
     	Turnout myTurnout;
     	
-    	TurnoutOperationEditor(TurnoutTableAction tta, JFrame parent, TurnoutOperation op, Turnout t, JComboBox box) {
+    	TurnoutOperationEditor(TurnoutTableAction tta, JFrame parent, TurnoutOperation op, Turnout t, JComboBox<String> box) {
             super(parent);
             final TurnoutOperationEditor self = this;
             myOp = op;
@@ -909,8 +928,8 @@ public class TurnoutTableAction extends AbstractTableAction {
     JCheckBox doAutomationBox = new JCheckBox("Automatic retry");
     
     protected void setDefaultSpeeds(JFrame _who){
-        JComboBox thrownCombo = new JComboBox(speedListThrown);
-        JComboBox closedCombo = new JComboBox(speedListClosed);
+        JComboBox<String> thrownCombo = new JComboBox<String>(speedListThrown);
+        JComboBox<String> closedCombo = new JComboBox<String>(speedListClosed);
         thrownCombo.setEditable(true);
         closedCombo.setEditable(true);
         
@@ -1258,7 +1277,12 @@ public class TurnoutTableAction extends AbstractTableAction {
     public String getClassDescription() { return rb.getString("TitleTurnoutTable"); }
     
     static class BeanBoxRenderer extends JmriBeanComboBox implements TableCellRenderer {
-        public BeanBoxRenderer() {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 7351045146446284915L;
+
+		public BeanBoxRenderer() {
             super(InstanceManager.sensorManagerInstance());
             setFirstItemBlank(true);
         }
@@ -1281,7 +1305,12 @@ public class TurnoutTableAction extends AbstractTableAction {
     }
     
     static class BeanComboBoxEditor extends DefaultCellEditor {
-        public BeanComboBoxEditor(JmriBeanComboBox beanBox) {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1705620352249335223L;
+
+		public BeanComboBoxEditor(JmriBeanComboBox beanBox) {
             super(beanBox);
         }
     }

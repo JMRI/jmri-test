@@ -17,14 +17,18 @@ import org.slf4j.LoggerFactory;
  */
  public class IEEE802154MonFrame extends jmri.jmrix.AbstractMonFrame implements IEEE802154Listener {
 
-        private IEEE802154SystemConnectionMemo _memo=null;
+        /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6640585503142002255L;
+		private IEEE802154SystemConnectionMemo _memo=null;
 
         public IEEE802154MonFrame() {
                super();
                // If there is no system memo given, assume the system memo
                // is the first one in the instance list.
-              _memo=(IEEE802154SystemConnectionMemo)(jmri.InstanceManager.
-                    getList(IEEE802154SystemConnectionMemo.class).get(0));
+              _memo= jmri.InstanceManager.
+                    getList(IEEE802154SystemConnectionMemo.class).get(0);
         }
 
 

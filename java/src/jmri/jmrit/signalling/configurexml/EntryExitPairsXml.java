@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import jmri.configurexml.AbstractXmlAdapter;
 import jmri.jmrit.display.layoutEditor.LayoutEditor;
 import jmri.jmrit.signalling.EntryExitPairs;
-import org.jdom.Element;
+import org.jdom2.Element;
 import java.util.ArrayList;
 import java.util.List;
 import jmri.SignalMast;
@@ -131,7 +131,6 @@ public class EntryExitPairsXml extends AbstractXmlAdapter {
      * all the value-icon pairs
      * @param element Top level Element to unpack.
      */
-    @SuppressWarnings({ "unchecked", "null" })
     public boolean load(Element element) {
         // create the objects
 		EntryExitPairs eep = jmri.InstanceManager.getDefault(jmri.jmrit.signalling.EntryExitPairs.class);

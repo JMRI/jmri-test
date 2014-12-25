@@ -13,12 +13,12 @@ import java.util.List;
 import jmri.profile.ProfileManager;
 import jmri.util.FileUtil;
 import jmri.web.server.WebServerManager;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +57,6 @@ public class NodeIdentity {
         init(); // init as a method so the init can be synchronized.
     }
 
-    @SuppressWarnings("unchecked") // JDOM getChildren returns plain List, not List<Element>
     synchronized private void init() {
         File identityFile = this.identityFile();
         if (identityFile.exists()) {
@@ -65,7 +64,7 @@ public class NodeIdentity {
                 Document doc = (new SAXBuilder()).build(identityFile);
                 String id = doc.getRootElement().getChild(NODE_IDENTITY).getAttributeValue(NODE_IDENTITY);
                 this.formerIdentities.clear();
-                for (Element e : (List<Element>) doc.getRootElement().getChild(FORMER_IDENTITIES).getChildren()) {
+                for (Element e : doc.getRootElement().getChild(FORMER_IDENTITIES).getChildren()) {
                     this.formerIdentities.add(e.getAttributeValue(NODE_IDENTITY));
                 }
                 if (!this.validateIdentity(id)) {

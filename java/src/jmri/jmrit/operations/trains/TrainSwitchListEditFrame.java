@@ -31,7 +31,6 @@ import jmri.jmrit.operations.OperationsXml;
 import jmri.jmrit.operations.locations.Location;
 import jmri.jmrit.operations.locations.LocationManager;
 import jmri.jmrit.operations.setup.Control;
-import jmri.jmrit.operations.setup.OperationsSetupXml;
 import jmri.jmrit.operations.setup.Setup;
 
 import java.beans.PropertyChangeEvent;
@@ -45,6 +44,11 @@ import java.io.File;
  */
 
 public class TrainSwitchListEditFrame extends OperationsFrame implements java.beans.PropertyChangeListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3796539428562528626L;
 
 	JScrollPane switchPane;
 
@@ -279,8 +283,6 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 		Setup.setSwitchListRealTime(switchListRealTimeCheckBox.isSelected());
 		Setup.setSwitchListAllTrainsEnabled(switchListAllTrainsCheckBox.isSelected());
 		Setup.setSwitchListPagePerTrainEnabled(switchListPageCheckBox.isSelected());
-		// save setup file
-		OperationsSetupXml.instance().setDirty(true);
 		// save location file
 		OperationsXml.save();
 		enableSaveButton(false);
@@ -554,6 +556,10 @@ public class TrainSwitchListEditFrame extends OperationsFrame implements java.be
 
 	private static class TrainSwitchListCommentFrame extends OperationsFrame {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 4880037349897207594L;
 		// text area
 		JTextArea commentTextArea = new JTextArea(10, 90);
 		JScrollPane commentScroller = new JScrollPane(commentTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,

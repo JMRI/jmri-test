@@ -116,7 +116,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		String old = _number;
 		_number = number;
 		if (!old.equals(number))
-			firePropertyChange("rolling stock number", old, number); // NOI18N
+			setDirtyAndFirePropertyChange("rolling stock number", old, number); // NOI18N
 	}
 
 	public String getNumber() {
@@ -127,7 +127,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		String old = _road;
 		_road = road;
 		if (!old.equals(road))
-			firePropertyChange("rolling stock road", old, road); // NOI18N
+			setDirtyAndFirePropertyChange("rolling stock road", old, road); // NOI18N
 	}
 
 	public String getRoadName() {
@@ -151,7 +151,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		String old = _type;
 		_type = type;
 		if (!old.equals(type))
-			firePropertyChange("rolling stock type", old, type); // NOI18N
+			setDirtyAndFirePropertyChange("rolling stock type", old, type); // NOI18N
 	}
 
 	public String getTypeName() {
@@ -193,7 +193,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 				}
 			}
 			_length = length;
-			firePropertyChange(LENGTH_CHANGED_PROPERTY, old, length);
+			setDirtyAndFirePropertyChange(LENGTH_CHANGED_PROPERTY, old, length);
 		}
 	}
 
@@ -220,7 +220,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		String old = _color;
 		_color = color;
 		if (!old.equals(color))
-			firePropertyChange("rolling stock color", old, color); // NOI18N
+			setDirtyAndFirePropertyChange("rolling stock color", old, color); // NOI18N
 	}
 
 	public String getColor() {
@@ -236,7 +236,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		String old = _weight;
 		_weight = weight;
 		if (!old.equals(weight))
-			firePropertyChange("rolling stock weight", old, weight); // NOI18N
+			setDirtyAndFirePropertyChange("rolling stock weight", old, weight); // NOI18N
 	}
 
 	public String getWeight() {
@@ -253,7 +253,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		String old = _weightTons;
 		_weightTons = weight;
 		if (!old.equals(weight))
-			firePropertyChange("rolling stock weight tons", old, weight); // NOI18N
+			setDirtyAndFirePropertyChange("rolling stock weight tons", old, weight); // NOI18N
 	}
 
 	public String getWeightTons() {
@@ -291,7 +291,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		String old = _built;
 		_built = built;
 		if (!old.equals(built))
-			firePropertyChange("rolling stock built", old, built); // NOI18N
+			setDirtyAndFirePropertyChange("rolling stock built", old, built); // NOI18N
 	}
 
 	public String getBuilt() {
@@ -445,8 +445,8 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 					_trackLocation.addPickupRS(this);
 				}
 			}
-			firePropertyChange(LOCATION_CHANGED_PROPERTY, oldLocation, location);
-			firePropertyChange(TRACK_CHANGED_PROPERTY, oldTrack, track);
+			setDirtyAndFirePropertyChange(LOCATION_CHANGED_PROPERTY, oldLocation, location);
+			setDirtyAndFirePropertyChange(TRACK_CHANGED_PROPERTY, oldTrack, track);
 		}
 		return Track.OKAY;
 	}
@@ -536,8 +536,8 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 				setRouteDestination(null);
 			}
 
-			firePropertyChange(DESTINATION_CHANGED_PROPERTY, oldDestination, destination);
-			firePropertyChange(DESTINATION_TRACK_CHANGED_PROPERTY, oldTrack, track);
+			setDirtyAndFirePropertyChange(DESTINATION_CHANGED_PROPERTY, oldDestination, destination);
+			setDirtyAndFirePropertyChange(DESTINATION_TRACK_CHANGED_PROPERTY, oldTrack, track);
 		}
 		return Track.OKAY;
 	}
@@ -637,7 +637,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		int old = _moves;
 		_moves = moves;
 		if (old != moves)
-			firePropertyChange("rolling stock moves", Integer.toString(old), // NOI18N
+			setDirtyAndFirePropertyChange("rolling stock moves", Integer.toString(old), // NOI18N
 					Integer.toString(moves));
 	}
 
@@ -659,7 +659,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 			}
 			if (train != null)
 				train.addPropertyChangeListener(this);
-			firePropertyChange(TRAIN_CHANGED_PROPERTY, old, train);
+			setDirtyAndFirePropertyChange(TRAIN_CHANGED_PROPERTY, old, train);
 		}
 	}
 
@@ -689,7 +689,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		RouteLocation old = _routeLocation;
 		_routeLocation = routeLocation;
 		if (old != routeLocation)
-			firePropertyChange(ROUTE_LOCATION_CHANGED_PROPERTY, old, routeLocation);
+			setDirtyAndFirePropertyChange(ROUTE_LOCATION_CHANGED_PROPERTY, old, routeLocation);
 	}
 
 	public RouteLocation getRouteLocation() {
@@ -732,7 +732,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		String old = _value;
 		_value = value;
 		if (!old.equals(value))
-			firePropertyChange("rolling stock value", old, value); // NOI18N
+			setDirtyAndFirePropertyChange("rolling stock value", old, value); // NOI18N
 	}
 
         private IdTag _tag = null;
@@ -752,7 +752,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		_rfid = id;
                 log.debug("Changing IdTag for {} to {}", toString(),id);  
 		if (!old.equals(id))
-			firePropertyChange("rolling stock rfid", old, id); // NOI18N
+			setDirtyAndFirePropertyChange("rolling stock rfid", old, id); // NOI18N
                 _tag = InstanceManager.getDefault(IdTagManager.class).getIdTag(id);
                 log.debug("Tag {} Found",_tag.toString() );
                 _tag.addPropertyChangeListener( new PropertyChangeListener(){
@@ -792,14 +792,14 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		String old = _last;
 		_last = date;
 		if (!old.equals(date))
-			firePropertyChange("rolling stock date", old, date); // NOI18N
+			setDirtyAndFirePropertyChange("rolling stock date", old, date); // NOI18N
 	}
 	
 	public void setBlocking(int number) {
 		int old = _blocking;
 		_blocking = number;
 		if (old != number)
-			firePropertyChange("car blocking changed", old, number); // NOI18N
+			setDirtyAndFirePropertyChange("car blocking changed", old, number); // NOI18N
 	}
 
 	public int getBlocking() {
@@ -822,7 +822,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		RouteLocation old = _routeDestination;
 		_routeDestination = routeDestination;
 		if (old != routeDestination)
-			firePropertyChange(ROUTE_DESTINATION_CHANGED_PROPERTY, old, routeDestination);
+			setDirtyAndFirePropertyChange(ROUTE_DESTINATION_CHANGED_PROPERTY, old, routeDestination);
 	}
 
 	public RouteLocation getRouteDestination() {
@@ -839,7 +839,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		String old = _owner;
 		_owner = owner;
 		if (!old.equals(owner))
-			firePropertyChange("rolling stock owner", old, owner); // NOI18N
+			setDirtyAndFirePropertyChange("rolling stock owner", old, owner); // NOI18N
 	}
 
 	public String getOwner() {
@@ -856,7 +856,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		boolean old = _locationUnknown;
 		_locationUnknown = unknown;
 		if (!old == unknown)
-			firePropertyChange("car location known", old ? "true" : "false", unknown ? "true" // NOI18N
+			setDirtyAndFirePropertyChange("car location known", old ? "true" : "false", unknown ? "true" // NOI18N
 					: "false"); // NOI18N
 	}
 
@@ -879,7 +879,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		boolean old = _outOfService;
 		_outOfService = outOfService;
 		if (!old == outOfService)
-			firePropertyChange("car out of service", old ? "true" : "false", outOfService ? "true" // NOI18N
+			setDirtyAndFirePropertyChange("car out of service", old ? "true" : "false", outOfService ? "true" // NOI18N
 					: "false"); // NOI18N
 	}
 
@@ -895,7 +895,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		boolean old = _selected;
 		_selected = selected;
 		if (!old == selected)
-			firePropertyChange("selected", old ? "true" : "false", selected ? "true" // NOI18N
+			setDirtyAndFirePropertyChange("selected", old ? "true" : "false", selected ? "true" // NOI18N
 					: "false"); // NOI18N
 	}
 
@@ -916,7 +916,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		String old = _comment;
 		_comment = comment;
 		if (!old.equals(comment))
-			firePropertyChange("rolling stock comment", old, comment); // NOI18N
+			setDirtyAndFirePropertyChange("rolling stock comment", old, comment); // NOI18N
 	}
 
 	public String getComment() {
@@ -968,8 +968,8 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 	 * @param e
 	 *            RollingStock XML element
 	 */
-	public void rollingStock(org.jdom.Element e) {
-		org.jdom.Attribute a;
+	public void rollingStock(org.jdom2.Element e) {
+		org.jdom2.Attribute a;
 		if ((a = e.getAttribute(Xml.ID)) != null)
 			_id = a.getValue();
 		else
@@ -1053,7 +1053,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 	 * 
 	 * @return Contents in a JDOM Element
 	 */
-	protected org.jdom.Element store(org.jdom.Element e) {
+	protected org.jdom2.Element store(org.jdom2.Element e) {
 		e.setAttribute(Xml.ID, getId());
 		e.setAttribute(Xml.ROAD_NAME, getRoadName());
 		e.setAttribute(Xml.ROAD_NUMBER, getNumber());
@@ -1127,7 +1127,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 			if (log.isDebugEnabled())
 				log.debug("Property change for rolling stock: ({}) property name: ({}) old: ({}) new: ({})",
 						toString(), e.getPropertyName(), e.getOldValue(), e.getNewValue());
-			firePropertyChange(e.getPropertyName(), e.getOldValue(), e.getNewValue());
+			setDirtyAndFirePropertyChange(e.getPropertyName(), e.getOldValue(), e.getNewValue());
 		}
 		if (e.getPropertyName().equals(Location.DISPOSE_CHANGED_PROPERTY)) {
 			if (e.getSource() == _location) {
@@ -1206,7 +1206,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		pcs.removePropertyChangeListener(l);
 	}
 
-	protected void firePropertyChange(String p, Object old, Object n) {
+	protected void setDirtyAndFirePropertyChange(String p, Object old, Object n) {
 		pcs.firePropertyChange(p, old, n);
 	}
 

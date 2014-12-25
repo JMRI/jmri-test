@@ -21,8 +21,8 @@ import java.awt.BorderLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jdom.Attribute;
-import org.jdom.Element;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
 import jmri.util.BusyGlassPane;
 import java.awt.event.ItemListener;
 import java.awt.Cursor;
@@ -43,7 +43,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 abstract public class PaneProgFrame extends JmriJFrame
     implements java.beans.PropertyChangeListener, PaneContainer  {
 
-    // members to contain working variable, CV values, Indexed CV values
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2824668047394722236L;
+	// members to contain working variable, CV values, Indexed CV values
     JLabel              progStatus   = new JLabel(SymbolicProgBundle.getMessage("StateIdle"));
     CvTableModel        cvModel      = null;
     IndexedCvTableModel iCvModel     = null;
@@ -140,7 +144,12 @@ abstract public class PaneProgFrame extends JmriJFrame
         }
         // Add a save item
         fileMenu.add(new AbstractAction(SymbolicProgBundle.getMessage("MenuSave")) {
-            public void actionPerformed(ActionEvent e) {
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = -5729965483978099042L;
+
+			public void actionPerformed(ActionEvent e) {
                 storeFile();
             }
         });
@@ -347,7 +356,6 @@ abstract public class PaneProgFrame extends JmriJFrame
      * @param pProgrammerFile   Name of the programmer file to use
      * @param pProg             Programmer object to be used to access CVs
      */
-    @SuppressWarnings("unchecked")
 	public PaneProgFrame(DecoderFile pDecoderFile, @NonNull RosterEntry pRosterEntry,
                         String pFrameTitle, String pProgrammerFile, Programmer pProg, boolean opsMode) {
         super(pFrameTitle);
@@ -618,7 +626,6 @@ abstract public class PaneProgFrame extends JmriJFrame
 
     }
 
-    @SuppressWarnings("unchecked")
     protected void loadProgrammerFile(RosterEntry r) {
         // Open and parse programmer file
         XmlFile pf = new XmlFile(){};  // XmlFile is abstract
@@ -738,7 +745,6 @@ abstract public class PaneProgFrame extends JmriJFrame
         super.windowClosing(e);
     }
 
-    @SuppressWarnings("unchecked")
 	void readConfig(Element root, RosterEntry r) {
         // check for "programmer" element at start
         Element base;

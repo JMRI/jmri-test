@@ -16,7 +16,11 @@ import java.awt.event.ActionEvent;
  */
 public class NodeConfigAction extends AbstractAction {
 
-    private jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo icm=null;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 9095207703075488295L;
+	private jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo icm=null;
 
     public NodeConfigAction(String s, jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo cm) { 
        super(s);
@@ -24,8 +28,8 @@ public class NodeConfigAction extends AbstractAction {
        {
           try{
              // find the first registered memo.
-             icm=(jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo)(jmri.InstanceManager.
-               getList(jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo.class).get(0));
+             icm= jmri.InstanceManager.
+               getList(jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo.class).get(0);
           } catch(java.lang.NullPointerException npe) {
                // no memo exists, are we configuring this for the first time?
                log.debug("No IEEE 802.15.4 System Connection Memo available");

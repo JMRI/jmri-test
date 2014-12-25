@@ -3,6 +3,7 @@
 package jmri.jmrix.nce;
 
 import jmri.*;
+
 import java.util.ResourceBundle;
 
 /**
@@ -55,9 +56,11 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
             tc.setSystemConnectionMemo(this);
     }
     
-    private ProgrammerManager programmerManager;
+    @SuppressWarnings("deprecation")
+	private ProgrammerManager programmerManager;
     
-    public ProgrammerManager getProgrammerManager() {
+    @SuppressWarnings("deprecation")
+	public ProgrammerManager getProgrammerManager() {
         //Do not want to return a programmer if the system is disabled
         if (getDisabled())
                 return null;
@@ -65,7 +68,8 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
             programmerManager = new NceProgrammerManager(new NceProgrammer(getNceTrafficController()), this);
         return programmerManager;
     }
-    public void setProgrammerManager(ProgrammerManager p) {
+    @SuppressWarnings("deprecation")
+	public void setProgrammerManager(ProgrammerManager p) {
         programmerManager = p;
     }
     
@@ -80,11 +84,17 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
     /** 
      * Tells which managers this provides by class
      */
-    public boolean provides(Class<?> type) {
+    @SuppressWarnings("deprecation")
+	public boolean provides(Class<?> type) {
         if (getDisabled())
             return false;
         if (type.equals(jmri.ProgrammerManager.class))
             return true;
+        if (type.equals(jmri.GlobalProgrammerManager.class))
+            return getProgrammerManager().isGlobalProgrammerAvailable();
+        if (type.equals(jmri.AddressedProgrammerManager.class))
+            return getProgrammerManager().isAddressedModePossible();
+            
         if (type.equals(jmri.ThrottleManager.class))
             return true;
         if (type.equals(jmri.PowerManager.class))
@@ -107,12 +117,17 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
     /** 
      * Provide manager by class
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "deprecation" })
     public <T> T get(Class<?> T) {
         if (getDisabled())
             return null;
         if (T.equals(jmri.ProgrammerManager.class))
             return (T)getProgrammerManager();
+        if (T.equals(jmri.GlobalProgrammerManager.class))
+            return (T)getProgrammerManager();
+        if (T.equals(jmri.AddressedProgrammerManager.class))
+            return (T)getProgrammerManager();
+
         if (T.equals(jmri.ThrottleManager.class))
             return (T)getThrottleManager();
         if (T.equals(jmri.PowerManager.class))
@@ -145,7 +160,8 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
      * This puts the common manager config in one
      * place.  
      */
-    public void configureManagers() {
+    @SuppressWarnings("deprecation")
+	public void configureManagers() {
     	powerManager = new jmri.jmrix.nce.NcePowerManager(this);
         InstanceManager.setPowerManager(powerManager);
 

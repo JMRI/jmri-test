@@ -27,6 +27,10 @@ import javax.swing.ScrollPaneConstants;
  */
 public class SchedulesTableFrame extends OperationsFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3345422286868959830L;
 	SchedulesTableModel schedulesModel = new SchedulesTableModel();
 	javax.swing.JTable schedulesTable = new javax.swing.JTable(schedulesModel);
 	JScrollPane schedulesPane;
@@ -90,7 +94,7 @@ public class SchedulesTableFrame extends OperationsFrame {
 		toolMenu.add(new PrintLocationsAction(Bundle.getMessage("MenuItemPreview"), true));
 		menuBar.add(toolMenu);
 		setJMenuBar(menuBar);
-		addHelpMenu("package.jmri.jmrit.operations.Operations_Schedules", true); // NOI18N
+		addHelpMenu("package.jmri.jmrit.operations.Operations_LocationSchedules", true); // NOI18N
 
 		initMinimumSize();
 		// make panel a bit wider than minimum if the very first time opened

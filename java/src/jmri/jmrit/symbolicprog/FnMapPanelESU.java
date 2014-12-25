@@ -9,14 +9,14 @@ import javax.swing.UIManager;
 import java.awt.*;
 
 import java.util.List;
-import org.jdom.Element;
-import org.jdom.Attribute;
+import org.jdom2.Element;
+import org.jdom2.Attribute;
 import jmri.util.jdom.LocaleSelector;
 import jmri.jmrit.symbolicprog.tabbedframe.PaneProgPane;
 import jmri.util.SystemType;
 import jmri.Application;
 import jmri.jmrit.roster.RosterEntry;
-import org.jdom.*;
+import org.jdom2.*;
 
 /**
  * <p>Provide a graphical representation of the ESU mapping table.
@@ -75,7 +75,11 @@ import org.jdom.*;
  * @version			$Revision: 24716 $
  */
 public class FnMapPanelESU extends JPanel {
-    // columns
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5897048084177413562L;
+	// columns
     int firstCol = 0;
     int firstOut = 1;
     int currentCol = firstCol;

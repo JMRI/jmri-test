@@ -8,7 +8,7 @@ import javax.swing.*;
 import jmri.progdebugger.*;
 import junit.framework.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 /**
  * VariableTableModelTest.java
@@ -261,7 +261,12 @@ public class VariableTableModelTest extends TestCase {
     public void testVarTableLoadBogus() {
         String[] args = {"CV", "Name"};
         VariableTableModel t = new VariableTableModel(null, args, new CvTableModel(null, p), null){
-            void reportBogus(){}
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 396374590706462256L;
+
+			void reportBogus(){}
         };
 
         // create a JDOM tree with just some elements

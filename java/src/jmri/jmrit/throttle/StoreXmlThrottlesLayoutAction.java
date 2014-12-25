@@ -11,8 +11,8 @@ import javax.swing.*;
 
 import java.util.*;
 
-import org.jdom.*;
-import org.jdom.output.*;
+import org.jdom2.*;
+import org.jdom2.output.*;
 
 /**
  * Save throttles to XML
@@ -22,6 +22,11 @@ import org.jdom.output.*;
  * @version     $Revision$
  */
 public class StoreXmlThrottlesLayoutAction extends AbstractAction {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7344068917325110367L;
 
 	/**
 	 * Constructor

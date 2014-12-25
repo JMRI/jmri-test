@@ -11,16 +11,17 @@ import javax.swing.JComboBox;
 import jmri.jmris.AbstractOperationsServer;
 import jmri.jmrit.operations.rollingstock.RollingStockLogger;
 import jmri.jmrit.operations.trains.TrainLogger;
+import jmri.jmrit.operations.trains.TrainManagerXml;
 import jmri.web.server.WebServerManager;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Operations settings.
  * 
- * @author Daniel Boudreau Copyright (C) 2008, 2010, 2012
+ * @author Daniel Boudreau Copyright (C) 2008, 2010, 2012, 2014
  * @version $Revision$
  */
 public class Setup {
@@ -167,6 +168,9 @@ public class Setup {
 	public static final String GREEN = Bundle.getMessage("Green");
 	public static final String BLUE = Bundle.getMessage("Blue");
 	public static final String GRAY = Bundle.getMessage("Gray");
+	public static final String PINK = Bundle.getMessage("Pink");
+	public static final String CYAN = Bundle.getMessage("Cyan");
+	public static final String MAGENTA = Bundle.getMessage("Magenta");
 
 	// Unit of Length
 	public static final String FEET = Bundle.getMessage("Feet");
@@ -259,6 +263,7 @@ public class Setup {
 
 	private static boolean enableTrainIconXY = true;
 	private static boolean appendTrainIcon = false; // when true, append engine number to train name
+	private static String setupComment = "";
 
 	private static boolean mainMenuEnabled = false; // when true add operations menu to main menu bar
 	private static boolean closeWindowOnSave = false; // when true, close window when save button is activated
@@ -527,7 +532,9 @@ public class Setup {
 	public static void setGenerateCsvManifestEnabled(boolean enabled) {
 		boolean old = generateCsvManifest;
 		generateCsvManifest = enabled;
-		firePropertyChange(MANIFEST_CSV_PROPERTY_CHANGE, old, enabled);
+		if (enabled && !old)
+			TrainManagerXml.instance().createDefaultCsvManifestDirectory();
+		setDirtyAndFirePropertyChange(MANIFEST_CSV_PROPERTY_CHANGE, old, enabled);
 	}
 
 	public static boolean isGenerateCsvSwitchListEnabled() {
@@ -537,7 +544,9 @@ public class Setup {
 	public static void setGenerateCsvSwitchListEnabled(boolean enabled) {
 		boolean old = generateCsvSwitchList;
 		generateCsvSwitchList = enabled;
-		firePropertyChange(SWITCH_LIST_CSV_PROPERTY_CHANGE, old, enabled);
+		if (enabled && !old)
+			TrainManagerXml.instance().createDefaultCsvSwitchListDirectory();
+		setDirtyAndFirePropertyChange(SWITCH_LIST_CSV_PROPERTY_CHANGE, old, enabled);
 	}
 
 	public static boolean isVsdPhysicalLocationEnabled() {
@@ -555,9 +564,9 @@ public class Setup {
 	}
 
 	public static void setRailroadName(String name) {
-		if (!railroadName.equals(name))
-			OperationsSetupXml.instance().setDirty(true);
+		String old = railroadName;
 		railroadName = name;
+		setDirtyAndFirePropertyChange("Railroad Name Change", old, name); // NOI18N
 	}
 
 	public static String getHazardousMsg() {
@@ -663,6 +672,14 @@ public class Setup {
 	public static boolean isTrainIconAppendEnabled() {
 		return appendTrainIcon;
 	}
+	
+	public static void setComment(String comment) {
+		setupComment = comment;
+	}
+	
+	public static String getComment() {
+		return setupComment;
+	}
 
 	public static void setBuildReportLevel(String level) {
 		buildReportLevel = level;
@@ -729,7 +746,9 @@ public class Setup {
 	}
 
 	public static void setSwitchListRealTime(boolean b) {
+		boolean old = switchListRealTime;
 		switchListRealTime = b;
+		setDirtyAndFirePropertyChange("Switch List Real Time", old, b); // NOI18N
 	}
 
 	public static boolean isSwitchListRealTime() {
@@ -737,7 +756,9 @@ public class Setup {
 	}
 
 	public static void setSwitchListAllTrainsEnabled(boolean b) {
+		boolean old = switchListAllTrains;
 		switchListAllTrains = b;
+		setDirtyAndFirePropertyChange("Switch List All Trains", old, b); // NOI18N
 	}
 
 	public static boolean isSwitchListAllTrainsEnabled() {
@@ -1327,6 +1348,12 @@ public class Setup {
 			return Color.gray;
 		if (colorName.equals(YELLOW))
 			return Color.yellow;
+		if (colorName.equals(PINK))
+			return Color.pink;
+		if (colorName.equals(CYAN))
+			return Color.cyan;
+		if (colorName.equals(MAGENTA))
+			return Color.magenta;
 		return null; // default
 	}
 
@@ -1448,16 +1475,16 @@ public class Setup {
 		}
 	}
 
-	public static JComboBox getManifestFormatComboBox() {
-		JComboBox box = new JComboBox();
+	public static JComboBox<String> getManifestFormatComboBox() {
+		JComboBox<String> box = new JComboBox<>();
 		box.addItem(STANDARD_FORMAT);
 		box.addItem(TWO_COLUMN_FORMAT);
 		box.addItem(TWO_COLUMN_TRACK_FORMAT);
 		return box;
 	}
 
-	public static JComboBox getOrientationComboBox() {
-		JComboBox box = new JComboBox();
+	public static JComboBox<String> getOrientationComboBox() {
+		JComboBox<String> box = new JComboBox<>();
 		box.addItem(PORTRAIT);
 		box.addItem(LANDSCAPE);
 		box.addItem(HALFPAGE);
@@ -1469,8 +1496,8 @@ public class Setup {
 	 * 
 	 * @return the available text colors used for printing
 	 */
-	public static JComboBox getPrintColorComboBox() {
-		JComboBox box = new JComboBox();
+	public static JComboBox<String> getPrintColorComboBox() {
+		JComboBox<String> box = new JComboBox<>();
 		box.addItem(BLACK);
 		box.addItem(RED);
 		box.addItem(ORANGE);
@@ -1481,8 +1508,8 @@ public class Setup {
 		return box;
 	}
 
-	public static JComboBox getEngineMessageComboBox() {
-		JComboBox box = new JComboBox();
+	public static JComboBox<String> getEngineMessageComboBox() {
+		JComboBox<String> box = new JComboBox<>();
 		box.addItem(NONE);
 		for (String attribute : getEngineAttributes()) {
 			box.addItem(attribute);
@@ -1495,8 +1522,8 @@ public class Setup {
 		return box;
 	}
 
-	public static JComboBox getCarMessageComboBox() {
-		JComboBox box = new JComboBox();
+	public static JComboBox<String> getCarMessageComboBox() {
+		JComboBox<String> box = new JComboBox<>();
 		box.addItem(NONE);
 		for (String attribute : getCarAttributes()) {
 			box.addItem(attribute);
@@ -1514,8 +1541,8 @@ public class Setup {
 	 * @return JComboBox loaded with the strings (North, South, East, West) showing the available train directions for
 	 *         this railroad
 	 */
-	public static JComboBox getComboBox() {
-		JComboBox box = new JComboBox();
+	public static JComboBox<String> getComboBox() {
+		JComboBox<String> box = new JComboBox<>();
 		if ((traindir & EAST) > 0)
 			box.addItem(EAST_DIR);
 		if ((traindir & WEST) > 0)
@@ -1614,6 +1641,9 @@ public class Setup {
 		Element e = new Element(Xml.OPERATIONS);
 		e.addContent(values = new Element(Xml.RAIL_ROAD));
 		values.setAttribute(Xml.NAME, getRailroadName());
+		
+		e.addContent(values = new Element(Xml.SETUP));
+		values.setAttribute(Xml.COMMENT, getComment());
 
 		e.addContent(values = new Element(Xml.SETTINGS));
 		values.setAttribute(Xml.MAIN_MENU, isMainMenuEnabled() ? Xml.TRUE : Xml.FALSE);
@@ -1821,7 +1851,7 @@ public class Setup {
 			return;
 		}
 		Element operations = e.getChild(Xml.OPERATIONS);
-		org.jdom.Attribute a;
+		org.jdom2.Attribute a;
 
 		if ((operations.getChild(Xml.RAIL_ROAD) != null)
 				&& (a = operations.getChild(Xml.RAIL_ROAD).getAttribute(Xml.NAME)) != null) {
@@ -1830,6 +1860,15 @@ public class Setup {
 				log.debug("railroadName: {}", name);
 			railroadName = name; // don't set the dirty bit
 		}
+		
+		if ((operations.getChild(Xml.SETUP) != null)
+				&& (a = operations.getChild(Xml.SETUP).getAttribute(Xml.COMMENT)) != null) {
+			String comment = a.getValue();
+			if (log.isDebugEnabled())
+				log.debug("setup comment: {}", comment);
+			setupComment = comment;
+		}
+		
 		if (operations.getChild(Xml.SETTINGS) != null) {
 			if ((a = operations.getChild(Xml.SETTINGS).getAttribute(Xml.MAIN_MENU)) != null) {
 				String enabled = a.getValue();
@@ -2061,13 +2100,13 @@ public class Setup {
 				String b = a.getValue();
 				if (log.isDebugEnabled())
 					log.debug("realTime: {}", b);
-				setSwitchListRealTime(b.equals(Xml.TRUE));
+				switchListRealTime = b.equals(Xml.TRUE);
 			}
 			if ((a = operations.getChild(Xml.SWITCH_LIST).getAttribute(Xml.ALL_TRAINS)) != null) {
 				String b = a.getValue();
 				if (log.isDebugEnabled())
 					log.debug("allTrains: {}", b);
-				setSwitchListAllTrainsEnabled(b.equals(Xml.TRUE));
+				switchListAllTrains = b.equals(Xml.TRUE);
 			}
 			if ((a = operations.getChild(Xml.SWITCH_LIST).getAttribute(Xml.PAGE_MODE)) != null) {
 				String b = a.getValue();
@@ -2389,13 +2428,13 @@ public class Setup {
 				String enable = a.getValue();
 				if (log.isDebugEnabled())
 					log.debug("generateCvsManifest: " + enable);
-				setGenerateCsvManifestEnabled(enable.equals(Xml.TRUE));
+				generateCsvManifest = enable.equals(Xml.TRUE);
 			}
 			if ((a = operations.getChild(Xml.BUILD_OPTIONS).getAttribute(Xml.GENERATE_CSV_SWITCH_LIST)) != null) {
 				String enable = a.getValue();
 				if (log.isDebugEnabled())
 					log.debug("generateCvsSwitchList: " + enable);
-				setGenerateCsvSwitchListEnabled(enable.equals(Xml.TRUE));
+				generateCsvSwitchList = enable.equals(Xml.TRUE);
 			}
 		}
 		if (operations.getChild(Xml.BUILD_REPORT) != null) {
@@ -2698,7 +2737,8 @@ public class Setup {
 		pcs.removePropertyChangeListener(l);
 	}
 
-	protected static void firePropertyChange(String p, Object old, Object n) {
+	protected static void setDirtyAndFirePropertyChange(String p, Object old, Object n) {
+		OperationsSetupXml.instance().setDirty(true);
 		pcs.firePropertyChange(p, old, n);
 	}
 

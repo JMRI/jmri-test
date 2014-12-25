@@ -2,18 +2,19 @@
 
 package jmri.jmrit.operations.locations;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.beans.*;
-
-import javax.swing.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumnModel;
-
-import java.util.List;
 import jmri.jmrit.operations.setup.Control;
 import jmri.util.table.ButtonEditor;
 import jmri.util.table.ButtonRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Table Model for edit of locations used by operations
@@ -22,6 +23,11 @@ import jmri.util.table.ButtonRenderer;
  * @version $Revision$
  */
 public class LocationsTableModel extends javax.swing.table.AbstractTableModel implements PropertyChangeListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8385333181895879131L;
 
 	LocationManager manager; // There is only one manager
 
@@ -277,9 +283,8 @@ public class LocationsTableModel extends javax.swing.table.AbstractTableModel im
 
 	private synchronized void launchYardmaster(int row) {
 		log.debug("Yardmaster");
-		ymf = new YardmasterFrame();
 		Location loc = locationsList.get(row);
-		ymf.initComponents(loc);
+		ymf = new YardmasterFrame(loc);
 	}
 
 	public void propertyChange(PropertyChangeEvent e) {

@@ -31,6 +31,10 @@ import java.util.List;
 
 public class LocationEditFrame extends OperationsFrame implements java.beans.PropertyChangeListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -820196357214001064L;
 	YardTableModel yardModel = new YardTableModel();
 	JTable yardTable = new JTable(yardModel);
 	JScrollPane yardPane;
@@ -84,7 +88,6 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 	JTextArea commentTextArea = new JTextArea(2, 60);
 	JScrollPane commentScroller = new JScrollPane(commentTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 			JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	Dimension minScrollerDim = new Dimension(800, 42);
 
         // Reader selection dropdown.
         JComboBox<String> readerSelector = new JComboBox<String>();
@@ -229,9 +232,11 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 		JPanel pC = new JPanel();
 		pC.setLayout(new GridBagLayout());
 		pC.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("Comment")));
-		commentScroller.setMinimumSize(minScrollerDim);
 		addItem(pC, commentScroller, 0, 0);
-
+		
+		// adjust text area width based on window size
+		adjustTextAreaColumnWidth(commentScroller, commentTextArea);
+		
                 // reader row
                 JPanel readerPanel = new JPanel();
                 readerPanel.setLayout(new GridBagLayout());
@@ -307,7 +312,7 @@ public class LocationEditFrame extends OperationsFrame implements java.beans.Pro
 			toolMenu.add(new SetPhysicalLocationAction(Bundle.getMessage("MenuSetPhysicalLocation"), _location));
 		menuBar.add(toolMenu);
 		setJMenuBar(menuBar);
-		addHelpMenu("package.jmri.jmrit.operations.Operations_Locations", true); // NOI18N
+		addHelpMenu("package.jmri.jmrit.operations.Operations_AddLocation", true); // NOI18N
 
 		pack();
 		setMinimumSize(new Dimension(Control.panelWidth500, Control.panelHeight500));

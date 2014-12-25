@@ -13,8 +13,8 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 
-import org.jdom.Attribute;
-import org.jdom.Element;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
 
 import jmri.util.jdom.LocaleSelector;
 
@@ -30,7 +30,12 @@ import jmri.util.jdom.LocaleSelector;
  */
 public class VariableTableModel extends AbstractTableModel implements ActionListener, PropertyChangeListener {
 
-    private String headers[] = null;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6912067927864604835L;
+
+	private String headers[] = null;
 
     private Vector<VariableValue> rowVector = new Vector<VariableValue>();  // vector of Variable items
     private CvTableModel _cvModel = null;          // reference to external table model
@@ -697,7 +702,7 @@ public class VariableTableModel extends AbstractTableModel implements ActionList
             if (entriesAttr != null) {
                 entries = entriesAttr.getIntValue();
             }
-        } catch (org.jdom.DataConversionException e1) {
+        } catch (org.jdom2.DataConversionException e1) {
         }
         Attribute ESUAttr = child.getAttribute("mfx");
 		boolean mfxFlag = false;
@@ -705,7 +710,7 @@ public class VariableTableModel extends AbstractTableModel implements ActionList
             if (ESUAttr != null) {
                 mfxFlag = ESUAttr.getBooleanValue();
             }
-        } catch (org.jdom.DataConversionException e1) {
+        } catch (org.jdom2.DataConversionException e1) {
         }
         // ensure all CVs exist
         for (int i = 0; i < entries; i++) {

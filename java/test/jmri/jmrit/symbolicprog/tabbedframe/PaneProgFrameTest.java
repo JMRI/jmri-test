@@ -9,9 +9,9 @@ import jmri.jmrit.roster.RosterEntry;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.jdom.DocType;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.jdom2.DocType;
+import org.jdom2.Document;
+import org.jdom2.Element;
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -36,7 +36,12 @@ public class PaneProgFrameTest extends TestCase {
         PaneProgFrame p = new PaneProgFrame(null, new RosterEntry(),
                                             "test frame", "programmers/Basic.xml",
                                             new jmri.progdebugger.ProgDebugger(), false) {
-                // dummy implementations
+                /**
+												 * 
+												 */
+												private static final long serialVersionUID = 4374088194550590113L;
+
+				// dummy implementations
                 protected JPanel getModePane() { return new JPanel(); }
             };
 
@@ -48,8 +53,7 @@ public class PaneProgFrameTest extends TestCase {
         
     	JFrame f = jmri.util.JmriJFrame.getFrame("test frame");
     	Assert.assertTrue("found frame", f !=null );
-    	if (f != null)
-    		f.dispose();
+    	f.dispose();
     }
 
 
@@ -60,7 +64,12 @@ public class PaneProgFrameTest extends TestCase {
         PaneProgFrame p = new PaneProgFrame(null, new RosterEntry(),
                                             "test frame", "programmers/Basic.xml",
                                             new jmri.progdebugger.ProgDebugger(), false) {
-                // dummy implementations
+                /**
+												 * 
+												 */
+												private static final long serialVersionUID = 8480123043386522138L;
+
+				// dummy implementations
                 protected JPanel getModePane() { return null; }
             };
 
@@ -76,8 +85,7 @@ public class PaneProgFrameTest extends TestCase {
         
     	JFrame f = jmri.util.JmriJFrame.getFrame("test frame");
     	Assert.assertTrue("found frame", f !=null );
-    	if (f != null)
-    		f.dispose();
+    	f.dispose();
     }
 
     // static variables for internal classes to report their interpretations

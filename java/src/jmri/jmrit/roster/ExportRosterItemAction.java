@@ -4,7 +4,7 @@ package jmri.jmrit.roster;
 
 import java.awt.Component;
 import jmri.util.FileUtil;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,12 @@ import org.slf4j.LoggerFactory;
  */
 public class ExportRosterItemAction extends AbstractRosterItemAction  {
 
-    public ExportRosterItemAction(String pName, Component pWho) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6157199339046481963L;
+
+	public ExportRosterItemAction(String pName, Component pWho) {
         super(pName, pWho);
     }
     
@@ -67,7 +72,7 @@ public class ExportRosterItemAction extends AbstractRosterItemAction  {
         LocoFile lf = new LocoFile();  // used as a temporary
         Element lroot;
         try {
-            lroot = (Element)lf.rootFromName(mFullFromFilename).clone();
+            lroot = lf.rootFromName(mFullFromFilename).clone();
         } catch (Exception e) {
             log.error("Exception while loading loco XML file: "+mFullFromFilename+" exception: "+e);
             return false;

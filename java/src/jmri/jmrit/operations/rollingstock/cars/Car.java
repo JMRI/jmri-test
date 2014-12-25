@@ -29,24 +29,24 @@ public class Car extends RollingStock {
 	protected boolean _utility = false;
 	protected boolean _loadGeneratedByStaging = false;
 	protected Kernel _kernel = null;
-	protected String _load = carLoads.getDefaultEmptyName();
+	protected String _loadName = carLoads.getDefaultEmptyName();
 	protected int _wait = 0;
 	protected String _pickupScheduleId = NONE;
 
 	protected Location _rweDestination = null; // return when empty destination
 	protected Track _rweDestTrack = null; // return when empty track
-	protected String _rweLoad = carLoads.getDefaultEmptyName();
+	protected String _rweLoadName = carLoads.getDefaultEmptyName();
 
 	// schedule items
 	protected String _scheduleId = NONE; // the schedule id assigned to this car
-	protected String _nextLoad = NONE; // next load by schedule
+	protected String _nextLoadName = NONE; // next load by schedule
 	protected int _nextWait = 0; // next wait by schedule
 	protected Location _finalDestination = null; // final destination by schedule or router
 	protected Track _finalDestTrack = null; // final track by schedule or router
 	protected Location _previousFinalDestination = null; // previous final destination (for train resets)
 	protected Track _previousFinalDestTrack = null; // previous final track (for train resets)
 	protected String _previousScheduleId = NONE; // previous schedule id (for train resets)
-	protected String _nextPickupScheduleId = NONE;
+	protected String _nextPickupScheduleId = NONE; // when the car needs to be pulled
 
 	public static final String LOAD_CHANGED_PROPERTY = "Car load changed"; // NOI18N property change descriptions
 	public static final String WAIT_CHANGED_PROPERTY = "Car wait changed"; // NOI18N
@@ -72,8 +72,8 @@ public class Car extends RollingStock {
 		car.setBuilt(_built);
 		car.setColor(_color);
 		car.setLength(_length);
-		car.setLoadName(_load);
-		car.setReturnWhenEmptyLoadName(_rweLoad);
+		car.setLoadName(_loadName);
+		car.setReturnWhenEmptyLoadName(_rweLoadName);
 		car.setNumber(_number);
 		car.setOwner(_owner);
 		car.setRoadName(_road);
@@ -85,7 +85,7 @@ public class Car extends RollingStock {
 		boolean old = _hazardous;
 		_hazardous = hazardous;
 		if (!old == hazardous)
-			firePropertyChange("car hazardous", old ? "true" : "false", hazardous ? "true" : "false"); // NOI18N
+			setDirtyAndFirePropertyChange("car hazardous", old ? "true" : "false", hazardous ? "true" : "false"); // NOI18N
 	}
 
 	public boolean isHazardous() {
@@ -96,7 +96,7 @@ public class Car extends RollingStock {
 		boolean old = _passenger;
 		_passenger = passenger;
 		if (!old == passenger)
-			firePropertyChange("car passenger", old ? "true" : "false", passenger ? "true" : "false"); // NOI18N
+			setDirtyAndFirePropertyChange("car passenger", old ? "true" : "false", passenger ? "true" : "false"); // NOI18N
 	}
 
 	public boolean isPassenger() {
@@ -107,7 +107,7 @@ public class Car extends RollingStock {
 		boolean old = _fred;
 		_fred = fred;
 		if (!old == fred)
-			firePropertyChange("car has fred", old ? "true" : "false", fred ? "true" : "false"); // NOI18N
+			setDirtyAndFirePropertyChange("car has fred", old ? "true" : "false", fred ? "true" : "false"); // NOI18N
 	}
 
 	public boolean hasFred() {
@@ -115,14 +115,14 @@ public class Car extends RollingStock {
 	}
 
 	public void setLoadName(String load) {
-		String old = _load;
-		_load = load;
+		String old = _loadName;
+		_loadName = load;
 		if (!old.equals(load))
-			firePropertyChange(LOAD_CHANGED_PROPERTY, old, load);
+			setDirtyAndFirePropertyChange(LOAD_CHANGED_PROPERTY, old, load);
 	}
 
 	public String getLoadName() {
-		return _load;
+		return _loadName;
 	}
 
 	@Deprecated
@@ -138,21 +138,29 @@ public class Car extends RollingStock {
 	}
 
 	public void setReturnWhenEmptyLoadName(String load) {
-		String old = _rweLoad;
-		_rweLoad = load;
+		String old = _rweLoadName;
+		_rweLoadName = load;
 		if (!old.equals(load))
-			firePropertyChange(LOAD_CHANGED_PROPERTY, old, load);
+			setDirtyAndFirePropertyChange(LOAD_CHANGED_PROPERTY, old, load);
 	}
 
 	public String getReturnWhenEmptyLoadName() {
-		return _rweLoad;
+		return _rweLoadName;
 	}
 
 	/**
 	 * Gets the car load's priority.
 	 */
 	public String getLoadPriority() {
-		return (carLoads.getPriority(_type, _load));
+		return (carLoads.getPriority(_type, _loadName));
+	}
+	
+	/**
+	 * Gets the car load's type, empty or load.
+	 * @return type empty or type load
+	 */
+	public String getLoadType() {
+		return (carLoads.getLoadType(_type, _loadName));
 	}
 
 	public String getPickupComment() {
@@ -181,7 +189,7 @@ public class Car extends RollingStock {
 		String old = _scheduleId;
 		_scheduleId = id;
 		if (!old.equals(id))
-			firePropertyChange(SCHEDULE_ID_CHANGED_PROPERTY, old, id);
+			setDirtyAndFirePropertyChange(SCHEDULE_ID_CHANGED_PROPERTY, old, id);
 	}
 
 	public String getScheduleId() {
@@ -189,14 +197,14 @@ public class Car extends RollingStock {
 	}
 
 	public void setNextLoadName(String load) {
-		String old = _nextLoad;
-		_nextLoad = load;
+		String old = _nextLoadName;
+		_nextLoadName = load;
 		if (!old.equals(load))
-			firePropertyChange(LOAD_CHANGED_PROPERTY, old, load);
+			setDirtyAndFirePropertyChange(LOAD_CHANGED_PROPERTY, old, load);
 	}
 
 	public String getNextLoadName() {
-		return _nextLoad;
+		return _nextLoadName;
 	}
 
 	public String getWeightTons() {
@@ -223,8 +231,7 @@ public class Car extends RollingStock {
 			// get loaded weight
 			weightTons = Integer.parseInt(getWeightTons());
 			// adjust for empty weight if car is empty, 1/3 of loaded weight
-			if (!isCaboose() && !isPassenger()
-					&& CarLoads.instance().getLoadType(getTypeName(), getLoadName()).equals(CarLoad.LOAD_TYPE_EMPTY))
+			if (!isCaboose() && !isPassenger() && getLoadType().equals(CarLoad.LOAD_TYPE_EMPTY))
 				weightTons = weightTons / 3;
 		} catch (Exception e) {
 			log.debug("Car ({}) weight not set", toString());
@@ -236,37 +243,18 @@ public class Car extends RollingStock {
 		int old = _wait;
 		_wait = count;
 		if (old != count)
-			firePropertyChange(NEXT_WAIT_CHANGED_PROPERTY, old, count);
+			setDirtyAndFirePropertyChange(NEXT_WAIT_CHANGED_PROPERTY, old, count);
 	}
 
 	public int getWait() {
 		return _wait;
 	}
 
-	// /**
-	// * This car's service order when placed at a track that considers car order. There are two track orders, FIFO and
-	// * LIFO. Car's with the lowest numbers are serviced first when placed on a track in FIFO mode. Car's with the
-	// * highest numbers are serviced first when placed on a track in LIFO mode.
-	// *
-	// * @param number
-	// * The assigned service order for this car.
-	// */
-	// public void setOrder(int number) {
-	// int old = _order;
-	// _order = number;
-	// if (old != number)
-	// firePropertyChange("car order changed", old, number); // NOI18N
-	// }
-	//
-	// public int getOrder() {
-	// return _order;
-	// }
-
 	public void setNextWait(int count) {
 		int old = _nextWait;
 		_nextWait = count;
 		if (old != count)
-			firePropertyChange(NEXT_WAIT_CHANGED_PROPERTY, old, count);
+			setDirtyAndFirePropertyChange(NEXT_WAIT_CHANGED_PROPERTY, old, count);
 	}
 
 	public int getNextWait() {
@@ -277,7 +265,7 @@ public class Car extends RollingStock {
 		String old = _pickupScheduleId;
 		_pickupScheduleId = id;
 		if (!old.equals(id))
-			firePropertyChange("car pickup schedule changes", old, id); // NOI18N
+			setDirtyAndFirePropertyChange("car pickup schedule changes", old, id); // NOI18N
 	}
 
 	public String getPickupScheduleId() {
@@ -288,7 +276,7 @@ public class Car extends RollingStock {
 		String old = _nextPickupScheduleId;
 		_nextPickupScheduleId = id;
 		if (!old.equals(id))
-			firePropertyChange("next car pickup schedule changes", old, id); // NOI18N
+			setDirtyAndFirePropertyChange("next car pickup schedule changes", old, id); // NOI18N
 	}
 
 	public String getNextPickupScheduleId() {
@@ -318,7 +306,7 @@ public class Car extends RollingStock {
 			_finalDestination.addPropertyChangeListener(this);
 		// log.debug("Next destination for car ("+toString()+") old: "+old+" new: "+destination);
 		if ((old != null && !old.equals(destination)) || (destination != null && !destination.equals(old)))
-			firePropertyChange(FINAL_DESTINATION_CHANGED_PROPERTY, old, destination);
+			setDirtyAndFirePropertyChange(FINAL_DESTINATION_CHANGED_PROPERTY, old, destination);
 	}
 
 	@Deprecated
@@ -351,7 +339,7 @@ public class Car extends RollingStock {
 				_finalDestTrack.addReservedInRoute(this);
 				_finalDestTrack.addPropertyChangeListener(this);
 			}
-			firePropertyChange(FINAL_DESTINATION_TRACK_CHANGED_PROPERTY, old, track);
+			setDirtyAndFirePropertyChange(FINAL_DESTINATION_TRACK_CHANGED_PROPERTY, old, track);
 		}
 	}
 
@@ -399,7 +387,7 @@ public class Car extends RollingStock {
 		Location old = _rweDestination;
 		_rweDestination = destination;
 		if ((old != null && !old.equals(destination)) || (destination != null && !destination.equals(old)))
-			firePropertyChange(RETURN_WHEN_EMPTY_CHANGED_PROPERTY, null, null);
+			setDirtyAndFirePropertyChange(RETURN_WHEN_EMPTY_CHANGED_PROPERTY, null, null);
 	}
 
 	public Location getReturnWhenEmptyDestination() {
@@ -418,7 +406,7 @@ public class Car extends RollingStock {
 		Track old = _rweDestTrack;
 		_rweDestTrack = track;
 		if ((old != null && !old.equals(track)) || (track != null && !track.equals(old)))
-			firePropertyChange(RETURN_WHEN_EMPTY_CHANGED_PROPERTY, null, null);
+			setDirtyAndFirePropertyChange(RETURN_WHEN_EMPTY_CHANGED_PROPERTY, null, null);
 
 	}
 
@@ -444,7 +432,7 @@ public class Car extends RollingStock {
 		boolean old = _caboose;
 		_caboose = caboose;
 		if (!old == caboose)
-			firePropertyChange("car is caboose", old ? "true" : "false", caboose ? "true" : "false"); // NOI18N
+			setDirtyAndFirePropertyChange("car is caboose", old ? "true" : "false", caboose ? "true" : "false"); // NOI18N
 	}
 
 	public boolean isCaboose() {
@@ -455,7 +443,7 @@ public class Car extends RollingStock {
 		boolean old = _utility;
 		_utility = utility;
 		if (!old == utility)
-			firePropertyChange("car is utility", old ? "true" : "false", utility ? "true" : "false"); // NOI18N
+			setDirtyAndFirePropertyChange("car is utility", old ? "true" : "false", utility ? "true" : "false"); // NOI18N
 	}
 
 	public boolean isUtility() {
@@ -482,7 +470,7 @@ public class Car extends RollingStock {
 			newName = _kernel.getName();
 		}
 		if (!old.equals(newName))
-			firePropertyChange(KERNEL_NAME_CHANGED_PROPERTY, old, newName); // NOI18N
+			setDirtyAndFirePropertyChange(KERNEL_NAME_CHANGED_PROPERTY, old, newName); // NOI18N
 	}
 
 	public Kernel getKernel() {
@@ -609,8 +597,7 @@ public class Car extends RollingStock {
 				if (getLoadName().equals(getReturnWhenEmptyLoadName()))
 					setLoadName(carLoads.getDefaultEmptyName());
 				else
-					// note that RWE sets the car's final destination
-					setLoadEmpty();
+					setLoadEmpty(); // note that RWE sets the car's final destination
 			}
 		}
 	}
@@ -630,8 +617,8 @@ public class Car extends RollingStock {
 				setReturnWhenEmpty();
 			return;
 		}
-		// if car doesn't have a custom load, flip load status
-		if (getLoadName().equals(carLoads.getDefaultEmptyName()))
+		// flip load names
+		if (getLoadType().equals(CarLoad.LOAD_TYPE_EMPTY))
 			setLoadName(carLoads.getDefaultLoadName());
 		else
 			setLoadEmpty();
@@ -691,11 +678,11 @@ public class Car extends RollingStock {
 	 * @param e
 	 *            Car XML element
 	 */
-	public Car(org.jdom.Element e) {
+	public Car(org.jdom2.Element e) {
 		loading = true; // stop track schedule from bumping
 		super.rollingStock(e);
 		loading = false;
-		org.jdom.Attribute a;
+		org.jdom2.Attribute a;
 		if ((a = e.getAttribute(Xml.PASSENGER)) != null)
 			_passenger = a.getValue().equals(Xml.TRUE);
 		if ((a = e.getAttribute(Xml.HAZARDOUS)) != null)
@@ -718,7 +705,7 @@ public class Car extends RollingStock {
 			}
 		}
 		if ((a = e.getAttribute(Xml.LOAD)) != null) {
-			_load = a.getValue();
+			_loadName = a.getValue();
 		}
 		if ((a = e.getAttribute(Xml.LOAD_FROM_STAGING)) != null && a.getValue().equals(Xml.TRUE)) {
 			setLoadGeneratedFromStaging(true);
@@ -734,7 +721,7 @@ public class Car extends RollingStock {
 			_scheduleId = a.getValue();
 		}
 		if ((a = e.getAttribute(Xml.NEXT_LOAD)) != null) {
-			_nextLoad = a.getValue();
+			_nextLoadName = a.getValue();
 		}
 		if ((a = e.getAttribute(Xml.NEXT_WAIT)) != null) {
 			_nextWait = Integer.parseInt(a.getValue());
@@ -764,7 +751,7 @@ public class Car extends RollingStock {
 			_rweDestTrack = _rweDestination.getTrackById(a.getValue());
 		}
 		if ((a = e.getAttribute(Xml.RWE_LOAD)) != null) {
-			_rweLoad = a.getValue();
+			_rweLoadName = a.getValue();
 		}
 		addPropertyChangeListeners();
 	}
@@ -775,8 +762,8 @@ public class Car extends RollingStock {
 	 * 
 	 * @return Contents in a JDOM Element
 	 */
-	public org.jdom.Element store() {
-		org.jdom.Element e = new org.jdom.Element(Xml.CAR);
+	public org.jdom2.Element store() {
+		org.jdom2.Element e = new org.jdom2.Element(Xml.CAR);
 		super.store(e);
 		if (isPassenger())
 			e.setAttribute(Xml.PASSENGER, isPassenger() ? Xml.TRUE : Xml.FALSE);
@@ -849,10 +836,10 @@ public class Car extends RollingStock {
 		return e;
 	}
 
-	protected void firePropertyChange(String p, Object old, Object n) {
+	protected void setDirtyAndFirePropertyChange(String p, Object old, Object n) {
 		// Set dirty
 		CarManagerXml.instance().setDirty(true);
-		super.firePropertyChange(p, old, n);
+		super.setDirtyAndFirePropertyChange(p, old, n);
 	}
 
 	private void addPropertyChangeListeners() {
@@ -888,7 +875,7 @@ public class Car extends RollingStock {
 		if (e.getPropertyName().equals(Track.DISPOSE_CHANGED_PROPERTY)) {
 			if (e.getSource() == _finalDestTrack) {
 				if (log.isDebugEnabled())
-					log.debug("delete final destination for car: ({})",  toString());
+					log.debug("delete final destination for car: ({})", toString());
 				setFinalDestinationTrack(null);
 			}
 		}

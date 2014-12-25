@@ -30,7 +30,7 @@ import jmri.AudioException;
 import jmri.AudioManager;
 import jmri.jmrit.audio.AudioBuffer;
 import jmri.util.PhysicalLocation;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +41,10 @@ import org.slf4j.LoggerFactory;
 // loop() : starts extended sustain horn
 // stop() : ends extended sustain horn (plays end sound)
 
+// Suppressing "unused" warnings throughout. There are a dozen 
+// methods, ctors and values that aren't used and don't have
+// outside access.
+@SuppressWarnings("unused")
 class Diesel3Sound extends EngineSound {
 
     // Engine Sounds

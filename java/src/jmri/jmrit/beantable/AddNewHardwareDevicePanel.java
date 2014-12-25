@@ -23,7 +23,11 @@ import java.util.ResourceBundle;
 
 public class AddNewHardwareDevicePanel extends jmri.util.swing.JmriPanel {
 
-    public AddNewHardwareDevicePanel(JTextField sysAddress, JTextField userName, JComboBox prefixBox, JTextField endRange, JCheckBox addRange,
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -958394838638929630L;
+	public AddNewHardwareDevicePanel(JTextField sysAddress, JTextField userName, JComboBox prefixBox, JTextField endRange, JCheckBox addRange,
                              String addButtonLabel, ActionListener listener, ActionListener rangeListener) {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             _endRange=endRange;
@@ -78,11 +82,11 @@ public class AddNewHardwareDevicePanel extends jmri.util.swing.JmriPanel {
             finishLabel.setEnabled(false);
             _endRange.setEnabled(false);
            /* System.out.println(jmri.InstanceManager.getList(jmri.jmrix.SystemConnectionMemo.class));
-            java.util.List<Object> list 
+            java.util.List<jmri.jmrix.SystemConnectionMemo> list 
                 = jmri.InstanceManager.getList(jmri.jmrix.SystemConnectionMemo.class);
             if (list != null) {
-                for (Object memo : list) {
-                    System.out.println(((jmri.jmrix.SystemConnectionMemo)memo).getUserName());
+                for (jmri.jmrix.SystemConnectionMemo memo : list) {
+                    System.out.println(memo.getUserName());
                     //if (menu != null) m.add(menu);
                 }
             }*/

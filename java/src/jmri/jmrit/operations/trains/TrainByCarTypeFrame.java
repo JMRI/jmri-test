@@ -34,6 +34,11 @@ import java.util.List;
 
 public class TrainByCarTypeFrame extends OperationsFrame implements java.beans.PropertyChangeListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5894248098711372139L;
+
 	// train
 	Train _train;
 
@@ -109,6 +114,8 @@ public class TrainByCarTypeFrame extends OperationsFrame implements java.beans.P
 		CarTypes.instance().addPropertyChangeListener(this);
 		// listen to all tracks and locations
 		addLocationAndTrackPropertyChange();
+		
+		addHelpMenu("package.jmri.jmrit.operations.Operations_TrainShowCarTypesServiced", true); // NOI18N
 
 		setPreferredSize(null);
 		initMinimumSize();

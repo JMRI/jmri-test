@@ -8,8 +8,8 @@ import java.util.List;
 
 import java.io.File;
 import java.util.Vector;
-import org.jdom.Element;
-import org.jdom.JDOMException;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 
 import jmri.SignalHead;
 import jmri.SignalSystem;
@@ -26,7 +26,12 @@ import jmri.util.FileUtil;
  */
 public class DefaultSignalAppearanceMap extends AbstractNamedBean implements jmri.SignalAppearanceMap {
 
-    public DefaultSignalAppearanceMap(String systemName, String userName) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1448362198557086500L;
+
+	public DefaultSignalAppearanceMap(String systemName, String userName) {
         super(systemName, userName);
     }
 
@@ -46,7 +51,17 @@ public class DefaultSignalAppearanceMap extends AbstractNamedBean implements jmr
         }
         return map;
     }
-    
+
+    // added 3.9.7 so CATS can create own implementations
+    protected void registerMap() {
+        maps.put(getSystemName(), this);
+    }
+
+    // added 3.9.7 so CATS can create own implementations
+    static public DefaultSignalAppearanceMap findMap(String systemName) {
+        return maps.get(systemName);
+    }
+
     static DefaultSignalAppearanceMap loadMap(String signalSystemName, String aspectMapName) {
         DefaultSignalAppearanceMap map = 
             new DefaultSignalAppearanceMap("map:"+signalSystemName+":"+aspectMapName);
@@ -129,7 +144,7 @@ public class DefaultSignalAppearanceMap extends AbstractNamedBean implements jmr
         } catch (java.io.IOException e) {
             log.error("error reading file \""+file.getName(), e);
             return null;
-        } catch (org.jdom.JDOMException e) {
+        } catch (org.jdom2.JDOMException e) {
             log.error("error parsing file \""+file.getName(), e);
             return null;
         }

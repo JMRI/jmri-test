@@ -13,9 +13,9 @@ import java.io.File;
 
 import java.util.List;
 import jmri.util.FileUtil;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.ProcessingInstruction;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.ProcessingInstruction;
 
 /**
  * Represents and manipulates a locomotive definition, both as a file and
@@ -47,7 +47,6 @@ class LocoFile extends XmlFile {
      *                 the CVs from the loco Element appended.  It is
      *                 intended, but not required, that this be empty.
      */
-    @SuppressWarnings("unchecked")
 	public static void loadCvModel(Element loco, CvTableModel cvModel, IndexedCvTableModel iCvModel, String family){
         CvValue cvObject;
         // get the CVs and load
@@ -65,7 +64,7 @@ class LocoFile extends XmlFile {
             // get the CV values and load
             if (log.isDebugEnabled()) log.debug("Found "+values.getChildren("CVvalue").size()+" CVvalues");
 
-            for (Element element : (List<Element>)values.getChildren("CVvalue")) {
+            for (Element element : values.getChildren("CVvalue")) {
                 // locate the row
                 if ( element.getAttribute("name") == null) {
                     if (log.isDebugEnabled()) log.debug("unexpected null in name "+element+" "+element.getAttributes());
@@ -92,7 +91,7 @@ class LocoFile extends XmlFile {
             }
 
             if (log.isDebugEnabled()) log.debug("Found "+values.getChildren("indexedCVvalue").size()+" indexedCVvalues");
-            for (Element element : (List<Element>)values.getChildren("indexedCVvalue")) {
+            for (Element element : values.getChildren("indexedCVvalue")) {
                 if ( element.getAttribute("name") == null) {
                     if (log.isDebugEnabled()) log.debug("unexpected null in name "+element+" "+element.getAttributes());
                     break;
@@ -179,7 +178,7 @@ class LocoFile extends XmlFile {
             Element root = new Element("locomotive-config");
             root.setAttribute("noNamespaceSchemaLocation",
                 "http://jmri.org/xml/schema/locomotive-config"+Roster.schemaVersion+".xsd",
-                org.jdom.Namespace.getNamespace("xsi",
+                org.jdom2.Namespace.getNamespace("xsi",
                     "http://www.w3.org/2001/XMLSchema-instance"));
             
             Document doc = newDocument(root);
@@ -315,7 +314,7 @@ class LocoFile extends XmlFile {
 
             // Add the variable info
             Element values = existingElement.getChild("locomotive").getChild("values");
-            newLocomotive.addContent((Element)values.clone());
+            newLocomotive.addContent(values.clone());
             
             writeXML(pFile, doc);
         }

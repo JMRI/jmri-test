@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 
 import jmri.jmrit.operations.OperationsFrame;
 import jmri.jmrit.operations.OperationsManager;
+import jmri.jmrit.operations.OperationsXml;
 import jmri.jmrit.operations.setup.Control;
 import jmri.jmrit.operations.setup.Setup;
 
@@ -32,6 +33,11 @@ import org.slf4j.LoggerFactory;
  */
 
 public class SetupExcelProgramSwitchListFrame extends OperationsFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3528092911363603010L;
 
 	// text windows
 	JTextField fileName = new JTextField(30);
@@ -110,7 +116,7 @@ public class SetupExcelProgramSwitchListFrame extends OperationsFrame {
 		if (ae.getSource() == saveButton) {
 			log.debug("Save button activated");
 			Setup.setGenerateCsvSwitchListEnabled(generateCvsSwitchListCheckBox.isSelected());
-			TrainManagerXml.instance().writeOperationsFile();
+			OperationsXml.save();
 			if (Setup.isCloseWindowOnSaveEnabled())
 				dispose();
 		}

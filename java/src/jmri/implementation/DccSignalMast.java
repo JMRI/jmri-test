@@ -41,7 +41,12 @@ IF$dsm:basic:one-searchlight:(123)
  */
 public class DccSignalMast extends AbstractSignalMast {
 
-  public DccSignalMast( String sys, String user ) {
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2711857995161461274L;
+
+public DccSignalMast( String sys, String user ) {
     super(sys, user);
     configureFromName(sys);
   }
@@ -70,10 +75,10 @@ public class DccSignalMast extends AbstractSignalMast {
             log.warn("First part of signal mast is incorrect "+systemName + " : " + mastType);
         } else {
             String commandStationPrefix = parts[0].substring(0, parts[0].indexOf("$")-1);
-            java.util.List<Object> connList = jmri.InstanceManager.getList(jmri.CommandStation.class);
+            java.util.List<jmri.CommandStation> connList = jmri.InstanceManager.getList(jmri.CommandStation.class);
             if(connList!=null){
                 for(int x = 0; x < connList.size(); x++){
-                    jmri.CommandStation station = (jmri.CommandStation) connList.get(x);
+                    jmri.CommandStation station = connList.get(x);
                     if(station.getSystemPrefix().equals(commandStationPrefix)){
                         c = station;
                         break;

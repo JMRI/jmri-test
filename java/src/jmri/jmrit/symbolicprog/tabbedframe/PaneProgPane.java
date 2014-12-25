@@ -28,8 +28,8 @@ import jmri.jmrit.roster.RosterEntry;
 import jmri.jmrit.symbolicprog.*;
 import jmri.util.davidflanagan.HardcopyWriter;
 import jmri.util.jdom.LocaleSelector;
-import org.jdom.Attribute;
-import org.jdom.Element;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
 
 /**
  * Provides the individual panes for the TabbedPaneProgrammer.
@@ -68,7 +68,11 @@ import org.jdom.Element;
 public class PaneProgPane extends javax.swing.JPanel
     implements java.beans.PropertyChangeListener  {
 
-    static final String LAST_GRIDX = "last_gridx";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1884950541914044865L;
+	static final String LAST_GRIDX = "last_gridx";
     static final String LAST_GRIDY = "last_gridy";
 
     protected CvTableModel _cvModel;

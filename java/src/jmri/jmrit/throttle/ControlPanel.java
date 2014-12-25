@@ -33,8 +33,8 @@ import jmri.jmrit.roster.Roster;
 import jmri.jmrit.roster.RosterEntry;
 import jmri.util.MouseInputAdapterInstaller;
 
-import org.jdom.Attribute;
-import org.jdom.Element;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
 
 /**
  *  A JInternalFrame that contains a JSlider to control loco speed, and buttons
@@ -50,7 +50,12 @@ import org.jdom.Element;
  */
 public class ControlPanel extends JInternalFrame implements java.beans.PropertyChangeListener, ActionListener, AddressListener 
 {
-    private DccThrottle throttle;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2556116647848797537L;
+
+	private DccThrottle throttle;
     
     private JSlider speedSlider;
     private JSlider speedSliderContinuous;
@@ -1234,7 +1239,7 @@ public class ControlPanel extends JInternalFrame implements java.beans.PropertyC
         internalAdjust=true;
         try {			
             this.setSpeedController(e.getAttribute("displaySpeedSlider").getIntValue());
-        } catch (org.jdom.DataConversionException ex)
+        } catch (org.jdom2.DataConversionException ex)
             {
                 log.error("DataConverstionException in setXml: "+ex);
             } catch (Exception em)
@@ -1246,7 +1251,7 @@ public class ControlPanel extends JInternalFrame implements java.beans.PropertyC
         if (tsAtt!=null) {
             try {
                 trackSlider = tsAtt.getBooleanValue();
-            } catch (org.jdom.DataConversionException ex) {
+            } catch (org.jdom2.DataConversionException ex) {
                 trackSlider = trackSliderDefault;
             }
         } else {
@@ -1256,7 +1261,7 @@ public class ControlPanel extends JInternalFrame implements java.beans.PropertyC
         if (tsmiAtt!=null) {
             try {
                 trackSliderMinInterval = tsmiAtt.getLongValue();
-            } catch (org.jdom.DataConversionException ex) {
+            } catch (org.jdom2.DataConversionException ex) {
                 trackSliderMinInterval = trackSliderMinIntervalDefault;
             }
             if (trackSliderMinInterval < trackSliderMinIntervalMin) {

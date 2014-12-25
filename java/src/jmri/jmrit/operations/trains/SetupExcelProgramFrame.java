@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 
 import jmri.jmrit.operations.OperationsFrame;
 import jmri.jmrit.operations.OperationsManager;
+import jmri.jmrit.operations.OperationsXml;
 import jmri.jmrit.operations.setup.Control;
 import jmri.jmrit.operations.setup.Setup;
 
@@ -33,6 +34,10 @@ import org.slf4j.LoggerFactory;
 
 public class SetupExcelProgramFrame extends OperationsFrame {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8918278401005216433L;
 	// checkboxes
 	protected static final ResourceBundle rb = ResourceBundle
 			.getBundle("jmri.jmrit.operations.setup.JmritOperationsSetupBundle");
@@ -110,7 +115,7 @@ public class SetupExcelProgramFrame extends OperationsFrame {
 		if (ae.getSource() == saveButton) {
 			log.debug("Save button activated");
 			Setup.setGenerateCsvManifestEnabled(generateCvsManifestCheckBox.isSelected());
-			TrainManagerXml.instance().writeOperationsFile();
+			OperationsXml.save();
 			if (Setup.isCloseWindowOnSaveEnabled())
 				dispose();
 		}

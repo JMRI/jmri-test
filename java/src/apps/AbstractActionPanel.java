@@ -39,7 +39,11 @@ import java.util.List;
  */
 abstract public class AbstractActionPanel extends JPanel {
 
-    JPanel self;  // used for synchronization
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5092031602319689380L;
+	JPanel self;  // used for synchronization
     protected ResourceBundle rb;
 
     String removeButtonKey;
@@ -100,14 +104,18 @@ abstract public class AbstractActionPanel extends JPanel {
     abstract AbstractActionModel getNewModel();
 
     public class Item extends JPanel implements ActionListener {
-        JButton removeButton = new JButton(rb.getString(removeButtonKey));
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -2499516926618516181L;
+		JButton removeButton = new JButton(rb.getString(removeButtonKey));
             
         Item() {
             setLayout(new FlowLayout());
             add(removeButton);
             removeButton.addActionListener(this);
             // create the list of possibilities
-            selections = new JComboBox(AbstractActionModel.nameList());
+            selections = new JComboBox<String>(AbstractActionModel.nameList());
             add(selections);
         }
         Item(AbstractActionModel m) {
@@ -117,7 +125,7 @@ abstract public class AbstractActionPanel extends JPanel {
         }
 
         AbstractActionModel model = null;
-        JComboBox selections;
+        JComboBox<String> selections;
         
         void updateCombo(){
             String current = (String)selections.getSelectedItem();

@@ -54,7 +54,11 @@ import jmri.util.FileUtil;
  */
 public final class ImageIndexEditor extends JmriJFrame {
 
-    CatalogPanel    _catalog;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8308930846582782285L;
+	CatalogPanel    _catalog;
     CatalogPanel    _index;
 
     static ImageIndexEditor _instance;
@@ -209,7 +213,7 @@ public final class ImageIndexEditor extends JmriJFrame {
             new jmri.jmrit.catalog.configurexml.DefaultCatalogTreeManagerXml().writeCatalogTrees();
             indexChanged(false);
         } 
-        //catch (org.jdom.JDOMException jde) { log.error("Exception writing CatalogTrees: "+jde); }                           
+        //catch (org.jdom2.JDOMException jde) { log.error("Exception writing CatalogTrees: "+jde); }                           
         catch (java.io.IOException ioe) { log.error("Exception writing CatalogTrees: "+ioe); }   
     }
     

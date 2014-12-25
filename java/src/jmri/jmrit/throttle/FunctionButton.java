@@ -18,7 +18,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 import jmri.util.FileUtil;
 import jmri.util.swing.ResizableImagePanel;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,11 @@ import org.slf4j.LoggerFactory;
  */
 public class FunctionButton extends JToggleButton implements ActionListener
 {
-    private ArrayList<FunctionListener> listeners = new ArrayList<FunctionListener>();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2228118723029439168L;
+	private ArrayList<FunctionListener> listeners = new ArrayList<FunctionListener>();
     private int identity; // F0, F1, etc?
     private boolean isOn;
     private boolean isLockable = true;
@@ -464,7 +468,7 @@ public class FunctionButton extends JToggleButton implements ActionListener
             		this.setSelectedIconPath(e.getAttribute("selectedIconPath").getValue());
             updateLnF();
         }
-        catch (org.jdom.DataConversionException ex)
+        catch (org.jdom2.DataConversionException ex)
         {
             log.error("DataConverstionException in setXml: "+ex);
         }

@@ -19,7 +19,11 @@ public class LocoStatsFrameTest extends TestCase {
     LocoStatsPanel getFrame(String title, int offset) throws Exception {
         JmriJFrame f = new JmriJFrame();
         LocoStatsPanel p = new LocoStatsPanel() {
-            public void requestUpdate() {  // replace actual transmit
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1454939858436681834L;
+			public void requestUpdate() {  // replace actual transmit
                 updatePending = true;
             }
             void report(String m) {}  // suppress messages
@@ -37,8 +41,7 @@ public class LocoStatsFrameTest extends TestCase {
         getFrame("Default LocoStats Window",0);
     	JFrame f = jmri.util.JmriJFrame.getFrame("Default LocoStats Window");
     	Assert.assertTrue("found frame", f !=null );
-    	if (f != null)
-    		f.dispose();
+    	f.dispose();
     }
     
     public void testLocoBufferFormat()throws Exception {
@@ -50,8 +53,7 @@ public class LocoStatsFrameTest extends TestCase {
         ));
         JFrame f = jmri.util.JmriJFrame.getFrame("LocoBuffer Stats Window");
     	Assert.assertTrue("found frame", f !=null );
-    	if (f != null)
-    		f.dispose();
+    	f.dispose();
     }
     
     public void testPR2Format() throws Exception {
@@ -65,8 +67,7 @@ public class LocoStatsFrameTest extends TestCase {
         ));
     	JFrame f = jmri.util.JmriJFrame.getFrame("PR2 Stats Window");
     	Assert.assertTrue("found frame", f !=null );
-    	if (f != null)
-    		f.dispose();
+    	f.dispose();
     }
     
     public void testMS100Format() throws Exception {
@@ -80,8 +81,7 @@ public class LocoStatsFrameTest extends TestCase {
         ));
         JFrame f = jmri.util.JmriJFrame.getFrame("MS100 Stats Window");
     	Assert.assertTrue("found frame", f !=null );
-    	if (f != null)
-    		f.dispose();
+    	f.dispose();
     }   
     
     // from here down is testing infrastructure

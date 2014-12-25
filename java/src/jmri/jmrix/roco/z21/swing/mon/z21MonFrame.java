@@ -17,14 +17,18 @@ import org.slf4j.LoggerFactory;
  */
  public class z21MonFrame extends jmri.jmrix.AbstractMonFrame implements z21Listener {
 
-        private z21SystemConnectionMemo _memo=null;
+        /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8216921338328955386L;
+		private z21SystemConnectionMemo _memo=null;
 
         public z21MonFrame() {
                super();
                // If there is no system memo given, assume the system memo
                // is the first one in the instance list.
-              _memo=(z21SystemConnectionMemo)(jmri.InstanceManager.
-                    getList(z21SystemConnectionMemo.class).get(0));
+              _memo=jmri.InstanceManager.
+                    getList(z21SystemConnectionMemo.class).get(0);
         }
 
 

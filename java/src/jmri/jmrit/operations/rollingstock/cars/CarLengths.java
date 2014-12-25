@@ -4,7 +4,7 @@ package jmri.jmrit.operations.rollingstock.cars;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import jmri.jmrit.operations.rollingstock.RollingStockAttribute;
 import jmri.jmrit.operations.rollingstock.cars.Xml;
@@ -51,17 +51,17 @@ public class CarLengths extends RollingStockAttribute {
 
 	public void addName(String length) {
 		super.addName(length);
-		firePropertyChange(CARLENGTHS_CHANGED_PROPERTY, null, length);
+		setDirtyAndFirePropertyChange(CARLENGTHS_CHANGED_PROPERTY, null, length);
 	}
 
 	public void deleteName(String length) {
 		super.deleteName(length);
-		firePropertyChange(CARLENGTHS_CHANGED_PROPERTY, length, null);
+		setDirtyAndFirePropertyChange(CARLENGTHS_CHANGED_PROPERTY, length, null);
 	}
 
 	public void replaceName(String oldName, String newName) {
 		super.addName(newName);
-		firePropertyChange(CARLENGTHS_NAME_CHANGED_PROPERTY, oldName, newName);
+		setDirtyAndFirePropertyChange(CARLENGTHS_NAME_CHANGED_PROPERTY, oldName, newName);
 		// need to keep old name so location manager can replace properly
 		super.deleteName(oldName);
 	}
@@ -79,7 +79,7 @@ public class CarLengths extends RollingStockAttribute {
 		load(root, Xml.LENGTHS, Xml.LENGTH, Xml.CAR_LENGTHS);
 	}
 	
-	protected void firePropertyChange(String p, Object old, Object n) {
+	protected void setDirtyAndFirePropertyChange(String p, Object old, Object n) {
 		// Set dirty
 		CarManagerXml.instance().setDirty(true);
 		super.firePropertyChange(p, old, n);

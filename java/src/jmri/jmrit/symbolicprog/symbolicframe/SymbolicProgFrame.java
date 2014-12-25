@@ -12,8 +12,8 @@ import java.io.*;
 import javax.swing.*;
 
 import java.util.List;   // resolve ambiguity with java.awt.List
-import org.jdom.*;
-import org.jdom.output.*;
+import org.jdom2.*;
+import org.jdom2.output.*;
 
 /**
  * Frame providing a table-organized command station programmer from decoder definition files
@@ -24,7 +24,11 @@ public class SymbolicProgFrame extends jmri.util.JmriJFrame  {
 
     // GUI member declarations
 
-    JTextField locoRoadName 	= new JTextField(12);
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -9126105092523857438L;
+	JTextField locoRoadName 	= new JTextField(12);
     JTextField locoRoadNumber 	= new JTextField(5);
     JTextField locoMfg 		= new JTextField(12);
     JTextField locoModel 	= new JTextField(12);

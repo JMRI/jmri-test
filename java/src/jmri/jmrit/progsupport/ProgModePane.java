@@ -28,7 +28,11 @@ import jmri.Programmer;
  */
 public class ProgModePane extends ProgModeSelector {
 
-    // GUI member declarations
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -557999704137510315L;
+	// GUI member declarations
     ProgOpsModePane     mOpsPane;
     ProgServiceModePane mServicePane;
     ButtonGroup group = new ButtonGroup();
@@ -38,6 +42,18 @@ public class ProgModePane extends ProgModeSelector {
      */
     public ProgModePane(int direction) {
 
+        if (log.isDebugEnabled()) {
+            log.debug("ProgrammerManager:");
+            for (Object p : InstanceManager.getList(ProgrammerManager.class))
+                log.debug("   "+((ProgrammerManager)p).toString());
+            log.debug("Addressed:");
+            for (Object p : InstanceManager.getList(AddressedProgrammerManager.class))
+                log.debug("   "+((AddressedProgrammerManager)p).toString());
+            log.debug("Global:");
+            for (Object p : InstanceManager.getList(GlobalProgrammerManager.class))
+                log.debug("   "+((GlobalProgrammerManager)p).toString());
+        }
+        
         // general GUI config
         setLayout(new BoxLayout(this, direction));
 

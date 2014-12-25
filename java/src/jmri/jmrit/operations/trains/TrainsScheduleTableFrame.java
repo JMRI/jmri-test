@@ -23,7 +23,6 @@ import javax.swing.JButton;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableColumnModel;
 
-import jmri.implementation.swing.SwingShutDownTask;
 import jmri.jmrit.operations.OperationsFrame;
 import jmri.jmrit.operations.OperationsXml;
 import jmri.jmrit.operations.setup.Control;
@@ -38,8 +37,12 @@ import jmri.jmrit.operations.setup.Setup;
  */
 public class TrainsScheduleTableFrame extends OperationsFrame implements PropertyChangeListener {
 
-	public static SwingShutDownTask trainDirtyTask;
+//	public static SwingShutDownTask trainDirtyTask;
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2436589778859368847L;
 	public static final String NAME = Bundle.getMessage("Name"); // Sort by choices
 	public static final String TIME = Bundle.getMessage("Time");
 
@@ -165,6 +168,8 @@ public class TrainsScheduleTableFrame extends OperationsFrame implements Propert
 		setTitle(Bundle.getMessage("TitleTimeTableTrains"));
 
 		initMinimumSize();
+		
+		addHorizontalScrollBarKludgeFix(controlPane, controlPanel);
 
 		scheduleManager.addPropertyChangeListener(this);
 		addPropertyChangeTrainSchedules();

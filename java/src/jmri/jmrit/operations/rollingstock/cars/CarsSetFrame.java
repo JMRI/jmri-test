@@ -20,6 +20,10 @@ import jmri.util.com.sun.TableSorter;
 
 public class CarsSetFrame extends CarSetFrame implements java.beans.PropertyChangeListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3962047189679581L;
 	CarsTableModel _carsTableModel;
 	JTable _carsTable;
 	TableSorter _sorter;
@@ -46,6 +50,7 @@ public class CarsSetFrame extends CarSetFrame implements java.beans.PropertyChan
 		super.initComponents();
 
 		setTitle(Bundle.getMessage("TitleSetCars"));
+		addHelpMenu("package.jmri.jmrit.operations.Operations_SetCars", true); // NOI18N
 		// modify Save button text to "Change"
 		saveButton.setText(Bundle.getMessage("Change"));
 		// disable edit load button if no cars selected

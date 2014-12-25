@@ -5,7 +5,7 @@ package jmri.jmrit.operations.rollingstock.cars;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import jmri.jmrit.operations.rollingstock.RollingStockAttribute;
 import jmri.jmrit.operations.setup.Control;
@@ -46,17 +46,17 @@ public class CarColors extends RollingStockAttribute {
 
 	public void addName(String color) {
 		super.addName(color);
-		firePropertyChange(CARCOLORS_CHANGED_PROPERTY, null, color);
+		setDirtyAndFirePropertyChange(CARCOLORS_CHANGED_PROPERTY, null, color);
 	}
 
 	public void deleteName(String color) {
 		super.deleteName(color);
-		firePropertyChange(CARCOLORS_CHANGED_PROPERTY, color, null);
+		setDirtyAndFirePropertyChange(CARCOLORS_CHANGED_PROPERTY, color, null);
 	}
 
 	public void replaceName(String oldName, String newName) {
 		super.addName(newName);
-		firePropertyChange(CARCOLORS_NAME_CHANGED_PROPERTY, oldName, newName);
+		setDirtyAndFirePropertyChange(CARCOLORS_NAME_CHANGED_PROPERTY, oldName, newName);
 		// need to keep old name so location manager can replace properly
 		super.deleteName(oldName);
 	}
@@ -74,7 +74,7 @@ public class CarColors extends RollingStockAttribute {
 		load(root, Xml.COLORS, Xml.COLOR, Xml.CAR_COLORS);
 	}
 
-	protected void firePropertyChange(String p, Object old, Object n) {
+	protected void setDirtyAndFirePropertyChange(String p, Object old, Object n) {
 		// Set dirty
 		CarManagerXml.instance().setDirty(true);
 		super.firePropertyChange(p, old, n);

@@ -9,8 +9,8 @@ import java.awt.*;
 
 import java.util.List;
 import java.util.ResourceBundle;
-import org.jdom.Element;
-import org.jdom.Attribute;
+import org.jdom2.Element;
+import org.jdom2.Attribute;
 import jmri.util.jdom.LocaleSelector;
 import jmri.jmrit.symbolicprog.tabbedframe.PaneProgPane;
 
@@ -80,7 +80,11 @@ import jmri.jmrit.symbolicprog.tabbedframe.PaneProgPane;
  * @version			$Revision$
  */
 public class FnMapPanel extends JPanel {
-    // GridBayLayout column numbers
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8500513259142259577L;
+	// GridBayLayout column numbers
     int fnName = 0;
     int firstOut = 1;
     

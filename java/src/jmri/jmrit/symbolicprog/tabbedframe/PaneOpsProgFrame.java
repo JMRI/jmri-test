@@ -8,7 +8,7 @@ import jmri.Programmer;
 import jmri.jmrit.decoderdefn.DecoderFile;
 import jmri.jmrit.roster.RosterEntry;
 import javax.swing.JPanel;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -21,7 +21,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class PaneOpsProgFrame extends PaneProgFrame
                  implements java.beans.PropertyChangeListener  {
 
-    JPanel modePane;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 151719893908045286L;
+	JPanel modePane;
 
     /**
      * Provide programming-mode panel to the parent class.

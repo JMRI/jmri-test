@@ -48,7 +48,7 @@ import jmri.jmrit.display.Positionable;
 import jmri.jmrit.display.PositionablePopupUtil;
 import jmri.jmrit.display.ToolTip;
 import jmri.util.JmriJFrame;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +90,11 @@ import org.slf4j.LoggerFactory;
  */
 public class PanelEditor extends Editor implements ItemListener {
 
-    JTextField nextX = new JTextField(Bundle.getMessage("DefaultX"), 4);
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3568655156437993712L;
+	JTextField nextX = new JTextField(Bundle.getMessage("DefaultX"), 4);
     JTextField nextY = new JTextField(Bundle.getMessage("DefaultY"), 4);
 
     JCheckBox editableBox = new JCheckBox(Bundle.getMessage("CheckBoxEditable"));
@@ -101,12 +105,12 @@ public class PanelEditor extends Editor implements ItemListener {
     JCheckBox hiddenBox = new JCheckBox(Bundle.getMessage("CheckBoxHidden"));
     JCheckBox menuBox = new JCheckBox(Bundle.getMessage("CheckBoxMenuBar"));
     JLabel scrollableLabel = new JLabel(Bundle.getMessage("ComboBoxScrollable"));
-    JComboBox scrollableComboBox = new JComboBox();
+    JComboBox<String> scrollableComboBox = new JComboBox<String>();
 
     JButton labelAdd = new JButton(Bundle.getMessage("ButtonAddText"));
     JTextField nextLabel = new JTextField(10);
 
-    JComboBox _addIconBox;
+    JComboBox<ComboBoxItem> _addIconBox;
 
     public PanelEditor() {
     }
@@ -280,7 +284,7 @@ public class PanelEditor extends Editor implements ItemListener {
         }
 
         // Selection of the type of entity for the icon to represent is done from a combobox
-        _addIconBox = new JComboBox();
+        _addIconBox = new JComboBox<ComboBoxItem>();
         _addIconBox.setMinimumSize(new Dimension(75, 75));
         _addIconBox.setMaximumSize(new Dimension(200, 200));
         _addIconBox.addItem(new ComboBoxItem("RightTurnout"));
@@ -534,14 +538,24 @@ public class PanelEditor extends Editor implements ItemListener {
         JMenu editMenu = new JMenu(Bundle.getMessage("MenuEdit"));
         menuBar.add(editMenu);
         editMenu.add(new AbstractAction(Bundle.getMessage("OpenEditor")) {
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = -7003482354206142094L;
+
+			@Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(true);
             }
         });
         editMenu.addSeparator();
         editMenu.add(new AbstractAction(Bundle.getMessage("DeletePanel")) {
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = -3302292525750164017L;
+
+			@Override
             public void actionPerformed(ActionEvent e) {
                 if (deletePanel()) {
                     dispose(true);
@@ -553,19 +567,34 @@ public class PanelEditor extends Editor implements ItemListener {
         JMenu markerMenu = new JMenu(Bundle.getMessage("MenuMarker"));
         menuBar.add(markerMenu);
         markerMenu.add(new AbstractAction(Bundle.getMessage("AddLoco")) {
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 3904117730465002247L;
+
+			@Override
             public void actionPerformed(ActionEvent e) {
                 locoMarkerFromInput();
             }
         });
         markerMenu.add(new AbstractAction(Bundle.getMessage("AddLocoRoster")) {
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 9124717518244688272L;
+
+			@Override
             public void actionPerformed(ActionEvent e) {
                 locoMarkerFromRoster();
             }
         });
         markerMenu.add(new AbstractAction(Bundle.getMessage("RemoveMarkers")) {
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 3102044914128656099L;
+
+			@Override
             public void actionPerformed(ActionEvent e) {
                 removeMarkers();
             }
@@ -1188,7 +1217,11 @@ public class PanelEditor extends Editor implements ItemListener {
     @Override
     public void setRemoveMenu(Positionable p, JPopupMenu popup) {
         popup.add(new AbstractAction(Bundle.getMessage("Remove")) {
-            Positionable comp;
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = -7169869783719845309L;
+			Positionable comp;
 
             @Override
             public void actionPerformed(ActionEvent e) {

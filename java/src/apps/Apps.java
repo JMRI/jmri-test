@@ -111,7 +111,11 @@ import org.slf4j.LoggerFactory;
  */
 public class Apps extends JPanel implements PropertyChangeListener, WindowListener {
 
-    static String profileFilename;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8846653289120123006L;
+	static String profileFilename;
 
     @edu.umd.cs.findbugs.annotations.SuppressWarnings({"ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD", "SC_START_IN_CTOR"})//"only one application at a time. The thread is only called to help improve user experiance when opening the preferences, it is not critical for it to be run at this stage"
     public Apps(JFrame frame) {
@@ -146,7 +150,7 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
                         log.debug("Start writing block info");
                         try {
                             new BlockValueFile().writeBlockValues();
-                        } //catch (org.jdom.JDOMException jde) { log.error("Exception writing blocks: {}", jde); }
+                        } //catch (org.jdom2.JDOMException jde) { log.error("Exception writing blocks: {}", jde); }
                         catch (IOException ioe) {
                             log.error("Exception writing blocks: {}", ioe);
                         }
@@ -498,8 +502,8 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
      * <P>
      * This does not include the development menu.
      *
-     * @param menuBar
-     * @param wi
+     * @param menuBar Menu bar to be populated
+     * @param wi WindowInterface where this menu bar will appear
      */
     protected void createMenus(JMenuBar menuBar, WindowInterface wi) {
         // the debugging statements in the following are
@@ -532,6 +536,12 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         log.debug("end building menus");
     }
 
+    /**
+     * Create default File menu
+     *
+     * @param menuBar Menu bar to be populated
+     * @param wi WindowInterface where this menu will appear as part of the menu bar
+     */
     protected void fileMenu(JMenuBar menuBar, WindowInterface wi) {
         JMenu fileMenu = new JMenu(Bundle.getMessage("MenuFile"));
         menuBar.add(fileMenu);
@@ -543,7 +553,12 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         if (!(SystemType.isMacOSX() && UIManager.getLookAndFeel().isNativeLookAndFeel())) {
             fileMenu.add(new JSeparator());
             fileMenu.add(new AbstractAction(Bundle.getMessage("MenuItemQuit")) {
-                @Override
+                /**
+				 * 
+				 */
+				private static final long serialVersionUID = -3051429826192051394L;
+
+				@Override
                 public void actionPerformed(ActionEvent e) {
                     handleQuit();
                 }
@@ -560,9 +575,11 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
      * Set the location of the window-specific help for the preferences pane.
      * Made a separate method so if can be overridden for application specific
      * preferences help
+     * @param frame The frame being described in the help system
+     * @param location The location within the JavaHelp system
      */
-    protected void setPrefsFrameHelp(JmriJFrame f, String l) {
-        f.addHelpMenu(l, true);
+    protected void setPrefsFrameHelp(JmriJFrame frame, String location) {
+        frame.addHelpMenu(location, true);
     }
 
     protected void editMenu(JMenuBar menuBar, WindowInterface wi) {

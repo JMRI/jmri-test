@@ -57,6 +57,10 @@ import jmri.jmrit.operations.setup.Setup;
 
 public class TrainEditFrame extends OperationsFrame implements java.beans.PropertyChangeListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5151081816323580604L;
 	TrainManager trainManager;
 	RouteManager routeManager;
 
@@ -104,7 +108,6 @@ public class TrainEditFrame extends OperationsFrame implements java.beans.Proper
 	JTextArea commentTextArea = new JTextArea(2, 70);
 	JScrollPane commentScroller = new JScrollPane(commentTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 			JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	Dimension minScrollerDim = new Dimension(800, 42);
 
 	// for padding out panel
 	JLabel space1 = new JLabel("       ");
@@ -286,8 +289,10 @@ public class TrainEditFrame extends OperationsFrame implements java.beans.Proper
 		JPanel pC = new JPanel();
 		pC.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("Comment")));
 		pC.setLayout(new GridBagLayout());
-		commentScroller.setMinimumSize(minScrollerDim);
 		addItem(pC, commentScroller, 1, 0);
+		
+		// adjust text area width based on window size
+		adjustTextAreaColumnWidth(commentScroller, commentTextArea);
 
 		// row 15 buttons
 		JPanel pB = new JPanel();
@@ -370,7 +375,7 @@ public class TrainEditFrame extends OperationsFrame implements java.beans.Proper
 
 		menuBar.add(toolMenu);
 		setJMenuBar(menuBar);
-		addHelpMenu("package.jmri.jmrit.operations.Operations_Trains", true); // NOI18N
+		addHelpMenu("package.jmri.jmrit.operations.Operations_TrainEdit", true); // NOI18N
 
 		// load route location checkboxes
 		updateLocationCheckboxes();

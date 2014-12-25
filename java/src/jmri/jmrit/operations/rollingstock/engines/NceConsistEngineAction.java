@@ -24,6 +24,10 @@ import jmri.jmrix.nce.NceTrafficController;
 
 public class NceConsistEngineAction extends AbstractAction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5434949149698630276L;
 	NceTrafficController tc;
 
 	public NceConsistEngineAction(String actionName, Component frame) {
@@ -32,11 +36,11 @@ public class NceConsistEngineAction extends AbstractAction {
 		setEnabled(false);
 		// disable if NCE USB selected
 		// get NceTrafficContoller if there's one
-		List<Object> memos = InstanceManager.getList(NceSystemConnectionMemo.class);
+		List<NceSystemConnectionMemo> memos = InstanceManager.getList(NceSystemConnectionMemo.class);
 		if (memos != null) {
 			// find NceConnection that is serial
 			for (int i = 0; i < memos.size(); i++) {
-				NceSystemConnectionMemo memo = (NceSystemConnectionMemo) memos.get(i);
+				NceSystemConnectionMemo memo = memos.get(i);
 				if (memo.getNceUsbSystem() == NceTrafficController.USB_SYSTEM_NONE) {
 					tc = memo.getNceTrafficController();
 				}

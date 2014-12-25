@@ -20,7 +20,11 @@ import java.util.ArrayList;
 
 public class BeanSelectCreatePanel extends JPanel{
     
-    Manager _manager;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8850883067365493880L;
+	Manager _manager;
     NamedBean _defaultSelect;
     String _reference = null;
     JRadioButton existingItem = new JRadioButton();
@@ -29,7 +33,7 @@ public class BeanSelectCreatePanel extends JPanel{
     
     JmriBeanComboBox existingCombo;
     JTextField hardwareAddress = new JTextField(8);
-    JComboBox prefixBox = new JComboBox();
+    JComboBox<String> prefixBox = new JComboBox<String>();
     jmri.UserPreferencesManager p;
     String systemSelectionCombo = this.getClass().getName()+".SystemSelected";
         
@@ -90,7 +94,7 @@ public class BeanSelectCreatePanel extends JPanel{
                 Boolean addToPrefix = true;
                 //Simple test not to add a system with a duplicate System prefix
                 for (int i = 0; i<prefixBox.getItemCount(); i++){
-                    if(((String)prefixBox.getItemAt(i)).equals(manuName))
+                    if((prefixBox.getItemAt(i)).equals(manuName))
                         addToPrefix=false;
                 }
                 if (addToPrefix)

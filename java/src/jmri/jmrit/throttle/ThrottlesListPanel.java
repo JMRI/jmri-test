@@ -13,13 +13,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import jmri.jmrit.catalog.NamedIcon;
 
 
 public class ThrottlesListPanel extends JPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2070978940988241144L;
 	private ThrottlesTableModel throttleFramesLM;
 	private JTable throttleFrames;
 

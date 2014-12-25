@@ -7,7 +7,7 @@ import java.io.File;
 import javax.swing.Icon;
 import jmri.util.FileUtil;
 import jmri.util.swing.WindowInterface;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,12 @@ import org.slf4j.LoggerFactory;
  */
 public class CopyRosterItemAction extends AbstractRosterItemAction {
 
-    public CopyRosterItemAction(String s, WindowInterface wi) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1887063385344105392L;
+
+	public CopyRosterItemAction(String s, WindowInterface wi) {
     	super(s, wi);
     }
      

@@ -5,10 +5,10 @@ import java.io.IOException;
 import jmri.InstanceManager;
 import jmri.jmrit.XmlFile;
 import jmri.util.FileUtil;
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
+import org.jdom2.Attribute;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,23 +79,23 @@ public class WebServerManager {
             for (Object pref : MSPrefs.getChildren()) {
                 WSRoot.addContent((Element) pref);
             }
-            for (Object attr : MSPrefs.getAttributes()) {
-                if (((Attribute) attr).getName().equals("getDisallowedFrames")) { // NOI18N
+            for (Attribute attr : MSPrefs.getAttributes()) {
+                if (attr.getName().equals("getDisallowedFrames")) { // NOI18N
                     Element DF = new Element(WebServerPreferences.DisallowedFrames);
-                    String[] frames = ((Attribute) attr).getValue().split("\\n"); // NOI18N
+                    String[] frames = attr.getValue().split("\\n"); // NOI18N
                     for (String frame : frames) {
                         DF.addContent(new Element(WebServerPreferences.Frame).addContent(frame));
                     }
                     WSRoot.addContent(DF);
-                } else if (((Attribute) attr).getName().equals("getPort")) { // NOI18N
-                    WSRoot.setAttribute(WebServerPreferences.Port, ((Attribute) attr).getValue());
-                } else if (((Attribute) attr).getName().equals("getClickDelay")) { // NOI18N
-                    WSRoot.setAttribute(WebServerPreferences.ClickDelay, ((Attribute) attr).getValue());
-                } else if (((Attribute) attr).getName().equals("getRefreshDelay")) { // NOI18N
-                    WSRoot.setAttribute(WebServerPreferences.RefreshDelay, ((Attribute) attr).getValue());
+                } else if (attr.getName().equals("getPort")) { // NOI18N
+                    WSRoot.setAttribute(WebServerPreferences.Port, attr.getValue());
+                } else if (attr.getName().equals("getClickDelay")) { // NOI18N
+                    WSRoot.setAttribute(WebServerPreferences.ClickDelay, attr.getValue());
+                } else if (attr.getName().equals("getRefreshDelay")) { // NOI18N
+                    WSRoot.setAttribute(WebServerPreferences.RefreshDelay, attr.getValue());
                 } else {
                     // double cast because clone() is Protected on Object
-                    WSRoot.setAttribute((Attribute) ((Attribute) attr).clone());
+                    WSRoot.setAttribute(attr.clone());
                 }
             }
             Document WSDoc = XmlFile.newDocument(WSRoot);

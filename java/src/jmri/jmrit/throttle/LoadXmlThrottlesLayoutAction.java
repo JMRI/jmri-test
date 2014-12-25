@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 
 import java.util.List;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  *  Load throttles from XML
@@ -21,6 +21,11 @@ import org.jdom.Element;
  * @version     $Revision$
  */
 public class LoadXmlThrottlesLayoutAction extends AbstractAction {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 447922874340812542L;
 
 	/**
 	 *  Constructor
@@ -113,7 +118,7 @@ public class LoadXmlThrottlesLayoutAction extends AbstractAction {
 					ThrottleFrameManager.instance().getThrottlesListPanel().setXml(tlp);
 				}
 			}
-		} catch (org.jdom.JDOMException ex) {
+		} catch (org.jdom2.JDOMException ex) {
 			log.warn("Loading Throttles exception",ex);
 			return false;
 		}

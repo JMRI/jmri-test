@@ -2,24 +2,22 @@
 
 package jmri.jmrit.operations.setup;
 
-import jmri.jmrit.operations.locations.LocationManagerXml;
-import jmri.jmrit.operations.rollingstock.engines.EngineManagerXml;
-import jmri.jmrit.operations.rollingstock.cars.CarManagerXml;
-import jmri.jmrit.operations.routes.RouteManagerXml;
-import jmri.jmrit.operations.setup.OperationsSetupXml;
-import jmri.jmrit.operations.trains.TrainManagerXml;
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.extensions.jfcunit.eventdata.*;
-import junit.extensions.jfcunit.finder.AbstractButtonFinder;
-import junit.extensions.jfcunit.finder.DialogFinder;
-import jmri.jmrit.display.LocoIcon;
-import jmri.util.JmriJFrame;
-
 import java.io.File;
 import java.util.List;
 import java.util.Locale;
+import jmri.jmrit.display.LocoIcon;
+import jmri.jmrit.operations.locations.LocationManagerXml;
+import jmri.jmrit.operations.rollingstock.cars.CarManagerXml;
+import jmri.jmrit.operations.rollingstock.engines.EngineManagerXml;
+import jmri.jmrit.operations.routes.RouteManagerXml;
+import jmri.jmrit.operations.trains.TrainManagerXml;
+import jmri.util.JmriJFrame;
+import junit.extensions.jfcunit.eventdata.MouseEventData;
+import junit.extensions.jfcunit.finder.AbstractButtonFinder;
+import junit.extensions.jfcunit.finder.DialogFinder;
+import junit.framework.Assert;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests for the Operations Setup GUI class
@@ -30,58 +28,62 @@ import java.util.Locale;
 public class OperationsSetupGuiTest extends jmri.util.SwingTestCase {
 	
 	public void testDirectionCheckBoxes(){
+                // it may be possible to make this a headless test by only initializing the panel, not the frame
 		OperationsSetupFrame f = new OperationsSetupFrame();
 		f.setLocation(0, 0);	// entire panel must be visible for tests to work properly
 		f.initComponents();
+                OperationsSetupPanel p = (OperationsSetupPanel) f.getContentPane();
 				
 		//both east/west and north/south checkboxes should be set	
-		Assert.assertTrue("North selected", f.northCheckBox.isSelected());
-		Assert.assertTrue("East selected", f.eastCheckBox.isSelected());
+		Assert.assertTrue("North selected", p.northCheckBox.isSelected());
+		Assert.assertTrue("East selected", p.eastCheckBox.isSelected());
 		
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.northCheckBox ) );	
-		Assert.assertFalse("North deselected", f.northCheckBox.isSelected());
-		Assert.assertTrue("East selected", f.eastCheckBox.isSelected());
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.northCheckBox ) );
+		Assert.assertFalse("North deselected", p.northCheckBox.isSelected());
+		Assert.assertTrue("East selected", p.eastCheckBox.isSelected());
 		
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.eastCheckBox ) );		
-		Assert.assertTrue("North selected", f.northCheckBox.isSelected());
-		Assert.assertFalse("East deselected", f.eastCheckBox.isSelected());
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.eastCheckBox ) );
+		Assert.assertTrue("North selected", p.northCheckBox.isSelected());
+		Assert.assertFalse("East deselected", p.eastCheckBox.isSelected());
 		
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.eastCheckBox ) );
-		Assert.assertTrue("North selected", f.northCheckBox.isSelected());
-		Assert.assertTrue("East selected", f.eastCheckBox.isSelected());
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.eastCheckBox ) );
+		Assert.assertTrue("North selected", p.northCheckBox.isSelected());
+		Assert.assertTrue("East selected", p.eastCheckBox.isSelected());
 		
 		//done
 		f.dispose();
 	}
 	
 	public void testSetupFrameWrite(){
+                // it may be possible to make this a headless test by only initializing the panel, not the frame
 		// force creation of backup
 		Setup.setCarTypes(Setup.AAR);
 		
 		OperationsSetupFrame f = new OperationsSetupFrame();
 		f.setLocation(0, 0);	// entire panel must be visible for tests to work properly
 		f.initComponents();
-		
-		f.railroadNameTextField.setText("Test Railroad Name");
-		f.maxLengthTextField.setText("1234");
-		f.maxEngineSizeTextField.setText("6");
-		f.switchTimeTextField.setText("3");
-		f.travelTimeTextField.setText("4");
+                OperationsSetupPanel p = (OperationsSetupPanel) f.getContentPane();
+
+		p.railroadNameTextField.setText("Test Railroad Name");
+		p.maxLengthTextField.setText("1234");
+		p.maxEngineSizeTextField.setText("6");
+		p.switchTimeTextField.setText("3");
+		p.travelTimeTextField.setText("4");
 		//f.ownerTextField.setText("Bob J");
 		
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.scaleHO ) );
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.typeDesc ) );
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.scaleHO ) );
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.typeDesc ) );
 		
-		f.panelTextField.setText("Test Panel Name");
+		p.panelTextField.setText("Test Panel Name");
 		
-		f.eastComboBox.setSelectedItem(LocoIcon.RED);
-		f.westComboBox.setSelectedItem(LocoIcon.BLUE);
-		f.northComboBox.setSelectedItem(LocoIcon.WHITE);
-		f.southComboBox.setSelectedItem(LocoIcon.GREEN);
-		f.terminateComboBox.setSelectedItem(LocoIcon.GRAY);
-		f.localComboBox.setSelectedItem(LocoIcon.YELLOW);
+		p.eastComboBox.setSelectedItem(LocoIcon.RED);
+		p.westComboBox.setSelectedItem(LocoIcon.BLUE);
+		p.northComboBox.setSelectedItem(LocoIcon.WHITE);
+		p.southComboBox.setSelectedItem(LocoIcon.GREEN);
+		p.terminateComboBox.setSelectedItem(LocoIcon.GRAY);
+		p.localComboBox.setSelectedItem(LocoIcon.YELLOW);
 
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.saveButton ) );
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.saveButton ) );
 		// confirm delete dialog window should appear
 		pressDialogButton(f, "OK");
 		//done
@@ -89,40 +91,42 @@ public class OperationsSetupGuiTest extends jmri.util.SwingTestCase {
 	}
 	
 	public void testSetupFrameRead(){
+                // it may be possible to make this a headless test by only initializing the panel, not the frame
 		OperationsSetupFrame f = new OperationsSetupFrame();
 		f.setLocation(0, 0);	// entire panel must be visible for tests to work properly
 		f.initComponents();
+                OperationsSetupPanel p = (OperationsSetupPanel) f.getContentPane();
 		
-		Assert.assertEquals("railroad name", "Test Railroad Name", f.railroadNameTextField.getText());
-		Assert.assertEquals("max length", "1234", f.maxLengthTextField.getText());
-		Assert.assertEquals("max engines", "6", f.maxEngineSizeTextField.getText());
-		Assert.assertEquals("switch time", "3", f.switchTimeTextField.getText());
-		Assert.assertEquals("travel time", "4", f.travelTimeTextField.getText());
+		Assert.assertEquals("railroad name", "Test Railroad Name", p.railroadNameTextField.getText());
+		Assert.assertEquals("max length", "1234", p.maxLengthTextField.getText());
+		Assert.assertEquals("max engines", "6", p.maxEngineSizeTextField.getText());
+		Assert.assertEquals("switch time", "3", p.switchTimeTextField.getText());
+		Assert.assertEquals("travel time", "4", p.travelTimeTextField.getText());
 		//Assert.assertEquals("owner", "Bob J", f.ownerTextField.getText());
 				
-		Assert.assertTrue("HO scale", f.scaleHO.isSelected());
-		Assert.assertFalse("N scale", f.scaleN.isSelected());
-		Assert.assertFalse("Z scale", f.scaleZ.isSelected());
-		Assert.assertFalse("TT scale", f.scaleTT.isSelected());
-		Assert.assertFalse("HOn3 scale", f.scaleHOn3.isSelected());
-		Assert.assertFalse("OO scale", f.scaleOO.isSelected());
-		Assert.assertFalse("Sn3 scale", f.scaleSn3.isSelected());
-		Assert.assertFalse("S scale", f.scaleS.isSelected());
-		Assert.assertFalse("On3 scale", f.scaleOn3.isSelected());
-		Assert.assertFalse("O scale", f.scaleO.isSelected());
-		Assert.assertFalse("G scale", f.scaleG.isSelected());
+		Assert.assertTrue("HO scale", p.scaleHO.isSelected());
+		Assert.assertFalse("N scale", p.scaleN.isSelected());
+		Assert.assertFalse("Z scale", p.scaleZ.isSelected());
+		Assert.assertFalse("TT scale", p.scaleTT.isSelected());
+		Assert.assertFalse("HOn3 scale", p.scaleHOn3.isSelected());
+		Assert.assertFalse("OO scale", p.scaleOO.isSelected());
+		Assert.assertFalse("Sn3 scale", p.scaleSn3.isSelected());
+		Assert.assertFalse("S scale", p.scaleS.isSelected());
+		Assert.assertFalse("On3 scale", p.scaleOn3.isSelected());
+		Assert.assertFalse("O scale", p.scaleO.isSelected());
+		Assert.assertFalse("G scale", p.scaleG.isSelected());
 		
-		Assert.assertTrue("descriptive", f.typeDesc.isSelected());
-		Assert.assertFalse("AAR", f.typeAAR.isSelected());
+		Assert.assertTrue("descriptive", p.typeDesc.isSelected());
+		Assert.assertFalse("AAR", p.typeAAR.isSelected());
 		
-		Assert.assertEquals("panel name", "Test Panel Name", f.panelTextField.getText());
+		Assert.assertEquals("panel name", "Test Panel Name", p.panelTextField.getText());
 		
-		Assert.assertEquals("east color", LocoIcon.RED, f.eastComboBox.getSelectedItem());
-		Assert.assertEquals("west color", LocoIcon.BLUE, f.westComboBox.getSelectedItem());
-		Assert.assertEquals("north color", LocoIcon.WHITE, f.northComboBox.getSelectedItem());
-		Assert.assertEquals("south color", LocoIcon.GREEN, f.southComboBox.getSelectedItem());
-		Assert.assertEquals("terminate color", LocoIcon.GRAY, f.terminateComboBox.getSelectedItem());
-		Assert.assertEquals("local color", LocoIcon.YELLOW, f.localComboBox.getSelectedItem());
+		Assert.assertEquals("east color", LocoIcon.RED, p.eastComboBox.getSelectedItem());
+		Assert.assertEquals("west color", LocoIcon.BLUE, p.westComboBox.getSelectedItem());
+		Assert.assertEquals("north color", LocoIcon.WHITE, p.northComboBox.getSelectedItem());
+		Assert.assertEquals("south color", LocoIcon.GREEN, p.southComboBox.getSelectedItem());
+		Assert.assertEquals("terminate color", LocoIcon.GRAY, p.terminateComboBox.getSelectedItem());
+		Assert.assertEquals("local color", LocoIcon.YELLOW, p.localComboBox.getSelectedItem());
 		//done
 		f.dispose();
 	}
@@ -130,45 +134,46 @@ public class OperationsSetupGuiTest extends jmri.util.SwingTestCase {
 	public void testOptionFrameWrite(){
 		OptionFrame f = new OptionFrame();
 		f.setLocation(0, 0);	// entire panel must be visible for tests to work properly
-		f.initComponents();		
+		f.initComponents();
+                OptionPanel p = (OptionPanel) f.getContentPane();
 		
 		// confirm defaults
-		Assert.assertTrue("build normal", f.buildNormal.isSelected());
-		Assert.assertFalse("build aggressive", f.buildAggressive.isSelected());
-		Assert.assertFalse("local", f.localSpurCheckBox.isSelected());
-		Assert.assertFalse("interchange", f.localInterchangeCheckBox.isSelected());
-		Assert.assertFalse("yard", f.localYardCheckBox.isSelected());
-		Assert.assertFalse("rfid", f.rfidCheckBox.isSelected());
-		Assert.assertFalse("car logger", f.carLoggerCheckBox.isSelected());
-		Assert.assertFalse("engine logger", f.engineLoggerCheckBox.isSelected());
-		Assert.assertTrue("router", f.routerCheckBox.isSelected());
+		Assert.assertTrue("build normal", p.buildNormal.isSelected());
+		Assert.assertFalse("build aggressive", p.buildAggressive.isSelected());
+		Assert.assertFalse("local", p.localSpurCheckBox.isSelected());
+		Assert.assertFalse("interchange", p.localInterchangeCheckBox.isSelected());
+		Assert.assertFalse("yard", p.localYardCheckBox.isSelected());
+		Assert.assertFalse("rfid", p.rfidCheckBox.isSelected());
+		Assert.assertFalse("car logger", p.carLoggerCheckBox.isSelected());
+		Assert.assertFalse("engine logger", p.engineLoggerCheckBox.isSelected());
+		Assert.assertTrue("router", p.routerCheckBox.isSelected());
 		
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.buildAggressive ) );
-		Assert.assertFalse("build normal", f.buildNormal.isSelected());
-		Assert.assertTrue("build aggressive", f.buildAggressive.isSelected());
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.buildAggressive ) );
+		Assert.assertFalse("build normal", p.buildNormal.isSelected());
+		Assert.assertTrue("build aggressive", p.buildAggressive.isSelected());
 		
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.localSpurCheckBox ) );
-		Assert.assertTrue("local", f.localSpurCheckBox.isSelected());
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.localSpurCheckBox ) );
+		Assert.assertTrue("local", p.localSpurCheckBox.isSelected());
 		
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.localInterchangeCheckBox ) );
-		Assert.assertTrue("interchange", f.localInterchangeCheckBox.isSelected());
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.localInterchangeCheckBox ) );
+		Assert.assertTrue("interchange", p.localInterchangeCheckBox.isSelected());
 		
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.localYardCheckBox ) );
-		Assert.assertTrue("yard", f.localYardCheckBox.isSelected());
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.localYardCheckBox ) );
+		Assert.assertTrue("yard", p.localYardCheckBox.isSelected());
 		
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.rfidCheckBox ) );
-		Assert.assertTrue("rfid", f.rfidCheckBox.isSelected());
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.rfidCheckBox ) );
+		Assert.assertTrue("rfid", p.rfidCheckBox.isSelected());
 		
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.carLoggerCheckBox ) );
-		Assert.assertTrue("car logger", f.carLoggerCheckBox.isSelected());
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.carLoggerCheckBox ) );
+		Assert.assertTrue("car logger", p.carLoggerCheckBox.isSelected());
 		
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.engineLoggerCheckBox ) );
-		Assert.assertTrue("engine logger", f.engineLoggerCheckBox.isSelected());
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.engineLoggerCheckBox ) );
+		Assert.assertTrue("engine logger", p.engineLoggerCheckBox.isSelected());
 		
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.routerCheckBox ) );
-		Assert.assertFalse("router", f.routerCheckBox.isSelected());
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.routerCheckBox ) );
+		Assert.assertFalse("router", p.routerCheckBox.isSelected());
 		
-		getHelper().enterClickAndLeave( new MouseEventData( this, f.saveButton ) );
+		getHelper().enterClickAndLeave( new MouseEventData( this, p.saveButton ) );
 		//done
 		f.dispose();
 	}
@@ -176,17 +181,18 @@ public class OperationsSetupGuiTest extends jmri.util.SwingTestCase {
 	public void testOptionFrameRead(){
 		OptionFrame f = new OptionFrame();
 		f.setLocation(0, 0);	// entire panel must be visible for tests to work properly
-		f.initComponents();		
+		f.initComponents();
+                OptionPanel p = (OptionPanel) f.getContentPane();
 		
-		Assert.assertFalse("build normal",f.buildNormal.isSelected());
-		Assert.assertTrue("build aggressive",f.buildAggressive.isSelected());
-		Assert.assertTrue("local", f.localSpurCheckBox.isSelected());
-		Assert.assertTrue("interchange", f.localInterchangeCheckBox.isSelected());
-		Assert.assertTrue("yard", f.localYardCheckBox.isSelected());
-		Assert.assertTrue("rfid", f.rfidCheckBox.isSelected());
-		Assert.assertTrue("car logger", f.carLoggerCheckBox.isSelected());
-		Assert.assertTrue("engine logger", f.engineLoggerCheckBox.isSelected());
-		Assert.assertFalse("router", f.routerCheckBox.isSelected());
+		Assert.assertFalse("build normal",p.buildNormal.isSelected());
+		Assert.assertTrue("build aggressive",p.buildAggressive.isSelected());
+		Assert.assertTrue("local", p.localSpurCheckBox.isSelected());
+		Assert.assertTrue("interchange", p.localInterchangeCheckBox.isSelected());
+		Assert.assertTrue("yard", p.localYardCheckBox.isSelected());
+		Assert.assertTrue("rfid", p.rfidCheckBox.isSelected());
+		Assert.assertTrue("car logger", p.carLoggerCheckBox.isSelected());
+		Assert.assertTrue("engine logger", p.engineLoggerCheckBox.isSelected());
+		Assert.assertFalse("router", p.routerCheckBox.isSelected());
 		
 		//done
 		f.dispose();

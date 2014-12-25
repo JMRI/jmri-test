@@ -7,7 +7,7 @@ import java.io.File;
 import javax.swing.Icon;
 import jmri.util.FileUtil;
 import jmri.util.swing.WindowInterface;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,12 @@ import org.slf4j.LoggerFactory;
  */
 public class ImportRosterItemAction extends AbstractRosterItemAction  {
 
-    public ImportRosterItemAction(String s, WindowInterface wi) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7656609516525647086L;
+
+	public ImportRosterItemAction(String s, WindowInterface wi) {
     	super(s, wi);
     }
      
@@ -70,7 +75,7 @@ public class ImportRosterItemAction extends AbstractRosterItemAction  {
         LocoFile lf = new LocoFile();  // used as a temporary
         Element lroot;
         try {
-            lroot = (Element)lf.rootFromFile(mFromFile).clone();
+            lroot = lf.rootFromFile(mFromFile).clone();
         } catch (Exception e) {
             log.error("Exception while loading loco XML file: "+mFullFromFilename+" exception: "+e);
             return false;
@@ -96,17 +101,7 @@ public class ImportRosterItemAction extends AbstractRosterItemAction  {
         File fout = new File(LocoFile.getFileLocation()+mToEntry.getFileName());
         newLocoFile.writeFile(fout, lroot, mToEntry);
         
-        String[] attributes = mToEntry.getAttributeList();
-        if (attributes!=null){
-            Roster roster = Roster.instance();
-            for(int x=0; x<attributes.length; x++){
-                if(attributes[x].startsWith(roster.getRosterGroupPrefix())){
-                    //We don't bother checking to see if the group already exists as this is done by the addRosterGroupList.
-                    roster.addRosterGroupList(attributes[x].substring(roster.getRosterGroupPrefix().length()));
-                }
-            }
-        }
-
+        mToEntry.getGroups();
         return true;
     }
     

@@ -48,7 +48,12 @@ import jmri.util.PythonInterp;
 public class DefaultConditional extends AbstractNamedBean
     implements Conditional, java.io.Serializable {
 
-    public static final boolean PARKS_DEBUG = false;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7856761914540392475L;
+
+	public static final boolean PARKS_DEBUG = false;
 
 	static final java.util.ResourceBundle rbx = java.util.ResourceBundle.getBundle("jmri.jmrit.beantable.LogixTableBundle");
 
@@ -1260,7 +1265,11 @@ public class DefaultConditional extends AbstractNamedBean
     static private boolean _skipErrorDialog = false;
 
     class ErrorDialog extends JDialog {
-        JCheckBox rememberSession;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -3083184035319691227L;
+		JCheckBox rememberSession;
         ErrorDialog(List<String> list, Conditional cond) {
             super();
             setTitle("Logix Runtime Errors");
@@ -1275,7 +1284,7 @@ public class DefaultConditional extends AbstractNamedBean
             contentPanel.add(panel);
 
             panel = new JPanel();
-            panel.add(new JList(list.toArray()));
+            panel.add(new JList<String>(list.toArray(new String[0])));
             contentPanel.add(panel);
 
             panel = new JPanel();

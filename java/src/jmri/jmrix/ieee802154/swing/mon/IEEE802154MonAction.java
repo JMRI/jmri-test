@@ -19,7 +19,11 @@ import org.slf4j.LoggerFactory;
 
 public class IEEE802154MonAction extends AbstractAction {
 
-    private jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo _memo;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 542282941886486019L;
+	private jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo _memo;
 
     public IEEE802154MonAction(String s,jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo memo) { 
        super(s);
@@ -34,8 +38,8 @@ public class IEEE802154MonAction extends AbstractAction {
          super(s);
          // If there is no system memo given, assume the system memo
          // is the first one in the instance list.
-         _memo=(jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo)(jmri.InstanceManager.
-               getList(jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo.class).get(0));
+         _memo= jmri.InstanceManager.
+                getList(jmri.jmrix.ieee802154.IEEE802154SystemConnectionMemo.class).get(0);
     }
 
     public IEEE802154MonAction() {

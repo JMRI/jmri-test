@@ -22,7 +22,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import jmri.jmrit.decoderdefn.DecoderFile;
 import jmri.jmrit.decoderdefn.DecoderIndexFile;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import javax.swing.tree.TreePath;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -507,7 +507,12 @@ public class EcosLocoToRoster implements EcosListener {
         dRoot = new DefaultMutableTreeNode("Root");
         dModel = new DefaultTreeModel(dRoot);
         dTree = new JTree(dModel){
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = -3197427124986523211L;
+
+			@Override
             public String getToolTipText(MouseEvent evt) {
                 if (getRowForLocation(evt.getX(), evt.getY()) == -1) return null;
                 TreePath curPath = getPathForLocation(evt.getX(), evt.getY());
@@ -540,12 +545,12 @@ public class EcosLocoToRoster implements EcosListener {
         	String famComment = decoders.get(i).getFamilyComment();
         	String verString = decoders.get(i).getVersionsAsString();
         	String hoverText = "";
-        	if (famComment == null ? "" == null : famComment.equals("")) {
-        		if (verString == null ? "" != null : !verString.equals("")) {
+        	if (famComment == null || famComment.equals("")) {
+        		if (verString != null && !verString.equals("")) {
             		hoverText = "CV7=" + verString;
         		}
         	} else {
-        		if (verString == null ? "" == null : verString.equals("")) {
+        		if (verString == null || verString.equals("")) {
             		hoverText = famComment;
         		} else {
             		hoverText = famComment + "  CV7=" + verString;
@@ -639,7 +644,11 @@ public class EcosLocoToRoster implements EcosListener {
     }
         // from http://www.codeguru.com/java/articles/143.shtml
     static class DecoderTreeNode extends DefaultMutableTreeNode {
-        private String toolTipText;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -5606230191141397789L;
+		private String toolTipText;
         private String title;
 
         public DecoderTreeNode(String str, String toolTipText, String title) {
@@ -788,7 +797,7 @@ public class EcosLocoToRoster implements EcosListener {
 
         try {
             decoderRoot = df.rootFromName(DecoderFile.fileLocation+df.getFilename());
-        } catch (org.jdom.JDOMException e) { log.error("JDOM Exception while loading decoder XML file: "+df.getFilename()); }
+        } catch (org.jdom2.JDOMException e) { log.error("JDOM Exception while loading decoder XML file: "+df.getFilename()); }
         catch (java.io.IOException e) { log.error("IO Exception while loading decoder XML file: "+df.getFilename()); }
         // load variables from decoder tree
         df.getProductID();

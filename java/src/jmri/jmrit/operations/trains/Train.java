@@ -23,7 +23,6 @@ import jmri.jmrit.operations.locations.Track;
 import jmri.jmrit.operations.rollingstock.RollingStock;
 import jmri.jmrit.operations.rollingstock.cars.Car;
 import jmri.jmrit.operations.rollingstock.cars.CarLoad;
-import jmri.jmrit.operations.rollingstock.cars.CarLoads;
 import jmri.jmrit.operations.rollingstock.cars.CarManager;
 import jmri.jmrit.operations.rollingstock.cars.CarOwners;
 import jmri.jmrit.operations.rollingstock.cars.CarRoads;
@@ -35,13 +34,12 @@ import jmri.jmrit.operations.rollingstock.engines.EngineTypes;
 import jmri.jmrit.operations.routes.Route;
 import jmri.jmrit.operations.routes.RouteLocation;
 import jmri.jmrit.operations.routes.RouteManager;
-import jmri.jmrit.operations.routes.RouteManagerXml;
 import jmri.jmrit.operations.setup.Control;
 import jmri.jmrit.operations.setup.Setup;
 import jmri.jmrit.roster.Roster;
 import jmri.jmrit.roster.RosterEntry;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,6 +158,7 @@ public class Train implements java.beans.PropertyChangeListener {
 
 	// Train status
 	public static final String TRAIN_RESET = Bundle.getMessage("TrainReset");
+	public static final String RUN_SCRIPTS = Bundle.getMessage("RunScripts");
 	public static final String BUILDING = Bundle.getMessage("Building");
 	public static final String BUILD_FAILED = Bundle.getMessage("BuildFailed");
 	public static final String BUILT = Bundle.getMessage("Built");
@@ -169,6 +168,7 @@ public class Train implements java.beans.PropertyChangeListener {
 
 	// Train status codes
 	public static final int CODE_TRAIN_RESET = 0;
+	public static final int CODE_RUN_SCRIPTS = 0x100;
 	public static final int CODE_BUILDING = 0x01;
 	public static final int CODE_BUILD_FAILED = 0x02;
 	public static final int CODE_BUILT = 0x10;
@@ -760,6 +760,8 @@ public class Train implements java.beans.PropertyChangeListener {
 			case CODE_TERMINATED:
 				setTableRowColorName(TrainManager.instance().getRowColorNameForTerminated());
 				break;
+			default: // all other cases do nothing
+				break;
 			}
 		}
 	}
@@ -793,6 +795,8 @@ public class Train implements java.beans.PropertyChangeListener {
 	 */
 	public String getStatus(Locale locale, int code) {
 		switch (code) {
+		case CODE_RUN_SCRIPTS:
+			return RUN_SCRIPTS;
 		case CODE_BUILDING:
 			return BUILDING;
 		case CODE_BUILD_FAILED:
@@ -1804,8 +1808,7 @@ public class Train implements java.beans.PropertyChangeListener {
 			for (RouteLocation rl : route.getLocationsBySequenceList()) {
 				for (RollingStock rs : CarManager.instance().getList(this)) {
 					Car car = (Car) rs;
-					if (!CarLoads.instance().getLoadType(car.getTypeName(), car.getLoadName()).equals(
-							CarLoad.LOAD_TYPE_EMPTY))
+					if (!car.getLoadType().equals(CarLoad.LOAD_TYPE_EMPTY))
 						continue;
 					if (car.getRouteLocation() == rl) {
 						number++;
@@ -2684,11 +2687,18 @@ public class Train implements java.beans.PropertyChangeListener {
 	 */
 	private synchronized void runScripts(List<String> scripts) {
 		if (scripts.size() > 0) {
+			// save the current status
+			int savedStatus = getStatusCode();
+			setStatus(CODE_RUN_SCRIPTS);
 			// find the number of active threads
 			ThreadGroup root = Thread.currentThread().getThreadGroup();
 			int numberOfThreads = root.activeCount();
 			for (String scriptPathname : scripts) {
-				jmri.util.PythonInterp.runScript(jmri.util.FileUtil.getExternalFilename(scriptPathname));
+				try {
+					jmri.util.PythonInterp.runScript(jmri.util.FileUtil.getExternalFilename(scriptPathname));
+				} catch (Exception e) {
+					log.error("Problem with script: {}", scriptPathname);
+				}
 			}
 			// need to wait for scripts to complete or 2 seconds maximum
 			int count = 0;
@@ -2704,6 +2714,7 @@ public class Train implements java.beans.PropertyChangeListener {
 						break; // 2 seconds maximum 20*100 = 2000
 				}
 			}
+			setStatus(savedStatus);
 		}
 	}
 
@@ -2901,7 +2912,7 @@ public class Train implements java.beans.PropertyChangeListener {
 		if (Setup.isTrainIconCordEnabled()) {
 			_trainIconRl.setTrainIconX(_trainIcon.getX());
 			_trainIconRl.setTrainIconY(_trainIcon.getY());
-			RouteManagerXml.instance().setDirty(true);
+//			RouteManagerXml.instance().setDirty(true);
 			return true;
 		}
 		return false;
@@ -3233,7 +3244,7 @@ public class Train implements java.beans.PropertyChangeListener {
 	 *            Consist XML element
 	 */
 	public Train(Element e) {
-		org.jdom.Attribute a;
+		org.jdom2.Attribute a;
 		if ((a = e.getAttribute(Xml.ID)) != null)
 			_id = a.getValue();
 		else

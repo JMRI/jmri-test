@@ -26,7 +26,11 @@ import jmri.jmrix.swing.ComponentFactory;
  * @version     $Revision$
  */
 public class ActiveSystemsMenu extends JMenu {
-    public ActiveSystemsMenu(String name) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6929237793054146826L;
+	public ActiveSystemsMenu(String name) {
         this();
         setText(name);
 
@@ -49,11 +53,11 @@ public class ActiveSystemsMenu extends JMenu {
     static public void addItems(JMenuBar m) {
 
         // get ComponentFactory objects and create menus
-        java.util.List<Object> list 
+        java.util.List<ComponentFactory> list 
                 = jmri.InstanceManager.getList(ComponentFactory.class);
         if (list != null) {
-            for (Object memo : list) {
-                JMenu menu = ((ComponentFactory)memo).getMenu();
+            for (ComponentFactory memo : list) {
+                JMenu menu = memo.getMenu();
                 if (menu != null) m.add(menu);
             }
         }

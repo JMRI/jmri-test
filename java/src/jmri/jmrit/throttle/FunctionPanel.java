@@ -17,7 +17,7 @@ import jmri.LocoAddress;
 import jmri.jmrit.roster.Roster;
 import jmri.jmrit.roster.RosterEntry;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 
 /**
@@ -25,6 +25,10 @@ import org.jdom.Element;
  */
 public class FunctionPanel extends JInternalFrame implements FunctionListener, java.beans.PropertyChangeListener, AddressListener
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4241542668066898837L;
 	public static final int NUM_FUNCTION_BUTTONS = 29;
 	public static final int NUM_FUNC_BUTTONS_INIT = 16;	//only show 16 function buttons at start
 	private DccThrottle mThrottle;
