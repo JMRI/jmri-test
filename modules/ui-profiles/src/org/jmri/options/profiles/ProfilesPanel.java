@@ -11,7 +11,11 @@
  *============================================================================*/
 package org.jmri.options.profiles;
 
-final class ProfilesPanel extends javax.swing.JPanel {
+import javax.swing.GroupLayout;
+import javax.swing.JPanel;
+import jmri.profile.ProfilePreferencesPanel;
+
+final class ProfilesPanel extends JPanel {
 
     private final ProfilesOptionsPanelController controller;
 
@@ -29,21 +33,19 @@ final class ProfilesPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        profilePreferences = new jmri.profile.ProfilePreferencesPanel();
+        profilePreferences = new ProfilePreferencesPanel();
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+        layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(profilePreferences, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(profilePreferences, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+        layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(profilePreferences, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(profilePreferences, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -52,7 +54,9 @@ final class ProfilesPanel extends javax.swing.JPanel {
     }
 
     void store() {
-        // Nothing to do
+        if (this.controller.isChanged()) {
+            this.profilePreferences.savePreferences();
+        }
     }
 
     boolean valid() {
@@ -61,6 +65,6 @@ final class ProfilesPanel extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private jmri.profile.ProfilePreferencesPanel profilePreferences;
+    private ProfilePreferencesPanel profilePreferences;
     // End of variables declaration//GEN-END:variables
 }
