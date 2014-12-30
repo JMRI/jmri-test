@@ -72,4 +72,11 @@ final class OptionsPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private OptionPanel optionPanel;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the optionPanel
+     */
+    public OptionPanel getOptionPanel() {
+        return optionPanel;
+    }
 }

@@ -55,13 +55,7 @@ final class ManifestPrintPanel extends javax.swing.JPanel {
     }
 
     void store() {
-        // TODO store modified settings
-        // Example:
-        // Preferences.userNodeForPackage(ManifestPrintPanel.class).putBoolean("someFlag", someCheckBox.isSelected());
-        // or for org.openide.util with API spec. version >= 7.4:
-        // NbPreferences.forModule(ManifestPrintPanel.class).putBoolean("someFlag", someCheckBox.isSelected());
-        // or:
-        // SomeSystemOption.getDefault().setSomeStringProperty(someTextField.getText());
+        this.printOptionPanel.savePreferences();
     }
 
     boolean valid() {
@@ -72,4 +66,11 @@ final class ManifestPrintPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private PrintOptionPanel printOptionPanel;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the printOptionPanel
+     */
+    public PrintOptionPanel getPrintOptionPanel() {
+        return printOptionPanel;
+    }
 }

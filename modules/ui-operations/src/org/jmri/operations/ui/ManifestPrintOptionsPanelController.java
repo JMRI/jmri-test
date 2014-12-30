@@ -59,6 +59,11 @@ public final class ManifestPrintOptionsPanelController extends OptionsPanelContr
 
     @Override
     public boolean isChanged() {
+        if (this.getPanel().getPrintOptionPanel().isDirty()) {
+            this.changed();
+        } else {
+            this.changed = false;
+        }
         return changed;
     }
 

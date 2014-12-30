@@ -54,6 +54,11 @@ public final class GeneralOptionsPanelController extends OptionsPanelController 
 
     @Override
     public boolean isChanged() {
+        if (this.getPanel().getOperationsSetupPanel().isDirty()) {
+            this.changed();
+        } else {
+            this.changed = false;
+        }
         return changed;
     }
 
