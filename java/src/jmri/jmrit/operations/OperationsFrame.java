@@ -36,10 +36,10 @@ import org.slf4j.LoggerFactory;
 public class OperationsFrame extends JmriJFrame implements AncestorListener {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -8263240370517832287L;
-	public static final String NEW_LINE = "\n"; // NOI18N
+     *
+     */
+    private static final long serialVersionUID = -8263240370517832287L;
+    public static final String NEW_LINE = "\n"; // NOI18N
     public static final String NONE = ""; // NOI18N
 
     public OperationsFrame(String s) {
@@ -113,7 +113,7 @@ public class OperationsFrame extends JmriJFrame implements AncestorListener {
      * @return the number of checkboxes, minimum is 5 (6 checkboxes)
      */
     protected int getNumberOfCheckboxesPerLine() {
-        return ((OperationsPanel) this.getContentPane()).getNumberOfCheckboxesPerLine();
+        return ((OperationsPanel) this.getContentPane()).getNumberOfCheckboxesPerLine(this.getPreferredSize());
     }
 
     protected void addButtonAction(JButton b) {
@@ -148,7 +148,7 @@ public class OperationsFrame extends JmriJFrame implements AncestorListener {
         ((OperationsPanel) this.getContentPane()).spinnerChangeEvent(ae);
     }
 
-    protected void addComboBoxAction(JComboBox b) {
+    protected void addComboBoxAction(JComboBox<?> b) {
         b.addActionListener(this::comboBoxActionPerformed);
     }
 
@@ -156,7 +156,7 @@ public class OperationsFrame extends JmriJFrame implements AncestorListener {
         ((OperationsPanel) this.getContentPane()).comboBoxActionPerformed(ae);
     }
 
-    protected void selectNextItemComboBox(JComboBox b) {
+    protected void selectNextItemComboBox(JComboBox<?> b) {
         ((OperationsPanel) this.getContentPane()).selectNextItemComboBox(b);
     }
 
@@ -168,7 +168,7 @@ public class OperationsFrame extends JmriJFrame implements AncestorListener {
      * @param textArea
      */
     protected void adjustTextAreaColumnWidth(JScrollPane scrollPane, JTextArea textArea) {
-        ((OperationsPanel) this.getContentPane()).adjustTextAreaColumnWidth(scrollPane, textArea);
+        ((OperationsPanel) this.getContentPane()).adjustTextAreaColumnWidth(scrollPane, textArea, this.getPreferredSize());
     }
 
     /**
@@ -312,7 +312,7 @@ public class OperationsFrame extends JmriJFrame implements AncestorListener {
     }
 
     protected String lineWrap(String s) {
-        return ((OperationsPanel) this.getContentPane()).lineWrap(s);
+        return ((OperationsPanel) this.getContentPane()).lineWrap(s, this.getPreferredSize());
     }
 
     // Kludge fix for horizontal scrollbar encroaching buttons at bottom of a scrollable window.

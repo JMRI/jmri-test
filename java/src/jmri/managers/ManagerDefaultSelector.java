@@ -111,12 +111,24 @@ public class ManagerDefaultSelector {
      * Record the userName of the system
      * that provides the default instance
      * for a specific class.
+     *
+     * To ensure compatibility of different preference versions,
+     * only classes that are current registered are preserved.
+     * This way, reading in an old file will just have irrelevant
+     * items ignored.
+     *
      * @param managerClass the specific type, e.g. TurnoutManager,
      *          for which a default system is desired
      * @param userName of the system, or null if none set
      */
     public void setDefault(Class<?> managerClass, String userName) {
-        defaults.put(managerClass, userName);
+        for (Item item : knownManagers) {
+            if (item.managerClass.equals(managerClass)) {
+                defaults.put(managerClass, userName);
+                return;
+            }
+        }
+        log.warn("Ignoring preference for class {} with name {}",managerClass, userName);
     }
 
     /** 
@@ -166,23 +178,21 @@ public class ManagerDefaultSelector {
     public Hashtable<Class<?>, String> defaults = new Hashtable<Class<?>, String>();
     
     final public Item[] knownManagers = new Item[] {
-                new Item("Throttles", ThrottleManager.class, false),
-                new Item("<html>Power<br>Control</html>", PowerManager.class, false),
-                new Item("<html>Command<br>Station</html>", CommandStation.class, false),
-                new Item("Programmer", ProgrammerManager.class, false),
-                new Item("<html>Service<br>Programmer</html>", GlobalProgrammerManager.class, false),
-                new Item("<html>Ops Mode<br>Programmer</html>", AddressedProgrammerManager.class, false),
-                new Item( "Consists ", ConsistManager.class, false)
+                new Item("Throttles", ThrottleManager.class),
+                new Item("<html>Power<br>Control</html>", PowerManager.class),
+                new Item("<html>Command<br>Station</html>", CommandStation.class),
+                new Item("<html>Service<br>Programmer</html>", GlobalProgrammerManager.class),
+                new Item("<html>Ops Mode<br>Programmer</html>", AddressedProgrammerManager.class),
+                new Item( "Consists ", ConsistManager.class)
     };
     
     public static class Item {
         public String typeName;
         public Class<?> managerClass;
         public boolean proxy;
-        Item(String typeName, Class<?> managerClass, boolean proxy) {
+        Item(String typeName, Class<?> managerClass) {
             this.typeName = typeName;
             this.managerClass = managerClass;
-            this.proxy = proxy;
         }
     }
     

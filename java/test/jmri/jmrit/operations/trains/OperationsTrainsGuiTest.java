@@ -549,7 +549,7 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 	public void testTrainSwitchListEditFrame() {
 		// check defaults
 		Assert.assertTrue("All Trains", Setup.isSwitchListAllTrainsEnabled());
-		Assert.assertFalse("Page per Train", Setup.isSwitchListPagePerTrainEnabled());
+		Assert.assertTrue("Page per Train", Setup.getSwitchListPageFormat().equals(Setup.PAGE_NORMAL));
 		Assert.assertTrue("Real Time", Setup.isSwitchListRealTime());
 
 		TrainSwitchListEditFrame f = new TrainSwitchListEditFrame();
@@ -580,27 +580,28 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 			Assert.assertTrue("print switchlist 3", l.isSwitchListEnabled());
 		}
 
-		// test the three check box options
+		// test the two check box options
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.switchListRealTimeCheckBox));
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.saveButton));
 		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
 		Assert.assertTrue("All Trains", Setup.isSwitchListAllTrainsEnabled());
-		Assert.assertFalse("Page per Train", Setup.isSwitchListPagePerTrainEnabled());
+		Assert.assertTrue("Page per Train", Setup.getSwitchListPageFormat().equals(Setup.PAGE_NORMAL));
 		Assert.assertFalse("Real Time", Setup.isSwitchListRealTime());
 
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.switchListAllTrainsCheckBox));
 		getHelper().enterClickAndLeave(new MouseEventData(this, f.saveButton));
 		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
 		Assert.assertFalse("All Trains", Setup.isSwitchListAllTrainsEnabled());
-		Assert.assertFalse("Page per Train", Setup.isSwitchListPagePerTrainEnabled());
+		Assert.assertTrue("Page per Train", Setup.getSwitchListPageFormat().equals(Setup.PAGE_NORMAL));
 		Assert.assertFalse("Real Time", Setup.isSwitchListRealTime());
 
-		getHelper().enterClickAndLeave(new MouseEventData(this, f.switchListPageCheckBox));
-		getHelper().enterClickAndLeave(new MouseEventData(this, f.saveButton));
-		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
-		Assert.assertFalse("All Trains", Setup.isSwitchListAllTrainsEnabled());
-		Assert.assertTrue("Page per Train", Setup.isSwitchListPagePerTrainEnabled());
-		Assert.assertFalse("Real Time", Setup.isSwitchListRealTime());
+		// TODO add test for combo box
+//		getHelper().enterClickAndLeave(new MouseEventData(this, f.switchListPageComboBox));
+//		getHelper().enterClickAndLeave(new MouseEventData(this, f.saveButton));
+//		jmri.util.JUnitUtil.releaseThread(f, 1); // compensate for race between GUI and test thread
+//		Assert.assertFalse("All Trains", Setup.isSwitchListAllTrainsEnabled());
+//		Assert.assertTrue("Page per Train", Setup.isSwitchListPagePerTrainEnabled());
+//		Assert.assertFalse("Real Time", Setup.isSwitchListRealTime());
 
 		f.dispose();
 	}
@@ -709,6 +710,10 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		jmri.jmrit.display.panelEditor.PanelEditor editor = new jmri.jmrit.display.panelEditor.PanelEditor(
 				"Train Test Panel");
 		PanelMenu.instance().addEditorPanel(editor);
+		
+		// confirm panel creation
+		JmriJFrame f = JmriJFrame.getFrame("Train Test Panel");
+		Assert.assertNotNull(f);
 
 		// Place train icons on panel
 		Setup.setPanelName("Train Test Panel");
@@ -1037,12 +1042,12 @@ public class OperationsTrainsGuiTest extends jmri.util.SwingTestCase {
 		editor.getTargetFrame().dispose();
 	}
 
-	public void testTrainTestPanel() {
-		// confirm panel creation
-		JmriJFrame f = JmriJFrame.getFrame("Train Test Panel");
-		Assert.assertNotNull(f);
-
-	}
+//	public void testTrainTestPanel() {
+//		// confirm panel creation
+//		JmriJFrame f = JmriJFrame.getFrame("Train Test Panel");
+//		Assert.assertNotNull(f);
+//
+//	}
 
 	@SuppressWarnings("unchecked")
 	private void pressDialogButton(JmriJFrame f, String buttonName) {

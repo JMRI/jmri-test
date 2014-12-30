@@ -74,12 +74,9 @@ public class PR2Adapter extends LocoBufferAdapter {
         packets.connectPort(this);
 
         // create memo
-        /*PR2SystemConnectionMemo memo 
-            = new PR2SystemConnectionMemo(packets, new SlotManager(packets));*/
-        adaptermemo.setSlotManager(new SlotManager(packets));
         adaptermemo.setLnTrafficController(packets);
         // do the common manager config
-        adaptermemo.configureCommandStation(mCanRead, mProgPowersOff, commandStationName, 
+        adaptermemo.configureCommandStation(commandStationType, 
                                             mTurnoutNoRetry, mTurnoutExtraSpace);
         adaptermemo.configureManagers();
 

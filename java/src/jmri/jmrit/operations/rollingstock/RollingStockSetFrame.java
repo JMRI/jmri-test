@@ -66,13 +66,13 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 	protected JButton ignoreAllButton = new JButton(Bundle.getMessage("IgnoreAll"));
 
 	// combo boxes
-	protected JComboBox locationBox = LocationManager.instance().getComboBox();
-	protected JComboBox trackLocationBox = new JComboBox();
-	protected JComboBox destinationBox = LocationManager.instance().getComboBox();
-	protected JComboBox trackDestinationBox = new JComboBox();
-	protected JComboBox finalDestinationBox = LocationManager.instance().getComboBox();
-	protected JComboBox finalDestTrackBox = new JComboBox();
-	protected JComboBox trainBox = TrainManager.instance().getTrainComboBox();
+	protected JComboBox<Location> locationBox = LocationManager.instance().getComboBox();
+	protected JComboBox<Track> trackLocationBox = new JComboBox<>();
+	protected JComboBox<Location> destinationBox = LocationManager.instance().getComboBox();
+	protected JComboBox<Track> trackDestinationBox = new JComboBox<>();
+	protected JComboBox<Location> finalDestinationBox = LocationManager.instance().getComboBox();
+	protected JComboBox<Track> finalDestTrackBox = new JComboBox<>();
+	protected JComboBox<Train> trainBox = TrainManager.instance().getTrainComboBox();
 
 	// check boxes
 	protected JCheckBox autoTrackCheckBox = new JCheckBox(Bundle.getMessage("Auto"));
@@ -466,7 +466,7 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 
 	private void loadTrain(RollingStock rs) {
 		if (!ignoreTrainCheckBox.isSelected()) {
-			if (trainBox.getSelectedItem() == null || trainBox.getSelectedItem().equals("")) {
+			if (trainBox.getSelectedItem() == null) {
 				if (rs.getTrain() != null) {
 					// prevent rs from being picked up and delivered
 					setRouteLocationAndDestination(rs, rs.getTrain(), null, null);
@@ -588,7 +588,7 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 				return false;
 
 			if (!ignoreTrainCheckBox.isSelected()) {
-				if (trainBox.getSelectedItem() == null || trainBox.getSelectedItem().equals("")) {
+				if (trainBox.getSelectedItem() == null) {
 					rs.setTrain(null);
 				} else {
 					rs.setTrain((Train) trainBox.getSelectedItem());
@@ -713,8 +713,7 @@ public class RollingStockSetFrame extends OperationsFrame implements java.beans.
 				track = (Track)trackDestinationBox.getSelectedItem();
 			loc.updateComboBox(trackDestinationBox, _rs, autoDestinationTrackCheckBox.isSelected(), true);
 			// check for staging, add track if train is built and terminates into staging
-			if (autoDestinationTrackCheckBox.isSelected() && trainBox.getSelectedItem() != null
-					&& !trainBox.getSelectedItem().equals("")) {
+			if (autoDestinationTrackCheckBox.isSelected() && trainBox.getSelectedItem() != null) {
 				Train train = (Train) trainBox.getSelectedItem();
 				if (train.isBuilt() && train.getTerminationTrack() != null
 						&& train.getTerminationTrack().getLocation() == loc) {

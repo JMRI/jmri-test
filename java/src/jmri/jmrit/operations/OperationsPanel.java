@@ -1,4 +1,4 @@
-//OperationsFrame.java
+//OperationsPanel.java
 package jmri.jmrit.operations;
 
 import java.awt.Dimension;
@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Frame for operations
+ * Panel for operations
  *
  * @author Dan Boudreau Copyright (C) 2008, 2012
  * @version $Revision$
@@ -40,10 +40,10 @@ import org.slf4j.LoggerFactory;
 public class OperationsPanel extends JPanel implements AncestorListener {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 4203296733948891651L;
-	public static final String NEW_LINE = "\n"; // NOI18N
+     *
+     */
+    private static final long serialVersionUID = 4203296733948891651L;
+    public static final String NEW_LINE = "\n"; // NOI18N
     public static final String NONE = ""; // NOI18N
 
     public OperationsPanel() {
@@ -141,10 +141,10 @@ public class OperationsPanel extends JPanel implements AncestorListener {
      * @return the number of checkboxes, minimum is 5 (6 checkboxes)
      */
     protected int getNumberOfCheckboxesPerLine() {
-        return getNumberOfCheckboxes(getPreferredSize());
+        return getNumberOfCheckboxesPerLine(this.getPreferredSize());
     }
 
-    private int getNumberOfCheckboxes(Dimension size) {
+    protected int getNumberOfCheckboxesPerLine(Dimension size) {
         if (size == null) {
             return MIN_CHECKBOXES; // default is 6 checkboxes per row
         }
@@ -204,17 +204,17 @@ public class OperationsPanel extends JPanel implements AncestorListener {
         log.debug("spinner action not overridden");
     }
 
-    protected void addComboBoxAction(JComboBox b) {
+    protected void addComboBoxAction(JComboBox<?> b) {
         b.addActionListener((ActionEvent e) -> {
             comboBoxActionPerformed(e);
         });
     }
 
     protected void comboBoxActionPerformed(ActionEvent ae) {
-        log.debug("combo box action not overridden");
+        log.debug("combobox action not overridden");
     }
 
-    protected void selectNextItemComboBox(JComboBox b) {
+    protected void selectNextItemComboBox(JComboBox<?> b) {
         int newIndex = b.getSelectedIndex() + 1;
         if (newIndex < b.getItemCount()) {
             b.setSelectedIndex(newIndex);
@@ -229,9 +229,13 @@ public class OperationsPanel extends JPanel implements AncestorListener {
      * @param textArea
      */
     protected void adjustTextAreaColumnWidth(JScrollPane scrollPane, JTextArea textArea) {
+        this.adjustTextAreaColumnWidth(scrollPane, textArea, this.getPreferredSize());
+    }
+
+    protected void adjustTextAreaColumnWidth(JScrollPane scrollPane, JTextArea textArea, Dimension size) {
         FontMetrics metrics = getFontMetrics(textArea.getFont());
         int columnWidth = metrics.charWidth('m');
-        int width = getPreferredSize().width;
+        int width = size.width;
         int columns = width / columnWidth * 90 / 100; // make text area 90% of the panel width
         if (columns > textArea.getColumns()) {
             log.debug("Increasing text area character width to {} columns", columns);
@@ -403,8 +407,11 @@ public class OperationsPanel extends JPanel implements AncestorListener {
     }
 
     protected String lineWrap(String s) {
+        return this.lineWrap(s, this.getPreferredSize());
+    }
+
+    protected String lineWrap(String s, Dimension size) {
         int numberChar = 80;
-        Dimension size = getPreferredSize();
         if (size != null) {
             JLabel X = new JLabel("X");
             numberChar = size.width / X.getPreferredSize().width;

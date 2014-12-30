@@ -55,7 +55,7 @@ public class OperationsCarsGuiTest extends jmri.util.SwingTestCase {
 		westfordSiding.setLength(300);
 		Track westfordAble = westford.addTrack("Able", Track.SPUR);
 		westfordAble.setLength(300);
-		Location boxford = lManager.newLocation("Boxford");
+		Location boxford = lManager.newLocation("New Boxford");
 		Track boxfordYard = boxford.addTrack("Yard", Track.YARD);
 		boxfordYard.setLength(300);
 		Track boxfordJacobson = boxford.addTrack("Jacobson", Track.SPUR);
@@ -231,6 +231,10 @@ public class OperationsCarsGuiTest extends jmri.util.SwingTestCase {
 	List<String> tempCars;
 	
 	public void testCarEditFrame(){	
+		loadCars();		// load cars
+		CarManager cManager = CarManager.instance();
+		Assert.assertEquals("number of cars", 5, cManager.getNumEntries());
+		
 		CarEditFrame f = new CarEditFrame();
 		f.setTitle("Test Add Car Frame");
 		f.initComponents();
@@ -245,9 +249,8 @@ public class OperationsCarsGuiTest extends jmri.util.SwingTestCase {
 		f.builtTextField.setText("1999");
 		f.ownerComboBox.setSelectedItem("Owner1");
 		f.commentTextField.setText("test car comment field");
-        getHelper().enterClickAndLeave( new MouseEventData( this, f.saveButton ) );
+        getHelper().enterClickAndLeave( new MouseEventData( this, f.saveButton ) );	
 		
-		CarManager cManager = CarManager.instance();
 		Car c6 = cManager.getByRoadAndNumber("SP", "6");
 		
 		Assert.assertNotNull("Car did not create", c6);
@@ -312,6 +315,8 @@ public class OperationsCarsGuiTest extends jmri.util.SwingTestCase {
 	public void testCarEditFrameRead(){
 		loadCars();		// load cars
 		CarManager cManager = CarManager.instance();
+		// should have 5 cars now
+		Assert.assertEquals("number of cars", 5, cManager.getNumEntries());
 		Car c1 = cManager.getByRoadAndNumber("NH", "1");
 
 		CarEditFrame f = new CarEditFrame();
@@ -339,7 +344,7 @@ public class OperationsCarsGuiTest extends jmri.util.SwingTestCase {
         getHelper().enterClickAndLeave( new MouseEventData( this, f.deleteButton ) );
 		
 		// should have 5 cars now
-		Assert.assertEquals("number of cars", 5, cManager.getNumEntries());
+		Assert.assertEquals("number of cars", 4, cManager.getNumEntries());
 		
 		f.dispose();
 	}
@@ -449,6 +454,8 @@ public class OperationsCarsGuiTest extends jmri.util.SwingTestCase {
 	
 	private void loadCars() {
 		CarManager cManager = CarManager.instance();
+		// remove previous cars
+		cManager.dispose();
 		// add 5 cars to table
 		Car c1 = cManager.newCar("NH", "1");
 		c1.setBuilt("2009");

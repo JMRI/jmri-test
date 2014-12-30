@@ -183,11 +183,8 @@ public class ThrottlesPreferencesPane extends JPanel implements PropertyChangeLi
         labelApplyWarning.setText(Bundle.getMessage("ExThrottleLabelApplyWarning"));
         cbSaveThrottleOnLayoutSave.setText(Bundle.getMessage("ExThrottleSaveThrottleOnLayoutSave"));
 
-        ActionListener al = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                checkConsistancy();
-            }
+        ActionListener al = (ActionEvent evt) -> {
+            checkConsistancy();
         };
         cbUseExThrottle.addActionListener(al);
         cbUseToolBar.addActionListener(al);
@@ -195,29 +192,14 @@ public class ThrottlesPreferencesPane extends JPanel implements PropertyChangeLi
         cbEnableAutoLoad.addActionListener(al);
 
         jbSave.setText(Bundle.getMessage("ThrottlesPrefsSave"));
-        jbSave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                jbSaveActionPerformed(evt);
-            }
-        });
+        jbSave.addActionListener(this::jbSaveActionPerformed);
         jbSave.setVisible(false);
 
         jbCancel.setText(Bundle.getMessage("ThrottlesPrefsReset"));
-        jbCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                jbCancelActionPerformed(evt);
-            }
-        });
+        jbCancel.addActionListener(this::jbCancelActionPerformed);
 
         jbApply.setText(Bundle.getMessage("ThrottlesPrefsApply"));
-        jbApply.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                jbApplyActionPerformed(evt);
-            }
-        });
+        jbApply.addActionListener(this::jbApplyActionPerformed);
 
         setLayout(new GridBagLayout());
 
@@ -377,5 +359,10 @@ public class ThrottlesPreferencesPane extends JPanel implements PropertyChangeLi
     @Override
     public boolean isDirty() {
         return InstanceManager.getDefault(ThrottlesPreferences.class).isDirty();
+    }
+
+    @Override
+    public boolean isRestartRequired() {
+        return false;
     }
 }

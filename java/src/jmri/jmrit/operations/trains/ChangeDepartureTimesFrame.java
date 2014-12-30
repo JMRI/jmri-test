@@ -39,7 +39,7 @@ public class ChangeDepartureTimesFrame extends OperationsFrame {
 	javax.swing.JButton changeButton = new javax.swing.JButton(Bundle.getMessage("Change"));
 
 	// combo boxes
-	javax.swing.JComboBox hourBox = new javax.swing.JComboBox();
+	javax.swing.JComboBox<String> hourBox = new javax.swing.JComboBox<>();
 
 	public ChangeDepartureTimesFrame() {
 		// general GUI config
@@ -50,7 +50,7 @@ public class ChangeDepartureTimesFrame extends OperationsFrame {
 
 		// Layout the panel by rows
 
-		for (int i = 0; i < 24; i++) {
+		for (int i = 1; i < 24; i++) {
 			hourBox.addItem(Integer.toString(i));
 		}
 

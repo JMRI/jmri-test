@@ -4,8 +4,6 @@ package jmri.jmrit.operations.setup;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import jmri.jmrit.operations.OperationsFrame;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Frame for user edit of manifest and switch list print options
@@ -38,7 +36,9 @@ public class PrintOptionFrame extends OperationsFrame {
         menuBar.add(toolMenu);
         setJMenuBar(menuBar);
         addHelpMenu("package.jmri.jmrit.operations.Operations_PrintOptions", true); // NOI18N
+        
+        initMinimumSize();
     }
 
-    private static final Logger log = LoggerFactory.getLogger(PrintOptionFrame.class);
+    //private static final Logger log = LoggerFactory.getLogger(PrintOptionFrame.class);
 }

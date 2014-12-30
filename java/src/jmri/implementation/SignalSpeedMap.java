@@ -2,13 +2,14 @@
 
 package jmri.implementation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.io.File;
+import java.net.URL;
 import java.util.Hashtable;
 import java.util.List;
+import jmri.util.FileUtil;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
  /**
  * Default implementation to map Signal aspects or appearances to speed requirements.
@@ -37,13 +38,11 @@ public class SignalSpeedMap {
     static void loadMap() {
         _map = new SignalSpeedMap();
 
-        String path = "xml" + File.separator
-                + "signals" + File.separator
-                + "signalSpeeds.xml";
+        URL path = FileUtil.findURL("signalSpeeds.xml", new String[] {"", "xml/signals"});
         jmri.jmrit.XmlFile xf = new jmri.jmrit.XmlFile(){};
         Element root;
         try {
-            root = xf.rootFromName(path);
+            root = xf.rootFromURL(path);
             Element e = root.getChild("interpretation");
             String sval = e.getText().toUpperCase();
             if (sval.equals("PERCENTNORMAL")) {
@@ -82,7 +81,6 @@ public class SignalSpeedMap {
             }
             if (log.isDebugEnabled()) log.debug("_numSteps = "+_numSteps);
 
-            @SuppressWarnings("unchecked")
             List<Element> list = root.getChild("aspectSpeeds").getChildren();
             for (int i = 0; i < list.size(); i++) {
                 String name = list.get(i).getName();
@@ -97,7 +95,6 @@ public class SignalSpeedMap {
                 _table.put(name, speed);
             }
 
-            @SuppressWarnings("unchecked")
             List<Element>l = root.getChild("appearanceSpeeds").getChildren();
             for (int i = 0; i < l.size(); i++) {
                 String name = l.get(i).getName();
