@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.jmri.operations.ui;
 
 import java.beans.PropertyChangeListener;
@@ -10,18 +15,18 @@ import org.openide.util.Lookup;
 
 @OptionsPanelController.SubRegistration(
         location = "Operations",
-        displayName = "#AdvancedOption_DisplayName_General",
-        keywords = "#AdvancedOption_Keywords_General",
-        keywordsCategory = "Operations/General",
-        position = 100
+        displayName = "#AdvancedOption_DisplayName_ManifestPrint",
+        keywords = "#AdvancedOption_Keywords_ManifestPrint",
+        keywordsCategory = "Operations/ManifestPrint",
+        position = 120
 )
 @org.openide.util.NbBundle.Messages({
-    "AdvancedOption_DisplayName_General=General",
-    "AdvancedOption_Keywords_General=Scale"
+    "AdvancedOption_DisplayName_ManifestPrint=Manifest",
+    "AdvancedOption_Keywords_ManifestPrint=manifest, print, format, font"
 })
-public final class GeneralOptionsPanelController extends OptionsPanelController {
+public final class ManifestPrintOptionsPanelController extends OptionsPanelController {
 
-    private GeneralPanel panel;
+    private ManifestPrintPanel panel;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean changed;
 
@@ -77,9 +82,9 @@ public final class GeneralOptionsPanelController extends OptionsPanelController 
         pcs.removePropertyChangeListener(l);
     }
 
-    private GeneralPanel getPanel() {
+    private ManifestPrintPanel getPanel() {
         if (panel == null) {
-            panel = new GeneralPanel(this);
+            panel = new ManifestPrintPanel(this);
         }
         return panel;
     }

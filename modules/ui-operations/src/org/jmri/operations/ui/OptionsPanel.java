@@ -12,13 +12,13 @@
 package org.jmri.operations.ui;
 
 import javax.swing.GroupLayout;
-import jmri.jmrit.operations.setup.OperationsSetupPanel;
+import jmri.jmrit.operations.setup.OptionPanel;
 
-final class GeneralPanel extends javax.swing.JPanel {
+final class OptionsPanel extends javax.swing.JPanel {
 
-    private final GeneralOptionsPanelController controller;
+    private final OptionsOptionsPanelController controller;
 
-    GeneralPanel(GeneralOptionsPanelController controller) {
+    OptionsPanel(OptionsOptionsPanelController controller) {
         this.controller = controller;
         initComponents();
         // TODO listen to changes in form fields and call controller.changed()
@@ -32,24 +32,24 @@ final class GeneralPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        operationsSetupPanel = new OperationsSetupPanel();
+        optionPanel = new OptionPanel();
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(operationsSetupPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(optionPanel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(operationsSetupPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(optionPanel, GroupLayout.DEFAULT_SIZE, 733, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
     void load() {
         // TODO read settings and initialize GUI
         // Example:        
-        // someCheckBox.setSelected(Preferences.userNodeForPackage(GeneralPanel.class).getBoolean("someFlag", false));
+        // someCheckBox.setSelected(Preferences.userNodeForPackage(OptionsPanel.class).getBoolean("someFlag", false));
         // or for org.openide.util with API spec. version >= 7.4:
-        // someCheckBox.setSelected(NbPreferences.forModule(GeneralPanel.class).getBoolean("someFlag", false));
+        // someCheckBox.setSelected(NbPreferences.forModule(OptionsPanel.class).getBoolean("someFlag", false));
         // or:
         // someTextField.setText(SomeSystemOption.getDefault().getSomeStringProperty());
     }
@@ -57,9 +57,9 @@ final class GeneralPanel extends javax.swing.JPanel {
     void store() {
         // TODO store modified settings
         // Example:
-        // Preferences.userNodeForPackage(GeneralPanel.class).putBoolean("someFlag", someCheckBox.isSelected());
+        // Preferences.userNodeForPackage(OptionsPanel.class).putBoolean("someFlag", someCheckBox.isSelected());
         // or for org.openide.util with API spec. version >= 7.4:
-        // NbPreferences.forModule(GeneralPanel.class).putBoolean("someFlag", someCheckBox.isSelected());
+        // NbPreferences.forModule(OptionsPanel.class).putBoolean("someFlag", someCheckBox.isSelected());
         // or:
         // SomeSystemOption.getDefault().setSomeStringProperty(someTextField.getText());
     }
@@ -70,13 +70,6 @@ final class GeneralPanel extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private OperationsSetupPanel operationsSetupPanel;
+    private OptionPanel optionPanel;
     // End of variables declaration//GEN-END:variables
-
-    /**
-     * @return the operationsSetupPanel
-     */
-    public OperationsSetupPanel getOperationsSetupPanel() {
-        return operationsSetupPanel;
-    }
 }

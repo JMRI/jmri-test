@@ -10,18 +10,18 @@ import org.openide.util.Lookup;
 
 @OptionsPanelController.SubRegistration(
         location = "Operations",
-        displayName = "#AdvancedOption_DisplayName_General",
-        keywords = "#AdvancedOption_Keywords_General",
-        keywordsCategory = "Operations/General",
-        position = 100
+        displayName = "#AdvancedOption_DisplayName_Options",
+        keywords = "#AdvancedOption_Keywords_Options",
+        keywordsCategory = "Operations/Options",
+        position = 110
 )
 @org.openide.util.NbBundle.Messages({
-    "AdvancedOption_DisplayName_General=General",
-    "AdvancedOption_Keywords_General=Scale"
+    "AdvancedOption_DisplayName_Options=Options",
+    "AdvancedOption_Keywords_Options=option, options, switcher, staging, routing, car routing, logging"
 })
-public final class GeneralOptionsPanelController extends OptionsPanelController {
+public final class OptionsOptionsPanelController extends OptionsPanelController {
 
-    private GeneralPanel panel;
+    private OptionsPanel panel;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean changed;
 
@@ -77,9 +77,9 @@ public final class GeneralOptionsPanelController extends OptionsPanelController 
         pcs.removePropertyChangeListener(l);
     }
 
-    private GeneralPanel getPanel() {
+    private OptionsPanel getPanel() {
         if (panel == null) {
-            panel = new GeneralPanel(this);
+            panel = new OptionsPanel(this);
         }
         return panel;
     }
