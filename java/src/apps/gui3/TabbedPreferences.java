@@ -9,6 +9,7 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -51,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * @author Randall Wood 2012
  * @version $Revision$
  */
-public class TabbedPreferences extends AppConfigBase {
+public class TabbedPreferences extends AppConfigBase implements PropertyChangeSupport {
 
     @Override
     public String getHelpTarget() {
@@ -81,9 +82,12 @@ public class TabbedPreferences extends AppConfigBase {
     int initalisationState = 0x00;
     private static final long serialVersionUID = -6266891995866315885L;
 
-    static final int UNINITIALISED = 0x00;
-    static final int INITIALISING = 0x01;
-    static final int INITIALISED = 0x02;
+    public static final int UNINITIALISED = 0x00;
+    public static final int INITIALISING = 0x01;
+    public static final int INITIALISED = 0x02;
+    public static final String INITIALIZATION = "PROP_INITIALIZATION";
+
+    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     public TabbedPreferences() {
 
@@ -127,7 +131,7 @@ public class TabbedPreferences extends AppConfigBase {
         if (initalisationState != UNINITIALISED) {
             return initalisationState;
         }
-        initalisationState = INITIALISING;
+        this.setInitalisationState(INITIALISING);
 
         list = new JList<String>();
         listScroller = new JScrollPane(list);
@@ -185,8 +189,14 @@ public class TabbedPreferences extends AppConfigBase {
 
         list.setSelectedIndex(0);
         selection(preferencesArray.get(0).getPrefItem());
-        initalisationState = INITIALISED;
+        this.setInitalisationState(INITIALISED);
         return initalisationState;
+    }
+
+    private void setInitalisationState(int state) {
+        int old = this.initalisationState;
+        this.initalisationState = state;
+        pcs.firePropertyChange(INITIALIZATION, old, state);
     }
 
     private boolean invokeSaveOptions() {
@@ -236,14 +246,14 @@ public class TabbedPreferences extends AppConfigBase {
                 panel.getPreferencesItemText(),
                 panel.getTabbedPreferencesTitle(),
                 panel.getLabelKey(),
-                panel.getPreferencesComponent(),
+                panel,
                 panel.isPersistant(),
                 panel.getPreferencesTooltip()
         );
     }
 
     private void addItem(String prefItem, String itemText, String tabtitle,
-            String labelKey, JComponent item, boolean store, String tooltip) {
+            String labelKey, PreferencesPanel item, boolean store, String tooltip) {
         PreferencesCatItems itemBeingAdded = null;
         for (PreferencesCatItems preferences : preferencesArray) {
             if (preferences.getPrefItem().equals(prefItem)) {
@@ -263,7 +273,7 @@ public class TabbedPreferences extends AppConfigBase {
         if (tabtitle == null) {
             tabtitle = itemText;
         }
-        itemBeingAdded.addPreferenceItem(tabtitle, labelKey, item, tooltip);
+        itemBeingAdded.addPreferenceItem(tabtitle, labelKey, item.getPreferencesComponent(), tooltip);
         if (store) {
             items.add(item);
         }
