@@ -1,9 +1,11 @@
 package org.jmri.core.ui.options;
 
+import apps.gui3.TabbedPreferences;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
+import jmri.InstanceManager;
 import jmri.swing.PreferencesPanel;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
@@ -26,15 +28,21 @@ public abstract class PreferencesPanelController extends OptionsPanelController 
 
     @Override
     public void update() {
-        // there is no analogous mechanism in a PreferencesPanel
-        // subclasses should implement this if they need to load preferences
-        // on demand
+        // ensure that TabbedPreferences are initialized
+        new Thread(InstanceManager.getDefault(TabbedPreferences.class)::init).start();
     }
 
     @Override
     public void applyChanges() {
         SwingUtilities.invokeLater(() -> {
             this.preferencesPanel.savePreferences();
+            if (this.preferencesPanel.isPersistant()
+                    && this.preferencesPanel.isDirty()) {
+                // this may result in multiple writes to the profile configuration
+                // if a persistant PreferencesPanel sets itself to dirty after
+                // another PreferencesPanel has already written the configuration
+                InstanceManager.getDefault(TabbedPreferences.class).savePressed(true);
+            }
         });
     }
 
@@ -49,6 +57,7 @@ public abstract class PreferencesPanelController extends OptionsPanelController 
         // override this method to indicate that a preferences setting is not
         // valid, for example, there are no connections defined, or a numeric
         // setting is outside the valid range
+        // return (InstanceManager.getDefault(TabbedPreferences.class).init() == TabbedPreferences.INITIALIZED);
         return true;
     }
 
