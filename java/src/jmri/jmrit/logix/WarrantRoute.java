@@ -94,6 +94,7 @@ public abstract class WarrantRoute extends jmri.util.JmriJFrame implements Actio
         doAction(obj);
     }
     
+    @SuppressWarnings("unchecked") // parameter can be any of several types, including JComboBox<String>
     void doAction(Object obj) {
         if (obj instanceof JTextField) {
             JTextField box = (JTextField)obj;
@@ -106,7 +107,7 @@ public abstract class WarrantRoute extends jmri.util.JmriJFrame implements Actio
                 }
             }
         } else {
-            JComboBox<String> box = (JComboBox)obj;
+            JComboBox<String> box = (JComboBox<String>)obj;
             if (!_origin.checkPathBox(box)) {
             	if (!_destination.checkPathBox(box)) {
             		if (!_via.checkPathBox(box)) {
