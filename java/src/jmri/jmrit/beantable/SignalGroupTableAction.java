@@ -275,7 +275,7 @@ public class SignalGroupTableAction extends AbstractTableAction implements Prope
         return "package.jmri.jmrit.beantable.SignalGroupTable";
     }
 
-    int signalStateFromBox(JComboBox box) {
+    int signalStateFromBox(JComboBox<String> box) {
         String mode = (String)box.getSelectedItem();
         int result = jmri.util.StringUtil.getStateFromName(mode, signalStatesValues, signalStates);
         
@@ -286,7 +286,7 @@ public class SignalGroupTableAction extends AbstractTableAction implements Prope
         return result;
     }
     
-    void setSignalStateBox(int mode, JComboBox box) {
+    void setSignalStateBox(int mode, JComboBox<String> box) {
         String result = jmri.util.StringUtil.getNameFromState(mode, signalStatesValues, signalStates);
         box.setSelectedItem(result);
     }

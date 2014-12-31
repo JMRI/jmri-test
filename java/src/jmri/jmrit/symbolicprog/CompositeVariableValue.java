@@ -57,7 +57,7 @@ public class CompositeVariableValue extends EnumVariableValue implements ActionL
         super(name, comment, cvName, readOnly, infoOnly, writeOnly, opsOnly, cvNum, mask, minVal, maxVal, v, status, stdname);
         _maxVal = maxVal;
         _minVal = minVal;
-        _value = new JComboBox();
+        _value = new JComboBox<String>();
         if (log.isDebugEnabled()) log.debug("New Composite named "+name);
     }
 
@@ -65,7 +65,7 @@ public class CompositeVariableValue extends EnumVariableValue implements ActionL
      * Create a null object.  Normally only used for tests and to pre-load classes.
      */
     public CompositeVariableValue() {
-        _value = new JComboBox();
+        _value = new JComboBox<String>();
     }
 
     public CvValue[] usesCVs() {
@@ -250,7 +250,7 @@ public class CompositeVariableValue extends EnumVariableValue implements ActionL
         }
         
         // locate SettingList for that number
-        String choice = (String)_value.getItemAt(value);
+        String choice = _value.getItemAt(value);
         SettingList sl = choiceHash.get(choice);
         sl.setValues();
         
@@ -456,7 +456,7 @@ public class CompositeVariableValue extends EnumVariableValue implements ActionL
     void findValue() {
         if (log.isDebugEnabled()) log.debug("findValue invoked on "+label());
         for (int i=0; i<_value.getItemCount(); i++) {
-            String choice = (String)_value.getItemAt(i);
+            String choice = _value.getItemAt(i);
             SettingList sl = choiceHash.get(choice);
             if (sl.match()) {
                 if (log.isDebugEnabled()) log.debug("  match in "+i);
