@@ -1,6 +1,7 @@
 package org.jmri.core.ui.options;
 
 import apps.gui3.TabbedPreferences;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.swing.JComponent;
@@ -10,9 +11,11 @@ import jmri.swing.PreferencesPanel;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Generic OptionsPanelController that maps the standard OptionsPanelController
+ * Abstract OptionsPanelController that maps the standard OptionsPanelController
  * to a JMRI PreferencesPanel.
  *
  * @author Randall Wood <randall.h.wood@alexandriasoftware.com>
@@ -21,27 +24,61 @@ public abstract class PreferencesPanelController extends OptionsPanelController 
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private final PreferencesPanel preferencesPanel;
+    private final static Logger log = LoggerFactory.getLogger(PreferencesPanelController.class);
 
     public PreferencesPanelController(PreferencesPanel preferencesPanel) {
         this.preferencesPanel = preferencesPanel;
     }
 
+    public PreferencesPanel getPreferencesPanel() {
+        return this.preferencesPanel;
+    }
+
     @Override
     public void update() {
-        // ensure that TabbedPreferences are initialized
-        new Thread(InstanceManager.getDefault(TabbedPreferences.class)::init).start();
+        log.info("update called");
+        TabbedPreferences tabbedPreferences = InstanceManager.getDefault(TabbedPreferences.class);
+        if (!tabbedPreferences.isInitialised()) {
+            tabbedPreferences.addPropertyChangeListener(TabbedPreferences.INITIALIZATION, new PropertyChangeListener() {
+                @Override
+                public void propertyChange(PropertyChangeEvent evt) {
+                    if ((int) evt.getNewValue() == TabbedPreferences.INITIALISED) {
+                        tabbedPreferences.removePropertyChangeListener(this);
+                        update();
+                    }
+                }
+            });
+            new Thread(tabbedPreferences::init).start();
+        } else {
+            tabbedPreferences.addPreferencesPanel(preferencesPanel);
+        }
     }
 
     @Override
     public void applyChanges() {
+        this.applyChanges(this.preferencesPanel.isPersistant());
+    }
+
+    /**
+     * Called by {@link #applyChanges() } with a boolean value indicating the
+     * changes should be saved as if the preferences are handled by the
+     * persistent configuration manager or not.
+     *
+     * The default applyChanges passes the result of
+     * <code>this.preferencesPanel.isPersistant()</code> for the isPersistent
+     * parameter.
+     *
+     * @param isPersistant true if persistent configuration manager should be
+     * invoked
+     */
+    protected void applyChanges(boolean isPersistent) {
         SwingUtilities.invokeLater(() -> {
             this.preferencesPanel.savePreferences();
-            if (this.preferencesPanel.isPersistant()
-                    && this.preferencesPanel.isDirty()) {
+            if (isPersistent && this.preferencesPanel.isDirty()) {
                 // this may result in multiple writes to the profile configuration
                 // if a persistant PreferencesPanel sets itself to dirty after
                 // another PreferencesPanel has already written the configuration
-                InstanceManager.getDefault(TabbedPreferences.class).savePressed(true);
+                InstanceManager.getDefault(TabbedPreferences.class).savePressed(this.preferencesPanel.isRestartRequired());
             }
         });
     }
@@ -56,9 +93,10 @@ public abstract class PreferencesPanelController extends OptionsPanelController 
     public boolean isValid() {
         // override this method to indicate that a preferences setting is not
         // valid, for example, there are no connections defined, or a numeric
-        // setting is outside the valid range
-        // return (InstanceManager.getDefault(TabbedPreferences.class).init() == TabbedPreferences.INITIALIZED);
-        return true;
+        // setting is outside the valid range. If your PreferencesPanel uses
+        // persistant perferences, ensure you return true only is super.isValid
+        // is true when overriding this method
+        return (InstanceManager.getDefault(TabbedPreferences.class).init() == TabbedPreferences.INITIALISED);
     }
 
     @Override

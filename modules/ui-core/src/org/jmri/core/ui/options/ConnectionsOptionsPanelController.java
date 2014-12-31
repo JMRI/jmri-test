@@ -19,4 +19,8 @@ public final class ConnectionsOptionsPanelController extends PreferencesPanelCon
         super(new ConnectionsPreferencesPanel());
     }
 
+    @Override
+    public void applyChanges() {
+        this.applyChanges(true);
+    }
 }
