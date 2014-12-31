@@ -22,8 +22,10 @@ import jmri.configurexml.ConfigXmlManager;
 import jmri.configurexml.ErrorHandler;
 import jmri.configurexml.swing.DialogErrorHandler;
 import jmri.implementation.AbstractShutDownTask;
+import jmri.jmrit.catalog.configurexml.DefaultCatalogTreeManagerXml;
 import jmri.jmrit.decoderdefn.DecoderIndexFile;
 import jmri.jmrit.display.layoutEditor.BlockValueFile;
+import jmri.jmrit.display.layoutEditor.LayoutBlockManager;
 import jmri.jmrit.revhistory.FileHistory;
 import jmri.jmrit.signalling.EntryExitPairs;
 import jmri.managers.DefaultIdTagManager;
@@ -536,6 +538,11 @@ public abstract class JmriApplication extends Bean {
             Thread thr3 = new Thread(r, "initialize python interpreter");
             thr3.start();
         }
+
+        // do final activation
+        InstanceManager.logixManagerInstance().activateAllLogixs();
+        InstanceManager.getDefault(LayoutBlockManager.class).initializeLayoutBlockPaths();
+        new DefaultCatalogTreeManagerXml().readCatalogTrees();
 
         return this.configLoaded;
     }

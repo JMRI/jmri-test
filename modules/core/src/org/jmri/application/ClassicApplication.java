@@ -57,10 +57,12 @@ import jmri.jmrit.ToolsMenu;
 import jmri.jmrit.automat.SampleAutomaton2Action;
 import jmri.jmrit.automat.SampleAutomaton3Action;
 import jmri.jmrit.automat.SampleAutomatonAction;
+import jmri.jmrit.catalog.configurexml.DefaultCatalogTreeManagerXml;
 import jmri.jmrit.decoderdefn.DecoderIndexFile;
 import jmri.jmrit.decoderdefn.PrintDecoderListAction;
 import jmri.jmrit.display.PanelMenu;
 import jmri.jmrit.display.layoutEditor.BlockValueFile;
+import jmri.jmrit.display.layoutEditor.LayoutBlockManager;
 import jmri.jmrit.jython.Jynstrument;
 import jmri.jmrit.jython.JynstrumentFactory;
 import jmri.jmrit.jython.RunJythonScript;
@@ -369,6 +371,11 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
         log.debug("Done with statusPanel, start buttonSpace");
         add(buttonSpace());
         add(_jynstrumentSpace);
+
+        // do final activation
+        InstanceManager.logixManagerInstance().activateAllLogixs();
+        InstanceManager.getDefault(LayoutBlockManager.class).initializeLayoutBlockPaths();
+        new DefaultCatalogTreeManagerXml().readCatalogTrees();
 
         log.debug("End constructor");
     }
