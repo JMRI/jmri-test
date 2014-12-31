@@ -11,8 +11,6 @@ import jmri.swing.PreferencesPanel;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract OptionsPanelController that maps the standard OptionsPanelController
@@ -24,7 +22,6 @@ public abstract class PreferencesPanelController extends OptionsPanelController 
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private final PreferencesPanel preferencesPanel;
-    private final static Logger log = LoggerFactory.getLogger(PreferencesPanelController.class);
 
     public PreferencesPanelController(PreferencesPanel preferencesPanel) {
         this.preferencesPanel = preferencesPanel;
@@ -36,7 +33,6 @@ public abstract class PreferencesPanelController extends OptionsPanelController 
 
     @Override
     public void update() {
-        log.info("update called");
         TabbedPreferences tabbedPreferences = InstanceManager.getDefault(TabbedPreferences.class);
         if (!tabbedPreferences.isInitialised()) {
             tabbedPreferences.addPropertyChangeListener(TabbedPreferences.INITIALIZATION, new PropertyChangeListener() {
@@ -68,7 +64,7 @@ public abstract class PreferencesPanelController extends OptionsPanelController 
      * <code>this.preferencesPanel.isPersistant()</code> for the isPersistent
      * parameter.
      *
-     * @param isPersistant true if persistent configuration manager should be
+     * @param isPersistent true if persistent configuration manager should be
      * invoked
      */
     protected void applyChanges(boolean isPersistent) {
