@@ -804,7 +804,7 @@ abstract public class BeanTableDataModel extends javax.swing.table.AbstractTable
             return;
         }
         
-        JComboBox box = new JComboBox();
+        JComboBox<String> box = new JComboBox<String>();
         List<String> nameList = getManager().getSystemNameList();
         for(int i = 0; i<nameList.size(); i++){
             NamedBean nb = getBySystemName(nameList.get(i));

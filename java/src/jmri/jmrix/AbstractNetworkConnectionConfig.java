@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * @author Bob Jacobsen Copyright (C) 2001, 2003
  * @version	$Revision$
  */
-abstract public class AbstractNetworkConnectionConfig extends AbstractConnectionConfig implements ConnectionConfig {
+abstract public class AbstractNetworkConnectionConfig extends AbstractConnectionConfig {
 
     private final static ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrix.JmrixBundle");
 
@@ -290,7 +290,7 @@ abstract public class AbstractNetworkConnectionConfig extends AbstractConnection
             String[] optionsAvailable = adapter.getOptions();
             options = new Hashtable<String, Option>();
             for (String i : optionsAvailable) {
-                JComboBox opt = new JComboBox(adapter.getOptionChoices(i));
+                JComboBox<String> opt = new JComboBox<String>(adapter.getOptionChoices(i));
                 opt.setSelectedItem(adapter.getOptionState(i));
                 options.put(i, new Option(adapter.getOptionDisplayName(i), opt, adapter.isOptionAdvanced(i)));
             }

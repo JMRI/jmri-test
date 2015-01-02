@@ -311,7 +311,7 @@
 	<LI>Jim LeFevre, who did the testing on the TMCC implementation, including buying components so we could do a more complete job,
 	    and coded the function support
     <LI>Alain Le Marchand, who provided a number of decoder definitions and updates
-    <LI>Lisby, who made large improvements to the Uhlenbrock Intellibox support
+    <LI>Karl Johan Lisby, who made large improvements to the Uhlenbrock Intellibox support
     <LI>Peter Lloyd-Jones, who contributed a script for playing a sound when a function key is pressed on a throttle 
     and wrote instructions and an installer Ubuntu Linux
 	<LI>Stephen Lowens, who updated the Digitrax sound decoder definitions
@@ -404,6 +404,7 @@
 	<LI>Klaus Ruebsam, who is hosting German and English JMRI discussion
 	groups on his 
 	<A HREF="http://www.dcc-portal.net/">http://www.dcc-portal.net/</a> website.
+	<li>Mathias Rufer created the first pre-release version of the ESU LokPilot Standard V1.0 decoder definition.</li>
 	<li>Peter Rushworth helped to add a reporter icon to the layout editor.
 <a name="S"></A>
     <LI>John Sacrey wrote instructions for getting Java to work on 64-bit Windows

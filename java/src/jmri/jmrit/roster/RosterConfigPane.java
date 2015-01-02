@@ -1,107 +1,127 @@
 // RosterConfigPane.java
-
 package jmri.jmrit.roster;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
-
+import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+import jmri.swing.PreferencesPanel;
 import jmri.util.FileUtil;
 
 /**
  * Provide GUI to configure Roster defaults.
  *
  *
- * @author      Bob Jacobsen   Copyright (C) 2001, 2003, 2007
+ * @author Bob Jacobsen Copyright (C) 2001, 2003, 2007
  * @version	$Revision$
  */
-public class RosterConfigPane extends JPanel {
+public class RosterConfigPane extends JPanel implements PreferencesPanel {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -8185051724790761792L;
-	JLabel filename;
+     *
+     */
+    private static final long serialVersionUID = -8185051724790761792L;
+    JLabel filename;
     JTextField owner = new JTextField(20);
     JFileChooser fc;
     JPanel parent;
-    
+    private final ResourceBundle apb = ResourceBundle.getBundle("apps.AppsConfigBundle");
+
     public RosterConfigPane() {
         fc = new JFileChooser(FileUtil.getUserFilesPath());
         // filter to only show the roster.xml file
-        FileFilter filt = new FileFilter(){
+        FileFilter filt = new FileFilter() {
+            @Override
             public boolean accept(File f) {
-                if (f.getName().equals("roster.xml")) return true;
-                else if (f.isDirectory()) return true;
-                else return false;
+                if (f.getName().equals("roster.xml")) {
+                    return true;
+                } else {
+                    return f.isDirectory();
+                }
             }
-            public String getDescription() { return "roster.xml only"; }
+
+            @Override
+            public String getDescription() {
+                return "roster.xml only";
+            }
         };
-        
-        java.util.ResourceBundle rb = java.util.ResourceBundle.getBundle("jmri.jmrit.roster.JmritRosterBundle");
-        fc.setDialogTitle(rb.getString("DialogTitleMove"));
+
+        fc.setDialogTitle(Bundle.getMessage("DialogTitleMove"));
         fc.setFileFilter(filt);
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         JPanel p = new JPanel();
         p.setLayout(new FlowLayout());
-        p.add(new JLabel(rb.getString("LabelMoveLocation")));
+        p.add(new JLabel(Bundle.getMessage("LabelMoveLocation")));
 
         p.add(filename = new JLabel(Roster.getFileLocation()));
         // don't show default location, so it's not deemed a user selection
         // and saved
-        if (FileUtil.getUserFilesPath().equals(Roster.getFileLocation()))
+        if (FileUtil.getUserFilesPath().equals(Roster.getFileLocation())) {
             filename.setText("");
-        JButton b = new JButton(rb.getString("ButtonSetDots"));
+        }
+        JButton b = new JButton(Bundle.getMessage("ButtonSetDots"));
 
         parent = this;
         b.addActionListener(new AbstractAction() {
             /**
-			 * 
-			 */
-			private static final long serialVersionUID = -1593137799319787064L;
+             *
+             */
+            private static final long serialVersionUID = -1593137799319787064L;
 
-			public void actionPerformed(ActionEvent e) {
-                java.util.ResourceBundle rb = java.util.ResourceBundle.getBundle("jmri.jmrit.roster.JmritRosterBundle");
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 // prompt with instructions
-                if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(parent.getTopLevelAncestor(), 
-                rb.getString("DialogMsgMoveWarning"), 
-                rb.getString("DialogMsgMoveQuestion"),
-                JOptionPane.OK_CANCEL_OPTION
-                )) return;
-                
+                if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(parent.getTopLevelAncestor(),
+                        Bundle.getMessage("DialogMsgMoveWarning"),
+                        Bundle.getMessage("DialogMsgMoveQuestion"),
+                        JOptionPane.OK_CANCEL_OPTION
+                )) {
+                    return;
+                }
+
                 // get the file
                 fc.rescanCurrentDirectory();
                 fc.showOpenDialog(null);
-                if (fc.getSelectedFile()==null) return; // cancelled
-                if (!fc.getSelectedFile().getName().equals("roster.xml")) return; // wrong file
-                filename.setText(fc.getSelectedFile().getParent()+File.separator);
+                if (fc.getSelectedFile() == null) {
+                    return; // cancelled
+                }
+                if (!fc.getSelectedFile().getName().equals("roster.xml")) {
+                    return; // wrong file
+                }
+                filename.setText(fc.getSelectedFile().getParent() + File.separator);
                 validate();
-                if (getTopLevelAncestor()!=null) ((JFrame)getTopLevelAncestor()).pack();
+                if (getTopLevelAncestor() != null) {
+                    ((JFrame) getTopLevelAncestor()).pack();
+                }
             }
         });
         p.add(b);
-        b = new JButton(rb.getString("ButtonReset"));
+        b = new JButton(Bundle.getMessage("ButtonReset"));
         b.addActionListener(new AbstractAction() {
             /**
-			 * 
-			 */
-			private static final long serialVersionUID = 898239723894109746L;
+             *
+             */
+            private static final long serialVersionUID = 898239723894109746L;
 
-			public void actionPerformed(ActionEvent e) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 filename.setText("");
                 validate();
-                if (getTopLevelAncestor()!=null) ((JFrame)getTopLevelAncestor()).pack();
+                if (getTopLevelAncestor() != null) {
+                    ((JFrame) getTopLevelAncestor()).pack();
+                }
             }
         });
         p.add(b);
@@ -109,7 +129,7 @@ public class RosterConfigPane extends JPanel {
 
         JPanel p2 = new JPanel();
         p2.setLayout(new FlowLayout());
-        p2.add(new JLabel(rb.getString("LabelDefaultOwner")));
+        p2.add(new JLabel(Bundle.getMessage("LabelDefaultOwner")));
         owner.setText(RosterEntry.getDefaultOwner());
         p2.add(owner);
         add(p2);
@@ -118,14 +138,64 @@ public class RosterConfigPane extends JPanel {
     public String getDefaultOwner() {
         return owner.getText();
     }
-    
-    public void setDefaultOwner(String defaultOwner){
+
+    public void setDefaultOwner(String defaultOwner) {
         owner.setText(defaultOwner);
     }
-    
+
     public String getSelectedItem() {
         return filename.getText();
     }
 
-}
+    @Override
+    public String getPreferencesItem() {
+        return "ROSTER"; // NOI18N
+    }
 
+    @Override
+    public String getPreferencesItemText() {
+        return this.apb.getString("MenuRoster"); // NOI18N
+    }
+
+    @Override
+    public String getTabbedPreferencesTitle() {
+        return this.apb.getString("TabbedLayoutRoster"); // NOI18N
+    }
+
+    @Override
+    public String getLabelKey() {
+        return this.apb.getString("LabelTabbedLayoutRoster"); // NOI18N
+    }
+
+    @Override
+    public JComponent getPreferencesComponent() {
+        return this;
+    }
+
+    @Override
+    public boolean isPersistant() {
+        return true;
+    }
+
+    @Override
+    public String getPreferencesTooltip() {
+        return null;
+    }
+
+    @Override
+    public void savePreferences() {
+        // do nothing - the persistant manager will take care of this
+    }
+
+    @Override
+    public boolean isDirty() {
+        return (!Roster.getFileLocation().equals(this.getSelectedItem())
+                || !RosterEntry.getDefaultOwner().equals(this.getDefaultOwner()));
+    }
+
+    @Override
+    public boolean isRestartRequired() {
+        return !Roster.getFileLocation().equals(this.getSelectedItem());
+    }
+
+}

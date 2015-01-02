@@ -51,7 +51,7 @@ public class AddSensorPanel extends jmri.util.swing.JmriPanel {
                 Boolean addToPrefix = true;
                 //Simple test not to add a system with a duplicate System prefix
                 for (int i = 0; i<prefixBox.getItemCount(); i++){
-                    if(((String)prefixBox.getItemAt(i)).equals(manuName))
+                    if((prefixBox.getItemAt(i)).equals(manuName))
                         addToPrefix=false;
                 }
                 if (addToPrefix)
@@ -138,7 +138,7 @@ public class AddSensorPanel extends jmri.util.swing.JmriPanel {
     
     protected SensorManager senManager = jmri.InstanceManager.sensorManagerInstance();
     
-    JComboBox prefixBox = new JComboBox();
+    JComboBox<String> prefixBox = new JComboBox<String>();
     JTextField numberToAdd = new JTextField(10);
     JCheckBox range = new JCheckBox("Add a range");
     String systemSelectionCombo = this.getClass().getName()+".SystemSelected";

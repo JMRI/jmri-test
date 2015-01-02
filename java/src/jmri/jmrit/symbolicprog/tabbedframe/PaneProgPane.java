@@ -112,7 +112,6 @@ public class PaneProgPane extends javax.swing.JPanel
      * @param modelElem "model" element from the Decoder Index, used to check what decoder options are present.
      * @param pRosterEntry The current roster entry, used to get sound labels.
      */
-    @SuppressWarnings("unchecked")
     public PaneProgPane(PaneContainer parent, String name, Element pane, CvTableModel cvModel, IndexedCvTableModel icvModel, VariableTableModel varModel, Element modelElem, RosterEntry pRosterEntry) {
 
         container = parent;
@@ -1197,7 +1196,6 @@ public class PaneProgPane extends javax.swing.JPanel
     /**
      * Create a new group from the JDOM group Element
      */
-    @SuppressWarnings("unchecked")
     protected JPanel newGroup(Element element, boolean showStdName, Element modelElem) {
 
         // create a panel to add as a new column or row
@@ -1343,7 +1341,6 @@ public class PaneProgPane extends javax.swing.JPanel
     /**
      * Create a new grid group from the JDOM group Element
      */
-    @SuppressWarnings("unchecked")
     protected void newGridGroup(Element element, final JPanel c, GridBagLayout g, GridGlobals globs, boolean showStdName, Element modelElem) {
 
         // handle include/exclude
@@ -1398,7 +1395,6 @@ public class PaneProgPane extends javax.swing.JPanel
     /**
      * Create a single column from the JDOM column Element
      */
-    @SuppressWarnings("unchecked")
     public JPanel newColumn(Element element, boolean showStdName, Element modelElem) {
 
         // create a panel to add as a new column or row
@@ -1543,7 +1539,6 @@ public class PaneProgPane extends javax.swing.JPanel
     /**
      * Create a single row from the JDOM column Element
      */
-    @SuppressWarnings("unchecked")
     public JPanel newRow(Element element, boolean showStdName, Element modelElem) {
 
         // create a panel to add as a new column or row
@@ -1688,7 +1683,6 @@ public class PaneProgPane extends javax.swing.JPanel
     /**
      * Create a grid from the JDOM  Element
      */
-    @SuppressWarnings("unchecked")
     public JPanel newGrid(Element element, boolean showStdName, Element modelElem) {
 
         // create a panel to add as a new grid
@@ -1755,7 +1749,6 @@ public class PaneProgPane extends javax.swing.JPanel
     /**
      * Create a griditem from the JDOM  Element
      */
-    @SuppressWarnings("unchecked")
     public JPanel newGridItem(Element element, boolean showStdName, Element modelElem, GridGlobals globs) {
 
                 List<Attribute> itemAttList = element.getAttributes(); // get item-level attributes

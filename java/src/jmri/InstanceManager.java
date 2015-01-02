@@ -12,7 +12,6 @@ import java.util.Vector;
 import jmri.implementation.DccConsistManager;
 import jmri.implementation.NmraConsistManager;
 import jmri.jmrit.roster.RosterIconFactory;
-import jmri.jmrit.vsdecoder.VSDecoderManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,6 +91,7 @@ public class InstanceManager {
      * registered with {@link #store}.
      * @param type The class Object for the items' type.
      */
+    @SuppressWarnings("unchecked") // the cast here is protected by the structure of the managerLists
     static public <T> List<T> getList(Class<T> type) {
         return (List<T>)managerLists.get(type);
     }
@@ -254,13 +254,12 @@ public class InstanceManager {
         }
     }
     
-    @SuppressWarnings("unchecked")
 	protected static void notifyPropertyChangeListener(String property, Object oldValue, Object newValue) {
         // make a copy of the listener vector to synchronized not needed for transmit
         Vector<PropertyChangeListener> v;
         synchronized(InstanceManager.class)
             {
-                v = (Vector<PropertyChangeListener>) listeners.clone();
+                v = new Vector<PropertyChangeListener>(listeners);
             }
         // forward to all listeners
         int cnt = v.size();
@@ -383,8 +382,10 @@ public class InstanceManager {
     }
 
     /**
-     * Will eventually be deprecated, use @{link #getDefault} directly.
+     * @deprecated Since 3.11.1, use @{link #getDefault} for either GlobalProgrammerManager
+     * or AddressedProgrammerManager directly
      */
+    @Deprecated
     static public ProgrammerManager programmerManagerInstance()  { 
         return getDefault(ProgrammerManager.class);
     }
@@ -636,10 +637,9 @@ public class InstanceManager {
     // deprecated.
     //
     static public void setProgrammerManager(ProgrammerManager p) {
-        store(p, ProgrammerManager.class);
- 		if(programmerManagerInstance().isAddressedModePossible() )
+ 		if(p.isAddressedModePossible() )
  		    store(p, AddressedProgrammerManager.class);
- 		if(programmerManagerInstance().isGlobalProgrammerAvailable() )
+ 		if(p.isGlobalProgrammerAvailable() )
  		    store(p, GlobalProgrammerManager.class);
        
     	// Now that we have a programmer manager, install the default

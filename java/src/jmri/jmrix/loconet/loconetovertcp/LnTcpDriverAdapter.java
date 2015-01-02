@@ -4,7 +4,6 @@ package jmri.jmrix.loconet.loconetovertcp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jmri.jmrix.SystemConnectionMemo;
 import jmri.jmrix.loconet.*;
 
 /**
@@ -41,10 +40,9 @@ public class LnTcpDriverAdapter extends LnNetworkPortController {
         packets.connectPort(this);
 
         // create memo
-        adaptermemo.setSlotManager(new SlotManager(packets));
         adaptermemo.setLnTrafficController(packets);
         // do the common manager config
-        adaptermemo.configureCommandStation(mCanRead, mProgPowersOff, commandStationName, 
+        adaptermemo.configureCommandStation(commandStationType,
                                             mTurnoutNoRetry, mTurnoutExtraSpace);
         adaptermemo.configureManagers();
 
@@ -65,12 +63,6 @@ public class LnTcpDriverAdapter extends LnNetworkPortController {
     	log.debug("configureOption1: "+value);
         setCommandStationType(value);
     }
-    
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="EI_EXPOSE_REP") // OK to expose array instead of copy until Java 1.6
-    public String[] getCommandStationNames() { return commandStationNames; }
-    public String   getCurrentCommandStation() { return commandStationName; }
-    
-    public SystemConnectionMemo getSystemConnectionMemo() { return adaptermemo; }
     
     public void dispose(){
         if (adaptermemo!=null)

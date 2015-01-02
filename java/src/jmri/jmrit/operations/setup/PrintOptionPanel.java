@@ -6,7 +6,9 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -18,9 +20,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import jmri.jmrit.operations.OperationsPanel;
+
 import jmri.jmrit.operations.trains.TrainManager;
 import jmri.util.swing.FontComboUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,14 +33,15 @@ import org.slf4j.LoggerFactory;
  * @author Dan Boudreau Copyright (C) 2008, 2010, 2011, 2012, 2013
  * @version $Revision$
  */
-public class PrintOptionPanel extends OperationsPanel {
+public class PrintOptionPanel extends OperationsPreferencesPanel {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 2753161901627545371L;
+     *
+     */
+    private static final long serialVersionUID = 2753161901627545371L;
+    private static final Logger log = LoggerFactory.getLogger(PrintOptionPanel.class);
 
-	// labels
+    // labels
     JLabel logoURL = new JLabel("");
 
     // major buttons
@@ -96,24 +100,24 @@ public class PrintOptionPanel extends OperationsPanel {
             JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
     // combo boxes
-    JComboBox fontComboBox = new JComboBox();
-    JComboBox manifestFormatComboBox = Setup.getManifestFormatComboBox();
-    JComboBox manifestOrientationComboBox = Setup.getOrientationComboBox();
-    JComboBox fontSizeComboBox = new JComboBox();
-    JComboBox pickupComboBox = Setup.getPrintColorComboBox(); // colors
-    JComboBox dropComboBox = Setup.getPrintColorComboBox();
-    JComboBox localComboBox = Setup.getPrintColorComboBox();
-    JComboBox switchListOrientationComboBox = Setup.getOrientationComboBox();
+    JComboBox<String> fontComboBox = new JComboBox<>();
+    JComboBox<String> manifestFormatComboBox = Setup.getManifestFormatComboBox();
+    JComboBox<String> manifestOrientationComboBox = Setup.getOrientationComboBox();
+    JComboBox<Integer> fontSizeComboBox = new JComboBox<>();
+    JComboBox<String> pickupComboBox = Setup.getPrintColorComboBox(); // colors
+    JComboBox<String> dropComboBox = Setup.getPrintColorComboBox();
+    JComboBox<String> localComboBox = Setup.getPrintColorComboBox();
+    JComboBox<String> switchListOrientationComboBox = Setup.getOrientationComboBox();
 
     // message formats
-    List<JComboBox> enginePickupMessageList = new ArrayList<>();
-    List<JComboBox> engineDropMessageList = new ArrayList<>();
-    List<JComboBox> carPickupMessageList = new ArrayList<>();
-    List<JComboBox> carDropMessageList = new ArrayList<>();
-    List<JComboBox> localMessageList = new ArrayList<>();
-    List<JComboBox> switchListCarPickupMessageList = new ArrayList<>();
-    List<JComboBox> switchListCarDropMessageList = new ArrayList<>();
-    List<JComboBox> switchListLocalMessageList = new ArrayList<>();
+    List<JComboBox<String>> enginePickupMessageList = new ArrayList<>();
+    List<JComboBox<String>> engineDropMessageList = new ArrayList<>();
+    List<JComboBox<String>> carPickupMessageList = new ArrayList<>();
+    List<JComboBox<String>> carDropMessageList = new ArrayList<>();
+    List<JComboBox<String>> localMessageList = new ArrayList<>();
+    List<JComboBox<String>> switchListCarPickupMessageList = new ArrayList<>();
+    List<JComboBox<String>> switchListCarDropMessageList = new ArrayList<>();
+    List<JComboBox<String>> switchListLocalMessageList = new ArrayList<>();
 
     // manifest panels
     JPanel pManifest = new JPanel();
@@ -469,112 +473,7 @@ public class PrintOptionPanel extends OperationsPanel {
         }
 
         if (ae.getSource() == saveButton) {
-            // font name
-            Setup.setFontName((String) fontComboBox.getSelectedItem());
-            // font size
-            Setup.setManifestFontSize((Integer) fontSizeComboBox.getSelectedItem());
-            // page orientation
-            Setup.setManifestOrientation((String) manifestOrientationComboBox.getSelectedItem());
-            Setup.setSwitchListOrientation((String) switchListOrientationComboBox.getSelectedItem());
-            // format
-            Setup.setManifestFormat((String) manifestFormatComboBox.getSelectedItem());
-            // drop and pick up color option
-            Setup.setDropTextColor((String) dropComboBox.getSelectedItem());
-            Setup.setPickupTextColor((String) pickupComboBox.getSelectedItem());
-            Setup.setLocalTextColor((String) localComboBox.getSelectedItem());
-            // save engine pick up message format
-            Setup.setPickupEnginePrefix(pickupEngPrefix.getText());
-            String[] format = new String[enginePickupMessageList.size()];
-            for (int i = 0; i < enginePickupMessageList.size(); i++) {
-                JComboBox b = enginePickupMessageList.get(i);
-                format[i] = (String) b.getSelectedItem();
-            }
-            Setup.setPickupEngineMessageFormat(format);
-            // save engine drop message format
-            Setup.setDropEnginePrefix(dropEngPrefix.getText());
-            format = new String[engineDropMessageList.size()];
-            for (int i = 0; i < engineDropMessageList.size(); i++) {
-                JComboBox b = engineDropMessageList.get(i);
-                format[i] = (String) b.getSelectedItem();
-            }
-            Setup.setDropEngineMessageFormat(format);
-            // save car pick up message format
-            Setup.setPickupCarPrefix(pickupCarPrefix.getText());
-            format = new String[carPickupMessageList.size()];
-            for (int i = 0; i < carPickupMessageList.size(); i++) {
-                JComboBox b = carPickupMessageList.get(i);
-                format[i] = (String) b.getSelectedItem();
-            }
-            Setup.setPickupCarMessageFormat(format);
-            // save car drop message format
-            Setup.setDropCarPrefix(dropCarPrefix.getText());
-            format = new String[carDropMessageList.size()];
-            for (int i = 0; i < carDropMessageList.size(); i++) {
-                JComboBox b = carDropMessageList.get(i);
-                format[i] = (String) b.getSelectedItem();
-            }
-            Setup.setDropCarMessageFormat(format);
-            // save local message format
-            Setup.setLocalPrefix(localPrefix.getText());
-            format = new String[localMessageList.size()];
-            for (int i = 0; i < localMessageList.size(); i++) {
-                JComboBox b = localMessageList.get(i);
-                format[i] = (String) b.getSelectedItem();
-            }
-            Setup.setLocalMessageFormat(format);
-            // save switch list car pick up message format
-            Setup.setSwitchListPickupCarPrefix(switchListPickupCarPrefix.getText());
-            format = new String[switchListCarPickupMessageList.size()];
-            for (int i = 0; i < switchListCarPickupMessageList.size(); i++) {
-                JComboBox b = switchListCarPickupMessageList.get(i);
-                format[i] = (String) b.getSelectedItem();
-            }
-            Setup.setSwitchListPickupCarMessageFormat(format);
-            // save switch list car drop message format
-            Setup.setSwitchListDropCarPrefix(switchListDropCarPrefix.getText());
-            format = new String[switchListCarDropMessageList.size()];
-            for (int i = 0; i < switchListCarDropMessageList.size(); i++) {
-                JComboBox b = switchListCarDropMessageList.get(i);
-                format[i] = (String) b.getSelectedItem();
-            }
-            Setup.setSwitchListDropCarMessageFormat(format);
-            // save switch list local message format
-            Setup.setSwitchListLocalPrefix(switchListLocalPrefix.getText());
-            format = new String[switchListLocalMessageList.size()];
-            for (int i = 0; i < switchListLocalMessageList.size(); i++) {
-                JComboBox b = switchListLocalMessageList.get(i);
-                format[i] = (String) b.getSelectedItem();
-            }
-            Setup.setSwitchListLocalMessageFormat(format);
-            // hazardous comment
-            Setup.setHazardousMsg(hazardousTextField.getText());
-            // misplaced car comment
-            Setup.setMiaComment(commentTextArea.getText());
-            Setup.setSwitchListFormatSameAsManifest(formatSwitchListCheckBox.isSelected());
-            Setup.setPrintLocationCommentsEnabled(printLocCommentsCheckBox.isSelected());
-            Setup.setPrintRouteCommentsEnabled(printRouteCommentsCheckBox.isSelected());
-            Setup.setPrintLoadsAndEmptiesEnabled(printLoadsEmptiesCheckBox.isSelected());
-            Setup.set12hrFormatEnabled(use12hrFormatCheckBox.isSelected());
-            Setup.setPrintValidEnabled(printValidCheckBox.isSelected());
-            Setup.setSortByTrackEnabled(sortByTrackCheckBox.isSelected());
-            Setup.setPrintHeadersEnabled(printHeadersCheckBox.isSelected());
-            Setup.setPrintTimetableNameEnabled(printTimetableNameCheckBox.isSelected());
-            Setup.setTruncateManifestEnabled(truncateCheckBox.isSelected());
-            Setup.setUseDepartureTimeEnabled(departureTimeCheckBox.isSelected());
-            Setup.setManifestEditorEnabled(editManifestCheckBox.isSelected());
-            Setup.setSwitchListRouteLocationCommentEnabled(routeLocationCheckBox.isSelected());
-
-            // reload combo boxes if tab changed
-            boolean oldTabEnabled = Setup.isTabEnabled();
-            Setup.setTabEnabled(tabFormatCheckBox.isSelected());
-            if (oldTabEnabled ^ Setup.isTabEnabled()) {
-                loadFormatComboBox();
-            }
-
-            // recreate all train manifests
-            TrainManager.instance().setTrainsModified();
-
-            OperationsSetupXml.instance().writeOperationsFile();
+            this.savePreferences();
             if (Setup.isCloseWindowOnSaveEnabled()) {
                 dispose();
             }
@@ -643,16 +542,16 @@ public class PrintOptionPanel extends OperationsPanel {
         }
     }
 
-    private void addComboBox(JPanel panel, List<JComboBox> list, JComboBox box) {
+    private void addComboBox(JPanel panel, List<JComboBox<String>> list, JComboBox<String> box) {
         list.add(box);
         panel.add(box, list.size());
         panel.validate();
         pManifest.revalidate();
     }
 
-    private void removeComboBox(JPanel panel, List<JComboBox> list) {
+    private void removeComboBox(JPanel panel, List<JComboBox<String>> list) {
         for (int i = 0; i < list.size(); i++) {
-            JComboBox cb = list.get(i);
+            JComboBox<?> cb = list.get(i);
             if (cb.getSelectedItem() == Setup.NONE) {
                 list.remove(i);
                 panel.remove(cb);
@@ -673,10 +572,10 @@ public class PrintOptionPanel extends OperationsPanel {
         pickupEngPrefix.setText(Setup.getPickupEnginePrefix());
         String[] format = Setup.getPickupEngineMessageFormat();
         for (String f : format) {
-            JComboBox b = Setup.getEngineMessageComboBox();
-            b.setSelectedItem(f);
-            pEngPickup.add(b);
-            enginePickupMessageList.add(b);
+            JComboBox<String> cb = Setup.getEngineMessageComboBox();
+            cb.setSelectedItem(f);
+            pEngPickup.add(cb);
+            enginePickupMessageList.add(cb);
         }
         pEngPickup.add(addEngPickupComboboxButton);
         pEngPickup.add(deleteEngPickupComboboxButton);
@@ -690,10 +589,10 @@ public class PrintOptionPanel extends OperationsPanel {
         dropEngPrefix.setText(Setup.getDropEnginePrefix());
         format = Setup.getDropEngineMessageFormat();
         for (String f : format) {
-            JComboBox b = Setup.getEngineMessageComboBox();
-            b.setSelectedItem(f);
-            pEngDrop.add(b);
-            engineDropMessageList.add(b);
+            JComboBox<String> cb = Setup.getEngineMessageComboBox();
+            cb.setSelectedItem(f);
+            pEngDrop.add(cb);
+            engineDropMessageList.add(cb);
         }
         pEngDrop.add(addEngDropComboboxButton);
         pEngDrop.add(deleteEngDropComboboxButton);
@@ -707,10 +606,10 @@ public class PrintOptionPanel extends OperationsPanel {
         pickupCarPrefix.setText(Setup.getPickupCarPrefix());
         String[] pickFormat = Setup.getPickupCarMessageFormat();
         for (String pf : pickFormat) {
-            JComboBox b = Setup.getCarMessageComboBox();
-            b.setSelectedItem(pf);
-            pPickup.add(b);
-            carPickupMessageList.add(b);
+            JComboBox<String> cb = Setup.getCarMessageComboBox();
+            cb.setSelectedItem(pf);
+            pPickup.add(cb);
+            carPickupMessageList.add(cb);
         }
         pPickup.add(addCarPickupComboboxButton);
         pPickup.add(deleteCarPickupComboboxButton);
@@ -724,10 +623,10 @@ public class PrintOptionPanel extends OperationsPanel {
         dropCarPrefix.setText(Setup.getDropCarPrefix());
         String[] dropFormat = Setup.getDropCarMessageFormat();
         for (String lf : dropFormat) {
-            JComboBox b = Setup.getCarMessageComboBox();
-            b.setSelectedItem(lf);
-            pDrop.add(b);
-            carDropMessageList.add(b);
+            JComboBox<String> cb = Setup.getCarMessageComboBox();
+            cb.setSelectedItem(lf);
+            pDrop.add(cb);
+            carDropMessageList.add(cb);
         }
         pDrop.add(addCarDropComboboxButton);
         pDrop.add(deleteCarDropComboboxButton);
@@ -741,10 +640,10 @@ public class PrintOptionPanel extends OperationsPanel {
         localPrefix.setText(Setup.getLocalPrefix());
         String[] localFormat = Setup.getLocalMessageFormat();
         for (String lf : localFormat) {
-            JComboBox b = Setup.getCarMessageComboBox();
-            b.setSelectedItem(lf);
-            pLocal.add(b);
-            localMessageList.add(b);
+            JComboBox<String> cb = Setup.getCarMessageComboBox();
+            cb.setSelectedItem(lf);
+            pLocal.add(cb);
+            localMessageList.add(cb);
         }
         pLocal.add(addLocalComboboxButton);
         pLocal.add(deleteLocalComboboxButton);
@@ -759,10 +658,10 @@ public class PrintOptionPanel extends OperationsPanel {
         switchListPickupCarPrefix.setText(Setup.getSwitchListPickupCarPrefix());
         pickFormat = Setup.getSwitchListPickupCarMessageFormat();
         for (String pf : pickFormat) {
-            JComboBox b = Setup.getCarMessageComboBox();
-            b.setSelectedItem(pf);
-            pSwPickup.add(b);
-            switchListCarPickupMessageList.add(b);
+            JComboBox<String> cb = Setup.getCarMessageComboBox();
+            cb.setSelectedItem(pf);
+            pSwPickup.add(cb);
+            switchListCarPickupMessageList.add(cb);
         }
         pSwPickup.add(addSwitchListPickupComboboxButton);
         pSwPickup.add(deleteSwitchListPickupComboboxButton);
@@ -776,10 +675,10 @@ public class PrintOptionPanel extends OperationsPanel {
         switchListDropCarPrefix.setText(Setup.getSwitchListDropCarPrefix());
         dropFormat = Setup.getSwitchListDropCarMessageFormat();
         for (String df : dropFormat) {
-            JComboBox b = Setup.getCarMessageComboBox();
-            b.setSelectedItem(df);
-            pSwDrop.add(b);
-            switchListCarDropMessageList.add(b);
+            JComboBox<String> cb = Setup.getCarMessageComboBox();
+            cb.setSelectedItem(df);
+            pSwDrop.add(cb);
+            switchListCarDropMessageList.add(cb);
         }
         pSwDrop.add(addSwitchListDropComboboxButton);
         pSwDrop.add(deleteSwitchListDropComboboxButton);
@@ -793,10 +692,10 @@ public class PrintOptionPanel extends OperationsPanel {
         switchListLocalPrefix.setText(Setup.getSwitchListLocalPrefix());
         localFormat = Setup.getSwitchListLocalMessageFormat();
         for (String lf : localFormat) {
-            JComboBox b = Setup.getCarMessageComboBox();
-            b.setSelectedItem(lf);
-            pSwLocal.add(b);
-            switchListLocalMessageList.add(b);
+            JComboBox<String> cb = Setup.getCarMessageComboBox();
+            cb.setSelectedItem(lf);
+            pSwLocal.add(cb);
+            switchListLocalMessageList.add(cb);
         }
         pSwLocal.add(addSwitchListLocalComboboxButton);
         pSwLocal.add(deleteSwitchListLocalComboboxButton);
@@ -814,5 +713,238 @@ public class PrintOptionPanel extends OperationsPanel {
         fontComboBox.setSelectedItem(Setup.getFontName());
     }
 
-    private static final Logger log = LoggerFactory.getLogger(PrintOptionPanel.class);
+    @Override
+    public String getTabbedPreferencesTitle() {
+        return Bundle.getMessage("TitlePrintOptions"); // NOI18N
+    }
+
+    @Override
+    public String getPreferencesTooltip() {
+        return null;
+    }
+
+    @Override
+    public void savePreferences() {
+        // font name
+        Setup.setFontName((String) fontComboBox.getSelectedItem());
+        // font size
+        Setup.setManifestFontSize((Integer) fontSizeComboBox.getSelectedItem());
+        // page orientation
+        Setup.setManifestOrientation((String) manifestOrientationComboBox.getSelectedItem());
+        Setup.setSwitchListOrientation((String) switchListOrientationComboBox.getSelectedItem());
+        // format
+        Setup.setManifestFormat((String) manifestFormatComboBox.getSelectedItem());
+        // drop and pick up color option
+        Setup.setDropTextColor((String) dropComboBox.getSelectedItem());
+        Setup.setPickupTextColor((String) pickupComboBox.getSelectedItem());
+        Setup.setLocalTextColor((String) localComboBox.getSelectedItem());
+        // save engine pick up message format
+        Setup.setPickupEnginePrefix(pickupEngPrefix.getText());
+        String[] format = new String[enginePickupMessageList.size()];
+        for (int i = 0; i < enginePickupMessageList.size(); i++) {
+            JComboBox<?> cb = enginePickupMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        Setup.setPickupEngineMessageFormat(format);
+        // save engine drop message format
+        Setup.setDropEnginePrefix(dropEngPrefix.getText());
+        format = new String[engineDropMessageList.size()];
+        for (int i = 0; i < engineDropMessageList.size(); i++) {
+            JComboBox<?> cb = engineDropMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        Setup.setDropEngineMessageFormat(format);
+        // save car pick up message format
+        Setup.setPickupCarPrefix(pickupCarPrefix.getText());
+        format = new String[carPickupMessageList.size()];
+        for (int i = 0; i < carPickupMessageList.size(); i++) {
+            JComboBox<?> cb = carPickupMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        Setup.setPickupCarMessageFormat(format);
+        // save car drop message format
+        Setup.setDropCarPrefix(dropCarPrefix.getText());
+        format = new String[carDropMessageList.size()];
+        for (int i = 0; i < carDropMessageList.size(); i++) {
+            JComboBox<?> cb = carDropMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        Setup.setDropCarMessageFormat(format);
+        // save local message format
+        Setup.setLocalPrefix(localPrefix.getText());
+        format = new String[localMessageList.size()];
+        for (int i = 0; i < localMessageList.size(); i++) {
+            JComboBox<?> cb = localMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        Setup.setLocalMessageFormat(format);
+        // save switch list car pick up message format
+        Setup.setSwitchListPickupCarPrefix(switchListPickupCarPrefix.getText());
+        format = new String[switchListCarPickupMessageList.size()];
+        for (int i = 0; i < switchListCarPickupMessageList.size(); i++) {
+            JComboBox<?> cb = switchListCarPickupMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        Setup.setSwitchListPickupCarMessageFormat(format);
+        // save switch list car drop message format
+        Setup.setSwitchListDropCarPrefix(switchListDropCarPrefix.getText());
+        format = new String[switchListCarDropMessageList.size()];
+        for (int i = 0; i < switchListCarDropMessageList.size(); i++) {
+            JComboBox<?> cb = switchListCarDropMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        Setup.setSwitchListDropCarMessageFormat(format);
+        // save switch list local message format
+        Setup.setSwitchListLocalPrefix(switchListLocalPrefix.getText());
+        format = new String[switchListLocalMessageList.size()];
+        for (int i = 0; i < switchListLocalMessageList.size(); i++) {
+            JComboBox<?> cb = switchListLocalMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        Setup.setSwitchListLocalMessageFormat(format);
+        // hazardous comment
+        Setup.setHazardousMsg(hazardousTextField.getText());
+        // misplaced car comment
+        Setup.setMiaComment(commentTextArea.getText());
+        Setup.setSwitchListFormatSameAsManifest(formatSwitchListCheckBox.isSelected());
+        Setup.setPrintLocationCommentsEnabled(printLocCommentsCheckBox.isSelected());
+        Setup.setPrintRouteCommentsEnabled(printRouteCommentsCheckBox.isSelected());
+        Setup.setPrintLoadsAndEmptiesEnabled(printLoadsEmptiesCheckBox.isSelected());
+        Setup.set12hrFormatEnabled(use12hrFormatCheckBox.isSelected());
+        Setup.setPrintValidEnabled(printValidCheckBox.isSelected());
+        Setup.setSortByTrackEnabled(sortByTrackCheckBox.isSelected());
+        Setup.setPrintHeadersEnabled(printHeadersCheckBox.isSelected());
+        Setup.setPrintTimetableNameEnabled(printTimetableNameCheckBox.isSelected());
+        Setup.setTruncateManifestEnabled(truncateCheckBox.isSelected());
+        Setup.setUseDepartureTimeEnabled(departureTimeCheckBox.isSelected());
+        Setup.setManifestEditorEnabled(editManifestCheckBox.isSelected());
+        Setup.setSwitchListRouteLocationCommentEnabled(routeLocationCheckBox.isSelected());
+
+        // reload combo boxes if tab changed
+        boolean oldTabEnabled = Setup.isTabEnabled();
+        Setup.setTabEnabled(tabFormatCheckBox.isSelected());
+        if (oldTabEnabled ^ Setup.isTabEnabled()) {
+            loadFormatComboBox();
+        }
+
+        // recreate all train manifests
+        TrainManager.instance().setTrainsModified();
+
+        OperationsSetupXml.instance().writeOperationsFile();
+    }
+
+    @Override
+    public boolean isDirty() {
+        if ( // font name
+                !Setup.getFontName().equals(fontComboBox.getSelectedItem())
+                // font size
+                || Setup.getManifestFontSize() != (Integer) fontSizeComboBox.getSelectedItem()
+                // page orientation
+                || !Setup.getManifestOrientation().equals(manifestOrientationComboBox.getSelectedItem())
+                || !Setup.getSwitchListOrientation().equals(switchListOrientationComboBox.getSelectedItem())
+                // format
+                || !Setup.getManifestFormat().equals(manifestFormatComboBox.getSelectedItem())
+                // drop and pick up color option
+                || !Setup.getDropTextColor().equals(dropComboBox.getSelectedItem())
+                || !Setup.getPickupTextColor().equals(pickupComboBox.getSelectedItem())
+                || !Setup.getLocalTextColor().equals(localComboBox.getSelectedItem())
+                // hazardous comment
+                || !Setup.getHazardousMsg().equals(hazardousTextField.getText())
+                // misplaced car comment
+                || !Setup.getMiaComment().equals(commentTextArea.getText())
+                || Setup.isSwitchListFormatSameAsManifest() != formatSwitchListCheckBox.isSelected()
+                || Setup.isPrintLocationCommentsEnabled() != printLocCommentsCheckBox.isSelected()
+                || Setup.isPrintRouteCommentsEnabled() != printRouteCommentsCheckBox.isSelected()
+                || Setup.isPrintLoadsAndEmptiesEnabled() != printLoadsEmptiesCheckBox.isSelected()
+                || Setup.is12hrFormatEnabled() != use12hrFormatCheckBox.isSelected()
+                || Setup.isPrintValidEnabled() != printValidCheckBox.isSelected()
+                || Setup.isSortByTrackEnabled() != sortByTrackCheckBox.isSelected()
+                || Setup.isPrintHeadersEnabled() != printHeadersCheckBox.isSelected()
+                || Setup.isPrintTimetableNameEnabled() != printTimetableNameCheckBox.isSelected()
+                || Setup.isTruncateManifestEnabled() != truncateCheckBox.isSelected()
+                || Setup.isUseDepartureTimeEnabled() != departureTimeCheckBox.isSelected()
+                || Setup.isManifestEditorEnabled() != editManifestCheckBox.isSelected()
+                || Setup.isSwitchListRouteLocationCommentEnabled() != routeLocationCheckBox.isSelected()
+                || Setup.isTabEnabled() != this.tabFormatCheckBox.isSelected()) {
+            return true;
+        }
+        // save engine pick up message format
+        String[] format = new String[enginePickupMessageList.size()];
+        for (int i = 0; i < enginePickupMessageList.size(); i++) {
+            JComboBox<?> cb = enginePickupMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        if (!Setup.getPickupEnginePrefix().equals(pickupEngPrefix.getText())
+                || !Arrays.equals(Setup.getPickupEngineMessageFormat(), format)) {
+            return true;
+        }
+        // save engine drop message format
+        format = new String[engineDropMessageList.size()];
+        for (int i = 0; i < engineDropMessageList.size(); i++) {
+            JComboBox<?> cb = engineDropMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        if (!Setup.getDropEnginePrefix().equals(dropEngPrefix.getText())
+                || !Arrays.equals(Setup.getDropEngineMessageFormat(), format)) {
+            return true;
+        }
+        // save car pick up message format
+        format = new String[carPickupMessageList.size()];
+        for (int i = 0; i < carPickupMessageList.size(); i++) {
+            JComboBox<?> cb = carPickupMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        if (!Setup.getPickupCarPrefix().equals(this.pickupCarPrefix.getText())
+                || !Arrays.equals(Setup.getPickupCarMessageFormat(), format)) {
+            return true;
+        }
+        // save car drop message format
+        format = new String[carDropMessageList.size()];
+        for (int i = 0; i < carDropMessageList.size(); i++) {
+            JComboBox<?> cb = carDropMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        if (!Setup.getDropCarPrefix().equals(this.dropCarPrefix.getText())
+                || !Arrays.equals(Setup.getDropCarMessageFormat(), format)) {
+            return true;
+        }
+        // save local message format
+        format = new String[localMessageList.size()];
+        for (int i = 0; i < localMessageList.size(); i++) {
+            JComboBox<?> cb = localMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        if (!Setup.getLocalPrefix().equals(this.localPrefix.getText())
+                || !Arrays.equals(Setup.getLocalMessageFormat(), format)) {
+            return true;
+        }
+        // save switch list car pick up message format
+        format = new String[switchListCarPickupMessageList.size()];
+        for (int i = 0; i < switchListCarPickupMessageList.size(); i++) {
+            JComboBox<?> cb = switchListCarPickupMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        if (!Setup.getSwitchListPickupCarPrefix().equals(this.switchListPickupCarPrefix.getText())
+                || !Arrays.equals(Setup.getSwitchListPickupCarMessageFormat(), format)) {
+            return true;
+        }
+        // save switch list car drop message format
+        format = new String[switchListCarDropMessageList.size()];
+        for (int i = 0; i < switchListCarDropMessageList.size(); i++) {
+            JComboBox<?> cb = switchListCarDropMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        if (!Setup.getSwitchListDropCarPrefix().equals(this.switchListDropCarPrefix.getText())
+                || !Arrays.equals(Setup.getSwitchListDropCarMessageFormat(), format)) {
+            return true;
+        }
+        // save switch list local message format
+        format = new String[switchListLocalMessageList.size()];
+        for (int i = 0; i < switchListLocalMessageList.size(); i++) {
+            JComboBox<?> cb = switchListLocalMessageList.get(i);
+            format[i] = (String) cb.getSelectedItem();
+        }
+        return !Setup.getSwitchListLocalPrefix().equals(this.switchListLocalPrefix.getText())
+                || !Arrays.equals(Setup.getSwitchListLocalMessageFormat(), format);
+    }
 }

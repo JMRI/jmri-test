@@ -205,7 +205,7 @@ public class SpeedoConsoleFrame extends JmriJFrame implements SpeedoListener,
 
     //Create the combo box, select item at index 4.
     //Indices start at 0, so 4 specifies British N.
-    JComboBox scaleList = new JComboBox(scaleStrings);
+    JComboBox<String> scaleList = new JComboBox<String>(scaleStrings);
 
     // members for handling the Speedo interface
     SpeedoTrafficController tc = null;
@@ -267,8 +267,9 @@ public class SpeedoConsoleFrame extends JmriJFrame implements SpeedoListener,
 
         // Listen to selection of scale
         scaleList.addActionListener(new java.awt.event.ActionListener() {
+            @SuppressWarnings("unchecked") // action semantics pass an Object that must be a JComboBox<String>
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                JComboBox cb = (JComboBox)e.getSource();
+                JComboBox<String> cb = (JComboBox<String>)e.getSource();
                 selectedScale = scales[cb.getSelectedIndex()];
                 // *** check if -1 and enable text entry box
             }

@@ -25,12 +25,12 @@ public class UhlenbrockAdapter extends LocoBufferAdapter {
 
 
     public UhlenbrockAdapter() {
-        super();
-        if (adaptermemo!=null){
-            adaptermemo.dispose();
-        }
-        adaptermemo = new UhlenbrockSystemConnectionMemo();
+        super(new UhlenbrockSystemConnectionMemo());
         
+        // define command station options
+        options.remove(option2Name);
+        options.put(option2Name, new Option("Command station type:", commandStationOptions(), false));
+
         validSpeeds = new String[]{"19200", "38400", "57600", "115200"};
         validSpeedValues = new int[]{19200, 38400, 57600, 115200};
         configureBaudRate("115200"); //Set the default baud rate
@@ -49,12 +49,9 @@ public void configure() {
     packets.connectPort(this);
 
     // create memo
-    /*LocoNetSystemConnectionMemo memo 
-        = new LocoNetSystemConnectionMemo(packets, new SlotManager(packets));*/
-    adaptermemo.setSlotManager(new UhlenbrockSlotManager(packets));
     adaptermemo.setLnTrafficController(packets);
     // do the common manager config
-        adaptermemo.configureCommandStation(mCanRead, mProgPowersOff, commandStationName, 
+        adaptermemo.configureCommandStation(commandStationType, 
                                             mTurnoutNoRetry, mTurnoutExtraSpace);
     adaptermemo.configureManagers();
 
@@ -98,6 +95,16 @@ public void configure() {
                   +" RTSCTS_IN= "+SerialPort.FLOWCONTROL_RTSCTS_IN);
     }
     
+    /**
+     * Provide just one valid command station value
+     */
+    public String[] commandStationOptions() {
+        String[] retval = {
+                          LnCommandStationType.COMMAND_STATION_IBX_TYPE_2.getName()
+        }; 
+        return retval;
+    }
+
     static Logger log = LoggerFactory.getLogger(UhlenbrockAdapter.class.getName());
 
 }

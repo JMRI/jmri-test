@@ -279,11 +279,11 @@ public class Llnmon {
                     SENSOR_ADR(l.getElement(1), l.getElement(2));
 
             try {
-                jmri.Turnout turnout = turnoutManager.getBySystemName(turnoutSystemName);
-                if ((turnout != null) && (turnout.getUserName().length() > 0))
-                    turnoutUserName = "(" + turnout.getUserName() + ")";
-                else
-                    turnoutUserName = "()";
+                    jmri.Turnout turnout = turnoutManager.getBySystemName(turnoutSystemName);
+                    if ((turnout != null) && (turnout.getUserName().length() > 0))
+                        turnoutUserName = "(" + turnout.getUserName() + ")";
+                    else
+                        turnoutUserName = "()";
             }
             catch (Exception e) {
                 turnoutUserName = "()";
@@ -311,11 +311,11 @@ public class Llnmon {
                     SENSOR_ADR(l.getElement(1), l.getElement(2));
 
             try {
-                jmri.Turnout turnout = turnoutManager.getBySystemName(turnoutSystemName);
-                if ((turnout != null) && (turnout.getUserName().length() > 0))
-                    turnoutUserName = "(" + turnout.getUserName() + ")";
-                else
-                    turnoutUserName = "()";
+                    jmri.Turnout turnout = turnoutManager.getBySystemName(turnoutSystemName);
+                    if ((turnout != null) && (turnout.getUserName().length() > 0))
+                        turnoutUserName = "(" + turnout.getUserName() + ")";
+                    else
+                        turnoutUserName = "()";
             }
             catch (Exception e) {
                 turnoutUserName = "()";
@@ -603,15 +603,15 @@ public class Llnmon {
             String sensorUserName = "";
             try {
                 sensorSystemName = locoNetSensorPrefix + contactNum;
-                jmri.Sensor sensor = sensorManager.getBySystemName(
-                    sensorSystemName);
-                if ((sensor != null) && (sensor.getUserName().length() > 0 )) {
-                    sensorUserName = " (" + sensor.getUserName() + ")";
+                    jmri.Sensor sensor = sensorManager.getBySystemName(
+                        sensorSystemName);
+                    if ((sensor != null) && (sensor.getUserName().length() > 0 )) {
+                        sensorUserName = " (" + sensor.getUserName() + ")";
+                    }
+                    else {
+                        sensorUserName = "()";
+                    }
                 }
-                else {
-                    sensorUserName = "()";
-                }
-            }
             catch (Exception e) {
                 sensorUserName = "()";
             }
@@ -684,12 +684,12 @@ public class Llnmon {
                     SENSOR_ADR(sn1, sn2);
 
             try {
-                jmri.Turnout turnout = turnoutManager.getBySystemName(turnoutSystemName);
-                if ((turnout != null) && (turnout.getUserName().length() > 0))
-                    turnoutUserName = "(" + turnout.getUserName() + ")";
-                else
-                    turnoutUserName = "()";
-            }
+                    jmri.Turnout turnout = turnoutManager.getBySystemName(turnoutSystemName);
+                    if ((turnout != null) && (turnout.getUserName().length() > 0))
+                        turnoutUserName = "(" + turnout.getUserName() + ")";
+                    else
+                        turnoutUserName = "()";
+                }
             catch (Exception e) {
                 turnoutUserName = "()";
             }
@@ -1153,12 +1153,12 @@ public class Llnmon {
                         ((l.getElement(1)&0x1F)*128 + l.getElement(2) +1);
 
                 try {
-                    jmri.Reporter reporter = reporterManager.getBySystemName(reporterSystemName);
-                    if ((reporter != null) && (reporter.getUserName().length() > 0))
-                        reporterUserName = "(" + reporter.getUserName() + ")";
-                    else
-                        reporterUserName = "()";
-                }
+                        jmri.Reporter reporter = reporterManager.getBySystemName(reporterSystemName);
+                        if ((reporter != null) && (reporter.getUserName().length() > 0))
+                            reporterUserName = "(" + reporter.getUserName() + ")";
+                        else
+                            reporterUserName = "()";
+                    }
                 catch (Exception e) {
                     reporterUserName = "()";
                 }
@@ -1964,7 +1964,7 @@ public class Llnmon {
                     int pxct2 = l.getElement(10);
 
                     int d[] = l.getPeerXfrData();
-
+                    
                     String generic = "Peer to Peer transfer: SRC=0x"
                                      + Integer.toHexString(src)
                                      + ", DSTL=0x"
@@ -2783,11 +2783,11 @@ public class Llnmon {
                                     ((l.getElement(5)&0x1F)*128 + l.getElement(6) +1);
 
                             try {
-                                jmri.Reporter reporter = reporterManager.getBySystemName(reporterSystemName);
-                                if ((reporter != null) && (reporter.getUserName().length() > 0))
-                                    reporterUserName = "(" + reporter.getUserName() + ")";
-                                else
-                                    reporterUserName = "()";
+                                    jmri.Reporter reporter = reporterManager.getBySystemName(reporterSystemName);
+                                    if ((reporter != null) && (reporter.getUserName().length() > 0))
+                                        reporterUserName = "(" + reporter.getUserName() + ")";
+                                    else
+                                        reporterUserName = "()";
                             }
                             catch (Exception e) {
                                 reporterUserName = "()";
@@ -2814,12 +2814,20 @@ public class Llnmon {
                         switch (l.getElement(5)) {
                             case 0x40: { return "Uhlenbrock IB-COM / Intellibox II Stop Programming Track.\n"; }
                             case 0x41: { return "Uhlenbrock IB-COM / Intellibox II Start Programming Track.\n"; }
+                            default:
+                                forceHex = true;
+                                return "Unknown OPC_PEER_XFER, may be related to Uhkenbrock\n";
                         }
+                    } else {
+                        forceHex = true;
+                        return "Message with opcode 0xE5, length 0x07, and unknown format.";
                     }
+                        
                 } // end of case 0x07:
 
                 default: {
-                    // 0xE5 message of unknown format
+                    // 0xE5 message with length byte that does not correspond to
+                    // a well-defined message (yet?)
                     forceHex = true;
                     return "Message with opcode 0xE5 and unknown format.";
 
@@ -3126,13 +3134,28 @@ public class Llnmon {
                         }
                     } // else { // F9-F28 w/a short address.
                 } else if (l.getElement(1)==0x1F && l.getElement(2)==0x01 && l.getElement(3)==0x49 && l.getElement(4)==0x42 &&
-                           l.getElement(8)==0x00 && l.getElement(10)==0x70 && l.getElement(11)==0x00 && l.getElement(15)==0x10) {
-                    // Uhlenbrock IB-COM / Intellibox II read or write CV value on programming track
-                    int cv  = l.getElement(7)+256*l.getElement(8);
+                           l.getElement(6)!=0x5E && l.getElement(10)==0x70 && l.getElement(11)==0x00 && l.getElement(15)==0x10) {
+                    // Uhlenbrock IB-COM / Intellibox I and II read or write CV value on programming track
+                    int cv  = l.getElement(8)*256 + ((l.getElement(5)&0x02)*64) + l.getElement(7);
                     int val = l.getElement(9)+16*(l.getElement(5)&0x08);
-                    return "Command to Uhlenbrock IB-COM / Intellibox II for "
-                           + (l.getElement(6) == 0x71 ? "writing "+val+" to " : "reading from "
-                           + "CV "+cv+".\n");
+                    switch (l.getElement(6)) {
+                        case 0x6C: return "Read CV in Register Mode from PT for Uhlenbrock IB-COM / Intellibox - CV: "+cv+".\n";
+                        case 0x6D: return "Write CV in Register Mode from PT for Uhlenbrock IB-COM / Intellibox - CV: "+cv+".\n";                            
+                        case 0x6E: return "Read CV in Paged Mode from PT for Uhlenbrock IB-COM / Intellibox - CV: "+cv+".\n";
+                        case 0x6F: return "Write CV in Paged Mode from PT for Uhlenbrock IB-COM / Intellibox - CV: "+cv+".\n";  
+                        case 0x71: return "Write CV in Direct Byte Mode on PT for Uhlenbrock IB-COM / Intellibox - CV: "+cv+"  Value: "+val+".\n";                            
+                        case 0x70: // observed on Intellibox II, even though it does not work on IB-COM
+                        case 0x72: return "Read CV in Direct Byte Mode from PT for Uhlenbrock IB-COM / Intellibox - CV: "+cv+".\n";
+                    }
+                    return "Unknown Uhlenbrock IB-COM / Intellibox PT command CV: "+cv+"  Value: "+val+".\n";
+                } else if (l.getElement(1)==0x1F && l.getElement(2)==0x01 && l.getElement(3)==0x49 && l.getElement(4)==0x42 &&
+                           l.getElement(6)==0x5E) {
+                    // Uhlenbrock IB-COM / Intellibox I and II write CV value on main track
+                    int addr = l.getElement(8)*256 + ((l.getElement(5)&0x02)*64) + l.getElement(7);
+                    int cv  = l.getElement(11)*256 + ((l.getElement(5)&0x08)<<4) + l.getElement(9);
+                    int val = ((l.getElement(10)&0x02)<<6) + l.getElement(12);
+                    return "Write CV on Main Track (Ops Mode) for Uhlenbrock IB-COM / Intellibox - Address: " + addr
+                          + "  CV: "+cv+"  Value: "+val+".\n";
                 } else {
                     /* Hmmmm... */
                     forceHex = true;
@@ -3196,18 +3219,25 @@ public class Llnmon {
         } // case LnConstants.RE_OPC_IB2_F8_F12
 
         case LnConstants.RE_OPC_IB2_SPECIAL: {
-            if ((l.getElement(1) == LnConstants.PE_IB2_SPECIAL_FUNCS_TOKEN) && 
-                    ((l.getElement(3) == LnConstants.RE_IB2_SPECIAL_F13_F19_TOKEN) ||
-                    (l.getElement(3) == LnConstants.RE_IB2_SPECIAL_F21_F27_TOKEN))) {
-                // Intellibox-II function control message for mobile decoder F13 
-                // thru F27 except F20 
+            // Intellibox function control message for mobile decoder F0-F28 (IB-I) and F13-F28 (IB-II)
+            if ((l.getElement(1) == LnConstants.RE_IB2_SPECIAL_FUNCS_TOKEN) &&
+                    ((l.getElement(3) == LnConstants.RE_IB1_SPECIAL_F5_F11_TOKEN) ||                    
+                     (l.getElement(3) == LnConstants.RE_IB2_SPECIAL_F13_F19_TOKEN) ||
+                     (l.getElement(3) == LnConstants.RE_IB2_SPECIAL_F21_F27_TOKEN))) {
+                // Intellibox-I function control message for mobile decoder F5 thru F27 except F12 and F20                 
+                // Intellibox-II function control message for mobile decoder F13 thru F27 except F20 
                 // Note: Intellibox-II documentation implies capability to control 
                 // MANY more functions.  This capability may be extended by 
                 // additional tokens in element 3, including the special-case encoding
                 // for the "eighth bit" as handled in the following case, below,
-                // for F20 & F28
-                int funcOffset = 13 + 8*(l.getElement(3)-LnConstants.RE_IB2_SPECIAL_F13_F19_TOKEN);
-                StringBuilder s = new StringBuilder("Set (Intellibox-II format) loco in slot ");
+                // for F12, F20 & F28
+                int funcOffset = 5 + 8*(l.getElement(3)-LnConstants.RE_IB1_SPECIAL_F5_F11_TOKEN);
+                StringBuilder s = new StringBuilder("Set (");
+                if (l.getElement(3) == LnConstants.RE_IB1_SPECIAL_F5_F11_TOKEN) {
+                    s.append("Intellibox-I v2.x format) loco in slot ");                       
+                } else {
+                    s.append("Intellibox-II format) loco in slot ");                    
+                }
                 s.append(l.getElement(2));
                 int mask = 1;
                 for (int i = 0; i < 7; i++) {
@@ -3221,15 +3251,34 @@ public class Llnmon {
                 s.append("\n");
                 return s.toString();
             } else if (l.getElement(3) == LnConstants.RE_IB2_SPECIAL_F20_F28_TOKEN) {
-                // Special-case for F20 and F28, since the tokens from the previous case
+                // Special-case for F12, F20 and F28, since the tokens from the previous case
                 // can only encode 7 bits of data in element(4).
                 StringBuilder s = new StringBuilder("Set (Intellibox-II format) loco in slot ");
                 s.append(l.getElement(2));
+                s.append(" F12=");
+                s.append((l.getElement(4)&LnConstants.RE_IB2_SPECIAL_F12_MASK)==0?"Off":"On");                
                 s.append(" F20=");
                 s.append((l.getElement(4)&LnConstants.RE_IB2_SPECIAL_F20_MASK)==0?"Off":"On");
                 s.append(" F28=");
                 s.append((l.getElement(4)&LnConstants.RE_IB2_SPECIAL_F28_MASK)==0?"Off\n":"On\n");
                 return s.toString();
+            } else if (l.getElement(3) == LnConstants.RE_IB1_SPECIAL_F0_F4_TOKEN) {
+                // For Intellibox-I "one" with SW version 2.x - Special-case for F0 to F4
+                StringBuilder s = new StringBuilder("Set (Intellibox-I v2.x format) loco in slot ");
+                s.append(l.getElement(2));
+                s.append(" F0=");
+                s.append((l.getElement(4)&LnConstants.RE_IB1_F0_MASK)==0?"Off":"On");
+                int mask = 1;
+                for (int i = 0; i < 4; i++) {
+                    // handle 4 bits of data
+                    s.append(" F");
+                    s.append(1+i);
+                    s.append("=");
+                    s.append(((l.getElement(4)& mask)>0)?"On":"Off");
+                    mask *=2;
+                }
+                s.append("\n");
+                return s.toString(); 
             }
             // Because the usage of other tokens in message element(3) are not yet 
             // understood, let execution fall thru to the "default" case

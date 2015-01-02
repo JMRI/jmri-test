@@ -24,7 +24,6 @@ package jmri.jmrit.beantable.oblock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 
@@ -58,7 +57,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.TransferHandler;
 
@@ -453,11 +451,11 @@ public class TableFrames extends jmri.util.JmriJFrame implements InternalFrameLi
         _oBlockTable.getColumnModel().getColumn(OBlockTableModel.DELETE_COL).setCellRenderer(new ButtonRenderer());
         _oBlockTable.getColumnModel().getColumn(OBlockTableModel.UNITSCOL).setCellRenderer(
         									new MyBooleanRenderer(Bundle.getMessage("cm"), Bundle.getMessage("in")));
-        JComboBox box = new JComboBox(OBlockTableModel.curveOptions);
+        JComboBox<String> box = new JComboBox<String>(OBlockTableModel.curveOptions);
         _oBlockTable.getColumnModel().getColumn(OBlockTableModel.CURVECOL).setCellEditor(new DefaultCellEditor(box));
         _oBlockTable.getColumnModel().getColumn(OBlockTableModel.REPORT_CURRENTCOL).setCellRenderer(
         									new MyBooleanRenderer(Bundle.getMessage("Current"), Bundle.getMessage("Last")));
-        box = new JComboBox(jmri.implementation.SignalSpeedMap.getMap().getValidSpeedNames());
+        box = new JComboBox<String>(jmri.implementation.SignalSpeedMap.getMap().getValidSpeedNames());
         _oBlockTable.getColumnModel().getColumn(OBlockTableModel.SPEEDCOL).setCellEditor(new DefaultCellEditor(box));
         _oBlockTable.getColumnModel().getColumn(OBlockTableModel.PERMISSIONCOL).setCellRenderer(
 											new MyBooleanRenderer(Bundle.getMessage("Permissive"), Bundle.getMessage("Absolute")));
@@ -706,7 +704,7 @@ public class TableFrames extends jmri.util.JmriJFrame implements InternalFrameLi
         PathTurnoutModel.init();
         JTable PathTurnoutTable = new DnDJTable(PathTurnoutModel, new int[] {PathTurnoutTableModel.SETTINGCOLUMN,
                                                                             PathTurnoutTableModel.DELETE_COL});
-        JComboBox box = new JComboBox(PathTurnoutTableModel.turnoutStates);
+        JComboBox<String> box = new JComboBox<String>(PathTurnoutTableModel.turnoutStates);
         //PathTurnoutTable.setDefaultEditor(JComboBox.class, new jmri.jmrit.symbolicprog.ValueEditor());
         PathTurnoutTable.getColumnModel().getColumn(PathTurnoutTableModel.SETTINGCOLUMN).setCellEditor(new DefaultCellEditor(box));
         PathTurnoutTable.getColumnModel().getColumn(PathTurnoutTableModel.DELETE_COL).setCellEditor(new ButtonEditor(new JButton()));

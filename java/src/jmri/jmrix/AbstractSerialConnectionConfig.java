@@ -2,36 +2,34 @@
 
 package jmri.jmrix;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import gnu.io.CommPortIdentifier;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-
-import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
-import java.awt.*;
-import javax.swing.*;
-
-import javax.swing.JOptionPane;
-
-import java.awt.Color;
-import java.util.Vector;
+import java.awt.event.ItemListener;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.ResourceBundle;
-import java.util.Map.Entry;
 import java.util.Hashtable;
-
+import java.util.Map.Entry;
+import java.util.ResourceBundle;
+import java.util.Vector;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
-import gnu.io.CommPortIdentifier;
-
+import javax.swing.ListCellRenderer;
 import jmri.util.PortNameMapper;
 import jmri.util.PortNameMapper.SerialPortFriendlyName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for common implementation of the ConnectionConfig
@@ -41,7 +39,7 @@ import jmri.util.PortNameMapper.SerialPortFriendlyName;
  */
 
 //
-abstract public class AbstractSerialConnectionConfig extends AbstractConnectionConfig implements jmri.jmrix.ConnectionConfig {
+abstract public class AbstractSerialConnectionConfig extends AbstractConnectionConfig {
 
     /**
      * Ctor for an object being created during load process
@@ -164,9 +162,9 @@ abstract public class AbstractSerialConnectionConfig extends AbstractConnectionC
     }
 
     jmri.UserPreferencesManager p = jmri.InstanceManager.getDefault(jmri.UserPreferencesManager.class);
-    protected JComboBox portBox = new JComboBox();
+    protected JComboBox<String> portBox = new JComboBox<String>();
     protected JLabel portBoxLabel;
-    protected JComboBox baudBox = new JComboBox();
+    protected JComboBox<String> baudBox = new JComboBox<String>();
     protected JLabel baudBoxLabel;
     protected String[] baudList;
     protected jmri.jmrix.SerialPortAdapter adapter = null;
@@ -257,9 +255,9 @@ abstract public class AbstractSerialConnectionConfig extends AbstractConnectionC
             for (int i=0; i<portBox.getItemCount(); i++) {
                 outerloop:
                 for(String friendlyName: getPortFriendlyNames()){
-                    if(((String)portBox.getItemAt(i)).contains(friendlyName)){
+                    if((portBox.getItemAt(i)).contains(friendlyName)){
                         portBox.setSelectedIndex(i);
-                        adapter.setPort(PortNameMapper.getPortFromName((String)portBox.getItemAt(i)));
+                        adapter.setPort(PortNameMapper.getPortFromName(portBox.getItemAt(i)));
                         break outerloop;
                     }
                 }
@@ -287,7 +285,7 @@ abstract public class AbstractSerialConnectionConfig extends AbstractConnectionC
             String[] optionsAvailable = adapter.getOptions();
             options = new Hashtable<String, Option>();
             for(String i:optionsAvailable){
-                JComboBox opt = new JComboBox(adapter.getOptionChoices(i));
+                JComboBox<String> opt = new JComboBox<String>(adapter.getOptionChoices(i));
                 opt.setSelectedItem(adapter.getOptionState(i));
                 options.put(i, new Option(adapter.getOptionDisplayName(i), opt, adapter.isOptionAdvanced(i)));
             }
@@ -500,7 +498,7 @@ abstract public class AbstractSerialConnectionConfig extends AbstractConnectionC
     }
 
     class ComboBoxRenderer extends JLabel
-                       implements ListCellRenderer {
+                       implements ListCellRenderer<String> {
 
         /**
 		 * 
@@ -519,13 +517,13 @@ abstract public class AbstractSerialConnectionConfig extends AbstractConnectionC
          */
         @Override
         public Component getListCellRendererComponent(
-                                           JList list,
-                                           Object value,
+                                           JList<? extends String> list,
+                                           String name,
                                            int index,
                                            boolean isSelected,
                                            boolean cellHasFocus) {
 
-            String displayName = value.toString();
+            String displayName = name.toString();
             setOpaque(index > -1);
             setForeground(Color.black);
             list.setSelectionForeground(Color.black);
@@ -549,7 +547,7 @@ abstract public class AbstractSerialConnectionConfig extends AbstractConnectionC
     }
 
     @SuppressWarnings("UseOfObsoleteCollectionType")
-    protected synchronized static void updateSerialPortNames(String portName, JComboBox portCombo, Vector<String> portList){
+    protected synchronized static void updateSerialPortNames(String portName, JComboBox<String> portCombo, Vector<String> portList){
         for(Entry<String, SerialPortFriendlyName> en : PortNameMapper.getPortNameMap().entrySet()){
             en.getValue().setValidPort(false);
         }

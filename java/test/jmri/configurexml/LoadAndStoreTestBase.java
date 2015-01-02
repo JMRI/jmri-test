@@ -1,7 +1,6 @@
 // LoadAndStoreTestBase.java
 package jmri.configurexml;
 
-import jmri.jmrit.XmlFile;
 import java.io.*;
 import jmri.InstanceManager;
 import jmri.util.FileUtil;
@@ -61,6 +60,10 @@ public class LoadAndStoreTestBase extends TestCase {
         
         // load file
         InstanceManager.configureManagerInstance().load(inFile);
+
+		InstanceManager.logixManagerInstance().activateAllLogixs();
+		InstanceManager.getDefault(jmri.jmrit.display.layoutEditor.LayoutBlockManager.class).initializeLayoutBlockPaths();
+        new jmri.jmrit.catalog.configurexml.DefaultCatalogTreeManagerXml().readCatalogTrees();
 
         String name = inFile.getName();
 

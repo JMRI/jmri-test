@@ -4,10 +4,7 @@ package jmri.jmrix.loconet.pr2;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jmri.jmrix.SystemConnectionMemo;
 import jmri.jmrix.loconet.locobuffer.LocoBufferAdapter;
-import jmri.jmrix.loconet.*;
-
 import gnu.io.SerialPort;
 
 /**
@@ -21,15 +18,8 @@ public class PR2Adapter extends LocoBufferAdapter {
 
 
     public PR2Adapter() {
-        super();
+        super(new PR2SystemConnectionMemo());
         options.remove(option2Name);
-        /*As this extends the locobuffer, we need to remove the SystemConnectionMemo,
-        that it has created and replace it with our own. dispose has to be done to
-        the registered connection details.*/
-        if (adaptermemo!=null){
-            adaptermemo.dispose();
-        }
-        adaptermemo = new PR2SystemConnectionMemo();
     }
 
     /**
@@ -74,12 +64,9 @@ public class PR2Adapter extends LocoBufferAdapter {
         packets.connectPort(this);
 
         // create memo
-        /*PR2SystemConnectionMemo memo 
-            = new PR2SystemConnectionMemo(packets, new SlotManager(packets));*/
-        adaptermemo.setSlotManager(new SlotManager(packets));
         adaptermemo.setLnTrafficController(packets);
         // do the common manager config
-        adaptermemo.configureCommandStation(mCanRead, mProgPowersOff, commandStationName, 
+        adaptermemo.configureCommandStation(commandStationType, 
                                             mTurnoutNoRetry, mTurnoutExtraSpace);
         adaptermemo.configureManagers();
 
@@ -119,8 +106,6 @@ public class PR2Adapter extends LocoBufferAdapter {
         String[] retval = {"PR2"}; 
         return retval;
     }*/
-    
-    public SystemConnectionMemo getSystemConnectionMemo() { return adaptermemo; }
     
     public void dispose(){
         if (adaptermemo!=null)

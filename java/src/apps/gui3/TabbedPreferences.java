@@ -2,75 +2,46 @@
 package apps.gui3;
 
 import apps.AppConfigBase;
-import apps.CreateButtonPanel;
-import apps.FileLocationPane;
-import apps.GuiLafConfigPane;
-import apps.ManagerDefaultsConfigPane;
-import apps.PerformActionPanel;
-import apps.PerformFilePanel;
-import apps.PerformScriptPanel;
-import apps.SystemConsoleConfigPanel;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.FontUIResource;
-import jmri.InstanceManager;
-import jmri.jmrit.beantable.usermessagepreferences.UserMessagePreferencesPane;
-import jmri.jmrit.roster.RosterConfigPane;
-import jmri.jmrit.symbolicprog.ProgrammerConfigPane;
-import jmri.jmrit.throttle.ThrottlesPreferencesPane;
-import jmri.jmrit.withrottle.WiThrottlePrefsPanel;
-import jmri.jmrix.ConnectionConfig;
-import jmri.jmrix.ConnectionStatus;
-import jmri.jmrix.JmrixConfigPane;
 import jmri.swing.PreferencesPanel;
+import jmri.swing.PreferencesSubPanel;
 import jmri.util.FileUtil;
 import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provide access to preferences via a tabbed pane
+ * Provide access to preferences via a tabbed pane.
  *
  * Preferences panels listed in the PreferencesPanel property of the
- * AppsConfigBundle ResourceBundle will be automatically loaded if they
+ * apps.AppsStructureBundle ResourceBundle will be automatically loaded if they
  * implement the {@link jmri.swing.PreferencesPanel} interface.
  *
  * Other Preferences Panels will need to be manually added to this file in a
@@ -97,33 +68,23 @@ public class TabbedPreferences extends AppConfigBase {
         return false;
     } // only one of these!
 
-    ArrayList<Element> preferencesElements = new ArrayList<Element>();
-    HashMap<String, PreferencesPanel> preferencesPanels = new HashMap<String, PreferencesPanel>();
+    ArrayList<Element> preferencesElements = new ArrayList<>();
+    HashMap<String, PreferencesPanel> preferencesPanels = new HashMap<>();
 
-    // All the following needs to be in a separate preferences frame
-    // class! How about switching AppConfigPanel to tabbed?
     JPanel detailpanel = new JPanel();
-    JTabbedPane connectionPanel = new JTabbedPane();
-    ThrottlesPreferencesPane throttlePreferences;
-    WiThrottlePrefsPanel withrottlePrefsPanel;
 
-    ArrayList<JmrixConfigPane> connectionTabInstance = new ArrayList<JmrixConfigPane>();
-    ArrayList<PreferencesCatItems> preferencesArray = new ArrayList<PreferencesCatItems>();
+    ArrayList<PreferencesCatItems> preferencesArray = new ArrayList<>();
     JPanel buttonpanel;
-    @SuppressWarnings("rawtypes")
-    // IDEs in Java 1.7 warn about this, IDEs in Java 1.6 don't.
-    JList list; // Java 1.7 changes JList to a generic (JList<String> in this
-    // case)
+    JList<String> list;
     JButton save;
     JScrollPane listScroller;
-    int initalisationState = 0x00;
-    Hashtable<Class<?>, Object> saveHook = new Hashtable<Class<?>, Object>();
-    Hashtable<Class<?>, String> saveMethod = new Hashtable<Class<?>, String>();
+    int initialisationState = 0x00;
     private static final long serialVersionUID = -6266891995866315885L;
 
-    static final int UNINITIALISED = 0x00;
-    static final int INITIALISING = 0x01;
-    static final int INITIALISED = 0x02;
+    public static final int UNINITIALISED = 0x00;
+    public static final int INITIALISING = 0x01;
+    public static final int INITIALISED = 0x02;
+    public static final String INITIALIZATION = "PROP_INITIALIZATION";
 
     public TabbedPreferences() {
 
@@ -161,27 +122,15 @@ public class TabbedPreferences extends AppConfigBase {
 
     @SuppressWarnings("rawtypes")
     public synchronized int init() {
-        if (initalisationState == INITIALISED) {
+        if (initialisationState == INITIALISED) {
             return INITIALISED;
         }
-        if (initalisationState != UNINITIALISED) {
-            return initalisationState;
+        if (initialisationState != UNINITIALISED) {
+            return initialisationState;
         }
-        initalisationState = INITIALISING;
+        this.setInitalisationState(INITIALISING);
 
-        deleteConnectionIconRollOver = new ImageIcon(
-                FileUtil.findExternalFilename("program:resources/icons/misc/gui3/Delete16x16.png"));
-        deleteConnectionIcon = new ImageIcon(
-                FileUtil.findExternalFilename("program:resources/icons/misc/gui3/Delete-bw16x16.png"));
-        deleteConnectionButtonSize = new Dimension(
-                deleteConnectionIcon.getIconWidth() + 2,
-                deleteConnectionIcon.getIconHeight() + 2);
-        addConnectionIcon = new ImageIcon(
-                FileUtil.findExternalFilename("program:resources/icons/misc/gui3/Add16x16.png"));
-
-        throttlePreferences = new ThrottlesPreferencesPane();
-        withrottlePrefsPanel = new WiThrottlePrefsPanel();
-        list = new JList();
+        list = new JList<String>();
         listScroller = new JScrollPane(list);
         listScroller.setPreferredSize(new Dimension(100, 100));
 
@@ -193,150 +142,41 @@ public class TabbedPreferences extends AppConfigBase {
         detailpanel.setLayout(new CardLayout());
         detailpanel.setBorder(BorderFactory.createEmptyBorder(6, 3, 6, 6));
 
-        GuiLafConfigPane gui = new GuiLafConfigPane();
-        items.add(0, gui);
-
         save = new JButton(
                 rb.getString("ButtonSave"),
                 new ImageIcon(
                         FileUtil.findExternalFilename("program:resources/icons/misc/gui3/SaveIcon.png")));
-        save.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                invokeSaveOptions();
-                throttlePreferences.jbSaveActionPerformed(e);
-                withrottlePrefsPanel.storeValues();
-                FileLocationPane.save();
-                savePressed();
-            }
+        save.addActionListener((ActionEvent e) -> {
+            savePressed(invokeSaveOptions());
         });
 
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
-        setUpConnectionPanel();
-        connectionPanel.setSelectedIndex(0);
-
-        addItem("CONNECTIONS", rb.getString("MenuConnections"), null, null,
-                connectionPanel, false, null);
-
         try {
-            addItem("DEFAULTS", rb.getString("MenuDefaults"),
-                    rb.getString("TabbedLayoutDefaults"),
-                    rb.getString("LabelTabbedLayoutDefaults"),
-                    new ManagerDefaultsConfigPane(), true, null);
-        } catch (Exception ex) {
-            log.error("Error in trying to add defaults to the preferences "
-                    + ex.toString());
-        }
-        try {
-            addItem("FILELOCATIONS", rb.getString("MenuFileLocation"),
-                    rb.getString("TabbedLayoutFileLocations"),
-                    rb.getString("LabelTabbedFileLocations"),
-                    new FileLocationPane(), true, null);
-        } catch (Exception ex) {
-            log.error("Error in trying to add the file locations to the preferences "
-                    + ex.toString());
-        }
-        try {
-            addItem("STARTUP", rb.getString("MenuStartUp"),
-                    rb.getString("TabbedLayoutStartupActions"),
-                    rb.getString("LabelTabbedLayoutStartupActions"),
-                    new PerformActionPanel(), true, null);
-            addItem("STARTUP", rb.getString("MenuStartUp"),
-                    rb.getString("TabbedLayoutCreateButton"),
-                    rb.getString("LabelTabbedLayoutCreateButton"),
-                    new CreateButtonPanel(), true, null);
-            addItem("STARTUP", rb.getString("MenuStartUp"),
-                    rb.getString("TabbedLayoutStartupFiles"),
-                    rb.getString("LabelTabbedLayoutStartupFiles"),
-                    new PerformFilePanel(), true, null);
-            addItem("STARTUP", rb.getString("MenuStartUp"),
-                    rb.getString("TabbedLayoutStartupScripts"),
-                    rb.getString("LabelTabbedLayoutStartupScripts"),
-                    new PerformScriptPanel(), true, null);
-        } catch (Exception ex) {
-            log.error("Error in trying to add the startup items to the preferences "
-                    + ex.toString());
-        }
-        try {
-            addItem("DISPLAY", rb.getString("MenuDisplay"),
-                    rb.getString("TabbedLayoutGUI"),
-                    rb.getString("LabelTabbedLayoutGUI"), gui, true, null);
-            addItem("DISPLAY", rb.getString("MenuDisplay"),
-                    rb.getString("TabbedLayoutLocale"),
-                    rb.getString("LabelTabbedLayoutLocale"), gui.doLocale(),
-                    false, null);
-            addItem("DISPLAY", rb.getString("MenuDisplay"),
-                    rb.getString("TabbedLayoutConsole"),
-                    rb.getString("LabelTabbedLayoutConsole"),
-                    new SystemConsoleConfigPanel(), true, null);
-        } catch (Exception ex) {
-            log.error("Error in trying to add display config to the preferences "
-                    + ex.toString());
-        }
-        try {
-            addItem("MESSAGES", rb.getString("MenuMessages"), null, null,
-                    new UserMessagePreferencesPane(), false, null);
-        } catch (Exception ex) {
-            log.error("Error in trying to add message items to the preferences "
-                    + ex.toString());
-        }
-        try {
-            addItem("ROSTER", rb.getString("MenuRoster"),
-                    rb.getString("TabbedLayoutProgrammer"),
-                    rb.getString("LabelTabbedLayoutProgrammer"),
-                    new ProgrammerConfigPane(true), true, null);
-            addItem("ROSTER", rb.getString("MenuRoster"),
-                    rb.getString("TabbedLayoutRoster"),
-                    rb.getString("LabelTabbedLayoutRoster"),
-                    new RosterConfigPane(), true, null);
-        } catch (Exception ex) {
-            log.error("Error in trying to add roster preferemce "
-                    + ex.toString());
-        }
-        try {
-            addItem("THROTTLE", rb.getString("MenuThrottle"), null, null,
-                    throttlePreferences, false, null);
-        } catch (Exception ex) {
-            log.error("Error in trying to add throttle preferences "
-                    + ex.toString());
-        }
-        try {
-            addItem("WITHROTTLE", rb.getString("MenuWiThrottle"), null, null,
-                    withrottlePrefsPanel, false, null);
-        } catch (Exception ex) {
-            log.error("Error in trying to add WiThrottle preferences "
-                    + ex.toString());
-        }
-        try {
-            // need to replace this mechanism with some mechanism that relies on a
-            // cached discovery mechanism for plugins like @ http://code.google.com/p/jspf/
             List<String> classNames = (new ObjectMapper()).readValue(
-                    java.util.ResourceBundle.getBundle("apps.AppsStructureBundle").getString("PreferencesPanels"),
+                    ResourceBundle.getBundle("apps.AppsStructureBundle").getString("PreferencesPanels"),
                     new TypeReference<List<String>>() {
                     });
             for (String className : classNames) {
                 try {
-                    PreferencesPanel panel = (PreferencesPanel) Class.forName(
-                            className).newInstance();
-                    this.preferencesPanels.put(className, panel);
-                    addItem(panel.getPreferencesItem(),
-                            panel.getPreferencesItemText(),
-                            panel.getTabbedPreferencesTitle(),
-                            panel.getLabelKey(),
-                            panel.getPreferencesComponent(),
-                            panel.isPersistant(), panel.getPreferencesTooltip());
-                } catch (Exception e) {
-                    log.error("Unable to add preferences class (" + className
-                            + ")", e);
+                    PreferencesPanel panel = (PreferencesPanel) Class.forName(className).newInstance();
+                    if (panel instanceof PreferencesSubPanel) {
+                        className = ((PreferencesSubPanel) panel).getParentClassName();
+                        if (!this.preferencesPanels.containsKey(className)) {
+                            this.addPreferencesPanel((PreferencesPanel) Class.forName(className).newInstance());
+                        }
+                        ((PreferencesSubPanel) panel).setParent(this.preferencesPanels.get(className));
+                    }
+                    this.addPreferencesPanel(panel);
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                    log.error("Unable to add preferences class (" + className + ")", e);
                 }
             }
         } catch (Exception e) {
             log.error("Unable to parse PreferencePanels property", e);
         }
-        for (int x = 0; x < preferencesArray.size(); x++) {
-            detailpanel.add(preferencesArray.get(x).getPanel(),
-                    preferencesArray.get(x).getPrefItem());
+        for (PreferencesCatItems preferences : preferencesArray) {
+            detailpanel.add(preferences.getPanel(), preferences.getPrefItem());
         }
 
         updateJList();
@@ -346,99 +186,33 @@ public class TabbedPreferences extends AppConfigBase {
 
         list.setSelectedIndex(0);
         selection(preferencesArray.get(0).getPrefItem());
-        initalisationState = INITIALISED;
-        return initalisationState;
+        this.setInitalisationState(INITIALISED);
+        return initialisationState;
     }
 
-    /**
-     * Provides a method for preferences dynamically added to the preference
-     * window to have a method ran when the save button is pressed, thus
-     * allowing panes to put placed into a state where the information can be
-     * saved
-     *
-     * @param <T> The class of the object
-     * @param object The instance of the pane
-     * @param type The class of the object
-     * @param strMethod the method to be invoked at save.
-     */
-    public <T> void addItemToSave(T object, Class<T> type, String strMethod) {
-        if (!saveHook.containsKey(type)) {
-            saveHook.put(type, object);
-            saveMethod.put(type, strMethod);
-        }
+    private void setInitalisationState(int state) {
+        int old = this.initialisationState;
+        this.initialisationState = state;
+        this.firePropertyChange(INITIALIZATION, old, state);
     }
 
-    void invokeSaveOptions() {
-        Enumeration<Class<?>> keys = saveHook.keys();
-        while (keys.hasMoreElements()) {
+    public int getInitialisationState() {
+        return this.initialisationState;
+    }
 
-            Class<?> strClass = keys.nextElement();
-            String strMethod = saveMethod.get(strClass);
-            boolean booMethod = false;
-            boolean errorInMethod = false;
-            try {
-                Method method;
-                try {
-                    method = strClass.getDeclaredMethod(strMethod);
-                    method.invoke(saveHook.get(strClass));
-                    booMethod = true;
-                } catch (InvocationTargetException et) {
-                    errorInMethod = true;
-                    log.error(et.toString());
-                } catch (IllegalAccessException ei) {
-                    errorInMethod = true;
-                    log.error(ei.toString());
-                } catch (Exception e) {
-                    log.error(e.toString());
-                    booMethod = false;
-                }
+    public boolean isInitialised() {
+        return (this.getInitialisationState() == INITIALISED);
+    }
 
-                if ((!booMethod) && (!errorInMethod)) {
-                    try {
-                        method = strClass.getMethod(strMethod);
-                        method.invoke(saveHook.get(strClass));
-                        booMethod = true;
-                    } catch (InvocationTargetException et) {
-                        errorInMethod = true;
-                        booMethod = false;
-                        log.error(et.toString());
-                    } catch (IllegalAccessException ei) {
-                        errorInMethod = true;
-                        booMethod = false;
-                        log.error(ei.toString());
-                    } catch (Exception e) {
-                        log.error(e.toString());
-                        booMethod = false;
-                    }
-                }
-                if (!booMethod) {
-                    log.error("Unable to save Preferences for " + strClass);
-                }
-            } catch (Exception e) {
-                log.error("unable to get a class name" + e);
-                log.error("Unable to save Preferences for " + strClass);
-            }
-        }
+    private boolean invokeSaveOptions() {
+        boolean restartRequired = false;
         for (PreferencesPanel panel : this.preferencesPanels.values()) {
-            if (!panel.isPersistant()) {
-                panel.savePreferences();
+            panel.savePreferences();
+            if (!restartRequired) {
+                restartRequired = panel.isRestartRequired();
             }
         }
-    }
-
-    void setUpConnectionPanel() {
-        ArrayList<Object> connList = InstanceManager.configureManagerInstance()
-                .getInstanceList(ConnectionConfig.class);
-        if (connList != null) {
-            for (int x = 0; x < connList.size(); x++) {
-                JmrixConfigPane configPane = JmrixConfigPane.instance(x);
-                addConnection(x, configPane);
-            }
-        } else {
-            addConnection(0, JmrixConfigPane.createNewPanel());
-        }
-        connectionPanel.addChangeListener(addTabListener);
-        newConnectionTab();
+        return restartRequired;
     }
 
     public void setUIFontSize(float size) {
@@ -471,12 +245,24 @@ public class TabbedPreferences extends AppConfigBase {
         cl.show(detailpanel, View);
     }
 
-    public void addItem(String prefItem, String itemText, String tabtitle,
-            String labelKey, JComponent item, boolean store, String tooltip) {
+    public void addPreferencesPanel(PreferencesPanel panel) {
+        this.preferencesPanels.put(panel.getClass().getName(), panel);
+        addItem(panel.getPreferencesItem(),
+                panel.getPreferencesItemText(),
+                panel.getTabbedPreferencesTitle(),
+                panel.getLabelKey(),
+                panel,
+                panel.isPersistant(),
+                panel.getPreferencesTooltip()
+        );
+    }
+
+    private void addItem(String prefItem, String itemText, String tabtitle,
+            String labelKey, PreferencesPanel item, boolean store, String tooltip) {
         PreferencesCatItems itemBeingAdded = null;
-        for (int x = 0; x < preferencesArray.size(); x++) {
-            if (preferencesArray.get(x).getPrefItem().equals(prefItem)) {
-                itemBeingAdded = preferencesArray.get(x);
+        for (PreferencesCatItems preferences : preferencesArray) {
+            if (preferences.getPrefItem().equals(prefItem)) {
+                itemBeingAdded = preferences;
                 break;
             }
         }
@@ -485,14 +271,14 @@ public class TabbedPreferences extends AppConfigBase {
             preferencesArray.add(itemBeingAdded);
             // As this is a new item in the selection list, we need to update
             // the JList.
-            if (initalisationState == INITIALISED) {
+            if (initialisationState == INITIALISED) {
                 updateJList();
             }
         }
         if (tabtitle == null) {
             tabtitle = itemText;
         }
-        itemBeingAdded.addPreferenceItem(tabtitle, labelKey, item, tooltip);
+        itemBeingAdded.addPreferenceItem(tabtitle, labelKey, item.getPreferencesComponent(), tooltip);
         if (store) {
             items.add(item);
         }
@@ -513,9 +299,9 @@ public class TabbedPreferences extends AppConfigBase {
      * Returns a List of existing Preference Categories.
      */
     public List<String> getPreferenceMenuList() {
-        ArrayList<String> choices = new ArrayList<String>();
-        for (int x = 0; x < preferencesArray.size(); x++) {
-            choices.add(preferencesArray.get(x).getPrefItem());
+        ArrayList<String> choices = new ArrayList<>();
+        for (PreferencesCatItems preferences : preferencesArray) {
+            choices.add(preferences.getPrefItem());
         }
         return choices;
     }
@@ -548,9 +334,9 @@ public class TabbedPreferences extends AppConfigBase {
     }
 
     protected ArrayList<String> getChoices() {
-        ArrayList<String> choices = new ArrayList<String>();
-        for (int x = 0; x < preferencesArray.size(); x++) {
-            choices.add(preferencesArray.get(x).getItemString());
+        ArrayList<String> choices = new ArrayList<>();
+        for (PreferencesCatItems preferences : preferencesArray) {
+            choices.add(preferences.getItemString());
         }
         return choices;
     }
@@ -560,221 +346,36 @@ public class TabbedPreferences extends AppConfigBase {
         if (list.getListSelectionListeners().length > 0) {
             list.removeListSelectionListener(list.getListSelectionListeners()[0]);
         }
-        list = new JList(new Vector<String>(getChoices()));
+        list = new JList<String>(new Vector<String>(getChoices()));
         listScroller = new JScrollPane(list);
         listScroller.setPreferredSize(new Dimension(100, 100));
 
         list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         list.setLayoutOrientation(JList.VERTICAL);
-        list.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                PreferencesCatItems item = preferencesArray.get(list
-                        .getSelectedIndex());
-                selection(item.getPrefItem());
-            }
+        list.addListSelectionListener((ListSelectionEvent e) -> {
+            PreferencesCatItems item = preferencesArray.get(list.getSelectedIndex());
+            selection(item.getPrefItem());
         });
         buttonpanel.add(listScroller);
         buttonpanel.add(save);
     }
 
-    void addConnection(int tabPosition, final JmrixConfigPane configPane) {
-        JPanel p = new JPanel();
-        p.setLayout(new BorderLayout());
-        p.add(configPane, BorderLayout.CENTER);
-
-        JButton tabCloseButton = new JButton(deleteConnectionIcon);
-        tabCloseButton.setPreferredSize(deleteConnectionButtonSize);
-        tabCloseButton.setBorderPainted(false);
-        tabCloseButton.setRolloverIcon(deleteConnectionIconRollOver);
-        tabCloseButton.setVisible(false);
-
-        JPanel c = new JPanel();
-        c.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        final JCheckBox disable = new JCheckBox("Disable Connection");
-        disable.setSelected(configPane.getDisabled());
-        disable.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                configPane.setDisabled(disable.isSelected());
-            }
-        });
-        c.add(disable);
-        p.add(c, BorderLayout.SOUTH);
-        String title;
-
-        if (configPane.getConnectionName() != null) {
-            title = configPane.getConnectionName();
-        } else if ((configPane.getCurrentProtocolName() != null)
-                && (!configPane.getCurrentProtocolName().equals(
-                        JmrixConfigPane.NONE))) {
-            title = configPane.getCurrentProtocolName();
-        } else {
-            title = rb.getString("TabbedLayoutConnection") + (tabPosition + 1);
-            if (connectionPanel.indexOfTab(title) != -1) {
-                for (int x = 2; x < 12; x++) {
-                    title = rb.getString("TabbedLayoutConnection")
-                            + (tabPosition + 2);
-                    if (connectionPanel.indexOfTab(title) != -1) {
-                        break;
-                    }
-                }
-            }
-        }
-
-        final JPanel tabTitle = new JPanel(new BorderLayout(5, 0));
-        tabTitle.setOpaque(false);
-        p.setName(title);
-
-        if (configPane.getDisabled()) {
-            title = "(" + title + ")";
-        }
-
-        JLabel tabLabel = new JLabel(title, JLabel.LEFT);
-        tabTitle.add(tabLabel, BorderLayout.WEST);
-        tabTitle.add(tabCloseButton, BorderLayout.EAST);
-
-        connectionTabInstance.add(configPane);
-        connectionPanel.add(p);
-        connectionPanel.setTabComponentAt(tabPosition, tabTitle);
-
-        tabCloseButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                removeTab(e, connectionPanel.indexOfTabComponent(tabTitle));
-            }
-        });
-
-        connectionPanel.setToolTipTextAt(tabPosition, title);
-
-        if (ConnectionStatus.instance().isConnectionOk(
-                configPane.getCurrentProtocolInfo())) {
-            tabLabel.setForeground(Color.black);
-        } else {
-            tabLabel.setForeground(Color.red);
-        }
-        if (configPane.getDisabled()) {
-            tabLabel.setForeground(Color.ORANGE);
-        }
-
-        items.add(configPane);
-    }
-
-    void addConnectionTab() {
-        connectionPanel.removeTabAt(connectionPanel
-                .indexOfTab(addConnectionIcon));
-        addConnection(connectionTabInstance.size(),
-                JmrixConfigPane.createNewPanel());
-        newConnectionTab();
-    }
-
-    void newConnectionTab() {
-        connectionPanel.addTab(null, addConnectionIcon, null,
-                rb.getString("ToolTipAddNewConnection"));
-        connectionPanel.setSelectedIndex(connectionPanel.getTabCount() - 2);
-    }
-
-    JmrixConfigPane comm1;
-    GuiLafConfigPane guiPrefs;
-
-    private void removeTab(ActionEvent e, int x) {
-        int i;
-
-        i = x;
-
-        if (i != -1) {
-            int n = JOptionPane.showConfirmDialog(null, MessageFormat.format(
-                    rb.getString("MessageDoDelete"),
-                    new Object[]{connectionPanel.getTitleAt(i)}),
-                    rb.getString("MessageDeleteConnection"),
-                    JOptionPane.YES_NO_OPTION);
-            if (n != JOptionPane.YES_OPTION) {
-                return;
-            }
-
-            JmrixConfigPane configPane = connectionTabInstance.get(i);
-
-            connectionPanel.removeChangeListener(addTabListener);
-            connectionPanel.remove(i); // was x
-            items.remove(configPane);
-            try {
-                JmrixConfigPane.dispose(configPane);
-            } catch (NullPointerException ex) {
-                log.error("Caught Null Pointer Exception while removing connection tab");
-            }
-            connectionTabInstance.remove(i);
-            if (connectionPanel.getTabCount() == 1) {
-                addConnectionTab();
-            }
-            if (x != 0) {
-                connectionPanel.setSelectedIndex(x - 1);
-            } else {
-                connectionPanel.setSelectedIndex(0);
-            }
-            connectionPanel.addChangeListener(addTabListener);
-        }
-        activeTab();
-    }
-
-    transient ChangeListener addTabListener = new ChangeListener() {
-        // This method is called whenever the selected tab changes
-        @Override
-        public void stateChanged(ChangeEvent evt) {
-            JTabbedPane pane = (JTabbedPane) evt.getSource();
-            int sel = pane.getSelectedIndex();
-            if (sel == -1) {
-                addConnectionTab();
-                return;
-            } else {
-                Icon icon = pane.getIconAt(sel);
-                if (icon == addConnectionIcon) {
-                    addConnectionTab();
-                    return;
-                }
-            }
-            activeTab();
-        }
-    };
-
-    void activeTab() {
-        int sel = connectionPanel.getSelectedIndex();
-        for (int i = 0; i < connectionPanel.getTabCount() - 1; i++) {
-            JPanel panel = (JPanel) connectionPanel.getTabComponentAt(i);
-            panel.invalidate();
-            Component[] comp = panel.getComponents();
-            for (Component c : comp) {
-                if (c instanceof JButton) {
-                    if (i == sel) {
-                        c.setVisible(true);
-                    } else {
-                        c.setVisible(false);
-                    }
-                }
-            }
-        }
-    }
-
-    private ImageIcon deleteConnectionIcon;
-    private ImageIcon deleteConnectionIconRollOver;
-    private Dimension deleteConnectionButtonSize;
-    private ImageIcon addConnectionIcon;
-
     static class PreferencesCatItems implements java.io.Serializable {
 
         /**
-		 * 
-		 */
-		private static final long serialVersionUID = 5928584215129175250L;
-		/*
+         *
+         */
+        private static final long serialVersionUID = 5928584215129175250L;
+        /*
          * This contains details of all list items to be displayed in the
          * preferences
          */
         String itemText;
         String prefItem;
         JTabbedPane tabbedPane = new JTabbedPane();
-        ArrayList<String> disableItemsList = new ArrayList<String>();
+        ArrayList<String> disableItemsList = new ArrayList<>();
 
-        ArrayList<TabDetails> TabDetailsArray = new ArrayList<TabDetails>();
+        ArrayList<TabDetails> TabDetailsArray = new ArrayList<>();
 
         PreferencesCatItems(String pref, String title) {
             prefItem = pref;
@@ -783,8 +384,8 @@ public class TabbedPreferences extends AppConfigBase {
 
         void addPreferenceItem(String title, String labelkey, JComponent item,
                 String tooltip) {
-            for (int x = 0; x < TabDetailsArray.size(); x++) {
-                if (TabDetailsArray.get(x).getTitle().equals(title)) {
+            for (TabDetails tabDetails : TabDetailsArray) {
+                if (tabDetails.getTitle().equals(title)) {
                     // If we have a match then we do not need to add it back in.
                     return;
                 }
@@ -794,10 +395,9 @@ public class TabbedPreferences extends AppConfigBase {
             tabbedPane.addTab(tab.getTitle(), null, tab.getPanel(),
                     tab.getToolTip());
 
-            for (int i = 0; i < disableItemsList.size(); i++) {
-                if (item.getClass().getName().equals(disableItemsList.get(i))) {
-                    tabbedPane.setEnabledAt(
-                            tabbedPane.indexOfTab(tab.getTitle()), false);
+            for (String disableItem : disableItemsList) {
+                if (item.getClass().getName().equals(disableItem)) {
+                    tabbedPane.setEnabledAt(tabbedPane.indexOfTab(tab.getTitle()), false);
                     return;
                 }
             }
@@ -812,9 +412,9 @@ public class TabbedPreferences extends AppConfigBase {
         }
 
         ArrayList<String> getSubCategoriesList() {
-            ArrayList<String> choices = new ArrayList<String>();
-            for (int x = 0; x < TabDetailsArray.size(); x++) {
-                choices.add(TabDetailsArray.get(x).getTitle());
+            ArrayList<String> choices = new ArrayList<>();
+            for (TabDetails tabDetails : TabDetailsArray) {
+                choices.add(tabDetails.getTitle());
             }
             return choices;
         }
@@ -863,10 +463,10 @@ public class TabbedPreferences extends AppConfigBase {
         static class TabDetails implements java.io.Serializable {
 
             /**
-			 * 
-			 */
-			private static final long serialVersionUID = -7077354592762639878L;
-			/* This contains all the JPanels that make up a preferences menus */
+             *
+             */
+            private static final long serialVersionUID = -7077354592762639878L;
+            /* This contains all the JPanels that make up a preferences menus */
             JComponent tabItem;
             String tabTooltip;
             String tabTitle;
