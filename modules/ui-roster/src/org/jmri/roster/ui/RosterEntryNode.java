@@ -23,8 +23,6 @@ import org.openide.windows.WindowManager;
  */
 public class RosterEntryNode extends BeanNode<RosterEntry> implements Serializable {
 
-    //private static final Logger log = LoggerFactory.getLogger(RosterEntryNode.class);
-
     public RosterEntryNode(RosterEntry bean) throws IntrospectionException {
         super(bean, Children.LEAF, Lookups.singleton(bean));
         this.setDisplayName(bean.getDisplayName());
