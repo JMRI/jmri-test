@@ -13,7 +13,10 @@ import org.netbeans.core.api.multiview.MultiViews;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.util.Utilities;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.Lookups;
+import org.openide.util.lookup.ProxyLookup;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
@@ -23,9 +26,21 @@ import org.openide.windows.WindowManager;
  */
 public class RosterEntryNode extends BeanNode<RosterEntry> implements Serializable {
 
+    private static final long serialVersionUID = -6744524117316735354L;
+
     public RosterEntryNode(RosterEntry bean) throws IntrospectionException {
-        super(bean, Children.LEAF, Lookups.singleton(bean));
-        this.setDisplayName(bean.getDisplayName());
+        this(bean, new InstanceContent());
+    }
+
+    public RosterEntryNode(RosterEntry bean, InstanceContent ic) throws IntrospectionException {
+        super(bean, Children.LEAF, new ProxyLookup(Lookups.singleton(bean), new AbstractLookup(ic)));
+        ic.add(ic);
+        ic.add(bean);
+    }
+
+    @Override
+    public String getDisplayName() {
+        return this.getBean().getDisplayName();
     }
 
     @Override
@@ -37,6 +52,9 @@ public class RosterEntryNode extends BeanNode<RosterEntry> implements Serializab
     @Override
     public Action getPreferredAction() {
         return new AbstractAction("Edit") { // TODO: I18N
+
+            private static final long serialVersionUID = 4377386270269629176L;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 RosterEntry rosterEntry = getLookup().lookup(RosterEntry.class);

@@ -55,6 +55,7 @@ import org.slf4j.LoggerFactory;
 public final class RosterExplorerTopComponent extends TopComponent implements ExplorerManager.Provider {
 
     private final ExplorerManager explorerManager = new ExplorerManager();
+    private static final long serialVersionUID = -2470091010818684955L;
     private static final Logger log = LoggerFactory.getLogger(RosterExplorerTopComponent.class);
 
     public RosterExplorerTopComponent() {

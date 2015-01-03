@@ -15,7 +15,7 @@ import java.io.Serializable;
 import javax.swing.Action;
 import javax.swing.GroupLayout;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import jmri.jmrit.roster.RosterEntry;
 import jmri.jmrit.roster.RosterMediaPane;
@@ -25,7 +25,7 @@ import org.netbeans.core.spi.multiview.MultiViewElementCallback;
 import org.openide.awt.UndoRedo;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.lookup.Lookups;
+import org.openide.util.lookup.InstanceContent;
 import org.openide.windows.TopComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,22 +37,30 @@ import org.slf4j.LoggerFactory;
 @MultiViewElement.Registration(
         displayName = "#LBL_RosterEntryMediaPanel",
         mimeType = "application/x-jmri-rosterentry-node",
-        persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED,
+        persistenceType = TopComponent.PERSISTENCE_NEVER,
         preferredID = "RosterEntryMedia",
         position = 10)
 @Messages("LBL_RosterEntryMediaPanel=Media")
-public class RosterEntryMediaPanel extends JPanel implements MultiViewElement, Serializable {
+//@ConvertAsProperties(dtd = "-//org.jmri.roster.ui//RosterEntryMediaPanel//EN", autostore = false)
+public class RosterEntryMediaPanel extends TopComponent implements MultiViewElement, RosterEntryHandler, Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(RosterEntryMediaPanel.class);
-    
-    RosterEntry rosterEntry;
+    private static final long serialVersionUID = -2978649987411993013L;
+    private final RosterEntrySavable savable;
+    private final RosterEntry rosterEntry;
+    private final Lookup lookup;
+
     /**
      * Creates new form RosterEntryMediaPanel
      */
     public RosterEntryMediaPanel(Lookup lookup) {
+        this.lookup = lookup;
         this.rosterEntry = lookup.lookup(RosterEntry.class);
+        this.savable = new RosterEntrySavable(this);
         if (this.rosterEntry == null) {
             log.error("RosterEntry is null.");
+        } else {
+            log.info("RosterEntry {} has URL {}", this.rosterEntry.getDisplayName(), this.rosterEntry.getURL());
         }
         initComponents();
     }
@@ -66,30 +74,25 @@ public class RosterEntryMediaPanel extends JPanel implements MultiViewElement, S
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        rosterMediaPane = new RosterMediaPane(this.rosterEntry);
+        jScrollPane1 = new JScrollPane();
+        rosterMediaPane = new RosterMediaPane(this.rosterEntry, this.getLookup(), this.savable);
 
-        GroupLayout rosterMediaPaneLayout = new GroupLayout(rosterMediaPane);
-        rosterMediaPane.setLayout(rosterMediaPaneLayout);
-        rosterMediaPaneLayout.setHorizontalGroup(rosterMediaPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGap(0, 403, Short.MAX_VALUE)
-        );
-        rosterMediaPaneLayout.setVerticalGroup(rosterMediaPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGap(0, 278, Short.MAX_VALUE)
-        );
+        jScrollPane1.setViewportView(rosterMediaPane);
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(rosterMediaPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, GroupLayout.Alignment.TRAILING)
         );
         layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(rosterMediaPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, GroupLayout.Alignment.TRAILING)
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private transient JPanel rosterMediaPane;
+    private JScrollPane jScrollPane1;
+    private RosterMediaPane rosterMediaPane;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -111,7 +114,7 @@ public class RosterEntryMediaPanel extends JPanel implements MultiViewElement, S
 
     @Override
     public Lookup getLookup() {
-        return Lookups.singleton(this.rosterEntry);
+        return this.lookup;
     }
 
     @Override
@@ -151,5 +154,32 @@ public class RosterEntryMediaPanel extends JPanel implements MultiViewElement, S
     @Override
     public CloseOperationState canCloseElement() {
         return CloseOperationState.STATE_OK;
+    }
+
+    @Override
+    public RosterEntry getRosterEntry() {
+        return this.rosterEntry;
+    }
+
+    @Override
+    public InstanceContent getInstanceContent() {
+        return this.getLookup().lookup(InstanceContent.class);
+    }
+
+    @Override
+    public String getHtmlDisplayName() {
+        if (this.rosterMediaPane.guiChanged(this.getRosterEntry())) {
+            return "<html><b>" + this.getDisplayName() + "</b></html>";
+        }
+        return super.getHtmlDisplayName();
+    }
+
+    @Override
+    public boolean save() {
+        if (this.rosterMediaPane.guiChanged(rosterEntry)) {
+            this.rosterMediaPane.update(this.rosterEntry);
+            return true;
+        }
+        return false;
     }
 }
