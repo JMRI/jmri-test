@@ -17,8 +17,8 @@ import javax.swing.GroupLayout;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import jmri.jmrit.roster.FunctionLabelPane;
 import jmri.jmrit.roster.RosterEntry;
-import jmri.jmrit.roster.RosterMediaPane;
 import jmri.jmrit.roster.swing.RosterEntryNetBeansGlue;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -36,25 +36,25 @@ import org.slf4j.LoggerFactory;
  * @author Randall Wood <randall.h.wood@alexandriasoftware.com>
  */
 @MultiViewElement.Registration(
-        displayName = "#LBL_RosterEntryMediaPanel",
+        displayName = "#LBL_RosterEntryFunctionsPanel",
         mimeType = "application/x-jmri-rosterentry-node",
         persistenceType = TopComponent.PERSISTENCE_NEVER,
-        preferredID = "RosterEntryMedia",
+        preferredID = "RosterEntryFunctionLabels",
         position = 10)
-@Messages("LBL_RosterEntryMediaPanel=Media")
+@Messages("LBL_RosterEntryFunctionsPanel=Function Key Labels")
 //@ConvertAsProperties(dtd = "-//org.jmri.roster.ui//RosterEntryMediaPanel//EN", autostore = false)
-public class RosterEntryMediaPanel extends TopComponent implements MultiViewElement, RosterEntryNetBeansGlue, Serializable {
+public class RosterEntryFunctionsPanel extends TopComponent implements MultiViewElement, RosterEntryNetBeansGlue, Serializable {
 
-    private static final Logger log = LoggerFactory.getLogger(RosterEntryMediaPanel.class);
+    private static final Logger log = LoggerFactory.getLogger(RosterEntryFunctionsPanel.class);
     private static final long serialVersionUID = -2978649987411993013L;
-    private final InstanceContent instanceContent;
     private final RosterEntry rosterEntry;
+    private final InstanceContent instanceContent;
     private final Lookup lookup;
 
     /**
      * Creates new form RosterEntryMediaPanel
      */
-    public RosterEntryMediaPanel(Lookup lookup) {
+    public RosterEntryFunctionsPanel(Lookup lookup) {
         this.lookup = lookup;
         this.rosterEntry = lookup.lookup(RosterEntry.class);
         this.instanceContent = lookup.lookup(InstanceContent.class);
@@ -74,9 +74,9 @@ public class RosterEntryMediaPanel extends TopComponent implements MultiViewElem
     private void initComponents() {
 
         jScrollPane1 = new JScrollPane();
-        rosterMediaPane = new RosterMediaPane(this.rosterEntry, this);
+        functionLabelPane = new FunctionLabelPane(this.rosterEntry, this);
 
-        jScrollPane1.setViewportView(rosterMediaPane);
+        jScrollPane1.setViewportView(functionLabelPane);
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -91,7 +91,7 @@ public class RosterEntryMediaPanel extends TopComponent implements MultiViewElem
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JScrollPane jScrollPane1;
-    private RosterMediaPane rosterMediaPane;
+    private FunctionLabelPane functionLabelPane;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -147,7 +147,7 @@ public class RosterEntryMediaPanel extends TopComponent implements MultiViewElem
 
     @Override
     public void setMultiViewCallback(MultiViewElementCallback mvec) {
-        if (this.rosterMediaPane.guiChanged(this.getRosterEntry())) {
+        if (this.functionLabelPane.guiChanged(this.getRosterEntry())) {
             mvec.getTopComponent().setHtmlDisplayName("<html><b>" + this.getRosterEntry().getDisplayName() + "</b></html>");
         } else {
             mvec.getTopComponent().setHtmlDisplayName("<html>" + this.getRosterEntry().getDisplayName() + "</html>");
@@ -166,13 +166,13 @@ public class RosterEntryMediaPanel extends TopComponent implements MultiViewElem
 
     @Override
     public InstanceContent getInstanceContent() {
-        return this.instanceContent;
+        return this.getLookup().lookup(InstanceContent.class);
     }
 
     @Override
     public boolean save() {
-        if (this.rosterMediaPane.guiChanged(rosterEntry)) {
-            this.rosterMediaPane.update(this.rosterEntry);
+        if (this.functionLabelPane.guiChanged(rosterEntry)) {
+            this.functionLabelPane.update(this.rosterEntry);
             return true;
         }
         return false;

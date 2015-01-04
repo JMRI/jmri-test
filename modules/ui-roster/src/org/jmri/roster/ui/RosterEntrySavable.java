@@ -1,5 +1,6 @@
 package org.jmri.roster.ui;
 
+import jmri.jmrit.roster.swing.RosterEntryNetBeansGlue;
 import java.io.IOException;
 import jmri.jmrit.roster.Roster;
 import org.netbeans.spi.actions.AbstractSavable;
@@ -10,9 +11,9 @@ import org.netbeans.spi.actions.AbstractSavable;
  */
 public class RosterEntrySavable extends AbstractSavable {
 
-    private final RosterEntryHandler object;
+    private final RosterEntryNetBeansGlue object;
 
-    public RosterEntrySavable(RosterEntryHandler object) {
+    public RosterEntrySavable(RosterEntryNetBeansGlue object) {
         this.object = object;
         this.register();
     }

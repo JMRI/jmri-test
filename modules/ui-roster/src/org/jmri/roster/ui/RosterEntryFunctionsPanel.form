@@ -30,9 +30,9 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="jmri.jmrit.roster.RosterMediaPane" name="rosterMediaPane">
+        <Component class="jmri.jmrit.roster.FunctionLabelPane" name="functionLabelPane">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new jmri.jmrit.roster.RosterMediaPane(this.rosterEntry, this)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new jmri.jmrit.roster.FunctionLabelPane(this.rosterEntry, this)"/>
           </AuxValues>
         </Component>
       </SubComponents>
