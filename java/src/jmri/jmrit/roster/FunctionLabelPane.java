@@ -6,6 +6,12 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -13,6 +19,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import jmri.jmrit.roster.swing.RosterEntryNetBeansGlue;
 import jmri.util.davidflanagan.HardcopyWriter;
 import jmri.util.swing.EditableResizableImagePanel;
 import org.slf4j.Logger;
@@ -51,6 +60,51 @@ public class FunctionLabelPane extends javax.swing.JPanel {
      */
     public FunctionLabelPane() {
         super();
+    }
+
+    public FunctionLabelPane(RosterEntry r, RosterEntryNetBeansGlue g) {
+        this(r);
+        DocumentListener dl = new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                g.savable();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                g.savable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                g.savable();
+            }
+        };
+        ItemListener il = (ItemEvent e) -> {
+            g.savable();
+        };
+        ActionListener al = (ActionEvent e) -> {
+            g.savable();
+        };
+        PropertyChangeListener pcl = (PropertyChangeEvent e) -> {
+            g.savable();
+        };
+        for (JTextField c : this.labels) {
+            c.getDocument().addDocumentListener(dl);
+        }
+        for (JCheckBox c : this.lockable) {
+            c.addItemListener(il);
+        }
+        for (JRadioButton c : this.shunterMode) {
+            c.addActionListener(al);
+        }
+        for (EditableResizableImagePanel c : this._imageFilePath) {
+            c.addPropertyChangeListener(EditableResizableImagePanel.IMAGE_PATH, pcl);
+        }
+        for (EditableResizableImagePanel c : this._imagePressedFilePath) {
+            c.addPropertyChangeListener(EditableResizableImagePanel.IMAGE_PATH, pcl);
+        }
     }
 
     public FunctionLabelPane(RosterEntry r) {

@@ -20,11 +20,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
+import jmri.jmrit.roster.swing.RosterEntryNetBeansGlue;
 import jmri.util.swing.EditableResizableImagePanel;
 import jmri.util.swing.ResizableImagePanel;
-import org.netbeans.api.actions.Savable;
-import org.openide.util.Lookup;
-import org.openide.util.lookup.InstanceContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,8 +59,6 @@ public class RosterMediaPane extends JPanel {
     JLabel _URLlabel = new JLabel();
     JTextField _URL = new JTextField(30);
     RosterAttributesTableModel rosterAttributesModel;
-    private Savable savable = null;
-    private Lookup lookup = null;
 
     final ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrit.roster.JmritRosterBundle");
 
@@ -74,35 +70,33 @@ public class RosterMediaPane extends JPanel {
         super();
     }
 
-    public RosterMediaPane(RosterEntry r, Lookup l, Savable s) {
+    public RosterMediaPane(RosterEntry r, RosterEntryNetBeansGlue g) {
         this(r);
-        this.lookup = l;
-        this.savable = s;
         this._imageFilePath.addPropertyChangeListener(ResizableImagePanel.IMAGE_PATH, (PropertyChangeEvent evt) -> {
-            modify();
+            g.savable();
         });
         this._iconFilePath.addPropertyChangeListener(ResizableImagePanel.IMAGE_PATH, (PropertyChangeEvent evt) -> {
-            modify();
+            g.savable();
         });
         this._URL.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                modify();
+                g.savable();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                modify();
+                g.savable();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                modify();
+                g.savable();
             }
         });
         this.rosterAttributesModel.addTableModelListener((TableModelEvent e) -> {
-            modify();
+            g.savable();
         });
     }
 
@@ -212,12 +206,6 @@ public class RosterMediaPane extends JPanel {
     public void dispose() {
         if (log.isDebugEnabled()) {
             log.debug("dispose");
-        }
-    }
-
-    private void modify() {
-        if (this.lookup.lookup(this.savable.getClass()) == null) {
-            this.lookup.lookup(InstanceContent.class).add(this.savable);
         }
     }
 

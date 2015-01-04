@@ -1,4 +1,4 @@
-package org.jmri.roster.ui;
+package jmri.jmrit.roster.swing;
 
 import jmri.jmrit.roster.RosterEntry;
 import org.openide.util.lookup.InstanceContent;
@@ -10,11 +10,17 @@ import org.openide.util.lookup.InstanceContent;
  *
  * @author Randall Wood <randall.h.wood@alexandriasoftware.com>
  */
-public interface RosterEntryHandler {
+public interface RosterEntryNetBeansGlue {
 
     public RosterEntry getRosterEntry();
 
     public InstanceContent getInstanceContent();
+
+    /**
+     * Mark the handler savable by creating a Savable and attaching it to the
+     * instance content.
+     */
+    public void savable();
 
     /**
      * Take any required actions to save the handled
