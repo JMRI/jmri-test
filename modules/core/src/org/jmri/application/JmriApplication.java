@@ -5,6 +5,7 @@ import apps.gui3.TabbedPreferences;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -35,6 +36,7 @@ import jmri.profile.ProfileManager;
 import jmri.profile.ProfileManagerDialog;
 import jmri.util.FileUtil;
 import jmri.util.PythonInterp;
+import jmri.util.zeroconf.ZeroConfService;
 import jmri.web.server.WebServerManager;
 import org.jmri.managers.NetBeansShutDownManager;
 import org.openide.util.Lookup;
@@ -179,6 +181,15 @@ public abstract class JmriApplication extends Bean {
                 }
                 // Always run the WebServer when headless
                 WebServerManager.getWebServer().start();
+                System.out.println();
+                System.out.println("JMRI web service is at:");
+                for (InetAddress address : ZeroConfService.hostAddresses()) {
+                    System.out.println("    http://" + address.getHostAddress() + ":" + WebServerManager.getWebServerPreferences().getPort());
+                    String fqdn = ZeroConfService.FQDN(address);
+                    if (!fqdn.equals("computer") && !fqdn.equals(address.getHostAddress() + ".local.")) {
+                        System.out.println("    http://" + fqdn + ":" + WebServerManager.getWebServerPreferences().getPort());
+                    }
+                }
             }
             if (setState) {
                 this.setState(State.STARTED);
@@ -438,6 +449,9 @@ public abstract class JmriApplication extends Bean {
                     log.error("Exception writing blocks", ex);
                 }
 
+                if (GraphicsEnvironment.isHeadless()) {
+                    System.out.println("Exiting JMRI...");
+                }
                 // continue shutdown
                 return true;
             }
