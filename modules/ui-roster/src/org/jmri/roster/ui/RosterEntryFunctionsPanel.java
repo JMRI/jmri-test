@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 @MultiViewElement.Registration(
         displayName = "#LBL_RosterEntryFunctionsPanel",
         mimeType = "application/x-jmri-rosterentry-node",
+        iconBase = "org/jmri/roster/ui/RosterEntry.png",
         persistenceType = TopComponent.PERSISTENCE_NEVER,
         preferredID = "RosterEntryFunctionLabels",
         position = 10)

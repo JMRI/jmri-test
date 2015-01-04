@@ -36,6 +36,7 @@ public class RosterEntryNode extends BeanNode<RosterEntry> implements Serializab
         super(bean, Children.LEAF, new ProxyLookup(Lookups.singleton(bean), new AbstractLookup(ic)));
         ic.add(ic);
         ic.add(bean);
+        this.setIconBaseWithExtension("org/jmri/roster/ui/RosterEntry.png");
     }
 
     @Override

@@ -1,17 +1,22 @@
 package org.jmri.roster.ui;
 
-import jmri.jmrit.roster.swing.RosterEntryNetBeansGlue;
+import java.awt.Component;
+import java.awt.Graphics;
 import java.io.IOException;
+import javax.swing.Icon;
 import jmri.jmrit.roster.Roster;
+import jmri.jmrit.roster.swing.RosterEntryNetBeansGlue;
 import org.netbeans.spi.actions.AbstractSavable;
+import org.openide.util.ImageUtilities;
 
 /**
  *
  * @author Randall Wood <randall.h.wood@alexandriasoftware.com>
  */
-public class RosterEntrySavable extends AbstractSavable {
+public class RosterEntrySavable extends AbstractSavable implements Icon {
 
     private final RosterEntryNetBeansGlue object;
+    private static final Icon icon = ImageUtilities.loadImageIcon("org/jmri/roster/ui/RosterEntry.png", true);
 
     public RosterEntrySavable(RosterEntryNetBeansGlue object) {
         this.object = object;
@@ -46,5 +51,20 @@ public class RosterEntrySavable extends AbstractSavable {
     @Override
     public int hashCode() {
         return this.object.hashCode();
+    }
+
+    @Override
+    public void paintIcon(Component c, Graphics g, int x, int y) {
+        icon.paintIcon(c, g, x, y);
+    }
+
+    @Override
+    public int getIconWidth() {
+        return icon.getIconWidth();
+    }
+
+    @Override
+    public int getIconHeight() {
+        return icon.getIconHeight();
     }
 }
