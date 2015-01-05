@@ -753,25 +753,29 @@ public class RollingStock implements java.beans.PropertyChangeListener {
                 log.debug("Changing IdTag for {} to {}", toString(),id);  
 		if (!old.equals(id))
 			setDirtyAndFirePropertyChange("rolling stock rfid", old, id); // NOI18N
-                _tag = InstanceManager.getDefault(IdTagManager.class).getIdTag(id);
-                log.debug("Tag {} Found",_tag.toString() );
-                _tag.addPropertyChangeListener( new PropertyChangeListener(){
-                     @Override
-                     public void propertyChange(java.beans.PropertyChangeEvent e){
-                         if(e.getPropertyName().equals("whereLastSeen")){
-                              log.debug("Tag Reader Position update received for {}", toString());  
-                              // update the position of this piece of rolling
-                              // stock when it's IdTag is seen.
-                              if(e.getNewValue()!=null)
-                                 setLocation(locationManager
+                //try {
+                   _tag = InstanceManager.getDefault(IdTagManager.class).getIdTag(id.toUpperCase());
+                   log.debug("Tag {} Found",_tag.toString() );
+                   _tag.addPropertyChangeListener( new PropertyChangeListener(){
+                        @Override
+                        public void propertyChange(java.beans.PropertyChangeEvent e){
+                            if(e.getPropertyName().equals("whereLastSeen")){
+                                 log.debug("Tag Reader Position update received for {}", toString());  
+                                 // update the position of this piece of rolling
+                                 // stock when it's IdTag is seen.
+                                 if(e.getNewValue()!=null)
+                                    setLocation(locationManager
                                           .getLocationByReporter(
                                           (jmri.Reporter)e.getNewValue()),null);
-                         }
-                         if(e.getPropertyName().equals("whenLastSeen")){
-                              log.debug("Tag Reader Time at Location update received for {}", toString());  
-                         }
-                     }
-                });
+                            }
+                            if(e.getPropertyName().equals("whenLastSeen")){
+                                 log.debug("Tag Reader Time at Location update received for {}", toString());  
+                            }
+                        }
+                  });
+                //} catch( NullPointerException e) {
+                //  log.error("Tag {} Not Found", id );
+                //}
 	}
 
 	/**

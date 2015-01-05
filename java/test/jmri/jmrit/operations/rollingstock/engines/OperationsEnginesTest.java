@@ -24,6 +24,7 @@ import jmri.jmrit.operations.routes.RouteManagerXml;
 import jmri.jmrit.operations.setup.OperationsSetupXml;
 import jmri.jmrit.operations.trains.Train;
 import jmri.jmrit.operations.trains.TrainManagerXml;
+import jmri.util.JUnitUtil;
 
 /**
  * Tests for the Operations RollingStock Engine class
@@ -583,6 +584,15 @@ public class OperationsEnginesTest extends TestCase {
         e4.setMoves(33);
         e5.setMoves(4);
         e6.setMoves(9999);
+
+        // make sure the ID tags exist before we
+        // try to add it to an engine.
+        jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("SQ1");
+        jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("1Ab");
+        jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("Ase");
+        jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("asd");
+        jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("93F");
+        jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("B12");
         
         e1.setRfid("SQ1");
         e2.setRfid("1Ab");
@@ -818,7 +828,10 @@ public class OperationsEnginesTest extends TestCase {
 		e1.setMoves(1);
 		e1.setNumber("X Test Number e1");  
 		e1.setOutOfService(false);
-		e1.setRfid("norfide1");
+                // make sure the ID tags exist before we
+                // try to add it to a engine.
+                jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("norfide1");
+                e1.setRfid("norfide1");
 		e1.setRoadName("OLDRoad");
 		e1.setTypeName("e1 X type");
 		e1.setWeight("54");
@@ -833,6 +846,9 @@ public class OperationsEnginesTest extends TestCase {
 		e2.setMoves(10000);
 		e2.setNumber("X Test Number e2");  
 		e2.setOutOfService(true);
+                // make sure the ID tags exist before we
+                // try to add it to a engine.
+                jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("rfide2");
 		e2.setRfid("rfide2");
 		e2.setRoadName("e2 Road");
 		e2.setTypeName("e2 type");
@@ -848,6 +864,9 @@ public class OperationsEnginesTest extends TestCase {
 		e3.setMoves(243);
 		e3.setNumber("X Test Number e3");  
 		e3.setOutOfService(false);
+                // make sure the ID tags exist before we
+                // try to add it to a engine.
+                jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("rfide3");
 		e3.setRfid("rfide3");
 		e3.setRoadName("e3 Road");
 		e3.setTypeName("e3 type");
@@ -879,6 +898,9 @@ public class OperationsEnginesTest extends TestCase {
 		e1.setMoves(3);
 		e1.setNumber("New Test Number e1");  
 		e1.setOutOfService(true);
+                // make sure the ID tags exist before we
+                // try to add it to a engine.
+                jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("rfide1");
 		e1.setRfid("rfide1");
 		e1.setRoadName("newRoad");
 		e1.setTypeName("e1 type");
@@ -894,6 +916,9 @@ public class OperationsEnginesTest extends TestCase {
 		e5.setMoves(5);
 		e5.setNumber("New Test Number e5");  
 		e5.setOutOfService(true);
+                // make sure the ID tags exist before we
+                // try to add it to a engine.
+                jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("rfide5");
 		e5.setRfid("rfide5");
 		e5.setRoadName("e5Road");
 		e5.setTypeName("e5 type");
@@ -1128,11 +1153,25 @@ public class OperationsEnginesTest extends TestCase {
 
     // Ensure minimal setup for log4J
     @Override
-    protected void setUp() {
-        apps.tests.Log4JFixture.setUp();
+    protected void setUp() throws Exception{
+        super.setUp();
+        JUnitUtil.resetInstanceManager();
+        JUnitUtil.initInternalTurnoutManager();
+        JUnitUtil.initInternalLightManager();
+        JUnitUtil.initInternalSensorManager();
+        JUnitUtil.initDebugThrottleManager();
+        JUnitUtil.initIdTagManager();
+        jmri.InstanceManager.setShutDownManager( new
+                 jmri.managers.DefaultShutDownManager() {
+                    @Override
+                    public void register(jmri.ShutDownTask s){
+                       // do nothing with registered shutdown tasks for testing.
+                    }
+                 });
+
         
-		// set the locale to US English
-		Locale.setDefault(Locale.ENGLISH);
+        // set the locale to US English
+        Locale.setDefault(Locale.ENGLISH);
         
 		// Repoint OperationsSetupXml to JUnitTest subdirectory
 		OperationsSetupXml.setOperationsDirectoryName("operations"+File.separator+"JUnitTest");
@@ -1174,5 +1213,10 @@ public class OperationsEnginesTest extends TestCase {
 
     // The minimal setup for log4J
     @Override
-    protected void tearDown() { apps.tests.Log4JFixture.tearDown(); }
+    protected void tearDown() throws Exception {
+       JUnitUtil.resetInstanceManager();
+       super.tearDown();
+    }
+
+
 }

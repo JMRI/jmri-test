@@ -26,7 +26,7 @@ import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
+import jmri.util.JUnitUtil;
 
 /**
  * Tests for the Operations RollingStock Cars class
@@ -511,6 +511,14 @@ public class OperationsCarsTest extends TestCase {
         c4.setMoves(33);
         c5.setMoves(4);
         c6.setMoves(9999);
+        // make sure the ID tags exist before we
+        // try to add it to a car.
+        jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("SQ1");
+        jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("1Ab");
+        jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("Ase");
+        jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("asd");
+        jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("93F");
+        jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("B12");
         
         c1.setRfid("SQ1");
         c2.setRfid("1Ab");
@@ -824,6 +832,9 @@ public class OperationsCarsTest extends TestCase {
 		c1.setMoves(1);
 		c1.setNumber("X Test Number c1");  
 		c1.setOutOfService(false);
+                // make sure the ID tags exist before we
+                // try to add it to a car.
+                jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("norfidc1");
 		c1.setRfid("norfidc1");
 		c1.setRoadName("OLDRoad");
 		c1.setTypeName("noCaboose");
@@ -840,6 +851,9 @@ public class OperationsCarsTest extends TestCase {
 		c2.setMoves(10000);
 		c2.setNumber("X Test Number c2");  
 		c2.setOutOfService(true);
+                // make sure the ID tags exist before we
+                // try to add it to a car.
+                jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("rfidc2");
 		c2.setRfid("rfidc2");
 		c2.setRoadName("c2 Road");
 		c2.setTypeName("c2 Boxcar");
@@ -856,6 +870,9 @@ public class OperationsCarsTest extends TestCase {
 		c3.setMoves(243);
 		c3.setNumber("X Test Number c3");  
 		c3.setOutOfService(false);
+                // make sure the ID tags exist before we
+                // try to add it to a car.
+                jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("rfidc3");
 		c3.setRfid("rfidc3");
 		c3.setRoadName("c3 Road");
 		c3.setTypeName("c3 Boxcar");
@@ -888,6 +905,9 @@ public class OperationsCarsTest extends TestCase {
 		c1.setMoves(3);
 		c1.setNumber("New Test Number c1");  
 		c1.setOutOfService(true);
+                // make sure the ID tags exist before we
+                // try to add it to a car.
+                jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("rfidc1");
 		c1.setRfid("rfidc1");
 		c1.setRoadName("newRoad");
 		c1.setTypeName("bigCaboose");
@@ -904,6 +924,9 @@ public class OperationsCarsTest extends TestCase {
 		c5.setMoves(5);
 		c5.setNumber("New Test Number c5");  
 		c5.setOutOfService(true);
+                // make sure the ID tags exist before we
+                // try to add it to a car.
+                jmri.InstanceManager.getDefault(jmri.IdTagManager.class).provideIdTag("rfidc5");
 		c5.setRfid("rfidc5");
 		c5.setRoadName("c5Road");
 		c5.setTypeName("smallCaboose");
@@ -1157,21 +1180,33 @@ public class OperationsCarsTest extends TestCase {
 
     // Ensure minimal setup for log4J
     @Override
-    protected void setUp() {
-        apps.tests.Log4JFixture.setUp();
+    protected void setUp() throws Exception {
+        super.setUp();
+        JUnitUtil.resetInstanceManager();
+        JUnitUtil.initInternalTurnoutManager();
+        JUnitUtil.initInternalLightManager();
+        JUnitUtil.initInternalSensorManager();
+        JUnitUtil.initDebugThrottleManager();
+        JUnitUtil.initIdTagManager();
+        jmri.InstanceManager.setShutDownManager( new
+                 jmri.managers.DefaultShutDownManager() {
+                    @Override
+                    public void register(jmri.ShutDownTask s){
+                       // do nothing with registered shutdown tasks for testing.
+                    }
+                 });
+        // set the locale to US English
+        Locale.setDefault(Locale.ENGLISH);
         
-		// set the locale to US English
-		Locale.setDefault(Locale.ENGLISH);
-        
-		// Repoint OperationsSetupXml to JUnitTest subdirectory
-		OperationsSetupXml.setOperationsDirectoryName("operations"+File.separator+"JUnitTest");
-		// Change file names to ...Test.xml
-		OperationsSetupXml.instance().setOperationsFileName("OperationsJUnitTest.xml"); 
-		RouteManagerXml.instance().setOperationsFileName("OperationsJUnitTestRouteRoster.xml");
-		EngineManagerXml.instance().setOperationsFileName("OperationsJUnitTestEngineRoster.xml");
-		CarManagerXml.instance().setOperationsFileName("OperationsJUnitTestCarRoster.xml");
-		LocationManagerXml.instance().setOperationsFileName("OperationsJUnitTestLocationRoster.xml");
-		TrainManagerXml.instance().setOperationsFileName("OperationsJUnitTestTrainRoster.xml");
+        // Repoint OperationsSetupXml to JUnitTest subdirectory
+        OperationsSetupXml.setOperationsDirectoryName("operations"+File.separator+"JUnitTest");
+        // Change file names to ...Test.xml
+        OperationsSetupXml.instance().setOperationsFileName("OperationsJUnitTest.xml"); 
+        RouteManagerXml.instance().setOperationsFileName("OperationsJUnitTestRouteRoster.xml");
+        EngineManagerXml.instance().setOperationsFileName("OperationsJUnitTestEngineRoster.xml");
+        CarManagerXml.instance().setOperationsFileName("OperationsJUnitTestCarRoster.xml");
+        LocationManagerXml.instance().setOperationsFileName("OperationsJUnitTestLocationRoster.xml");
+        TrainManagerXml.instance().setOperationsFileName("OperationsJUnitTestTrainRoster.xml");
 
         // Need to clear out CarManager global variables
         CarManager manager = CarManager.instance();
@@ -1201,5 +1236,8 @@ public class OperationsCarsTest extends TestCase {
 
     // The minimal setup for log4J
     @Override
-    protected void tearDown() { apps.tests.Log4JFixture.tearDown(); }
+    protected void tearDown() throws Exception {
+       JUnitUtil.resetInstanceManager();
+       super.tearDown();
+    }
 }
