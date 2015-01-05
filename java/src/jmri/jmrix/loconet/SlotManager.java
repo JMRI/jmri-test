@@ -4,15 +4,13 @@ package jmri.jmrix.loconet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jmri.CommandStation;
-import jmri.ProgListener;
-import jmri.Programmer;
+import jmri.*;
 import jmri.jmrix.AbstractProgrammer;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
+import jmri.managers.DefaultProgrammerManager;
 
 /**
  * Controls a collection of slots, acting as the
@@ -588,54 +586,16 @@ public class SlotManager extends AbstractProgrammer implements LocoNetListener, 
     // members for handling the programmer interface
     
     /**
-     * Set the mode of the Programmer implementation.
-     * @param mode A mode constant from the Programmer interface
+     * Types implemented here.
      */
-    public void setMode(int mode) {
-        if (mode == jmri.Programmer.DIRECTBITMODE)
-            mode = jmri.Programmer.DIRECTBYTEMODE;
-        if (mode != _mode) {
-            notifyPropertyChange("Mode", _mode, mode);
-            _mode = mode;
-        }
-    }
-    
-    /**
-     * Get the current mode of the Programmer implementation.
-     * @return A mode constant from the Programmer interface
-     */
-    public int getMode() { return _mode; }
-
-    /**
-     * Records the current mode of the Programmer implementation.
-     */
-    protected int _mode = Programmer.PAGEMODE;
-
-    /**
-     * Trigger notification of PropertyChangeListeners. The only bound
-     * property is Mode from the Programmer interface. It is not clear
-     * why this is not in AbstractProgrammer...
-     * @param name Changed property
-     * @param oldval
-     * @param newval
-     */
-    @SuppressWarnings("unchecked")
-    protected void notifyPropertyChange(String name, int oldval, int newval) {
-        // make a copy of the listener vector to synchronized not needed for transmit
-        Vector<PropertyChangeListener> v;
-        synchronized(this)
-            {
-                v = (Vector<PropertyChangeListener>) propListeners.clone();
-            }
-        if (log.isDebugEnabled()) log.debug("notify "+v.size()
-                                            +"listeners of property change name: "
-                                            +name+" oldval: "+oldval+" newval: "+newval);
-        // forward to all listeners
-        int cnt = v.size();
-        for (int i=0; i < cnt; i++) {
-            PropertyChangeListener client = v.elementAt(i);
-            client.propertyChange(new PropertyChangeEvent(this, name, Integer.valueOf(oldval), Integer.valueOf(newval)));
-        }
+    @Override
+    public List<ProgrammingMode> getSupportedModes() {
+        List<ProgrammingMode> ret = new ArrayList<ProgrammingMode>();
+        ret.add(DefaultProgrammerManager.PAGEMODE);
+        ret.add(DefaultProgrammerManager.DIRECTBYTEMODE);
+        ret.add(DefaultProgrammerManager.REGISTERMODE);
+        ret.add(DefaultProgrammerManager.ADDRESSMODE);
+        return ret;
     }
 
     /**
@@ -692,24 +652,6 @@ public class SlotManager extends AbstractProgrammer implements LocoNetListener, 
     protected LnCommandStationType commandStationType = null;
     
     /**
-     * Determine is a mode is available for this Programmer implementation
-     * @param mode A mode constant from the Programmer interface
-     * @return True if paged or register mode
-     */
-    @Override
-    public boolean hasMode(int mode) {
-        if ( mode == Programmer.PAGEMODE ||
-             mode == Programmer.ADDRESSMODE ||
-             mode == Programmer.DIRECTBYTEMODE ||
-             mode == Programmer.REGISTERMODE ) {
-            log.debug("hasMode request on mode "+mode+" returns true");
-            return true;
-        }
-        log.debug("hasMode returns false on mode "+mode);
-        return false;
-    }
-
-    /**
      * Internal routine to handle a timeout
      */
     synchronized protected void timeout() {
@@ -750,10 +692,10 @@ public class SlotManager extends AbstractProgrammer implements LocoNetListener, 
         mServiceMode = true;
         // parse the programming command
         int pcmd = 0x43;       // LPE imples 0x40, but 0x43 is observed
-        if (getMode() == jmri.Programmer.PAGEMODE) pcmd = pcmd | 0x20;
-        else if (getMode() == jmri.Programmer.DIRECTBYTEMODE) pcmd = pcmd | 0x28;
-        else if (getMode() == jmri.Programmer.REGISTERMODE
-                 || getMode() == jmri.Programmer.ADDRESSMODE) pcmd = pcmd | 0x10;
+        if (getMode().equals(DefaultProgrammerManager.PAGEMODE)) pcmd = pcmd | 0x20;
+        else if (getMode().equals(DefaultProgrammerManager.DIRECTBYTEMODE)) pcmd = pcmd | 0x28;
+        else if (getMode().equals(DefaultProgrammerManager.REGISTERMODE)
+                 || getMode().equals(DefaultProgrammerManager.ADDRESSMODE)) pcmd = pcmd | 0x10;
         else throw new jmri.ProgrammerException("mode not supported");
 
         doWrite(CV, val, p, pcmd);
@@ -786,10 +728,10 @@ public class SlotManager extends AbstractProgrammer implements LocoNetListener, 
         mServiceMode = true;
         // parse the programming command
         int pcmd = 0x03;       // LPE imples 0x00, but 0x03 is observed
-        if (getMode() == jmri.Programmer.PAGEMODE) pcmd = pcmd | 0x20;
-        else if (getMode() == jmri.Programmer.DIRECTBYTEMODE) pcmd = pcmd | 0x28;
-        else if (getMode() == jmri.Programmer.REGISTERMODE
-                 || getMode() == jmri.Programmer.ADDRESSMODE) pcmd = pcmd | 0x10;
+        if (getMode().equals(DefaultProgrammerManager.PAGEMODE)) pcmd = pcmd | 0x20;
+        else if (getMode().equals(DefaultProgrammerManager.DIRECTBYTEMODE)) pcmd = pcmd | 0x28;
+        else if (getMode().equals(DefaultProgrammerManager.REGISTERMODE)
+                 || getMode().equals(DefaultProgrammerManager.ADDRESSMODE)) pcmd = pcmd | 0x10;
         else throw new jmri.ProgrammerException("mode not supported");
 
         doConfirm(CV, val, p, pcmd);
@@ -836,10 +778,10 @@ public class SlotManager extends AbstractProgrammer implements LocoNetListener, 
         mServiceMode = true;
         // parse the programming command
         int pcmd = 0x03;       // LPE imples 0x00, but 0x03 is observed
-        if (getMode() == jmri.Programmer.PAGEMODE) pcmd = pcmd | 0x20;
-        else if (getMode() == jmri.Programmer.DIRECTBYTEMODE) pcmd = pcmd | 0x28;
-        else if (getMode() == jmri.Programmer.REGISTERMODE
-                 || getMode() == jmri.Programmer.ADDRESSMODE) pcmd = pcmd | 0x10;
+        if (getMode().equals(DefaultProgrammerManager.PAGEMODE)) pcmd = pcmd | 0x20;
+        else if (getMode().equals(DefaultProgrammerManager.DIRECTBYTEMODE)) pcmd = pcmd | 0x28;
+        else if (getMode().equals(DefaultProgrammerManager.REGISTERMODE)
+                 || getMode().equals(DefaultProgrammerManager.ADDRESSMODE)) pcmd = pcmd | 0x10;
         else throw new jmri.ProgrammerException("mode not supported");
 
         doRead(CV, p, pcmd);

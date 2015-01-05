@@ -5,6 +5,7 @@ package jmri.jmris.srcp.parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jmri.InstanceManager;
+import jmri.managers.DefaultProgrammerManager;
 
 /* This class provides an interface between the JavaTree/JavaCC 
  * parser for the SRCP protocol and the JMRI back end.
@@ -183,11 +184,11 @@ public class SRCPVisitor implements SRCPParserVisitor {
     else if(((SimpleNode)node.jjtGetChild(1)).jjtGetValue().equals("SM")
          && isSupported(bus,"SM") ) {
       // This is a Service Mode read request.
-      int modeno=jmri.Programmer.REGISTERMODE;
+      jmri.ProgrammingMode modeno=DefaultProgrammerManager.REGISTERMODE;
       if(node.jjtGetChild(3).getClass()==ASTcv.class)
-         modeno=jmri.Programmer.DIRECTBYTEMODE;
+         modeno=DefaultProgrammerManager.DIRECTBYTEMODE;
       else if(node.jjtGetChild(3).getClass()==ASTcvbit.class)
-         modeno=jmri.Programmer.DIRECTBITMODE;
+         modeno=DefaultProgrammerManager.DIRECTBITMODE;
      
       int cv = Integer.parseInt(((String)((SimpleNode)node.jjtGetChild(4)).jjtGetValue()));
        //try {
@@ -407,11 +408,11 @@ public class SRCPVisitor implements SRCPParserVisitor {
     else if(((SimpleNode)node.jjtGetChild(1)).jjtGetValue().equals("SM")
          && isSupported(bus,"SM") ) {
       // This is a Service Mode write request
-      int modeno=jmri.Programmer.REGISTERMODE;
+      jmri.ProgrammingMode modeno=DefaultProgrammerManager.REGISTERMODE;
       if(node.jjtGetChild(3).getClass()==ASTcv.class)
-         modeno=jmri.Programmer.DIRECTBYTEMODE;
+         modeno=DefaultProgrammerManager.DIRECTBYTEMODE;
       else if(node.jjtGetChild(3).getClass()==ASTcvbit.class)
-         modeno=jmri.Programmer.DIRECTBITMODE;
+         modeno=DefaultProgrammerManager.DIRECTBITMODE;
       int cv = Integer.parseInt(((String)((SimpleNode)node.jjtGetChild(4)).jjtGetValue()));
       int value = Integer.parseInt(((String)((SimpleNode)node.jjtGetChild(5)).jjtGetValue()));
      

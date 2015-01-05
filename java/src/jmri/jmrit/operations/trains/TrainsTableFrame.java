@@ -88,7 +88,7 @@ public class TrainsTableFrame extends OperationsFrame implements java.beans.Prop
 	JButton printButton = new JButton(Bundle.getMessage("Print"));
 	JButton openFileButton = new JButton(Bundle.getMessage("OpenFile"));
 	JButton runFileButton = new JButton(Bundle.getMessage("RunFile"));
-	JButton printSwitchButton = new JButton(Bundle.getMessage("SwitchLists"));
+	JButton switchListsButton = new JButton(Bundle.getMessage("SwitchLists"));
 	JButton terminateButton = new JButton(Bundle.getMessage("Terminate"));
 	JButton saveButton = new JButton(Bundle.getMessage("SaveBuilds"));
 
@@ -154,7 +154,7 @@ public class TrainsTableFrame extends OperationsFrame implements java.beans.Prop
 		// tool tips, see setPrintButtonText() for more tool tips
 		addButton.setToolTipText(Bundle.getMessage("AddTrain"));
 		buildButton.setToolTipText(Bundle.getMessage("BuildSelectedTip"));
-		printSwitchButton.setToolTipText(Bundle.getMessage("PreviewPrintSwitchLists"));
+		switchListsButton.setToolTipText(Bundle.getMessage("PreviewPrintSwitchLists"));
 
 		terminateButton.setToolTipText(Bundle.getMessage("TerminateSelectedTip"));
 		saveButton.setToolTipText(Bundle.getMessage("SaveBuildsTip"));
@@ -186,7 +186,7 @@ public class TrainsTableFrame extends OperationsFrame implements java.beans.Prop
 		select.add(printButton);
 		select.add(openFileButton);
 		select.add(runFileButton);
-		select.add(printSwitchButton);
+		select.add(switchListsButton);
 		select.add(terminateButton);
 
 		JPanel save = new JPanel();
@@ -216,7 +216,7 @@ public class TrainsTableFrame extends OperationsFrame implements java.beans.Prop
 		addButtonAction(printButton);
 		addButtonAction(openFileButton);
 		addButtonAction(runFileButton);
-		addButtonAction(printSwitchButton);
+		addButtonAction(switchListsButton);
 		addButtonAction(terminateButton);
 		addButtonAction(saveButton);
 
@@ -335,19 +335,7 @@ public class TrainsTableFrame extends OperationsFrame implements java.beans.Prop
 			trainManager.buildSelectedTrains(getSortByList());
 		}
 		if (ae.getSource() == printButton) {
-			List<Train> trains = getSortByList();
-			for (Train train : trains) {
-				if (train.isBuildEnabled() && !train.printManifestIfBuilt() && trainManager.isBuildMessagesEnabled()) {
-					JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle
-							.getMessage("NeedToBuildBeforePrinting"), new Object[] {
-							train.getName(),
-							(trainManager.isPrintPreviewEnabled() ? Bundle.getMessage("preview") : Bundle
-									.getMessage("print")) }), MessageFormat.format(Bundle
-							.getMessage("CanNotPrintManifest"),
-							new Object[] { trainManager.isPrintPreviewEnabled() ? Bundle.getMessage("preview") : Bundle
-									.getMessage("print") }), JOptionPane.ERROR_MESSAGE);
-				}
-			}
+			trainManager.printSelectedTrains(getSortByList());
 		}
 		if (ae.getSource() == openFileButton) {
 			// open the csv files
@@ -404,31 +392,14 @@ public class TrainsTableFrame extends OperationsFrame implements java.beans.Prop
 			// Now run the user specified custom Manifest processor program
 			TrainCustomManifest.process();
 		}
-		if (ae.getSource() == printSwitchButton) {
+		if (ae.getSource() == switchListsButton) {
 			if (tslef != null)
 				tslef.dispose();
 			tslef = new TrainSwitchListEditFrame();
 			tslef.initComponents();
 		}
 		if (ae.getSource() == terminateButton) {
-			List<Train> trains = getSortByList();
-			for (Train train : trains) {
-				if (train.isBuildEnabled() && train.isBuilt()) {
-					if (train.isPrinted()) {
-						train.terminate();
-					} else {
-						int status = JOptionPane.showConfirmDialog(null, Bundle
-								.getMessage("WarningTrainManifestNotPrinted"), MessageFormat
-								.format(Bundle.getMessage("TerminateTrain"), new Object[] { train.getName(),
-										train.getDescription() }), JOptionPane.YES_NO_OPTION);
-						if (status == JOptionPane.YES_OPTION)
-							train.terminate();
-						// Quit?
-						if (status == JOptionPane.CLOSED_OPTION)
-							return;
-					}
-				}
-			}
+			trainManager.terminateSelectedTrains(getSortByList());
 		}
 		if (ae.getSource() == saveButton) {
 			storeValues();
@@ -534,11 +505,11 @@ public class TrainsTableFrame extends OperationsFrame implements java.beans.Prop
 		List<Location> locations = locationManager.getList();
 		for (Location location : locations) {
 			if (location != null && location.isSwitchListEnabled() && location.getStatus().equals(Location.MODIFIED)) {
-				printSwitchButton.setBackground(Color.RED);
+				switchListsButton.setBackground(Color.RED);
 				return;
 			}
 		}
-		printSwitchButton.setBackground(Color.GREEN);
+		switchListsButton.setBackground(Color.GREEN);
 	}
 
 	// show open files only if create csv is enabled

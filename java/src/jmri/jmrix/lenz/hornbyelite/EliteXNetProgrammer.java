@@ -8,13 +8,16 @@ package jmri.jmrix.lenz.hornbyelite;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jmri.Programmer;
+import java.util.*;
+
+import jmri.*;
 import jmri.jmrix.lenz.XNetTrafficController;
 import jmri.jmrix.lenz.XNetProgrammer;
 import jmri.jmrix.lenz.XNetMessage;
 import jmri.jmrix.lenz.XNetReply;
 import jmri.jmrix.lenz.XNetListener;
 import jmri.jmrix.lenz.XNetConstants;
+import jmri.managers.DefaultProgrammerManager;
 
 /**
  * Programmer support for Hornby Elite implementationn of XpressNet.
@@ -59,12 +62,12 @@ public class EliteXNetProgrammer extends XNetProgrammer implements XNetListener 
                    restartTimer(EliteXNetProgrammerTimeout);
 
                    // format and send message to go to program mode
-                   if (_mode == Programmer.PAGEMODE) {
+                   if (getMode().equals(DefaultProgrammerManager.PAGEMODE)) {
                        XNetMessage msg = XNetMessage.getWritePagedCVMsg(CV,val);
 		       msg.setNeededMode(jmri.jmrix.AbstractMRTrafficController.NORMALMODE);
 		       msg.setTimeout(ELITEMESSAGETIMEOUT);
                        controller().sendXNetMessage(msg, this);
-                   } else if (_mode == Programmer.DIRECTBITMODE || _mode == Programmer.DIRECTBYTEMODE) {
+                   } else if (getMode().equals(DefaultProgrammerManager.DIRECTBITMODE) || getMode().equals(DefaultProgrammerManager.DIRECTBYTEMODE)) {
                        XNetMessage msg = XNetMessage.getWriteDirectCVMsg(CV,val);
 		       msg.setNeededMode(jmri.jmrix.AbstractMRTrafficController.NORMALMODE);
 		       msg.setTimeout(ELITEMESSAGETIMEOUT);
@@ -116,12 +119,12 @@ public class EliteXNetProgrammer extends XNetProgrammer implements XNetListener 
                    restartTimer(EliteXNetProgrammerTimeout);
 
                    // format and send message to go to program mode
-                   if (_mode == Programmer.PAGEMODE) {
+                   if (getMode().equals(DefaultProgrammerManager.PAGEMODE)) {
                        XNetMessage msg=XNetMessage.getReadPagedCVMsg(CV);
 		       msg.setNeededMode(jmri.jmrix.AbstractMRTrafficController.NORMALMODE);
 		       msg.setTimeout(ELITEMESSAGETIMEOUT);
                        controller().sendXNetMessage(msg, this);
-                   } else if (_mode == Programmer.DIRECTBITMODE || _mode == Programmer.DIRECTBYTEMODE) {
+                   } else if (getMode().equals(DefaultProgrammerManager.DIRECTBITMODE) || getMode().equals(DefaultProgrammerManager.DIRECTBYTEMODE)) {
                        XNetMessage msg=XNetMessage.getReadDirectCVMsg(CV);
 		       msg.setNeededMode(jmri.jmrix.AbstractMRTrafficController.NORMALMODE);
 		       msg.setTimeout(ELITEMESSAGETIMEOUT);
