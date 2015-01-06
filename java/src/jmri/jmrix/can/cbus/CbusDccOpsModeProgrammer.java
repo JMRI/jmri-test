@@ -2,11 +2,14 @@
 
 package jmri.jmrix.can.cbus;
 
+import java.util.*;
+
 import jmri.*;
 import jmri.ProgListener;
 import jmri.ProgrammerException;
 
 import jmri.jmrix.can.CanReply;
+import jmri.managers.DefaultProgrammerManager;
 
 /**
  * Provide an Ops Mode Programmer via a wrapper what works with the CBUS
@@ -59,17 +62,14 @@ public class CbusDccOpsModeProgrammer extends CbusDccProgrammer implements Addre
         throw new ProgrammerException();
     }
 
-    public void setMode(int mode) {
-        if (mode!=Programmer.OPSBYTEMODE)
-            log.error("Can't switch to mode "+mode);
-    }
-
-    public int  getMode() {
-        return Programmer.OPSBYTEMODE;
-    }
-
-    public boolean hasMode(int mode) {
-        return (mode==Programmer.OPSBYTEMODE);
+    /**
+     * Types implemented here.
+     */
+    @Override
+    public List<ProgrammingMode> getSupportedModes() {
+        List<ProgrammingMode> ret = new ArrayList<ProgrammingMode>();
+        ret.add(DefaultProgrammerManager.OPSBYTEMODE);
+        return ret;
     }
 
     synchronized public void reply(CanReply m) {

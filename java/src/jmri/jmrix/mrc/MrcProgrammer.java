@@ -4,14 +4,15 @@ package jmri.jmrix.mrc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jmri.Programmer;
+
+import jmri.ProgrammingMode;
 import jmri.jmrix.AbstractProgrammer;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Date;
-//import static jmri.jmrix.mrc.MrcReply.READCVHEADERREPLY;
+import java.util.List;
+
+import jmri.managers.DefaultProgrammerManager;
 
 /**
  * Convert the jmri.Programmer interface into commands for the MRC power house.
@@ -33,66 +34,35 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
         super.LONG_TIMEOUT = 700000;
     }
 
-    // handle mode
-    protected int _mode = Programmer.PAGEMODE;
     int PACKET_TIMEOUT = 5000;
     int PACKET_READTIMEOUT = 650000;
 
     /**
-     * Switch to a new programming mode.  Note that MRC 
-     * doesn't support the setting of mode, the command station works it out.
-     * @param mode The new mode, use values from the jmri.Programmer interface
+     * Types implemented here.
      */
-    public void setMode(int mode) {
-        int oldMode = _mode;  // preserve this in case we need to go back
-        if (mode != _mode) {
-            notifyPropertyChange("Mode", _mode, mode); //IN18N
-            _mode = mode;
-        }
-        if (!hasMode(_mode)) {
-            // attempt to switch to unsupported mode, switch back to previous
-            _mode = oldMode;
-            notifyPropertyChange("Mode", mode, _mode); //IN18N
-        }
+    @Override
+    public List<ProgrammingMode> getSupportedModes() {
+        List<ProgrammingMode> ret = new ArrayList<ProgrammingMode>();
+        ret.add(DefaultProgrammerManager.PAGEMODE);
+        ret.add(DefaultProgrammerManager.REGISTERMODE);
+        return ret;
     }
-
-    /**
-     * Signifies mode's available
-     * @param mode
-     * @return True if paged or register mode
-     */
-    public boolean hasMode(int mode) {
-        return true;
-    }
-
-    public int getMode() { return _mode; }
 
     @Override
     public boolean getCanRead() {
     	return true;
     }
-    /*Need to check this out */
-    public boolean getCanWrite(int mode, String cv) {
+    @Override
+    public boolean getCanWrite()  { return true; }
+    @Override
+    /** CV1 to 1024 valid */
+    public boolean getCanWrite(String cv) {
+        if (Integer.parseInt(cv) > 1024) {
+        	return false;
+        }
         return true;
     }
     
-    // notify property listeners - see AbstractProgrammer for more
-
-    @SuppressWarnings("unchecked")
-	protected void notifyPropertyChange(String name, int oldval, int newval) {
-        // make a copy of the listener vector to synchronized not needed for transmit
-        Vector<PropertyChangeListener> v;
-        synchronized(this) {
-            v = (Vector<PropertyChangeListener>) propListeners.clone();
-        }
-        // forward to all listeners
-        int cnt = v.size();
-        for (int i=0; i < cnt; i++) {
-            PropertyChangeListener client = v.elementAt(i);
-            client.propertyChange(new PropertyChangeEvent(this, name, Integer.valueOf(oldval), Integer.valueOf(newval)));
-        }
-    }
-
     // members for handling the programmer interface
 
     int progState = 0;
@@ -169,7 +139,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
 
     // internal method to create the MrcMessage for programmer task start
     /* todo MRC doesn't set the prog mode the command station sorts it out.*/
-    protected MrcMessage progTaskStart(int mode, int val, int cvnum) throws jmri.ProgrammerException {
+    protected MrcMessage progTaskStart(ProgrammingMode mode, int val, int cvnum) throws jmri.ProgrammerException {
         // val = -1 for read command; mode is direct, etc
         MrcMessage m;
         if (val < 0) {
@@ -177,7 +147,7 @@ public class MrcProgrammer extends AbstractProgrammer implements MrcTrafficListe
             
             m = MrcMessage.getReadCV(cvnum);
         } else {
-            m = MrcMessage.getWriteCV((byte)cvnum, (byte)val);
+            m = MrcMessage.getWriteCV(cvnum, val);
         }
         m.setTimeout(PACKET_TIMEOUT);
         m.setSource(this);

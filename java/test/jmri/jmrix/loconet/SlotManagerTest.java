@@ -1,8 +1,8 @@
 
 package jmri.jmrix.loconet;
 
-import jmri.ProgListener;
-import jmri.Programmer;
+import jmri.*;
+import jmri.managers.DefaultProgrammerManager;
 import junit.framework.*;
 
 public class SlotManagerTest extends TestCase {
@@ -149,7 +149,7 @@ public class SlotManagerTest extends TestCase {
         SlotManager slotmanager = new SlotManager(lnis);
         int CV1=  12;
         ProgListener p2=  null;
-        slotmanager.setMode(Programmer.PAGEMODE);
+        slotmanager.setMode(DefaultProgrammerManager.PAGEMODE);
         slotmanager.readCV(CV1, p2);
         Assert.assertEquals("read message",
 			    "EF 0E 7C 23 00 00 00 00 02 0B 7F 7F 7F 00",
@@ -165,7 +165,7 @@ public class SlotManagerTest extends TestCase {
         SlotManager slotmanager = new SlotManager(lnis);
         String CV1 = "12";
         ProgListener p2=  null;
-        slotmanager.setMode(Programmer.PAGEMODE);
+        slotmanager.setMode(DefaultProgrammerManager.PAGEMODE);
         slotmanager.readCV(CV1, p2);
         Assert.assertEquals("read message",
 			    "EF 0E 7C 23 00 00 00 00 02 0B 7F 7F 7F 00",
@@ -176,7 +176,7 @@ public class SlotManagerTest extends TestCase {
         SlotManager slotmanager = new SlotManager(lnis);
         int CV1=  2;
         ProgListener p2=  null;
-        slotmanager.setMode(Programmer.REGISTERMODE);
+        slotmanager.setMode(DefaultProgrammerManager.REGISTERMODE);
         slotmanager.readCV(CV1, p2);
         Assert.assertEquals("read message",
 			    "EF 0E 7C 13 00 00 00 00 02 01 7F 7F 7F 00",
@@ -187,7 +187,7 @@ public class SlotManagerTest extends TestCase {
         SlotManager slotmanager = new SlotManager(lnis);
         String CV1 = "2";
         ProgListener p2=  null;
-        slotmanager.setMode(Programmer.REGISTERMODE);
+        slotmanager.setMode(DefaultProgrammerManager.REGISTERMODE);
         slotmanager.readCV(CV1, p2);
         Assert.assertEquals("read message",
 			    "EF 0E 7C 13 00 00 00 00 02 01 7F 7F 7F 00",
@@ -198,7 +198,7 @@ public class SlotManagerTest extends TestCase {
         SlotManager slotmanager = new SlotManager(lnis);
         int CV1=  12;
         ProgListener p2=  null;
-        slotmanager.setMode(Programmer.DIRECTBYTEMODE);
+        slotmanager.setMode(DefaultProgrammerManager.DIRECTBYTEMODE);
         slotmanager.readCV(CV1, p2);
         Assert.assertEquals("read message",
 			    "EF 0E 7C 2B 00 00 00 00 02 0B 7F 7F 7F 00", 
@@ -230,7 +230,7 @@ public class SlotManagerTest extends TestCase {
 	    int CV1=  12;
 	    int val2=  34;
         ProgListener p3=  null;
-	    slotmanager.setMode(Programmer.PAGEMODE);
+	    slotmanager.setMode(DefaultProgrammerManager.PAGEMODE);
         slotmanager.writeCV(CV1, val2, p3);
 	    Assert.assertEquals("write message",
 			    "EF 0E 7C 63 00 00 00 00 00 0B 22 7F 7F 00",
@@ -242,7 +242,7 @@ public class SlotManagerTest extends TestCase {
 	    String CV1 = "12";
 	    int val2=  34;
         ProgListener p3=  null;
-	    slotmanager.setMode(Programmer.PAGEMODE);
+	    slotmanager.setMode(DefaultProgrammerManager.PAGEMODE);
         slotmanager.writeCV(CV1, val2, p3);
 	    Assert.assertEquals("write message",
 			    "EF 0E 7C 63 00 00 00 00 00 0B 22 7F 7F 00",
@@ -254,7 +254,7 @@ public class SlotManagerTest extends TestCase {
         int CV1=  2;
         int val2=  34;
         ProgListener p3=  null;
-        slotmanager.setMode(Programmer.REGISTERMODE);
+        slotmanager.setMode(DefaultProgrammerManager.REGISTERMODE);
         slotmanager.writeCV(CV1, val2, p3);
         Assert.assertEquals("write message",
 			    "EF 0E 7C 53 00 00 00 00 00 01 22 7F 7F 00",
@@ -266,7 +266,7 @@ public class SlotManagerTest extends TestCase {
         int CV1=  12;
         int val2=  34;
         ProgListener p3=  null;
-        slotmanager.setMode(Programmer.DIRECTBYTEMODE);
+        slotmanager.setMode(DefaultProgrammerManager.DIRECTBYTEMODE);
         slotmanager.writeCV(CV1, val2, p3);
         Assert.assertEquals("write message",
 			    "EF 0E 7C 6B 00 00 00 00 00 0B 22 7F 7F 00",
@@ -278,7 +278,7 @@ public class SlotManagerTest extends TestCase {
         String CV1 = "12";
         int val2=  34;
         ProgListener p3=  null;
-        slotmanager.setMode(Programmer.DIRECTBYTEMODE);
+        slotmanager.setMode(DefaultProgrammerManager.DIRECTBYTEMODE);
         slotmanager.writeCV(CV1, val2, p3);
         Assert.assertEquals("write message",
 			    "EF 0E 7C 6B 00 00 00 00 00 0B 22 7F 7F 00",

@@ -5,8 +5,11 @@ package jmri.jmrix.loconet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.beans.*;
+import java.util.*;
+import java.beans.*;
 
 import jmri.*;
+import jmri.managers.DefaultProgrammerManager;
 
 /**
  * Provide an Ops Mode Programmer via a wrapper what works with the LocoNet
@@ -52,22 +55,50 @@ public class LnOpsModeProgrammer implements AddressedProgrammer  {
         confirmCV(Integer.parseInt(CV), val, p);
     }
 
-    public void setMode(int mode) {
-        if (mode!=Programmer.OPSBYTEMODE) {
-            reportBadMode(mode);
+    // handle mode
+    protected ProgrammingMode mode = DefaultProgrammerManager.OPSBYTEMODE;
+
+    @Override
+    public final void setMode(ProgrammingMode m) {
+        if (getSupportedModes().contains(m)) {
+            mode = m;
+            notifyPropertyChange("Mode", mode, m);
+        } else {
+            throw new IllegalArgumentException("Invalid requested mode: "+m);
         }
     }
+    public final ProgrammingMode getMode() { return mode; }
 
-    void reportBadMode(int mode) {
-        log.error("Can't switch to mode "+mode);
+     /**
+     * Types implemented here.
+     */
+    @Override
+    public List<ProgrammingMode> getSupportedModes() {
+        List<ProgrammingMode> ret = new ArrayList<ProgrammingMode>();
+        ret.add(DefaultProgrammerManager.OPSBYTEMODE);
+        return ret;
     }
 
-    public int  getMode() {
-        return Programmer.OPSBYTEMODE;
+    /**
+     * Provide a {@link java.beans.PropertyChangeSupport} helper.
+     */
+    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
+    /**
+     * Add a PropertyChangeListener to the listener list.
+     *
+     * @param listener The PropertyChangeListener to be added
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    public boolean hasMode(int mode) {
-        return (mode==Programmer.OPSBYTEMODE);
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    protected void notifyPropertyChange(String key, Object oldValue, Object value) {
+        propertyChangeSupport.firePropertyChange(key, oldValue, value);
     }
 
     /**
@@ -81,29 +112,14 @@ public class LnOpsModeProgrammer implements AddressedProgrammer  {
     }
     @Override
     public boolean getCanRead(String addr) { 
-        return getCanRead() && getCanRead(getMode(), addr);
-    }
-    @Override
-    public boolean getCanRead(int mode, String addr) { 
-        return getCanRead() && Integer.parseInt(addr)<=1024;
+        return getCanRead();
     }
     
     @Override
     public boolean getCanWrite()  { return true; }
     @Override
     public boolean getCanWrite(String addr) { 
-        return getCanWrite(getMode(), addr);
-    }
-    @Override
-    public boolean getCanWrite(int mode, String addr)  {
         return getCanWrite() && Integer.parseInt(addr)<=1024;
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener p) {
-        mSlotMgr.addPropertyChangeListener(p);
-    }
-    public void removePropertyChangeListener(PropertyChangeListener p) {
-        mSlotMgr.removePropertyChangeListener(p);
     }
 
     public String decodeErrorCode(int i) {
