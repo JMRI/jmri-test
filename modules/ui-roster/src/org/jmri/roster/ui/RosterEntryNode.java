@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import jmri.jmrit.roster.RosterEntry;
+import org.jmri.roster.RosterEntryProxy;
 import org.netbeans.core.api.multiview.MultiViews;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
@@ -58,8 +59,12 @@ public class RosterEntryNode extends BeanNode<RosterEntry> implements Serializab
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                RosterEntry rosterEntry = getLookup().lookup(RosterEntry.class);
-                TopComponent tc = findTopComponent(rosterEntry);
+                RosterEntryProxy proxy = getLookup().lookup(RosterEntryProxy.class);
+                if (proxy == null) {
+                    proxy = new RosterEntryProxy(getLookup().lookup(RosterEntry.class));
+                    getLookup().lookup(InstanceContent.class).add(proxy);
+                }
+                TopComponent tc = findTopComponent(proxy);
                 if (tc == null) {
                     tc = MultiViews.createMultiView("application/x-jmri-rosterentry-node", RosterEntryNode.this); // NOI18N
                     tc.open();
@@ -69,12 +74,12 @@ public class RosterEntryNode extends BeanNode<RosterEntry> implements Serializab
         };
     }
 
-    private TopComponent findTopComponent(RosterEntry rosterEntry) {
+    private TopComponent findTopComponent(RosterEntryProxy rosterEntry) {
         Set<TopComponent> openTopComponents = WindowManager.getDefault().getRegistry().getOpened();
         for (TopComponent tc : openTopComponents) {
             try {
                 if (!tc.getName().equals("RosterExplorerTopComponent")) { // NOI18N
-                    if (tc.getLookup().lookup(RosterEntry.class).equals(rosterEntry)) {
+                    if (tc.getLookup().lookup(RosterEntryProxy.class).equals(rosterEntry)) {
                         return tc;
                     }
                 }

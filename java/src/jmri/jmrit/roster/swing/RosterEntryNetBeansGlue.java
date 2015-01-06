@@ -1,20 +1,15 @@
 package jmri.jmrit.roster.swing;
 
-import jmri.jmrit.roster.RosterEntry;
-import org.openide.util.lookup.InstanceContent;
-
 /**
- * Provide an interface for objects (mostly TopComponents) accepted by
- * RosterEntrySavable to provide methods called by RosterEntrySavable without
- * using introspection to test for the presence of the needed methods.
+ * Provide an interface for NetBeans UI objects (mostly TopComponents) that wrap
+ * panes used by the SymbolicProgrammer.
+ *
+ * This interface is in the JMRI Library module so that NetBeans UI objects that
+ * extend it can be in other modules that depend on the JMRI Library module.
  *
  * @author Randall Wood <randall.h.wood@alexandriasoftware.com>
  */
 public interface RosterEntryNetBeansGlue {
-
-    public RosterEntry getRosterEntry();
-
-    public InstanceContent getInstanceContent();
 
     /**
      * Mark the handler savable by creating a Savable and attaching it to the
@@ -22,11 +17,4 @@ public interface RosterEntryNetBeansGlue {
      */
     public void savable();
 
-    /**
-     * Take any required actions to save the handled
-     * {@link jmri.jmrit.roster.RosterEntry}.
-     *
-     * @return true if RosterEntry needs to be updated
-     */
-    public boolean save();
 }

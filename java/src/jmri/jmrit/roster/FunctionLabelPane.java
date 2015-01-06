@@ -68,26 +68,32 @@ public class FunctionLabelPane extends javax.swing.JPanel {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
+                update(r);
                 g.savable();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
+                update(r);
                 g.savable();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
+                update(r);
                 g.savable();
             }
         };
         ItemListener il = (ItemEvent e) -> {
+            update(r);
             g.savable();
         };
         ActionListener al = (ActionEvent e) -> {
+            update(r);
             g.savable();
         };
         PropertyChangeListener pcl = (PropertyChangeEvent e) -> {
+            update(r);
             g.savable();
         };
         for (JTextField c : this.labels) {

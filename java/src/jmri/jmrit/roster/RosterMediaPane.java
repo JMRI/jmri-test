@@ -73,29 +73,35 @@ public class RosterMediaPane extends JPanel {
     public RosterMediaPane(RosterEntry r, RosterEntryNetBeansGlue g) {
         this(r);
         this._imageFilePath.addPropertyChangeListener(ResizableImagePanel.IMAGE_PATH, (PropertyChangeEvent evt) -> {
+            r.setImagePath(_imageFilePath.getImagePath());
             g.savable();
         });
         this._iconFilePath.addPropertyChangeListener(ResizableImagePanel.IMAGE_PATH, (PropertyChangeEvent evt) -> {
+            r.setIconPath(_iconFilePath.getImagePath());
             g.savable();
         });
         this._URL.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
+                r.setURL(_URL.getText());
                 g.savable();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
+                r.setURL(_URL.getText());
                 g.savable();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
+                r.setURL(_URL.getText());
                 g.savable();
             }
         });
         this.rosterAttributesModel.addTableModelListener((TableModelEvent e) -> {
+            rosterAttributesModel.updateModel(r);
             g.savable();
         });
     }

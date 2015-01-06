@@ -5,9 +5,10 @@ import java.awt.Graphics;
 import java.io.IOException;
 import javax.swing.Icon;
 import jmri.jmrit.roster.Roster;
-import jmri.jmrit.roster.swing.RosterEntryNetBeansGlue;
+import jmri.jmrit.roster.RosterEntry;
 import org.netbeans.spi.actions.AbstractSavable;
 import org.openide.util.ImageUtilities;
+import org.openide.util.lookup.InstanceContent;
 
 /**
  *
@@ -15,42 +16,39 @@ import org.openide.util.ImageUtilities;
  */
 public class RosterEntrySavable extends AbstractSavable implements Icon {
 
-    private final RosterEntryNetBeansGlue object;
+    private final RosterEntry rosterEntry;
+    private final InstanceContent instanceContent;
     private static final Icon icon = ImageUtilities.loadImageIcon("org/jmri/roster/ui/RosterEntry.png", true);
 
-    public RosterEntrySavable(RosterEntryNetBeansGlue object) {
-        this.object = object;
+    public RosterEntrySavable(RosterEntry re, InstanceContent ic) {
+        this.rosterEntry = re;
+        this.instanceContent = ic;
         this.register();
     }
 
     @Override
     protected String findDisplayName() {
-        return this.object.getRosterEntry().getDisplayName();
+        return this.rosterEntry.getDisplayName();
     }
 
     @Override
     protected void handleSave() throws IOException {
-        this.object.save();
-        this.object.getRosterEntry().updateFile();
+        this.rosterEntry.updateFile();
         Roster.writeRosterFile();
-        this.object.getInstanceContent().remove(this);
+        this.instanceContent.remove(this);
     }
 
     @Override
     public boolean equals(Object object) {
         if (object instanceof RosterEntrySavable) {
-            if (this.object.getRosterEntry() != null) {
-                return this.object.getRosterEntry().equals(((RosterEntrySavable) object).object.getRosterEntry());
-            } else {
-                return this.object.equals(((RosterEntrySavable) object).object);
-            }
+            return this.rosterEntry.equals(((RosterEntrySavable) object).rosterEntry);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return this.object.hashCode();
+        return this.rosterEntry.hashCode();
     }
 
     @Override

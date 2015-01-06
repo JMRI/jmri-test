@@ -20,6 +20,7 @@ import javax.swing.JToolBar;
 import jmri.jmrit.roster.FunctionLabelPane;
 import jmri.jmrit.roster.RosterEntry;
 import jmri.jmrit.roster.swing.RosterEntryNetBeansGlue;
+import org.jmri.roster.RosterEntryProxy;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
@@ -57,7 +58,7 @@ public class RosterEntryFunctionsPanel extends TopComponent implements MultiView
      */
     public RosterEntryFunctionsPanel(Lookup lookup) {
         this.lookup = lookup;
-        this.rosterEntry = lookup.lookup(RosterEntry.class);
+        this.rosterEntry = lookup.lookup(RosterEntryProxy.class);
         this.instanceContent = lookup.lookup(InstanceContent.class);
         if (this.rosterEntry == null) {
             log.error("RosterEntry is null.");
@@ -148,10 +149,10 @@ public class RosterEntryFunctionsPanel extends TopComponent implements MultiView
 
     @Override
     public void setMultiViewCallback(MultiViewElementCallback mvec) {
-        if (this.functionLabelPane.guiChanged(this.getRosterEntry())) {
-            mvec.getTopComponent().setHtmlDisplayName("<html><b>" + this.getRosterEntry().getDisplayName() + "</b></html>");
+        if (this.functionLabelPane.guiChanged(this.rosterEntry)) {
+            mvec.getTopComponent().setHtmlDisplayName("<html><b>" + this.rosterEntry.getDisplayName() + "</b></html>");
         } else {
-            mvec.getTopComponent().setHtmlDisplayName("<html>" + this.getRosterEntry().getDisplayName() + "</html>");
+            mvec.getTopComponent().setHtmlDisplayName("<html>" + this.rosterEntry.getDisplayName() + "</html>");
         }
     }
 
@@ -161,26 +162,9 @@ public class RosterEntryFunctionsPanel extends TopComponent implements MultiView
     }
 
     @Override
-    public RosterEntry getRosterEntry() {
-        return this.rosterEntry;
-    }
-
-    @Override
-    public InstanceContent getInstanceContent() {
-        return this.getLookup().lookup(InstanceContent.class);
-    }
-
-    @Override
-    public boolean save() {
-        if (this.functionLabelPane.guiChanged(rosterEntry)) {
-            this.functionLabelPane.update(this.rosterEntry);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public void savable() {
-        this.getInstanceContent().add(new RosterEntrySavable(this));
+        if (this.getLookup().lookup(RosterEntrySavable.class) == null) {
+            this.instanceContent.add(new RosterEntrySavable(this.rosterEntry, this.instanceContent));
+        }
     }
 }
