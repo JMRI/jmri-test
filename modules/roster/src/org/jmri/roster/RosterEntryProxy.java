@@ -2,8 +2,6 @@ package org.jmri.roster;
 
 import java.beans.PropertyChangeEvent;
 import jmri.jmrit.roster.RosterEntry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Proxy object for editing RosterEntries.
@@ -17,7 +15,6 @@ import org.slf4j.LoggerFactory;
 public final class RosterEntryProxy extends RosterEntry {
 
     private final RosterEntry rosterEntry;
-    private final static Logger log = LoggerFactory.getLogger(RosterEntryProxy.class);
 
     public RosterEntryProxy(RosterEntry re) {
         super(re, re.getId());
@@ -111,9 +108,6 @@ public final class RosterEntryProxy extends RosterEntry {
                         this.putAttribute(key, evt.getNewValue().toString());
                     }
             }
-        });
-        this.addPropertyChangeListener((PropertyChangeEvent evt) -> {
-            log.info("Updating proxy for {}: {}", RosterEntryProxy.this.getId(), evt.getPropertyName());
         });
     }
 
