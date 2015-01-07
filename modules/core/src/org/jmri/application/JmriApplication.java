@@ -5,11 +5,14 @@ import apps.gui3.TabbedPreferences;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import jmri.Application;
 import jmri.ConfigureManager;
 import jmri.IdTagManager;
@@ -77,7 +80,8 @@ public abstract class JmriApplication extends Bean {
     private State state = State.LOADING;
     private HashMap<Runnable, State> deferredTasks = new HashMap<>();
     private String configFilename;
-    private Boolean configLoaded = false;
+    private boolean configLoaded = false;
+    private boolean deferredConfigLoaded = false;
     private String profileFilename;
     private static final Logger log = LoggerFactory.getLogger(JmriApplication.class);
 
@@ -326,7 +330,7 @@ public abstract class JmriApplication extends Bean {
     }
 
     protected void doDeferred() {
-        Set<Runnable> tasks = this.deferredTasks.keySet();
+        Set<Runnable> tasks = new HashSet<>(this.deferredTasks.keySet());
         for (Runnable task : tasks) {
             if (this.state == this.deferredTasks.get(task)) {
                 task.run();
@@ -499,58 +503,44 @@ public abstract class JmriApplication extends Bean {
                 log.error("Unhandled problem loading configuration", ex);
                 this.configLoaded = false;
             }
-            /* Does NetBeans offer a better way? Need to also trap Headless Exceptions
-             // To avoid possible locks, deferred load should be
-             // performed on the Swing thread
-             if (SwingUtilities.isEventDispatchThread()) {
-             configDeferredLoadOK = doDeferredLoad(file);
-             } else {
-             try {
-             // Use invokeAndWait method as we don't want to
-             // return until deferred load is completed
-             SwingUtilities.invokeAndWait(new Runnable() {
-             @Override
-             public void run() {
-             configDeferredLoadOK = doDeferredLoad(file);
-             }
-             });
-             } catch (Exception ex) {
-             log.error("Exception creating system console frame", ex);
-             }
-             }
-             */
+            // TODO: Trap Headless exceptions
+            // To avoid possible locks, deferred load should be
+            // performed on the Swing thread
+            if (SwingUtilities.isEventDispatchThread()) {
+                this.deferredConfigLoaded = doDeferredLoad(file);
+            } else {
+                try {
+                    // Use invokeAndWait method as we don't want to
+                    // return until deferred load is completed
+                    SwingUtilities.invokeAndWait(() -> {
+                        this.deferredConfigLoaded = doDeferredLoad(file);
+                    });
+                } catch (InterruptedException | InvocationTargetException ex) {
+                    log.error("Exception creating system console frame", ex);
+                }
+            }
         }
 
         // TODO: All these threads should eventually be pushed into Initialzers.
         //Initialise the decoderindex file instance within a seperate thread to help improve first use perfomance
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    DecoderIndexFile.instance();
-                } catch (Exception ex) {
-                    log.error("Error in trying to initialize decoder index file " + ex.toString());
-                }
+        new Thread(() -> {
+            try {
+                DecoderIndexFile.instance();
+            } catch (Exception ex) {
+                log.error("Error in trying to initialize decoder index file " + ex.toString());
             }
-        };
-        Thread thr2 = new Thread(r, "initialize decoder index");
-        thr2.start();
+        }, "initialize decoder index").start();
         // TODO: Move into @Start initializer in Python Scripting Support module.
         // Once done, JMRI Core dependency on Python Scripting Support module
         // can also be removed.
         if (Boolean.getBoolean("org.jmri.python.preload")) {
-            r = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        PythonInterp.getPythonInterpreter();
-                    } catch (Exception ex) {
-                        log.error("Error in trying to initialize python interpreter " + ex.toString());
-                    }
+            new Thread(() -> {
+                try {
+                    PythonInterp.getPythonInterpreter();
+                } catch (Exception ex) {
+                    log.error("Error in trying to initialize python interpreter " + ex.toString());
                 }
-            };
-            Thread thr3 = new Thread(r, "initialize python interpreter");
-            thr3.start();
+            }, "initialize python interpreter").start();
         }
 
         // do final activation
@@ -561,21 +551,29 @@ public abstract class JmriApplication extends Bean {
         return this.configLoaded;
     }
 
+    private boolean doDeferredLoad(File file) {
+        boolean result;
+        log.debug("start deferred load from config");
+        try {
+            result = InstanceManager.configureManagerInstance().loadDeferred(file);
+        } catch (JmriException e) {
+            log.error("Unhandled problem loading deferred configuration", e);
+            result = false;
+        }
+        log.debug("end deferred load from config file, OK={}", result);
+        return result;
+    }
+
     protected void initilizePreferencesUI() {
         // Once all preferences have been loaded, initialize the preferences UI
         // Doing it in a thread now means we can let it work in the background
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    InstanceManager.tabbedPreferencesInstance().init();
-                } catch (Exception ex) {
-                    log.error("Error trying to setup preferences {}", ex.getLocalizedMessage(), ex);
-                }
+        new Thread(() -> {
+            try {
+                InstanceManager.tabbedPreferencesInstance().init();
+            } catch (Exception ex) {
+                log.error("Error trying to setup preferences {}", ex.getLocalizedMessage(), ex);
             }
-        };
-        Thread thr = new Thread(r, "initialize preferences");
-        thr.start();
+        }, "initialize preferences").start();
     }
 
     /**
