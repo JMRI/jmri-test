@@ -1,12 +1,15 @@
 package org.jmri.managers;
 
 import java.awt.GraphicsEnvironment;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import jmri.ShutDownManager;
 import jmri.ShutDownTask;
+import org.jmri.application.JmriApplication;
 import org.openide.LifecycleManager;
+import org.openide.modules.OnStop;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.ServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,26 +19,27 @@ import org.slf4j.LoggerFactory;
  *
  * @author Randall Wood
  */
-public class NetBeansShutDownManager implements ShutDownManager {
+@ServiceProvider(service = NetBeansShutDownManager.class)
+@OnStop
+public class NetBeansShutDownManager implements ShutDownManager, Runnable {
 
     private final ArrayList<ShutDownTask> tasks = new ArrayList<>();
-    static Boolean shuttingDown = false;
+    static boolean shuttingDown = false;
     static Logger log = LoggerFactory.getLogger(NetBeansShutDownManager.class);
 
     public NetBeansShutDownManager() {
         if (GraphicsEnvironment.isHeadless()) {
+            // This shutdown hook allows us to perform a clean shutdown when
+            // running in headless mode and SIGINT (Ctrl-C) or SIGTERM. It
+            // calls ApplicationStop.run() after ensuring the ShutDownManager
+            // will not trigger any calls to System.exit() since calling
+            // System.exit() within a shutdown hook will cause the application
+            // to hang.
             Runtime.getRuntime().addShutdownHook(new Thread() {
 
                 @Override
                 public void run() {
-                    NetBeansShutDownManager.this.runShutdownTasks();
-                    try {
-                        System.in.close();
-                    } catch (IOException ex) {
-                        // Do nothing. This error at this point is not worth handling.
-                    }
-                    System.out.close();
-                    System.err.close();
+                    NetBeansShutDownManager.this.run();
                 }
             });
         }
@@ -73,17 +77,12 @@ public class NetBeansShutDownManager implements ShutDownManager {
 
     public Boolean shutdown(int status, Boolean restart) {
         if (!shuttingDown) {
-            shuttingDown = true;
-            if (!this.runShutdownTasks()) {
-                return false;
-            }
-            log.info("Normal termination complete");
             if (restart) {
                 LifecycleManager.getDefault().markForRestart();
             }
             LifecycleManager.getDefault().exit(status);
         }
-        return false;
+        return true;
     }
 
     private Boolean runShutdownTasks() {
@@ -104,4 +103,23 @@ public class NetBeansShutDownManager implements ShutDownManager {
         }
         return true;
     }
+
+    /**
+     * If a {@link org.jmri.application.JmriApplication} service provider
+     * exists, call {@link org.jmri.application.JmriApplication#stop()} or its
+     * overriding method.
+     */
+    @Override
+    public void run() {
+        if (!shuttingDown) {
+            shuttingDown = true;
+            JmriApplication application = Lookup.getDefault().lookup(JmriApplication.class);
+            if (application != null) {
+                application.stop();
+            }
+            this.runShutdownTasks();
+            log.info("Normal termination complete");
+        }
+    }
+
 }

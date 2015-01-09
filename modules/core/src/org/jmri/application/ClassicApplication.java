@@ -101,6 +101,7 @@ import jmri.util.swing.WindowInterface;
 import jmri.web.server.WebServerAction;
 import org.jmri.managers.NetBeansShutDownManager;
 import org.netbeans.api.options.OptionsDisplayer;
+import org.openide.util.Lookup;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -139,7 +140,7 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
         prepareFontLists();
 
         // install shutdown manager
-        InstanceManager.store(new NetBeansShutDownManager(), ShutDownManager.class);
+        InstanceManager.store(Lookup.getDefault().lookup(NetBeansShutDownManager.class), ShutDownManager.class);
 
         // add the default shutdown task to save blocks
         // as a special case, register a ShutDownTask to write out blocks

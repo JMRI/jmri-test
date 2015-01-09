@@ -419,7 +419,7 @@ public abstract class JmriApplication extends Bean {
                         : new DialogErrorHandler()
         );
         // Start a shutdown manager
-        InstanceManager.store(new NetBeansShutDownManager(), ShutDownManager.class);
+        InstanceManager.store(Lookup.getDefault().lookup(NetBeansShutDownManager.class), ShutDownManager.class);
         this.registerDefaultShutDownTasks();
         // Start a history manager
         InstanceManager.store(new FileHistory(), FileHistory.class);
