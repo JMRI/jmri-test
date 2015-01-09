@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 @ActionID(id = "org.jmri.core.ui.SystemMenuPresenter", category = "JMRI")
 @ActionRegistration(displayName = "#SystemMenuPresenterTitle", lazy = false)
-@ActionReference(path = "Menu/Tools")
+@ActionReference(path = "Menu/Connections")
 @Messages({"SystemMenuPresenterTitle=Loading..."})
 public class SystemMenuPresenter extends AbstractAction implements DynamicMenuContent, Runnable {
 

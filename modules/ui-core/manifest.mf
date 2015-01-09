@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: true
 OpenIDE-Module: org.jmri.core.ui
+OpenIDE-Module-Layer: org/jmri/core/ui/layer.xml
 OpenIDE-Module-Localizing-Bundle: org/jmri/core/ui/Bundle.properties
 OpenIDE-Module-Specification-Version: 1.0
 
