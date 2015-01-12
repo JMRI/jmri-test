@@ -1,10 +1,11 @@
 // SimpleProgAction.java
 package jmri.jmrit.simpleprog;
 
-package jmri.jmrit.simpleprog;
-
-import jmri.*;
-
+import java.awt.event.ActionEvent;
+import javax.swing.Icon;
+import jmri.AddressedProgrammerManager;
+import jmri.GlobalProgrammerManager;
+import jmri.InstanceManager;
 import jmri.util.swing.JmriAbstractAction;
 import jmri.util.swing.WindowInterface;
 import org.openide.awt.ActionID;
@@ -33,11 +34,11 @@ import org.openide.awt.ActionRegistration;
 public class SimpleProgAction extends JmriAbstractAction {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 2613992237869747426L;
+     *
+     */
+    private static final long serialVersionUID = 2613992237869747426L;
 
-	public SimpleProgAction(String s, WindowInterface wi) {
+    public SimpleProgAction(String s, WindowInterface wi) {
         super(s, wi);
     }
 
@@ -45,15 +46,20 @@ public class SimpleProgAction extends JmriAbstractAction {
         super(s, i, wi);
     }
 
-     // disable ourself if programming is not possible
+    public SimpleProgAction(String s) {
+        super(s);
+
+        // disable ourself if programming is not possible
         boolean enabled = false;
-        if ( (InstanceManager.getList(GlobalProgrammerManager.class) != null) 
-                && (InstanceManager.getList(GlobalProgrammerManager.class).size() > 0) )
-                enabled = true;
-        if ( (InstanceManager.getList(AddressedProgrammerManager.class) != null) 
-                && (InstanceManager.getList(AddressedProgrammerManager.class).size() > 0) )
-                enabled = true;
-        
+        if ((InstanceManager.getList(GlobalProgrammerManager.class) != null)
+                && (InstanceManager.getList(GlobalProgrammerManager.class).size() > 0)) {
+            enabled = true;
+        }
+        if ((InstanceManager.getList(AddressedProgrammerManager.class) != null)
+                && (InstanceManager.getList(AddressedProgrammerManager.class).size() > 0)) {
+            enabled = true;
+        }
+
         setEnabled(enabled);
     }
 
