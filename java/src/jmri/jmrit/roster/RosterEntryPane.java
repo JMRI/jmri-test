@@ -20,12 +20,16 @@ import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import jmri.DccLocoAddress;
 import jmri.InstanceManager;
 import jmri.LocoAddress;
 import jmri.jmrit.DccLocoAddressSelector;
 import jmri.jmrit.decoderdefn.DecoderFile;
 import jmri.jmrit.decoderdefn.DecoderIndexFile;
+import jmri.jmrit.roster.swing.RosterEntryNetBeansGlue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +77,51 @@ public class RosterEntryPane extends javax.swing.JPanel {
 
     final ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrit.roster.JmritRosterBundle");
 
+    /**
+     * Allows manipulation as a JavaBean, but should never be called in code.
+     */
+    public RosterEntryPane() {
+        super();
+    }
+
+    public RosterEntryPane(RosterEntry r, RosterEntryNetBeansGlue g) {
+        this(r);
+        DocumentListener dl = new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                update(r);
+                g.savable();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update(r);
+                g.savable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update(r);
+                g.savable();
+            }
+
+        };
+        this.id.getDocument().addDocumentListener(dl);
+        this.roadName.getDocument().addDocumentListener(dl);
+        this.roadNumber.getDocument().addDocumentListener(dl);
+        this.mfg.getDocument().addDocumentListener(dl);
+        this.owner.getDocument().addDocumentListener(dl);
+        this.model.getDocument().addDocumentListener(dl);
+        this.comment.getDocument().addDocumentListener(dl);
+        this.maxSpeedSpinner.addChangeListener((ChangeEvent e) -> {
+            RosterEntryPane.this.update(r);
+            g.savable();
+        });
+    }
+
     public RosterEntryPane(RosterEntry r) {
+        super();
 
         id.setText(r.getId());
 
