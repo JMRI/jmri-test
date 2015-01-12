@@ -13,9 +13,7 @@ import jmri.*;
 /**
  * Provide a JPanel with a JComboBox to configure the service mode programmer.
  * <P>
- * The using code should get a configured programmer with getProgrammer. Since
- * there's only one service mode programmer, maybe this isn't critical, but
- * it's a good idea for the future.
+ * The using code should get a configured programmer with getProgrammer. 
  * <P>
  * A ProgModePane may "share" between one of these and a ProgOpsModePane,
  * which means that there might be _none_ of these buttons selected.  When
@@ -89,9 +87,11 @@ public class ProgServiceModeComboBox extends ProgModeSelector implements Propert
         List<GlobalProgrammerManager> mgrList = getMgrList();
         if (mgrList != null) {
             for (GlobalProgrammerManager pm : getMgrList()) {
-                v.add(pm);
-                // listen for changes
-                pm.getGlobalProgrammer().addPropertyChangeListener(this);
+                if (pm != null && pm.getGlobalProgrammer() != null) {
+                    v.add(pm);
+                    // listen for changes
+                    pm.getGlobalProgrammer().addPropertyChangeListener(this);
+                }
             }
         }
         add(progBox = new JComboBox<GlobalProgrammerManager>(v));
@@ -148,7 +148,7 @@ public class ProgServiceModeComboBox extends ProgModeSelector implements Propert
         if ("Mode".equals(e.getPropertyName()) && getProgrammer().equals(e.getSource())) {
             // mode changed in programmer, change GUI here if needed
             if (isSelected()) {  // if we're not holding a current mode, don't update
-                modeBox.setSelectedItem((ProgrammingMode)e.getNewValue());
+                modeBox.setSelectedItem(e.getNewValue());
             }
         }
     }
