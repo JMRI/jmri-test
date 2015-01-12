@@ -158,9 +158,11 @@ public class SystemMenuPresenter extends AbstractAction implements DynamicMenuCo
         if (this.menus.isEmpty()) {
             this.menus.add(new JMenu(""));
         }
-        log.info("System Menu contains:");
-        for (JMenu menu : this.menus) {
-            log.info("    {}", menu.getText());
+        if (log.isDebugEnabled()) {
+            log.debug("System Menu contains:");
+            for (JMenu menu : this.menus) {
+                log.info("    {}", menu.getText());
+            }
         }
         FileUtil.getConfigFile("Menu").refresh(true);
     }
