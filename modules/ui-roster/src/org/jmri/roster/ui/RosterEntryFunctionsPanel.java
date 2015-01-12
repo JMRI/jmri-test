@@ -42,8 +42,8 @@ import org.slf4j.LoggerFactory;
         iconBase = "org/jmri/roster/ui/RosterEntry.png",
         persistenceType = TopComponent.PERSISTENCE_NEVER,
         preferredID = "RosterEntryFunctionLabels",
-        position = 10)
-@Messages("LBL_RosterEntryFunctionsPanel=Function Key Labels")
+        position = 20)
+@Messages("LBL_RosterEntryFunctionsPanel=Function Keys")
 //@ConvertAsProperties(dtd = "-//org.jmri.roster.ui//RosterEntryMediaPanel//EN", autostore = false)
 public class RosterEntryFunctionsPanel extends TopComponent implements MultiViewElement, RosterEntryNetBeansGlue, Serializable {
 

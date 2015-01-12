@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
         iconBase = "org/jmri/roster/ui/RosterEntry.png",
         persistenceType = TopComponent.PERSISTENCE_NEVER,
         preferredID = "RosterEntryMedia",
-        position = 10)
+        position = 40)
 @Messages("LBL_RosterEntryMediaPanel=Media")
 //@ConvertAsProperties(dtd = "-//org.jmri.roster.ui//RosterEntryMediaPanel//EN", autostore = false)
 public class RosterEntryMediaPanel extends TopComponent implements MultiViewElement, RosterEntryNetBeansGlue, Serializable {
