@@ -99,6 +99,7 @@
             </module-dependencies>
             <public-packages>
                 <package>org.jmri.core.ui.options</package>
+                <package>org.jmri.core.ui.toolbar</package>
             </public-packages>
         </data>
     </configuration>
