@@ -12,13 +12,13 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * LI100XNetInitilizationManagerTest.java
+ * LI100XNetInitializationManagerTest.java
  *
- * Description:	    tests for the jmri.jmrix.lenz.li100.LI100XNetInitilizationManager class
+ * Description:	    tests for the jmri.jmrix.lenz.li100.LI100XNetInitializationManager class
  * @author			Paul Bender
  * @version         $Revision$
  */
-public class LI100XNetInitilizationManagerTest extends TestCase {
+public class LI100XNetInitializationManagerTest extends TestCase {
 
     public void testCtor() {
 
@@ -27,7 +27,7 @@ public class LI100XNetInitilizationManagerTest extends TestCase {
                 XNetListenerScaffold l = new XNetListenerScaffold();
 
         XNetSystemConnectionMemo memo=new XNetSystemConnectionMemo(t);
-        LI100XNetInitilizationManager m = new LI100XNetInitilizationManager(memo){
+        LI100XNetInitializationManager m = new LI100XNetInitializationManager(memo){
             protected int getInitTimeout() {
                 return 50;   // shorten, because this will fail & delay test
             }  
@@ -41,19 +41,19 @@ public class LI100XNetInitilizationManagerTest extends TestCase {
     }
 
 	// from here down is testing infrastructure
-        public LI100XNetInitilizationManagerTest(String s) {
+        public LI100XNetInitializationManagerTest(String s) {
 		super(s);
 	}
 
 	// Main entry point
 	static public void main(String[] args) {
-		String[] testCaseName = {"-noloading", LI100XNetInitilizationManagerTest.class.getName()};
+		String[] testCaseName = {"-noloading", LI100XNetInitializationManagerTest.class.getName()};
 		junit.swingui.TestRunner.main(testCaseName);
 	}
 
 	// test suite from all defined tests
 	public static Test suite() {
-		TestSuite suite = new TestSuite(LI100XNetInitilizationManagerTest.class);
+		TestSuite suite = new TestSuite(LI100XNetInitializationManagerTest.class);
 		return suite;
 	}
 
@@ -67,6 +67,6 @@ public class LI100XNetInitilizationManagerTest extends TestCase {
         apps.tests.Log4JFixture.tearDown(); 
     }
 
-    static Logger log = Logger.getLogger(LI100XNetInitilizationManagerTest.class.getName());
+    static Logger log = Logger.getLogger(LI100XNetInitializationManagerTest.class.getName());
 
 }
