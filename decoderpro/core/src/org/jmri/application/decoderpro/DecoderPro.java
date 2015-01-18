@@ -1,103 +1,142 @@
+// Paned.java
 package org.jmri.application.decoderpro;
 
-import apps.Apps;
-import java.awt.event.ActionEvent;
+import apps.gui3.dp3.DecoderPro3Window;
+import java.awt.Dimension;
+import java.io.File;
+import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import jmri.InstanceManager;
-import jmri.jmrit.symbolicprog.tabbedframe.PaneOpsProgAction;
-import jmri.jmrit.symbolicprog.tabbedframe.PaneProgAction;
-import org.jmri.application.AppsBundle;
-import org.jmri.application.ClassicApplication;
+import jmri.UserPreferencesManager;
+import jmri.jmrit.decoderdefn.DecoderIndexFile;
+import jmri.util.FileUtil;
+import org.jmri.application.Gui3Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The JMRI application for developing the DecoderPro 3 GUI <P>
  *
- * @author rhwood
+ * <hr> This file is part of JMRI. <P> JMRI is free software; you can
+ * redistribute it and/or modify it under the terms of version 2 of the GNU
+ * General Public License as published by the Free Software Foundation. See the
+ * "COPYING" file for a copy of this license. <P> JMRI is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU General Public License for more details.
+ *
+ * @author	Bob Jacobsen Copyright 2003, 2004, 2007, 2009, 2010
+ * @version $Revision: 24867 $
  */
-public class DecoderPro extends ClassicApplication {
+public class DecoderPro extends Gui3Application {
 
-    static Logger log = LoggerFactory.getLogger(DecoderPro.class);
+    private static String menuFile = null;
+    private static String toolbarFile = null;
+    private static final String applicationName = "DecoderPro 3";
 
-    DecoderPro(JFrame p) {
-        super(p);
-        log.info(ClassicApplication.startupInfo("DecoderPro"));
+    public DecoderPro(String[] args) {
+        super(applicationName, "DecoderProConfig3.xml", args);
+    }
+    
+    public synchronized static String getMenuFile() {
+        if (menuFile == null) {
+            menuFile = "dp3/Gui3Menus.xml";
+            File file = new File(menuFile);
+            // decide whether name is absolute or relative
+            if (!file.isAbsolute()) {
+                // must be relative, but we want it to
+                // be relative to the preferences directory
+                menuFile = FileUtil.getUserFilesPath() + "dp3/Gui3Menus.xml";
+                file = new File(menuFile);
+            }
+            if (!file.exists()) {
+                menuFile = "xml/config/parts/jmri/jmrit/roster/swing/RosterFrameMenu.xml";
+            } else {
+                log.info("Found user created menu structure this will be used instead of the system default");
+            }
+        }
+        return menuFile;
+    }
+
+    public synchronized static String getToolbarFile() {
+        if (toolbarFile == null) {
+            toolbarFile = "dp3/Gui3MainToolBar.xml";
+            File file = new File(toolbarFile);
+            // decide whether name is absolute or relative
+            if (!file.isAbsolute()) {
+                // must be relative, but we want it to
+                // be relative to the preferences directory
+                toolbarFile = FileUtil.getUserFilesPath() + "dp3/Gui3MainToolBar.xml";
+                file = new File(toolbarFile);
+            }
+            if (!file.exists()) {
+                toolbarFile = "xml/config/parts/jmri/jmrit/roster/swing/RosterFrameToolBar.xml";
+            } else {
+                log.info("Found user created toolbar structure this will be used instead of the system default");
+            }
+        }
+        return toolbarFile;
     }
 
     @Override
-    protected String logo() {
-        return "resources/decoderpro.gif";
+    protected void createMainFrame() {
+        // create and populate main window
+        mainFrame = new DecoderPro3Window(getMenuFile(), getToolbarFile());
+    }
+
+    /**
+     * Force our test size. Superclass method set to max size, filling real
+     * window.
+     * @param d
+     */
+    @Override
+    protected void displayMainFrame(Dimension d) {
+        UserPreferencesManager p = InstanceManager.getDefault(UserPreferencesManager.class);
+        if (!p.isWindowPositionSaved(mainFrame.getWindowFrameRef())) {
+            mainFrame.setSize(new Dimension(1024, 600));
+            mainFrame.setPreferredSize(new Dimension(1024, 600));
+        }
+
+        mainFrame.setVisible(true);
     }
 
     @Override
-    protected String mainWindowHelpID() {
-        return "package.apps.DecoderPro.DecoderPro";
+    protected ResourceBundle getActionModelResourceBundle() {
+        return ResourceBundle.getBundle("apps.gui3.dp3.DecoderPro3ActionListBundle");
     }
 
-    @Override
-    protected String line1() {
-        return AppsBundle.getMessage("DecoderProVersionCredit",
-                new Object[]{jmri.Version.name()});
+    static public void preInit(String[] args) {
+        Gui3Application.preInit(applicationName);
+        setConfigFilename("DecoderProConfig3.xml", args);
     }
 
+    /**
+     * Final actions before releasing control of app to user
+     */
     @Override
-    protected String line2() {
-        return "http://jmri.org/DecoderPro";
-    }
+    protected void start() {
+        super.start();
 
-    @Override
-    protected JPanel statusPanel() {
-        JPanel j = new JPanel();
-        j.setLayout(new BoxLayout(j, BoxLayout.Y_AXIS));
-        j.add(super.statusPanel());
+        if ((!configOK) || (!configDeferredLoadOK)) {
+            if (preferenceFileExists) {
+                //if the preference file already exists then we will launch the normal preference window
+                AbstractAction prefsAction = new apps.gui3.TabbedPreferencesAction();
+                prefsAction.actionPerformed(null);
+            }
+        }
+        addToActionModel();
 
-        // Buttons
-        Action serviceprog = new PaneProgAction(AppsBundle.getMessage("DpButtonUseProgrammingTrack"));
-        Action opsprog = new PaneOpsProgAction(AppsBundle.getMessage("DpButtonProgramOnMainTrack"));
-        Action quit = new AbstractAction(AppsBundle.getMessage("MenuItemQuit")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Apps.handleQuit();
+        Runnable r = () -> {
+            try {
+                DecoderIndexFile.instance();
+            } catch (Exception ex) {
+                log.error("Error in trying to initialize decoder index file " + ex.toString());
             }
         };
-
-        JButton b1 = new JButton(AppsBundle.getMessage("DpButtonUseProgrammingTrack"));
-        b1.addActionListener(serviceprog);
-        b1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        j.add(b1);
-        if (InstanceManager.programmerManagerInstance() == null
-                || !InstanceManager.programmerManagerInstance().isGlobalProgrammerAvailable()) {
-            b1.setEnabled(false);
-            b1.setToolTipText(AppsBundle.getMessage("MsgServiceButtonDisabled"));
-        }
-        JButton m1 = new JButton(AppsBundle.getMessage("DpButtonProgramOnMainTrack"));
-        m1.addActionListener(opsprog);
-        m1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        j.add(m1);
-        if (InstanceManager.programmerManagerInstance() == null
-                || !InstanceManager.programmerManagerInstance().isAddressedModePossible()) {
-            m1.setEnabled(false);
-            m1.setToolTipText(AppsBundle.getMessage("MsgOpsButtonDisabled"));
-        }
-
-        JPanel p3 = new JPanel();
-        p3.setLayout(new java.awt.FlowLayout());
-        JButton h1 = new JButton(AppsBundle.getMessage("ButtonHelp"));
-        jmri.util.HelpUtil.addHelpToComponent(h1, "html.apps.DecoderPro.index");
-        h1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        p3.add(h1);
-        JButton q1 = new JButton(AppsBundle.getMessage("ButtonQuit"));
-        q1.addActionListener(quit);
-        q1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        p3.add(q1);
-        j.add(p3);
-
-        return j;
+        Thread thr = new Thread(r, "initialize decoder index");
+        thr.start();
+        InstanceManager.tabbedPreferencesInstance().disablePreferenceItem("STARTUP", "apps.PerformFilePanel");
     }
+
+    static Logger log = LoggerFactory.getLogger(DecoderPro.class.getName());
 }
