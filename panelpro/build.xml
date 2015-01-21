@@ -5,4 +5,9 @@
 <project name="panelpro" basedir=".">
     <description>Builds the module suite panelpro.</description>
     <import file="nbproject/build-impl.xml"/>
+
+    <target name="build-launchers" depends="suite.build-launchers">
+        <property name="app.sh" location="${harness.dir}/launchers/app.sh"/>
+        <copy file="${app.sh}" tofile="${build.launcher.dir}/bin/${app.name}"/>
+    </target>
 </project>
