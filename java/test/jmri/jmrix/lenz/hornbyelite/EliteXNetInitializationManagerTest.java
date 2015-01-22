@@ -1,9 +1,10 @@
-package jmri.jmrix.lenz;
+package jmri.jmrix.lenz.hornbyelite;
 
 import org.apache.log4j.Logger;
-import jmri.jmrix.lenz.LenzCommandStation;
+import jmri.jmrix.lenz.hornbyelite.HornbyEliteCommandStation;
 import jmri.jmrix.lenz.XNetInterfaceScaffold;
 import jmri.jmrix.lenz.XNetListenerScaffold;
+import jmri.jmrix.lenz.XNetSystemConnectionMemo;
 
 import junit.framework.Assert;
 import junit.framework.Test;
@@ -11,23 +12,23 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * XNetInitilizationManagerTest.java
+ * EliteXNetInitializationManagerTest.java
  *
- * Description:	    tests for the jmri.jmrix.lenz.XNetInitilizationManager class
+ * Description:	    tests for the jmri.jmrix.lenz.EliteXNetInitializationManager class
  * @author			Paul Bender
  * @version         $Revision$
  */
-public class XNetInitilizationManagerTest extends TestCase {
+public class EliteXNetInitializationManagerTest extends TestCase {
 
     public void testCtor() {
 
 // infrastructure objects
-                XNetInterfaceScaffold t = new XNetInterfaceScaffold(new LenzCommandStation());
+                XNetInterfaceScaffold t = new XNetInterfaceScaffold(new HornbyEliteCommandStation());
                 XNetListenerScaffold l = new XNetListenerScaffold();
 
         XNetSystemConnectionMemo memo=new XNetSystemConnectionMemo(t);
 
-        XNetInitilizationManager m = new XNetInitilizationManager(memo){
+        EliteXNetInitializationManager m = new EliteXNetInitializationManager(memo){
             protected int getInitTimeout() {
                 return 50;   // shorten, because this will fail & delay test
             }  
@@ -36,23 +37,22 @@ public class XNetInitilizationManagerTest extends TestCase {
         Assert.assertNotNull("exists", l);
         Assert.assertNotNull("exists", m);
         Assert.assertNotNull("exists", memo);
-        jmri.util.JUnitAppender.assertWarnMessage("Command Station disconnected, or powered down assuming LZ100/LZV100 V3.x");
     }
 
 	// from here down is testing infrastructure
-        public XNetInitilizationManagerTest(String s) {
+        public EliteXNetInitializationManagerTest(String s) {
 		super(s);
 	}
 
 	// Main entry point
 	static public void main(String[] args) {
-		String[] testCaseName = {"-noloading", XNetInitilizationManagerTest.class.getName()};
+		String[] testCaseName = {"-noloading", EliteXNetInitializationManagerTest.class.getName()};
 		junit.swingui.TestRunner.main(testCaseName);
 	}
 
 	// test suite from all defined tests
 	public static Test suite() {
-		TestSuite suite = new TestSuite(XNetInitilizationManagerTest.class);
+		TestSuite suite = new TestSuite(EliteXNetInitializationManagerTest.class);
 		return suite;
 	}
 
@@ -66,6 +66,6 @@ public class XNetInitilizationManagerTest extends TestCase {
         apps.tests.Log4JFixture.tearDown(); 
     }
 
-    static Logger log = Logger.getLogger(XNetInitilizationManagerTest.class.getName());
+    static Logger log = Logger.getLogger(EliteXNetInitializationManagerTest.class.getName());
 
 }

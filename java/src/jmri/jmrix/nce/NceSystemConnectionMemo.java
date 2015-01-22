@@ -2,9 +2,11 @@
 
 package jmri.jmrix.nce;
 
-import jmri.*;
 
 import java.util.ResourceBundle;
+
+import jmri.InstanceManager;
+import jmri.ProgrammerManager;
 
 /**
  * Lightweight class to denote that a system is active,
@@ -179,7 +181,7 @@ public class NceSystemConnectionMemo extends jmri.jmrix.SystemConnectionMemo {
         
         if (getNceUsbSystem() != NceTrafficController.USB_SYSTEM_NONE) {
             if (getNceUsbSystem() != NceTrafficController.USB_SYSTEM_POWERHOUSE) {
-                jmri.InstanceManager.setProgrammerManager(new NceProgrammerManager(new NceProgrammer(getNceTrafficController()), this));
+                // don't set a service mode programmer
             }
         } else {
             InstanceManager.setProgrammerManager(

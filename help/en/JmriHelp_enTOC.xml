@@ -74,4 +74,6 @@
    </tocitem>
   </tocitem>
  </tocitem>
+ <tocitem text="OperationPro " target="package.jmri.jmrit.operations.Operations"/>
+
 </toc>

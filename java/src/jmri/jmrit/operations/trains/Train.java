@@ -38,6 +38,7 @@ import jmri.jmrit.operations.setup.Control;
 import jmri.jmrit.operations.setup.Setup;
 import jmri.jmrit.roster.Roster;
 import jmri.jmrit.roster.RosterEntry;
+import jmri.util.FileUtil;
 
 import org.jdom2.Element;
 import org.slf4j.Logger;
@@ -1975,7 +1976,7 @@ public class Train implements java.beans.PropertyChangeListener {
 	 * Returns a formated string providing the train's description.  {0} = lead engine number, {1} = train's departure direction.
 	 */
 	public String getDescription() {
-		String description = MessageFormat.format(_description, new Object[] { getLeadEngineNumber(), getTrainDepartsDirection() });
+		String description = MessageFormat.format(_description, new Object[] { getLeadEngineRoadAndNumber(), getTrainDepartsDirection() });
 		return description;
 	}
 
@@ -2693,6 +2694,7 @@ public class Train implements java.beans.PropertyChangeListener {
 			// find the number of active threads
 			ThreadGroup root = Thread.currentThread().getThreadGroup();
 			int numberOfThreads = root.activeCount();
+//			log.debug("Number of active threads: {}", numberOfThreads);
 			for (String scriptPathname : scripts) {
 				try {
 					jmri.util.PythonInterp.runScript(jmri.util.FileUtil.getExternalFilename(scriptPathname));
@@ -2704,7 +2706,7 @@ public class Train implements java.beans.PropertyChangeListener {
 			int count = 0;
 			while (root.activeCount() > numberOfThreads) {
 				synchronized (this) {
-					log.debug("Number of active threads: " + root.activeCount());
+					log.debug("Number of active threads: {}, at start: {}", root.activeCount(), numberOfThreads);
 					try {
 						wait(20);
 					} catch (InterruptedException e) {
@@ -2812,9 +2814,9 @@ public class Train implements java.beans.PropertyChangeListener {
 		}
 		String logoURL = "";
 		if (!getManifestLogoURL().equals(""))
-			logoURL = getManifestLogoURL();
-		else
-			logoURL = Setup.getManifestLogoURL();
+			logoURL = FileUtil.getExternalFilename(getManifestLogoURL());
+		else if (!Setup.getManifestLogoURL().equals(""))
+			logoURL = FileUtil.getExternalFilename(Setup.getManifestLogoURL());
 		Location departs = LocationManager.instance().getLocationByName(getTrainDepartsName());
 		String printerName = departs.getDefaultPrinterName();
 		TrainPrintUtilities.printReport(file, getDescription(), isPreview, Setup.getFontName(), false, logoURL,
@@ -3066,6 +3068,12 @@ public class Train implements java.beans.PropertyChangeListener {
 		if (getLeadEngine() != null)
 			number = getLeadEngine().getNumber();
 		return number;	
+	}
+	
+	public String getLeadEngineRoadAndNumber() {
+		if (getLeadEngine() == null)
+			return "";
+		return getLeadEngine().toString();
 	}
 
 	/**

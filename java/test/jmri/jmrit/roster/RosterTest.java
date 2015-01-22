@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.List;
-
 import jmri.jmrit.roster.swing.RosterEntryComboBox;
 import jmri.util.FileUtil;
 import junit.framework.Assert;
@@ -26,7 +25,7 @@ public class RosterTest extends TestCase {
     public void testDirty() {
         Roster r = new Roster();
         Assert.assertEquals("new object ", false, r.isDirty());
-        r.addEntry(null);
+        r.addEntry(new RosterEntry());
         Assert.assertEquals("after add ", true, r.isDirty());
     }
 
@@ -36,6 +35,35 @@ public class RosterTest extends TestCase {
         r.addEntry(new RosterEntry("file name Bob"));
         Assert.assertEquals("one item ", 1, r.numEntries());
     }
+    
+    public void testDontAddNullEntriesLater() {
+        // test as documentation...
+        Roster r = new Roster();
+        r.addEntry(new RosterEntry());
+        r.addEntry(new RosterEntry());
+        
+        boolean pass = false;
+        try {
+            r.addEntry(null);
+        } catch (NullPointerException e) { 
+            pass = true;
+        }
+        Assert.assertTrue("Adding null entry should have caused NPE", pass);
+    }
+    
+    public void testDontAddNullEntriesFirst() {
+        // test as documentation...
+        Roster r = new Roster();
+        
+        boolean pass = false;
+        try {
+            r.addEntry(null);
+        } catch (NullPointerException e) { 
+            pass = true;
+        }
+        Assert.assertTrue("Adding null entry should have caused NPE", pass);
+    }
+    
 
     public void testAddrSearch() {
         Roster r = new Roster();

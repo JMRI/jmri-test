@@ -108,7 +108,7 @@ public class TrainPrintUtilities {
 		}
 		String line;
 
-		if (!isBuildReport && (!logoURL.equals(""))) {
+		if (!isBuildReport && logoURL != null && !logoURL.equals("")) {
 			ImageIcon icon = new ImageIcon(logoURL);
 			if (icon.getIconWidth() == -1)
 				log.error("Logo not found: " + logoURL);
@@ -125,6 +125,7 @@ public class TrainPrintUtilities {
 			}
 			if (line == null)
 				break;
+//			log.debug("Line: {}", line.toString());
 			// check for build report print level
 			if (isBuildReport) {
 				line = filterBuildReport(line, false); // no indent
@@ -133,17 +134,19 @@ public class TrainPrintUtilities {
 				// printing the train manifest
 			} else {
 				// determine if there's a line separator
-				boolean horizontialLineSeparatorFound = true;
-				for (int i = 0; i < line.length(); i++) {
-					if (line.charAt(i) != HORIZONTAL_LINE_SEPARATOR) {
-						horizontialLineSeparatorFound = false;
-						break;
+				if (line.length() > 0) {
+					boolean horizontialLineSeparatorFound = true;
+					for (int i = 0; i < line.length(); i++) {
+						if (line.charAt(i) != HORIZONTAL_LINE_SEPARATOR) {
+							horizontialLineSeparatorFound = false;
+							break;
+						}
 					}
-				}
-				if (horizontialLineSeparatorFound) {
-					writer.write(writer.getCurrentLineNumber(), 0, writer.getCurrentLineNumber(), line.length() + 1);
-					c = null;
-					continue;
+					if (horizontialLineSeparatorFound) {
+						writer.write(writer.getCurrentLineNumber(), 0, writer.getCurrentLineNumber(), line.length() + 1);
+						c = null;
+						continue;
+					}
 				}
 				for (int i = 0; i < line.length(); i++) {
 					if (line.charAt(i) == VERTICAL_LINE_SEPARATOR) {
@@ -332,8 +335,7 @@ public class TrainPrintUtilities {
 	}
 
 	/**
-	 * This method uses Desktop which is supported in Java 1.6. Since we're currently limiting the code to Java 1.5,
-	 * this method must be commented out.
+	 * This method uses Desktop which is supported in Java 1.6.
 	 */
 	public static void openDesktopEditor(File file) {
 		if (!java.awt.Desktop.isDesktopSupported()) {
@@ -341,14 +343,20 @@ public class TrainPrintUtilities {
 			return;
 		}
 		java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
-		if (!desktop.isSupported(java.awt.Desktop.Action.EDIT)) {
-			log.warn("desktop edit not supported");
-			return;
-		}
-		try {
-			desktop.edit(file);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (desktop.isSupported(java.awt.Desktop.Action.EDIT)) {
+			try {
+				desktop.edit(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else if (desktop.isSupported(java.awt.Desktop.Action.OPEN)) {
+			try {
+				desktop.open(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			log.warn("desktop edit or open not supported");
 		}
 	}
 
