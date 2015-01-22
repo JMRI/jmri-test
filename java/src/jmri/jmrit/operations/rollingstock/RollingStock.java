@@ -741,6 +741,14 @@ public class RollingStock implements java.beans.PropertyChangeListener {
 		return _rfid;
 	}
 
+	public IdTag getIdTag() {
+		return _tag;
+	}
+
+	public void setIdTag(IdTag tag) {
+		_tag=tag;
+	}
+
 	/**
 	 * Sets the RFID for this rolling stock.
 	 * 

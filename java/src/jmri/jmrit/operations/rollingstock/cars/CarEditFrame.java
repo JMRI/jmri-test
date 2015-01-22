@@ -31,6 +31,7 @@ import jmri.jmrit.operations.locations.Track;
 import jmri.jmrit.operations.rollingstock.RollingStock;
 import jmri.jmrit.operations.setup.Control;
 import jmri.jmrit.operations.setup.Setup;
+import jmri.IdTag;
 
 /**
  * Frame for user edit of car
@@ -87,7 +88,6 @@ public class CarEditFrame extends OperationsFrame implements java.beans.Property
 	JTextField weightTonsTextField = new JTextField(Control.max_len_string_weight_name);
 	JTextField commentTextField = new JTextField(35);
 	JTextField valueTextField = new JTextField(8);
-	JTextField rfidTextField = new JTextField(16);
 
 	// combo boxes
 	JComboBox<String> roadComboBox = CarRoads.instance().getComboBox();
@@ -99,6 +99,7 @@ public class CarEditFrame extends OperationsFrame implements java.beans.Property
 	JComboBox<Track> trackLocationBox = new JComboBox<>();
 	JComboBox<String> loadComboBox = CarLoads.instance().getComboBox(null);
 	JComboBox<String> kernelComboBox = carManager.getKernelComboBox();
+	JComboBox<IdTag> rfidComboBox = new JComboBox<IdTag>();
 
 	// panels
 	JPanel pBlocking = new JPanel();
@@ -133,7 +134,7 @@ public class CarEditFrame extends OperationsFrame implements java.beans.Property
 		fillWeightButton.setToolTipText(Bundle.getMessage("TipCalculateCarWeight"));
 		builtTextField.setToolTipText(Bundle.getMessage("TipBuildDate"));
 		valueTextField.setToolTipText(Bundle.getMessage("TipValue"));
-		rfidTextField.setToolTipText(Bundle.getMessage("TipRfid"));
+		rfidComboBox.setToolTipText(Bundle.getMessage("TipRfid"));
 
 		editRoadButton.setToolTipText(MessageFormat.format(Bundle.getMessage("TipAddDeleteReplace"),
 				new Object[] { Bundle.getMessage("Road").toLowerCase() }));
@@ -289,7 +290,8 @@ public class CarEditFrame extends OperationsFrame implements java.beans.Property
 			JPanel pRfid = new JPanel();
 			pRfid.setLayout(new GridBagLayout());
 			pRfid.setBorder(BorderFactory.createTitledBorder(Setup.getRfidLabel()));
-			addItem(pRfid, rfidTextField, 1, 0);
+			addItem(pRfid, rfidComboBox, 1, 0);
+                        jmri.InstanceManager.getDefault(jmri.IdTagManager.class).getNamedBeanList().forEach( (tag)->rfidComboBox.addItem((jmri.IdTag)tag));
 			pOptional.add(pRfid);
 		}
 
@@ -437,7 +439,7 @@ public class CarEditFrame extends OperationsFrame implements java.beans.Property
 
 		commentTextField.setText(car.getComment());
 		valueTextField.setText(car.getValue());
-		rfidTextField.setText(car.getRfid());
+		rfidComboBox.setSelectedItem(car.getIdTag());
 		autoTrackCheckBox.setEnabled(true);
 
 		blockingTextField.setText(Integer.toString(car.getBlocking()));
@@ -773,7 +775,7 @@ public class CarEditFrame extends OperationsFrame implements java.beans.Property
 		}
 		_car.setComment(commentTextField.getText());
 		_car.setValue(valueTextField.getText());
-		_car.setRfid(rfidTextField.getText());
+		_car.setIdTag((IdTag)rfidComboBox.getSelectedItem());
 		autoTrackCheckBox.setEnabled(true);
 		if (locationBox.getSelectedItem() != null) {
 			if (!locationBox.getSelectedItem().equals(LocationManager.NONE)
