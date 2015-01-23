@@ -54,7 +54,9 @@ abstract class AbstractPanelServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("Handling GET request for {}", request.getRequestURI());
-        if (request.getRequestURI().endsWith("/")) {
+        if (request.getParameter(JSON.NAME) != null) {
+            response.sendRedirect("/panel/" + request.getParameter(JSON.NAME));
+        } else if (request.getRequestURI().endsWith("/")) {
             listPanels(request, response);
         } else {
             String[] path = request.getRequestURI().split("/");
@@ -97,8 +99,6 @@ abstract class AbstractPanelServlet extends HttpServlet {
             response.setContentType(UTF8_APPLICATION_JSON);
             ServletUtil.getInstance().setNonCachingHeaders(response);
             response.getWriter().print(JsonUtil.getPanels(request.getLocale(), JSON.XML));
-        } else if (JSON.XML.equals(request.getParameter("format"))) {
-            response.sendRedirect("/xmlio/list?type=panel");
         } else {
             response.setContentType(UTF8_TEXT_HTML);
             response.getWriter().print(String.format(request.getLocale(),
