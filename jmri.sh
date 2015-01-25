@@ -86,10 +86,11 @@ nbexec=`echo "$progdir"/../platform*/lib/nbexec`
 
 case "`uname`" in
     Darwin*)
+        APPTITLE=${APPTITLE:-$APPNAME}
         eval exec sh '"$nbexec"' \
             --jdkhome '"$jdkhome"' \
-            -J-Dcom.apple.mrj.application.apple.menu.about.name='"$APPNAME"' \
-            -J-Xdock:name='"$APPNAME"' \
+            -J-Dcom.apple.mrj.application.apple.menu.about.name='"$APPTITLE"' \
+            -J-Xdock:name='"$APPTITLE"' \
             '"-J-Xdock:icon=$progdir/../../$APPNAME.icns"' \
             --clusters '"$clusters"' \
             --userdir '"${userdir}"' \

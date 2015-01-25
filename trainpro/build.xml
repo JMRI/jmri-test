@@ -41,8 +41,65 @@
         </ant>
     </target>
 
+    <!-- Use full title for OS X application bundle. See https://netbeans.org/bugzilla/show_bug.cgi?id=249937 -->
     <target name="build-launchers" depends="suite.build-launchers">
         <property name="app.sh" location="${harness.dir}/launchers/app.sh"/>
         <copy file="${app.sh}" tofile="${build.launcher.dir}/bin/${app.name}"/>
+    </target>
+    <target name="build-mac" depends="build,build-launchers" description="Builds a ZIP distribution of the suite, launchers, and selected modules from the platform.">
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}/${app.title}.app"/>
+        <mkdir dir="${dist.dir}/${app.title}.app/Contents"/>
+        <mkdir dir="${dist.dir}/${app.title}.app/Contents/MacOS"/>
+        <mkdir dir="${dist.dir}/${app.title}.app/Contents/Resources"/>
+        <property name="app.icon.icns" value="${harness.dir}/etc/applicationIcon.icns"/>
+        <copy file="${app.icon.icns}" tofile="${dist.dir}/${app.title}.app/Contents/Resources/${app.name}.icns"/>
+
+        <copy todir="${dist.dir}/${app.title}.app/Contents/Resources/${app.name}/bin">
+            <fileset dir="${build.launcher.dir}/bin/" />
+        </copy>
+        <copy todir="${dist.dir}/${app.title}.app/Contents/Resources/${app.name}/etc">
+            <fileset dir="${build.launcher.dir}/etc/" />
+        </copy>
+        <subant genericantfile="${harness.dir}/suite.xml" target="copy-cluster" inheritrefs="true">
+            <property name="dest.dir" value="${dist.dir}/${app.title}.app/Contents/Resources/${app.name}"/>
+            <property name="nbexec.dir" value="${dist.dir}/${app.title}.app/Contents/Resources/${app.name}"/>
+            <property name="build.dir" value="${suite.build.dir}"/>
+            <resources refid="zip.platform.clusters"/>
+        </subant>
+
+        <copy todir="${dist.dir}/${app.title}.app/Contents/Resources/${app.name}/${app.name}">
+
+            <fileset dir="${cluster}"/>
+        </copy>
+
+        <copy verbose="true" failonerror="false"
+              file="${dist.dir}/${app.title}.app/Contents/Resources/${app.name}/${app.name}/etc/${app.name}.icns"
+              tofile="${dist.dir}/${app.title}.app/Contents/Resources/${app.name}.icns"/>
+
+        <copy file="${harness.dir}/launchers/app-mac.sh" tofile="${dist.dir}/${app.title}.app/Contents/MacOS/${app.name}"/>
+        <chmod file="${dist.dir}/${app.title}.app/Contents/MacOS/${app.name}" perm="755"/>
+        <chmod file="${dist.dir}/${app.title}.app/Contents/Resources/${app.name}/bin/${app.name}" perm="755"/>
+        <chmod dir="${dist.dir}" includes="${app.title}.app/Contents/Resources/${app.name}/platform*/lib/nbexec" perm="755"/>
+
+        <copy file="${harness.dir}/etc/Info.plist" tofile="${dist.dir}/${app.title}.app/Contents/Info.plist">
+            <filterchain>
+                <replacestring from="$${app.name}" to="${app.name}"/>
+                <replacestring from="$${app.version}" to="${app.version}"/>
+                <replacestring from="$${app.title}" to="${app.title}"/>
+                <replacestring from="$${app.icon}" to="master.png"/>
+                <replacestring from="$${branding.token}" to="${branding.token}"/>
+                <replacestring from="$${app.title}" to="${app.title}"/>
+            </filterchain>
+        </copy>
+        <zip destfile="${dist.dir}/${app.name}-MacOS.zip" duplicate="preserve">
+            <zipfileset dir="${dist.dir}/${app.title}.app" prefix="${app.title}.app"/>
+        </zip>
+        <echo>
+        <echo>
+You MacOS Application bundle was created at ${dist.dir}/${app.title}.app.
+A simple zipped distribution has been created at ${dist.dir}/${app.name}-MacOS.zip.
+        </echo>
+        </echo>
     </target>
 </project>
