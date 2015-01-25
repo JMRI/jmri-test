@@ -61,12 +61,11 @@ public class HtmlTrainCommon extends TrainCommon {
         this.emptyCars = 0;
     }
 
-    @Override
     public String pickupUtilityCars(List<Car> carList, Car car, RouteLocation rl, RouteLocation rld, boolean isManifest) {
         // list utility cars by type, track, length, and load
-        String[] messageFormat = Setup.getSwitchListPickupUtilityCarMessageFormat();
+        String[] messageFormat = Setup.getPickupUtilitySwitchListMessageFormat();
         if (isManifest || Setup.isSwitchListFormatSameAsManifest()) {
-            messageFormat = Setup.getPickupUtilityCarMessageFormat();
+            messageFormat = Setup.getPickupUtilityManifestMessageFormat();
         }
         if (this.countUtilityCars(messageFormat, carList, car, rl, rld, PICKUP) == 0) {
             return ""; // already printed out this car type
@@ -79,13 +78,13 @@ public class HtmlTrainCommon extends TrainCommon {
         if (Setup.isSwitchListFormatSameAsManifest()) {
             isManifest = true;
         }
-        String[] messageFormat = Setup.getSetoutUtilityCarMessageFormat();
+        String[] messageFormat = Setup.getDropUtilityManifestMessageFormat();
         if (isLocal && isManifest) {
-            messageFormat = Setup.getLocalUtilityCarMessageFormat();
+            messageFormat = Setup.getLocalUtilityManifestMessageFormat();
         } else if (isLocal && !isManifest) {
-            messageFormat = Setup.getSwitchListLocalUtilityCarMessageFormat();
+            messageFormat = Setup.getLocalUtilitySwitchListMessageFormat();
         } else if (!isLocal && !isManifest) {
-            messageFormat = Setup.getSwitchListSetoutUtilityCarMessageFormat();
+            messageFormat = Setup.getDropUtilitySwitchListMessageFormat();
         }
         if (countUtilityCars(messageFormat, carList, car, rl, null, !PICKUP) == 0) {
             return ""; // already printed out this car type
@@ -241,7 +240,7 @@ public class HtmlTrainCommon extends TrainCommon {
             return StringEscapeUtils.escapeHtml4(rs.getOwner());
         } else if (attribute.equals(Setup.COMMENT)) {
             return StringEscapeUtils.escapeHtml4(rs.getComment());
-        } else if (attribute.equals(Setup.NONE) || attribute.equals(Setup.NO_NUMBER) || attribute.equals(Setup.NO_ROAD) || attribute.equals(Setup.NO_COLOR) || attribute.equals(Setup.NO_DESTINATION) || attribute.equals(Setup.NO_DEST_TRACK) || attribute.equals(Setup.NO_LOCATION) || attribute.equals(Setup.TAB) || attribute.equals(Setup.TAB2) || attribute.equals(Setup.TAB3)) {
+        } else if (attribute.equals(Setup.BLANK) || attribute.equals(Setup.NO_NUMBER) || attribute.equals(Setup.NO_ROAD) || attribute.equals(Setup.NO_COLOR) || attribute.equals(Setup.NO_DESTINATION) || attribute.equals(Setup.NO_DEST_TRACK) || attribute.equals(Setup.NO_LOCATION) || attribute.equals(Setup.TAB) || attribute.equals(Setup.TAB2) || attribute.equals(Setup.TAB3)) {
             // attributes that don't print
             return "";
         }

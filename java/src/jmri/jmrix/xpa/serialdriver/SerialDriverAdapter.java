@@ -2,18 +2,17 @@
 
 package jmri.jmrix.xpa.serialdriver;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jmri.jmrix.xpa.XpaPortController;
-import jmri.jmrix.xpa.XpaTrafficController;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-
 import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
-import jmri.jmrix.SystemConnectionMemo;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import jmri.jmrix.xpa.XpaPortController;
+import jmri.jmrix.xpa.XpaSystemConnectionMemo;
+import jmri.jmrix.xpa.XpaTrafficController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements SerialPortAdapter for a modem connected to an XPA.
@@ -32,7 +31,7 @@ import jmri.jmrix.SystemConnectionMemo;
 public class SerialDriverAdapter extends XpaPortController implements jmri.jmrix.SerialPortAdapter {
 
     public SerialDriverAdapter(){
-        super();
+        super(new XpaSystemConnectionMemo());
         option1Name = "ModemInitString";
         options.put(option1Name, new Option("Modem Initilization String : ", new String[]{"ATX0E0"}));
     }
@@ -180,10 +179,5 @@ public class SerialDriverAdapter extends XpaPortController implements jmri.jmrix
     public void setManufacturer(String manu) { manufacturerName=manu; }
 
     static Logger log = LoggerFactory.getLogger(SerialDriverAdapter.class.getName());
-
-    @Override
-    public SystemConnectionMemo getSystemConnectionMemo() {
-        return null; // no SystemConnectionMemo
-    }
 
 }

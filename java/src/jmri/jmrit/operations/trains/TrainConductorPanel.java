@@ -118,7 +118,7 @@ public class TrainConductorPanel extends CommonConductorYardmasterPanel {
 
         // setup buttons
         addButtonAction(moveButton);
-
+        
         if (_train != null) {
             textTrainDescription.setText(_train.getDescription());
             // show train comment box only if there's a comment
