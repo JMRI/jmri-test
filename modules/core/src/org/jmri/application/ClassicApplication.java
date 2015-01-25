@@ -5,10 +5,14 @@ import apps.AppsBase;
 import apps.SplashWindow;
 import apps.SystemConsole;
 import apps.gui3.TabbedPreferences;
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -35,12 +39,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.JTextComponent;
 import jmri.ConfigureManager;
 import jmri.IdTagManager;
 import jmri.InstanceManager;
@@ -73,6 +81,7 @@ import jmri.jmrit.signalling.EntryExitPairs;
 import jmri.jmrit.symbolicprog.autospeed.AutoSpeedAction;
 import jmri.jmrit.throttle.ThrottleFrame;
 import jmri.jmrit.withrottle.WiThrottleCreationAction;
+import jmri.jmrix.ActiveSystemsMenu;
 import jmri.jmrix.ConnectionConfig;
 import jmri.jmrix.ConnectionStatus;
 import jmri.jmrix.JmrixConfigPane;
@@ -80,6 +89,7 @@ import jmri.jmrix.jinput.treecontrol.TreeAction;
 import jmri.jmrix.libusb.UsbViewAction;
 import jmri.managers.DefaultIdTagManager;
 import jmri.managers.DefaultUserMessagePreferences;
+import jmri.plaf.macosx.Application;
 import jmri.plaf.macosx.PreferencesHandler;
 import jmri.plaf.macosx.QuitHandler;
 import jmri.profile.Profile;
@@ -152,9 +162,9 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
                         log.debug("Start writing block info");
                         try {
                             new BlockValueFile().writeBlockValues();
-                        } //catch (org.jdom.JDOMException jde) { log.error("Exception writing blocks: "+jde); }
+                        } //catch (org.jdom2.JDOMException jde) { log.error("Exception writing blocks: {}", jde); }
                         catch (IOException ioe) {
-                            log.error("Exception writing blocks: " + ioe);
+                            log.error("Exception writing blocks: {}", ioe);
                         }
 
                         // continue shutdown
@@ -258,22 +268,19 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
         // load config file if it exists
         if (file.exists()) {
             if (log.isDebugEnabled()) {
-                log.debug("start load config file " + file.getPath());
+                log.debug("start load config file {}", file.getPath());
             }
             try {
                 configOK = InstanceManager.configureManagerInstance().load(file, true);
             } catch (JmriException e) {
-                log.error("Unhandled problem loading configuration: " + e);
+                log.error("Unhandled problem loading configuration", e);
                 configOK = false;
             }
-            log.debug("end load config file, OK=" + configOK);
+            log.debug("end load config file, OK={}", configOK);
         } else {
-            log.info("No saved preferences, will open preferences window.  Searched for " + file.getPath());
+            log.info("No saved preferences, will open preferences window.  Searched for {}", file.getPath());
             configOK = false;
         }
-
-        //2012/01/21 dboudreau rb needs to be reloaded after reading the configuration file so the locale is set properly.
-        rb = ResourceBundle.getBundle("apps.AppsBundle");
 
         // Add actions to abstractActionModel
         // Done here as initial non-GUI initialisation is completed
@@ -310,14 +317,13 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
                         }
                     });
                 } catch (Exception ex) {
-                    log.error("Exception creating system console frame: " + ex);
+                    log.error("Exception creating system console frame", ex);
                 }
             }
         } else {
             configDeferredLoadOK = false;
         }
 
-        // TODO: All these threds should eventually be pushed into Initialzers.
         /*Once all the preferences have been loaded we can initial the preferences
          doing it in a thread at this stage means we can let it work in the background*/
         Runnable r = new Runnable() {
@@ -326,7 +332,7 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
                 try {
                     InstanceManager.tabbedPreferencesInstance().init();
                 } catch (Exception ex) {
-                    log.error("Error in trying to setup preferences {}", ex.toString(), ex);
+                    log.error("Error trying to setup preferences {}", ex.getLocalizedMessage(), ex);
                 }
             }
         };
@@ -339,7 +345,7 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
                 try {
                     DecoderIndexFile.instance();
                 } catch (Exception ex) {
-                    log.error("Error in trying to initialize decoder index file " + ex.toString());
+                    log.error("Error in trying to initialize decoder index file {}", ex.toString());
                 }
             }
         };
@@ -353,7 +359,7 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
                     try {
                         PythonInterp.getPythonInterpreter();
                     } catch (Exception ex) {
-                        log.error("Error in trying to initialize python interpreter " + ex.toString());
+                        log.error("Error in trying to initialize python interpreter {}", ex.toString());
                     }
                 }
             };
@@ -361,9 +367,9 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
             thr3.start();
         }
         // if the configuration didn't complete OK, pop the prefs frame and help
-        log.debug("Config go OK? " + (configOK || configDeferredLoadOK));
+        log.debug("Config go OK? {}", (configOK || configDeferredLoadOK));
         if (!configOK || !configDeferredLoadOK) {
-            jmri.util.HelpUtil.displayHelpRef("package.apps.AppConfigPanelErrorPage");
+            HelpUtil.displayHelpRef("package.apps.AppConfigPanelErrorPage");
             doPreferences();
         }
         log.debug("Done with doPreferences, start statusPanel");
@@ -372,6 +378,34 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
         log.debug("Done with statusPanel, start buttonSpace");
         add(buttonSpace());
         add(_jynstrumentSpace);
+        long eventMask = AWTEvent.MOUSE_EVENT_MASK;
+
+        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+            @Override
+            public void eventDispatched(AWTEvent e) {
+                if (e instanceof MouseEvent) {
+                    MouseEvent me = (MouseEvent) e;
+                    if (me.isPopupTrigger() && me.getComponent() instanceof JTextComponent) {
+                        final JTextComponent component = (JTextComponent) me.getComponent();
+                        final JPopupMenu menu = new JPopupMenu();
+                        JMenuItem item;
+                        item = new JMenuItem(new DefaultEditorKit.CopyAction());
+                        item.setText("Copy");
+                        item.setEnabled(component.getSelectionStart() != component.getSelectionEnd());
+                        menu.add(item);
+                        item = new JMenuItem(new DefaultEditorKit.CutAction());
+                        item.setText("Cut");
+                        item.setEnabled(component.isEditable() && component.getSelectionStart() != component.getSelectionEnd());
+                        menu.add(item);
+                        item = new JMenuItem(new DefaultEditorKit.PasteAction());
+                        item.setText("Paste");
+                        item.setEnabled(component.isEditable());
+                        menu.add(item);
+                        menu.show(me.getComponent(), me.getX(), me.getY());
+                    }
+                }
+            }
+        }, eventMask);
 
         // do final activation
         InstanceManager.logixManagerInstance().activateAllLogixs();
@@ -387,10 +421,10 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
         try {
             result = InstanceManager.configureManagerInstance().loadDeferred(file);
         } catch (JmriException e) {
-            log.error("Unhandled problem loading deferred configuration: " + e);
+            log.error("Unhandled problem loading deferred configuration", e);
             result = false;
         }
-        log.debug("end deferred load from config file, OK=" + result);
+        log.debug("end deferred load from config file, OK={}", result);
         return result;
     }
 
@@ -403,7 +437,7 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
             try {
                 bm.addAction(key, actionList.getString(key));
             } catch (ClassNotFoundException ex) {
-                log.error("Did not find class " + key);
+                log.error("Did not find class {}", key);
             }
         }
     }
@@ -440,7 +474,7 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
     public static void ynstrument(String path) {
         Jynstrument it = JynstrumentFactory.createInstrument(path, _jynstrumentSpace);
         if (it == null) {
-            log.error("Error while creating Jynstrument " + path);
+            log.error("Error while creating Jynstrument {}", path);
             return;
         }
         ThrottleFrame.setTransparent(it);
@@ -454,8 +488,8 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
      * <P>
      * This does not include the development menu.
      *
-     * @param menuBar
-     * @param wi
+     * @param menuBar Menu bar to be populated
+     * @param wi WindowInterface where this menu bar will appear
      */
     protected void createMenus(JMenuBar menuBar, WindowInterface wi) {
         // the debugging statements in the following are
@@ -469,10 +503,6 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
                     return handleQuit();
                 }
             });
-            if (UIManager.getLookAndFeel().isNativeLookAndFeel()) {
-                System.setProperty("apple.laf.useScreenMenuBar", "true");
-            }
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", jmri.Application.getApplicationName());
         }
 
         fileMenu(menuBar, wi);
@@ -492,17 +522,23 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
         log.debug("end building menus");
     }
 
+    /**
+     * Create default File menu
+     *
+     * @param menuBar Menu bar to be populated
+     * @param wi WindowInterface where this menu will appear as part of the menu bar
+     */
     protected void fileMenu(JMenuBar menuBar, WindowInterface wi) {
-        JMenu fileMenu = new JMenu(rb.getString("MenuFile"));
+        JMenu fileMenu = new JMenu(AppsBundle.getMessage("MenuFile"));
         menuBar.add(fileMenu);
 
-        fileMenu.add(new PrintDecoderListAction(rb.getString("MenuPrintDecoderDefinitions"), wi.getFrame(), false));
-        fileMenu.add(new PrintDecoderListAction(rb.getString("MenuPrintPreviewDecoderDefinitions"), wi.getFrame(), true));
+        fileMenu.add(new PrintDecoderListAction(AppsBundle.getMessage("MenuPrintDecoderDefinitions"), wi.getFrame(), false));
+        fileMenu.add(new PrintDecoderListAction(AppsBundle.getMessage("MenuPrintPreviewDecoderDefinitions"), wi.getFrame(), true));
 
         // Use Mac OS X native Quit if using Aqua look and feel
         if (!(SystemType.isMacOSX() && UIManager.getLookAndFeel().isNativeLookAndFeel())) {
             fileMenu.add(new JSeparator());
-            fileMenu.add(new AbstractAction(rb.getString("MenuItemQuit")) {
+            fileMenu.add(new AbstractAction(AppsBundle.getMessage("MenuItemQuit")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     handleQuit();
@@ -520,40 +556,43 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
      * Set the location of the window-specific help for the preferences pane.
      * Made a separate method so if can be overridden for application specific
      * preferences help
+     * @param frame The frame being described in the help system
+     * @param location The location within the JavaHelp system
      */
-    protected void setPrefsFrameHelp(JmriJFrame f, String l) {
-        f.addHelpMenu(l, true);
+    protected void setPrefsFrameHelp(JmriJFrame frame, String location) {
+        frame.addHelpMenu(location, true);
     }
 
     protected void editMenu(JMenuBar menuBar, WindowInterface wi) {
 
-        JMenu editMenu = new JMenu(rb.getString("MenuEdit"));
+        JMenu editMenu = new JMenu(AppsBundle.getMessage("MenuEdit"));
         menuBar.add(editMenu);
 
         // cut, copy, paste
         AbstractAction a;
-        a = new javax.swing.text.DefaultEditorKit.CutAction();
-        a.putValue(javax.swing.Action.NAME, rb.getString("MenuItemCut"));
+        a = new DefaultEditorKit.CutAction();
+        a.putValue(Action.NAME, AppsBundle.getMessage("MenuItemCut"));
         editMenu.add(a);
-        a = new javax.swing.text.DefaultEditorKit.CopyAction();
-        a.putValue(javax.swing.Action.NAME, rb.getString("MenuItemCopy"));
+        a = new DefaultEditorKit.CopyAction();
+        a.putValue(Action.NAME, AppsBundle.getMessage("MenuItemCopy"));
         editMenu.add(a);
-        a = new javax.swing.text.DefaultEditorKit.PasteAction();
-        a.putValue(javax.swing.Action.NAME, rb.getString("MenuItemPaste"));
+        a = new DefaultEditorKit.PasteAction();
+        a.putValue(Action.NAME, AppsBundle.getMessage("MenuItemPaste"));
         editMenu.add(a);
 
         // prefs
-        prefsAction = new apps.gui3.TabbedPreferencesAction("Preferences");
+        prefsAction = new apps.gui3.TabbedPreferencesAction(AppsBundle.getMessage("MenuItemPreferences"));
         // Put prefs in Apple's prefered area on Mac OS X
-        if (SystemType.isMacOSX() && UIManager.getLookAndFeel().isNativeLookAndFeel()) {
-            jmri.plaf.macosx.Application.getApplication().setPreferencesHandler(new PreferencesHandler() {
+        if (SystemType.isMacOSX()) {
+            Application.getApplication().setPreferencesHandler(new PreferencesHandler() {
                 @Override
                 public void handlePreferences(EventObject eo) {
                     doPreferences();
                 }
             });
-        } else {
+        }
             // Include prefs in Edit menu if not on Mac OS X or not using Aqua Look and Feel
+        if (!SystemType.isMacOSX() || !UIManager.getLookAndFeel().isNativeLookAndFeel()) {
             editMenu.addSeparator();
             editMenu.add(prefsAction);
         }
@@ -563,7 +602,7 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
     protected void toolsMenu(JMenuBar menuBar, WindowInterface wi) {
         // menuBar.add(new ToolsMenu(rb.getString("MenuTools")));
         // TEMPORARY UNTIL TABBED PREFERENCES IS REPLACED WITH NETBEANS PREFERENCES
-        ToolsMenu toolsMenu = new ToolsMenu(rb.getString("MenuTools"));
+        ToolsMenu toolsMenu = new ToolsMenu(AppsBundle.getMessage("MenuTools"));
         toolsMenu.addSeparator();
         toolsMenu.add(new AbstractAction("NetBeans Options") {
             @Override
@@ -579,7 +618,7 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
     }
 
     protected void rosterMenu(JMenuBar menuBar, WindowInterface wi) {
-        menuBar.add(new RosterMenu(rb.getString("MenuRoster"), RosterMenu.MAINMENU, this));
+        menuBar.add(new RosterMenu(AppsBundle.getMessage("MenuRoster"), RosterMenu.MAINMENU, this));
     }
 
     protected void panelMenu(JMenuBar menuBar, WindowInterface wi) {
@@ -598,7 +637,7 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
      * @param wi
      */
     protected void systemsMenu(JMenuBar menuBar, WindowInterface wi) {
-        jmri.jmrix.ActiveSystemsMenu.addItems(menuBar);
+        ActiveSystemsMenu.addItems(menuBar);
     }
 
     protected void debugMenu(JMenuBar menuBar, WindowInterface wi) {
@@ -658,8 +697,8 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
             // use as main help menu 
             menuBar.add(helpMenu);
 
-        } catch (java.lang.Throwable e3) {
-            log.error("Unexpected error creating help: " + e3);
+        } catch (Throwable e3) {
+            log.error("Unexpected error creating help.", e3);
         }
 
     }
@@ -819,8 +858,8 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
     @Override
     public void windowClosing(WindowEvent e) {
         if (JOptionPane.showConfirmDialog(null,
-                rb.getString("MessageLongCloseWarning"),
-                rb.getString("MessageShortCloseWarning"),
+                AppsBundle.getMessage("MessageLongCloseWarning"),
+                AppsBundle.getMessage("MessageShortCloseWarning"),
                 JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             handleQuit();
         }
@@ -857,12 +896,10 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
             if (current == null) {
                 System.setProperty("org.jmri.Apps." + key, value);
             } else if (!current.equals(value)) {
-                log.warn("JMRI property " + key + " already set to " + current
-                        + ", skipping reset to " + value);
+                log.warn("JMRI property {} already set to {}, skipping reset to {}", key, current, value);
             }
         } catch (Exception e) {
-            log.error("Unable to set JMRI property " + key + " to " + value
-                    + "due to exception: " + e);
+            log.error("Unable to set JMRI property {} to {} due to execption {}", key, value, e);
         }
     }
 
@@ -877,9 +914,6 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
         return _buttonSpace;
     }
     static JComponent _buttonSpace = null;
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "MS_PKGPROTECT",
-            justification = "Needs protected access so it can be reloaded after reading the configuration file so the locale is set properly")
-    protected static ResourceBundle rb = ResourceBundle.getBundle("apps.AppsBundle");
     static AppConfigBase prefs;
 
     static public AppConfigBase getPrefs() {
@@ -957,11 +991,14 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
      * <P>
      * The Configuration File name variable holds the name used to load the
      * configuration file during later startup processing. Applications invoke
-     * this method to handle the usual startup hierarchy: <UL> <LI>If an
-     * absolute filename was provided on the command line, use it <LI>If a
-     * filename was provided that's not absolute, consider it to be in the
-     * preferences directory <LI>If no filename provided, use a default name
-     * (that's application specific) </UL>
+     * this method to handle the usual startup hierarchy:
+     * <UL>
+     * <LI>If an absolute filename was provided on the command line, use it
+     * <LI>If a filename was provided that's not absolute, consider it to be in
+     * the preferences directory
+     * <LI>If no filename provided, use a default name (that's application
+     * specific)
+     * </UL>
      * This name will be used for reading and writing the preferences. It need
      * not exist when the program first starts up. This name may be proceeded
      * with <em>config=</em> and may not contain the equals sign (=).
@@ -973,13 +1010,13 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
         // save the configuration filename if present on the command line
         if (args.length >= 1 && args[0] != null && !args[0].contains("=")) {
             def = args[0];
-            log.debug("Config file was specified as: " + args[0]);
+            log.debug("Config file was specified as: {}", args[0]);
         }
         for (String arg : args) {
             String[] split = arg.split("=", 2);
             if (split[0].equalsIgnoreCase("config")) {
                 def = split[1];
-                log.debug("Config file was specified as: " + arg);
+                log.debug("Config file was specified as: {}", arg);
             }
         }
         ClassicApplication.configFilename = def;
@@ -1017,10 +1054,10 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
             try {
                 InstanceManager.configureManagerInstance().load(pFile);
             } catch (JmriException e) {
-                log.error("Unhandled problem in loadFile: " + e);
+                log.error("Unhandled problem in loadFile", e);
             }
         } else {
-            log.warn("Could not find " + name + " config file");
+            log.warn("Could not find {} config file", name);
         }
 
     }
