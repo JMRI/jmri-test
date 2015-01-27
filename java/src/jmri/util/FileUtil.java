@@ -833,7 +833,7 @@ public final class FileUtil {
         }
         try {
             // attempt to return path from preferences directory
-            File file = new File(FileUtil.getUserFilesPath() + path);
+            File file = new File(FileUtil.getUserFilesPath(), path);
             if (file.exists()) {
                 return file.toURI().toURL();
             }
@@ -843,11 +843,13 @@ public final class FileUtil {
                 return file.toURI().toURL();
             }
             // attempt to return path from JMRI distribution directory
-            file = new File(FileUtil.getProgramPath() + path);
+            file = new File(FileUtil.getProgramPath(), path);
             if (file.exists()) {
                 return file.toURI().toURL();
             }
             if (!path.startsWith(".")) {
+                // Ensure path is in URL format
+                path = path.replace(File.separatorChar, '/');
                 if (path.startsWith("/")) {
                     path = path.substring(1);
                 }
@@ -1058,7 +1060,9 @@ public final class FileUtil {
     }
 
     /**
-     * Recursively delete a path. Not needed in Java 1.7.
+     * Recursively delete a path. Use
+     * {@link java.nio.file.Files#delete(java.nio.file.Path)} if more control is
+     * required.
      *
      * @param path
      * @return true if path was deleted, false otherwise
@@ -1073,7 +1077,9 @@ public final class FileUtil {
     }
 
     /**
-     * Copy a file. Not needed in Java 1.7.
+     * Copy a file. Use
+     * {@link java.nio.file.Files#copy(java.nio.file.Path, java.nio.file.Path, java.nio.file.CopyOption...)}
+     * if more control is required.
      *
      * @param source
      * @param dest must be the file, not the destination directory.
