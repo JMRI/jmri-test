@@ -31,6 +31,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.ServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,16 +46,15 @@ import org.slf4j.LoggerFactory;
  * @author Randall Wood Copyright 2012, 2014
  * @version $Revision$
  */
+@ServiceProvider(service = WebServer.class)
 public final class WebServer implements LifeCycle.Listener {
 
     protected Server server;
     protected ZeroConfService zeroConfService = null;
-    private WebServerPreferences preferences = null;
     protected ShutDownTask shutDownTask = null;
     static Logger log = LoggerFactory.getLogger(WebServer.class.getName());
 
-    protected WebServer() {
-        preferences = WebServerManager.getWebServerPreferences();
+    public WebServer() {
         shutDownTask = new QuietShutDownTask("Stop Web Server") { // NOI18N
             @Override
             public boolean execute() {
@@ -77,7 +77,7 @@ public final class WebServer implements LifeCycle.Listener {
             SelectChannelConnector connector = new SelectChannelConnector();
             connector.setMaxIdleTime(5 * 60 * 1000); // 5 minutes
             connector.setSoLingerTime(-1);
-            connector.setPort(preferences.getPort());
+            connector.setPort(WebServerManager.getWebServerPreferences().getPort());
             QueuedThreadPool threadPool = new QueuedThreadPool();
             threadPool.setName("WebServer");
             threadPool.setMaxThreads(1000);
@@ -124,7 +124,8 @@ public final class WebServer implements LifeCycle.Listener {
                     continue;
                 } else if (services.getProperty(path).equals("redirectHandler")) { // NOI18N
                     servletContext.addServlet("jmri.web.servlet.RedirectionServlet", ""); // NOI18N
-                } else if (services.getProperty(path).startsWith("jmri.web.servlet.config.ConfigServlet") && !this.preferences.allowRemoteConfig()) { // NOI18N
+                } else if (services.getProperty(path).startsWith("jmri.web.servlet.config.ConfigServlet") &&
+                        !WebServerManager.getWebServerPreferences().allowRemoteConfig()) { // NOI18N
                     // if not allowRemoteConfig, use DenialServlet for any path configured to use ConfigServlet
                     servletContext.addServlet("jmri.web.servlet.DenialServlet", "/*"); // NOI18N
                 } else {
@@ -142,13 +143,7 @@ public final class WebServer implements LifeCycle.Listener {
                     )) {
                         contexts.addHandler(handler);
                     }
-                } catch (InstantiationException ex) {
-                    log.error("Unable to register servlet", ex);
-                } catch (IllegalAccessException ex) {
-                    log.error("Unable to register servlet", ex);
-                } catch (InvocationTargetException ex) {
-                    log.error("Unable to register servlet", ex);
-                } catch (NoSuchMethodException ex) {
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
                     log.error("Unable to register servlet", ex);
                 }
             }
@@ -189,7 +184,7 @@ public final class WebServer implements LifeCycle.Listener {
     }
 
     public int getPort() {
-        return preferences.getPort();
+        return WebServerManager.getWebServerPreferences().getPort();
     }
 
     /**
@@ -229,13 +224,7 @@ public final class WebServer implements LifeCycle.Listener {
             )) {
                 ((ContextHandlerCollection) this.server.getHandler()).addHandler(handler);
             }
-        } catch (InstantiationException ex) {
-            log.error("Unable to register servlet", ex);
-        } catch (IllegalAccessException ex) {
-            log.error("Unable to register servlet", ex);
-        } catch (InvocationTargetException ex) {
-            log.error("Unable to register servlet", ex);
-        } catch (NoSuchMethodException ex) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
             log.error("Unable to register servlet", ex);
         }
     }
@@ -243,7 +232,7 @@ public final class WebServer implements LifeCycle.Listener {
     private List<ServletContextHandler> registerServlet(int options, Class<? extends HttpServlet> type, HttpServlet instance)
             throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         WebServlet info = type.getAnnotation(WebServlet.class);
-        List<ServletContextHandler> handlers = new ArrayList<ServletContextHandler>(info.urlPatterns().length);
+        List<ServletContextHandler> handlers = new ArrayList<>(info.urlPatterns().length);
         for (String pattern : info.urlPatterns()) {
             ServletContextHandler context = new ServletContextHandler(options);
             context.setContextPath(pattern);
@@ -265,16 +254,16 @@ public final class WebServer implements LifeCycle.Listener {
         if (InstanceManager.shutDownManagerInstance() != null) {
             InstanceManager.shutDownManagerInstance().register(shutDownTask);
         }
-        log.info("Starting Web Server on port " + preferences.getPort());
+        log.info("Starting Web Server on port {}", WebServerManager.getWebServerPreferences().getPort());
     }
 
     @Override
     public void lifeCycleStarted(LifeCycle lc) {
-        HashMap<String, String> properties = new HashMap<String, String>();
+        HashMap<String, String> properties = new HashMap<>();
         properties.put("path", "/"); // NOI18N
         properties.put(JSON.JSON, JSON.JSON_PROTOCOL_VERSION);
         log.info("Starting ZeroConfService _http._tcp.local for Web Server with properties {}", properties);
-        zeroConfService = ZeroConfService.create("_http._tcp.local.", preferences.getPort(), properties); // NOI18N
+        zeroConfService = ZeroConfService.create("_http._tcp.local.", WebServerManager.getWebServerPreferences().getPort(), properties); // NOI18N
         zeroConfService.publish();
         log.debug("Web Server finished starting");
     }

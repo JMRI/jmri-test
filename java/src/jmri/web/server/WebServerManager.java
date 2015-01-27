@@ -9,6 +9,7 @@ import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
+import org.openide.util.Lookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,6 @@ public class WebServerManager {
 
     static private WebServerManager instance = null;
     private WebServerPreferences preferences;
-    private WebServer server;
     static Logger log = LoggerFactory.getLogger(WebServer.class.getName());
 
     private WebServerManager() {
@@ -58,10 +58,7 @@ public class WebServerManager {
     }
 
     public WebServer getServer() {
-        if (server == null) {
-            server = new WebServer();
-        }
-        return server;
+        return Lookup.getDefault().lookup(WebServer.class);
     }
 
     public static WebServer getWebServer() {
@@ -116,9 +113,7 @@ public class WebServerManager {
 
             xmlFile.writeXML(WSFile, WSDoc);
 
-        } catch (IOException ex) {
-            log.error("Error converting miniServer preferences to Web Server preferences.", ex);
-        } catch (JDOMException ex) {
+        } catch (IOException | JDOMException ex) {
             log.error("Error converting miniServer preferences to Web Server preferences.", ex);
         }
     }
