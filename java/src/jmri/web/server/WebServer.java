@@ -77,7 +77,7 @@ public final class WebServer implements LifeCycle.Listener {
             SelectChannelConnector connector = new SelectChannelConnector();
             connector.setMaxIdleTime(5 * 60 * 1000); // 5 minutes
             connector.setSoLingerTime(-1);
-            connector.setPort(WebServerManager.getWebServerPreferences().getPort());
+            connector.setPort(this.getPreferences().getPort());
             QueuedThreadPool threadPool = new QueuedThreadPool();
             threadPool.setName("WebServer");
             threadPool.setMaxThreads(1000);
@@ -125,7 +125,7 @@ public final class WebServer implements LifeCycle.Listener {
                 } else if (services.getProperty(path).equals("redirectHandler")) { // NOI18N
                     servletContext.addServlet("jmri.web.servlet.RedirectionServlet", ""); // NOI18N
                 } else if (services.getProperty(path).startsWith("jmri.web.servlet.config.ConfigServlet") &&
-                        !WebServerManager.getWebServerPreferences().allowRemoteConfig()) { // NOI18N
+                        !this.getPreferences().allowRemoteConfig()) { // NOI18N
                     // if not allowRemoteConfig, use DenialServlet for any path configured to use ConfigServlet
                     servletContext.addServlet("jmri.web.servlet.DenialServlet", "/*"); // NOI18N
                 } else {
@@ -184,9 +184,13 @@ public final class WebServer implements LifeCycle.Listener {
     }
 
     public int getPort() {
-        return WebServerManager.getWebServerPreferences().getPort();
+        return this.getPreferences().getPort();
     }
 
+    public WebServerPreferences getPreferences() {
+        return WebServerManager.getWebServerPreferences();
+    }
+    
     /**
      * Register a {@link javax.servlet.http.HttpServlet } that is annotated with
      * the {@link javax.servlet.annotation.WebServlet } annotation.
@@ -254,7 +258,7 @@ public final class WebServer implements LifeCycle.Listener {
         if (InstanceManager.shutDownManagerInstance() != null) {
             InstanceManager.shutDownManagerInstance().register(shutDownTask);
         }
-        log.info("Starting Web Server on port {}", WebServerManager.getWebServerPreferences().getPort());
+        log.info("Starting Web Server on port {}", this.getPreferences().getPort());
     }
 
     @Override
@@ -263,7 +267,7 @@ public final class WebServer implements LifeCycle.Listener {
         properties.put("path", "/"); // NOI18N
         properties.put(JSON.JSON, JSON.JSON_PROTOCOL_VERSION);
         log.info("Starting ZeroConfService _http._tcp.local for Web Server with properties {}", properties);
-        zeroConfService = ZeroConfService.create("_http._tcp.local.", WebServerManager.getWebServerPreferences().getPort(), properties); // NOI18N
+        zeroConfService = ZeroConfService.create("_http._tcp.local.", this.getPreferences().getPort(), properties); // NOI18N
         zeroConfService.publish();
         log.debug("Web Server finished starting");
     }
