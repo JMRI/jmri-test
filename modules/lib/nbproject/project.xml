@@ -224,7 +224,6 @@
                 <package>apps.gui3.dp3</package>
                 <package>apps.gui3.mdi</package>
                 <package>apps.gui3.paned</package>
-                <package>help.fr.images</package>
                 <package>jmri</package>
                 <package>jmri.beans</package>
                 <package>jmri.configurexml</package>
@@ -382,6 +381,8 @@
                 <package>jmri.jmrix.cmri.serial.sim</package>
                 <package>jmri.jmrix.cmri.serial.sim.configurexml</package>
                 <package>jmri.jmrix.configurexml</package>
+                <package>jmri.jmrix.dcc</package>
+                <package>jmri.jmrix.dcc.configurexml</package>
                 <package>jmri.jmrix.dcc4pc</package>
                 <package>jmri.jmrix.dcc4pc.configurexml</package>
                 <package>jmri.jmrix.dcc4pc.serialdriver</package>
@@ -618,6 +619,7 @@
                 <package>jmri.jmrix.rfid.protocol.coreid</package>
                 <package>jmri.jmrix.rfid.protocol.olimex</package>
                 <package>jmri.jmrix.rfid.protocol.parallax</package>
+                <package>jmri.jmrix.rfid.protocol.seeedstudio</package>
                 <package>jmri.jmrix.rfid.serialdriver</package>
                 <package>jmri.jmrix.rfid.serialdriver.configurexml</package>
                 <package>jmri.jmrix.rfid.swing</package>
@@ -700,8 +702,11 @@
                 <package>jmri.jmrix.zimo</package>
                 <package>jmri.jmrix.zimo.mx1</package>
                 <package>jmri.jmrix.zimo.mx1.configurexml</package>
-                <package>jmri.jmrix.zimo.packetgen</package>
-                <package>jmri.jmrix.zimo.zimomon</package>
+                <package>jmri.jmrix.zimo.mxulf</package>
+                <package>jmri.jmrix.zimo.mxulf.configurexml</package>
+                <package>jmri.jmrix.zimo.swing</package>
+                <package>jmri.jmrix.zimo.swing.monitor</package>
+                <package>jmri.jmrix.zimo.swing.packetgen</package>
                 <package>jmri.layout</package>
                 <package>jmri.managers</package>
                 <package>jmri.managers.configurexml</package>
@@ -740,8 +745,6 @@
                 <package>jmri.web.servlet.panel</package>
                 <package>jmri.web.servlet.roster</package>
                 <package>jmri.web.servlet.simple</package>
-                <package>jmri.web.servlet.xmlio</package>
-                <package>jmri.web.xmlio</package>
             </public-packages>
         </data>
     </configuration>
