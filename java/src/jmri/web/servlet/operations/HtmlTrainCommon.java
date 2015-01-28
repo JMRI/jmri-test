@@ -63,14 +63,17 @@ public class HtmlTrainCommon extends TrainCommon {
 
     public String pickupUtilityCars(List<Car> carList, Car car, RouteLocation rl, RouteLocation rld, boolean isManifest) {
         // list utility cars by type, track, length, and load
-        String[] messageFormat = Setup.getPickupUtilitySwitchListMessageFormat();
-        if (isManifest || Setup.isSwitchListFormatSameAsManifest()) {
+        String[] messageFormat;
+        if (isManifest) {
             messageFormat = Setup.getPickupUtilityManifestMessageFormat();
+        } else {
+        	messageFormat = Setup.getPickupUtilitySwitchListMessageFormat();
         }
-        if (this.countUtilityCars(messageFormat, carList, car, rl, rld, PICKUP) == 0) {
+        int count = countUtilityCars(messageFormat, carList, car, rl, rld, PICKUP);
+        if (count == 0) {
             return ""; // already printed out this car type
         }
-        return pickUpCar(car, messageFormat);
+        return pickUpCar(car, count, messageFormat);
     }
 
     protected String setoutUtilityCars(List<Car> carList, Car car, RouteLocation rl, boolean isManifest) {
@@ -86,26 +89,41 @@ public class HtmlTrainCommon extends TrainCommon {
         } else if (!isLocal && !isManifest) {
             messageFormat = Setup.getDropUtilitySwitchListMessageFormat();
         }
-        if (countUtilityCars(messageFormat, carList, car, rl, null, !PICKUP) == 0) {
+        int count = countUtilityCars(messageFormat, carList, car, rl, null, !PICKUP);
+        if (count == 0) {
             return ""; // already printed out this car type
         }
-        return dropCar(car, messageFormat, isLocal);
+        return dropCar(car, count, messageFormat, isLocal);
+    }
+    
+    protected String pickUpCar(Car car, String[] format) {
+    	return pickUpCar(car, 0, format);
     }
 
-    protected String pickUpCar(Car car, String[] format) {
+    protected String pickUpCar(Car car, int count, String[] format) {
         if (isLocalMove(car)) {
             return ""; // print nothing local move, see dropCar
         }
         StringBuilder builder = new StringBuilder();
+        // count the number of utility cars
+        if (count != 0)
+        	builder.append(count);
         for (String attribute : format) {
             builder.append(String.format(locale, strings.getProperty("Attribute"), getCarAttribute(car, attribute, PICKUP, !LOCAL), attribute.toLowerCase())).append(" "); // NOI18N
         }
         log.debug("Picking up car {}", builder);
         return String.format(locale, strings.getProperty(this.resourcePrefix + "PickUpCar"), builder.toString()); // NOI18N
     }
-
+    
     protected String dropCar(Car car, String[] format, boolean isLocal) {
+    	return dropCar(car, 0, format, isLocal);
+    }
+
+    protected String dropCar(Car car, int count, String[] format, boolean isLocal) {
         StringBuilder builder = new StringBuilder();
+        // count the number of utility cars
+        if (count != 0)
+        	builder.append(count);
         for (String attribute : format) {
             builder.append(String.format(locale, strings.getProperty("Attribute"), getCarAttribute(car, attribute, !PICKUP, isLocal), attribute.toLowerCase())).append(" "); // NOI18N
         }
@@ -223,7 +241,8 @@ public class HtmlTrainCommon extends TrainCommon {
             return rs.getLength();
         } else if (attribute.equals(Setup.COLOR)) {
             return rs.getColor();
-        } else if (attribute.equals(Setup.LOCATION) && (isPickup || isLocal)) {
+        } else if (attribute.equals(Setup.LOCATION) && (isPickup || isLocal)
+        		|| (attribute.equals(Setup.TRACK) && isPickup)) {
             if (rs.getTrack() != null) {
                 return String.format(locale, strings.getProperty("FromTrack"), StringEscapeUtils.escapeHtml4(rs.getTrackName()));
             }
@@ -232,7 +251,7 @@ public class HtmlTrainCommon extends TrainCommon {
             return String.format(locale, strings.getProperty("FromLocation"), StringEscapeUtils.escapeHtml4(rs.getLocationName()));
         } else if (attribute.equals(Setup.DESTINATION) && isPickup) {
             return String.format(locale, strings.getProperty("ToLocation"), StringEscapeUtils.escapeHtml4(splitString(rs.getDestinationName())));
-        } else if (attribute.equals(Setup.DESTINATION) && !isPickup) {
+        } else if ((attribute.equals(Setup.DESTINATION) || attribute.equals(Setup.TRACK)) && !isPickup) {
             return String.format(locale, strings.getProperty("ToTrack"), StringEscapeUtils.escapeHtml4(splitString(rs.getDestinationTrackName())));
         } else if (attribute.equals(Setup.DEST_TRACK)) {
             return String.format(locale, strings.getProperty("ToLocationAndTrack"), StringEscapeUtils.escapeHtml4(splitString(rs.getDestinationName())), StringEscapeUtils.escapeHtml4(splitString(rs.getDestinationTrackName())));
@@ -240,11 +259,11 @@ public class HtmlTrainCommon extends TrainCommon {
             return StringEscapeUtils.escapeHtml4(rs.getOwner());
         } else if (attribute.equals(Setup.COMMENT)) {
             return StringEscapeUtils.escapeHtml4(rs.getComment());
-        } else if (attribute.equals(Setup.BLANK) || attribute.equals(Setup.NO_NUMBER) || attribute.equals(Setup.NO_ROAD) || attribute.equals(Setup.NO_COLOR) || attribute.equals(Setup.NO_DESTINATION) || attribute.equals(Setup.NO_DEST_TRACK) || attribute.equals(Setup.NO_LOCATION) || attribute.equals(Setup.TAB) || attribute.equals(Setup.TAB2) || attribute.equals(Setup.TAB3)) {
+        } else if (attribute.equals(Setup.BLANK) || attribute.equals(Setup.NO_NUMBER) || attribute.equals(Setup.NO_ROAD) || attribute.equals(Setup.NO_COLOR) || attribute.equals(Setup.NO_DESTINATION) || attribute.equals(Setup.NO_DEST_TRACK) || attribute.equals(Setup.NO_LOCATION) || attribute.equals(Setup.NO_TRACK) ||attribute.equals(Setup.TAB) || attribute.equals(Setup.TAB2) || attribute.equals(Setup.TAB3)) {
             // attributes that don't print
             return "";
         }
-        return Bundle.getMessage(locale, "ErrorPrintOptions"); // something is isn't right!
+        return String.format(Bundle.getMessage(locale, "ErrorPrintOptions"), attribute) ; // something is isn't right!
     }
 
     protected String getTrackComments(RouteLocation location, List<Car> cars) {
