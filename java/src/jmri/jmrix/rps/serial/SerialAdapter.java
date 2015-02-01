@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import jmri.jmrix.rps.Distributor;
 import jmri.jmrix.rps.Engine;
 import jmri.jmrix.rps.Reading;
+import jmri.jmrix.rps.RpsSystemConnectionMemo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +33,10 @@ import org.slf4j.LoggerFactory;
 public class SerialAdapter extends jmri.jmrix.AbstractSerialPortController implements jmri.jmrix.SerialPortAdapter {
 
     public SerialAdapter(){
-        super(null);
+        super(new RpsSystemConnectionMemo());
         option1Name = "Protocol";
         options.put(option1Name, new Option("Protocol", validOptions1));
+        this.manufacturerName = jmri.jmrix.DCCManufacturerList.NAC;
     }
     
     transient SerialPort activeSerialPort = null;
@@ -224,14 +226,20 @@ public class SerialAdapter extends jmri.jmrix.AbstractSerialPortController imple
         t.stop();
     }
 
+    @Override
     public synchronized void dispose() {
         // stop operations here. This is a deprecated method, but OK for us.
-        if (readerThread!=null) stopThread(readerThread);
+        if (readerThread != null) {
+            stopThread(readerThread);
+        }
 
         // release port
-        if (activeSerialPort != null) activeSerialPort.close();
+        if (activeSerialPort != null) {
+            activeSerialPort.close();
+        }
         serialStream = null;    // flags state
         activeSerialPort = null; // flags state
+        super.dispose();
     }
 
     /**
@@ -448,11 +456,6 @@ public class SerialAdapter extends jmri.jmrix.AbstractSerialPortController imple
         }
     }
     
-    String manufacturerName = jmri.jmrix.DCCManufacturerList.NAC;
-    
-    public String getManufacturer() { return manufacturerName; }
-    public void setManufacturer(String manu) { manufacturerName=manu; }
-
     static Logger log = LoggerFactory.getLogger(SerialAdapter.class.getName());
 
 }

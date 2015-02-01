@@ -30,22 +30,29 @@ abstract public class AbstractPortController implements PortAdapter {
     @Override
     public abstract DataOutputStream getOutputStream();
 
-    // Ideally, this would be final, but two classes expect to be
-    // able to set this after object construction.
+    protected String manufacturerName = null;
+
+    // By making this private, and not protected, we are able to require that
+    // all access is through the getter and setter, and that subclasses that
+    // override the getter and setter must call the super implemenations of the
+    // getter and setter. By channelling setting through a single method, we can
+    // ensure this is never null.
     private SystemConnectionMemo connectionMemo;
 
     protected AbstractPortController(SystemConnectionMemo connectionMemo) {
-        if (connectionMemo == null) {
-            throw new NullPointerException();
-        }
-        this.connectionMemo = connectionMemo;
+        AbstractPortController.this.setSystemConnectionMemo(connectionMemo);
     }
 
+    /**
+     * Clean up before removal.
+     *
+     * Overriding methods must call <code>super.dispose()</code> or document why
+     * they are not calling the overridden implementation. In most cases, failure
+     * to call the overridden implementation will cause user-visible error.
+     */
     @Override
     public void dispose() {
-        if (this.getSystemConnectionMemo() != null) {
-            this.getSystemConnectionMemo().dispose();
-        }
+        this.getSystemConnectionMemo().dispose();
     }
 
     // check that this object is ready to operate
@@ -252,15 +259,14 @@ abstract public class AbstractPortController implements PortAdapter {
      */
     @Override
     public String getManufacturer() {
-        return mManufacturer;
+        return this.manufacturerName;
     }
 
     @Override
     public void setManufacturer(String manufacturer) {
-        log.debug("update manufacturer from " + mManufacturer + " to " + manufacturer);
-        mManufacturer = manufacturer;
+        log.debug("update manufacturer from {} to {}", this.manufacturerName, manufacturer);
+        this.manufacturerName = manufacturer;
     }
-    protected String mManufacturer = null;
 
     @Override
     public boolean getDisabled() {
@@ -366,18 +372,42 @@ abstract public class AbstractPortController implements PortAdapter {
         return this.isDirty();
     }
 
+    /**
+     * Get the {@link jmri.jmrix.SystemConnectionMemo} associated with this
+     * object.
+     *
+     * This method should only be overridden to ensure that a specific subclass
+     * of SystemConnectionMemo is returned. The recommended pattern is:      <code>
+     * public MySystemConnectionMemo getSystemConnectionMemo() {
+     *  return (MySystemConnectionMemo) super.getSystemConnectionMemo();
+     * }
+     * </code>
+     *
+     * @return a SystemConnectionMemo
+     */
     @Override
     public SystemConnectionMemo getSystemConnectionMemo() {
         return this.connectionMemo;
     }
 
-    protected void setSystemConnectionMemo(SystemConnectionMemo connectionMemo) {
+    /**
+     * Set the {@link jmri.jmrix.SystemConnectionMemo} associated with this
+     * object.
+     *
+     * Overriding implementations must call
+     * <code>super.setSystemConnectionMemo(memo)</code> at some point to ensure
+     * the SystemConnectionMemo gets set.
+     *
+     * @param connectionMemo
+     */
+    @Override
+    public void setSystemConnectionMemo(SystemConnectionMemo connectionMemo) {
         if (connectionMemo == null) {
             throw new NullPointerException();
         }
         this.connectionMemo = connectionMemo;
     }
-    
+
     static private Logger log = LoggerFactory.getLogger(AbstractPortController.class.getName());
 
 }
