@@ -1245,7 +1245,7 @@ public class Track {
 		} catch (Exception e) {
 			return LENGTH + " (" + rs.getLength() + ")";
 		}
-		// @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="BC_UNCONFIRMED_CAST")
+
 		if (Car.class.isInstance(rs)) {
 			Car car = (Car) rs;
 			// does this track service the car's final destination?
@@ -1274,7 +1274,6 @@ public class Track {
 			}
 		}
 		// check for loco in consist
-		// @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="BC_UNCONFIRMED_CAST")
 		if (Engine.class.isInstance(rs)) {
 			Engine eng = (Engine) rs;
 			if (eng.getConsist() != null && eng.getConsist().isLead(eng)) {
@@ -1296,16 +1295,18 @@ public class Track {
 				return OKAY;
 			// ignore used length option?
 			if (checkPlannedPickUps(length))
-					return OKAY;
+				return OKAY;
 			// Note that a lot of the code checks for track length being an issue, therefore it has to be the last
 			// check.
 			// Is rolling stock too long for this track?
 			if ((getLength() < length && getPool() == null)
 					|| (getPool() != null && getPool().getTotalLengthTracks() < length))
-				return CAPACITY + " " + getLength() + " " + Setup.getLengthUnit().toLowerCase();// NOI18N
+				return MessageFormat.format(Bundle.getMessage("capacityIssue"), new Object[] { CAPACITY, length,
+						Setup.getLengthUnit().toLowerCase(), getLength() });
 			log.debug("Rolling stock ({}) not accepted at location ({}, {}) no room!", rs.toString(), getLocation()
 					.getName(), getName()); // NOI18N
-			return LENGTH + " " + length + " " + Setup.getLengthUnit().toLowerCase();// NOI18N
+			return MessageFormat.format(Bundle.getMessage("lengthIssue"), new Object[] { LENGTH, length,
+					Setup.getLengthUnit().toLowerCase(), getLength() - (getUsedLength() + getReserved()) });
 		}
 		return OKAY;
 	}

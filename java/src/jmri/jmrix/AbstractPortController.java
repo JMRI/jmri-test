@@ -4,6 +4,8 @@ package jmri.jmrix;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.HashMap;
+import javax.annotation.Nonnull;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,10 +49,12 @@ abstract public class AbstractPortController implements PortAdapter {
      * Clean up before removal.
      *
      * Overriding methods must call <code>super.dispose()</code> or document why
-     * they are not calling the overridden implementation. In most cases, failure
-     * to call the overridden implementation will cause user-visible error.
+     * they are not calling the overridden implementation. In most cases,
+     * failure to call the overridden implementation will cause user-visible
+     * error.
      */
     @Override
+    @OverridingMethodsMustInvokeSuper
     public void dispose() {
         this.getSystemConnectionMemo().dispose();
     }
@@ -252,11 +256,6 @@ abstract public class AbstractPortController implements PortAdapter {
         }
     }
 
-    /**
-     * Get and set of the Manufacturer for network (TCP/IP) based connections is
-     * handled by the ConnectionConfig code in each connector. this is here as
-     * we implement the serialdriveradpter.
-     */
     @Override
     public String getManufacturer() {
         return this.manufacturerName;
@@ -270,10 +269,7 @@ abstract public class AbstractPortController implements PortAdapter {
 
     @Override
     public boolean getDisabled() {
-        if (this.getSystemConnectionMemo() != null) {
-            return this.getSystemConnectionMemo().getDisabled();
-        }
-        return this.mDisabled;
+        return this.getSystemConnectionMemo().getDisabled();
     }
 
     /**
@@ -289,49 +285,30 @@ abstract public class AbstractPortController implements PortAdapter {
      */
     @Override
     public void setDisabled(boolean disabled) {
-        if (this.loadedDisabled == null) {
-            this.loadedDisabled = disabled;
-        }
-        if (this.getSystemConnectionMemo() != null) {
-            this.getSystemConnectionMemo().setDisabled(disabled);
-        }
-        this.mDisabled = disabled;
+        this.getSystemConnectionMemo().setDisabled(disabled);
     }
-
-    protected boolean mDisabled = false;
-    private Boolean loadedDisabled = null;
 
     @Override
     public String getSystemPrefix() {
-        if (this.getSystemConnectionMemo() != null) {
-            return this.getSystemConnectionMemo().getSystemPrefix();
-        }
-        return null;
+        return this.getSystemConnectionMemo().getSystemPrefix();
     }
 
     @Override
     public void setSystemPrefix(String systemPrefix) {
-        if (this.getSystemConnectionMemo() != null) {
-            if (!this.getSystemConnectionMemo().setSystemPrefix(systemPrefix)) {
-                throw new IllegalArgumentException();
-            }
+        if (!this.getSystemConnectionMemo().setSystemPrefix(systemPrefix)) {
+            throw new IllegalArgumentException();
         }
     }
 
     @Override
     public String getUserName() {
-        if (this.getSystemConnectionMemo() != null) {
-            return this.getSystemConnectionMemo().getUserName();
-        }
-        return null;
+        return this.getSystemConnectionMemo().getUserName();
     }
 
     @Override
     public void setUserName(String userName) {
-        if (this.getSystemConnectionMemo() != null) {
-            if (!this.getSystemConnectionMemo().setUserName(userName)) {
-                throw new IllegalArgumentException();
-            }
+        if (!this.getSystemConnectionMemo().setUserName(userName)) {
+            throw new IllegalArgumentException();
         }
     }
 
@@ -353,7 +330,7 @@ abstract public class AbstractPortController implements PortAdapter {
 
     @Override
     public boolean isDirty() {
-        boolean isDirty = (this.loadedDisabled == null || this.loadedDisabled != this.getDisabled());
+        boolean isDirty = this.getSystemConnectionMemo().isDirty();
         if (!isDirty) {
             for (Option option : this.options.values()) {
                 isDirty = option.isDirty();
@@ -377,7 +354,7 @@ abstract public class AbstractPortController implements PortAdapter {
      * object.
      *
      * This method should only be overridden to ensure that a specific subclass
-     * of SystemConnectionMemo is returned. The recommended pattern is:      <code>
+     * of SystemConnectionMemo is returned. The recommended pattern is: <code>
      * public MySystemConnectionMemo getSystemConnectionMemo() {
      *  return (MySystemConnectionMemo) super.getSystemConnectionMemo();
      * }
@@ -401,7 +378,8 @@ abstract public class AbstractPortController implements PortAdapter {
      * @param connectionMemo
      */
     @Override
-    public void setSystemConnectionMemo(SystemConnectionMemo connectionMemo) {
+    @OverridingMethodsMustInvokeSuper
+    public void setSystemConnectionMemo(@Nonnull SystemConnectionMemo connectionMemo) {
         if (connectionMemo == null) {
             throw new NullPointerException();
         }
