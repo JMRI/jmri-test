@@ -67,13 +67,22 @@ public class LinkingLabel extends PositionableLabel implements LinkingObject {
                 // locate JmriJFrame and push to front
                 String frame = url.substring(6);
                 final jmri.util.JmriJFrame jframe = jmri.util.JmriJFrame.getFrame(frame);
-                java.awt.EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        jframe.toFront();
-                        jframe.repaint();
-                    }
-                });                
+                if (jframe!=null) {  //ignore if jframe not found
+                	java.awt.EventQueue.invokeLater(new Runnable() {
+                		@Override
+                		public void run() {
+                			//if frame was minimized, restore
+                			if (jframe.getExtendedState() == java.awt.Frame.ICONIFIED) {
+                				jframe.setExtendedState(java.awt.Frame.NORMAL);
+                			}
+                			//bring the frame to the foreground
+                			jframe.toFront();
+                			jframe.repaint();
+                		}
+                	});                
+                } else {
+                	log.error("Frame '" + frame + "' not found, cannot link to it.");
+                }
             } else if (url!=null && url.length()>0) {
                 jmri.util.ExternalLinkContentViewerUI.activateURL(new java.net.URL(url));
             }

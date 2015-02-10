@@ -1,7 +1,6 @@
 package jmri.web.servlet.directory;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import org.eclipse.jetty.util.resource.Resource;
@@ -55,20 +54,16 @@ public class ModuleDirectoryHandler extends DirectoryHandler {
         if (path.endsWith("/")) { // NOI18N
             path = path.substring(0, path.length() - 1);
         }
-        try {
-            ArrayList<File> files = new ArrayList<File>(InstalledFileLocator.getDefault().locateAll(path, null, true));
-            if (files.size() == 1) {
-                resource = Resource.newResource(files.get(0));
-            } else if (!files.isEmpty()) {
-                ArrayList<Resource> resources = new ArrayList<Resource>();
-                for (File file : files) {
-                    resources.add(Resource.newResource(file));
-                }
-                resource = new ResourceCollection();
-                ((ResourceCollection) resource).setResources(resources.toArray(new Resource[0]));
-            }
-        } catch (IOException ex) {
-            log.warn("Error locating \"{}\" in modules: {}", path, ex.getMessage());
+        ArrayList<File> files = new ArrayList<>(InstalledFileLocator.getDefault().locateAll(path, null, true));
+        if (files.size() == 1) {
+            resource = Resource.newResource(files.get(0));
+        } else if (!files.isEmpty()) {
+            ArrayList<Resource> resources = new ArrayList<>();
+            files.stream().forEach((file) -> {
+                resources.add(Resource.newResource(file));
+            });
+            resource = new ResourceCollection();
+            ((ResourceCollection) resource).setResources(resources.toArray(new Resource[0]));
         }
         return resource;
     }
