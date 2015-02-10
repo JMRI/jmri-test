@@ -17,11 +17,8 @@ import org.slf4j.LoggerFactory;
  */
 public class RedirectionServlet extends HttpServlet {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = -4780651112712605891L;
-	private final Properties redirections = new Properties();
+    private static final long serialVersionUID = -4780651112712605891L;
+    private final Properties redirections = new Properties();
     private static final Logger log = LoggerFactory.getLogger(RedirectionServlet.class);
 
     public RedirectionServlet() {
@@ -35,6 +32,11 @@ public class RedirectionServlet extends HttpServlet {
         }
     }
 
+    public RedirectionServlet(String urlPattern, String redirection) {
+        this();
+        this.redirections.setProperty(urlPattern, redirection);
+    }
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         boolean firstParameter = true;
