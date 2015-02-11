@@ -11,6 +11,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import jmri.web.server.WebServerManager;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -22,12 +23,9 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = HttpServlet.class)
 public class ConfigServlet extends HttpServlet {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = -6553518147779778004L;
+    private static final long serialVersionUID = -6553518147779778004L;
 
-	/**
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
@@ -43,7 +41,11 @@ public class ConfigServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.sendError(501, Bundle.getMessage("501NotImplemented")); // NOI18N
+        if (!WebServerManager.getWebServerPreferences().allowRemoteConfig()) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, Bundle.getMessage("501NotImplemented")); // NOI18N
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
