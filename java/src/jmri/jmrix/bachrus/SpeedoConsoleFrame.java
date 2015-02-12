@@ -27,11 +27,11 @@ import jmri.InstanceManager;
 import jmri.ThrottleListener;
 import jmri.jmrit.DccLocoAddressSelector;
 import jmri.jmrit.roster.RosterEntry;
-import jmri.jmrit.roster.swing.RosterEntryComboBox;
 import jmri.util.JmriJFrame;
 import jmri.Programmer;
 import jmri.ProgrammerException;
 import jmri.ProgListener;
+import jmri.jmrit.roster.RosterEntrySelector;
 import jmri.jmrit.roster.swing.GlobalRosterEntryComboBox;
 
 
@@ -39,6 +39,7 @@ import jmri.jmrit.roster.swing.GlobalRosterEntryComboBox;
  * Frame for Speedo Console for Bachrus running stand reader interface
  * 
  * @author			Andrew Crosland   Copyright (C) 2010
+ * @author			Dennis Miller   Copyright (C) 2015
  * @version			$Revision$
  */
 public class SpeedoConsoleFrame extends JmriJFrame implements SpeedoListener,
@@ -87,7 +88,7 @@ public class SpeedoConsoleFrame extends JmriJFrame implements SpeedoListener,
 
     private DccLocoAddressSelector addrSelector = new DccLocoAddressSelector();
     private JButton setButton;
-    private RosterEntryComboBox rosterBox;
+    private GlobalRosterEntryComboBox rosterBox;
     protected RosterEntry rosterEntry;
     private boolean disableRosterBoxActions = false;
     
@@ -446,13 +447,22 @@ public class SpeedoConsoleFrame extends JmriJFrame implements SpeedoListener,
         rosterBox = new GlobalRosterEntryComboBox();
         rosterBox.setNonSelectedItem(rb.getString("NoLocoSelected"));
         rosterBox.setToolTipText(rb.getString("TTSelectLocoFromRoster"));
-        rosterBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (!disableRosterBoxActions) { //Have roster box actions been disabled?
-                    rosterItemSelected();
-                }
-            }
-        });
+        /* 
+        Using an ActionListener didn't select a loco from the ComboBox properly
+        so changed it to a PropertyChangeListener approach modeled on the code
+        in CombinedLocoSelPane class, layoutRosterSelection method, which is known to work.
+        Not sure why the ActionListener didn't work properly, but this fixes the bug
+        */
+        rosterBox.addPropertyChangeListener(
+                RosterEntrySelector.SELECTED_ROSTER_ENTRIES, new PropertyChangeListener(){
+                    @Override
+                    public void propertyChange(PropertyChangeEvent pce){
+                        if (!disableRosterBoxActions) { //Have roster box actions been disabled?
+                            rosterItemSelected();
+                        }
+                    }
+                });
+
 
         readAddressButton.setToolTipText(rb.getString("ReadLoco"));
 
@@ -578,6 +588,7 @@ public class SpeedoConsoleFrame extends JmriJFrame implements SpeedoListener,
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 spFwd.clear();
                 spRev.clear();
+		speedoDialDisplay.reset();
                 profileGraphPane.repaint();
             }
         });
