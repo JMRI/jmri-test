@@ -116,6 +116,7 @@ public final class LoggingConfigurator implements ArgsProcessor, Runnable {
 
     @Override
     public void run() {
+        System.setProperty("jmri.log.path", new File(Places.getUserDirectory(), "var/log").getPath());
         /*
          TODO: how do I get a logging configuration from the user files
          without a dependency on a running JMRI configuation? This cannot
@@ -131,6 +132,6 @@ public final class LoggingConfigurator implements ArgsProcessor, Runnable {
         if (installedLogConfig != null) {
             this.configureLogging(org.openide.filesystems.FileUtil.toFileObject(installedLogConfig));
         }
-        log.info("Logging to {}", new File(Places.getUserDirectory(), "var/log/messages.log")); // TODO: remove once Locations dialog is fixed
+        log.info("Logging to {}", new File(Places.getUserDirectory(), "var/log/messages.log"));
     }
 }
