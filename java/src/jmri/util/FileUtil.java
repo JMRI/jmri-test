@@ -1,7 +1,6 @@
 // FileUtil.java
 package jmri.util;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +20,7 @@ import java.security.CodeSource;
 import java.util.Arrays;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
+import javax.annotation.Nonnull;
 import org.openide.modules.InstalledFileLocator;
 import org.openide.modules.ModuleInfo;
 import org.openide.modules.Modules;
@@ -102,9 +102,18 @@ public final class FileUtil {
     static private String profilePath = null;
 
     // get the default module for resources
-    private static ModuleInfo defaultModule = Modules.getDefault().findCodeNameBase("org.jmri.resources"); // NOI18N
+    private static final ModuleInfo defaultModule = Modules.getDefault().findCodeNameBase("org.jmri.resources"); // NOI18N
     // initialize logging
     private static final Logger log = LoggerFactory.getLogger(FileUtil.class.getName());
+
+    /**
+     * The types of locations to use when falling back on default locations in {@link #findURL(java.lang.String, java.lang.String...)
+     * }.
+     */
+    static public enum Location {
+
+        INSTALLED, USER, ALL, NONE
+    }
 
     /**
      * Get the {@link java.io.File} that path refers to. Throws a
@@ -191,7 +200,7 @@ public final class FileUtil {
      * @return Canonical path to use, or null if one cannot be found.
      * @since 2.7.2
      */
-    static private String pathFromPortablePath(@NonNull String path) {
+    static private String pathFromPortablePath(@Nonnull String path) {
         if (path.startsWith(PROGRAM)) {
             if (new File(path.substring(PROGRAM.length())).isAbsolute()) {
                 path = path.substring(PROGRAM.length());
@@ -704,13 +713,18 @@ public final class FileUtil {
     /**
      * Search for a file or JAR resource by name and return the
      * {@link java.io.InputStream} for that file. Search order is defined by
-     * {@link #findURL(java.lang.String, java.lang.String[])}.
+     * {@link #findURL(java.lang.String, jmri.util.FileUtil.Location, java.lang.String...) }.
+     * No limits are placed on search locations.
      *
-     * @param path The relative path of the file or resource.
+     * @param path The relative path of the file or resource
      * @return InputStream or null.
-     * @see #findInputStream(java.lang.String, java.lang.String[])
+     * @see #findInputStream(java.lang.String, java.lang.String...)
+     * @see #findInputStream(java.lang.String, jmri.util.FileUtil.Location,
+     * java.lang.String...)
      * @see #findURL(java.lang.String)
-     * @see #findURL(java.lang.String, java.lang.String[])
+     * @see #findURL(java.lang.String, java.lang.String...)
+     * @see #findURL(java.lang.String, jmri.util.FileUtil.Location,
+     * java.lang.String...)
      */
     static public InputStream findInputStream(String path) {
         return FileUtil.findInputStream(path, new String[]{});
@@ -719,17 +733,50 @@ public final class FileUtil {
     /**
      * Search for a file or JAR resource by name and return the
      * {@link java.io.InputStream} for that file. Search order is defined by
-     * {@link #findURL(java.lang.String, java.lang.String[])}.
+     * {@link #findURL(java.lang.String, jmri.util.FileUtil.Location, java.lang.String...) }.
+     * No limits are placed on search locations.
      *
-     * @param path The relative path of the file or resource.
+     * @param path The relative path of the file or resource
      * @param searchPaths a list of paths to search for the path in
      * @return InputStream or null.
-     * @see #findInputStream(java.lang.String, java.lang.String[])
-     * @see #findURL(java.lang.String)
-     * @see #findURL(java.lang.String, java.lang.String[])
+     * @see #findInputStream(java.lang.String)
+     * @see #findInputStream(java.lang.String, jmri.util.FileUtil.Location,
+     * java.lang.String...)
      */
-    static public InputStream findInputStream(String path, @NonNull String... searchPaths) {
-        URL file = FileUtil.findURL(path, searchPaths);
+    static public InputStream findInputStream(String path, @Nonnull String... searchPaths) {
+        return FileUtil.findInputStream(path, Location.ALL, searchPaths);
+    }
+
+    /**
+     * Search for a file or JAR resource by name and return the
+     * {@link java.io.InputStream} for that file. Search order is defined by
+     * {@link #findURL(java.lang.String, jmri.util.FileUtil.Location, java.lang.String...) }.
+     *
+     * @param path The relative path of the file or resource
+     * @param locations The type of locations to limit the search to
+     * @return InputStream or null.
+     * @see #findInputStream(java.lang.String)
+     * @see #findInputStream(java.lang.String, jmri.util.FileUtil.Location,
+     * java.lang.String...)
+     */
+    static public InputStream findInputStream(String path, Location locations) {
+        return FileUtil.findInputStream(path, locations, new String[]{});
+    }
+
+    /**
+     * Search for a file or JAR resource by name and return the
+     * {@link java.io.InputStream} for that file. Search order is defined by
+     * {@link #findURL(java.lang.String, jmri.util.FileUtil.Location, java.lang.String...) }.
+     *
+     * @param path The relative path of the file or resource
+     * @param locations The type of locations to limit the search to
+     * @param searchPaths a list of paths to search for the path in
+     * @return InputStream or null.
+     * @see #findInputStream(java.lang.String)
+     * @see #findInputStream(java.lang.String, java.lang.String...)
+     */
+    static public InputStream findInputStream(String path, Location locations, @Nonnull String... searchPaths) {
+        URL file = FileUtil.findURL(path, locations, searchPaths);
         if (file != null) {
             try {
                 return file.openStream();
@@ -752,16 +799,53 @@ public final class FileUtil {
     /**
      * Search for a file or JAR resource by name and return the
      * {@link java.net.URL} for that file. Search order is defined by
-     * {@link #findURL(java.lang.String, java.lang.String...) }.
+     * {@link #findURL(java.lang.String, jmri.util.FileUtil.Location, java.lang.String...)}.
+     * No limits are placed on search locations.
      *
      * @param path The relative path of the file or resource.
      * @return The URL or null.
-     * @see #findInputStream(java.lang.String)
-     * @see #findInputStream(java.lang.String, java.lang.String[])
-     * @see #findURL(java.lang.String, java.lang.String[])
+     * @see #findURL(java.lang.String, java.lang.String...)
+     * @see #findURL(java.lang.String, jmri.util.FileUtil.Location)
+     * @see #findURL(java.lang.String, jmri.util.FileUtil.Location,
+     * java.lang.String...)
      */
     static public URL findURL(String path) {
         return FileUtil.findURL(path, new String[]{});
+    }
+
+    /**
+     * Search for a file or JAR resource by name and return the
+     * {@link java.net.URL} for that file. Search order is defined by
+     * {@link #findURL(java.lang.String, jmri.util.FileUtil.Location, java.lang.String...)}.
+     * No limits are placed on search locations.
+     *
+     * @param path The relative path of the file or resource
+     * @param searchPaths a list of paths to search for the path in
+     * @return The URL or null
+     * @see #findURL(java.lang.String)
+     * @see #findURL(java.lang.String, jmri.util.FileUtil.Location)
+     * @see #findURL(java.lang.String, jmri.util.FileUtil.Location,
+     * java.lang.String...)
+     */
+    static public URL findURL(String path, @Nonnull String... searchPaths) {
+        return FileUtil.findURL(path, Location.ALL, searchPaths);
+    }
+
+    /**
+     * Search for a file or JAR resource by name and return the
+     * {@link java.net.URL} for that file. Search order is defined by
+     * {@link #findURL(java.lang.String, jmri.util.FileUtil.Location, java.lang.String...)}.
+     *
+     * @param path The relative path of the file or resource
+     * @param locations The types of locations to limit the search to
+     * @return The URL or null
+     * @see #findURL(java.lang.String)
+     * @see #findURL(java.lang.String, java.lang.String...)
+     * @see #findURL(java.lang.String, jmri.util.FileUtil.Location,
+     * java.lang.String...)
+     */
+    static public URL findURL(String path, Location locations) {
+        return FileUtil.findURL(path, locations, new String[]{});
     }
 
     /**
@@ -779,16 +863,27 @@ public final class FileUtil {
      * module</li> <li>As a resource in all modules</li></ol></li>
      * <li>If the file or resource has not been found in the searchPaths, search
      * in the four locations listed without prepending any path</li></ol>
+     * <p>
+     * The <code>locations</code> parameter limits the above logic by limiting
+     * the location searched.
+     * <ol><li>{@link Location#ALL} will not place any limits on the
+     * search</li><li>{@link Location#NONE} effectively requires that
+     * <code>path</code> be a portable
+     * pathname</li><li>{@link Location#INSTALLED} limits the search to the
+     * {@link #PROGRAM} directory and JARs in the class
+     * path</li><li>{@link Location#USER} limits the search to the
+     * {@link #PROFILE} directory</li></ol>
      *
      * @param path The relative path of the file or resource
+     * @param locations The types of locations to limit the search to
      * @param searchPaths a list of paths to search for the path in
      * @return The URL or null
-     * @see #findInputStream(java.lang.String)
-     * @see #findInputStream(java.lang.String, java.lang.String[])
      * @see #findURL(java.lang.String)
+     * @see #findURL(java.lang.String, jmri.util.FileUtil.Location)
+     * @see #findURL(java.lang.String, java.lang.String...)
      */
-    static public URL findURL(String path, @NonNull String... searchPaths) {
-        return FileUtil.findURL(null, path, searchPaths); // NOI18N
+    static public URL findURL(String path, Location locations, @Nonnull String... searchPaths) {
+        return FileUtil.findURL(null, path, locations, searchPaths); // NOI18N
     }
 
     /**
@@ -811,20 +906,21 @@ public final class FileUtil {
      * @param module The module with which the file or resource is distrubuted;
      * bypassed if null
      * @param path The relative path of the file or resource
+     * @param locations The types of locations to limit the search to
      * @param searchPaths a list of paths to search for the path in
      * @return The URL or null
      * @see #findInputStream(java.lang.String)
      * @see #findInputStream(java.lang.String, java.lang.String[])
      * @see #findURL(java.lang.String)
      */
-    static public URL findURL(ModuleInfo module, String path, @NonNull String... searchPaths) {
+    static public URL findURL(ModuleInfo module, String path, Location locations, @Nonnull String... searchPaths) {
         if (log.isDebugEnabled()) { // avoid the Arrays.toString call unless debugging
             log.debug("Attempting to find {} in {}", path, Arrays.toString(searchPaths));
         }
         if (FileUtil.isPortableFilename(path)) {
             return FileUtil.findExternalFilename(path);
         }
-        URL resource;
+        URL resource = null;
         for (String searchPath : searchPaths) {
             resource = FileUtil.findURL(searchPath + File.separator + path);
             if (resource != null) {
@@ -832,53 +928,60 @@ public final class FileUtil {
             }
         }
         try {
-            // attempt to return path from preferences directory
-            File file = new File(FileUtil.getUserFilesPath(), path);
-            if (file.exists()) {
-                return file.toURI().toURL();
-            }
-            // attempt to return path from current working directory
-            file = new File(path);
-            if (file.exists()) {
-                return file.toURI().toURL();
-            }
-            // attempt to return path from JMRI distribution directory
-            file = new File(FileUtil.getProgramPath(), path);
-            if (file.exists()) {
-                return file.toURI().toURL();
-            }
-            if (!path.startsWith(".")) {
-                // Ensure path is in URL format
-                path = path.replace(File.separatorChar, '/');
-                if (path.startsWith("/")) {
-                    path = path.substring(1);
+            File file;
+            if (locations == Location.ALL || locations == Location.USER) {
+                // attempt to return path from preferences directory
+                file = new File(FileUtil.getUserFilesPath() + path);
+                if (file.exists()) {
+                    return file.toURI().toURL();
                 }
-                // attempt to return path from specified module if specified module is not the JMRI Resources module
-                if (module != null) {
-                    file = InstalledFileLocator.getDefault().locate(path, module.getCodeNameBase(), true);
+            }
+            if (locations == Location.ALL || locations == Location.INSTALLED) {
+                // attempt to return path from current working directory
+                file = new File(path);
+                if (file.exists()) {
+                    return file.toURI().toURL();
+                }
+                // attempt to return path from JMRI distribution directory
+                file = new File(FileUtil.getProgramPath() + path);
+                if (file.exists()) {
+                    return file.toURI().toURL();
+                }
+                if (!path.startsWith(".")) {
+                    // Ensure path is in URL format
+                    path = path.replace(File.separatorChar, '/');
+                    if (path.startsWith("/")) {
+                        path = path.substring(1);
+                    }
+                    // attempt to return path from specified module if specified module is not the JMRI Resources module
+                    if (module != null) {
+                        file = InstalledFileLocator.getDefault().locate(path, module.getCodeNameBase(), true);
+                        if (file != null && file.exists()) {
+                            return file.toURI().toURL();
+                        }
+                    }
+                    // attempt to return path from JMRI Resources module
+                    file = InstalledFileLocator.getDefault().locate(path, FileUtil.defaultModule.getCodeNameBase(), true);
                     if (file != null && file.exists()) {
                         return file.toURI().toURL();
                     }
-                }
-                // attempt to return path from JMRI Resources module
-                file = InstalledFileLocator.getDefault().locate(path, FileUtil.defaultModule.getCodeNameBase(), true);
-                if (file != null && file.exists()) {
-                    return file.toURI().toURL();
-                }
-                // attempt to return path from any module
-                file = InstalledFileLocator.getDefault().locate(path, null, true);
-                if (file != null && file.exists()) {
-                    return file.toURI().toURL();
+                    // attempt to return path from any module
+                    file = InstalledFileLocator.getDefault().locate(path, null, true);
+                    if (file != null && file.exists()) {
+                        return file.toURI().toURL();
+                    }
                 }
             }
         } catch (MalformedURLException ex) {
             log.warn("Unable to get URL for {}", path, ex);
             return null;
         }
-        // return path if in jmri.jar or null
-        resource = FileUtil.class.getResource(path);
-        if (resource == null) {
-            log.debug("Unable to get URL for {}", path);
+        if (locations == Location.ALL || locations == Location.INSTALLED) {
+            // return path if in jmri.jar or null
+            resource = FileUtil.class.getResource(path);
+            if (resource == null) {
+                log.debug("Unable to get URL for {}", path);
+            }
         }
         return resource;
     }
