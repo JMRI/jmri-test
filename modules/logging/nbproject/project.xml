@@ -44,6 +44,7 @@
                 <package>org.apache.log4j</package>
                 <package>org.jmri.logging</package>
                 <package>org.slf4j</package>
+                <package>org.slf4j.spi</package>
             </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/log4j-over-slf4j-1.7.10.jar</runtime-relative-path>
