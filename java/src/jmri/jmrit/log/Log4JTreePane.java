@@ -3,13 +3,15 @@
 package jmri.jmrit.log;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggerRepository;
 
 /**
  * Show the current Log4J Logger tree; not dynamic.
@@ -49,22 +51,33 @@ public class Log4JTreePane extends jmri.util.swing.JmriPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     }
     
+    /*
+     If a Logger's level is null, get it's parent Logger's level, recursing
+     through Loggers until a nonnull level is found (the global Logger has
+     a nonnull level).
+     */
+    private Level getLevel(Logger logger) {
+        return (logger.getLevel() != null)
+                ? logger.getLevel()
+                : this.getLevel(logger.getParent());
+    }
+    
     /**
      * 2nd stage of initialization, invoked after
      * the constructor is complete.
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void initComponents() throws Exception {
-        LoggerRepository repo = Logger.getRootLogger().getLoggerRepository();
-        
-        List<String> list = new ArrayList<String>();
-        for (java.util.Enumeration<Logger> e = repo.getCurrentLoggers() ; e.hasMoreElements() ;) {
-            Logger l = e.nextElement();
-            list.add(l.getName() + " - "
-                    + (l.getLevel()!=null
-                        ? "[" + l.getLevel().toString() + "]"
-                        : "{" + Logger.getRootLogger().getLevel().toString() + "}"));
+    public void initComponents() {
+        List<String> list = new ArrayList<>();
+        for (Enumeration<String> e = LogManager.getLogManager().getLoggerNames(); e.hasMoreElements();) {
+            Logger l = Logger.getLogger(e.nextElement());
+            if (l != null) {
+                list.add(l.getName() + " - "
+                        + (l.getLevel() != null
+                                ? "[" + l.getLevel().toString() + "]"
+                                : "{" + this.getLevel(l).toString() + "}"));
+            }
         }
         java.util.Collections.sort(list);
         StringBuilder result = new StringBuilder();
