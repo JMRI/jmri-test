@@ -65,7 +65,6 @@ import jmri.jmrit.ToolsMenu;
 import jmri.jmrit.automat.SampleAutomaton2Action;
 import jmri.jmrit.automat.SampleAutomaton3Action;
 import jmri.jmrit.automat.SampleAutomatonAction;
-import jmri.jmrit.catalog.configurexml.DefaultCatalogTreeManagerXml;
 import jmri.jmrit.decoderdefn.DecoderIndexFile;
 import jmri.jmrit.decoderdefn.PrintDecoderListAction;
 import jmri.jmrit.display.PanelMenu;
@@ -410,7 +409,6 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
         // do final activation
         InstanceManager.logixManagerInstance().activateAllLogixs();
         InstanceManager.getDefault(LayoutBlockManager.class).initializeLayoutBlockPaths();
-        new DefaultCatalogTreeManagerXml().readCatalogTrees();
 
         log.debug("End constructor");
     }

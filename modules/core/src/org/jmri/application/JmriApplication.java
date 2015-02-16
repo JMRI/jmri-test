@@ -26,7 +26,6 @@ import jmri.configurexml.ConfigXmlManager;
 import jmri.configurexml.ErrorHandler;
 import jmri.configurexml.swing.DialogErrorHandler;
 import jmri.implementation.AbstractShutDownTask;
-import jmri.jmrit.catalog.configurexml.DefaultCatalogTreeManagerXml;
 import jmri.jmrit.decoderdefn.DecoderIndexFile;
 import jmri.jmrit.display.layoutEditor.BlockValueFile;
 import jmri.jmrit.display.layoutEditor.LayoutBlockManager;
@@ -546,7 +545,6 @@ public abstract class JmriApplication extends Bean {
         // do final activation
         InstanceManager.logixManagerInstance().activateAllLogixs();
         InstanceManager.getDefault(LayoutBlockManager.class).initializeLayoutBlockPaths();
-        new DefaultCatalogTreeManagerXml().readCatalogTrees();
 
         return this.configLoaded;
     }
