@@ -22,29 +22,29 @@ import org.slf4j.LoggerFactory;
         position = 600
 )
 public class TurnoutTableTabAction extends AbstractTableTabAction {
-    
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 5514320062139920106L;
 
-	public TurnoutTableTabAction(String s){
+    /**
+     *
+     */
+    private static final long serialVersionUID = 5514320062139920106L;
+
+    public TurnoutTableTabAction(String s) {
         super(s);
     }
-    
-    public TurnoutTableTabAction(){
+
+    public TurnoutTableTabAction() {
         this("Multiple Tabbed");
     }
-    
+
     protected Manager getManager() {
         return InstanceManager.turnoutManagerInstance();
     }
-    
+
     protected String getClassName() {
         return TurnoutTableAction.class.getName();
     }
-       
-    protected AbstractTableAction getNewTableAction (String choice){
+
+    protected AbstractTableAction getNewTableAction(String choice) {
         return new TurnoutTableAction(choice);
     }
 
@@ -52,6 +52,6 @@ public class TurnoutTableTabAction extends AbstractTableTabAction {
     protected String helpTarget() {
         return "package.jmri.jmrit.beantable.TurnoutTable";
     }
-    
+
     static Logger log = LoggerFactory.getLogger(TurnoutTableTabAction.class.getName());
 }

@@ -23,6 +23,7 @@ public class CreateButtonModelXml extends jmri.configurexml.AbstractXmlAdapter {
 
     /**
      * Default implementation for storing the model contents
+     *
      * @param o Object to store, of type CreateButtonModel
      * @return Element containing the complete info
      */
@@ -38,6 +39,7 @@ public class CreateButtonModelXml extends jmri.configurexml.AbstractXmlAdapter {
 
     /**
      * Object should be loaded after basic GUI constructed
+     *
      * @return true to defer loading
      * @see jmri.configurexml.AbstractXmlAdapter#loadDeferred()
      * @see jmri.configurexml.XmlAdapter#loadDeferred()
@@ -49,19 +51,20 @@ public class CreateButtonModelXml extends jmri.configurexml.AbstractXmlAdapter {
 
     /**
      * Create object from XML file
+     *
      * @param e Top level Element to unpack.
      * @return true if successful
-      */
+     */
     public boolean load(Element e) {
-    	boolean result = true;
+        boolean result = true;
         String className = e.getAttribute("name").getValue();
-        log.debug("Invoke Action from"+className);
+        log.debug("Invoke Action from" + className);
         try {
-            Action action = (Action)Class.forName(className).newInstance();
-            if (Apps.buttonSpace()!=null) {
+            Action action = (Action) Class.forName(className).newInstance();
+            if (Apps.buttonSpace() != null) {
                 JButton b = new JButton(action);
                 Apps.buttonSpace().add(b);
-            } else if (Apps3.buttonSpace()!=null) {
+            } else if (Apps3.buttonSpace() != null) {
                 JButton b = new JButton(action);
                 Apps3.buttonSpace().add(b);
             } else {
@@ -69,16 +72,16 @@ public class CreateButtonModelXml extends jmri.configurexml.AbstractXmlAdapter {
             }
             //} else if (DecoderPro3.get)
         } catch (ClassNotFoundException ex1) {
-            log.error("Could not find specified class: "+className);
+            log.error("Could not find specified class: " + className);
             result = false;
         } catch (IllegalAccessException ex2) {
-            log.error("Unexpected access exception for class: "+className, ex2);
+            log.error("Unexpected access exception for class: " + className, ex2);
             result = false;
         } catch (InstantiationException ex3) {
-            log.error("Could not instantiate specified class: "+className, ex3);
+            log.error("Could not instantiate specified class: " + className, ex3);
             result = false;
         } catch (Exception ex4) {
-            log.error("Exception while performing startup action for class: "+className, ex4);
+            log.error("Exception while performing startup action for class: " + className, ex4);
             result = false;
         }
         CreateButtonModel m = new CreateButtonModel();
@@ -90,8 +93,9 @@ public class CreateButtonModelXml extends jmri.configurexml.AbstractXmlAdapter {
 
     /**
      * Update static data from XML file
+     *
      * @param element Top level Element to unpack.
-     * @param o  ignored
+     * @param o ignored
      */
     public void load(Element element, Object o) {
         log.error("Unexpected call of load(Element, Object)");

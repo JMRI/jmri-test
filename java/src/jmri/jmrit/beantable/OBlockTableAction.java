@@ -8,26 +8,23 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 
 /**
- * GUI to define OBlocks, OPaths and Portals 
- *<P> 
+ * GUI to define OBlocks, OPaths and Portals
+ * <P>
  * <hr>
  * This file is part of JMRI.
  * <P>
- * JMRI is free software; you can redistribute it and/or modify it under 
- * the terms of version 2 of the GNU General Public License as published 
- * by the Free Software Foundation. See the "COPYING" file for a copy
- * of this license.
+ * JMRI is free software; you can redistribute it and/or modify it under the
+ * terms of version 2 of the GNU General Public License as published by the Free
+ * Software Foundation. See the "COPYING" file for a copy of this license.
  * <P>
- * JMRI is distributed in the hope that it will be useful, but WITHOUT 
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
- * for more details.
+ * JMRI is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * <P>
  *
  * @author	Pete Cressman (C) 2009, 2010
- * @version     $Revision$
+ * @version $Revision$
  */
-
 @ActionID(
         id = "jmri.jmrit.beantable.OBlockTableAction",
         category = "Elements"
@@ -44,15 +41,16 @@ import org.openide.awt.ActionRegistration;
 public class OBlockTableAction extends AbstractAction {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 6331453045183182013L;
+     *
+     */
+    private static final long serialVersionUID = 6331453045183182013L;
 
-	public OBlockTableAction() {
+    public OBlockTableAction() {
         this("OBlock Table");
     }
+
     public OBlockTableAction(String actionName) {
-	    super(actionName);
+        super(actionName);
     }
 
     public void actionPerformed(ActionEvent e) {

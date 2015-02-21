@@ -1,9 +1,8 @@
 // OperationsSetupAction.java
-
 package jmri.jmrit.operations.setup;
 
-import java.awt.event.ActionEvent;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -11,7 +10,7 @@ import org.openide.awt.ActionRegistration;
 
 /**
  * Swing action to create and register a OperationsSetupFrame object.
- * 
+ *
  * @author Bob Jacobsen Copyright (C) 2001
  * @author Daniel Boudreau Copyright (C) 2008
  * @version $Revision$
@@ -26,29 +25,30 @@ import org.openide.awt.ActionRegistration;
         separatorBefore = 4385)
 public class OperationsSetupAction extends AbstractAction {
 
-    
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1935343860582396704L;
-	public OperationsSetupAction(String s) {
-    	super(s);
+     *
+     */
+    private static final long serialVersionUID = 1935343860582396704L;
+
+    public OperationsSetupAction(String s) {
+        super(s);
     }
 
     public OperationsSetupAction() {
-    	this(Bundle.getMessage("MenuSetup"));	// NOI18N
+        this(Bundle.getMessage("MenuSetup"));	// NOI18N
     }
 
     static OperationsSetupFrame f = null;
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(value="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
+
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
     public void actionPerformed(ActionEvent e) {
         // create a settings frame
-    	if (f == null || !f.isVisible()){
-    		f = new OperationsSetupFrame();
-    		f.initComponents();
-    	}
+        if (f == null || !f.isVisible()) {
+            f = new OperationsSetupFrame();
+            f.initComponents();
+        }
         f.setExtendedState(Frame.NORMAL);
-	   	f.setVisible(true);	// this also brings the frame into focus
+        f.setVisible(true);	// this also brings the frame into focus
     }
 }
 

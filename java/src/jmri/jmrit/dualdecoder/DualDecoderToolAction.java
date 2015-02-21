@@ -1,5 +1,4 @@
 // DualDecoderToolAction.java
-
 package jmri.jmrit.dualdecoder;
 
 import java.awt.event.ActionEvent;
@@ -9,11 +8,10 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 
 /**
- * Swing action to create and register a
- * DualDecoderTool
+ * Swing action to create and register a DualDecoderTool
  *
- * @author    Bob Jacobsen    Copyright (C) 2001
- * @version   $Revision$
+ * @author Bob Jacobsen Copyright (C) 2001
+ * @version $Revision$
  */
 @ActionID(
         id = "jmri.jmrit.dualdecoder.DualDecoderToolAction",
@@ -31,15 +29,15 @@ import org.openide.awt.ActionRegistration;
 public class DualDecoderToolAction extends AbstractAction {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -6247002513212825213L;
+     *
+     */
+    private static final long serialVersionUID = -6247002513212825213L;
 
-	public DualDecoderToolAction(String s) {
+    public DualDecoderToolAction(String s) {
         super(s);
 
         // disable ourself if programming is not possible
-        if (jmri.InstanceManager.programmerManagerInstance()==null) {
+        if (jmri.InstanceManager.programmerManagerInstance() == null) {
             setEnabled(false);
         }
 

@@ -28,6 +28,7 @@ import jmri.web.servlet.ServletUtil;
 import static jmri.web.servlet.ServletUtil.APPLICATION_JSON;
 import static jmri.web.servlet.ServletUtil.UTF8_APPLICATION_JSON;
 import static jmri.web.servlet.ServletUtil.UTF8_TEXT_HTML;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.openide.util.lookup.ServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,11 +44,11 @@ import org.slf4j.LoggerFactory;
 public class OperationsServlet extends HttpServlet {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 5856610982342205832L;
+     *
+     */
+    private static final long serialVersionUID = 5856610982342205832L;
 
-	private ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     private final static Logger log = LoggerFactory.getLogger(OperationsServlet.class);
 
@@ -115,14 +116,14 @@ public class OperationsServlet extends HttpServlet {
                 if (showAll || !CarManager.instance().getByTrainDestinationList(train).isEmpty()) {
                     html.append(String.format(request.getLocale(), format,
                             train.getIconName(),
-                            train.getDescription(),
+                            StringEscapeUtils.escapeHtml4(train.getDescription()),
                             train.getLeadEngine() != null ? train.getLeadEngine().toString() : "",
-                            train.getTrainDepartsName(),
+                            StringEscapeUtils.escapeHtml4(train.getTrainDepartsName()),
                             train.getDepartureTime(),
                             train.getStatus(),
-                            train.getCurrentLocationName(),
-                            train.getTrainTerminatesName(),
-                            train.getRoute(),
+                            StringEscapeUtils.escapeHtml4(train.getCurrentLocationName()),
+                            StringEscapeUtils.escapeHtml4(train.getTrainTerminatesName()),
+                            StringEscapeUtils.escapeHtml4(train.getTrainRouteName()),
                             train.getId()
                     ));
                 }
@@ -155,9 +156,9 @@ public class OperationsServlet extends HttpServlet {
             response.getWriter().print(String.format(request.getLocale(),
                     FileUtil.readURL(FileUtil.findURL(Bundle.getMessage(request.getLocale(), "ManifestSnippet.html"))),
                     train.getIconName(),
-                    train.getDescription(),
+                    StringEscapeUtils.escapeHtml4(train.getDescription()),
                     Setup.isPrintValidEnabled() ? manifest.getValidity() : "",
-                    train.getComment(),
+                    StringEscapeUtils.escapeHtml4(train.getComment()),
                     Setup.isPrintRouteCommentsEnabled() ? train.getRoute().getComment() : "",
                     manifest.getLocations()
             ));
@@ -182,7 +183,7 @@ public class OperationsServlet extends HttpServlet {
                             String.format(request.getLocale(),
                                     Bundle.getMessage(request.getLocale(), "ManifestTitle"),
                                     train.getIconName(),
-                                    train.getDescription()
+                                    StringEscapeUtils.escapeHtml4(train.getDescription())
                             )
                     ),
                     ServletUtil.getInstance().getNavBar(request.getLocale(), request.getContextPath()),
@@ -207,11 +208,18 @@ public class OperationsServlet extends HttpServlet {
         }
         if (data.path("format").asText().equals("html")) {
             if (!data.path(LOCATION).isMissingNode()) {
+// need to consider that the train could be moved by other methods, the commented out code incorrectly assumes that the train hasn't been moved
+//              String location = data.path(LOCATION).asText();
+//              if (location.equals(NULL)) {
+//                  train.terminate();
+//              } else if (!train.move(location)) {
+//                  response.sendError(412, String.format(Bundle.getMessage(request.getLocale(), "ErrorTrainMovement"), id, location));
+//              }
                 String location = data.path(LOCATION).asText();
                 if (location.equals(NULL)) {
                     train.terminate();
-                } else if (!train.move(location)) {
-                    response.sendError(412, String.format(Bundle.getMessage(request.getLocale(), "ErrorTrainMovement"), id, location));
+                } else if (train.getNextLocationName().equals(location)) {
+                    train.move();
                 }
             }
             log.debug("Getting conductor HTML code for train {}", id);
@@ -229,7 +237,7 @@ public class OperationsServlet extends HttpServlet {
                             String.format(request.getLocale(),
                                     Bundle.getMessage(request.getLocale(), "ConductorTitle"),
                                     train.getIconName(),
-                                    train.getDescription()
+                                    StringEscapeUtils.escapeHtml4(train.getDescription())
                             )
                     ),
                     ServletUtil.getInstance().getNavBar(request.getLocale(), request.getContextPath()),

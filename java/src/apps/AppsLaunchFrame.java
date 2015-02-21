@@ -3,6 +3,7 @@ package apps;
 
 import java.awt.Dimension;
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.EventObject;
 import javax.help.SwingHelpUtilities;
 import javax.swing.AbstractAction;
@@ -10,6 +11,7 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
@@ -25,6 +27,7 @@ import jmri.jmrit.withrottle.WiThrottleCreationAction;
 import jmri.jmrix.ActiveSystemsMenu;
 import jmri.plaf.macosx.Application;
 import jmri.plaf.macosx.PreferencesHandler;
+import jmri.util.FileUtil;
 import jmri.util.HelpUtil;
 import jmri.util.JmriJFrame;
 import jmri.util.SystemType;
@@ -38,7 +41,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for main frame (window) of traditional-style JMRI applications
  * <P>
- * This is for launching after the system is initialized, so it does none of that.
+ * This is for launching after the system is initialized, so it does none of
+ * that.
  *
  * @author	Bob Jacobsen Copyright 2003, 2007, 2008, 2010, 2014
  * @author Dennis Miller Copyright 2005
@@ -49,10 +53,10 @@ import org.slf4j.LoggerFactory;
 public class AppsLaunchFrame extends jmri.util.JmriJFrame {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 8986597544309635883L;
-	static String profileFilename;
+     *
+     */
+    private static final long serialVersionUID = 8986597544309635883L;
+    static String profileFilename;
 
     public AppsLaunchFrame(AppsLaunchPane containedPane, String name) {
         super(name);
@@ -78,7 +82,6 @@ public class AppsLaunchFrame extends jmri.util.JmriJFrame {
         Dimension size = getSize();
         setLocation((screen.width - size.width) / 2, (screen.height - size.height) / 2);
     }
-
 
     /**
      * Create default menubar.
@@ -129,6 +132,7 @@ public class AppsLaunchFrame extends jmri.util.JmriJFrame {
     }
 
     Action prefsAction;
+
     protected void editMenu(JMenuBar menuBar, WindowInterface wi) {
 
         JMenu editMenu = new JMenu(Bundle.getMessage("MenuEdit"));
@@ -208,7 +212,14 @@ public class AppsLaunchFrame extends jmri.util.JmriJFrame {
         d.add(new jmri.jmrix.libusb.UsbViewAction());
 
         d.add(new JSeparator());
-        d.add(new RunJythonScript("RailDriver Throttle", new File("jython/RailDriver.py")));
+        try {
+            d.add(new RunJythonScript("RailDriver Throttle", new File(FileUtil.findURL("jython/RailDriver.py").toURI())));
+        } catch (URISyntaxException | NullPointerException ex) {
+            log.error("Unable to load RailDriver Throttle", ex);
+            JMenuItem i = new JMenuItem("RailDriver Throttle");
+            i.setEnabled(false);
+            d.add(i);
+        }
 
         // also add some tentative items from webserver
         d.add(new JSeparator());
@@ -259,7 +270,6 @@ public class AppsLaunchFrame extends jmri.util.JmriJFrame {
 
     }
 
-
     /**
      * Provide access to a place where applications can expect the configuration
      * code to build run-time buttons.
@@ -279,6 +289,6 @@ public class AppsLaunchFrame extends jmri.util.JmriJFrame {
 
     // GUI members
     private JMenuBar menuBar;
-    
+
     static Logger log = LoggerFactory.getLogger(AppsLaunchFrame.class.getName());
 }
