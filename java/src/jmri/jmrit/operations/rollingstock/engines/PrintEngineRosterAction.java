@@ -31,7 +31,7 @@ public class PrintEngineRosterAction extends AbstractAction {
      *
      */
     private static final long serialVersionUID = -5500987959098367364L;
-    private static final int numberCharPerLine = 90;
+    private int numberCharPerLine = 90;
     final int ownerMaxLen = 5; // Only show the first 5 characters of the owner's name
 
     EngineManager manager = EngineManager.instance();
@@ -61,11 +61,13 @@ public class PrintEngineRosterAction extends AbstractAction {
         // obtain a HardcopyWriter to do this
         HardcopyWriter writer = null;
         try {
-            writer = new HardcopyWriter(mFrame, Bundle.getMessage("TitleEngineRoster"), 10, .5, .5, .5, .5, isPreview);
+            writer = new HardcopyWriter(mFrame, Bundle.getMessage("TitleEngineRoster"), Control.reportFontSize, .5, .5, .5, .5, isPreview);
         } catch (HardcopyWriter.PrintCanceledException ex) {
             log.debug("Print cancelled");
             return;
         }
+        
+        numberCharPerLine = writer.getCharactersPerLine();
 
         // Loop through the Roster, printing as needed
         String number;

@@ -57,6 +57,7 @@
    <UL>
     <LI><A HREF="#newUserAdvice">New User Advice</A></LI>
     <LI><A HREF="#demo">Operations Demo Files</A></LI>
+    <LI><A HREF="#Display">Display</A></LI>
     <LI><A HREF="#QuickStartHelp">Quick Start Help</A></LI>
     <LI><A HREF="#Settings">Settings</A>
      <UL>
@@ -243,6 +244,15 @@
     train using the "departure" track, car pulls directly into the train rather than to a specific
     departure track makes the operations run more smoothly.  By not specifying the A/D tracks, you're
     letting your operators, and not the program, decide which tracks to use when servicing a train.</P>
+    
+    <A NAME="Display"></A>
+    <H3>Display</H3>
+    
+    To adjust the display font size or appearance of the JMRI windows, select "Preferences.." found under
+    "Edit" in the main window menu bar. A new window will appear with options to make layout connections, change
+    the "Display" appearance and font size, and many other settings including the "Railroad Name". Most
+    JMRI windows have as part of the menu bar the "Help" option. Select "Window Help.." to get information
+    about the window you're using. 
 
    <A NAME="demo"></A>
    <H3>Operations Demo Files</H3>
@@ -2872,11 +2882,15 @@
    <A NAME="DepartingStagingRoute"></A>
    <H3>Departing Staging Route</H3>
 
-   When departing staging, the requested moves determines the maximum number of cars that the train
-   will depart with. For example, if the requested moves out of staging was 15, then staging tracks
-   with 15 cars or less, but not zero, can be used by the program. You can also request 0 cars out
-   of staging, then the program will select a track that doesn't have any cars. The staging track
-   can however have locos if required by the train's options. 
+   The program gives you several route options with regards to trains that depart from staging. You
+   can control which trains in staging have the proper length or number of cars by adjusting the
+   route's maximum train length and requested car moves. For example, if you set the route's
+   departure staging location maximum length train length to 800 feet, the program will ignore when
+   building the train all staging tracks that have more than 800 feet of rolling stock. And if you
+   set the car moves for the departure staging location to 15, the program will ignore all staging
+   tracks that have more than 15 cars. However, if you set the route's staging departure car moves
+   count to "0", the program will select a staging track that doesn't have any cars, as long as the
+   train doesn't require a caboose or car with FRED. The staging track can have locomotives.
    
    <A NAME="RouteFeatures"></A>
    <H3>Route Features</H3>
@@ -3030,20 +3044,37 @@
    the locomotive's model and road. If you don't want the program assigning locomotives to your
    train, select 0 as the number of locos required. If you want two or more locomotives assigned to
    a train, the locomotives must be part of a
-   <A HREF="#LocomotivesAdd">consist</A>. If you select "Auto", the program will calculate the
-   number of locomotives required for this train based on the weight of the train, the track grade,
-   and the horsepower of the locomotives.
+   <A HREF="#LocomotivesAdd">consist</A> or you can select the option to build a consist from single
+   locos. See <A
+    HREF="#BuildlocoConsist">Build loco consist from single locos</A> under the <A
+    HREF="#TrainBuildOptions">Train Build Options</A> for more information.
+
    <P>
-    You can also on a per train basis, ask the program to dynamically construct the consist for the
-    train. See <A HREF="#BuildlocoConsist">Build loco consist from single locos</A> under
-    the <A HREF="#TrainBuildOptions">Train Build Options</A> for more information.
+    There are two other options available when requesting locomotives, "Auto" and "Auto HPT". "Auto"
+    determines the maximum number of cars that could be assigned to a train, and does a simple
+    locomotive consist assignment based on the number of cars and the route grades. The assignment
+    is done before building the train, so the number of locomotives assigned has nothing to due with
+    engine HP or the train's tonnage. A better choice is the <A HREF="#BuildlocoConsist">Build
+     loco consist from single locos</A>, that option determines the number of locomotives to assign to a
+    train by tonnage and route grades.
+   </P>
+
+   <P>
+    "Auto HPT" is useful when you want to assign a single locomotive to a train based on the train's
+    tonnage, route grades, and locomotive horsepower. You can if you wish use this option along with
+    the <A HREF="#BuildlocoConsist">Build loco consist from single locos</A> option. The program
+    will first assign a single locomotive at the start of the train build process, and at the end of
+    the build, determine if the assigned locomotive has the appropriate HP for the train's tonnage
+    and grades. If a single locomotive can't be found that meets the requirements, the build will
+    fail unless you've also selected the option to <A HREF="#BuildlocoConsist">Build loco
+     consist from single locos</A>.
    </P>
 
    <P>
     You can also require a <A HREF="#CabooseFredHazardous">caboose or car with FRED (Flashing
-     Rear End Device)</A> as the last car in the train, and you can optionally specify the road for
-    the caboose or car with FRED. If you leave the road blank, the program will try and find a
-    caboose with the same road as the locomotive.
+     Rear End Device)</A> as the last car in the train, and you can optionally specify the road for the
+    caboose or car with FRED. If you leave the road blank, the program will try and find a caboose
+    with the same road as the locomotive.
    </P>
 
    <A NAME="TrainReset"></A>

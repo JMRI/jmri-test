@@ -1632,27 +1632,17 @@ public class Setup {
     /**
      *
      * @return JComboBox loaded with the strings (North, South, East, West)
-     * showing the available train directions for this railroad
+     *         showing the available train directions for this railroad
      */
     public static JComboBox<String> getTrainDirectionComboBox() {
         JComboBox<String> box = new JComboBox<>();
-        if ((traindir & EAST) > 0) {
-            box.addItem(EAST_DIR);
-        }
-        if ((traindir & WEST) > 0) {
-            box.addItem(WEST_DIR);
-        }
-        if ((traindir & NORTH) > 0) {
-            box.addItem(NORTH_DIR);
-        }
-        if ((traindir & SOUTH) > 0) {
-            box.addItem(SOUTH_DIR);
-        }
+        for (String direction : getTrainDirectionList())
+            box.addItem(direction);
         return box;
     }
 
     /**
-     * Get train directions
+     * Get train directions String format
      *
      * @return List of valid train directions
      */

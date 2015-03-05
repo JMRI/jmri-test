@@ -76,6 +76,7 @@ public final class FileUtil {
      * Replaced with {@link #PREFERENCES}.
      *
      * @see #PREFERENCES
+     * @deprecated
      */
     @Deprecated
     static public final String FILE = "file:"; // NOI18N
@@ -247,7 +248,7 @@ public final class FileUtil {
             if (new File(path.substring(FILE.length())).isAbsolute()) {
                 path = path.substring(FILE.length());
             } else {
-                path = path.replaceFirst(FILE, Matcher.quoteReplacement(FileUtil.getUserFilesPath()));
+                path = path.replaceFirst(FILE, Matcher.quoteReplacement(FileUtil.getUserFilesPath() + "resources" + File.separator));
             }
         } else if (!new File(path).isAbsolute()) {
             return null;
@@ -289,107 +290,18 @@ public final class FileUtil {
      * In any case, absolute pathnames will work.
      *
      * @param pName The name string, possibly starting with file:, home:,
-     * profile:, program:, preference:, scripts:, settings, or resource:
-     * @return Absolute or relative file name to use, or null.
+     *              profile:, program:, preference:, scripts:, settings, or
+     *              resource:
+     * @return Absolute file name to use, or null.
      * @since 2.7.2
      */
     static public String getExternalFilename(String pName) {
-        if (pName == null || pName.length() == 0) {
-            return null;
-        }
-        if (pName.startsWith(RESOURCE)) {
-            // convert to relative filename 
-            String temp = pName.substring(RESOURCE.length());
-            if ((new File(temp)).isAbsolute()) {
-                return temp.replace(SEPARATOR, File.separatorChar);
-            } else {
-                return temp.replace(SEPARATOR, File.separatorChar);
-            }
-        } else if (pName.startsWith(PROGRAM)) {
-            // both relative and absolute are just returned
-            return pName.substring(PROGRAM.length()).replace(SEPARATOR, File.separatorChar);
-        } else if (pName.startsWith(PREFERENCES)) {
-            String filename = pName.substring(PREFERENCES.length());
-
-            // Check for absolute path name
-            if ((new File(filename)).isAbsolute()) {
-                log.debug("Load from absolute path: {}", filename);
-                return filename.replace(SEPARATOR, File.separatorChar);
-            }
-            // assume this is a relative path from the
-            // preferences directory
-            filename = FileUtil.getUserFilesPath() + filename;
-            log.debug("load from user preferences file: {}", filename);
-            return filename.replace(SEPARATOR, File.separatorChar);
-        } else if (pName.startsWith(PROFILE)) {
-            String filename = pName.substring(PROFILE.length());
-            // Check for absolute path name
-            if ((new File(filename)).isAbsolute()) {
-                log.debug("Load from absolute path: {}", filename);
-                return filename.replace(SEPARATOR, File.separatorChar);
-            }
-            // assume this is a relative path from the profile directory
-            filename = FileUtil.getProfilePath() + filename;
-            log.debug("load from profile file: {}", filename);
-            return filename.replace(SEPARATOR, File.separatorChar);
-        } else if (pName.startsWith(SETTINGS)) {
-            String filename = pName.substring(SETTINGS.length());
-            // Check for absolute path name
-            if ((new File(filename)).isAbsolute()) {
-                log.debug("Load from absolute path: {}", filename);
-                return filename.replace(SEPARATOR, File.separatorChar);
-            }
-            // assume this is a relative path from the profile directory
-            filename = FileUtil.getPreferencesPath() + filename;
-            log.debug("load from settings file: {}", filename);
-            return filename.replace(SEPARATOR, File.separatorChar);
-        } else if (pName.startsWith(SCRIPTS)) {
-            String filename = pName.substring(SCRIPTS.length());
-            // Check for absolute path name
-            if ((new File(filename)).isAbsolute()) {
-                log.debug("Load from absolute path: {}", filename);
-                return filename.replace(SEPARATOR, File.separatorChar);
-            }
-            // assume this is a relative path from the scripts directory
-            filename = FileUtil.getScriptsPath() + filename;
-            log.debug("load from scripts file: {}", filename);
-            return filename.replace(SEPARATOR, File.separatorChar);
-        } else if (pName.startsWith(FILE)) {
-            String filename = pName.substring(FILE.length());
-
-            // historically, absolute path names could be stored 
-            // in the 'file' format.  Check for those, and
-            // accept them if present
-            if ((new File(filename)).isAbsolute()) {
-                log.debug("Load from absolute path: {}", filename);
-                return filename.replace(SEPARATOR, File.separatorChar);
-            }
-            // assume this is a relative path from the
-            // preferences directory
-            filename = FileUtil.getUserFilesPath() + "resources" + File.separator + filename; // NOI18N
-            log.debug("load from user preferences file: {}", filename);
-            return filename.replace(SEPARATOR, File.separatorChar);
-        } else if (pName.startsWith(HOME)) {
-            String filename = pName.substring(HOME.length());
-
-            // Check for absolute path name
-            if ((new File(filename)).isAbsolute()) {
-                log.debug("Load from absolute path: {}", filename);
-                return filename.replace(SEPARATOR, File.separatorChar);
-            }
-            // assume this is a relative path from the
-            // user.home directory
-            filename = FileUtil.getHomePath() + filename;
-            log.debug("load from user preferences file: {}", filename);
-            return filename.replace(SEPARATOR, File.separatorChar);
-        } else {
-            // must just be a (hopefully) valid name
-            return pName.replace(SEPARATOR, File.separatorChar);
-        }
+        String filename = FileUtil.pathFromPortablePath(pName);
+        return (filename != null) ? filename : pName;
     }
 
     /**
-     * Convert a portable filename into an absolute filename
+     * Convert a portable filename into an absolute filename.
      *
      * @param path
      * @return An absolute filename
@@ -426,11 +338,13 @@ public final class FileUtil {
      * for the Users file directory. In most cases, the use of
      * {@link #getPortableFilename(java.io.File)} is preferable.
      *
-     * @param file File at path to be represented
+     * @param file                File at path to be represented
      * @param ignoreUserFilesPath true if paths in the User files path should be
-     * stored as absolute paths, which is often not desirable.
-     * @param ignoreProfilePath true if paths in the profile should be stored as
-     * absolute paths, which is often not desirable.
+     *                            stored as absolute paths, which is often not
+     *                            desirable.
+     * @param ignoreProfilePath   true if paths in the profile should be stored
+     *                            as absolute paths, which is often not
+     *                            desirable.
      * @return Storage format representation
      * @since 3.5.5
      */
@@ -520,11 +434,13 @@ public final class FileUtil {
      * for the Users file directory. In most cases, the use of
      * {@link #getPortableFilename(java.io.File)} is preferable.
      *
-     * @param filename Filename to be represented
+     * @param filename            Filename to be represented
      * @param ignoreUserFilesPath true if paths in the User files path should be
-     * stored as absolute paths, which is often not desirable.
-     * @param ignoreProfilePath true if paths in the profile path should be
-     * stored as absolute paths, which is often not desirable.
+     *                            stored as absolute paths, which is often not
+     *                            desirable.
+     * @param ignoreProfilePath   true if paths in the profile path should be
+     *                            stored as absolute paths, which is often not
+     *                            desirable.
      * @return Storage format representation
      * @since 3.5.5
      */
@@ -736,7 +652,7 @@ public final class FileUtil {
      * {@link #findURL(java.lang.String, jmri.util.FileUtil.Location, java.lang.String...) }.
      * No limits are placed on search locations.
      *
-     * @param path The relative path of the file or resource
+     * @param path        The relative path of the file or resource
      * @param searchPaths a list of paths to search for the path in
      * @return InputStream or null.
      * @see #findInputStream(java.lang.String)
@@ -752,7 +668,7 @@ public final class FileUtil {
      * {@link java.io.InputStream} for that file. Search order is defined by
      * {@link #findURL(java.lang.String, jmri.util.FileUtil.Location, java.lang.String...) }.
      *
-     * @param path The relative path of the file or resource
+     * @param path      The relative path of the file or resource
      * @param locations The type of locations to limit the search to
      * @return InputStream or null.
      * @see #findInputStream(java.lang.String)
@@ -768,8 +684,8 @@ public final class FileUtil {
      * {@link java.io.InputStream} for that file. Search order is defined by
      * {@link #findURL(java.lang.String, jmri.util.FileUtil.Location, java.lang.String...) }.
      *
-     * @param path The relative path of the file or resource
-     * @param locations The type of locations to limit the search to
+     * @param path        The relative path of the file or resource
+     * @param locations   The type of locations to limit the search to
      * @param searchPaths a list of paths to search for the path in
      * @return InputStream or null.
      * @see #findInputStream(java.lang.String)
@@ -819,7 +735,7 @@ public final class FileUtil {
      * {@link #findURL(java.lang.String, jmri.util.FileUtil.Location, java.lang.String...)}.
      * No limits are placed on search locations.
      *
-     * @param path The relative path of the file or resource
+     * @param path        The relative path of the file or resource
      * @param searchPaths a list of paths to search for the path in
      * @return The URL or null
      * @see #findURL(java.lang.String)
@@ -836,7 +752,7 @@ public final class FileUtil {
      * {@link java.net.URL} for that file. Search order is defined by
      * {@link #findURL(java.lang.String, jmri.util.FileUtil.Location, java.lang.String...)}.
      *
-     * @param path The relative path of the file or resource
+     * @param path      The relative path of the file or resource
      * @param locations The types of locations to limit the search to
      * @return The URL or null
      * @see #findURL(java.lang.String)
@@ -874,8 +790,8 @@ public final class FileUtil {
      * path</li><li>{@link Location#USER} limits the search to the
      * {@link #PROFILE} directory</li></ol>
      *
-     * @param path The relative path of the file or resource
-     * @param locations The types of locations to limit the search to
+     * @param path        The relative path of the file or resource
+     * @param locations   The types of locations to limit the search to
      * @param searchPaths a list of paths to search for the path in
      * @return The URL or null
      * @see #findURL(java.lang.String)
@@ -991,7 +907,7 @@ public final class FileUtil {
      *
      * @param url
      * @return a URI or null if the conversion would have caused a
-     * {@link java.net.URISyntaxException}
+     *         {@link java.net.URISyntaxException}
      */
     static public URI urlToURI(URL url) {
         try {
@@ -1011,7 +927,7 @@ public final class FileUtil {
      *
      * @param file The File to convert.
      * @return a URL or null if the conversion would have caused a
-     * MalformedURLException
+     *         MalformedURLException
      */
     static public URL fileToURL(File file) {
         try {
@@ -1185,7 +1101,7 @@ public final class FileUtil {
      * if more control is required.
      *
      * @param source
-     * @param dest must be the file, not the destination directory.
+     * @param dest   must be the file, not the destination directory.
      * @throws IOException
      */
     public static void copy(File source, File dest) throws IOException {

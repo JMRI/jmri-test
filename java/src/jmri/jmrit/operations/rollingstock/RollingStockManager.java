@@ -52,7 +52,7 @@ public class RollingStockManager {
     /**
      * Get rolling stock by road and number
      *
-     * @param road RollingStock road
+     * @param road   RollingStock road
      * @param number RollingStock number
      * @return requested RollingStock object or null if none exists
      */
@@ -487,6 +487,7 @@ public class RollingStockManager {
     protected static final int BY_OWNER = 11;
     protected static final int BY_RFID = 12;
     // BY_RWE = 13
+    // BY_HP = 13
     // BY_FINAL_DEST = 14
     protected static final int BY_VALUE = 15;
     // BY_WAIT = 16

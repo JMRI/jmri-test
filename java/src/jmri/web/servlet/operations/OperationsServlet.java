@@ -208,18 +208,10 @@ public class OperationsServlet extends HttpServlet {
         }
         if (data.path("format").asText().equals("html")) {
             if (!data.path(LOCATION).isMissingNode()) {
-// need to consider that the train could be moved by other methods, the commented out code incorrectly assumes that the train hasn't been moved
-//              String location = data.path(LOCATION).asText();
-//              if (location.equals(NULL)) {
-//                  train.terminate();
-//              } else if (!train.move(location)) {
-//                  response.sendError(412, String.format(Bundle.getMessage(request.getLocale(), "ErrorTrainMovement"), id, location));
-//              }
                 String location = data.path(LOCATION).asText();
-                if (location.equals(NULL)) {
-                    train.terminate();
-                } else if (train.getNextLocationName().equals(location)) {
+                if (location.equals(NULL) || train.getNextLocationName().equals(location)) {
                     train.move();
+                    return; // done property change will cause update to client
                 }
             }
             log.debug("Getting conductor HTML code for train {}", id);
@@ -252,10 +244,10 @@ public class OperationsServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -266,10 +258,10 @@ public class OperationsServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -280,10 +272,10 @@ public class OperationsServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>PUT</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
