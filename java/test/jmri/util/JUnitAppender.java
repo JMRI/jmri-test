@@ -3,6 +3,7 @@ package jmri.util;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import junit.framework.Assert;
 
 /**
@@ -57,6 +58,8 @@ public class JUnitAppender extends ConsoleHandler {
      * This causes log messages to be held for examination.
      */
     public static void start() {
+        Logger.getGlobal().addHandler(JUnitAppender.instance);
+        Logger.getLogger("").addHandler(JUnitAppender.instance);
         hold = true;
     }
 
@@ -81,6 +84,8 @@ public class JUnitAppender extends ConsoleHandler {
      * Remove any messages stored up, returning how many there were. This is
      * used to skip over messages that don't matter, e.g. during setting up a
      * test.
+     *
+     * @return number of messages logged
      */
     public static int clearBacklog() {
         if (list.isEmpty()) {
@@ -112,6 +117,7 @@ public class JUnitAppender extends ConsoleHandler {
      * specific message.
      * <P>
      * Invokes a JUnit Assert if the message doesn't match
+     *
      * @param msg
      */
     public static void assertErrorMessage(String msg) {
@@ -145,6 +151,8 @@ public class JUnitAppender extends ConsoleHandler {
      * specific message.
      * <P>
      * Invokes a JUnit Assert if the message doesn't match
+     *
+     * @param msg
      */
     public static void assertWarnMessage(String msg) {
         if (list.isEmpty()) {
