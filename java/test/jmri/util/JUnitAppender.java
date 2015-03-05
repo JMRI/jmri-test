@@ -1,8 +1,9 @@
 package jmri.util;
 
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import junit.framework.Assert;
-import org.apache.log4j.Level;
-import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * Log4J Appender that just publishes what it sees
@@ -10,25 +11,23 @@ import org.apache.log4j.spi.LoggingEvent;
  * @author	Bob Jacobsen - Copyright 2007
  * @version	$Revision$
  */
-public class JUnitAppender extends org.apache.log4j.ConsoleAppender {
+public class JUnitAppender extends ConsoleHandler {
 
-    static java.util.ArrayList<LoggingEvent> list = new java.util.ArrayList<LoggingEvent>();
+    static java.util.ArrayList<LogRecord> list = new java.util.ArrayList<>();
 
-    /**
-     * Called for each logging event.
-     */
-    public synchronized void append(LoggingEvent event) {
+    @Override
+    public void publish(LogRecord record) {
         if (hold) {
-            list.add(event);
+            list.add(record);
         } else {
-            super.append(event);
+            super.publish(record);
         }
     }
 
     /**
      * Called once options are set.
      *
-     * Currently just reflects back to super-class.
+     * Initializes the static JUnitAppender instance.
      */
     public void activateOptions() {
         if (JUnitAppender.instance != null) {
@@ -36,7 +35,6 @@ public class JUnitAppender extends org.apache.log4j.ConsoleAppender {
         } else {
             JUnitAppender.instance = this;
         }
-        super.activateOptions();
     }
 
     /**
@@ -44,6 +42,7 @@ public class JUnitAppender extends org.apache.log4j.ConsoleAppender {
      *
      * Currently just reflects back to super-class.
      */
+    @Override
     public synchronized void close() {
         super.close();
     }
@@ -70,12 +69,12 @@ public class JUnitAppender extends org.apache.log4j.ConsoleAppender {
     public static void end() {
         hold = false;
         while (!list.isEmpty()) {
-            instance().superappend(list.remove(0));
+            instance().superpublish(list.remove(0));
         }
     }
 
-    void superappend(LoggingEvent l) {
-        super.append(l);
+    void superpublish(LogRecord l) {
+        super.publish(l);
     }
 
     /**
@@ -103,7 +102,7 @@ public class JUnitAppender extends org.apache.log4j.ConsoleAppender {
             return true;
         }
         while (!list.isEmpty()) {
-            instance().superappend(list.remove(0));
+            instance().superpublish(list.remove(0));
         }
         return false;
     }
@@ -113,6 +112,7 @@ public class JUnitAppender extends org.apache.log4j.ConsoleAppender {
      * specific message.
      * <P>
      * Invokes a JUnit Assert if the message doesn't match
+     * @param msg
      */
     public static void assertErrorMessage(String msg) {
         if (list.isEmpty()) {
@@ -120,9 +120,9 @@ public class JUnitAppender extends org.apache.log4j.ConsoleAppender {
             return;
         }
 
-        LoggingEvent evt = list.remove(0);
+        LogRecord evt = list.remove(0);
 
-        while ((evt.getLevel() == Level.INFO) || (evt.getLevel() == Level.DEBUG)) {
+        while ((evt.getLevel() == Level.INFO) || (evt.getLevel() == Level.FINE)) {
             if (list.isEmpty()) {
                 Assert.fail("Only debug/info messages present: " + msg);
                 return;
@@ -131,11 +131,11 @@ public class JUnitAppender extends org.apache.log4j.ConsoleAppender {
         }
 
         // check the remaining message, if any
-        if (evt.getLevel() != Level.ERROR) {
-            Assert.fail("Level mismatch when looking for ERROR message: \"" + msg + "\" found \"" + (String) evt.getMessage() + "\"");
+        if (evt.getLevel() != Level.SEVERE) {
+            Assert.fail("Level mismatch when looking for ERROR message: \"" + msg + "\" found \"" + evt.getMessage() + "\"");
         }
 
-        if (!((String) evt.getMessage()).equals(msg)) {
+        if (!evt.getMessage().equals(msg)) {
             Assert.fail("Looking for ERROR message \"" + msg + "\" got \"" + evt.getMessage() + "\"");
         }
     }
@@ -151,9 +151,9 @@ public class JUnitAppender extends org.apache.log4j.ConsoleAppender {
             Assert.fail("No message present: " + msg);
             return;
         }
-        LoggingEvent evt = list.remove(0);
+        LogRecord evt = list.remove(0);
 
-        while ((evt.getLevel() == Level.INFO) || (evt.getLevel() == Level.DEBUG)) {
+        while ((evt.getLevel() == Level.INFO) || (evt.getLevel() == Level.FINE)) {
             if (list.isEmpty()) {
                 Assert.fail("Only debug/info messages present: " + msg);
                 return;
@@ -162,11 +162,11 @@ public class JUnitAppender extends org.apache.log4j.ConsoleAppender {
         }
 
         // check the remaining message, if any
-        if (evt.getLevel() != Level.WARN) {
-            Assert.fail("Level mismatch when looking for WARN message: \"" + msg + "\" found \"" + (String) evt.getMessage() + "\"");
+        if (evt.getLevel() != Level.WARNING) {
+            Assert.fail("Level mismatch when looking for WARN message: \"" + msg + "\" found \"" + evt.getMessage() + "\"");
         }
 
-        if (!((String) evt.getMessage()).equals(msg)) {
+        if (!evt.getMessage().equals(msg)) {
             Assert.fail("Looking for WARN message \"" + msg + "\" got \"" + evt.getMessage() + "\"");
         }
     }
