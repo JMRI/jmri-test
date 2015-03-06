@@ -1,7 +1,11 @@
 package apps.tests;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import jmri.util.FileUtil;
 import jmri.util.JUnitAppender;
 
 public class Log4JFixture {
@@ -31,16 +35,14 @@ public class Log4JFixture {
         if (log4jinit) {
             log4jinit = false;
             // initialize log4j - from logging control file (lcf) if you can find it
-            String logFile = "tests.lcf";
-            if (new java.io.File(logFile).canRead()) {
-                System.out.println(logFile + " configures logging");
-                org.apache.log4j.PropertyConfigurator.configure(logFile);
-            } else {
-                System.out.println(logFile + " not found, using default logging");
-
+            InputStream logConfig = FileUtil.findInputStream("test-logging.properties");
+            try {
+                LogManager.getLogManager().readConfiguration(logConfig);
+            } catch (IOException | SecurityException | NullPointerException ex) {
+                System.out.println("Logging config not found, using default logging");
+                
                 // create an appender, and load it with a default pattern
-                JUnitAppender a = new JUnitAppender();
-                a.activateOptions();
+                JUnitAppender.instance();
 
                 // only log warnings and above
                 Logger.getGlobal().setLevel(Level.WARNING);

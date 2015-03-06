@@ -1,6 +1,7 @@
 package jmri.util;
 
 import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -26,19 +27,6 @@ public class JUnitAppender extends ConsoleHandler {
     }
 
     /**
-     * Called once options are set.
-     *
-     * Initializes the static JUnitAppender instance.
-     */
-    public void activateOptions() {
-        if (JUnitAppender.instance != null) {
-            System.err.println("JUnitAppender initialized more than once"); // can't count on logging here
-        } else {
-            JUnitAppender.instance = this;
-        }
-    }
-
-    /**
      * Do clean-up at end.
      *
      * Currently just reflects back to super-class.
@@ -50,16 +38,14 @@ public class JUnitAppender extends ConsoleHandler {
 
     static boolean hold = false;
 
-    static private JUnitAppender instance = null;
-
     /**
      * Tell appender that a JUnit test is starting.
      * <P>
      * This causes log messages to be held for examination.
      */
     public static void start() {
-        Logger.getGlobal().addHandler(JUnitAppender.instance);
-        Logger.getLogger("").addHandler(JUnitAppender.instance);
+        Logger.getGlobal().addHandler(JUnitAppender.instance());
+        Logger.getLogger("").addHandler(JUnitAppender.instance());
         hold = true;
     }
 
@@ -180,6 +166,15 @@ public class JUnitAppender extends ConsoleHandler {
     }
 
     public static JUnitAppender instance() {
-        return JUnitAppender.instance;
+        Handler[] handlers = Logger.getGlobal().getHandlers();
+        for (Handler handler : handlers) {
+            if (handler instanceof JUnitAppender) {
+                return (JUnitAppender) handler;
+            }
+        }
+        JUnitAppender handler = new JUnitAppender();
+        Logger.getGlobal().addHandler(handler);
+        Logger.getLogger("").addHandler(handler);
+        return handler;
     }
 }
