@@ -819,10 +819,10 @@ public final class FileUtil {
      * <li>If the file or resource has not been found in the searchPaths, search
      * in the six locations listed without prepending any path</li></ol>
      *
-     * @param module The module with which the file or resource is distrubuted;
-     * bypassed if null
-     * @param path The relative path of the file or resource
-     * @param locations The types of locations to limit the search to
+     * @param module      The module with which the file or resource is
+     *                    distrubuted; bypassed if null
+     * @param path        The relative path of the file or resource
+     * @param locations   The types of locations to limit the search to
      * @param searchPaths a list of paths to search for the path in
      * @return The URL or null
      * @see #findInputStream(java.lang.String)
@@ -866,6 +866,7 @@ public final class FileUtil {
                 if (!path.startsWith(".")) {
                     // Ensure path is in URL format
                     path = path.replace(File.separatorChar, '/');
+                    // NetBeans InstalledFileLocator requires leading / be removed
                     if (path.startsWith("/")) {
                         path = path.substring(1);
                     }
@@ -877,9 +878,11 @@ public final class FileUtil {
                         }
                     }
                     // attempt to return path from JMRI Resources module
-                    file = InstalledFileLocator.getDefault().locate(path, FileUtil.defaultModule.getCodeNameBase(), true);
-                    if (file != null && file.exists()) {
-                        return file.toURI().toURL();
+                    if (FileUtil.defaultModule != null) {
+                        file = InstalledFileLocator.getDefault().locate(path, FileUtil.defaultModule.getCodeNameBase(), true);
+                        if (file != null && file.exists()) {
+                            return file.toURI().toURL();
+                        }
                     }
                     // attempt to return path from any module
                     file = InstalledFileLocator.getDefault().locate(path, null, true);
