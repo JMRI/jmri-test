@@ -2,9 +2,14 @@
 package apps;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
 import javax.swing.Icon;
 import jmri.util.swing.JmriPanel;
 import jmri.util.swing.WindowInterface;
+import org.openide.modules.Places;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing action to display the JMRI System Console
@@ -29,6 +34,7 @@ public class SystemConsoleAction extends jmri.util.swing.JmriAbstractAction {
      *
      */
     private static final long serialVersionUID = -5843920804488337948L;
+    private static final Logger log = LoggerFactory.getLogger(SystemConsoleAction.class);
 
     public SystemConsoleAction(String s, WindowInterface wi) {
         super(s, wi);
@@ -45,7 +51,17 @@ public class SystemConsoleAction extends jmri.util.swing.JmriAbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         // Show system console
-        SystemConsole.getConsole().setVisible(true);
+        File userDir = Places.getUserDirectory();
+        if (userDir == null) {
+            return;
+        }
+        File f = new File(userDir, "/var/log/messages.log");
+        SystemConsoleSupport scs = new SystemConsoleSupport(f);
+        try {
+            scs.showSystemConsole();
+        } catch (IOException ex) {
+            log.info("Showing System Console action failed", ex);
+        }
     }
 
     // never invoked, because we overrode actionPerformed above
