@@ -8,8 +8,8 @@ import jmri.Programmer;
 import jmri.progdebugger.ProgDebugger;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 // @ToDo("test mode handling")
 // @ToDo("test packet contents in each mode")
 // @ToDo("test address handling")
-public class AccessoryOpsModeProgrammerFacadeTest extends TestCase {
+public class AccessoryOpsModeProgrammerFacadeTest extends NbTestCase {
 
     public void testWriteDirect() throws jmri.ProgrammerException, InterruptedException {
 
@@ -111,9 +111,9 @@ public class AccessoryOpsModeProgrammerFacadeTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(AccessoryOpsModeProgrammerFacadeTest.class);
+        NbTestSuite suite = new NbTestSuite(AccessoryOpsModeProgrammerFacadeTest.class);
         return suite;
     }
 

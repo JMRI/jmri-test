@@ -3,7 +3,7 @@ package jmri.jmrit.display;
 import javax.swing.JFrame;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Test the ReporterIcon.
@@ -94,8 +94,8 @@ public class ReporterIconTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(ReporterIconTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(ReporterIconTest.class);
         return suite;
     }
 

@@ -4,8 +4,8 @@ package jmri.jmrix.sprog;
 import jmri.managers.DefaultProgrammerManager;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the SprogMessage class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2012
  * @version	$Revision$
  */
-public class SprogMessageTest extends TestCase {
+public class SprogMessageTest extends NbTestCase {
 
     public void testCreate() {
         SprogMessage m = new SprogMessage(1);
@@ -52,8 +52,8 @@ public class SprogMessageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SprogMessageTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SprogMessageTest.class);
         return suite;
     }
 

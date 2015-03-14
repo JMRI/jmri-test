@@ -7,8 +7,8 @@ import jmri.jmrit.decoderdefn.DecoderFile;
 import jmri.jmrit.roster.RosterEntry;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jdom2.DocType;
@@ -21,7 +21,7 @@ import org.jdom2.Element;
  * @author	Bob Jacobsen
  * @version	$Revision$
  */
-public class PaneProgFrameTest extends TestCase {
+public class PaneProgFrameTest extends NbTestCase {
 
     // test creating a pane in config file
     public void testPane() {
@@ -177,8 +177,8 @@ public class PaneProgFrameTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PaneProgFrameTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PaneProgFrameTest.class);
         return suite;
     }
 

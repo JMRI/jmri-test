@@ -3,8 +3,8 @@ package jmri;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the IdTag class
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author Matthew Harris Copyright (C) 2011
  * @version $Revision$
  */
-public class IdTagTest extends TestCase {
+public class IdTagTest extends NbTestCase {
 
     public void testStateConstants() {
 
@@ -39,8 +39,8 @@ public class IdTagTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(IdTagTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(IdTagTest.class);
         return suite;
     }
 

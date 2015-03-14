@@ -4,8 +4,8 @@ package jmri.jmrix.secsi;
 import jmri.util.JUnitAppender;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the SerialAddress utility class.
@@ -14,7 +14,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2007
  * @version	$Revision$
  */
-public class SerialAddressTest extends TestCase {
+public class SerialAddressTest extends NbTestCase {
 
     public void testValidateSystemNameFormat() {
         Assert.assertTrue("valid format - VL2", SerialAddress.validSystemNameFormat("VL2", 'L'));
@@ -205,8 +205,8 @@ public class SerialAddressTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SerialAddressTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SerialAddressTest.class);
         return suite;
     }
 

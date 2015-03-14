@@ -2,8 +2,8 @@
 package jmri.jmrix.roco;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen
  * @version	$Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -27,9 +27,9 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrix.roco.RocoTest");  // no tests in this class itself
-        suite.addTest(new TestSuite(RocoConnectionTypeListTest.class));
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.roco.RocoTest");  // no tests in this class itself
+        suite.addTest(new NbTestSuite(RocoConnectionTypeListTest.class));
         suite.addTest(jmri.jmrix.roco.z21.z21Test.suite());
 
         if (!System.getProperty("jmri.headlesstest", "false").equals("true")) {

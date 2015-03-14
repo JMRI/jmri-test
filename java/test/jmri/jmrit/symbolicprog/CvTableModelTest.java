@@ -3,14 +3,14 @@ package jmri.jmrit.symbolicprog;
 
 import javax.swing.JLabel;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * @author	Bob Jacobsen
  * @version	$Revision$
  */
-public class CvTableModelTest extends TestCase {
+public class CvTableModelTest extends NbTestCase {
 
     public void testStart() {
         new CvTableModel(new JLabel(), null);
@@ -28,8 +28,8 @@ public class CvTableModelTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(CvTableModelTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(CvTableModelTest.class);
         return suite;
     }
 

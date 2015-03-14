@@ -8,8 +8,7 @@ import jmri.SignalHead;
 import jmri.Turnout;
 import jmri.util.JUnitUtil;
 import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the OPath class
@@ -163,8 +162,8 @@ public class LogixActionTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        return new TestSuite(LogixActionTest.class);
+    public static NbTestSuite suite() {
+        return new NbTestSuite(LogixActionTest.class);
     }
 
     // The minimal setup for log4J

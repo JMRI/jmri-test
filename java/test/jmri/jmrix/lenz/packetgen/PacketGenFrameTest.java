@@ -5,8 +5,8 @@ import jmri.jmrix.AbstractMRMessage;
 import jmri.jmrix.lenz.XNetMessage;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright (c) 2001, 2002
  * @version	$Revision$
  */
-public class PacketGenFrameTest extends TestCase {
+public class PacketGenFrameTest extends NbTestCase {
 
     public void testFrameCreate() {
         new PacketGenFrame();
@@ -54,8 +54,8 @@ public class PacketGenFrameTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PacketGenFrameTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PacketGenFrameTest.class);
         return suite;
     }
 

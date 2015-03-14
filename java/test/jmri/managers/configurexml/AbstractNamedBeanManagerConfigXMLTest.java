@@ -5,8 +5,8 @@ import jmri.NamedBean;
 import jmri.implementation.AbstractNamedBean;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jdom2.Element;
@@ -17,7 +17,7 @@ import org.jdom2.Element;
  * @author Bob Jacobsen Copyright 2009
  * @version $Revision$
  */
-public class AbstractNamedBeanManagerConfigXMLTest extends TestCase {
+public class AbstractNamedBeanManagerConfigXMLTest extends NbTestCase {
 
     public void testStoreBean() {
         // Create the manager to test
@@ -235,8 +235,8 @@ public class AbstractNamedBeanManagerConfigXMLTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AbstractNamedBeanManagerConfigXMLTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(AbstractNamedBeanManagerConfigXMLTest.class);
         return suite;
     }
 

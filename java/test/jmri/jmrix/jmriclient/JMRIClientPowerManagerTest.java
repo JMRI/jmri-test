@@ -2,8 +2,8 @@ package jmri.jmrix.jmriclient;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen
  * @version $Revision: 17977 $
  */
-public class JMRIClientPowerManagerTest extends TestCase {
+public class JMRIClientPowerManagerTest extends NbTestCase {
 
     public void testCtor() {
         JMRIClientPowerManager m = new JMRIClientPowerManager(new JMRIClientSystemConnectionMemo());
@@ -34,8 +34,8 @@ public class JMRIClientPowerManagerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(JMRIClientPowerManagerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(JMRIClientPowerManagerTest.class);
         return suite;
     }
 

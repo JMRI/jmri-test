@@ -3,8 +3,8 @@ package jmri.jmrix.can.cbus.swing.nodeconfig;
 
 import jmri.jmrix.can.TestTrafficController;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.can.cbus.swing.nodeconfig package.
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2008
  * @version $Revision$
  */
-public class NodeConfigToolActionTest extends TestCase {
+public class NodeConfigToolActionTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public NodeConfigToolActionTest(String s) {
@@ -32,9 +32,9 @@ public class NodeConfigToolActionTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(NodeConfigToolActionTest.class);
+        NbTestSuite suite = new NbTestSuite(NodeConfigToolActionTest.class);
         return suite;
     }
 

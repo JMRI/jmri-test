@@ -13,8 +13,7 @@ import jmri.Turnout;
 import jmri.util.JUnitUtil;
 import junit.extensions.jfcunit.TestHelper;
 import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,8 +176,8 @@ public class LogixTableActionTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        Test suite = new TestSuite(LogixTableActionTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LogixTableActionTest.class);
         return suite;
     }
 

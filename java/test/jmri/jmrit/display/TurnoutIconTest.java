@@ -5,7 +5,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * TurnoutIconTest.java
@@ -111,8 +111,8 @@ public class TurnoutIconTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(TurnoutIconTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(TurnoutIconTest.class);
         return suite;
     }
 

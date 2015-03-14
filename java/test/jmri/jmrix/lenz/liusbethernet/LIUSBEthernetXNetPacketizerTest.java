@@ -1,7 +1,7 @@
 package jmri.jmrix.lenz.liusbethernet;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.netbeans.junit.NbTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author Paul Bender
  * @version $Revision$
  */
-public class LIUSBEthernetXNetPacketizerTest extends TestCase {
+public class LIUSBEthernetXNetPacketizerTest extends NbTestCase {
 
     public void testCtor() {
         LIUSBEthernetXNetPacketizer f = new LIUSBEthernetXNetPacketizer(new jmri.jmrix.lenz.LenzCommandStation());

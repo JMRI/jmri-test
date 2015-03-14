@@ -4,8 +4,8 @@ package jmri.jmrix.grapevine.serialmon;
 import jmri.jmrix.grapevine.SerialMessage;
 import jmri.jmrix.grapevine.SerialReply;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.grapevine.serialmon package.
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2003, 2007, 2008
  * @version $Revision$
  */
-public class SerialMonTest extends TestCase {
+public class SerialMonTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public SerialMonTest(String s) {
@@ -65,9 +65,9 @@ public class SerialMonTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(SerialMonTest.class);
+        NbTestSuite suite = new NbTestSuite(SerialMonTest.class);
         return suite;
     }
 

@@ -3,8 +3,8 @@ package jmri.jmrit.powerpanel;
 
 import java.util.ResourceBundle;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmrit.PowerPanel package
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version $Revision$
  */
-public class PowerPanelTest extends TestCase {
+public class PowerPanelTest extends NbTestCase {
 
     static ResourceBundle res = ResourceBundle.getBundle("jmri.jmrit.powerpanel.PowerPanelBundle");
 
@@ -28,8 +28,8 @@ public class PowerPanelTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrit.powerpanel.PowerPanelTest"); // no tests in class itself
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrit.powerpanel.PowerPanelTest"); // no tests in class itself
         suite.addTest(jmri.jmrit.powerpanel.PowerPaneTest.suite());
         return suite;
     }

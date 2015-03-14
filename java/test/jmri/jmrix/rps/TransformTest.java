@@ -2,8 +2,8 @@
 package jmri.jmrix.rps;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the rps.Transform class.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2007
  * @version	$Revision$
  */
-public class TransformTest extends TestCase {
+public class TransformTest extends NbTestCase {
 
     public void testBasic() {
     }
@@ -28,8 +28,8 @@ public class TransformTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(TransformTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(TransformTest.class);
         return suite;
     }
 

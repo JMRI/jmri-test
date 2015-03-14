@@ -6,8 +6,8 @@ import jmri.jmrix.can.CanReply;
 import jmri.jmrix.can.CanSystemConnectionMemo;
 import jmri.jmrix.can.TrafficControllerScaffold;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.can.swing.monitor package.
@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2003, 2007, 2008, 2009
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -76,9 +76,9 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(PackageTest.class);
+        NbTestSuite suite = new NbTestSuite(PackageTest.class);
         return suite;
     }
 

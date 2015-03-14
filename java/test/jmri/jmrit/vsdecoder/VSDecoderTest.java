@@ -2,8 +2,8 @@
 package jmri.jmrit.vsdecoder;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmrix.vsdecoder package & jmrix.vsdecoder.VSDecoder class.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author	Mark Underwood Copyright (C) 2011
  * @version $Revision: 17977 $
  */
-public class VSDecoderTest extends TestCase {
+public class VSDecoderTest extends NbTestCase {
 
     // Tests for the VSDecoder class...
     public void testCreate() {
@@ -30,8 +30,8 @@ public class VSDecoderTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(VSDecoderTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(VSDecoderTest.class);
         suite.addTest(jmri.jmrit.vsdecoder.TriggerTest.suite());
         suite.addTest(jmri.jmrit.vsdecoder.BoolTriggerTest.suite());
         suite.addTest(jmri.jmrit.vsdecoder.ButtonTriggerTest.suite());

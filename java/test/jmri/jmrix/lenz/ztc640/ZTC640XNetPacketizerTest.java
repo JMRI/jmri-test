@@ -1,7 +1,7 @@
 package jmri.jmrix.lenz.ztc640;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.netbeans.junit.NbTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author Paul Bender
  * @version $Revision$
  */
-public class ZTC640XNetPacketizerTest extends TestCase {
+public class ZTC640XNetPacketizerTest extends NbTestCase {
 
     public void testCtor() {
         ZTC640XNetPacketizer f = new ZTC640XNetPacketizer(new jmri.jmrix.lenz.LenzCommandStation());

@@ -5,8 +5,8 @@ import jmri.jmrix.lenz.XNetListenerScaffold;
 import jmri.jmrix.lenz.XNetSystemConnectionMemo;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * @author	Paul Bender
  * @version $Revision$
  */
-public class EliteXNetInitializationManagerTest extends TestCase {
+public class EliteXNetInitializationManagerTest extends NbTestCase {
 
     public void testCtor() {
 
@@ -52,8 +52,8 @@ public class EliteXNetInitializationManagerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(EliteXNetInitializationManagerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(EliteXNetInitializationManagerTest.class);
         return suite;
     }
 

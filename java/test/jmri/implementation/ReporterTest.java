@@ -4,8 +4,8 @@ package jmri.implementation;
 import jmri.Reporter;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Reporter class
@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
  * @author Matthew Harris Copyright (C) 2011
  * @version $Revision$
  */
-public class ReporterTest extends TestCase {
+public class ReporterTest extends NbTestCase {
 
     public void testReporterCreation() {
         // Create a new reporter
@@ -137,8 +137,8 @@ public class ReporterTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(ReporterTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(ReporterTest.class);
         return suite;
     }
 

@@ -5,8 +5,8 @@ import jmri.jmrix.can.CanSystemConnectionMemo;
 import jmri.jmrix.can.TrafficControllerScaffold;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.can.cbus.swing.configtool package.
@@ -14,7 +14,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2008
  * @version $Revision$
  */
-public class ConfigToolActionTest extends TestCase {
+public class ConfigToolActionTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public ConfigToolActionTest(String s) {
@@ -44,9 +44,9 @@ public class ConfigToolActionTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(ConfigToolActionTest.class);
+        NbTestSuite suite = new NbTestSuite(ConfigToolActionTest.class);
         return suite;
     }
 

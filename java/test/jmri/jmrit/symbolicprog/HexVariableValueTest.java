@@ -6,7 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +59,8 @@ public class HexVariableValueTest extends VariableValueTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(HexVariableValueTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(HexVariableValueTest.class);
         return suite;
     }
 

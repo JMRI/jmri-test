@@ -4,8 +4,8 @@ package jmri.jmrix.maple;
 import jmri.Sensor;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the InputBits class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Dave Duchamp 2009
  * @version	$Revision$
  */
-public class InputBitsTest extends TestCase {
+public class InputBitsTest extends NbTestCase {
 
     public void testConstructor1() {
         Assert.assertNotNull("check instance", InputBits.instance());
@@ -178,8 +178,8 @@ public class InputBitsTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(InputBitsTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(InputBitsTest.class);
         return suite;
     }
 

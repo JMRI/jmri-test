@@ -2,8 +2,8 @@
 package jmri.jmrit.roster.swing;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmrit.roster.swing package
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2001, 2002, 2012
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -25,8 +25,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrit.roster.swing.PackageTest");
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrit.roster.swing.PackageTest");
 
         suite.addTest(BundleTest.suite());
         suite.addTest(RosterTableModelTest.suite());

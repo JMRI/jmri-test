@@ -2,8 +2,8 @@
 package jmri.jmrit.ussctc;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2003, 2007
  * @version	$Revision$
  */
-public class FollowerActionTest extends TestCase {
+public class FollowerActionTest extends NbTestCase {
 
     public void testFrameCreate() {
         new FollowerAction("test");
@@ -35,8 +35,8 @@ public class FollowerActionTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(FollowerActionTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(FollowerActionTest.class);
         return suite;
     }
 

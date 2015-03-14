@@ -9,8 +9,8 @@ import jmri.ThrottleManager;
 import jmri.jmrix.debugthrottle.DebugThrottleManager;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright (C) 2005
  * @version	$Revision$
  */
-public class DccLocoAddressSelectorTest extends TestCase {
+public class DccLocoAddressSelectorTest extends NbTestCase {
 
     public void testCtor() {
         DccLocoAddressSelector sel = new DccLocoAddressSelector();
@@ -154,8 +154,8 @@ public class DccLocoAddressSelectorTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DccLocoAddressSelectorTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DccLocoAddressSelectorTest.class);
         return suite;
     }
 

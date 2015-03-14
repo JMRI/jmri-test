@@ -1,10 +1,12 @@
 // SchemaTestBase.java
 package jmri.configurexml;
 
+import java.io.File;
 import jmri.jmrit.XmlFile;
-import java.io.*;
-
-import junit.framework.*;
+import junit.framework.Assert;
+import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Base for XML schema testing
@@ -13,7 +15,7 @@ import junit.framework.*;
  * @since 3.9.2
  * @version $Revision$
  */
-public class SchemaTestBase extends TestCase {
+public class SchemaTestBase extends NbTestCase {
 
     public SchemaTestBase(String s) {
         super(s);
@@ -63,7 +65,7 @@ public class SchemaTestBase extends TestCase {
      */
     static public void validateDirectory(TestSuite suite, String name) {
         // adds subsuite even if empty
-        TestSuite subsuite = new TestSuite("Directory " + name + " validation");
+        NbTestSuite subsuite = new NbTestSuite("Directory " + name + " validation");
         suite.addTest(subsuite);
 
         java.io.File dir = new java.io.File(name);
@@ -85,7 +87,7 @@ public class SchemaTestBase extends TestCase {
      */
     static public void validateSubdirectories(TestSuite suite, String name) {
         // adds subsuite even if empty
-        TestSuite subsuite = new TestSuite("Subdirectories of " + name + " validation");
+        TestSuite subsuite = new NbTestSuite("Subdirectories of " + name + " validation");
         suite.addTest(subsuite);
 
         java.io.File dir = new java.io.File(name);
@@ -107,7 +109,7 @@ public class SchemaTestBase extends TestCase {
      */
     static public void validateDirectoryFail(TestSuite suite, String name) {
         // adds subsuite even if empty
-        TestSuite subsuite = new TestSuite("Directory " + name + " validation");
+        TestSuite subsuite = new NbTestSuite("Directory " + name + " validation");
         suite.addTest(subsuite);
 
         java.io.File dir = new java.io.File(name);
@@ -127,7 +129,7 @@ public class SchemaTestBase extends TestCase {
     /**
      * Internal TestCase class to allow separate tests for every file
      */
-    static public class CheckOneFilePasses extends TestCase {
+    static public class CheckOneFilePasses extends NbTestCase {
 
         File file;
 
@@ -145,7 +147,7 @@ public class SchemaTestBase extends TestCase {
      * Internal TestCase class to allow separate tests for every file that
      * ensure file fails validation
      */
-    static public class CheckOneFileFails extends TestCase {
+    static public class CheckOneFileFails extends NbTestCase {
 
         File file;
 

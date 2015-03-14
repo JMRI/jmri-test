@@ -17,8 +17,8 @@ import jmri.jmrit.operations.trains.TrainManager;
 import jmri.jmrit.operations.trains.TrainManagerXml;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.jdom2.JDOMException;
 
 /**
@@ -31,7 +31,7 @@ import org.jdom2.JDOMException;
  * @author Bob Coleman Copyright (C) 2008, 2009
  * @version $Revision$
  */
-public class OperationsRoutesTest extends TestCase {
+public class OperationsRoutesTest extends NbTestCase {
 
     // test Route creation
     public void testCreate() {
@@ -755,8 +755,8 @@ public class OperationsRoutesTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OperationsRoutesTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OperationsRoutesTest.class);
         return suite;
     }
 

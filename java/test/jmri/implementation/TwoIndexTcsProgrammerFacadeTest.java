@@ -6,8 +6,8 @@ import jmri.Programmer;
 import jmri.progdebugger.ProgDebugger;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2014
  * @version $Revision: 24246 $
  */
-public class TwoIndexTcsProgrammerFacadeTest extends TestCase {
+public class TwoIndexTcsProgrammerFacadeTest extends NbTestCase {
 
     int readValue = -2;
     boolean replied = false;
@@ -149,9 +149,9 @@ public class TwoIndexTcsProgrammerFacadeTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(TwoIndexTcsProgrammerFacadeTest.class);
+        NbTestSuite suite = new NbTestSuite(TwoIndexTcsProgrammerFacadeTest.class);
         return suite;
     }
 

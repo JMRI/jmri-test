@@ -4,8 +4,8 @@ package jmri;
 import java.util.Locale;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Bundle class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright (C) 2012
  * @version $Revision: 17977 $
  */
-public class BundleTest extends TestCase {
+public class BundleTest extends NbTestCase {
 
     public void testGoodKeyMessage() {
         Assert.assertEquals("Turnout", Bundle.getMessage("BeanNameTurnout"));
@@ -63,8 +63,8 @@ public class BundleTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(BundleTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(BundleTest.class);
         return suite;
     }
 

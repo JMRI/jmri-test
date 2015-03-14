@@ -7,8 +7,8 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2003, 2007
  * @version $Revision$
  */
-public class NceTrafficControllerTest extends TestCase {
+public class NceTrafficControllerTest extends NbTestCase {
 
     public void testCreate() {
         NceTrafficController m = new NceTrafficController();
@@ -283,8 +283,8 @@ public class NceTrafficControllerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(NceTrafficControllerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(NceTrafficControllerTest.class);
         return suite;
     }
 

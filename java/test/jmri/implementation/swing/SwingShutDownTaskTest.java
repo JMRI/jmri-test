@@ -2,8 +2,8 @@
 package jmri.implementation.swing;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the SwingShutDownTask class.
@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2008
  * @version $Revision$
  */
-public class SwingShutDownTaskTest extends TestCase {
+public class SwingShutDownTaskTest extends NbTestCase {
 
     static boolean modalDialogStopsTest = false;
 
@@ -77,8 +77,8 @@ public class SwingShutDownTaskTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SwingShutDownTaskTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SwingShutDownTaskTest.class);
         return suite;
     }
 

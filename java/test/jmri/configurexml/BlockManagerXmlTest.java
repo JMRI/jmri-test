@@ -21,8 +21,8 @@ import jmri.jmrit.display.layoutEditor.LayoutBlockManager;
 import jmri.util.JUnitUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for BlockManagerXml.
@@ -33,7 +33,7 @@ import junit.framework.TestSuite;
  * @author Bob Coleman Copyright 2012
  * @version $Revision$
  */
-public class BlockManagerXmlTest extends TestCase {
+public class BlockManagerXmlTest extends NbTestCase {
 
     public void testLoadCurrent() throws Exception {
         JUnitUtil.resetInstanceManager();
@@ -449,8 +449,8 @@ public class BlockManagerXmlTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(BlockManagerXmlTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(BlockManagerXmlTest.class);
         return suite;
     }
 

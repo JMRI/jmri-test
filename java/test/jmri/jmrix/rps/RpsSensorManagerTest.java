@@ -4,8 +4,8 @@ package jmri.jmrix.rps;
 import jmri.SensorManager;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the RPS SensorManager class.
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2007
  * @version	$Revision$
  */
-public class RpsSensorManagerTest extends TestCase {
+public class RpsSensorManagerTest extends NbTestCase {
 
     public void testCtor() {
         SensorManager s = new RpsSensorManager();
@@ -32,8 +32,8 @@ public class RpsSensorManagerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(RpsSensorManagerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(RpsSensorManagerTest.class);
         return suite;
     }
 

@@ -2,8 +2,8 @@
 package jmri.jmrix.sprog;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * tests for the jmri.jmrix.sprog package
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -30,9 +30,9 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite("jmri.jmrix.sprog.PackageTest");
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.sprog.PackageTest");
 
         suite.addTest(jmri.jmrix.sprog.SprogMessageTest.suite());
         suite.addTest(jmri.jmrix.sprog.SprogCSStreamPortControllerTest.suite());

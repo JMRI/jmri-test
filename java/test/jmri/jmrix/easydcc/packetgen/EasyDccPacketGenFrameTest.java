@@ -10,12 +10,12 @@
 package jmri.jmrix.easydcc.packetgen;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EasyDccPacketGenFrameTest extends TestCase {
+public class EasyDccPacketGenFrameTest extends NbTestCase {
 
     public void testFrameCreate() {
         new EasyDccPacketGenFrame();
@@ -33,8 +33,8 @@ public class EasyDccPacketGenFrameTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(EasyDccPacketGenFrameTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(EasyDccPacketGenFrameTest.class);
         return suite;
     }
 

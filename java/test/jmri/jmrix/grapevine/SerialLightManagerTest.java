@@ -5,7 +5,7 @@ import jmri.Light;
 import jmri.jmrix.AbstractMRListener;
 import jmri.jmrix.AbstractMRMessage;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,9 +87,9 @@ public class SerialLightManagerTest extends jmri.managers.AbstractLightMgrTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(SerialLightManagerTest.class);
+        NbTestSuite suite = new NbTestSuite(SerialLightManagerTest.class);
         return suite;
     }
 

@@ -9,8 +9,8 @@ import jmri.jmrix.can.CanSystemConnectionMemo;
 import jmri.jmrix.can.TrafficControllerScaffold;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.can.swing.monitor.MonitorFrame class
@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2010
  * @version $Revision$
  */
-public class MonitorFrameDemo extends TestCase {
+public class MonitorFrameDemo extends NbTestCase {
 
     String testFormatted;
     String testRaw;
@@ -170,9 +170,9 @@ public class MonitorFrameDemo extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(MonitorFrameDemo.class);
+        NbTestSuite suite = new NbTestSuite(MonitorFrameDemo.class);
         return suite;
     }
 

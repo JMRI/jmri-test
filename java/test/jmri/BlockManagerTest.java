@@ -3,8 +3,8 @@ package jmri;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author Bob Jacobsen Copyright 2014
  * @version $Revision$
  */
-public class BlockManagerTest extends TestCase {
+public class BlockManagerTest extends NbTestCase {
 
     public void testCreate1() {
         // original create with systemname and username
@@ -156,8 +156,8 @@ public class BlockManagerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(BlockManagerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(BlockManagerTest.class);
         return suite;
     }
 

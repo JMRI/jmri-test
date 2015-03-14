@@ -4,8 +4,8 @@ package jmri.jmrit.catalog;
 import jmri.NamedBean;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the CatalogTreeIndex class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2009
  * @version $Revision$
  */
-public class CatalogTreeIndexTest extends TestCase {
+public class CatalogTreeIndexTest extends NbTestCase {
 
     // class carries its own implementation of the
     // get/set parameter code, so we test that here
@@ -87,8 +87,8 @@ public class CatalogTreeIndexTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(CatalogTreeIndexTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(CatalogTreeIndexTest.class);
         return suite;
     }
 

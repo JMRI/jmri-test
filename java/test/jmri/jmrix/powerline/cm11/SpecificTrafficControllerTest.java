@@ -13,8 +13,8 @@ import jmri.jmrix.powerline.SerialSystemConnectionMemo;
 import jmri.jmrix.powerline.SerialTrafficController;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @author kcameron Copyright (C) 2011
  * @version $Revision$
  */
-public class SpecificTrafficControllerTest extends TestCase {
+public class SpecificTrafficControllerTest extends NbTestCase {
 
     SerialTrafficController t = null;
     SerialSystemConnectionMemo memo = null;
@@ -244,8 +244,8 @@ public class SpecificTrafficControllerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SpecificTrafficControllerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SpecificTrafficControllerTest.class);
         return suite;
     }
 

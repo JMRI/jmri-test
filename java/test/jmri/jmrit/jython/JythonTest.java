@@ -4,8 +4,8 @@ package jmri.jmrit.jython;
 import javax.swing.JFrame;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Invokes complete set of tests in the jmri.jmrit.jython tree
@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2009
  * @version $Revision$
  */
-public class JythonTest extends TestCase {
+public class JythonTest extends NbTestCase {
 
     // Really a check of Jython init, including the defaults file
     public void testExec() {
@@ -69,8 +69,8 @@ public class JythonTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(JythonTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(JythonTest.class);
         return suite;
     }
 

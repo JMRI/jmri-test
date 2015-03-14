@@ -3,8 +3,8 @@ package jmri.jmrix.nce;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the NceMessage class
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2002-2004
  * @version	$Revision$
  */
-public class NceMessageTest extends TestCase {
+public class NceMessageTest extends NbTestCase {
 
     // ensure that the static useBinary value is left OK
     int saveCommandOptions;
@@ -147,8 +147,8 @@ public class NceMessageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(NceMessageTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(NceMessageTest.class);
         return suite;
     }
 

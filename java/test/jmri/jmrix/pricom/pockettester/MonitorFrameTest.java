@@ -2,8 +2,8 @@
 package jmri.jmrix.pricom.pockettester;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the MonitorFrame class
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2005
  * @version	$Revision$
  */
-public class MonitorFrameTest extends TestCase {
+public class MonitorFrameTest extends NbTestCase {
 
     public void testCreate() {
         new MonitorFrame();
@@ -42,8 +42,8 @@ public class MonitorFrameTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(MonitorFrameTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(MonitorFrameTest.class);
         return suite;
     }
 

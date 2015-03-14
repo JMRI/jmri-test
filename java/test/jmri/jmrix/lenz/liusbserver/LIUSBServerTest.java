@@ -2,8 +2,8 @@
 package jmri.jmrix.lenz.liusbserver;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author Paul Bender
  * @version $Revision: 17977 $
  */
-public class LIUSBServerTest extends TestCase {
+public class LIUSBServerTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public LIUSBServerTest(String s) {
@@ -27,10 +27,10 @@ public class LIUSBServerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrix.lenz.liusbserver.LIUSBServerTest");  // no tests in this class itself
-        suite.addTest(new TestSuite(LIUSBServerAdapterTest.class));
-        suite.addTest(new TestSuite(LIUSBServerXNetPacketizerTest.class));
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.lenz.liusbserver.LIUSBServerTest");  // no tests in this class itself
+        suite.addTest(new NbTestSuite(LIUSBServerAdapterTest.class));
+        suite.addTest(new NbTestSuite(LIUSBServerXNetPacketizerTest.class));
         return suite;
     }
 

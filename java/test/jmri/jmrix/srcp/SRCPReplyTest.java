@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 import jmri.jmrix.srcp.parser.SRCPClientParser;
 import jmri.jmrix.srcp.parser.ParseException;
@@ -20,7 +20,7 @@ import java.io.StringReader;
  * @author	Bob Jacobsen
  * @version $Revision$
  */
-public class SRCPReplyTest extends TestCase {
+public class SRCPReplyTest extends NbTestCase {
 
     public void testCtor() {
         SRCPReply m = new SRCPReply();
@@ -62,8 +62,8 @@ public class SRCPReplyTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SRCPReplyTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SRCPReplyTest.class);
         return suite;
     }
 

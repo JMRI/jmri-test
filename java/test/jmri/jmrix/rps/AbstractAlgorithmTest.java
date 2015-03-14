@@ -3,7 +3,7 @@ package jmri.jmrix.rps;
 
 import javax.vecmath.Point3d;
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.netbeans.junit.NbTestCase;
 
 /**
  * Common test scaffolding for Algorithm implementations.
@@ -17,7 +17,11 @@ import junit.framework.TestCase;
  * @author	Bob Jacobsen Copyright 2008
  * @version	$Revision$
  */
-abstract public class AbstractAlgorithmTest extends TestCase {
+abstract public class AbstractAlgorithmTest extends NbTestCase {
+
+    public AbstractAlgorithmTest(String name) {
+        super(name);
+    }
 
     abstract Calculator getAlgorithm(Point3d[] pts, double vs);
 

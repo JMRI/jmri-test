@@ -10,7 +10,7 @@ import junit.extensions.jfcunit.eventdata.MouseEventData;
 import junit.extensions.jfcunit.finder.AbstractButtonFinder;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Swing jfcUnit tests for the SDI GUI
@@ -77,8 +77,8 @@ public class SdiJfcUnitTests extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SdiJfcUnitTests.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SdiJfcUnitTests.class);
         return suite;
     }
 

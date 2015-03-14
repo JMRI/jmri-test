@@ -3,8 +3,8 @@ package jmri;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Light class
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2008, 2010
  * @version $Revision$
  */
-public class LightTest extends TestCase {
+public class LightTest extends NbTestCase {
 
     @SuppressWarnings("all")
     public void testStateConstants() {
@@ -45,8 +45,8 @@ public class LightTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LightTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LightTest.class);
         return suite;
     }
 

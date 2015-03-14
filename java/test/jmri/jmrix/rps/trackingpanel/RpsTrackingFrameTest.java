@@ -9,8 +9,8 @@ import jmri.jmrix.rps.Reading;
 import jmri.jmrix.rps.Receiver;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the rps.RpsTrackingFrame class.
@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2008
  * @version	$Revision$
  */
-public class RpsTrackingFrameTest extends TestCase {
+public class RpsTrackingFrameTest extends NbTestCase {
 
     public void testShow() {
         new Engine() {
@@ -72,8 +72,8 @@ public class RpsTrackingFrameTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(RpsTrackingFrameTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(RpsTrackingFrameTest.class);
         return suite;
     }
 

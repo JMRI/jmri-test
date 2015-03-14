@@ -2,15 +2,15 @@
 package jmri.util.swing.mdi;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  *
  * @author	Bob Jacobsen Copyright 2003, 2010
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     public void testShow() {
         MdiMainFrame f = new MdiMainFrame("Test of MDI Frame",
@@ -37,8 +37,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PackageTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PackageTest.class);
 
         //suite.addTest(MultiJfcUnitTest.suite());
         return suite;

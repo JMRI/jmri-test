@@ -5,7 +5,7 @@ import jmri.*;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Test the DefaultConditional implementation class
@@ -68,8 +68,8 @@ public class DefaultConditionalTest extends NamedBeanTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DefaultConditionalTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DefaultConditionalTest.class);
         return suite;
     }
 

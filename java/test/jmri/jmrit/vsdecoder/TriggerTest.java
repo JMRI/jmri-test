@@ -3,8 +3,8 @@ package jmri.jmrit.vsdecoder;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Trigger class
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author Mark Underwood Copyright (C) 2011
  * @version $Revision: 17977 $
  */
-public class TriggerTest extends TestCase {
+public class TriggerTest extends NbTestCase {
 
     public void testStateConstants() {
         // Maybe check the enums here?
@@ -74,8 +74,8 @@ public class TriggerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(TriggerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(TriggerTest.class);
         return suite;
     }
 

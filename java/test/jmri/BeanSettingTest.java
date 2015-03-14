@@ -4,8 +4,8 @@ package jmri;
 import jmri.util.JUnitUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the BeanSetting class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2006
  * @version $Revision$
  */
-public class BeanSettingTest extends TestCase {
+public class BeanSettingTest extends NbTestCase {
 
     public void testCreate() {
         new BeanSetting(null, 0);
@@ -53,8 +53,8 @@ public class BeanSettingTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(BeanSettingTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(BeanSettingTest.class);
         return suite;
     }
 

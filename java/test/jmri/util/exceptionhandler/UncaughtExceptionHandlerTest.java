@@ -5,7 +5,7 @@ import jmri.util.JUnitAppender;
 import jmri.util.SwingTestCase;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,8 +69,8 @@ public class UncaughtExceptionHandlerTest extends SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(UncaughtExceptionHandlerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(UncaughtExceptionHandlerTest.class);
         return suite;
     }
 

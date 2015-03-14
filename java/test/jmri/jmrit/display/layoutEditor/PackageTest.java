@@ -1,7 +1,8 @@
 // PackageTest.java
 package jmri.jmrit.display.layoutEditor;
 
-import junit.framework.*;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmrit.display.layoutEditor package
@@ -9,7 +10,7 @@ import junit.framework.*;
  * @author	Bob Jacobsen Copyright 2008, 2009, 2010
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -23,8 +24,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PackageTest.class.getName());
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PackageTest.class.getName());
 
         suite.addTest(SchemaTest.suite());
 

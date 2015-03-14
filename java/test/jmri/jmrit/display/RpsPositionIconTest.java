@@ -8,7 +8,7 @@ import jmri.jmrix.rps.Reading;
 import jmri.util.JmriJFrame;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the RpsIcon class.
@@ -116,8 +116,8 @@ public class RpsPositionIconTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(RpsPositionIconTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(RpsPositionIconTest.class);
         return suite;
     }
 

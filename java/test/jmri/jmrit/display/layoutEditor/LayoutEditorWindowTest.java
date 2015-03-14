@@ -10,7 +10,7 @@ import junit.extensions.jfcunit.finder.AbstractButtonFinder;
 import junit.extensions.jfcunit.finder.DialogFinder;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Swing jfcUnit tests for the LayoutEditor
@@ -72,8 +72,8 @@ public class LayoutEditorWindowTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LayoutEditorWindowTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LayoutEditorWindowTest.class);
         return suite;
     }
 

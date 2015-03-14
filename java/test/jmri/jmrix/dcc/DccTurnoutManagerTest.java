@@ -10,7 +10,7 @@ package jmri.jmrix.dcc;
 
 import jmri.Turnout;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,9 +60,9 @@ public class DccTurnoutManagerTest extends jmri.managers.AbstractTurnoutMgrTest 
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(DccTurnoutManagerTest.class);
+        NbTestSuite suite = new NbTestSuite(DccTurnoutManagerTest.class);
         return suite;
     }
 

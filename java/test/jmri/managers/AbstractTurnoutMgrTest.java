@@ -19,9 +19,9 @@ import jmri.Turnout;
 import jmri.TurnoutAddress;
 import jmri.TurnoutManager;
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.netbeans.junit.NbTestCase;
 
-public abstract class AbstractTurnoutMgrTest extends TestCase {
+public abstract class AbstractTurnoutMgrTest extends NbTestCase {
 
     // implementing classes must provide these abstract members:
     //

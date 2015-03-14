@@ -3,9 +3,9 @@ package jmri.jmrix.loconet;
 import jmri.ProgrammingMode;
 import jmri.managers.DefaultProgrammerManager;
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.netbeans.junit.NbTestCase;
 
-public class LnOpsModeProgrammerTest extends TestCase {
+public class LnOpsModeProgrammerTest extends NbTestCase {
 
     public LnOpsModeProgrammerTest(String s) {
         super(s);

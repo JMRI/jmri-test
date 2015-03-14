@@ -7,8 +7,8 @@ import jmri.util.FileUtil;
 import jmri.util.JUnitAppender;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * @suthor B. Milhaupt Copyright (C) 2014
  * @version	$Revision$
  */
-public class MemoryContentsTest extends TestCase {
+public class MemoryContentsTest extends NbTestCase {
 
     public void testReadNormalFile() throws java.io.FileNotFoundException {
         MemoryContents m = new MemoryContents();
@@ -829,8 +829,8 @@ public class MemoryContentsTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(MemoryContentsTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(MemoryContentsTest.class);
         return suite;
     }
 

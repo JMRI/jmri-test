@@ -2,8 +2,8 @@ package jmri.jmrit.roster;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * IdentifyLocoTest.java
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version	$Revision$
  */
-public class IdentifyLocoTest extends TestCase {
+public class IdentifyLocoTest extends NbTestCase {
 
     static int cvRead = -1;
 
@@ -124,8 +124,8 @@ public class IdentifyLocoTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(IdentifyLocoTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(IdentifyLocoTest.class);
         return suite;
     }
 

@@ -3,16 +3,15 @@ package jmri.jmrit.logix;
 
 import jmri.Block;
 import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  *
  * @author	Bob Jacobsen Copyright 2010, 2014
  * @version $Revision$
  */
-public class OBlockTest extends TestCase {
+public class OBlockTest extends NbTestCase {
 
     @SuppressWarnings("all") // otherwise, you get "Comparing identical" warning (until something breaks!)
     public void testEqualCoding() {
@@ -58,8 +57,8 @@ public class OBlockTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        return new TestSuite(OBlockTest.class);
+    public static NbTestSuite suite() {
+        return new NbTestSuite(OBlockTest.class);
     }
 
     // The minimal setup for log4J

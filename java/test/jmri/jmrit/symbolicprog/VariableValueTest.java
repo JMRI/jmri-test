@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import jmri.progdebugger.ProgDebugger;
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.netbeans.junit.NbTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen, Copyright 2002
  * @version $Revision$
  */
-public abstract class VariableValueTest extends TestCase {
+public abstract class VariableValueTest extends NbTestCase {
 
     ProgDebugger p = new ProgDebugger();
 

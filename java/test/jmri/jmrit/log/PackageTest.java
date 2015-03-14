@@ -1,10 +1,8 @@
 // PackageTest.java
 package jmri.jmrit.log;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.slf4j.Logger;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -13,7 +11,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2003, 2010
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     public void testShow() {
         LoggerFactory.getLogger("jmri.jmrix");
@@ -43,8 +41,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        return new TestSuite(PackageTest.class);
+    public static NbTestSuite suite() {
+        return new NbTestSuite(PackageTest.class);
     }
 
     // The minimal setup for log4J

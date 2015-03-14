@@ -8,8 +8,8 @@ import jmri.jmrix.can.TrafficControllerScaffold;
 import jmri.managers.DefaultProgrammerManager;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2008
  * @version $Revision$
  */
-public class CbusProgrammerTest extends TestCase {
+public class CbusProgrammerTest extends NbTestCase {
 
     public void testGetMode() {
         CbusProgrammer p = new CbusProgrammer(10, new TestTrafficController());
@@ -116,8 +116,8 @@ public class CbusProgrammerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(CbusProgrammerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(CbusProgrammerTest.class);
         return suite;
     }
 

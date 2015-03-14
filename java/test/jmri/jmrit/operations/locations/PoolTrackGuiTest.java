@@ -9,7 +9,7 @@ import jmri.jmrit.operations.trains.TrainManagerXml;
 import junit.extensions.jfcunit.eventdata.MouseEventData;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Operations Pool track GUI class
@@ -1021,8 +1021,8 @@ public class PoolTrackGuiTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PoolTrackGuiTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PoolTrackGuiTest.class);
         return suite;
     }
 

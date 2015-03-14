@@ -13,7 +13,7 @@ import junit.extensions.jfcunit.finder.AbstractButtonFinder;
 import junit.extensions.jfcunit.finder.NamedComponentFinder;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Swing jfcUnit tests for the turnout table
@@ -90,8 +90,8 @@ public class TurnoutTableWindowTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(TurnoutTableWindowTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(TurnoutTableWindowTest.class);
         return suite;
     }
 

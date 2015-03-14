@@ -4,8 +4,8 @@ package jmri.jmrix.rps;
 import javax.vecmath.Point3d;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the rps.Ash1_1Algorithm class.
@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2006
  * @version	$Revision$
  */
-public class Ash1_1AlgorithmTest extends TestCase {
+public class Ash1_1AlgorithmTest extends NbTestCase {
 
     double vs = 0.0344;  // SI default for testing
 
@@ -120,8 +120,8 @@ public class Ash1_1AlgorithmTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(Ash1_1AlgorithmTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(Ash1_1AlgorithmTest.class);
         return suite;
     }
 

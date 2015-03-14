@@ -3,7 +3,7 @@ package jmri.jmrix.maple;
 
 import jmri.Turnout;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,9 +72,9 @@ public class SerialTurnoutManagerTest extends jmri.managers.AbstractTurnoutMgrTe
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(SerialTurnoutManagerTest.class);
+        NbTestSuite suite = new NbTestSuite(SerialTurnoutManagerTest.class);
         return suite;
     }
 

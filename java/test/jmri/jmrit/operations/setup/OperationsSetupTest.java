@@ -11,8 +11,8 @@ import jmri.jmrit.operations.trains.TrainManagerXml;
 import jmri.util.FileUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Operations Setup class Last manually cross-checked on 20090131
@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
  * @author	Bob Coleman Copyright (C) 2008, 2009
  * @version $Revision$
  */
-public class OperationsSetupTest extends TestCase {
+public class OperationsSetupTest extends NbTestCase {
 
     // test creation
     @SuppressWarnings("static-access")
@@ -549,8 +549,8 @@ public class OperationsSetupTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OperationsSetupTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OperationsSetupTest.class);
         suite.addTestSuite(OperationsBackupTest.class);
 
         return suite;

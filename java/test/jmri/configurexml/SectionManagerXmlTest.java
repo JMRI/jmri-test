@@ -14,8 +14,8 @@ import jmri.jmrit.display.layoutEditor.LayoutBlockManager;
 import jmri.util.JUnitUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for SectionManagerXml.
@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
  * @author Bob Coleman Copyright 2012
  * @version $Revision$
  */
-public class SectionManagerXmlTest extends TestCase {
+public class SectionManagerXmlTest extends NbTestCase {
 
     public void testLoadCurrent() throws Exception {
         // load file
@@ -545,8 +545,8 @@ public class SectionManagerXmlTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SectionManagerXmlTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SectionManagerXmlTest.class);
         return suite;
     }
     /*

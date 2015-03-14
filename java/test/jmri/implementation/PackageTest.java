@@ -9,10 +9,10 @@
 package jmri.implementation;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -26,8 +26,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.implementation");   // no tests in this class itself
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.implementation");   // no tests in this class itself
 
         // fundamental aspects
         suite.addTest(NamedBeanTest.suite());

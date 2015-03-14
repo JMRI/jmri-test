@@ -4,8 +4,8 @@ package jmri;
 import jmri.util.JUnitUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the NamedBeanHandleManager class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Kevin Dickerson Copyright (C) 2006
  * @version $Revision: 18111 $
  */
-public class NamedBeanHandleManagerTest extends TestCase {
+public class NamedBeanHandleManagerTest extends NbTestCase {
 
     public void testCreate() {
     }
@@ -95,8 +95,8 @@ public class NamedBeanHandleManagerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(NamedBeanHandleManagerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(NamedBeanHandleManagerTest.class);
         return suite;
     }
 

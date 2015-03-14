@@ -2,10 +2,10 @@ package jmri.jmrix.loconet;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
-public class LocoNetSlotTest extends TestCase {
+public class LocoNetSlotTest extends NbTestCase {
 
     public LocoNetSlotTest(String s) {
         super(s);
@@ -32,8 +32,8 @@ public class LocoNetSlotTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LocoNetSlotTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LocoNetSlotTest.class);
         return suite;
     }
 

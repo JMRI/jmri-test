@@ -6,8 +6,7 @@ import javax.swing.JFrame;
 import junit.extensions.jfcunit.eventdata.MouseEventData;
 import junit.extensions.jfcunit.finder.NamedComponentFinder;
 import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.util.SwingTestCase class.
@@ -60,8 +59,8 @@ public class SwingTestCaseTest extends SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        Test suite = new TestSuite(SwingTestCaseTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SwingTestCaseTest.class);
         return suite;
     }
 

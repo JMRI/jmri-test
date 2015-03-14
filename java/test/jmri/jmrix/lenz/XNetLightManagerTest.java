@@ -4,7 +4,7 @@ import jmri.Light;
 import jmri.LightManager;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,8 +61,8 @@ public class XNetLightManagerTest extends jmri.managers.AbstractLightMgrTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(XNetLightManagerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(XNetLightManagerTest.class);
         return suite;
     }
 

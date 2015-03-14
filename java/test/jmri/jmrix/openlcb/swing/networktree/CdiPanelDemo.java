@@ -7,8 +7,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
@@ -18,7 +18,7 @@ import org.openlcb.cdi.swing.CdiPanel;
  * @author Bob Jacobsen Copyright 2012
  * @version $Revision: 2175 $
  */
-public class CdiPanelDemo extends TestCase {
+public class CdiPanelDemo extends NbTestCase {
 
     // from here down is testing infrastructure
     public CdiPanelDemo(String s) {
@@ -137,8 +137,8 @@ public class CdiPanelDemo extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(CdiPanelDemo.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(CdiPanelDemo.class);
         return suite;
     }
 }

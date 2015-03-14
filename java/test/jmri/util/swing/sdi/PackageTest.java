@@ -7,8 +7,8 @@ import jmri.util.JmriJFrame;
 import jmri.util.swing.ButtonTestAction;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Invokes complete set of tests in the jmri.util.swing.sdi tree
@@ -16,7 +16,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2010
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     public void testAction() {
         JmriJFrame f = new JmriJFrame("SDI test");
@@ -45,8 +45,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PackageTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PackageTest.class);
 
         suite.addTest(SdiJfcUnitTests.suite());
 

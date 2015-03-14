@@ -3,8 +3,8 @@ package jmri.configurexml;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * @author Bob Jacobsen Copyright 2009
  * @version $Revision$
  */
-public class DefaultJavaBeanConfigXMLTest extends TestCase {
+public class DefaultJavaBeanConfigXMLTest extends NbTestCase {
 
     public void testStoreBean() {
         DefaultJavaBeanConfigXML x = new DefaultJavaBeanConfigXML();
@@ -71,8 +71,8 @@ public class DefaultJavaBeanConfigXMLTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DefaultJavaBeanConfigXMLTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DefaultJavaBeanConfigXMLTest.class);
         return suite;
     }
 

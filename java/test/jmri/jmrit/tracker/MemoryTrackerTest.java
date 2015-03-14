@@ -5,8 +5,8 @@ import jmri.Block;
 import jmri.InstanceManager;
 import jmri.MemoryManager;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the MemoryTracker class
@@ -14,7 +14,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2006
  * @version $Revision$
  */
-public class MemoryTrackerTest extends TestCase {
+public class MemoryTrackerTest extends NbTestCase {
 
     public void testDirectCreate() {
         MemoryManager m = InstanceManager.memoryManagerInstance();
@@ -36,8 +36,8 @@ public class MemoryTrackerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(MemoryTrackerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(MemoryTrackerTest.class);
         return suite;
     }
 

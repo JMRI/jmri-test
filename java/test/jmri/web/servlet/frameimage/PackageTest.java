@@ -2,8 +2,8 @@
 package jmri.web.servlet.frameimage;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Invokes complete set of tests in the jmri.web.servlet.frameimage tree
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2013
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -25,8 +25,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.web.servlet.frameimage.PackageTest");   // no tests in this class itself
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.web.servlet.frameimage.PackageTest");   // no tests in this class itself
         suite.addTest(JmriJFrameServletTest.suite());
         return suite;
     }

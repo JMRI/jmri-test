@@ -20,7 +20,7 @@ import junit.extensions.jfcunit.finder.AbstractButtonFinder;
 import junit.extensions.jfcunit.finder.DialogFinder;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Operations Cars GUI class
@@ -565,8 +565,8 @@ public class OperationsCarsGuiTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OperationsCarsGuiTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OperationsCarsGuiTest.class);
         return suite;
     }
 

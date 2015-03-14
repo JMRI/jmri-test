@@ -6,8 +6,8 @@ import javax.swing.JLabel;
 import jmri.progdebugger.ProgDebugger;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jdom2.DocType;
@@ -19,7 +19,7 @@ import org.jdom2.Element;
  * @author	Bob Jacobsen, Copyright 2014
  * @version $Revision$
  */
-public class QualifierAdderTest extends TestCase {
+public class QualifierAdderTest extends NbTestCase {
 
     // Service routine for tests
     ProgDebugger p;
@@ -263,8 +263,8 @@ public class QualifierAdderTest extends TestCase {
     }
 
     // test suite from all defined tests, including others in the package
-    public static Test suite() {
-        TestSuite suite = new TestSuite(QualifierAdderTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(QualifierAdderTest.class);
         return suite;
     }
 

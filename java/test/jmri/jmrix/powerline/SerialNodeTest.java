@@ -2,8 +2,8 @@
 package jmri.jmrix.powerline;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the SerialNode class
@@ -14,7 +14,7 @@ import junit.framework.TestSuite;
  * @author kcameron Copyright (C) 2011
  * @version	$Revision$
  */
-public class SerialNodeTest extends TestCase {
+public class SerialNodeTest extends NbTestCase {
 
     public void testMarkChanges() {
         //SerialSensor s1 = new SerialSensor("PSA1","a");
@@ -47,8 +47,8 @@ public class SerialNodeTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SerialNodeTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SerialNodeTest.class);
         return suite;
     }
 

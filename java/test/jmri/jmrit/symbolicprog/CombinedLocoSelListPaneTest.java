@@ -4,11 +4,11 @@ import javax.swing.JLabel;
 import jmri.managers.DefaultProgrammerManager;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 // Revision: $Revision$
-public class CombinedLocoSelListPaneTest extends TestCase {
+public class CombinedLocoSelListPaneTest extends NbTestCase {
 
     public CombinedLocoSelListPaneTest(String s) {
         super(s);
@@ -46,8 +46,8 @@ public class CombinedLocoSelListPaneTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(CombinedLocoSelListPaneTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(CombinedLocoSelListPaneTest.class);
         return suite;
     }
 

@@ -1,8 +1,8 @@
 package jmri.jmrix.loconet;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2001, 2003
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -26,8 +26,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrix.loconet.PackageTest");  // no tests in this class itself
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.loconet.PackageTest");  // no tests in this class itself
 
         suite.addTest(jmri.jmrix.loconet.LocoNetThrottledTransmitterTest.suite());
 
@@ -37,18 +37,18 @@ public class PackageTest extends TestCase {
             suite.addTest(jmri.jmrix.loconet.locostats.PackageTest.suite());
             suite.addTest(jmri.jmrix.loconet.soundloader.PackageTest.suite());
             suite.addTest(jmri.jmrix.loconet.spjfile.PackageTest.suite());
-            suite.addTest(new TestSuite(Se8AlmImplementationTest.class));
-            suite.addTest(new TestSuite(SecurityElementTest.class));
+            suite.addTest(new NbTestSuite(Se8AlmImplementationTest.class));
+            suite.addTest(new NbTestSuite(SecurityElementTest.class));
         }
 
-        suite.addTest(new TestSuite(SlotManagerTest.class));
-        suite.addTest(new TestSuite(LocoNetSlotTest.class));
-        suite.addTest(new TestSuite(LnOpsModeProgrammerTest.class));
-        suite.addTest(new TestSuite(LocoNetMessageTest.class));
-        suite.addTest(new TestSuite(LnTrafficControllerTest.class));
-        suite.addTest(new TestSuite(LnTrafficRouterTest.class));
-        suite.addTest(new TestSuite(LnPacketizerTest.class));
-        suite.addTest(new TestSuite(LocoNetThrottleTest.class));
+        suite.addTest(new NbTestSuite(SlotManagerTest.class));
+        suite.addTest(new NbTestSuite(LocoNetSlotTest.class));
+        suite.addTest(new NbTestSuite(LnOpsModeProgrammerTest.class));
+        suite.addTest(new NbTestSuite(LocoNetMessageTest.class));
+        suite.addTest(new NbTestSuite(LnTrafficControllerTest.class));
+        suite.addTest(new NbTestSuite(LnTrafficRouterTest.class));
+        suite.addTest(new NbTestSuite(LnPacketizerTest.class));
+        suite.addTest(new NbTestSuite(LocoNetThrottleTest.class));
         suite.addTest(LnPowerManagerTest.suite());
         suite.addTest(LnTurnoutTest.suite());
         suite.addTest(LnTurnoutManagerTest.suite());

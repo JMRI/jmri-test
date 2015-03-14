@@ -4,8 +4,8 @@ package jmri.jmrix.rps.swing.polling;
 import javax.swing.JFrame;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.rps.swing.polling package.
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2008
  * @version $Revision$
  */
-public class PollTableActionTest extends TestCase {
+public class PollTableActionTest extends NbTestCase {
 
     // Show the window
     public void testDisplay() {
@@ -36,9 +36,9 @@ public class PollTableActionTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(PollTableActionTest.class);
+        NbTestSuite suite = new NbTestSuite(PollTableActionTest.class);
         return suite;
     }
 

@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * SRCPTrafficControllerTest.java
@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version $Revision$
  */
-public class SRCPTrafficControllerTest extends TestCase {
+public class SRCPTrafficControllerTest extends NbTestCase {
 
     public void testCtor() {
         SRCPTrafficController m = new SRCPTrafficController();
@@ -34,8 +34,8 @@ public class SRCPTrafficControllerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SRCPTrafficControllerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SRCPTrafficControllerTest.class);
         return suite;
     }
 

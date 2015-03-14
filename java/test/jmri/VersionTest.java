@@ -5,14 +5,14 @@
 package jmri;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  *
  * @author zoo
  */
-public class VersionTest extends TestCase {
+public class VersionTest extends NbTestCase {
 
     public VersionTest(String testName) {
         super(testName);
@@ -52,8 +52,8 @@ public class VersionTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(VersionTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(VersionTest.class);
         return suite;
     }
 }

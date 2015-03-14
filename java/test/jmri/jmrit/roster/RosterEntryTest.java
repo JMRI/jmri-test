@@ -6,8 +6,8 @@ import java.io.IOException;
 import jmri.util.FileUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmrit.roster.RosterEntry class.
@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2001, 2002
  * @version	$Revision$
  */
-public class RosterEntryTest extends TestCase {
+public class RosterEntryTest extends NbTestCase {
 
     public void testCreate() {
         RosterEntry r = new RosterEntry("file here");
@@ -366,8 +366,8 @@ public class RosterEntryTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(RosterEntryTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(RosterEntryTest.class);
         return suite;
     }
 

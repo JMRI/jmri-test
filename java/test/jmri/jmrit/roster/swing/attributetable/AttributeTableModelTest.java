@@ -5,8 +5,8 @@ import jmri.jmrit.roster.Roster;
 import jmri.jmrit.roster.RosterEntry;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.jdom2.Element;
 
 /**
@@ -15,7 +15,7 @@ import org.jdom2.Element;
  * @author	Bob Jacobsen Copyright (C) 2009
  * @version $Revision$
  */
-public class AttributeTableModelTest extends TestCase {
+public class AttributeTableModelTest extends NbTestCase {
 
     public void testTableLength() throws Exception {
         AttributeTableModel t = new AttributeTableModel();
@@ -155,8 +155,8 @@ public class AttributeTableModelTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AttributeTableModelTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(AttributeTableModelTest.class);
         return suite;
     }
 

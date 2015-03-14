@@ -3,15 +3,15 @@ package jmri.util.swing;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  *
  * @author	Bob Jacobsen Copyright 2014
  * @version $Revision$
  */
-public class JCBHandleTest extends TestCase {
+public class JCBHandleTest extends NbTestCase {
 
     public void testToStringReal() {
         JCBHandle<DummyObject> a = new JCBHandle<DummyObject>(new DummyObject());
@@ -42,8 +42,8 @@ public class JCBHandleTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(JCBHandleTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(JCBHandleTest.class);
 
         return suite;
     }

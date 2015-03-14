@@ -3,8 +3,8 @@ package jmri.jmrix.maple;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the SerialMessage class.
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2003, 2008
  * @version	$Revision$
  */
-public class SerialMessageTest extends TestCase {
+public class SerialMessageTest extends NbTestCase {
 
     public void testCreate() {
         SerialMessage m = new SerialMessage(1);
@@ -62,8 +62,8 @@ public class SerialMessageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SerialMessageTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SerialMessageTest.class);
         return suite;
     }
 

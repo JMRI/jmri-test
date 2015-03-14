@@ -2,8 +2,8 @@
 package jmri.jmrix.openlcb.swing.monitor;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Demos for the jmri.jmrix.openlcb package.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2009, 2012
  * @version $Revision$
  */
-public class PackageDemo extends TestCase {
+public class PackageDemo extends NbTestCase {
 
     public void testDefinitions() {
     }
@@ -29,8 +29,8 @@ public class PackageDemo extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrix.openlcb.monitor.PackageDemo");
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.openlcb.monitor.PackageDemo");
 
         suite.addTest(MonitorFrameDemo.suite());
 

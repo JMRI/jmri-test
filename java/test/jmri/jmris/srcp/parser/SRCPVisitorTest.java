@@ -2,9 +2,8 @@
 package jmri.jmris.srcp.parser;
 
 import java.io.StringReader;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the {@link jmri.jmris.srcp.parser.SRCPVisitor} class.
@@ -12,7 +11,11 @@ import junit.framework.TestSuite;
  * @author Paul Bender
  * @version $Revision: 21215 $
  */
-public class SRCPVisitorTest extends TestCase {
+public class SRCPVisitorTest extends NbTestCase {
+
+    public SRCPVisitorTest(String name) {
+        super(name);
+    }
 
     public void testCTor() {
         // test the constructor.
@@ -78,8 +81,8 @@ public class SRCPVisitorTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SRCPVisitorTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SRCPVisitorTest.class);
         return suite;
 
     }

@@ -4,8 +4,8 @@ package jmri.util.swing;
 import java.util.List;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.util.swing.FontComboUtil class.
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Matthew Harris Copyright 2011
  * @version	$Revision$
  */
-public class FontComboUtilTest extends TestCase {
+public class FontComboUtilTest extends NbTestCase {
 
     // test constants
     public void testFontUtilConstants() {
@@ -88,8 +88,8 @@ public class FontComboUtilTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(FontComboUtilTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(FontComboUtilTest.class);
         return suite;
     }
 

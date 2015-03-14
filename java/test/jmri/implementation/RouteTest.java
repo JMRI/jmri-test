@@ -6,8 +6,8 @@ import jmri.Sensor;
 import jmri.Turnout;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Route interface
@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2006, 2007
  * @version $Revision$
  */
-public class RouteTest extends TestCase {
+public class RouteTest extends NbTestCase {
 
     public void testSetConstants() {
         Assert.assertTrue("ACTIVE not TOGGLE", Sensor.ACTIVE != Route.TOGGLE);
@@ -116,8 +116,8 @@ public class RouteTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(RouteTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(RouteTest.class);
         return suite;
     }
 

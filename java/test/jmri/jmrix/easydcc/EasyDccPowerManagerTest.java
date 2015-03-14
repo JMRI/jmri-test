@@ -5,7 +5,7 @@ import java.util.Vector;
 import jmri.JmriException;
 import jmri.jmrix.AbstractPowerManagerTest;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,8 +130,8 @@ public class EasyDccPowerManagerTest extends AbstractPowerManagerTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(EasyDccPowerManagerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(EasyDccPowerManagerTest.class);
         return suite;
     }
 

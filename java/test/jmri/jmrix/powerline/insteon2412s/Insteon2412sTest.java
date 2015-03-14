@@ -2,8 +2,8 @@
 package jmri.jmrix.powerline.insteon2412s;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.powerline.insteon2412s package.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2003, 2007, 2008, 2009
  * @version $Revision$
  */
-public class Insteon2412sTest extends TestCase {
+public class Insteon2412sTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public Insteon2412sTest(String s) {
@@ -25,9 +25,9 @@ public class Insteon2412sTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite("jmri.jmrix.powerline.insteon2412s.Insteon2412sTest");
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.powerline.insteon2412s.Insteon2412sTest");
         suite.addTest(SpecificMessageTest.suite());
         suite.addTest(SpecificReplyTest.suite());
         suite.addTest(SpecificTrafficControllerTest.suite());

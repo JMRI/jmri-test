@@ -10,10 +10,10 @@ package jmri.jmrix.qsi;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
-public class QsiMessageTest extends TestCase {
+public class QsiMessageTest extends NbTestCase {
 
     public void testCreate() {
         QsiMessage m = new QsiMessage(1);
@@ -64,8 +64,8 @@ public class QsiMessageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(QsiMessageTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(QsiMessageTest.class);
         return suite;
     }
 

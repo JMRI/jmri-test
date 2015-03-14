@@ -2,8 +2,8 @@
 package jmri.jmrix.rps;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Test all the RPS algorithms.
@@ -14,7 +14,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2008
  * @version $Revision$
  */
-public class AlgorithmsTest extends TestCase {
+public class AlgorithmsTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public AlgorithmsTest(String s) {
@@ -28,9 +28,9 @@ public class AlgorithmsTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite("jmri.jmrix.rps.AlgorithmsTest");
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.rps.AlgorithmsTest");
 
         suite.addTest(InitialAlgorithmTest.suite());
 

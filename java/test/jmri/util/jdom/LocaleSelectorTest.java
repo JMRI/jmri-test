@@ -3,8 +3,8 @@ package jmri.util.jdom;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jdom2.Element;
@@ -16,7 +16,7 @@ import org.jdom2.Namespace;
  * @author	Bob Jacobsen Copyright 2010
  * @version	$Revision$
  */
-public class LocaleSelectorTest extends TestCase {
+public class LocaleSelectorTest extends NbTestCase {
 
     public void testFindDefault() {
         LocaleSelector.suffixes
@@ -192,8 +192,8 @@ public class LocaleSelectorTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LocaleSelectorTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LocaleSelectorTest.class);
         return suite;
     }
 

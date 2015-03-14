@@ -10,12 +10,12 @@ package jmri;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NmraPacketTest extends TestCase {
+public class NmraPacketTest extends NbTestCase {
 
     // output values for some of these tests were provided by Bob Scheffler
     // create an accessory decoder packet
@@ -398,9 +398,9 @@ public class NmraPacketTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(NmraPacketTest.class);
+        NbTestSuite suite = new NbTestSuite(NmraPacketTest.class);
         return suite;
     }
 

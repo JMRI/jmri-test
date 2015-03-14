@@ -3,8 +3,8 @@ package jmri.jmrix.qsi;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the QsiReplyclass
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  *
  * @version $Revision$
  */
-public class QsiReplyTest extends TestCase {
+public class QsiReplyTest extends NbTestCase {
 
     public void testCreate() {
         QsiReply m = new QsiReply();
@@ -72,8 +72,8 @@ public class QsiReplyTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(QsiReplyTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(QsiReplyTest.class);
         return suite;
     }
 

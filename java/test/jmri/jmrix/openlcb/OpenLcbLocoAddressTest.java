@@ -3,8 +3,8 @@ package jmri.jmrix.openlcb;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openlcb.NodeID;
@@ -15,7 +15,7 @@ import org.openlcb.NodeID;
  * @author	Bob Jacobsen Copyright 2008, 2010, 2011
  * @version $Revision$
  */
-public class OpenLcbLocoAddressTest extends TestCase {
+public class OpenLcbLocoAddressTest extends NbTestCase {
 
     public void testEqualsNull() {
         OpenLcbLocoAddress a = new OpenLcbLocoAddress(new NodeID(new byte[]{1, 2, 3, 4, 5, 6}));
@@ -50,8 +50,8 @@ public class OpenLcbLocoAddressTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OpenLcbLocoAddressTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OpenLcbLocoAddressTest.class);
         return suite;
     }
 

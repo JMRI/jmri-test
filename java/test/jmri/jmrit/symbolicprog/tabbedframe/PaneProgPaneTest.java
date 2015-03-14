@@ -13,8 +13,8 @@ import jmri.jmrit.symbolicprog.VariableTableModel;
 import jmri.progdebugger.ProgDebugger;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jdom2.DocType;
@@ -25,7 +25,7 @@ import org.jdom2.Element;
  * @author	Bob Jacobsen Copyright 2001, 2002, 2003, 2004
  * @version $Revision$
  */
-public class PaneProgPaneTest extends TestCase {
+public class PaneProgPaneTest extends NbTestCase {
 
     ProgDebugger p = new ProgDebugger();
 
@@ -511,8 +511,8 @@ public class PaneProgPaneTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PaneProgPaneTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PaneProgPaneTest.class);
         return suite;
     }
 

@@ -6,8 +6,8 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * @author	Paul Bender
  * @version $Revision$
  */
-public class SprogCSStreamPortControllerTest extends TestCase {
+public class SprogCSStreamPortControllerTest extends NbTestCase {
 
     public void testCtor() {
 
@@ -49,8 +49,8 @@ public class SprogCSStreamPortControllerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SprogCSStreamPortControllerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SprogCSStreamPortControllerTest.class);
         return suite;
     }
 

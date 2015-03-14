@@ -2,8 +2,8 @@
 package jmri.jmrix.jmriclient;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen
  * @version	$Revision: 18472 $
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -27,19 +27,19 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrix.jmriclient.JMRiClientTest");  // no tests in this class itself
-        suite.addTest(new TestSuite(JMRIClientMessageTest.class));
-        suite.addTest(new TestSuite(JMRIClientReplyTest.class));
-        suite.addTest(new TestSuite(JMRIClientTurnoutTest.class));
-        suite.addTest(new TestSuite(JMRIClientSensorTest.class));
-        suite.addTest(new TestSuite(JMRIClientReporterTest.class));
-        suite.addTest(new TestSuite(JMRIClientTurnoutManagerTest.class));
-        suite.addTest(new TestSuite(JMRIClientSensorManagerTest.class));
-        suite.addTest(new TestSuite(JMRIClientReporterManagerTest.class));
-        suite.addTest(new TestSuite(JMRIClientTrafficControllerTest.class));
-        suite.addTest(new TestSuite(JMRIClientSystemConnectionMemoTest.class));
-        suite.addTest(new TestSuite(JMRIClientPowerManagerTest.class));
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.jmriclient.JMRiClientTest");  // no tests in this class itself
+        suite.addTest(new NbTestSuite(JMRIClientMessageTest.class));
+        suite.addTest(new NbTestSuite(JMRIClientReplyTest.class));
+        suite.addTest(new NbTestSuite(JMRIClientTurnoutTest.class));
+        suite.addTest(new NbTestSuite(JMRIClientSensorTest.class));
+        suite.addTest(new NbTestSuite(JMRIClientReporterTest.class));
+        suite.addTest(new NbTestSuite(JMRIClientTurnoutManagerTest.class));
+        suite.addTest(new NbTestSuite(JMRIClientSensorManagerTest.class));
+        suite.addTest(new NbTestSuite(JMRIClientReporterManagerTest.class));
+        suite.addTest(new NbTestSuite(JMRIClientTrafficControllerTest.class));
+        suite.addTest(new NbTestSuite(JMRIClientSystemConnectionMemoTest.class));
+        suite.addTest(new NbTestSuite(JMRIClientPowerManagerTest.class));
 
         // if (!System.getProperty("jmri.headlesstest","false").equals("true")) {
         // there are currently no swing tests.

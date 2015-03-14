@@ -2,8 +2,8 @@
 package jmri.jmrix.openlcb.swing.tie;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.openlcb package.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2009, 2012
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     public void testDefinitions() {
     }
@@ -29,8 +29,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrix.openlcb.tie.PackageTest");
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.openlcb.tie.PackageTest");
 
         suite.addTest(TieToolFrameTest.suite());
 

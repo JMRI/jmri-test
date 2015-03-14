@@ -3,8 +3,8 @@ package jmri.jmrix.maple;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.maple package.
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2003
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -31,9 +31,9 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite("jmri.jmrix.maple.SerialTest");
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.maple.SerialTest");
         suite.addTest(jmri.jmrix.maple.SerialTurnoutTest.suite());
         suite.addTest(jmri.jmrix.maple.SerialTurnoutManagerTest.suite());
         suite.addTest(jmri.jmrix.maple.SerialSensorManagerTest.suite());

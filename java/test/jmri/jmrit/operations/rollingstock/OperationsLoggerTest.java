@@ -11,8 +11,8 @@ import jmri.jmrit.operations.setup.OperationsSetupXml;
 import jmri.jmrit.operations.setup.Setup;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Operations Logger class
@@ -20,7 +20,7 @@ import junit.framework.TestSuite;
  * @author	Dan Boudreau Copyright (C) 2010
  *
  */
-public class OperationsLoggerTest extends TestCase {
+public class OperationsLoggerTest extends NbTestCase {
 
     // test creation
     public void testCreate() {
@@ -86,8 +86,8 @@ public class OperationsLoggerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OperationsLoggerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OperationsLoggerTest.class);
         return suite;
     }
 

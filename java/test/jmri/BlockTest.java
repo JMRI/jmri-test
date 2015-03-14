@@ -4,8 +4,8 @@ package jmri;
 import jmri.util.JUnitUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Block class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2006
  * @version $Revision$
  */
-public class BlockTest extends TestCase {
+public class BlockTest extends NbTestCase {
 
     /**
      * Normally, users create Block objects via a manager, but we test the
@@ -281,8 +281,8 @@ public class BlockTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(BlockTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(BlockTest.class);
         return suite;
     }
 

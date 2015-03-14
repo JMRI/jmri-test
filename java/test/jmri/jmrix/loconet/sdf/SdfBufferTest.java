@@ -6,8 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author Bob Jacobsen Copyright 2007
  * @version $Revision$
  */
-public class SdfBufferTest extends TestCase {
+public class SdfBufferTest extends NbTestCase {
 
     public void testFileCtor() throws java.io.IOException {
         SdfBuffer b = new SdfBuffer("java/test/jmri/jmrix/loconet/sdf/test2.sdf");
@@ -106,8 +106,8 @@ public class SdfBufferTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SdfBufferTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SdfBufferTest.class);
         return suite;
     }
 

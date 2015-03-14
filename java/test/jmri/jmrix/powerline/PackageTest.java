@@ -3,8 +3,8 @@ package jmri.jmrix.powerline;
 
 //import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.powerline package.
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2003, 2007, 2008
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -30,9 +30,9 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite("jmri.jmrix.powerline.SerialTest");
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.powerline.SerialTest");
         suite.addTest(X10SequenceTest.suite());
         //suite.addTest(SerialTurnoutTest.suite());
         //suite.addTest(SerialSensorManagerTest.suite());

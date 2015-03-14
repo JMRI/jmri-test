@@ -5,8 +5,8 @@ import javax.swing.JPanel;
 import jmri.jmrit.decoderdefn.DecoderFile;
 import jmri.jmrit.roster.RosterEntry;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jdom2.DocType;
@@ -19,7 +19,7 @@ import org.jdom2.Element;
  * @author	Bob Jacobsen Copyright 2010
  * @version	$Revision$
  */
-public class QualifiedVarTest extends TestCase {
+public class QualifiedVarTest extends NbTestCase {
 
     // show me a specially-created frame
     public void testFrame() throws Exception {
@@ -197,8 +197,8 @@ public class QualifiedVarTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(QualifiedVarTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(QualifiedVarTest.class);
         return suite;
     }
 

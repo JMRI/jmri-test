@@ -2,8 +2,8 @@
 package jmri.configurexml;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Test the jmri.configxml package.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -25,8 +25,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests, including others in the package
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.config.ConfigXmlTest");  // no tests in this class itself
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.config.ConfigXmlTest");  // no tests in this class itself
 
         suite.addTest(SchemaTest.suite());
         suite.addTest(LoadAndCheckTest.suite());

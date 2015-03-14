@@ -2,8 +2,8 @@
 package jmri.progdebugger;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen, Copyright (C) 2001, 2002
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     public void testCtor() {
     }
@@ -32,9 +32,9 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(PackageTest.class);
+        NbTestSuite suite = new NbTestSuite(PackageTest.class);
         suite.addTest(jmri.progdebugger.DebugProgrammerTest.suite());
         suite.addTest(jmri.progdebugger.DebugProgrammerManagerTest.suite());
         return suite;

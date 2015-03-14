@@ -4,15 +4,15 @@ package jmri.implementation;
 import jmri.ConditionalAction;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Test the DefaultConditionalAction implementation class
  *
  * @author Bob Jacobsen Copyright (C) 2015
  */
-public class DefaultConditionalActionTest extends TestCase {
+public class DefaultConditionalActionTest extends NbTestCase {
 
     public void testCtor() {
         new DefaultConditionalAction();
@@ -61,8 +61,8 @@ public class DefaultConditionalActionTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DefaultConditionalActionTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DefaultConditionalActionTest.class);
         return suite;
     }
 

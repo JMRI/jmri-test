@@ -3,8 +3,8 @@ package jmri.jmrix.nce;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the NceReplyclass
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version	$Revision$
  */
-public class NceReplyTest extends TestCase {
+public class NceReplyTest extends NbTestCase {
 
     public void testCreate() {
         NceTrafficController tc = new NceTrafficController();
@@ -194,8 +194,8 @@ public class NceReplyTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(NceReplyTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(NceReplyTest.class);
         return suite;
     }
 

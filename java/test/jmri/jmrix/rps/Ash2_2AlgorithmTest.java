@@ -2,8 +2,7 @@
 package jmri.jmrix.rps;
 
 import javax.vecmath.Point3d;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the rps.Ash2_2Algorithm class.
@@ -15,6 +14,10 @@ import junit.framework.TestSuite;
  * @version	$Revision$
  */
 public class Ash2_2AlgorithmTest extends AbstractAlgorithmTest {
+
+    public Ash2_2AlgorithmTest(String name) {
+        super(name);
+    }
 
     Calculator getAlgorithm(Point3d[] pts, double vs) {
         return new Ash2_2Algorithm(pts, vs);
@@ -28,9 +31,9 @@ public class Ash2_2AlgorithmTest extends AbstractAlgorithmTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(Ash2_2AlgorithmTest.class);
+        NbTestSuite suite = new NbTestSuite(Ash2_2AlgorithmTest.class);
         return suite;
     }
 

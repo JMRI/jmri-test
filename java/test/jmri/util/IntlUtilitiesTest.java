@@ -4,8 +4,8 @@ package jmri.util;
 import java.util.Locale;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 20014
  * @version	$Revision$
  */
-public class IntlUtilitiesTest extends TestCase {
+public class IntlUtilitiesTest extends NbTestCase {
 
     public void testFloatInUSEnglish() throws java.text.ParseException {
         Locale startingLocale = Locale.getDefault();
@@ -117,8 +117,8 @@ public class IntlUtilitiesTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(IntlUtilitiesTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(IntlUtilitiesTest.class);
         return suite;
     }
 

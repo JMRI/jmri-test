@@ -6,8 +6,8 @@ import jmri.InstanceManager;
 import jmri.util.JUnitUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the DccSignalMast implementation
@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2013
  * @version $Revision$
  */
-public class DccSignalMastTest extends TestCase {
+public class DccSignalMastTest extends NbTestCase {
 
     public void testCtor1() {
         DccSignalMast s = new DccSignalMast("IF$dsm:AAR-1946:PL-1-high-abs(1)");
@@ -51,8 +51,8 @@ public class DccSignalMastTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DccSignalMastTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DccSignalMastTest.class);
         return suite;
     }
 

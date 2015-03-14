@@ -5,8 +5,8 @@ import jmri.jmrix.can.CanMessage;
 import jmri.jmrix.can.TrafficControllerScaffold;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.can.adapters.gridconnect.canrs.MergMessage class
@@ -14,7 +14,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2008, 2009
  * @version $Revision$
  */
-public class MergMessageTest extends TestCase {
+public class MergMessageTest extends NbTestCase {
 
     // :S123N12345678;
     public void testOne() {
@@ -72,9 +72,9 @@ public class MergMessageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(MergMessageTest.class);
+        NbTestSuite suite = new NbTestSuite(MergMessageTest.class);
         return suite;
     }
 

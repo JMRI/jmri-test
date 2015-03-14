@@ -3,7 +3,7 @@ package jmri.jmrit.operations.setup;
 
 import java.util.Locale;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Operations Setup Backup GUI class.
@@ -75,8 +75,8 @@ public class OperationsBackupGuiTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OperationsBackupGuiTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OperationsBackupGuiTest.class);
         return suite;
     }
 

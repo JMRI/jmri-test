@@ -4,8 +4,8 @@ package jmri.jmrix.maple;
 import jmri.jmrix.AbstractMRMessage;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the OutputBits class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Dave Duchamp 2009
  * @version	$Revision$
  */
-public class OutputBitsTest extends TestCase {
+public class OutputBitsTest extends NbTestCase {
 
     public void testConstructor1() {
         Assert.assertNotNull("check instance", OutputBits.instance());
@@ -63,8 +63,8 @@ public class OutputBitsTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OutputBitsTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OutputBitsTest.class);
         return suite;
     }
 

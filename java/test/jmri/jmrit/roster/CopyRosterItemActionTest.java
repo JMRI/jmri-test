@@ -1,8 +1,8 @@
 package jmri.jmrit.roster;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmrit.roster.RosterEntryPane class.
@@ -10,7 +10,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2001, 2002
  * @version	$Revision$
  */
-public class CopyRosterItemActionTest extends TestCase {
+public class CopyRosterItemActionTest extends NbTestCase {
 
     /**
      * Really just checks that the thing can init; doesn't really copy the file,
@@ -51,8 +51,8 @@ public class CopyRosterItemActionTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(CopyRosterItemActionTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(CopyRosterItemActionTest.class);
         return suite;
     }
 

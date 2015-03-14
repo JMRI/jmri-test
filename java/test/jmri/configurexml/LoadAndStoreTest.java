@@ -1,7 +1,7 @@
 // LoadAndStoreTest.java
 package jmri.configurexml;
 
-import junit.framework.Test;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Test that configuration files can be read and then stored again consistently.
@@ -31,7 +31,7 @@ public class LoadAndStoreTest extends LoadAndStoreTestBase {
         junit.swingui.TestRunner.main(testCaseName);
     }
 
-    public static Test suite() {
+    public static NbTestSuite suite() {
         return LoadAndStoreTestBase.makeSuite("java/test/jmri/configurexml/");
     }
 

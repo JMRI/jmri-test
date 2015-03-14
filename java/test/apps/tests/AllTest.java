@@ -2,8 +2,8 @@
 package apps.tests;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Invoke all the JMRI project JUnit tests via a GUI interface.
@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version	$Revision$
  */
-public class AllTest extends TestCase {
+public class AllTest extends NbTestCase {
 
     public AllTest(String s) {
         super(s);
@@ -39,9 +39,9 @@ public class AllTest extends TestCase {
     }
 
     // test suite
-    public static Test suite() {
+    public static NbTestSuite suite() {
         // all tests from here down in heirarchy
-        TestSuite suite = new TestSuite("AllTest");  // no tests in this class itself
+        NbTestSuite suite = new NbTestSuite("AllTest");  // no tests in this class itself
         // all tests from other classes
         suite.addTest(jmri.PackageTest.suite());
         suite.addTest(apps.PackageTest.suite());

@@ -3,8 +3,8 @@ package jmri.jmrix.lenz.hornbyelite;
 import jmri.jmrix.lenz.XNetInterfaceScaffold;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author	Paul Bender
  * @version $Revision$
  */
-public class EliteXNetThrottleTest extends TestCase {
+public class EliteXNetThrottleTest extends NbTestCase {
 
     public void testCtor() {
         // infrastructure objects
@@ -38,8 +38,8 @@ public class EliteXNetThrottleTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(EliteXNetThrottleTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(EliteXNetThrottleTest.class);
         return suite;
     }
 

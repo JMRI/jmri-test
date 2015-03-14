@@ -3,7 +3,7 @@ package jmri.jmrit.display;
 import jmri.util.JmriJFrame;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * MemorySpinnerIconTest.java
@@ -84,8 +84,8 @@ public class MemorySpinnerIconTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(MemorySpinnerIconTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(MemorySpinnerIconTest.class);
         return suite;
     }
 

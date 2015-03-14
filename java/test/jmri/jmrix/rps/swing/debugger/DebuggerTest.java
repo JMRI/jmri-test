@@ -7,8 +7,8 @@ import jmri.jmrix.rps.Measurement;
 import jmri.jmrix.rps.Reading;
 import jmri.jmrix.rps.Receiver;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.rps.swing.debugger package
@@ -16,7 +16,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2008
  * @version $Revision$
  */
-public class DebuggerTest extends TestCase {
+public class DebuggerTest extends NbTestCase {
 
     public void testCtor() throws Exception {
 
@@ -53,9 +53,9 @@ public class DebuggerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(DebuggerTest.class);
+        NbTestSuite suite = new NbTestSuite(DebuggerTest.class);
         return suite;
     }
 

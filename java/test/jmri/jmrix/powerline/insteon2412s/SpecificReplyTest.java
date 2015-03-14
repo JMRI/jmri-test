@@ -6,8 +6,8 @@ import jmri.jmrix.powerline.SerialSystemConnectionMemo;
 import jmri.jmrix.powerline.SerialTrafficController;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the insteon2412s.SpecficReply class.
@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
  * @author kcameron Copyright (C) 2011
  * @version	$Revision$
  */
-public class SpecificReplyTest extends TestCase {
+public class SpecificReplyTest extends NbTestCase {
 
     SerialTrafficController t = null;
     SerialSystemConnectionMemo memo = null;
@@ -50,8 +50,8 @@ public class SpecificReplyTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SpecificReplyTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SpecificReplyTest.class);
         return suite;
     }
 

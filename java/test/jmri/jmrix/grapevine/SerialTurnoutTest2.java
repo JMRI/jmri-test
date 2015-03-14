@@ -4,7 +4,7 @@ package jmri.jmrix.grapevine;
 import jmri.implementation.AbstractTurnoutTest;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,8 +53,8 @@ public class SerialTurnoutTest2 extends AbstractTurnoutTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SerialTurnoutTest2.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SerialTurnoutTest2.class);
         return suite;
     }
 

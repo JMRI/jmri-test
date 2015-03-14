@@ -7,8 +7,8 @@ import jmri.jmrix.lenz.XNetReply;
 import jmri.managers.DefaultProgrammerManager;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * @author	Paul Bender
  * @version $Revision$
  */
-public class LI100XNetProgrammerTest extends TestCase {
+public class LI100XNetProgrammerTest extends NbTestCase {
 
     static final int RELEASE_TIME = 100;
     static final int RESTART_TIME = 20;
@@ -397,8 +397,8 @@ public class LI100XNetProgrammerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LI100XNetProgrammerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LI100XNetProgrammerTest.class);
         return suite;
     }
 

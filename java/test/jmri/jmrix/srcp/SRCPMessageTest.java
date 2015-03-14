@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * SRCPMessageTest.java
@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version $Revision$
  */
-public class SRCPMessageTest extends TestCase {
+public class SRCPMessageTest extends NbTestCase {
 
     public void testCtor() {
         SRCPMessage m = new SRCPMessage();
@@ -42,8 +42,8 @@ public class SRCPMessageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SRCPMessageTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SRCPMessageTest.class);
         return suite;
     }
 

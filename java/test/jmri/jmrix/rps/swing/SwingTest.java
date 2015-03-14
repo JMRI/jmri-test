@@ -2,8 +2,8 @@
 package jmri.jmrix.rps.swing;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.rps.swing package.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2008
  * @version $Revision$
  */
-public class SwingTest extends TestCase {
+public class SwingTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public SwingTest(String s) {
@@ -25,9 +25,9 @@ public class SwingTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite("jmri.jmrix.rps.SwingTest");
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.rps.SwingTest");
         suite.addTest(jmri.jmrix.rps.swing.AffineEntryPanelTest.suite());
         suite.addTest(jmri.jmrix.rps.swing.polling.PollTableActionTest.suite());
         suite.addTest(jmri.jmrix.rps.swing.debugger.DebuggerTest.suite()); // do last to display in front

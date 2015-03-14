@@ -4,8 +4,8 @@ package jmri.jmrix.direct;
 import jmri.NmraPacket;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2004
  * @version	$Revision$
  */
-public class MakePacketTest extends TestCase {
+public class MakePacketTest extends NbTestCase {
 
     public void testCreate() {
     }
@@ -216,8 +216,8 @@ public class MakePacketTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(MakePacketTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(MakePacketTest.class);
         return suite;
     }
     static Logger log = LoggerFactory.getLogger(MakePacketTest.class.getName());

@@ -2,8 +2,8 @@ package jmri.jmrit.decoderdefn;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * IdentifyDecoderTest.java
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version	$Revision$
  */
-public class IdentifyDecoderTest extends TestCase {
+public class IdentifyDecoderTest extends NbTestCase {
 
     static int cvRead = -1;
 
@@ -117,8 +117,8 @@ public class IdentifyDecoderTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(IdentifyDecoderTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(IdentifyDecoderTest.class);
         return suite;
     }
 

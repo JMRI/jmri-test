@@ -1,7 +1,7 @@
 package jmri.jmrix.lenz;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.netbeans.junit.NbTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author Bob Jacobsen
  * @version $Revision$
  */
-public class XNetPacketizerTest extends TestCase {
+public class XNetPacketizerTest extends NbTestCase {
 
     static final int RELEASE_TIME = 100;
 

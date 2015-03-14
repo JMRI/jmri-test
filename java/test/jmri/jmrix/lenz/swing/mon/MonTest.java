@@ -2,8 +2,8 @@
 package jmri.jmrix.lenz.swing.mon;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author Paul Bender
  * @version $Revision$
  */
-public class MonTest extends TestCase {
+public class MonTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public MonTest(String s) {
@@ -27,9 +27,9 @@ public class MonTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrix.lenz.swing.mon.MonTest");  // no tests in this class itself
-        suite.addTest(new TestSuite(XNetMonPaneTest.class));
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.lenz.swing.mon.MonTest");  // no tests in this class itself
+        suite.addTest(new NbTestSuite(XNetMonPaneTest.class));
         return suite;
     }
 

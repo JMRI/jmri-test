@@ -2,8 +2,8 @@
 package jmri.jmrix.pricom.downloader;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.pricom.downloader package.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2005
  * @version $Revision$
  */
-public class DownloaderTest extends TestCase {
+public class DownloaderTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public DownloaderTest(String s) {
@@ -25,9 +25,9 @@ public class DownloaderTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite("jmri.jmrix.pricom.pockettester.DownloaderTest");
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.pricom.pockettester.DownloaderTest");
         suite.addTest(jmri.jmrix.pricom.downloader.PdiFileTest.suite());
         suite.addTest(jmri.jmrix.pricom.downloader.LoaderPaneTest.suite());
         return suite;

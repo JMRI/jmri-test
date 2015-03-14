@@ -4,8 +4,8 @@ package jmri.jmrit.beantable;
 import javax.swing.JFrame;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for classes in the jmri.jmrit.beantable package
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2004
  * @version	$Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     public void testCreate() {
         new MemoryTableAction();
@@ -42,8 +42,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PackageTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PackageTest.class);
         suite.addTest(BlockTableActionTest.suite());
         suite.addTest(LogixTableActionTest.suite());
         suite.addTest(LRouteTableActionTest.suite());

@@ -6,8 +6,8 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.openlcb.AbstractConnection;
 import org.openlcb.Connection;
 import org.openlcb.EventID;
@@ -32,7 +32,7 @@ import org.openlcb.swing.networktree.TreePane;
  * @author Bob Jacobsen Copyright 2009
  * @version $Revision$
  */
-public class NetworkTreePaneDemo extends TestCase {
+public class NetworkTreePaneDemo extends NbTestCase {
 
     NodeID nid1 = new NodeID(new byte[]{0, 0, 0, 0, 0, 1});
     NodeID nid2 = new NodeID(new byte[]{0, 0, 0, 0, 0, 2});
@@ -163,8 +163,8 @@ public class NetworkTreePaneDemo extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(NetworkTreePaneDemo.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(NetworkTreePaneDemo.class);
         return suite;
     }
 }

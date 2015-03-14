@@ -6,8 +6,8 @@ import jmri.Turnout;
 import jmri.implementation.AbstractTurnout;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2008
  * @version	$Revision$
  */
-public class OrderedHashtableTest extends TestCase {
+public class OrderedHashtableTest extends NbTestCase {
 
     public void testCtor() {
         new OrderedHashtable<Object, Object>();
@@ -151,8 +151,8 @@ public class OrderedHashtableTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OrderedHashtableTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OrderedHashtableTest.class);
         return suite;
     }
 

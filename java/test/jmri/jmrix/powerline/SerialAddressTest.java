@@ -4,8 +4,8 @@ package jmri.jmrix.powerline;
 import jmri.util.JUnitAppender;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the SerialAddress utility class.
@@ -14,7 +14,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2007, 2008
  * @version	$Revision$
  */
-public class SerialAddressTest extends TestCase {
+public class SerialAddressTest extends NbTestCase {
 
     SerialTrafficControlScaffold tc = null;
 
@@ -135,8 +135,8 @@ public class SerialAddressTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SerialAddressTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SerialAddressTest.class);
         return suite;
     }
 

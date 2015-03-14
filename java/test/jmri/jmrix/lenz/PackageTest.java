@@ -2,8 +2,8 @@
 package jmri.jmrix.lenz;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen
  * @version	$Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -27,33 +27,33 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrix.lenz.XNetTest");  // no tests in this class itself
-        suite.addTest(new TestSuite(LenzCommandStationTest.class));
-        suite.addTest(new TestSuite(LenzConnectionTypeListTest.class));
-        suite.addTest(new TestSuite(XNetMessageTest.class));
-        suite.addTest(new TestSuite(XNetReplyTest.class));
-        suite.addTest(new TestSuite(XNetTurnoutTest.class));
-        suite.addTest(new TestSuite(XNetSensorTest.class));
-        suite.addTest(new TestSuite(XNetLightTest.class));
-        suite.addTest(new TestSuite(XNetPacketizerTest.class));
-        suite.addTest(new TestSuite(XNetTurnoutManagerTest.class));
-        suite.addTest(new TestSuite(XNetSensorManagerTest.class));
-        suite.addTest(new TestSuite(XNetLightManagerTest.class));
-        suite.addTest(new TestSuite(XNetTrafficControllerTest.class));
-        suite.addTest(new TestSuite(XNetSystemConnectionMemoTest.class));
-        suite.addTest(new TestSuite(XNetThrottleTest.class));
-        suite.addTest(new TestSuite(XNetConsistManagerTest.class));
-        suite.addTest(new TestSuite(XNetConsistTest.class));
-        suite.addTest(new TestSuite(XNetInitializationManagerTest.class));
-        suite.addTest(new TestSuite(XNetProgrammerTest.class));
-        suite.addTest(new TestSuite(XNetProgrammerManagerTest.class));
-        suite.addTest(new TestSuite(XNetOpsModeProgrammerTest.class));
-        suite.addTest(new TestSuite(XNetPowerManagerTest.class));
-        suite.addTest(new TestSuite(XNetThrottleManagerTest.class));
-        suite.addTest(new TestSuite(XNetExceptionTest.class));
-        suite.addTest(new TestSuite(XNetMessageExceptionTest.class));
-        suite.addTest(new TestSuite(XNetStreamPortControllerTest.class));
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.lenz.XNetTest");  // no tests in this class itself
+        suite.addTest(new NbTestSuite(LenzCommandStationTest.class));
+        suite.addTest(new NbTestSuite(LenzConnectionTypeListTest.class));
+        suite.addTest(new NbTestSuite(XNetMessageTest.class));
+        suite.addTest(new NbTestSuite(XNetReplyTest.class));
+        suite.addTest(new NbTestSuite(XNetTurnoutTest.class));
+        suite.addTest(new NbTestSuite(XNetSensorTest.class));
+        suite.addTest(new NbTestSuite(XNetLightTest.class));
+        suite.addTest(new NbTestSuite(XNetPacketizerTest.class));
+        suite.addTest(new NbTestSuite(XNetTurnoutManagerTest.class));
+        suite.addTest(new NbTestSuite(XNetSensorManagerTest.class));
+        suite.addTest(new NbTestSuite(XNetLightManagerTest.class));
+        suite.addTest(new NbTestSuite(XNetTrafficControllerTest.class));
+        suite.addTest(new NbTestSuite(XNetSystemConnectionMemoTest.class));
+        suite.addTest(new NbTestSuite(XNetThrottleTest.class));
+        suite.addTest(new NbTestSuite(XNetConsistManagerTest.class));
+        suite.addTest(new NbTestSuite(XNetConsistTest.class));
+        suite.addTest(new NbTestSuite(XNetInitializationManagerTest.class));
+        suite.addTest(new NbTestSuite(XNetProgrammerTest.class));
+        suite.addTest(new NbTestSuite(XNetProgrammerManagerTest.class));
+        suite.addTest(new NbTestSuite(XNetOpsModeProgrammerTest.class));
+        suite.addTest(new NbTestSuite(XNetPowerManagerTest.class));
+        suite.addTest(new NbTestSuite(XNetThrottleManagerTest.class));
+        suite.addTest(new NbTestSuite(XNetExceptionTest.class));
+        suite.addTest(new NbTestSuite(XNetMessageExceptionTest.class));
+        suite.addTest(new NbTestSuite(XNetStreamPortControllerTest.class));
         suite.addTest(jmri.jmrix.lenz.li100.LI100Test.suite());
         suite.addTest(jmri.jmrix.lenz.li100f.LI100FTest.suite());
         suite.addTest(jmri.jmrix.lenz.li101.LI101Test.suite());

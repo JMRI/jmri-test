@@ -2,8 +2,8 @@
 package jmri.jmrix.powerline.cm11;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.powerline.cm11 package.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2003, 2007, 2008
  * @version $Revision$
  */
-public class CM11Test extends TestCase {
+public class CM11Test extends NbTestCase {
 
     // from here down is testing infrastructure
     public CM11Test(String s) {
@@ -25,9 +25,9 @@ public class CM11Test extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite("jmri.jmrix.powerline.cm11.CM11Test");
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.powerline.cm11.CM11Test");
         suite.addTest(SpecificMessageTest.suite());
         suite.addTest(SpecificReplyTest.suite());
         suite.addTest(SpecificTrafficControllerTest.suite());

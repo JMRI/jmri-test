@@ -4,8 +4,8 @@ package jmri.util;
 import java.util.Comparator;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2003
  * @version	$Revision: 24569 $
  */
-public class PreferNumericComparatorTest extends TestCase {
+public class PreferNumericComparatorTest extends NbTestCase {
 
     public void testCompareNumbersEquals() {
         Comparator<Object> c = new PreferNumericComparator();
@@ -57,8 +57,8 @@ public class PreferNumericComparatorTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PreferNumericComparatorTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PreferNumericComparatorTest.class);
         return suite;
     }
 

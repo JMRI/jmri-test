@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 import jmri.util.JUnitUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * MemoryIconTest.java
@@ -116,8 +116,8 @@ public class MemoryIconTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(MemoryIconTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(MemoryIconTest.class);
         return suite;
     }
 

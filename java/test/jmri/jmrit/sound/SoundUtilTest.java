@@ -3,8 +3,8 @@ package jmri.jmrit.sound;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the SoundUtil class.
@@ -14,7 +14,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2006
  * @version $Revision$
  */
-public class SoundUtilTest extends TestCase {
+public class SoundUtilTest extends NbTestCase {
 
     public void testLargeBuffer() throws java.io.IOException, javax.sound.sampled.UnsupportedAudioFileException {
         String name = "bottle-open.wav";
@@ -37,8 +37,8 @@ public class SoundUtilTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SoundUtilTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SoundUtilTest.class);
         return suite;
     }
 

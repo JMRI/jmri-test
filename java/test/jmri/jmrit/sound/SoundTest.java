@@ -2,8 +2,8 @@
 package jmri.jmrit.sound;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Invokes complete set of tests in the jmri.jmrit.sound tree
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2001, 2003
  * @version $Revision$
  */
-public class SoundTest extends TestCase {
+public class SoundTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public SoundTest(String s) {
@@ -25,8 +25,8 @@ public class SoundTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrit.sound.SoundTest");
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrit.sound.SoundTest");
         suite.addTest(jmri.jmrit.sound.WavBufferTest.suite());
         suite.addTest(jmri.jmrit.sound.SoundUtilTest.suite());
         return suite;

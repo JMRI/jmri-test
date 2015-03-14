@@ -2,8 +2,8 @@
 package jmri.jmrix.can.adapters.gridconnect;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.can.adapters.gridconnect package.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2009
  * @version $Revision$
  */
-public class GridConnectTest extends TestCase {
+public class GridConnectTest extends NbTestCase {
 
     public void testDefinitions() {
     }
@@ -29,8 +29,8 @@ public class GridConnectTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrix.can.adapters.gridconnect.GridConnectTest");
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.can.adapters.gridconnect.GridConnectTest");
         suite.addTest(GridConnectMessageTest.suite());
         suite.addTest(GridConnectReplyTest.suite());
         suite.addTest(jmri.jmrix.can.adapters.gridconnect.canrs.CanRSTest.suite());

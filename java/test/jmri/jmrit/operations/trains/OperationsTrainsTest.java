@@ -38,8 +38,8 @@ import jmri.jmrit.operations.setup.OperationsSetupXml;
 import jmri.jmrit.operations.setup.Setup;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.jdom2.JDOMException;
 
 /**
@@ -80,7 +80,7 @@ import org.jdom2.JDOMException;
  * @author Bob Coleman Copyright (C) 2008, 2009
  * @version $Revision$
  */
-public class OperationsTrainsTest extends TestCase {
+public class OperationsTrainsTest extends NbTestCase {
 
     private final int DIRECTION_ALL = Location.EAST + Location.WEST + Location.NORTH + Location.SOUTH;
 
@@ -6361,8 +6361,8 @@ public class OperationsTrainsTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OperationsTrainsTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OperationsTrainsTest.class);
         return suite;
     }
 

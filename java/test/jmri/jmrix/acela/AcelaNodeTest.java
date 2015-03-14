@@ -13,15 +13,15 @@ import jmri.managers.InternalSensorManager;
 import jmri.managers.InternalTurnoutManager;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the AcelaNode class
  *
  * @author	Bob Coleman Copyright 2008
  */
-public class AcelaNodeTest extends TestCase {
+public class AcelaNodeTest extends NbTestCase {
 
     public void testInitialization1() {
         Assert.assertEquals("StartingSensorAddress TB", 0, a1.getStartingSensorAddress());
@@ -162,8 +162,8 @@ public class AcelaNodeTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AcelaNodeTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(AcelaNodeTest.class);
         return suite;
     }
 

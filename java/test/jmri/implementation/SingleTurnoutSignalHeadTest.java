@@ -6,8 +6,8 @@ import jmri.SignalHead;
 import jmri.Turnout;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright (C) 2010
  * @version $Revision$
  */
-public class SingleTurnoutSignalHeadTest extends TestCase {
+public class SingleTurnoutSignalHeadTest extends NbTestCase {
 
     public void testNoDarkValidTypes() {
         Turnout t = InstanceManager.turnoutManagerInstance().provideTurnout("IT1");
@@ -124,8 +124,8 @@ public class SingleTurnoutSignalHeadTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SingleTurnoutSignalHeadTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SingleTurnoutSignalHeadTest.class);
         return suite;
     }
 

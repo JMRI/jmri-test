@@ -2,8 +2,8 @@
 package jmri.jmrix.can;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Common tests for the jmri.jmrix.can.CanMessage and CanReply classes
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2008, 2009
  * @version $Revision$
  */
-public class CanMRCommonTest extends TestCase {
+public class CanMRCommonTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public CanMRCommonTest(String s) {
@@ -26,9 +26,9 @@ public class CanMRCommonTest extends TestCase {
     }
 
     // test suite from all defined tests in CanMessage, CanReply
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite("jmri.jmrix.can.CanMRCommonTest");
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.can.CanMRCommonTest");
         suite.addTest(jmri.jmrix.can.CanMessageTest.suite());
         suite.addTest(jmri.jmrix.can.CanReplyTest.suite());
         return suite;

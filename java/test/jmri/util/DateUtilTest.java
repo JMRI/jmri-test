@@ -5,8 +5,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author Paul Bender Copyright 2014
  * @version $Revision: 22710 $
  */
-public class DateUtilTest extends TestCase {
+public class DateUtilTest extends NbTestCase {
 
     public void testCalFromJulianDate() {
         // this test checks to see if the julian date
@@ -65,8 +65,8 @@ public class DateUtilTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DateUtilTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DateUtilTest.class);
         return suite;
     }
 

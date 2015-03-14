@@ -7,8 +7,8 @@ import java.io.FileInputStream;
 import jmri.util.FileUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jdom2.DocType;
@@ -25,7 +25,7 @@ import org.jdom2.input.SAXBuilder;
  * @author	Bob Jacobsen Copyright 2001
  * @version $Revision$
  */
-public class XmlFileTest extends TestCase {
+public class XmlFileTest extends NbTestCase {
 
     // file urls are relative to the 
     // program directory
@@ -175,8 +175,8 @@ public class XmlFileTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(XmlFileTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(XmlFileTest.class);
         return suite;
     }
 

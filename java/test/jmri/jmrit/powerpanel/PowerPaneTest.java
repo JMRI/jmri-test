@@ -8,8 +8,8 @@ import jmri.JmriException;
 import jmri.PowerManager;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Jmri package
@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version $Revision$
  */
-public class PowerPaneTest extends TestCase {
+public class PowerPaneTest extends NbTestCase {
 
     // setup a default PowerManager interface
     public void setUp() {
@@ -105,8 +105,8 @@ public class PowerPaneTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PowerPaneTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PowerPaneTest.class);
         return suite;
     }
 

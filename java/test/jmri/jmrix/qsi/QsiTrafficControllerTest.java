@@ -8,8 +8,8 @@ import java.io.PipedOutputStream;
 import java.util.Vector;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen
  * @version
  */
-public class QsiTrafficControllerTest extends TestCase {
+public class QsiTrafficControllerTest extends NbTestCase {
 
     public void testCreate() {
         QsiTrafficController m = new QsiTrafficController();
@@ -235,8 +235,8 @@ public class QsiTrafficControllerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(QsiTrafficControllerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(QsiTrafficControllerTest.class);
         return suite;
     }
 

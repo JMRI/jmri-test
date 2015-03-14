@@ -2,8 +2,8 @@
 package jmri.jmrix.openlcb.swing.tie;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.can.swing.tie.TieToolFrame class
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2008
  * @version $Revision$
  */
-public class TieToolFrameDemo extends TestCase {
+public class TieToolFrameDemo extends NbTestCase {
 
     public void testCreateAndShow() throws Exception {
         jmri.util.JmriJFrame f = new TieToolFrame();
@@ -36,9 +36,9 @@ public class TieToolFrameDemo extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(TieToolFrameDemo.class);
+        NbTestSuite suite = new NbTestSuite(TieToolFrameDemo.class);
         return suite;
     }
 

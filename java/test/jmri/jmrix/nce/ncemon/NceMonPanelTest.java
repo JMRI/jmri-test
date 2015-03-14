@@ -14,12 +14,12 @@ import jmri.jmrix.nce.NceReply;
 import jmri.jmrix.nce.NceTrafficController;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NceMonPanelTest extends TestCase {
+public class NceMonPanelTest extends NbTestCase {
 
     NceInterfaceScaffold controller;  // holds dummy NceTrafficController for testing
 
@@ -133,8 +133,8 @@ public class NceMonPanelTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(NceMonPanelTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(NceMonPanelTest.class);
         return suite;
     }
 

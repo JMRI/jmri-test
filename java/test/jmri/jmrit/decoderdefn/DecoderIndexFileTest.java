@@ -5,8 +5,8 @@ import java.util.List;
 import javax.swing.JComboBox;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.jdom2.DocType;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -17,7 +17,7 @@ import org.jdom2.Element;
  * @author	Bob Jacobsen, Copyright (c) 2001, 2002
  * @version	$Revision$
  */
-public class DecoderIndexFileTest extends TestCase {
+public class DecoderIndexFileTest extends NbTestCase {
 
     public void testLoading() {
         // setup the test object with guts
@@ -249,8 +249,8 @@ public class DecoderIndexFileTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DecoderIndexFileTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DecoderIndexFileTest.class);
         return suite;
     }
 

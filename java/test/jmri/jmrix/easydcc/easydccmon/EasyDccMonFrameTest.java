@@ -15,12 +15,12 @@ import jmri.jmrix.easydcc.EasyDccReply;
 import jmri.jmrix.easydcc.EasyDccTrafficController;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EasyDccMonFrameTest extends TestCase {
+public class EasyDccMonFrameTest extends NbTestCase {
 
     public void testCreate() {
         EasyDccMonFrame f = new EasyDccMonFrame();
@@ -130,8 +130,8 @@ public class EasyDccMonFrameTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(EasyDccMonFrameTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(EasyDccMonFrameTest.class);
         return suite;
     }
 

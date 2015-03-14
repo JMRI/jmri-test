@@ -2,8 +2,8 @@ package jmri.jmrix.srcp;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen
  * @version $Revision$
  */
-public class SRCPClockControlTest extends TestCase {
+public class SRCPClockControlTest extends NbTestCase {
 
     public void testCtor() {
         SRCPBusConnectionMemo sm = new SRCPBusConnectionMemo(new SRCPTrafficController() {
@@ -39,8 +39,8 @@ public class SRCPClockControlTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SRCPClockControlTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SRCPClockControlTest.class);
         return suite;
     }
 

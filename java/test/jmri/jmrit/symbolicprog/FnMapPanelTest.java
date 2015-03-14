@@ -5,8 +5,8 @@ import java.util.List;
 import javax.swing.JLabel;
 import jmri.progdebugger.ProgDebugger;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jdom2.Element;
@@ -17,7 +17,7 @@ import org.jdom2.Element;
  * @author	Bob Jacobsen, Copyright 2009
  * @version $Revision$
  */
-public class FnMapPanelTest extends TestCase {
+public class FnMapPanelTest extends NbTestCase {
 
     public void testCtor() {
         ProgDebugger p = new ProgDebugger();
@@ -60,8 +60,8 @@ public class FnMapPanelTest extends TestCase {
     }
 
     // test suite from all defined tests, including others in the package
-    public static Test suite() {
-        TestSuite suite = new TestSuite(FnMapPanelTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(FnMapPanelTest.class);
         return suite;
     }
 

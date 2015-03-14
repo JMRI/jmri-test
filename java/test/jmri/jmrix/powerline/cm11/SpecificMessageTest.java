@@ -4,8 +4,8 @@ package jmri.jmrix.powerline.cm11;
 import jmri.jmrix.powerline.SerialMessage;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the cm11.SpecficMessage class.
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2003, 2007, 2008
  * @version	$Revision$
  */
-public class SpecificMessageTest extends TestCase {
+public class SpecificMessageTest extends NbTestCase {
 
     public void testCreate() {
         SerialMessage m = new SpecificMessage(4);
@@ -41,8 +41,8 @@ public class SpecificMessageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SpecificMessageTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SpecificMessageTest.class);
         return suite;
     }
 

@@ -6,8 +6,8 @@ import javax.swing.JComboBox;
 import jmri.progdebugger.ProgDebugger;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * ComboRadioButtonsTest.java
@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2006
  * @version $Release:$
  */
-public class ComboRadioButtonsTest extends TestCase {
+public class ComboRadioButtonsTest extends NbTestCase {
 
     ProgDebugger p = new ProgDebugger();
 
@@ -132,8 +132,8 @@ public class ComboRadioButtonsTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(ComboRadioButtonsTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(ComboRadioButtonsTest.class);
         return suite;
     }
 

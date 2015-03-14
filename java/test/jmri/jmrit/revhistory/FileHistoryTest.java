@@ -3,8 +3,8 @@ package jmri.jmrit.revhistory;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmrit.revhistory package & jmrit.revhistory.FileHistory class.
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2010
  * @version $Revision$
  */
-public class FileHistoryTest extends TestCase {
+public class FileHistoryTest extends NbTestCase {
 
     public void testCtor() {
         new FileHistory();
@@ -95,8 +95,8 @@ public class FileHistoryTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(FileHistoryTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(FileHistoryTest.class);
         return suite;
     }
 

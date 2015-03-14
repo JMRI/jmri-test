@@ -4,8 +4,8 @@ package jmri.web.servlet.frameimage;
 import java.util.Map;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Invokes complete set of tests for the jmri.web.xmlio.JmriJFrameServlet class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2013
  * @version $Revision$
  */
-public class JmriJFrameServletTest extends TestCase {
+public class JmriJFrameServletTest extends NbTestCase {
 
     public void testCtor() {
         new JmriJFrameServlet_ut();
@@ -86,8 +86,8 @@ public class JmriJFrameServletTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(JmriJFrameServletTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(JmriJFrameServletTest.class);
         return suite;
     }
 

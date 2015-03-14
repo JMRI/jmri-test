@@ -9,9 +9,8 @@ import jmri.InstanceManager;
 import jmri.util.FileUtil;
 import jmri.util.JUnitUtil;
 import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * @since 2.5.5 (renamed & reworked in 3.9 series)
  * @version $Revision$
  */
-public class LoadAndStoreTestBase extends TestCase {
+public class LoadAndStoreTestBase extends NbTestCase {
 
     public LoadAndStoreTestBase(String s) {
         super(s);
@@ -36,7 +35,7 @@ public class LoadAndStoreTestBase extends TestCase {
      * Create the tests that load-and-store test contents of all files in a
      * directory
      */
-    static public void loadAndStoreAllInDirectory(TestSuite suite, String name) {
+    static public void loadAndStoreAllInDirectory(NbTestSuite suite, String name) {
 
         java.io.File dir = new java.io.File(name + "/load/");
         java.io.File[] files = dir.listFiles();
@@ -118,7 +117,7 @@ public class LoadAndStoreTestBase extends TestCase {
     /**
      * Internal TestCase class to allow separate tests for every file
      */
-    static public class CheckOneFilePasses extends TestCase {
+    static public class CheckOneFilePasses extends NbTestCase {
 
         File file;
 
@@ -134,8 +133,8 @@ public class LoadAndStoreTestBase extends TestCase {
 
     // Default test suite does all files in load subdirectory
     // test suite from all defined tests
-    public static Test makeSuite(String dir) {
-        TestSuite suite = new TestSuite("Load-and-store checks");
+    public static NbTestSuite makeSuite(String dir) {
+        NbTestSuite suite = new NbTestSuite("Load-and-store checks");
         loadAndStoreAllInDirectory(suite, dir);
         return suite;
     }

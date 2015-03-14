@@ -6,8 +6,8 @@ import jmri.Programmer;
 import jmri.managers.DefaultProgrammerManager;
 import jmri.progdebugger.ProgDebugger;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Test the jmri.jmrix.symbolicprog package.
@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2006
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // check configuring the programmer
     public void testConfigProgrammer() {
@@ -37,8 +37,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests, including others in the package
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PackageTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PackageTest.class);
         suite.addTest(jmri.jmrit.symbolicprog.BundleTest.suite());
         suite.addTest(jmri.jmrit.symbolicprog.ArithmeticQualifierTest.suite());
         suite.addTest(jmri.jmrit.symbolicprog.QualifierAdderTest.suite());

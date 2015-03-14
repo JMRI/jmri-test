@@ -8,8 +8,8 @@ import jmri.Turnout;
 import jmri.util.JUnitUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the BlockBossLogic class
@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version $Revision$
  */
-public class BlockBossLogicTest extends TestCase {
+public class BlockBossLogicTest extends NbTestCase {
 
     // test creation
     public void testCreate() {
@@ -301,8 +301,8 @@ public class BlockBossLogicTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(BlockBossLogicTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(BlockBossLogicTest.class);
         return suite;
     }
 

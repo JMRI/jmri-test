@@ -8,8 +8,8 @@ import jmri.Turnout;
 import jmri.util.JUnitUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the SE8cSignalHead implmentation
@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2009
  * @version $Revision$
  */
-public class SE8cSignalHeadTest extends TestCase {
+public class SE8cSignalHeadTest extends NbTestCase {
 
     public void testCtor1() {
         Turnout it11 = InstanceManager.turnoutManagerInstance().provideTurnout("11");
@@ -175,8 +175,8 @@ public class SE8cSignalHeadTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SE8cSignalHeadTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SE8cSignalHeadTest.class);
         return suite;
     }
 

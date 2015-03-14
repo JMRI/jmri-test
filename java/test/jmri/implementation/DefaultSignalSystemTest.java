@@ -4,8 +4,8 @@ package jmri.implementation;
 import jmri.SignalSystem;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright (C) 2009
  * @version $Revision$
  */
-public class DefaultSignalSystemTest extends TestCase {
+public class DefaultSignalSystemTest extends NbTestCase {
 
     public void testCtor() {
         new DefaultSignalSystem("sys", "user");
@@ -165,8 +165,8 @@ public class DefaultSignalSystemTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DefaultSignalSystemTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DefaultSignalSystemTest.class);
         return suite;
     }
 

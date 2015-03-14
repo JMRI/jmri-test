@@ -5,8 +5,8 @@ import jmri.Sensor;
 import jmri.jmrix.AbstractMRMessage;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the SerialNode class
@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
  * @author	Dave Duchamp multi-node extensions 2003
  * @version	$Revision$
  */
-public class SerialNodeTest extends TestCase {
+public class SerialNodeTest extends NbTestCase {
 
     //private SerialNode a = new SerialNode(1,SerialNode.DAUGHTER);
     SerialNode b = new SerialNode();
@@ -104,8 +104,8 @@ public class SerialNodeTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SerialNodeTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SerialNodeTest.class);
         return suite;
     }
 

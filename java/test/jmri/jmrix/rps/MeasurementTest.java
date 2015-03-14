@@ -3,8 +3,8 @@ package jmri.jmrix.rps;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the rps.Measurement class.
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2006
  * @version	$Revision$
  */
-public class MeasurementTest extends TestCase {
+public class MeasurementTest extends NbTestCase {
 
     public void testCtorAndID() {
         Reading r = new Reading("21", new double[]{0., 0., 0.});
@@ -32,8 +32,8 @@ public class MeasurementTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(MeasurementTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(MeasurementTest.class);
         return suite;
     }
 

@@ -3,8 +3,8 @@ package jmri.jmrix.pricom.pockettester;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the DataSource class
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2005
  * @version	$Revision$
  */
-public class DataSourceTest extends TestCase {
+public class DataSourceTest extends NbTestCase {
 
     public void testCreate() {
         Assert.assertTrue("no instance before ctor", DataSource.instance() == null);
@@ -54,8 +54,8 @@ public class DataSourceTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DataSourceTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DataSourceTest.class);
         return suite;
     }
 

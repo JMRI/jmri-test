@@ -13,8 +13,8 @@ import jmri.jmrix.rps.Region;
 import jmri.util.JmriJFrame;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the rps.RpsTrackingPanel class.
@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2006
  * @version	$Revision$
  */
-public class RpsTrackingPanelTest extends TestCase {
+public class RpsTrackingPanelTest extends NbTestCase {
 
     public void testShow() {
         new Engine() {
@@ -112,8 +112,8 @@ public class RpsTrackingPanelTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(RpsTrackingPanelTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(RpsTrackingPanelTest.class);
         return suite;
     }
 

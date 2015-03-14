@@ -3,7 +3,7 @@ package jmri.jmrix.loconet;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -283,8 +283,8 @@ public class LnTurnoutTest extends jmri.implementation.AbstractTurnoutTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LnTurnoutTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LnTurnoutTest.class);
         return suite;
     }
 

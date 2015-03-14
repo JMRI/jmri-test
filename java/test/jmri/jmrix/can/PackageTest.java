@@ -2,8 +2,8 @@
 package jmri.jmrix.can;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.can package.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2008
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     public void testDefinitions() {
     }
@@ -29,8 +29,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrix.can.CanTest");
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.can.CanTest");
         suite.addTest(jmri.jmrix.can.CanMessageTest.suite());
         suite.addTest(jmri.jmrix.can.CanReplyTest.suite());
         suite.addTest(jmri.jmrix.can.nmranet.PackageTest.suite());

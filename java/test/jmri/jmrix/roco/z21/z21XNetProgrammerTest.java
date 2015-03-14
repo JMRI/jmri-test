@@ -14,7 +14,7 @@ import jmri.*;
 
 import junit.framework.Test;
 import junit.framework.Assert;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import jmri.jmrix.lenz.*;
 
 public class z21XNetProgrammerTest extends jmri.jmrix.lenz.XNetProgrammerTest {
@@ -202,8 +202,8 @@ public class z21XNetProgrammerTest extends jmri.jmrix.lenz.XNetProgrammerTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(z21XNetProgrammerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(z21XNetProgrammerTest.class);
         return suite;
     }
 

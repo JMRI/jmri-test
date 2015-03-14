@@ -4,7 +4,7 @@ package jmri.implementation;
 import java.beans.PropertyChangeListener;
 import jmri.Light;
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.netbeans.junit.NbTestCase;
 
 /**
  * Abstract Base Class for Light tests in specific jmrix packages. This is not
@@ -14,7 +14,7 @@ import junit.framework.TestCase;
  * @author	Bob Jacobsen 2002, 2004, 2005, 2007, 2008
  * @version	$Revision$
  */
-public abstract class AbstractLightTest extends TestCase {
+public abstract class AbstractLightTest extends NbTestCase {
 
     // implementing classes must provide these abstract members:
     //

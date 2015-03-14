@@ -10,7 +10,7 @@ import java.beans.PropertyChangeListener;
 import jmri.Reporter;
 import jmri.ReporterManager;
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.netbeans.junit.NbTestCase;
 
 /**
  * Abstract Base Class for LightManager tests in specific jmrix packages. This
@@ -20,7 +20,7 @@ import junit.framework.TestCase;
  * @author	Bob Jacobsen 2003, 2006, 2008
  * @version	$Revision: 17977 $
  */
-public abstract class AbstractReporterMgrTest extends TestCase {
+public abstract class AbstractReporterMgrTest extends NbTestCase {
 
     // implementing classes must provide these abstract members:
     //

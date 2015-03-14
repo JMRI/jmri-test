@@ -2,8 +2,8 @@
 package jmri.jmrix.xpa;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author	Paul Bender
  * @version	$Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -27,18 +27,18 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrix.xpa.XpaTest");  // no tests in this class itself
-        suite.addTest(new TestSuite(XpaMessageTest.class));
-        suite.addTest(new TestSuite(XpaTurnoutTest.class));
-        suite.addTest(new TestSuite(XpaThrottleTest.class));
-        //suite.addTest(new TestSuite(XpaPacketizerTest.class));
-        //suite.addTest(new TestSuite(jmri.jmrix.xpa.packetgen.PacketGenFrameTest.class));
-        suite.addTest(new TestSuite(XpaTurnoutManagerTest.class));
-        suite.addTest(new TestSuite(XpaPowerManagerTest.class));
-        suite.addTest(new TestSuite(XpaThrottleManagerTest.class));
-        //suite.addTest(new TestSuite(XpaTrafficControllerTest.class));
-        //suite.addTest(new TestSuite(XpaTrafficRouterTest.class));
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.xpa.XpaTest");  // no tests in this class itself
+        suite.addTest(new NbTestSuite(XpaMessageTest.class));
+        suite.addTest(new NbTestSuite(XpaTurnoutTest.class));
+        suite.addTest(new NbTestSuite(XpaThrottleTest.class));
+        //suite.addTest(new NbTestSuite(XpaPacketizerTest.class));
+        //suite.addTest(new NbTestSuite(jmri.jmrix.xpa.packetgen.PacketGenFrameTest.class));
+        suite.addTest(new NbTestSuite(XpaTurnoutManagerTest.class));
+        suite.addTest(new NbTestSuite(XpaPowerManagerTest.class));
+        suite.addTest(new NbTestSuite(XpaThrottleManagerTest.class));
+        //suite.addTest(new NbTestSuite(XpaTrafficControllerTest.class));
+        //suite.addTest(new NbTestSuite(XpaTrafficRouterTest.class));
         return suite;
     }
 

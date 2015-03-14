@@ -1,8 +1,7 @@
 // GuiUtilBaseTest.java
 package jmri.util.swing;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +17,7 @@ public class GuiUtilBaseTest extends jmri.configurexml.SchemaTestBase {
     /**
      * Recursive
      */
-    static protected void doDirectory(TestSuite suite, String pathName) {
+    static protected void doDirectory(NbTestSuite suite, String pathName) {
         validateDirectory(suite, pathName);
         java.io.File dir = new java.io.File(pathName);
         java.io.File[] files = dir.listFiles();
@@ -44,8 +43,8 @@ public class GuiUtilBaseTest extends jmri.configurexml.SchemaTestBase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("GuiUtilBaseTest");
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("GuiUtilBaseTest");
         return suite;
     }
 

@@ -3,7 +3,7 @@ package jmri.jmrix.loconet;
 
 import jmri.jmrix.AbstractPowerManagerTest;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * tests for the Jmri package LnPowerManager
@@ -74,8 +74,8 @@ public class LnPowerManagerTest extends AbstractPowerManagerTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LnPowerManagerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LnPowerManagerTest.class);
         return suite;
     }
 

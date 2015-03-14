@@ -2,8 +2,8 @@
 package apps.gui3;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for GUI3 base class.
@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2009
  * @version $Revision$
  */
-public class Gui3AppsTest extends TestCase {
+public class Gui3AppsTest extends NbTestCase {
 
     Gui3AppsTest(String s) {
         super(s);
@@ -39,9 +39,9 @@ public class Gui3AppsTest extends TestCase {
     }
 
     // test suite
-    public static Test suite() {
+    public static NbTestSuite suite() {
         // all tests from here down in heirarchy
-        TestSuite suite = new TestSuite("Gui3AppsTest");  // no tests in this class itself
+        NbTestSuite suite = new NbTestSuite("Gui3AppsTest");  // no tests in this class itself
         // all tests from other classes
         //suite.addTest(jmri.JmriTest.suite());
 

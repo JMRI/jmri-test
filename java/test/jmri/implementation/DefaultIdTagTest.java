@@ -7,8 +7,8 @@ import jmri.IdTag;
 import jmri.Reporter;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the DefaultIdTag class
@@ -16,7 +16,7 @@ import junit.framework.TestSuite;
  * @author Matthew Harris Copyright (C) 2011
  * @version $Revision$
  */
-public class DefaultIdTagTest extends TestCase {
+public class DefaultIdTagTest extends NbTestCase {
 
     public void testCreateIdTag() {
         IdTag r = new DefaultIdTag("ID0413276BC1");
@@ -121,8 +121,8 @@ public class DefaultIdTagTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DefaultIdTagTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DefaultIdTagTest.class);
         return suite;
     }
 

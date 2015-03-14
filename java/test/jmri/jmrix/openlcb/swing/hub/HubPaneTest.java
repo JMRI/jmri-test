@@ -3,15 +3,15 @@ package jmri.jmrix.openlcb.swing.hub;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  *
  * @author Bob Jacobsen Copyright 2013
  * @version $Revision$
  */
-public class HubPaneTest extends TestCase {
+public class HubPaneTest extends NbTestCase {
 
     HubPane hub;
     jmri.jmrix.can.CanSystemConnectionMemo memo;
@@ -36,9 +36,9 @@ public class HubPaneTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(HubPaneTest.class);
+        NbTestSuite suite = new NbTestSuite(HubPaneTest.class);
         return suite;
     }
 

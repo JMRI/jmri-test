@@ -10,12 +10,12 @@ package jmri.jmrix.easydcc;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EasyDccConsistTest extends TestCase {
+public class EasyDccConsistTest extends NbTestCase {
 
     public void testCtor() {
         EasyDccConsist m = new EasyDccConsist(5);
@@ -34,8 +34,8 @@ public class EasyDccConsistTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(EasyDccConsistTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(EasyDccConsistTest.class);
         return suite;
     }
 

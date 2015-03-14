@@ -1,7 +1,7 @@
 package jmri.jmrix.lenz.liusbserver;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.netbeans.junit.NbTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author Paul Bender
  * @version $Revision: 17977 $
  */
-public class LIUSBServerXNetPacketizerTest extends TestCase {
+public class LIUSBServerXNetPacketizerTest extends NbTestCase {
 
     public void testCtor() {
         LIUSBServerXNetPacketizer f = new LIUSBServerXNetPacketizer(new jmri.jmrix.lenz.LenzCommandStation());

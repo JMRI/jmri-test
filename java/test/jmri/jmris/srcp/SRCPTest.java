@@ -2,8 +2,8 @@
 package jmri.jmris.srcp;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author Paul Bender
  * @version $Revision$
  */
-public class SRCPTest extends TestCase {
+public class SRCPTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public SRCPTest(String s) {
@@ -27,8 +27,8 @@ public class SRCPTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmris.srcp.SRCPTest");  // no tests in this class itself
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmris.srcp.SRCPTest");  // no tests in this class itself
         suite.addTest(jmri.jmris.srcp.JmriSRCPServerTest.suite());
         suite.addTest(jmri.jmris.srcp.parser.SRCPParserTests.suite());
         suite.addTest(jmri.jmris.srcp.JmriSRCPTurnoutServerTest.suite());

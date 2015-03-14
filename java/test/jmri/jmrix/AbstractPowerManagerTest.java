@@ -13,9 +13,9 @@ import java.beans.PropertyChangeListener;
 import jmri.JmriException;
 import jmri.PowerManager;
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.netbeans.junit.NbTestCase;
 
-public abstract class AbstractPowerManagerTest extends TestCase {
+public abstract class AbstractPowerManagerTest extends NbTestCase {
 
     public AbstractPowerManagerTest(String s) {
         super(s);

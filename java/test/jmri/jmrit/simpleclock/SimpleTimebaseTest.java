@@ -4,8 +4,8 @@ package jmri.jmrit.simpleclock;
 import java.util.Date;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the SimpleTimebase class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version $Revision$
  */
-public class SimpleTimebaseTest extends TestCase {
+public class SimpleTimebaseTest extends NbTestCase {
 
     void wait(int msec) {
         try {
@@ -81,8 +81,8 @@ public class SimpleTimebaseTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SimpleTimebaseTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SimpleTimebaseTest.class);
         return suite;
     }
 

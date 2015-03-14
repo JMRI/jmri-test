@@ -3,8 +3,8 @@ package jmri.jmrix.rps.csvinput;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.rps.csvinput package.
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2006
  * @version $Revision$
  */
-public class CsvTest extends TestCase {
+public class CsvTest extends NbTestCase {
 
     public void testCreateReader() throws java.io.IOException {
         Object o = new com.csvreader.CsvReader("java/test/jmri/jmrix/rps/csvinput/testdata.csv");
@@ -51,9 +51,9 @@ public class CsvTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(CsvTest.class);
+        NbTestSuite suite = new NbTestSuite(CsvTest.class);
         return suite;
     }
 

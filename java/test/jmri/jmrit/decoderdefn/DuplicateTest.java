@@ -8,8 +8,8 @@ import java.util.Iterator;
 import jmri.jmrit.XmlFile;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jdom2.Element;
@@ -23,7 +23,7 @@ import org.jdom2.filter.ElementFilter;
  * @since 2.9.3
  * @version $Revision$
  */
-public class DuplicateTest extends TestCase {
+public class DuplicateTest extends NbTestCase {
 
     public void testForDuplicateModels() throws JDOMException, IOException {
         File dir = new File("xml/decoders/");
@@ -88,8 +88,8 @@ public class DuplicateTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DuplicateTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DuplicateTest.class);
         return suite;
     }
 

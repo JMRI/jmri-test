@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * LinkingLabelTest.java
@@ -66,8 +66,8 @@ public class LinkingLabelTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LinkingLabelTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LinkingLabelTest.class);
         return suite;
     }
 

@@ -15,12 +15,12 @@ import jmri.jmrix.qsi.QsiReply;
 import jmri.jmrix.qsi.QsiTrafficController;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class QsiMonFrameTest extends TestCase {
+public class QsiMonFrameTest extends NbTestCase {
 
     public void testCreate() {
         QsiMonFrame f = new QsiMonFrame();
@@ -128,8 +128,8 @@ public class QsiMonFrameTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(QsiMonFrameTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(QsiMonFrameTest.class);
         return suite;
     }
 

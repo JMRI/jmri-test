@@ -2,7 +2,7 @@
 package jmri.jmrit.ussctc;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +34,8 @@ public class OsIndicatorActionTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OsIndicatorActionTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OsIndicatorActionTest.class);
         return suite;
     }
 

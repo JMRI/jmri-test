@@ -2,8 +2,8 @@
 package jmri.jmrix.can.cbus.swing;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.can.cbus.swing package.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2008
  * @version $Revision$
  */
-public class SwingTest extends TestCase {
+public class SwingTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public SwingTest(String s) {
@@ -28,9 +28,9 @@ public class SwingTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite("jmri.jmrix.can.cbus.swing.SwingTest");
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.can.cbus.swing.SwingTest");
         suite.addTest(jmri.jmrix.can.cbus.swing.configtool.ConfigToolActionTest.suite());
         return suite;
     }

@@ -4,8 +4,8 @@ package jmri.implementation;
 import jmri.NamedBean;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the NamedBean interface implementation.
@@ -16,7 +16,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2009, 2015
  * @version $Revision$
  */
-public class NamedBeanTest extends TestCase {
+public class NamedBeanTest extends NbTestCase {
 
     /**
      * This is a separate protected method, instead of part of setUp(), to make
@@ -89,8 +89,8 @@ public class NamedBeanTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(NamedBeanTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(NamedBeanTest.class);
         return suite;
     }
 

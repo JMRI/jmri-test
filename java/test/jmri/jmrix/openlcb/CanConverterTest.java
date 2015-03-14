@@ -4,8 +4,8 @@ package jmri.jmrix.openlcb;
 import jmri.jmrix.can.CanMessage;
 import jmri.jmrix.can.CanReply;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.openlcb.can.OpenLcbCanFrame;
 
 /**
@@ -14,7 +14,7 @@ import org.openlcb.can.OpenLcbCanFrame;
  * @author Bob Jacobsen Copyright 2010
  * @version $Revision$
  */
-public class CanConverterTest extends TestCase {
+public class CanConverterTest extends NbTestCase {
 
     public void testCtors() {
         // mostly tests libraries, etc.
@@ -40,8 +40,8 @@ public class CanConverterTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(CanConverterTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(CanConverterTest.class);
         return suite;
     }
 

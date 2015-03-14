@@ -4,8 +4,8 @@ package jmri.jmrix.can.adapters.lawicell;
 import jmri.jmrix.can.CanMessage;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.can.adapters.lawicell.Message class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2008, 2009
  * @version $Revision$
  */
-public class MessageTest extends TestCase {
+public class MessageTest extends NbTestCase {
 
     // t123412345678
     public void testOne() {
@@ -92,9 +92,9 @@ public class MessageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(MessageTest.class);
+        NbTestSuite suite = new NbTestSuite(MessageTest.class);
         return suite;
     }
 

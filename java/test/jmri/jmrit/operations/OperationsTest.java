@@ -2,8 +2,8 @@
 package jmri.jmrit.operations;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmrit.operations package
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author	Bob Coleman
  * @version $Revision$
  */
-public class OperationsTest extends TestCase {
+public class OperationsTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public OperationsTest(String s) {
@@ -25,8 +25,8 @@ public class OperationsTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrit.operations.OperationsTest"); // no tests in class itself
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrit.operations.OperationsTest"); // no tests in class itself
         suite.addTest(jmri.jmrit.operations.setup.OperationsSetupTest.suite());
         suite.addTest(jmri.jmrit.operations.locations.OperationsLocationsTest.suite()); // fixed references to Swing, 10/10/2012
         suite.addTest(jmri.jmrit.operations.rollingstock.OperationsRollingStockTest.suite());

@@ -2,7 +2,7 @@
 package apps;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +29,8 @@ public class ValidateConfigFilesTest extends jmri.util.swing.GuiUtilBaseTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("apps.ValidateConfigFilesTest");
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("apps.ValidateConfigFilesTest");
         doDirectory(suite, "xml/config");
         return suite;
     }

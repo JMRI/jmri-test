@@ -5,8 +5,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the rps.AlignmentPanel class.
@@ -14,7 +14,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2006
  * @version	$Revision$
  */
-public class AlignmentPanelTest extends TestCase {
+public class AlignmentPanelTest extends NbTestCase {
 
     public void testShow() {
         jmri.util.JmriJFrame f = new jmri.util.JmriJFrame("RPS Alignment");
@@ -45,8 +45,8 @@ public class AlignmentPanelTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AlignmentPanelTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(AlignmentPanelTest.class);
         return suite;
     }
 

@@ -3,8 +3,8 @@ package jmri.jmrix.secsi;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.secsi package.
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2003, 2007, 2008
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -31,9 +31,9 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite("jmri.jmrix.secsi.SerialTest");
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.secsi.SerialTest");
         suite.addTest(SerialTurnoutTest.suite());
         suite.addTest(SerialTurnoutManagerTest.suite());
         suite.addTest(SerialSensorManagerTest.suite());

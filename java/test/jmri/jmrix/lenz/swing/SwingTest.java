@@ -2,8 +2,8 @@
 package jmri.jmrix.lenz.swing;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen
  * @version	$Revision$
  */
-public class SwingTest extends TestCase {
+public class SwingTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public SwingTest(String s) {
@@ -27,8 +27,8 @@ public class SwingTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrix.lenz.swing.SwingTest");  // no tests in this class itself
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.lenz.swing.SwingTest");  // no tests in this class itself
         if (!System.getProperty("jmri.headlesstest", "false").equals("true")) {
             suite.addTest(jmri.jmrix.lenz.swing.liusb.LIUSBTest.suite());
             suite.addTest(jmri.jmrix.lenz.swing.li101.LI101Test.suite());

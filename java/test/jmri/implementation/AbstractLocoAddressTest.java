@@ -3,8 +3,8 @@ package jmri.implementation;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright (C) 2005
  * @version	$Revision$
  */
-public class AbstractLocoAddressTest extends TestCase {
+public class AbstractLocoAddressTest extends NbTestCase {
 
     public void testValue1() {
         AbstractLocoAddress l = new AbstractLocoAddress(12, true);
@@ -162,9 +162,9 @@ public class AbstractLocoAddressTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(AbstractLocoAddressTest.class);
+        NbTestSuite suite = new NbTestSuite(AbstractLocoAddressTest.class);
         return suite;
     }
 

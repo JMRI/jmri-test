@@ -7,8 +7,8 @@ import jmri.SignalHead;
 import jmri.util.JUnitUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the DccSignalHead implementation
@@ -16,7 +16,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2013
  * @version $Revision$
  */
-public class DccSignalHeadTest extends TestCase {
+public class DccSignalHeadTest extends NbTestCase {
 
     public void testCtor1() {
         DccSignalHead s = new DccSignalHead("IH$1");
@@ -155,8 +155,8 @@ public class DccSignalHeadTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DccSignalHeadTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DccSignalHeadTest.class);
         return suite;
     }
 

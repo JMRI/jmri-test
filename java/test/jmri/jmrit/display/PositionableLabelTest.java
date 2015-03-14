@@ -5,7 +5,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * PositionableLabelTest.java
@@ -67,8 +67,8 @@ public class PositionableLabelTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PositionableLabelTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PositionableLabelTest.class);
         return suite;
     }
 

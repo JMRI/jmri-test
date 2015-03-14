@@ -12,12 +12,12 @@ import jmri.JmriException;
 import jmri.managers.DefaultProgrammerManager;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XNetProgrammerTest extends TestCase {
+public class XNetProgrammerTest extends NbTestCase {
 
     static final int RELEASE_TIME = 100;
     static final int RESTART_TIME = 20;
@@ -652,8 +652,8 @@ public class XNetProgrammerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(XNetProgrammerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(XNetProgrammerTest.class);
         return suite;
     }
 

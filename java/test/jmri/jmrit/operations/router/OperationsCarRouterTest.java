@@ -29,8 +29,8 @@ import jmri.jmrit.operations.trains.TrainManagerXml;
 import jmri.util.FileUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Operations Router class
@@ -38,7 +38,7 @@ import junit.framework.TestSuite;
  * @author	Daniel Boudreau Copyright (C) 2010, 2011, 2013
  * @version $Revision$
  */
-public class OperationsCarRouterTest extends TestCase {
+public class OperationsCarRouterTest extends NbTestCase {
 
     private final int DIRECTION_ALL = Location.EAST + Location.WEST + Location.NORTH + Location.SOUTH;
 
@@ -2904,8 +2904,8 @@ public class OperationsCarRouterTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OperationsCarRouterTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OperationsCarRouterTest.class);
         return suite;
     }
 

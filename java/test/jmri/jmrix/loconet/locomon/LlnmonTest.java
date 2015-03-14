@@ -3,8 +3,8 @@ package jmri.jmrix.loconet.locomon;
 
 import jmri.jmrix.loconet.LocoNetMessage;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright (C) 2002, 2007
  * @version $Revision$
  */
-public class LlnmonTest extends TestCase {
+public class LlnmonTest extends NbTestCase {
 
     public void testTransponding() {
         LocoNetMessage l;
@@ -81,8 +81,8 @@ public class LlnmonTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LlnmonTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LlnmonTest.class);
         return suite;
     }
 

@@ -3,8 +3,8 @@ package jmri.jmrit.sound;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the WavBuffer class.
@@ -14,7 +14,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2006
  * @version $Revision$
  */
-public class WavBufferTest extends TestCase {
+public class WavBufferTest extends NbTestCase {
 
     public void testCtor() {
         byte[] data = new byte[idata.length];
@@ -65,8 +65,8 @@ public class WavBufferTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(WavBufferTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(WavBufferTest.class);
         return suite;
     }
 

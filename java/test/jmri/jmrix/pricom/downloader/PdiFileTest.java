@@ -3,8 +3,8 @@ package jmri.jmrix.pricom.downloader;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the PdiFile class
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2005
  * @version	$Revision$
  */
-public class PdiFileTest extends TestCase {
+public class PdiFileTest extends NbTestCase {
 
     public void testCreate() {
         new PdiFile(null);
@@ -36,8 +36,8 @@ public class PdiFileTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PdiFileTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PdiFileTest.class);
         return suite;
     }
 

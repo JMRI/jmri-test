@@ -3,8 +3,8 @@ package jmri.jmrix.grapevine;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the SerialMessage class.
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2003, 2008
  * @version	$Revision$
  */
-public class SerialReplyTest extends TestCase {
+public class SerialReplyTest extends NbTestCase {
 
     public void testCreate() {
         SerialMessage m = new SerialMessage();
@@ -79,8 +79,8 @@ public class SerialReplyTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SerialReplyTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SerialReplyTest.class);
         return suite;
     }
 

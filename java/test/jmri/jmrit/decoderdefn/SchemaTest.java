@@ -2,7 +2,7 @@
 package jmri.jmrit.decoderdefn;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +28,8 @@ public class SchemaTest extends jmri.configurexml.SchemaTestBase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrit.decoderdefn.SchemaTest"); // no tests in this class itself
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrit.decoderdefn.SchemaTest"); // no tests in this class itself
 
         // Some specific files for early tests
         validateDirectory(suite, "java/test/jmri/jmrit/decoderdefn/");

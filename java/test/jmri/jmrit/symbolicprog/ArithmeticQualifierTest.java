@@ -6,8 +6,8 @@ import javax.swing.JLabel;
 import jmri.progdebugger.ProgDebugger;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen, Copyright 2014
  * @version $Revision$
  */
-public class ArithmeticQualifierTest extends TestCase {
+public class ArithmeticQualifierTest extends NbTestCase {
 
     ProgDebugger p = new ProgDebugger();
 
@@ -142,8 +142,8 @@ public class ArithmeticQualifierTest extends TestCase {
     }
 
     // test suite from all defined tests, including others in the package
-    public static Test suite() {
-        TestSuite suite = new TestSuite(ArithmeticQualifierTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(ArithmeticQualifierTest.class);
         return suite;
     }
 

@@ -3,8 +3,8 @@ package jmri;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Audio class
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author Matthew Harris Copyright (C) 2011
  * @version $Revision$
  */
-public class AudioTest extends TestCase {
+public class AudioTest extends NbTestCase {
 
     public void testStateConstants() {
 
@@ -168,8 +168,8 @@ public class AudioTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AudioTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(AudioTest.class);
         return suite;
     }
 

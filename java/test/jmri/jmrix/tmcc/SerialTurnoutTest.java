@@ -3,7 +3,7 @@ package jmri.jmrix.tmcc;
 
 import jmri.implementation.AbstractTurnoutTest;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,8 +53,8 @@ public class SerialTurnoutTest extends AbstractTurnoutTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SerialTurnoutTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SerialTurnoutTest.class);
         return suite;
     }
 

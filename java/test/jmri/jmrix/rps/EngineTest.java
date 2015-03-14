@@ -3,8 +3,8 @@ package jmri.jmrix.rps;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the rps.Engine class.
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2008
  * @version	$Revision$
  */
-public class EngineTest extends TestCase {
+public class EngineTest extends NbTestCase {
 
     public void testCtor() {
         Engine e = new Engine();
@@ -37,9 +37,9 @@ public class EngineTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(EngineTest.class);
+        NbTestSuite suite = new NbTestSuite(EngineTest.class);
         return suite;
     }
 

@@ -13,8 +13,8 @@ import jmri.jmrit.operations.setup.OperationsSetupXml;
 import jmri.jmrit.operations.trains.TrainManagerXml;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Operations Pool class Last manually cross-checked on ?????
@@ -29,7 +29,7 @@ import junit.framework.TestSuite;
  * class
  * @version $Revision: 20262 $
  */
-public class OperationsPoolTest extends TestCase {
+public class OperationsPoolTest extends NbTestCase {
 
     Pool p = null;
     Track t1 = null;
@@ -399,8 +399,8 @@ public class OperationsPoolTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OperationsPoolTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OperationsPoolTest.class);
         return suite;
     }
 

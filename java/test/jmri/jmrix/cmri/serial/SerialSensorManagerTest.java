@@ -4,8 +4,8 @@ package jmri.jmrix.cmri.serial;
 import jmri.Sensor;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the SerialSensorManager class.
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2003
  * @version	$Revision$
  */
-public class SerialSensorManagerTest extends TestCase {
+public class SerialSensorManagerTest extends NbTestCase {
 
     public void testSensorCreationAndRegistration() {
 
@@ -82,8 +82,8 @@ public class SerialSensorManagerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SerialSensorManagerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SerialSensorManagerTest.class);
         return suite;
     }
 

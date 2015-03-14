@@ -3,8 +3,8 @@ package jmri.jmrix.powerline;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the X10Sequence class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Dave Duchamp multi-node extensions 2003
  * @version	$Revision$
  */
-public class X10SequenceTest extends TestCase {
+public class X10SequenceTest extends NbTestCase {
 
     public void testCtors() {
         new X10Sequence();
@@ -51,8 +51,8 @@ public class X10SequenceTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(X10SequenceTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(X10SequenceTest.class);
         return suite;
     }
 

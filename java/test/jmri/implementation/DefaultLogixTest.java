@@ -5,7 +5,7 @@ import jmri.*;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Test the DefaultLogixTest implementation class
@@ -70,8 +70,8 @@ public class DefaultLogixTest extends NamedBeanTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DefaultLogixTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DefaultLogixTest.class);
         return suite;
     }
 

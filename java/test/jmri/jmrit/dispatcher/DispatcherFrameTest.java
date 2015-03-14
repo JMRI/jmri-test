@@ -6,7 +6,7 @@ import jmri.util.JmriJFrame;
 import junit.extensions.jfcunit.TestHelper;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Swing jfcUnit tests for dispatcher options
@@ -84,8 +84,8 @@ public class DispatcherFrameTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DispatcherFrameTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DispatcherFrameTest.class);
         return suite;
     }
 

@@ -3,8 +3,8 @@ package jmri.managers;
 import jmri.implementation.SignalSystemTestUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author	Bob Jacobsen Copyright 2009
  */
-public class DefaultSignalSystemManagerTest extends TestCase {
+public class DefaultSignalSystemManagerTest extends NbTestCase {
 
     public void testGetListOfNames() {
         DefaultSignalSystemManager d = new DefaultSignalSystemManager();
@@ -100,8 +100,8 @@ public class DefaultSignalSystemManagerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DefaultSignalSystemManagerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DefaultSignalSystemManagerTest.class);
         return suite;
     }
 

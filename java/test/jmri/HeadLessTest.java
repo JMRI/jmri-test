@@ -2,8 +2,8 @@
 package jmri;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Invoke complete set of tests for the jmri package
@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen, Copyright (C) 2001, 2002, 2007
  * @version $Revision$
  */
-public class HeadLessTest extends TestCase {
+public class HeadLessTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public HeadLessTest(String s) {
@@ -41,9 +41,9 @@ public class HeadLessTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite("jmri.JmriTest");  // no tests in this class itself
+        NbTestSuite suite = new NbTestSuite("jmri.JmriTest");  // no tests in this class itself
 
         suite.addTest(jmri.PackageTest.suite());
         suite.addTest(apps.PackageTest.suite());

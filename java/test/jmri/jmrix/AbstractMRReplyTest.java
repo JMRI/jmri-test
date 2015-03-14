@@ -3,8 +3,8 @@ package jmri.jmrix;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for AbstractMRReply
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version	$Revision$
  */
-public class AbstractMRReplyTest extends TestCase {
+public class AbstractMRReplyTest extends NbTestCase {
 
     AbstractMRReply testMsg;
 
@@ -87,8 +87,8 @@ public class AbstractMRReplyTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AbstractMRReplyTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(AbstractMRReplyTest.class);
         return suite;
 
     }

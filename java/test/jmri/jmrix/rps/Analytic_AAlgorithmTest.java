@@ -2,8 +2,7 @@
 package jmri.jmrix.rps;
 
 import javax.vecmath.Point3d;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the rps.Analytic_AAlgorithm class.
@@ -13,6 +12,10 @@ import junit.framework.TestSuite;
  * @version	$Revision$
  */
 public class Analytic_AAlgorithmTest extends AbstractAlgorithmTest {
+
+    public Analytic_AAlgorithmTest(String name) {
+        super(name);
+    }
 
     Calculator getAlgorithm(Point3d[] pts, double vs) {
         return new Analytic_AAlgorithm(pts, vs);
@@ -26,9 +29,9 @@ public class Analytic_AAlgorithmTest extends AbstractAlgorithmTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(Analytic_AAlgorithmTest.class);
+        NbTestSuite suite = new NbTestSuite(Analytic_AAlgorithmTest.class);
         return suite;
     }
 

@@ -2,8 +2,8 @@
 package jmri.jmrix.rps.trackingpanel;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.rps package.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2006
  * @version $Revision$
  */
-public class TrackingPanelTest extends TestCase {
+public class TrackingPanelTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public TrackingPanelTest(String s) {
@@ -25,9 +25,9 @@ public class TrackingPanelTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite("jmri.jmrix.rps.trackingpanel.TrackingPanelTest");
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.rps.trackingpanel.TrackingPanelTest");
         suite.addTest(RpsTrackingFrameTest.suite());
         suite.addTest(RpsTrackingPanelTest.suite());
         return suite;

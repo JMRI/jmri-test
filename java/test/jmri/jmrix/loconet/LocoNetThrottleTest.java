@@ -2,10 +2,10 @@ package jmri.jmrix.loconet;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
-public class LocoNetThrottleTest extends TestCase {
+public class LocoNetThrottleTest extends NbTestCase {
 
     public LocoNetThrottleTest(String s) {
         super(s);
@@ -103,8 +103,8 @@ public class LocoNetThrottleTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LocoNetThrottleTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LocoNetThrottleTest.class);
         return suite;
     }
 

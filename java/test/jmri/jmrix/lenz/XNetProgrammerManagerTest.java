@@ -2,8 +2,8 @@ package jmri.jmrix.lenz;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author	Paul Bender
  * @version $Revision$
  */
-public class XNetProgrammerManagerTest extends TestCase {
+public class XNetProgrammerManagerTest extends NbTestCase {
 
     public void testCtor() {
         // infrastructure objects
@@ -37,8 +37,8 @@ public class XNetProgrammerManagerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(XNetProgrammerManagerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(XNetProgrammerManagerTest.class);
         return suite;
     }
 

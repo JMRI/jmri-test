@@ -3,8 +3,8 @@ package jmri.jmrix.grapevine;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.grapevine package.
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2003, 2007
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -31,9 +31,9 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite("jmri.jmrix.grapevine.SerialTest");
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.grapevine.SerialTest");
         suite.addTest(SerialTurnoutTest.suite());
         suite.addTest(SerialTurnoutTest1.suite());
         suite.addTest(SerialTurnoutTest2.suite());

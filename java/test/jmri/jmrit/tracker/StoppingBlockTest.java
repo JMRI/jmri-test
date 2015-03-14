@@ -3,8 +3,8 @@ package jmri.jmrit.tracker;
 
 import jmri.Block;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the StoppingBlock class
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2006
  * @version $Revision$
  */
-public class StoppingBlockTest extends TestCase {
+public class StoppingBlockTest extends NbTestCase {
 
     public void testDirectCreate() {
         // check for exception in ctor
@@ -31,8 +31,8 @@ public class StoppingBlockTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(StoppingBlockTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(StoppingBlockTest.class);
         return suite;
     }
 

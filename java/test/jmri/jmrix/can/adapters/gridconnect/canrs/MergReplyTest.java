@@ -4,8 +4,8 @@ package jmri.jmrix.can.adapters.gridconnect.canrs;
 import jmri.jmrix.can.CanReply;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.can.adapters.gridconnect.canrs.MergReply class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2008, 2009
  * @version $Revision$
  */
-public class MergReplyTest extends TestCase {
+public class MergReplyTest extends NbTestCase {
 
     // :S1260N12345678;
     public void testOne() {
@@ -119,9 +119,9 @@ public class MergReplyTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(MergReplyTest.class);
+        NbTestSuite suite = new NbTestSuite(MergReplyTest.class);
         return suite;
     }
 

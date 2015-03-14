@@ -2,8 +2,8 @@
 package jmri.jmrit.dispatcher;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmrit.dispatcher package
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author	Dave Duchamp
  * @version $Revision$
  */
-public class DispatcherTest extends TestCase {
+public class DispatcherTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public DispatcherTest(String s) {
@@ -25,8 +25,8 @@ public class DispatcherTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrit.dispatcher.DispatcherTest"); // no tests in class itself
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrit.dispatcher.DispatcherTest"); // no tests in class itself
         suite.addTest(jmri.jmrit.dispatcher.DispatcherTrainInfoTest.suite());
         suite.addTest(jmri.jmrit.dispatcher.DispatcherTrainInfoFileTest.suite());
         // GUI tests start here

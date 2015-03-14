@@ -7,8 +7,8 @@ import javax.vecmath.Point3d;
 import jmri.util.FileUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.jdom2.Element;
 
 /**
@@ -20,7 +20,7 @@ import org.jdom2.Element;
  * @author	Bob Jacobsen Copyright 2007
  * @version	$Revision$
  */
-public class PositionFileTest extends TestCase {
+public class PositionFileTest extends NbTestCase {
 
     public void testCtor() {
         new PositionFile();
@@ -105,8 +105,8 @@ public class PositionFileTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PositionFileTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PositionFileTest.class);
         return suite;
     }
 

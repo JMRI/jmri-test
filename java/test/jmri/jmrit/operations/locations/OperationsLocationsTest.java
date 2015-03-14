@@ -16,8 +16,8 @@ import jmri.jmrit.operations.trains.TrainManagerXml;
 import jmri.util.FileUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Operations Locations class Last manually cross-checked on
@@ -31,7 +31,7 @@ import junit.framework.TestSuite;
  * @author Bob Coleman Copyright (C) 2008, 2009
  * @version $Revision$
  */
-public class OperationsLocationsTest extends TestCase {
+public class OperationsLocationsTest extends NbTestCase {
 
     // test Location Class (part one)
     // test Location creation
@@ -1721,8 +1721,8 @@ public class OperationsLocationsTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OperationsLocationsTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OperationsLocationsTest.class);
         suite.addTest(jmri.jmrit.operations.locations.OperationsPoolTest.suite());
         return suite;
     }

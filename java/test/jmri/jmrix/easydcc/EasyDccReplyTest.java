@@ -10,10 +10,10 @@ package jmri.jmrix.easydcc;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
-public class EasyDccReplyTest extends TestCase {
+public class EasyDccReplyTest extends NbTestCase {
 
     public void testCreate() {
         EasyDccReply m = new EasyDccReply();
@@ -100,8 +100,8 @@ public class EasyDccReplyTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(EasyDccReplyTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(EasyDccReplyTest.class);
         return suite;
     }
 

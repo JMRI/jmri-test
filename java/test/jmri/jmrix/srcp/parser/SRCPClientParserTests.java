@@ -2,8 +2,8 @@
 package jmri.jmrix.srcp.parser;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author Paul Bender
  * @version $Revision$
  */
-public class SRCPClientParserTests extends TestCase {
+public class SRCPClientParserTests extends NbTestCase {
 
     // from here down is testing infrastructure
     public SRCPClientParserTests(String s) {
@@ -27,10 +27,10 @@ public class SRCPClientParserTests extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmris.srcp.SRCPClientParserTests");  // no tests in this class itself
-        suite.addTest(new TestSuite(SRCPClientParserTokenizerTest.class));
-        suite.addTest(new TestSuite(SRCPClientParserTest.class));
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmris.srcp.SRCPClientParserTests");  // no tests in this class itself
+        suite.addTest(new NbTestSuite(SRCPClientParserTokenizerTest.class));
+        suite.addTest(new NbTestSuite(SRCPClientParserTest.class));
 
         if (!System.getProperty("jmri.headlesstest", "false").equals("true")) {
             // put any tests that require a UI here.

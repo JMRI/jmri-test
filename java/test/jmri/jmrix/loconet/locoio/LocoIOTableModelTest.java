@@ -2,8 +2,8 @@
 package jmri.jmrix.loconet.locoio;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.loconet.locoio.LocoIOTableModel class.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2002
  * @version $Revision$
  */
-public class LocoIOTableModelTest extends TestCase {
+public class LocoIOTableModelTest extends NbTestCase {
 
     public void testObjectCreate() {
         /*         // prepare an interface */
@@ -479,8 +479,8 @@ public class LocoIOTableModelTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LocoIOTableModelTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LocoIOTableModelTest.class);
         return suite;
     }
 

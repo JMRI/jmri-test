@@ -7,8 +7,8 @@ import jmri.jmrit.logix.WarrantManager;
 import jmri.managers.TurnoutManagerScaffold;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen
  * @version $Revision$
  */
-public class InstanceManagerTest extends TestCase implements InstanceManagerAutoDefault {
+public class InstanceManagerTest extends NbTestCase implements InstanceManagerAutoDefault {
 
     public void testDefaultPowerManager() {
         PowerManager m = new PowerManagerScaffold();
@@ -207,9 +207,9 @@ public class InstanceManagerTest extends TestCase implements InstanceManagerAuto
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(InstanceManagerTest.class);
+        NbTestSuite suite = new NbTestSuite(InstanceManagerTest.class);
         return suite;
     }
 

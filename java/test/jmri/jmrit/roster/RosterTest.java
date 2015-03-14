@@ -11,8 +11,8 @@ import jmri.jmrit.roster.swing.RosterEntryComboBox;
 import jmri.util.FileUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmrit.roster.Roster class.
@@ -20,7 +20,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2001, 2002, 2012
  * @version $Revision$
  */
-public class RosterTest extends TestCase {
+public class RosterTest extends NbTestCase {
 
     public void testDirty() {
         Roster r = new Roster();
@@ -327,8 +327,8 @@ public class RosterTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(RosterTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(RosterTest.class);
         return suite;
     }
 

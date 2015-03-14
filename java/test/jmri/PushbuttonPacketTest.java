@@ -3,8 +3,8 @@ package jmri;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the PushbuttonPacket class
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2010
  * @version $Revision$
  */
-public class PushbuttonPacketTest extends TestCase {
+public class PushbuttonPacketTest extends NbTestCase {
 
     public void testImmutableNames() {
         String[] c1 = PushbuttonPacket.getValidDecoderNames();
@@ -36,8 +36,8 @@ public class PushbuttonPacketTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PushbuttonPacketTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PushbuttonPacketTest.class);
         return suite;
     }
 

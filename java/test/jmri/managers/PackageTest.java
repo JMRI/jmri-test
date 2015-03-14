@@ -2,8 +2,8 @@
 package jmri.managers;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Invoke complete set of tests for the jmri.managers
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen, Copyright (C) 2009
  * @version $Revision$
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -25,8 +25,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.managers.ManagersTest");  // no tests in this class itself
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.managers.ManagersTest");  // no tests in this class itself
         suite.addTest(DefaultConditionalManagerTest.suite());
         suite.addTest(DefaultIdTagManagerTest.suite());
         suite.addTest(DefaultLogixManagerTest.suite());

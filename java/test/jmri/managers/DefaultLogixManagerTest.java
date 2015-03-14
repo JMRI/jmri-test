@@ -5,15 +5,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.managers.DefaultLogixManager class.
  *
  * @author	Bob Jacobsen Copyright (C) 2015
  */
-public class DefaultLogixManagerTest extends TestCase {
+public class DefaultLogixManagerTest extends NbTestCase {
 
     public void testCtor() {
         new DefaultLogixManager();
@@ -50,8 +50,8 @@ public class DefaultLogixManagerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DefaultLogixManagerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DefaultLogixManagerTest.class);
         return suite;
     }
 

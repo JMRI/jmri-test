@@ -11,8 +11,7 @@ import jmri.SignalHead;
 import jmri.Turnout;
 import jmri.util.JUnitUtil;
 import junit.extensions.jfcunit.TestHelper;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrit.beantable.LRouteTableAction class
@@ -100,8 +99,8 @@ public class LRouteTableActionTest extends jmri.util.SwingTestCase //TestCase //
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        Test suite = new TestSuite(LRouteTableActionTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LRouteTableActionTest.class);
         return suite;
     }
 

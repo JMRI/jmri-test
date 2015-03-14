@@ -3,9 +3,8 @@ package jmri.jmrit.logix;
 
 import jmri.Block;
 import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the OPath class
@@ -13,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2010
  * @version $Revision$
  */
-public class OPathTest extends TestCase {
+public class OPathTest extends NbTestCase {
 
     public void testCtor() {
         Block b = new Block("IB1");
@@ -72,8 +71,8 @@ public class OPathTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        return new TestSuite(OPathTest.class);
+    public static NbTestSuite suite() {
+        return new NbTestSuite(OPathTest.class);
     }
 
     // The minimal setup for log4J

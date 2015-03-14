@@ -4,8 +4,8 @@ package jmri;
 import jmri.managers.DefaultProgrammerManager;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the ProgrammingMode class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright (C) 2014
  * @version $Revision$
  */
-public class ProgrammingModeTest extends TestCase {
+public class ProgrammingModeTest extends NbTestCase {
 
     public void testStateCtors() {
         // tests that statics exist, are not equal
@@ -33,8 +33,8 @@ public class ProgrammingModeTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(ProgrammingModeTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(ProgrammingModeTest.class);
         return suite;
     }
 

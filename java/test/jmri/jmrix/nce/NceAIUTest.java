@@ -4,8 +4,8 @@ package jmri.jmrix.nce;
 import jmri.Sensor;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the NceAIU class
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version	$Revision$
  */
-public class NceAIUTest extends TestCase {
+public class NceAIUTest extends NbTestCase {
 
     public void testMarkChanges() {
         NceAIU a = new NceAIU();
@@ -41,8 +41,8 @@ public class NceAIUTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(NceAIUTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(NceAIUTest.class);
         return suite;
     }
 

@@ -14,12 +14,12 @@ import jmri.jmrix.lenz.XNetReply;
 import jmri.managers.DefaultProgrammerManager;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EliteXNetProgrammerTest extends TestCase {
+public class EliteXNetProgrammerTest extends NbTestCase {
 
     public void testWriteCvSequence() throws JmriException {
         // infrastructure objects
@@ -262,8 +262,8 @@ public class EliteXNetProgrammerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(EliteXNetProgrammerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(EliteXNetProgrammerTest.class);
         return suite;
     }
 

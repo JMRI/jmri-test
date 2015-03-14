@@ -2,8 +2,8 @@ package jmri.jmrix.ieee802154;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author	Paul Bender
  * @version $Revision$
  */
-public class IEEE802154SystemConnectionMemoTest extends TestCase {
+public class IEEE802154SystemConnectionMemoTest extends NbTestCase {
 
     public void testCtor() {
         IEEE802154SystemConnectionMemo m = new IEEE802154SystemConnectionMemo();
@@ -35,8 +35,8 @@ public class IEEE802154SystemConnectionMemoTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(IEEE802154SystemConnectionMemoTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(IEEE802154SystemConnectionMemoTest.class);
         return suite;
     }
 

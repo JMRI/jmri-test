@@ -3,8 +3,8 @@ package jmri.jmrit;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Test the AbstractIdentify class. Since that's an abstract base class, we
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2001
  * @version	$Revision$
  */
-public class AbstractIdentifyTest extends TestCase {
+public class AbstractIdentifyTest extends NbTestCase {
 
     public void testFullSequence() {
         // walk through all 8 steps
@@ -191,8 +191,8 @@ public class AbstractIdentifyTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AbstractIdentifyTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(AbstractIdentifyTest.class);
         return suite;
     }
 

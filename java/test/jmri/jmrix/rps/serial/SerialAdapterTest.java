@@ -5,8 +5,8 @@ import jmri.jmrix.rps.Engine;
 import jmri.jmrix.rps.Reading;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the rps.serial.SerialAdapter class.
@@ -14,7 +14,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2008
  * @version	$Revision$
  */
-public class SerialAdapterTest extends TestCase {
+public class SerialAdapterTest extends NbTestCase {
 
     public void testStringParsing3() throws java.io.IOException {
         // String input = "DATA,TIME,4105,3751,1423,2835";
@@ -104,9 +104,9 @@ public class SerialAdapterTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(SerialAdapterTest.class);
+        NbTestSuite suite = new NbTestSuite(SerialAdapterTest.class);
         return suite;
     }
 

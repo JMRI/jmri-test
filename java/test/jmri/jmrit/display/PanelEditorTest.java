@@ -4,8 +4,8 @@ import java.io.File;
 import jmri.ConfigureManager;
 import jmri.InstanceManager;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * PanelEditorTest.java
@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen
  * @version	$Revision$
  */
-public class PanelEditorTest extends TestCase {
+public class PanelEditorTest extends NbTestCase {
 
     TurnoutIcon to = null;
 
@@ -58,8 +58,8 @@ public class PanelEditorTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PanelEditorTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(PanelEditorTest.class);
         return suite;
     }
 

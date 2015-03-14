@@ -7,8 +7,8 @@ import jmri.Sensor;
 import jmri.Turnout;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2003, 2007, 2015
  * @version	$Revision$
  */
-public class OsIndicatorTest extends TestCase {
+public class OsIndicatorTest extends NbTestCase {
 
     public void testCreate() {
         new OsIndicator("IT12", "IS34", "IS56");
@@ -140,8 +140,8 @@ public class OsIndicatorTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OsIndicatorTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OsIndicatorTest.class);
         return suite;
     }
 

@@ -12,9 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2003, 2009
  * @version	$Revision$
  */
-public class FileUtilTest extends TestCase {
+public class FileUtilTest extends NbTestCase {
 
     // tests of internal to external mapping
     // relative file with no prefix: Leave relative in system-specific form
@@ -307,8 +306,8 @@ public class FileUtilTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(FileUtilTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(FileUtilTest.class);
         return suite;
     }
     static Logger log = LoggerFactory.getLogger(FileUtilTest.class.getName());

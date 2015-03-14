@@ -2,7 +2,7 @@
 package jmri.implementation;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +28,8 @@ public class SignalSystemFileCheckTest extends jmri.configurexml.SchemaTestBase 
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.implementation.SignalSystemFileCheckTest");
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.implementation.SignalSystemFileCheckTest");
         validateDirectory(suite, "xml/signals/");
         validateSubdirectories(suite, "xml/signals/");
         return suite;

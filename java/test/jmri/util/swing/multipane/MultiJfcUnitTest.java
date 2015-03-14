@@ -9,7 +9,7 @@ import junit.extensions.jfcunit.eventdata.MouseEventData;
 import junit.extensions.jfcunit.finder.AbstractButtonFinder;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Swing jfcUnit tests for the Multipane (IDE) GUI
@@ -109,8 +109,8 @@ public class MultiJfcUnitTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(MultiJfcUnitTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(MultiJfcUnitTest.class);
         return suite;
     }
 

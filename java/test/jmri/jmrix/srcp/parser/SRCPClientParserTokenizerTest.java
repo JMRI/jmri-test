@@ -3,8 +3,8 @@ package jmri.jmrix.srcp.parser;
 
 import java.io.StringReader;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the {@link jmri.jmrix.srcp.parser.SRCPClientParserTokenizer} class.
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author Paul Bender
  * @version $Revision$
  */
-public class SRCPClientParserTokenizerTest extends TestCase {
+public class SRCPClientParserTokenizerTest extends NbTestCase {
 
     // numeric values 
     public void testTokenizeZEROADDR() {
@@ -263,8 +263,8 @@ public class SRCPClientParserTokenizerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SRCPClientParserTokenizerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SRCPClientParserTokenizerTest.class);
         return suite;
     }
 

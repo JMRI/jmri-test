@@ -11,8 +11,8 @@ import jmri.jmrit.operations.OperationsXml;
 import jmri.util.FileUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the new Operations Setup Backup classes used for copying and
@@ -41,7 +41,7 @@ import junit.framework.TestSuite;
  * @author Gregory Madsen Copyright (C) 2012
  * @version $Revision: 00001 $
  */
-public class OperationsBackupTest extends TestCase {
+public class OperationsBackupTest extends NbTestCase {
 
     private File operationsRoot;
 
@@ -113,8 +113,8 @@ public class OperationsBackupTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OperationsBackupTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OperationsBackupTest.class);
         return suite;
     }
 

@@ -14,7 +14,7 @@ import junit.extensions.jfcunit.finder.AbstractButtonFinder;
 import junit.extensions.jfcunit.finder.DialogFinder;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Swing jfcUnit tests for the SensorIcon
@@ -186,8 +186,8 @@ public class SensorIconWindowTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SensorIconWindowTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SensorIconWindowTest.class);
         return suite;
     }
 

@@ -4,8 +4,8 @@ package jmri.jmrit.vsdecoder;
 import java.beans.PropertyChangeEvent;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.jdom2.Element;
 
 /**
@@ -14,7 +14,7 @@ import org.jdom2.Element;
  * @author Mark Underwood Copyright (C) 2011
  * @version $Revision$
  */
-public class NotchTriggerTest extends TestCase {
+public class NotchTriggerTest extends NbTestCase {
 
     public void testStateConstants() {
         // Maybe check the enums here?
@@ -139,8 +139,8 @@ public class NotchTriggerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(NotchTriggerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(NotchTriggerTest.class);
         return suite;
     }
 

@@ -5,9 +5,8 @@
 package jmri.util;
 
 import java.io.IOException;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +14,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author rhwood
  */
-public class I18NTest extends TestCase {
+public class I18NTest extends NbTestCase {
+
+    public I18NTest(String name) {
+        super(name);
+    }
 
     public void testI18N() throws IOException {
         return; // disable the test until I can figure out why its failing on Jenkins
@@ -33,8 +36,8 @@ public class I18NTest extends TestCase {
          */
     }
 
-    public static Test suite() {
-        return new TestSuite(I18NTest.class);
+    public static NbTestSuite suite() {
+        return new NbTestSuite(I18NTest.class);
     }
 
     /* Referenced in disabled test above 

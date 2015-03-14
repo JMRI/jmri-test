@@ -3,8 +3,8 @@ package jmri.jmrit.dispatcher;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Swing jfcUnit tests for dispatcher train info
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Dave Duchamp
  * @version $Revision$
  */
-public class DispatcherTrainInfoFileTest extends TestCase {
+public class DispatcherTrainInfoFileTest extends NbTestCase {
 
     public void testFileRead() throws Exception {
 
@@ -59,8 +59,8 @@ public class DispatcherTrainInfoFileTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DispatcherTrainInfoFileTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DispatcherTrainInfoFileTest.class);
         return suite;
     }
 

@@ -3,8 +3,8 @@ package jmri.jmrix.pricom.downloader;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the LoaderPane class
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2005
  * @version	$Revision$
  */
-public class LoaderPaneTest extends TestCase {
+public class LoaderPaneTest extends NbTestCase {
 
     public void testCreate() {
         new LoaderPane();
@@ -83,8 +83,8 @@ public class LoaderPaneTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LoaderPaneTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LoaderPaneTest.class);
         return suite;
     }
 

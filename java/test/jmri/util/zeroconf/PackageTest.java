@@ -2,8 +2,8 @@
 package jmri.util.zeroconf;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Invokes complete set of tests in the jmri.util.zeroconf tree
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * @author Paul Bender Copyright 2014
  * @version $Revision: 22233 $
  */
-public class PackageTest extends TestCase {
+public class PackageTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public PackageTest(String s) {
@@ -26,8 +26,8 @@ public class PackageTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.util.zeroconf.ZeroConfTest");   // no tests in this class itself
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.util.zeroconf.ZeroConfTest");   // no tests in this class itself
 
         suite.addTest(ZeroConfServiceTest.suite());
 

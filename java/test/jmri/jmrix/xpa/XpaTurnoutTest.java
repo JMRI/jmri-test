@@ -2,8 +2,8 @@ package jmri.jmrix.xpa;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author	Paul Bender
  * @version $Revision: 17977 $
  */
-public class XpaTurnoutTest extends TestCase {
+public class XpaTurnoutTest extends NbTestCase {
 
     public void testCtor() {
         XpaTurnout t = new XpaTurnout(3);
@@ -34,8 +34,8 @@ public class XpaTurnoutTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(XpaTurnoutTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(XpaTurnoutTest.class);
         return suite;
     }
 

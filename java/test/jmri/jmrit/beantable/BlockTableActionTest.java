@@ -6,7 +6,7 @@ import jmri.InstanceManager;
 import jmri.util.JUnitUtil;
 import junit.extensions.jfcunit.TestHelper;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +50,8 @@ public class BlockTableActionTest extends jmri.util.SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(BlockTableActionTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(BlockTableActionTest.class);
         return suite;
     }
 

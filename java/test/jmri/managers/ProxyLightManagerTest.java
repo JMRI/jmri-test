@@ -7,8 +7,8 @@ import jmri.Light;
 import jmri.LightManager;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen 2003, 2006, 2008
  * @version	$Revision$
  */
-public class ProxyLightManagerTest extends TestCase {
+public class ProxyLightManagerTest extends NbTestCase {
 
     public String getSystemName(int i) {
         return "JL" + i;
@@ -175,8 +175,8 @@ public class ProxyLightManagerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(ProxyLightManagerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(ProxyLightManagerTest.class);
         return suite;
     }
 

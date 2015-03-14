@@ -4,8 +4,8 @@ package jmri.jmrix.openlcb;
 import jmri.jmrix.can.CanMessage;
 import jmri.jmrix.can.CanReply;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2008, 2010
  * @version $Revision$
  */
-public class OlcbAddressTest extends TestCase {
+public class OlcbAddressTest extends NbTestCase {
 
     public void testAddressOK() {
         // hex form
@@ -151,8 +151,8 @@ public class OlcbAddressTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OlcbAddressTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OlcbAddressTest.class);
         return suite;
     }
 

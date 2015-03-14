@@ -7,7 +7,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,8 +171,8 @@ public class EnumVariableValueTest extends VariableValueTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(EnumVariableValueTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(EnumVariableValueTest.class);
         return suite;
     }
 

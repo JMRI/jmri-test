@@ -1,7 +1,7 @@
 package jmri.jmrix.lenz;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.netbeans.junit.NbTestCase;
 
 /**
  * <p>
@@ -14,7 +14,7 @@ import junit.framework.TestCase;
  * @author Bob Jacobsen
  * @version $Revision$
  */
-public class XNetTrafficRouterTest extends TestCase {
+public class XNetTrafficRouterTest extends NbTestCase {
 
     public XNetTrafficRouterTest(String s) {
         super(s);

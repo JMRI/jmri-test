@@ -3,8 +3,8 @@ package jmri.jmrit.automat;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2008
  * @version	$Revision$
  */
-public class AutomatTest extends TestCase {
+public class AutomatTest extends NbTestCase {
 
     boolean initDone;
     boolean handleDone;
@@ -112,8 +112,8 @@ public class AutomatTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AutomatTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(AutomatTest.class);
         // suite.addTest(RouteTableActionTest.suite());
         return suite;
     }

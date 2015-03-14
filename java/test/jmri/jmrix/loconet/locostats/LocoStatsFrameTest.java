@@ -6,8 +6,8 @@ import jmri.jmrix.loconet.LocoNetMessage;
 import jmri.util.JmriJFrame;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright (C) 2006, 2008, 2010
  * @version $Revision$
  */
-public class LocoStatsFrameTest extends TestCase {
+public class LocoStatsFrameTest extends NbTestCase {
 
     LocoStatsPanel getFrame(String title, int offset) throws Exception {
         JmriJFrame f = new JmriJFrame();
@@ -102,8 +102,8 @@ public class LocoStatsFrameTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LocoStatsFrameTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LocoStatsFrameTest.class);
         return suite;
     }
 

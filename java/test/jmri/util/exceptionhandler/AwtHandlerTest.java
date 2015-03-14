@@ -4,7 +4,7 @@ package jmri.util.exceptionhandler;
 import jmri.util.JUnitAppender;
 import jmri.util.SwingTestCase;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +42,8 @@ public class AwtHandlerTest extends SwingTestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AwtHandlerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(AwtHandlerTest.class);
         return suite;
     }
 

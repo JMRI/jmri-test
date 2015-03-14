@@ -5,13 +5,13 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.ResourceBundle;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * @author Bob Jacobsen Copyright (C) 2015
  */
-public class AbstractPortControllerTest extends TestCase {
+public class AbstractPortControllerTest extends NbTestCase {
 
     public void testisDirtyNotNPE() {
         apc.isDirty();
@@ -31,8 +31,8 @@ public class AbstractPortControllerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AbstractPortControllerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(AbstractPortControllerTest.class);
         return suite;
     }
 

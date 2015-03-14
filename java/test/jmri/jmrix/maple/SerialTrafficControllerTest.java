@@ -8,8 +8,8 @@ import java.io.PipedOutputStream;
 import java.util.Vector;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2006
  * @version $Revision$
  */
-public class SerialTrafficControllerTest extends TestCase {
+public class SerialTrafficControllerTest extends NbTestCase {
 
     public void testCreate() {
         SerialTrafficController m = new SerialTrafficController();
@@ -150,8 +150,8 @@ public class SerialTrafficControllerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SerialTrafficControllerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SerialTrafficControllerTest.class);
         return suite;
     }
 

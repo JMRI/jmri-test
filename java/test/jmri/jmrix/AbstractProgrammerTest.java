@@ -5,8 +5,8 @@ import jmri.ProgListener;
 import jmri.ProgrammingMode;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * JUnit tests for the AbstractProgrammer class
@@ -16,7 +16,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen
  * @version $Revision$
  */
-public class AbstractProgrammerTest extends TestCase {
+public class AbstractProgrammerTest extends NbTestCase {
 
     public AbstractProgrammerTest(String s) {
         super(s);
@@ -86,8 +86,8 @@ public class AbstractProgrammerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AbstractProgrammerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(AbstractProgrammerTest.class);
         return suite;
     }
 

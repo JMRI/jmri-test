@@ -2,8 +2,8 @@
 package jmri.jmrix.lenz.ztc640;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author Paul Bender
  * @version $Revision$
  */
-public class ZTC640Test extends TestCase {
+public class ZTC640Test extends NbTestCase {
 
     // from here down is testing infrastructure
     public ZTC640Test(String s) {
@@ -27,10 +27,10 @@ public class ZTC640Test extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrix.lenz.ztc640.ZTC640Test");  // no tests in this class itself
-        suite.addTest(new TestSuite(ZTC640AdapterTest.class));
-        suite.addTest(new TestSuite(ZTC640XNetPacketizerTest.class));
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrix.lenz.ztc640.ZTC640Test");  // no tests in this class itself
+        suite.addTest(new NbTestSuite(ZTC640AdapterTest.class));
+        suite.addTest(new NbTestSuite(ZTC640XNetPacketizerTest.class));
         return suite;
     }
 

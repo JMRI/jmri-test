@@ -8,8 +8,8 @@ import jmri.jmrit.symbolicprog.VariableTableModel;
 import jmri.progdebugger.ProgDebugger;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.jdom2.DocType;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -20,7 +20,7 @@ import org.jdom2.Element;
  * @author	Bob Jacobsen, Copyright (C) 2001, 2002
  * @version $Revision$
  */
-public class DecoderFileTest extends TestCase {
+public class DecoderFileTest extends NbTestCase {
 
     ProgDebugger p = new ProgDebugger();
 
@@ -369,8 +369,8 @@ public class DecoderFileTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DecoderFileTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DecoderFileTest.class);
         return suite;
     }
 

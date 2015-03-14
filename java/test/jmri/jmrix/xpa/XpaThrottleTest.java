@@ -2,8 +2,8 @@ package jmri.jmrix.xpa;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author	Paul Bender
  * @version $Revision: 17977 $
  */
-public class XpaThrottleTest extends TestCase {
+public class XpaThrottleTest extends NbTestCase {
 
     public void testCtor() {
         XpaThrottle t = new XpaThrottle(new jmri.DccLocoAddress(3, false));
@@ -34,8 +34,8 @@ public class XpaThrottleTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(XpaThrottleTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(XpaThrottleTest.class);
         return suite;
     }
 

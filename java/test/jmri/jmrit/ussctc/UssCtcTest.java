@@ -2,8 +2,8 @@
 package jmri.jmrit.ussctc;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for classes in the jmri.jmrit.ussctc package
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright 2007
  * @version	$Revision$
  */
-public class UssCtcTest extends TestCase {
+public class UssCtcTest extends NbTestCase {
 
     // from here down is testing infrastructure
     public UssCtcTest(String s) {
@@ -25,8 +25,8 @@ public class UssCtcTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite("jmri.jmrit.ussctc.UssCtcTest");   // no tests in this class itself
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite("jmri.jmrit.ussctc.UssCtcTest");   // no tests in this class itself
         suite.addTest(jmri.jmrit.ussctc.FollowerTest.suite());
         suite.addTest(jmri.jmrit.ussctc.FollowerActionTest.suite());
         suite.addTest(jmri.jmrit.ussctc.OsIndicatorTest.suite());

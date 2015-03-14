@@ -13,7 +13,7 @@ import jmri.InstanceManager;
 import jmri.implementation.AbstractTurnoutTest;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +54,8 @@ public class DccTurnoutTest extends AbstractTurnoutTest {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DccTurnoutTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(DccTurnoutTest.class);
         return suite;
     }
 

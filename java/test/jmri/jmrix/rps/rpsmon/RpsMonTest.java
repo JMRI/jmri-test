@@ -4,8 +4,8 @@ package jmri.jmrix.rps.rpsmon;
 import javax.swing.JFrame;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.rps.rpsmon package.
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * @author Bob Jacobsen Copyright 2006
  * @version $Revision$
  */
-public class RpsMonTest extends TestCase {
+public class RpsMonTest extends NbTestCase {
 
     // show the window
     public void testDisplay() {
@@ -39,9 +39,9 @@ public class RpsMonTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
+    public static NbTestSuite suite() {
         apps.tests.AllTest.initLogging();
-        TestSuite suite = new TestSuite(RpsMonTest.class);
+        NbTestSuite suite = new NbTestSuite(RpsMonTest.class);
         return suite;
     }
 

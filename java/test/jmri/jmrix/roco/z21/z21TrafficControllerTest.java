@@ -2,8 +2,8 @@ package jmri.jmrix.roco.z21;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author	Paul Bender
  * @version $Revision$
  */
-public class z21TrafficControllerTest extends TestCase {
+public class z21TrafficControllerTest extends NbTestCase {
 
     public void testCtor() {
         z21TrafficController a = new z21TrafficController();
@@ -34,8 +34,8 @@ public class z21TrafficControllerTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(z21TrafficControllerTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(z21TrafficControllerTest.class);
         return suite;
     }
 

@@ -8,8 +8,8 @@ import jmri.jmrit.operations.rollingstock.cars.CarTypes;
 import jmri.jmrit.operations.setup.Setup;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the Operations RollingStock class Last manually cross-checked on
@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
  * @author	Bob Coleman Copyright (C) 2009
  *
  */
-public class OperationsRollingStockTest extends TestCase {
+public class OperationsRollingStockTest extends NbTestCase {
 
     // test creation
     public void testCreate() {
@@ -194,8 +194,8 @@ public class OperationsRollingStockTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(OperationsRollingStockTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(OperationsRollingStockTest.class);
         return suite;
     }
 

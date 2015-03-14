@@ -6,8 +6,8 @@ import jmri.jmrix.loconet.LocoNetMessage;
 import jmri.jmrix.loconet.LocoNetSystemConnectionMemo;
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmri.jmrix.loconet.locoio.LocoIOFrame class
@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2002
  * @version $Revision$
  */
-public class LocoIOPanelTest extends TestCase {
+public class LocoIOPanelTest extends NbTestCase {
 
     public void testFrameCreate() {
         LocoNetInterfaceScaffold lnis = new LocoNetInterfaceScaffold();
@@ -121,8 +121,8 @@ public class LocoIOPanelTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LocoIOPanelTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LocoIOPanelTest.class);
         return suite;
     }
 

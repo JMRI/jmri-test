@@ -3,8 +3,8 @@ package jmri.jmrix.loconet;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * @author	Bob Jacobsen Copyright 2001, 2002
  * @version $Revision$
  */
-public class LnSensorAddressTest extends TestCase {
+public class LnSensorAddressTest extends NbTestCase {
 
     public void testLnSensorAddressCreate() {
         LnSensorAddress a1 = new LnSensorAddress("LS001", "L");
@@ -111,8 +111,8 @@ public class LnSensorAddressTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LnSensorAddressTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(LnSensorAddressTest.class);
         return suite;
     }
 

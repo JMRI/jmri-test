@@ -2,8 +2,8 @@ package jmri.jmrit.roster;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the jmrit.roster.FunctionLabelPane class.
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * @author	Bob Jacobsen Copyright (C) 2008
  * @version	$Revision$
  */
-public class FunctionLabelPaneTest extends TestCase {
+public class FunctionLabelPaneTest extends NbTestCase {
 
     // statics for test objects
     org.jdom2.Element eOld = null;
@@ -115,8 +115,8 @@ public class FunctionLabelPaneTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(FunctionLabelPaneTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(FunctionLabelPaneTest.class);
         return suite;
     }
 

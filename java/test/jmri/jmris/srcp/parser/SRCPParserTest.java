@@ -2,9 +2,8 @@
 package jmri.jmris.srcp.parser;
 
 import java.io.StringReader;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.netbeans.junit.NbTestCase;
+import org.netbeans.junit.NbTestSuite;
 
 /**
  * Tests for the {@link jmri.jmris.srcp.parser.SRCPParser} class.
@@ -12,7 +11,11 @@ import junit.framework.TestSuite;
  * @author Paul Bender
  * @version $Revision$
  */
-public class SRCPParserTest extends TestCase {
+public class SRCPParserTest extends NbTestCase {
+
+    public SRCPParserTest(String name) {
+        super(name);
+    }
 
     public void testParseFailure() {
         boolean exceptionOccured = false;
@@ -402,8 +405,8 @@ public class SRCPParserTest extends TestCase {
     }
 
     // test suite from all defined tests
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SRCPParserTest.class);
+    public static NbTestSuite suite() {
+        NbTestSuite suite = new NbTestSuite(SRCPParserTest.class);
         return suite;
 
     }
