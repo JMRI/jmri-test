@@ -52,7 +52,7 @@ public class MrcTrafficListenerFilter {
      * Constructor
      *
      * @param _mask Type of traffic the listener is interested in.
-     * @param _l The listener interface.
+     * @param _l    The listener interface.
      */
     public MrcTrafficListenerFilter(int _mask, MrcTrafficListener _l) {
         mask = _mask;
@@ -74,10 +74,11 @@ public class MrcTrafficListenerFilter {
             l.notifyRcv(timestamp, m);
         }
     }
-    
-    boolean forwardMessage(int messageClass){
-        if((mask & messageClass) != 0)
+
+    boolean forwardMessage(int messageClass) {
+        if ((mask & messageClass) != 0) {
             return true;
+        }
         return false;
     }
 }

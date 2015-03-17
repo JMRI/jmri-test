@@ -28,6 +28,7 @@ import jmri.SignalHead;
 import jmri.SignalMast;
 import jmri.Turnout;
 import static jmri.jmris.json.JSON.ACTIVE;
+import static jmri.jmris.json.JSON.ACTIVE_PROFILE;
 import static jmri.jmris.json.JSON.ADDRESS;
 import static jmri.jmris.json.JSON.ADD_COMMENT;
 import static jmri.jmris.json.JSON.APPEARANCE;
@@ -106,7 +107,6 @@ import static jmri.jmris.json.JSON.OFF;
 import static jmri.jmris.json.JSON.ON;
 import static jmri.jmris.json.JSON.OWNER;
 import static jmri.jmris.json.JSON.PANEL;
-import static jmri.jmris.json.JSON.PANEL_PANEL;
 import static jmri.jmris.json.JSON.PORT;
 import static jmri.jmris.json.JSON.POSITION;
 import static jmri.jmris.json.JSON.POWER;
@@ -172,12 +172,12 @@ import jmri.jmrit.roster.RosterEntry;
 import jmri.jmrit.roster.rostergroup.RosterGroup;
 import jmri.jmrix.ConnectionConfig;
 import jmri.jmrix.SystemConnectionMemo;
+import jmri.profile.ProfileManager;
 import jmri.util.ConnectionNameFromSystemName;
 import jmri.util.JmriJFrame;
 import jmri.util.node.NodeIdentity;
 import jmri.util.zeroconf.ZeroConfService;
 import jmri.web.server.WebServerManager;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -210,10 +210,10 @@ public class JsonUtil {
     /**
      * Delete the consist at the given address.
      *
-     * @param locale The locale to format exceptions in
+     * @param locale  The locale to format exceptions in
      * @param address The address of the consist to delete.
      * @throws JsonException This exception has code 404 if the consist does not
-     * exist.
+     *                       exist.
      */
     static public void delConsist(Locale locale, DccLocoAddress address) throws JsonException {
         try {
@@ -249,11 +249,11 @@ public class JsonUtil {
      * </ul>
      * </ul>
      *
-     * @param locale The locale to throw exceptions in.
+     * @param locale  The locale to throw exceptions in.
      * @param address The address of the consist to get.
      * @return The JSON representation of the consist.
      * @throws JsonException This exception has code 404 if the consist does not
-     * exist.
+     *                       exist.
      */
     static public JsonNode getConsist(Locale locale, DccLocoAddress address) throws JsonException {
         try {
@@ -290,10 +290,11 @@ public class JsonUtil {
      *
      * Adds a consist, populating it with information from data.
      *
-     * @param locale The locale to throw exceptions in.
+     * @param locale  The locale to throw exceptions in.
      * @param address The address of the new consist.
-     * @param data The JSON representation of the consist. See
-     * {@link #getConsist(Locale, jmri.DccLocoAddress) } for the JSON structure.
+     * @param data    The JSON representation of the consist. See
+     * {@link #getConsist(Locale, jmri.DccLocoAddress) } for the
+     *                JSON structure.
      * @throws JsonException
      */
     static public void putConsist(Locale locale, DccLocoAddress address, JsonNode data) throws JsonException {
@@ -345,9 +346,9 @@ public class JsonUtil {
      * node.</li>
      * </ul>
      *
-     * @param locale the locale to throw exceptions in
+     * @param locale  the locale to throw exceptions in
      * @param address the consist address
-     * @param data the consist as a JsonObject
+     * @param data    the consist as a JsonObject
      * @throws JsonException
      */
     static public void setConsist(Locale locale, DccLocoAddress address, JsonNode data) throws JsonException {
@@ -588,56 +589,53 @@ public class JsonUtil {
         return root;
     }
 
+    static public ObjectNode getPanel(Locale locale, Editor editor, String format) {
+        if (editor.getAllowInFrameServlet()) {
+            String title = ((JmriJFrame) editor.getTargetPanel().getTopLevelAncestor()).getTitle();
+            if (!title.isEmpty() && !WebServerManager.getWebServerPreferences().getDisallowedFrames().contains(title)) {
+                String type = PANEL;
+                String name = "Panel";
+                if (editor instanceof ControlPanelEditor) {
+                    type = CONTROL_PANEL;
+                    name = "ControlPanel";
+                } else if (editor instanceof LayoutEditor) {
+                    type = LAYOUT_PANEL;
+                    name = "Layout";
+                }
+                ObjectNode root = mapper.createObjectNode();
+                root.put(TYPE, PANEL);
+                ObjectNode data = root.putObject(DATA);
+                data.put(NAME, name + "/" + title.replaceAll(" ", "%20").replaceAll("#", "%23")); // NOI18N
+                data.put(URL, "/panel/" + data.path(NAME).asText() + "?format=" + format); // NOI18N
+                data.put(USERNAME, title);
+                data.put(TYPE, type);
+                return root;
+            }
+        }
+        return null;
+    }
+
     static public JsonNode getPanels(Locale locale, String format) {
-        List<String> disallowedFrames = WebServerManager.getWebServerPreferences().getDisallowedFrames();
         ArrayNode root = mapper.createArrayNode();
         // list loaded Panels (ControlPanelEditor, PanelEditor, LayoutEditor)
-        List<ControlPanelEditor> controlPanels = Editor.getEditors(ControlPanelEditor.class);
-        for (Editor editor : controlPanels) {
-            if (editor.getAllowInFrameServlet()) {
-                String title = ((JmriJFrame) editor.getTargetPanel().getTopLevelAncestor()).getTitle();
-                if (!title.equals("") && !disallowedFrames.contains(title)) {
-                    ObjectNode panel = mapper.createObjectNode();
-                    panel.put(TYPE, PANEL);
-                    ObjectNode data = panel.putObject(DATA);
-                    data.put(NAME, "ControlPanel/" + title.replaceAll(" ", "%20").replaceAll("#", "%23")); // NOI18N
-                    data.put(URL, "/panel/" + data.path(NAME).asText() + "?format=" + format); // NOI18N
-                    data.put(USERNAME, title);
-                    data.put(TYPE, CONTROL_PANEL);
-                    root.add(data);
+        for (Editor editor : Editor.getEditors(ControlPanelEditor.class)) {
+            ObjectNode panel = JsonUtil.getPanel(locale, editor, format);
+            if (panel != null) {
+                root.add(panel);
+            }
+        }
+        for (Editor editor : Editor.getEditors(PanelEditor.class)) {
+            if (!(LayoutEditor.class.isInstance(editor))) {  //skip LayoutEditor panels, as they will be added later
+                ObjectNode panel = JsonUtil.getPanel(locale, editor, format);
+                if (panel != null) {
+                    root.add(panel);
                 }
             }
         }
-        List<PanelEditor> panels = Editor.getEditors(PanelEditor.class);
-        for (Editor editor : panels) {
-            if (editor.getAllowInFrameServlet() && !(LayoutEditor.class.isInstance(editor))) {  //skip LayoutEditor panels, as they will be added next
-                String title = ((JmriJFrame) editor.getTargetPanel().getTopLevelAncestor()).getTitle();
-                if (!title.equals("") && !disallowedFrames.contains(title)) {
-                    ObjectNode panel = mapper.createObjectNode();
-                    panel.put(TYPE, PANEL);
-                    ObjectNode data = panel.putObject(DATA);
-                    data.put(NAME, "Panel/" + title.replaceAll(" ", "%20").replaceAll("#", "%23")); // NOI18N
-                    data.put(URL, "/panel/" + data.path(NAME).asText() + "?format=" + format); // NOI18N
-                    data.put(USERNAME, title);
-                    data.put(TYPE, PANEL_PANEL);
-                    root.add(data);
-                }
-            }
-        }
-        List<LayoutEditor> layouts = Editor.getEditors(LayoutEditor.class);
-        for (Editor editor : layouts) {
-            if (editor.getAllowInFrameServlet()) {
-                String title = ((JmriJFrame) editor.getTargetPanel().getTopLevelAncestor()).getTitle();
-                if (!title.equals("") && !disallowedFrames.contains(title)) {
-                    ObjectNode panel = mapper.createObjectNode();
-                    panel.put(TYPE, PANEL);
-                    ObjectNode data = panel.putObject(DATA);
-                    data.put(NAME, "Layout/" + title.replaceAll(" ", "%20").replaceAll("#", "%23")); // NOI18N
-                    data.put(URL, "/panel/" + data.path(NAME).asText() + "?format=" + format); // NOI18N
-                    data.put(USERNAME, title);
-                    data.put(TYPE, LAYOUT_PANEL);
-                    root.add(data);
-                }
+        for (Editor editor : Editor.getEditors(LayoutEditor.class)) {
+            ObjectNode panel = JsonUtil.getPanel(locale, editor, format);
+            if (panel != null) {
+                root.add(panel);
             }
         }
         return root;
@@ -753,7 +751,7 @@ public class JsonUtil {
      * server IP address and port as they know it to be.
      *
      * @param locale
-     * @param id The id of an entry in the roster.
+     * @param id     The id of an entry in the roster.
      * @return a roster entry in JSON notation
      */
     static public JsonNode getRosterEntry(Locale locale, String id) {
@@ -768,7 +766,7 @@ public class JsonUtil {
      * server IP address and port as they know it to be.
      *
      * @param locale
-     * @param re A RosterEntry that may or may not be in the roster.
+     * @param re     A RosterEntry that may or may not be in the roster.
      * @return a roster entry in JSON notation
      */
     static public JsonNode getRosterEntry(Locale locale, RosterEntry re) {
@@ -893,8 +891,8 @@ public class JsonUtil {
      * equal to <em>8</em> (the aspect of {@link jmri.Route#TOGGLE}).
      *
      * @param locale The locale to throw exceptions in
-     * @param name The name of the route
-     * @param data A JsonNode containing route attributes to set
+     * @param name   The name of the route
+     * @param data   A JsonNode containing route attributes to set
      * @throws JsonException
      * @see jmri.Route#TOGGLE
      */
@@ -1266,8 +1264,8 @@ public class JsonUtil {
      * throws error code 428.
      *
      * @param locale The locale to throw exceptions in.
-     * @param id The id of the train.
-     * @param data Train data to change.
+     * @param id     The id of the train.
+     * @param data   Train data to change.
      * @throws JsonException
      */
     static public void setTrain(Locale locale, String id, JsonNode data) throws JsonException {
@@ -1415,6 +1413,7 @@ public class JsonUtil {
         data.put(HEARTBEAT, Math.round(heartbeat * 0.9f));
         data.put(RAILROAD, WebServerManager.getWebServerPreferences().getRailRoadName());
         data.put(NODE, NodeIdentity.identity());
+        data.put(ACTIVE_PROFILE, ProfileManager.defaultManager().getActiveProfile().getName());
         return root;
     }
 
@@ -1480,7 +1479,7 @@ public class JsonUtil {
 
     static public ObjectNode getCar(Car car) {
         ObjectNode node = JsonUtil.getRollingStock(car);
-        node.put(LOAD, StringEscapeUtils.escapeHtml4(car.getLoadName())); // NOI18N
+        node.put(LOAD, car.getLoadName()); // NOI18N
         node.put(HAZARDOUS, car.isHazardous());
         node.put(REMOVE_COMMENT, car.getDropComment());
         node.put(ADD_COMMENT, car.getPickupComment());
@@ -1510,14 +1509,14 @@ public class JsonUtil {
         ObjectNode node = mapper.createObjectNode();
         node.put(ID, rs.getId());
         node.put(NUMBER, splitString(rs.getNumber()));
-        node.put(ROAD, StringEscapeUtils.escapeHtml4(rs.getRoadName()));
+        node.put(ROAD, rs.getRoadName());
         String[] type = rs.getTypeName().split("-"); // second half of string
         // can be anything
         node.put(TYPE, type[0]);
         node.put(LENGTH, rs.getLength());
         node.put(COLOR, rs.getColor());
-        node.put(OWNER, StringEscapeUtils.escapeHtml4(rs.getOwner()));
-        node.put(COMMENT, StringEscapeUtils.escapeHtml4(rs.getComment()));
+        node.put(OWNER, rs.getOwner());
+        node.put(COMMENT, rs.getComment());
         if (rs.getTrack() != null) {
             node.put(LOCATION, JsonUtil.getLocationAndTrack(rs.getTrack(), rs.getRouteLocation()));
         } else if (rs.getLocation() != null) {

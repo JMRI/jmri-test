@@ -2,7 +2,6 @@
 package jmri.jmrit.operations.setup;
 
 import java.awt.Dimension;
-
 import jmri.jmrit.operations.OperationsFrame;
 
 /**
@@ -14,12 +13,12 @@ import jmri.jmrit.operations.OperationsFrame;
 public class BuildReportOptionFrame extends OperationsFrame {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -5896574373818704098L;
+     *
+     */
+    private static final long serialVersionUID = -5896574373818704098L;
 
-	public BuildReportOptionFrame() {
-        super(Bundle.getMessage("TitleBuildReportOptions"), new BuildReportOptionPanel()); // NOI18N
+    public BuildReportOptionFrame() {
+        super(Bundle.getMessage("TitleBuildReportOptions"), new BuildReportOptionPanel());
     }
 
     @Override
@@ -27,7 +26,7 @@ public class BuildReportOptionFrame extends OperationsFrame {
         super.initComponents();
         // build menu
         addHelpMenu("package.jmri.jmrit.operations.Operations_BuildReportDetails", true); // NOI18N
-        
+
         initMinimumSize(new Dimension(Control.panelWidth500, Control.panelHeight500));
     }
 }

@@ -1,7 +1,7 @@
 // PortController.java
-
 package jmri.jmrix.direct;
 
+import java.util.ResourceBundle;
 import jmri.jmrix.SystemConnectionMemo;
 
 /*
@@ -9,15 +9,21 @@ import jmri.jmrix.SystemConnectionMemo;
  * @author			Bob Jacobsen    Copyright (C) 2001, 2004
  * @version $Revision$
  */
-
 public abstract class PortController extends jmri.jmrix.AbstractSerialPortController {
-	// base class. Implementations will provide InputStream and OutputStream
-	// objects to TrafficController classes, who in turn will deal in messages.
+    // base class. Implementations will provide InputStream and OutputStream
+    // objects to TrafficController classes, who in turn will deal in messages.
 
-        @Override
-    public SystemConnectionMemo getSystemConnectionMemo() {
-        return null; // Direct connections do not use the SystemConnectionMemo.
+    protected PortController() {
+        super(new SystemConnectionMemo("N", "Others") {
+
+            @Override
+            protected ResourceBundle getActionModelResourceBundle() {
+                return null;
+            }
+        });
+        this.manufacturerName = jmri.jmrix.DCCManufacturerList.OTHER;
     }
+
 }
 
 

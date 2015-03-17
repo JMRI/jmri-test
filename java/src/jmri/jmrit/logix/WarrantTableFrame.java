@@ -1,27 +1,23 @@
 package jmri.jmrit.logix;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.BorderFactory;
+import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
-import javax.swing.JComboBox;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -29,13 +25,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JTable;
-
-import jmri.InstanceManager;
+import javax.swing.JTextField;
 import jmri.util.com.sun.TableSorter;
+import jmri.util.swing.XTableColumnModel;
 import jmri.util.table.ButtonEditor;
 import jmri.util.table.ButtonRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The WarrantTableFrame lists the existing Warrants and has controls to set their routes,
@@ -57,25 +54,23 @@ import jmri.util.table.ButtonRenderer;
  * for more details.
  * <P>
  *
- * @author	Pete Cressman  Copyright (C) 2009, 2010
+ * @author  Pete Cressman  Copyright (C) 2009, 2010
  */
 
-public class WarrantTableFrame  extends jmri.util.JmriJFrame implements MouseListener 
+public class WarrantTableFrame extends jmri.util.JmriJFrame implements MouseListener 
 {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8994208663637783635L;
-	static final String halt = Bundle.getMessage("Halt");
-	static final String resume = Bundle.getMessage("Resume");
-	static final String abort = Bundle.getMessage("Abort");
-	static final String retry = Bundle.getMessage("Retry");
-	static final String[] controls = {halt, resume, retry, abort};
+    private static final long serialVersionUID = 8994208663637783635L;
+    static final String halt = Bundle.getMessage("Halt");
+    static final String resume = Bundle.getMessage("Resume");
+    static final String abort = Bundle.getMessage("Abort");
+    static final String retry = Bundle.getMessage("Retry");
+    static final String[] controls = {halt, resume, retry, abort};
 
     public static int _maxHistorySize = 30;
 
-	private JTextField  _startWarrant = new JTextField(30);
-	private JTextField  _endWarrant = new JTextField(30);
+    private JTextField  _startWarrant = new JTextField(30);
+    private JTextField  _endWarrant = new JTextField(30);
+    private JDialog _concatDialog;
     private NXFrame _nxFrame;
     private JTextField  _status = new JTextField(90);
     private ArrayList<String> _statusHistory = new ArrayList<String>();
@@ -86,14 +81,14 @@ public class WarrantTableFrame  extends jmri.util.JmriJFrame implements MouseLis
     private static WarrantTableFrame _instance;
     
     public static WarrantTableFrame getInstance() {
-    	if (_instance==null) {
-    		_instance = new WarrantTableFrame();
-    	}
-    	return _instance;
+        if (_instance==null) {
+            _instance = new WarrantTableFrame();
+        }
+        return _instance;
     }
 
     WarrantTableModel getModel() {
-    	return _model;
+        return _model;
     }
 
     private WarrantTableFrame() 
@@ -105,7 +100,7 @@ public class WarrantTableFrame  extends jmri.util.JmriJFrame implements MouseLis
         JTable table;   // = new JTable(_model);
         ComboBoxCellEditor comboEd;
         try {   // following might fail due to a missing method on Mac Classic
-        	TableSorter sorter = new jmri.util.com.sun.TableSorter(_model);
+            TableSorter sorter = new jmri.util.com.sun.TableSorter(_model);
             table = jmri.util.JTableUtil.sortableDataModel(sorter);
             sorter.setTableHeader(table.getTableHeader());
             comboEd = new ComboBoxCellEditor(new JComboBox<String>(), sorter);
@@ -116,6 +111,12 @@ public class WarrantTableFrame  extends jmri.util.JmriJFrame implements MouseLis
             table = new JTable(_model);
             comboEd = new ComboBoxCellEditor(new JComboBox<String>());
         }
+        // Use XTableColumnModel so we can control which columns are visible
+        XTableColumnModel tcm = new XTableColumnModel();
+        table.setColumnModel(tcm);
+        table.getTableHeader().setReorderingAllowed(true);
+        table.createDefaultColumnsFromModel();
+        _model.addHeaderListener(table);
         
         table.setDefaultRenderer(Boolean.class, new ButtonRenderer());
         table.setDefaultRenderer(JComboBox.class, new jmri.jmrit.symbolicprog.ValueRenderer());
@@ -143,6 +144,8 @@ public class WarrantTableFrame  extends jmri.util.JmriJFrame implements MouseLis
             int width = _model.getPreferredWidth(i);
             table.getColumnModel().getColumn(i).setPreferredWidth(width);
         }
+        tcm.setColumnVisible(tcm.getColumnByModelIndex(WarrantTableModel.MANUAL_RUN_COLUMN), false);
+        
         _rowHeight = box.getPreferredSize().height;
         table.setRowHeight(_rowHeight);
         table.setDragEnabled(true);
@@ -157,28 +160,103 @@ public class WarrantTableFrame  extends jmri.util.JmriJFrame implements MouseLis
         tablePanel.add(_tablePane);
 
         JPanel bottom = new JPanel();
-        bottom.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        bottom.add(new JPanel(), gbc);
-//        bottom.setLayout(new BoxLayout(bottom, BoxLayout.Y_AXIS));
-        JPanel p = new JPanel();
-        p.add(new JLabel("status"));
+        JPanel panel = new JPanel();
+        JButton nxButton = new JButton(Bundle.getMessage("CreateNXWarrant"));
+        nxButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                nxAction();
+            }
+        });
+        panel.add(nxButton);
+        panel.add(Box.createGlue());
+        panel.add(new JLabel("status"));
         _status.addMouseListener(this);
-		_status.setBackground(Color.white);
-    	_status.setFont(jmri.util.FontUtil.deriveFont(_status.getFont(),java.awt.Font.BOLD));
+        _status.setBackground(Color.white);
+        _status.setFont(jmri.util.FontUtil.deriveFont(_status.getFont(),java.awt.Font.BOLD));
         _status.setEditable(false);
         setStatusText(BLANK.substring(0,90), null, false);
-        p.add(_status);
-        gbc.gridy = 1;
-        gbc.weighty = 0.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        bottom.add(p, gbc);
-        
+        panel.add(_status);
+        JButton haltAllButton = new JButton(Bundle.getMessage("HaltAllTrains"));
+        haltAllButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                haltAllAction();
+            }
+        });
+        haltAllButton.setForeground(Color.RED);
+        panel.add(Box.createGlue());
+        panel.add(haltAllButton);
+        bottom.add(panel);///
+        tablePanel.add(bottom);
+
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    dispose();
+                }
+            });         
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu(Bundle.getMessage("MenuFile"));
+        fileMenu.add(new jmri.configurexml.SaveMenu());
+        menuBar.add(fileMenu);
+        JMenu warrantMenu = new JMenu(Bundle.getMessage("MenuWarrant"));
+        warrantMenu.add(new AbstractAction(Bundle.getMessage("ConcatWarrants")){
+            public void actionPerformed(ActionEvent e) {
+                concatMenuAction();
+            }
+        });
+        warrantMenu.add(new jmri.jmrit.logix.WarrantTableAction("CreateWarrant"));
+        warrantMenu.add(WarrantTableAction._trackerTable);
+        warrantMenu.add(new AbstractAction(Bundle.getMessage("CreateNXWarrant")) {
+            private static final long serialVersionUID = -4129760191508866189L;
+
+            public void actionPerformed(ActionEvent e) {
+                _nxFrame = NXFrame.getInstance();
+                _nxFrame.setVisible(true);
+            }           
+        });
+        warrantMenu.add(WarrantTableAction.makeLogMenu());
+        menuBar.add(warrantMenu);
+        setJMenuBar(menuBar);
+        addHelpMenu("package.jmri.jmrit.logix.WarrantTable", true);
+
+        getContentPane().add(tablePanel);
+//        setLocation(50,0);
+        pack();
+    }
+    protected void scrollTable() {
+        JScrollBar bar = _tablePane.getVerticalScrollBar();
+        bar.setValue(bar.getMaximum());
+    }
+
+    
+    protected boolean mouseClickedOnBlock(OBlock block) {
+        if (_nxFrame!=null) {
+            _nxFrame.mouseClickedOnBlock(block);
+            return true;
+        }
+        return false;
+    }
+       
+    private void nxAction() {
+        _nxFrame = NXFrame.getInstance();
+        _nxFrame.setVisible(true);
+    }
+    
+    protected void closeNXFrame() {
+        _nxFrame = null;
+    }
+    
+    private void haltAllAction() {
+        _model.haltAllTrains();
+    }
+    
+    protected void concatMenuAction() {
+        _concatDialog = new JDialog(this, Bundle.getMessage("ConcatWarrants"), false);
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout(5,5));
         JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.add(Box.createHorizontalStrut(WarrantTableAction.STRUT_SIZE));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+//        panel.add(Box.createVerticalStrut(WarrantTableAction.STRUT_SIZE));
         JPanel pp = new JPanel();
         pp.setLayout(new FlowLayout());
         pp.add(new JLabel("A:"));
@@ -199,118 +277,36 @@ public class WarrantTableFrame  extends jmri.util.JmriJFrame implements MouseLis
                 concatenate();
             }
         });
-        panel.add(Box.createHorizontalStrut(WarrantTableAction.STRUT_SIZE));
-        panel.add(concatButton);
-        panel.add(Box.createHorizontalStrut(WarrantTableAction.STRUT_SIZE));
+//        panel.add(Box.createVerticalStrut(WarrantTableAction.STRUT_SIZE));
+        panel.add(concatButton, Box.CENTER_ALIGNMENT);
+//        panel.add(Box.createVerticalStrut(WarrantTableAction.STRUT_SIZE));
 
-        JPanel concatPanel = new JPanel();
-        concatPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(java.awt.Color.BLACK),
-                Bundle.getMessage("JoinPrompt"),
-                javax.swing.border.TitledBorder.CENTER,
-                javax.swing.border.TitledBorder.TOP));
-        concatPanel.add(panel);
-
-        panel = new JPanel();
-        panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(java.awt.Color.BLACK),
-                Bundle.getMessage("AutoWarrant"),
-                javax.swing.border.TitledBorder.CENTER,
-                javax.swing.border.TitledBorder.TOP));
-        JButton nxButton = new JButton(Bundle.getMessage("CreateNXWarrant"));
-        nxButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            	nxAction();
-            }
-        });
-        panel.add(nxButton);
-        
-        p = new JPanel();
-        p.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(java.awt.Color.BLACK),
-                Bundle.getMessage("HaltAllTrains"),
-                javax.swing.border.TitledBorder.CENTER,
-                javax.swing.border.TitledBorder.TOP));
-        JButton haltAllButton = new JButton(Bundle.getMessage("HaltAll"));
-        haltAllButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            	haltAllAction();
-            }
-        });
-        p.add(haltAllButton);
-        
-        pp = new JPanel();
-        pp.setLayout(new BoxLayout(pp, BoxLayout.X_AXIS));
-        pp.add(Box.createHorizontalStrut(WarrantTableAction.STRUT_SIZE));
-        pp.add(panel);
-        pp.add(Box.createHorizontalStrut(WarrantTableAction.STRUT_SIZE));
-        pp.add(p);
-        pp.add(Box.createHorizontalStrut(WarrantTableAction.STRUT_SIZE));
-        pp.add(concatPanel);
-        pp.add(Box.createHorizontalStrut(WarrantTableAction.STRUT_SIZE));
-        gbc.gridy = 2;
-        gbc.weighty = 0.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        bottom.add(pp, gbc);
-        tablePanel.add(bottom);
-
-        addWindowListener(new java.awt.event.WindowAdapter() {
-        	@Override
-                public void windowClosing(java.awt.event.WindowEvent e) {
-                    dispose();
-                }
-            });			
-        JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu(Bundle.getMessage("MenuFile"));
-        fileMenu.add(new jmri.configurexml.SaveMenu());
-        menuBar.add(fileMenu);
-        setJMenuBar(menuBar);
-        addHelpMenu("package.jmri.jmrit.logix.Warrant", true);
-
-        getContentPane().add(tablePanel);
-        setLocation(50,0);
-        pack();
+        mainPanel.add(panel);
+        _concatDialog.getContentPane().add(mainPanel);
+        _concatDialog.setLocation(getLocation().x+50, getLocation().y+150);
+        _concatDialog.pack();
+        _concatDialog.setVisible(true);
     }
-    protected void scrollTable() {
-        JScrollBar bar = _tablePane.getVerticalScrollBar();
-        bar.setValue(bar.getMaximum());
-    }
-
-    
-    protected boolean mouseClickedOnBlock(OBlock block) {
-    	if (_nxFrame!=null) {
-    		_nxFrame.mouseClickedOnBlock(block);
-    		return true;
-    	}
-    	return false;
-    }
-       
-    private void nxAction() {
-    	_nxFrame = NXFrame.getInstance();
-    	_nxFrame.setVisible(true);
-    }
-    
-    protected void closeNXFrame() {
-    	_nxFrame = null;
-    }
-    
-    private void haltAllAction() {
-    	_model.haltAllTrains();
-    }
-    
     private void concatenate() {
+        /*
         WarrantManager manager = InstanceManager.getDefault(jmri.jmrit.logix.WarrantManager.class);
         Warrant startW = manager.getWarrant(_startWarrant.getText().trim());
         Warrant endW = manager.getWarrant(_endWarrant.getText().trim());
+        */
+        Warrant startW = _model.getWarrant(_startWarrant.getText().trim());
+        Warrant endW = _model.getWarrant(_endWarrant.getText().trim());
         if (startW==null || endW==null) {
-        	showWarning("BadWarrantNames");
+            showWarning("BadWarrantNames");
             return;
         }
         BlockOrder last = startW.getLastOrder();
         BlockOrder next = endW.getfirstOrder();
         if (last==null || next==null) {
-        	showWarning("EmptyRoutes");
+            showWarning("EmptyRoutes");
             return;
         }
-        if (!last.getPathName().equals(next.getPathName())) {
-        	showWarning("RoutesDontMatch");
+        if (!last.getPathName().equals(next.getPathName()) || !last.getBlock().equals(next.getBlock())) {
+            showWarning("RoutesDontMatch");
             return;
         }
         WarrantTableAction.CreateWarrantFrame f = new WarrantTableAction.CreateWarrantFrame();
@@ -319,11 +315,14 @@ public class WarrantTableFrame  extends jmri.util.JmriJFrame implements MouseLis
             f.concatenate(startW, endW);
         } catch (Exception ex ) { log.error("error making CreateWarrantFrame", ex);}
         f.setVisible(true);
+        if (_concatDialog!=null) {
+            _concatDialog.dispose();
+        }
     }
     
     public void showWarning(String msg) {
-        JOptionPane.showMessageDialog(this, Bundle.getMessage(msg),
-                Bundle.getMessage("WarningTitle"), JOptionPane.WARNING_MESSAGE);    	
+        JOptionPane.showMessageDialog(this, Bundle.getMessage(msg, _startWarrant.getText(),_endWarrant.getText()),
+                Bundle.getMessage("WarningTitle"), JOptionPane.WARNING_MESSAGE);        
     }
 
     /************************* Table ****************************************/
@@ -331,10 +330,10 @@ public class WarrantTableFrame  extends jmri.util.JmriJFrame implements MouseLis
     static public class ComboBoxCellEditor extends DefaultCellEditor
     {
         /**
-		 * 
-		 */
-		private static final long serialVersionUID = 3035798240606397980L;
-		TableSorter _sorter;
+         * 
+         */
+        private static final long serialVersionUID = 3035798240606397980L;
+        TableSorter _sorter;
         
         ComboBoxCellEditor(JComboBox <String> comboBox) {
             super(comboBox);
@@ -349,12 +348,12 @@ public class WarrantTableFrame  extends jmri.util.JmriJFrame implements MouseLis
         public Component getTableCellEditorComponent(JTable table, Object value, 
                                          boolean isSelected, int row, int column) 
         {
-        	jmri.util.com.sun.TableSorter m = ((jmri.util.com.sun.TableSorter)table.getModel());       	
+            jmri.util.com.sun.TableSorter m = ((jmri.util.com.sun.TableSorter)table.getModel());        
             WarrantTableModel model = (WarrantTableModel)m.getTableModel();
 
             // If table has been sorted, table row no longer is the same as array index
             if (_sorter!=null) {
-            	row = _sorter.modelIndex(row);            	
+                row = _sorter.modelIndex(row);              
             }
             Warrant warrant = model.getWarrantAt(row);
             @SuppressWarnings("unchecked")
@@ -362,7 +361,7 @@ public class WarrantTableFrame  extends jmri.util.JmriJFrame implements MouseLis
             comboBox.removeAllItems();
             List <BlockOrder> orders = warrant.getBlockOrders();
             for (int i=0; i<orders.size(); i++) {
-            	BlockOrder order = orders.get(i);
+                BlockOrder order = orders.get(i);
                 comboBox.addItem(order.getBlock().getDisplayName()+": - "+order.getPath().getName());
             }
             return comboBox; 
@@ -375,39 +374,40 @@ public class WarrantTableFrame  extends jmri.util.JmriJFrame implements MouseLis
      * @return null if warrant is started
      */
     public String runTrain(Warrant w) {
-    	String msg = null;
+        String msg = null;
         if (w.getRunMode() != Warrant.MODE_NONE) {
-        	msg = w.getRunModeMessage();
-    		setStatusText(msg, Color.red, false);                        		
-        	return msg;
+            msg = w.getRunModeMessage();
+            setStatusText(msg, Color.red, false);                               
+            return msg;
         }
-    	msg = w.setRoute(0, null);
-		setStatusText(msg, WarrantTableModel.myGold, false);                        		
+        msg = w.setRoute(0, null);
+        setStatusText(msg, WarrantTableModel.myGold, false);                                
         if (msg!=null) {
-    		setStatusText(msg, Color.red, false);                        		
-        	return msg;
+            setStatusText(msg, Color.red, false);                               
+            return msg;
         }    
         msg = w.setRunMode(Warrant.MODE_RUN, null, null, null, false);
         if (msg!=null) {
-    		setStatusText(msg, Color.red, false);                        		
-        	return msg;
+            setStatusText(msg, Color.red, false);                               
+            return msg;
         } else {
-        	msg = w.checkStartBlock();	// notify first block occupied by this train
-    		setStatusText(msg, WarrantTableModel.myGold, false);                        		
+            msg = w.checkStartBlock();  // notify first block occupied by this train
+            setStatusText(msg, WarrantTableModel.myGold, false);                                
         }
-    	if (msg==null) {
-        	msg = w.checkRoute();	// notify about occupation ahead
-    		setStatusText(msg, WarrantTableModel.myGreen, false);                        		
-    	}
-    	return null;
+        // From here on messages are status information, not abort info
+        msg = w.checkRoute();   // notify about occupation ahead
+        if (msg!=null) {
+            setStatusText(msg, WarrantTableModel.myGreen, false);                               
+        }
+        return null;
     }
 
     public void mouseClicked(MouseEvent event) {
         javax.swing.JPopupMenu  popup = new javax.swing.JPopupMenu();
-    	for (int i=_statusHistory.size()-1; i>=0; i--) {
-    		popup.add(_statusHistory.get(i));
-    	}
-    	popup.show(_status, 0, 0);
+        for (int i=_statusHistory.size()-1; i>=0; i--) {
+            popup.add(_statusHistory.get(i));
+        }
+        popup.show(_status, 0, 0);
     }
 
     public void mousePressed(MouseEvent event) {}
@@ -416,23 +416,23 @@ public class WarrantTableFrame  extends jmri.util.JmriJFrame implements MouseLis
     public void mouseReleased(MouseEvent event) {}
     
     void setStatusText(String msg, Color c, boolean save) {
-/*    	if (WarrantTableModel.myGold.equals(c)) {
-    		_status.setBackground(Color.lightGray);
-    	} else if (Color.red.equals(c)) {
-        	_status.setBackground(Color.white);   		
-    	} else {
-        	_status.setBackground(Color.white);    		
-    	}*/
-    	_status.setForeground(c);
-    	_status.setText(msg);
-    	if (save && msg!=null && msg.length()>0) {
-    		WarrantTableAction.writetoLog(msg);
-    		_statusHistory.add(msg);
-    		while (_statusHistory.size()>_maxHistorySize) {
-    			_statusHistory.remove(0);
-    		}
-    	}
-    	
+/*      if (WarrantTableModel.myGold.equals(c)) {
+            _status.setBackground(Color.lightGray);
+        } else if (Color.red.equals(c)) {
+            _status.setBackground(Color.white);         
+        } else {
+            _status.setBackground(Color.white);         
+        }*/
+        _status.setForeground(c);
+        _status.setText(msg);
+        if (save && msg!=null && msg.length()>0) {
+            WarrantTableAction.writetoLog(msg);
+            _statusHistory.add(msg);
+            while (_statusHistory.size()>_maxHistorySize) {
+                _statusHistory.remove(0);
+            }
+        }
+        
     }
     static String BLANK = "                                                                                                 ";
     

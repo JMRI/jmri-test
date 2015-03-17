@@ -1494,11 +1494,23 @@ var $drawAllIconWidgets = function() {
     });
 };
 
-function updateWidgets(systemName, state) {
-    if (systemNames[systemName]) {
-        $.each(systemNames[systemName], function(index, widgetId) {
+function updateWidgets(name, state, data) {
+    //if systemName not in systemNames list, replace userName with systemName
+	if (!systemNames[name]) {
+		console.log("replacing userName " + data.userName + " with systemName " + name);    	
+		if (systemNames[data.userName]) {  										  //if found by userName
+			systemNames[name] = systemNames[data.userName];  //copy entry over
+			delete systemNames[data.userName];  							 //delete old one
+		}
+    }
+	//update all widgets based on the element that changed 
+    if (systemNames[name]) {
+        $.each(systemNames[name], function(index, widgetId) {
             $setWidgetState(widgetId, state);
         });
+    } else {
+        if (window.console)
+          console.log("system name " + name + " not found, can't set state to " + state);
     }
 }
 
@@ -1544,7 +1556,7 @@ function listPanels(name) {
                     $("#activity-alert").addClass("hidden").removeClass("show");
                     $("#panel-list").addClass("show").removeClass("hidden");
                     $.each(data, function(index, value) {
-                        $("#panel-list").append("<div class=\"col-sm-6 col-md-4 col-lg-3\"><div class=\"thumbnail\"><a href=\"/panel/" + value.name + "\"><div class=\"thumbnail-image\"><img src=\"/panel/" + value.name + "?format=png\" style=\"width: 100%;\"></div><div class=\"caption\">" + value.userName + "</div></a></div></div>");
+                        $("#panel-list").append("<div class=\"col-sm-6 col-md-4 col-lg-3\"><div class=\"thumbnail\"><a href=\"/panel/" + value.data.name + "\"><div class=\"thumbnail-image\"><img src=\"/panel/" + value.data.name + "?format=png\" style=\"width: 100%;\"></div><div class=\"caption\">" + value.data.userName + "</div></a></div></div>");
                         // (12 / col-lg-#) % index + 1
                         if (4 % (index + 1)) {
                             $("#panel-list").append("<div class=\"clearfix visible-lg\"></div>");
@@ -1618,29 +1630,29 @@ $(document).ready(function() {
                 location.reload(false);
             },
             light: function(name, state, data) {
-                updateWidgets(name, state);
+                updateWidgets(name, state, data);
             },
             memory: function(name, value, data) {
-                updateWidgets(name, value);
+                updateWidgets(name, value, data);
             },
             reporter: function(name, value, data) {
-                updateWidgets(name, value);
+                updateWidgets(name, value, data);
             },
             route: function(name, state, data) {
-                updateWidgets(name, state);
+                updateWidgets(name, state, data);
             },
             sensor: function(name, state, data) {
-                updateWidgets(name, state);
+                updateWidgets(name, state, data);
                 updateOccupancy(name, state);
             },
             signalHead: function(name, state, data) {
-                updateWidgets(name, state);
+                updateWidgets(name, state, data);
             },
             signalMast: function(name, state, data) {
-                updateWidgets(name, state);
+                updateWidgets(name, state, data);
             },
             turnout: function(name, state, data) {
-                updateWidgets(name, state);
+                updateWidgets(name, state, data);
             }
         });
         $("#panel-list").addClass("hidden").removeClass("show");

@@ -17,6 +17,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -112,10 +113,10 @@ import org.slf4j.LoggerFactory;
 public class Apps extends JPanel implements PropertyChangeListener, WindowListener {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 8846653289120123006L;
-	static String profileFilename;
+     *
+     */
+    private static final long serialVersionUID = 8846653289120123006L;
+    static String profileFilename;
 
     @edu.umd.cs.findbugs.annotations.SuppressWarnings({"ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD", "SC_START_IN_CTOR"})//"only one application at a time. The thread is only called to help improve user experiance when opening the preferences, it is not critical for it to be run at this stage"
     public Apps(JFrame frame) {
@@ -429,10 +430,11 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         }, eventMask);
 
         // do final activation
-		InstanceManager.logixManagerInstance().activateAllLogixs();
-		InstanceManager.getDefault(jmri.jmrit.display.layoutEditor.LayoutBlockManager.class).initializeLayoutBlockPaths();
-        new jmri.jmrit.catalog.configurexml.DefaultCatalogTreeManagerXml().readCatalogTrees();
-        
+        InstanceManager.logixManagerInstance().activateAllLogixs();
+        InstanceManager.getDefault(jmri.jmrit.display.layoutEditor.LayoutBlockManager.class).initializeLayoutBlockPaths();
+        // Loads too late - now started from ItemPalette
+//        new jmri.jmrit.catalog.configurexml.DefaultCatalogTreeManagerXml().readCatalogTrees();
+
         log.debug("End constructor");
     }
 
@@ -510,7 +512,7 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
      * This does not include the development menu.
      *
      * @param menuBar Menu bar to be populated
-     * @param wi WindowInterface where this menu bar will appear
+     * @param wi      WindowInterface where this menu bar will appear
      */
     protected void createMenus(JMenuBar menuBar, WindowInterface wi) {
         // the debugging statements in the following are
@@ -547,7 +549,8 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
      * Create default File menu
      *
      * @param menuBar Menu bar to be populated
-     * @param wi WindowInterface where this menu will appear as part of the menu bar
+     * @param wi      WindowInterface where this menu will appear as part of the
+     *                menu bar
      */
     protected void fileMenu(JMenuBar menuBar, WindowInterface wi) {
         JMenu fileMenu = new JMenu(Bundle.getMessage("MenuFile"));
@@ -561,11 +564,11 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
             fileMenu.add(new JSeparator());
             fileMenu.add(new AbstractAction(Bundle.getMessage("MenuItemQuit")) {
                 /**
-				 * 
-				 */
-				private static final long serialVersionUID = -3051429826192051394L;
+                 *
+                 */
+                private static final long serialVersionUID = -3051429826192051394L;
 
-				@Override
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     handleQuit();
                 }
@@ -582,7 +585,8 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
      * Set the location of the window-specific help for the preferences pane.
      * Made a separate method so if can be overridden for application specific
      * preferences help
-     * @param frame The frame being described in the help system
+     *
+     * @param frame    The frame being described in the help system
      * @param location The location within the JavaHelp system
      */
     protected void setPrefsFrameHelp(JmriJFrame frame, String location) {
@@ -668,7 +672,14 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         d.add(new jmri.jmrix.libusb.UsbViewAction());
 
         d.add(new JSeparator());
-        d.add(new RunJythonScript("RailDriver Throttle", new File("jython/RailDriver.py")));
+        try {
+            d.add(new RunJythonScript("RailDriver Throttle", new File(FileUtil.findURL("jython/RailDriver.py").toURI())));
+        } catch (URISyntaxException | NullPointerException ex) {
+            log.error("Unable to load RailDriver Throttle", ex);
+            JMenuItem i = new JMenuItem("RailDriver Throttle");
+            i.setEnabled(false);
+            d.add(i);
+        }
 
         // also add some tentative items from webserver
         d.add(new JSeparator());
@@ -826,7 +837,7 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         JPanel pane1 = new JPanel();
         pane1.setLayout(new BoxLayout(pane1, BoxLayout.X_AXIS));
         log.debug("Fetch main logo: {}", logo());
-        pane1.add(new JLabel(new ImageIcon(getToolkit().getImage(logo()), "JMRI logo"), JLabel.LEFT));
+        pane1.add(new JLabel(new ImageIcon(getToolkit().getImage(FileUtil.findURL(logo(), FileUtil.Location.INSTALLED)), "JMRI logo"), JLabel.LEFT));
         pane1.add(Box.createRigidArea(new Dimension(15, 0))); // Some spacing between logo and status panel
 
         log.debug("start labels");
@@ -836,6 +847,7 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
         pane2.add(new JLabel(line1()));
         pane2.add(new JLabel(line2()));
         pane2.add(new JLabel(line3()));
+        pane2.add(new JLabel(Bundle.getMessage("ActiveProfile", ProfileManager.defaultManager().getActiveProfile().getName())));
 
         // add listerner for Com port updates
         ConnectionStatus.instance().addPropertyChangeListener(this);
@@ -1105,7 +1117,7 @@ public class Apps extends JPanel implements PropertyChangeListener, WindowListen
      * not exist when the program first starts up. This name may be proceeded
      * with <em>config=</em> and may not contain the equals sign (=).
      *
-     * @param def Default value if no other is provided
+     * @param def  Default value if no other is provided
      * @param args Argument array from the main routine
      */
     static protected void setConfigFilename(String def, String[] args) {

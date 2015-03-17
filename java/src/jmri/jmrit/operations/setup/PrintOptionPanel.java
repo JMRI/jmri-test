@@ -546,17 +546,17 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
     private void addComboBox(JPanel panel, List<JComboBox<String>> list, JComboBox<String> box) {
         list.add(box);
         panel.add(box, list.size());
-        panel.validate();
+        panel.revalidate();
         pManifest.revalidate();
     }
 
     private void removeComboBox(JPanel panel, List<JComboBox<String>> list) {
         for (int i = 0; i < list.size(); i++) {
             JComboBox<?> cb = list.get(i);
-            if (cb.getSelectedItem() == Setup.NONE) {
+            if (cb.getSelectedItem() == Setup.BLANK) {
                 list.remove(i);
                 panel.remove(cb);
-                panel.validate();
+                panel.revalidate();
                 pManifest.revalidate();
                 return;
             }
@@ -605,7 +605,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
         pPickup.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("BorderLayoutPickupCar")));
         pPickup.add(pickupCarPrefix);
         pickupCarPrefix.setText(Setup.getPickupCarPrefix());
-        String[] pickFormat = Setup.getPickupCarMessageFormat();
+        String[] pickFormat = Setup.getPickupManifestMessageFormat();
         for (String pf : pickFormat) {
             JComboBox<String> cb = Setup.getCarMessageComboBox();
             cb.setSelectedItem(pf);
@@ -622,7 +622,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
         pDrop.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("BorderLayoutDropCar")));
         pDrop.add(dropCarPrefix);
         dropCarPrefix.setText(Setup.getDropCarPrefix());
-        String[] dropFormat = Setup.getDropCarMessageFormat();
+        String[] dropFormat = Setup.getDropManifestMessageFormat();
         for (String lf : dropFormat) {
             JComboBox<String> cb = Setup.getCarMessageComboBox();
             cb.setSelectedItem(lf);
@@ -639,7 +639,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
         pLocal.setBorder(BorderFactory.createTitledBorder(Bundle.getMessage("BorderLayoutLocal")));
         pLocal.add(localPrefix);
         localPrefix.setText(Setup.getLocalPrefix());
-        String[] localFormat = Setup.getLocalMessageFormat();
+        String[] localFormat = Setup.getLocalManifestMessageFormat();
         for (String lf : localFormat) {
             JComboBox<String> cb = Setup.getCarMessageComboBox();
             cb.setSelectedItem(lf);
@@ -657,7 +657,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
                 .getMessage("BorderLayoutSwitchListPickupCar")));
         pSwPickup.add(switchListPickupCarPrefix);
         switchListPickupCarPrefix.setText(Setup.getSwitchListPickupCarPrefix());
-        pickFormat = Setup.getSwitchListPickupCarMessageFormat();
+        pickFormat = Setup.getPickupSwitchListMessageFormat();
         for (String pf : pickFormat) {
             JComboBox<String> cb = Setup.getCarMessageComboBox();
             cb.setSelectedItem(pf);
@@ -674,7 +674,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
                 .getMessage("BorderLayoutSwitchListDropCar")));
         pSwDrop.add(switchListDropCarPrefix);
         switchListDropCarPrefix.setText(Setup.getSwitchListDropCarPrefix());
-        dropFormat = Setup.getSwitchListDropCarMessageFormat();
+        dropFormat = Setup.getDropSwitchListMessageFormat();
         for (String df : dropFormat) {
             JComboBox<String> cb = Setup.getCarMessageComboBox();
             cb.setSelectedItem(df);
@@ -691,7 +691,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
                 .getMessage("BorderLayoutSwitchListLocal")));
         pSwLocal.add(switchListLocalPrefix);
         switchListLocalPrefix.setText(Setup.getSwitchListLocalPrefix());
-        localFormat = Setup.getSwitchListLocalMessageFormat();
+        localFormat = Setup.getLocalSwitchListMessageFormat();
         for (String lf : localFormat) {
             JComboBox<String> cb = Setup.getCarMessageComboBox();
             cb.setSelectedItem(lf);
@@ -716,7 +716,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
 
     @Override
     public String getTabbedPreferencesTitle() {
-        return Bundle.getMessage("TitlePrintOptions"); // NOI18N
+        return Bundle.getMessage("TitlePrintOptions");
     }
 
     @Override
@@ -762,7 +762,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
             JComboBox<?> cb = carPickupMessageList.get(i);
             format[i] = (String) cb.getSelectedItem();
         }
-        Setup.setPickupCarMessageFormat(format);
+        Setup.setPickupManifestMessageFormat(format);
         // save car drop message format
         Setup.setDropCarPrefix(dropCarPrefix.getText());
         format = new String[carDropMessageList.size()];
@@ -770,7 +770,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
             JComboBox<?> cb = carDropMessageList.get(i);
             format[i] = (String) cb.getSelectedItem();
         }
-        Setup.setDropCarMessageFormat(format);
+        Setup.setDropManifestMessageFormat(format);
         // save local message format
         Setup.setLocalPrefix(localPrefix.getText());
         format = new String[localMessageList.size()];
@@ -778,7 +778,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
             JComboBox<?> cb = localMessageList.get(i);
             format[i] = (String) cb.getSelectedItem();
         }
-        Setup.setLocalMessageFormat(format);
+        Setup.setLocalManifestMessageFormat(format);
         // save switch list car pick up message format
         Setup.setSwitchListPickupCarPrefix(switchListPickupCarPrefix.getText());
         format = new String[switchListCarPickupMessageList.size()];
@@ -786,7 +786,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
             JComboBox<?> cb = switchListCarPickupMessageList.get(i);
             format[i] = (String) cb.getSelectedItem();
         }
-        Setup.setSwitchListPickupCarMessageFormat(format);
+        Setup.setPickupSwitchListMessageFormat(format);
         // save switch list car drop message format
         Setup.setSwitchListDropCarPrefix(switchListDropCarPrefix.getText());
         format = new String[switchListCarDropMessageList.size()];
@@ -794,7 +794,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
             JComboBox<?> cb = switchListCarDropMessageList.get(i);
             format[i] = (String) cb.getSelectedItem();
         }
-        Setup.setSwitchListDropCarMessageFormat(format);
+        Setup.setDropSwitchListMessageFormat(format);
         // save switch list local message format
         Setup.setSwitchListLocalPrefix(switchListLocalPrefix.getText());
         format = new String[switchListLocalMessageList.size()];
@@ -802,7 +802,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
             JComboBox<?> cb = switchListLocalMessageList.get(i);
             format[i] = (String) cb.getSelectedItem();
         }
-        Setup.setSwitchListLocalMessageFormat(format);
+        Setup.setLocalSwitchListMessageFormat(format);
         // hazardous comment
         Setup.setHazardousMsg(hazardousTextField.getText());
         // misplaced car comment
@@ -896,7 +896,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
             format[i] = (String) cb.getSelectedItem();
         }
         if (!Setup.getPickupCarPrefix().equals(this.pickupCarPrefix.getText())
-                || !Arrays.equals(Setup.getPickupCarMessageFormat(), format)) {
+                || !Arrays.equals(Setup.getPickupManifestMessageFormat(), format)) {
             return true;
         }
         // save car drop message format
@@ -906,7 +906,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
             format[i] = (String) cb.getSelectedItem();
         }
         if (!Setup.getDropCarPrefix().equals(this.dropCarPrefix.getText())
-                || !Arrays.equals(Setup.getDropCarMessageFormat(), format)) {
+                || !Arrays.equals(Setup.getDropManifestMessageFormat(), format)) {
             return true;
         }
         // save local message format
@@ -916,7 +916,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
             format[i] = (String) cb.getSelectedItem();
         }
         if (!Setup.getLocalPrefix().equals(this.localPrefix.getText())
-                || !Arrays.equals(Setup.getLocalMessageFormat(), format)) {
+                || !Arrays.equals(Setup.getLocalManifestMessageFormat(), format)) {
             return true;
         }
         // save switch list car pick up message format
@@ -926,7 +926,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
             format[i] = (String) cb.getSelectedItem();
         }
         if (!Setup.getSwitchListPickupCarPrefix().equals(this.switchListPickupCarPrefix.getText())
-                || !Arrays.equals(Setup.getSwitchListPickupCarMessageFormat(), format)) {
+                || !Arrays.equals(Setup.getPickupSwitchListMessageFormat(), format)) {
             return true;
         }
         // save switch list car drop message format
@@ -936,7 +936,7 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
             format[i] = (String) cb.getSelectedItem();
         }
         if (!Setup.getSwitchListDropCarPrefix().equals(this.switchListDropCarPrefix.getText())
-                || !Arrays.equals(Setup.getSwitchListDropCarMessageFormat(), format)) {
+                || !Arrays.equals(Setup.getDropSwitchListMessageFormat(), format)) {
             return true;
         }
         // save switch list local message format
@@ -946,6 +946,6 @@ public class PrintOptionPanel extends OperationsPreferencesPanel {
             format[i] = (String) cb.getSelectedItem();
         }
         return !Setup.getSwitchListLocalPrefix().equals(this.switchListLocalPrefix.getText())
-                || !Arrays.equals(Setup.getSwitchListLocalMessageFormat(), format);
+                || !Arrays.equals(Setup.getLocalSwitchListMessageFormat(), format);
     }
 }

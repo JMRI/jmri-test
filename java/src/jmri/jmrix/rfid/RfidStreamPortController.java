@@ -1,5 +1,4 @@
 // RfidStreamPortController.java
-
 package jmri.jmrix.rfid;
 
 import java.io.DataInputStream;
@@ -16,70 +15,72 @@ import org.slf4j.LoggerFactory;
  * NOTE: This currently only supports the standalone RFID interfaces.
  * <p>
  *
- * @author			Paul Bender    Copyright (C) 2014
- * @version			$Revision$
+ * @author	Paul Bender Copyright (C) 2014
+ * @version	$Revision$
  */
 public class RfidStreamPortController extends AbstractStreamPortController implements RfidInterface {
 
-    public RfidStreamPortController(DataInputStream in,DataOutputStream out,String pname){
-        super(in,out,pname);
-        adaptermemo = new SpecificSystemConnectionMemo();
-        
+    public RfidStreamPortController(DataInputStream in, DataOutputStream out, String pname) {
+        super(new SpecificSystemConnectionMemo(), in, out, pname);
     }
 
     @Override
     public void configure() {
-       log.debug("configure() called.");
-       RfidTrafficController control = new SpecificTrafficController((RfidSystemConnectionMemo)adaptermemo);
-       
-       // connect to the traffic controller
-       ((RfidSystemConnectionMemo)adaptermemo).setRfidTrafficController(control);
-       control.setAdapterMemo((RfidSystemConnectionMemo)adaptermemo);
-       ((RfidSystemConnectionMemo)adaptermemo).configureManagers();
-       control.connectPort(this);
+        log.debug("configure() called.");
+        RfidTrafficController control = new SpecificTrafficController(this.getSystemConnectionMemo());
 
-       // declare up
-       ActiveFlag.setActive(); 
+        // connect to the traffic controller
+        this.getSystemConnectionMemo().setRfidTrafficController(control);
+        control.setAdapterMemo(this.getSystemConnectionMemo());
+        this.getSystemConnectionMemo().configureManagers();
+        control.connectPort(this);
+
+        // declare up
+        ActiveFlag.setActive();
 
     }
 
-
     /**
-     * Check that this object is ready to operate. This is a question
-     * of configuration, not transient hardware status.
+     * Check that this object is ready to operate. This is a question of
+     * configuration, not transient hardware status.
+     *
      * @return true
      */
     @Override
-    public boolean status(){ return true; }
+    public boolean status() {
+        return true;
+    }
 
-    
     /**
-     * Can the port accept additional characters?  
+     * Can the port accept additional characters?
+     *
      * @return true
      */
-    public boolean okToSend(){
-                return(true);
+    public boolean okToSend() {
+        return (true);
     }
 
     // RFID Interface methods.
-
     @Override
-    public void addRfidListener( RfidListener l){
-      ((RfidSystemConnectionMemo)adaptermemo).getTrafficController().addRfidListener(l);
+    public void addRfidListener(RfidListener l) {
+        this.getSystemConnectionMemo().getTrafficController().addRfidListener(l);
     }
 
     @Override
-    public void removeRfidListener( RfidListener l) {
-      ((RfidSystemConnectionMemo)adaptermemo).getTrafficController().removeRfidListener(l);
+    public void removeRfidListener(RfidListener l) {
+        this.getSystemConnectionMemo().getTrafficController().removeRfidListener(l);
     }
 
     @Override
-    public void sendRfidMessage(RfidMessage m, RfidListener l){
-      ((RfidSystemConnectionMemo)adaptermemo).getTrafficController().sendRfidMessage(m,l);
+    public void sendRfidMessage(RfidMessage m, RfidListener l) {
+        this.getSystemConnectionMemo().getTrafficController().sendRfidMessage(m, l);
     }
-    
+
+    public RfidSystemConnectionMemo getSystemConnectionMemo() {
+        return (RfidSystemConnectionMemo) super.getSystemConnectionMemo();
+    }
+
     static Logger log = LoggerFactory.getLogger(RfidStreamPortController.class.getName());
-
 
 }
 

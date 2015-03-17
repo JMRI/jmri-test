@@ -1,9 +1,6 @@
 // SystemConsole.java
-
 package apps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -38,48 +35,51 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import jmri.UserPreferencesManager;
 import jmri.util.JmriJFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Class to direct standard output and standard error to a JTextArea.
- * This allows for easier clipboard operations etc.
+ * Class to direct standard output and standard error to a JTextArea. This
+ * allows for easier clipboard operations etc.
  * <hr>
  * This file is part of JMRI.
  * <P>
- * JMRI is free software; you can redistribute it and/or modify it under
- * the terms of version 2 of the GNU General Public License as published
- * by the Free Software Foundation. See the "COPYING" file for a copy
- * of this license.
+ * JMRI is free software; you can redistribute it and/or modify it under the
+ * terms of version 2 of the GNU General Public License as published by the Free
+ * Software Foundation. See the "COPYING" file for a copy of this license.
  * <P>
- * JMRI is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
+ * JMRI is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * <P>
  *
- * @author Matthew Harris  copyright (c) 2010, 2011, 2012
+ * @author Matthew Harris copyright (c) 2010, 2011, 2012
  * @version $Revision$
  */
 public final class SystemConsole extends JTextArea {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1807853160696208390L;
+     *
+     */
+    private static final long serialVersionUID = 1807853160696208390L;
 
-	static final ResourceBundle rbc = ResourceBundle.getBundle("apps.AppsConfigBundle"); // NOI18N
+    static final ResourceBundle rbc = ResourceBundle.getBundle("apps.AppsConfigBundle"); // NOI18N
 
     private static final int STD_ERR = 1;
     private static final int STD_OUT = 2;
 
-    private JTextArea console = null;
+    private final JTextArea console;
 
     private PrintStream originalOut;
     private PrintStream originalErr;
 
+    private final PrintStream outputStream;
+    private final PrintStream errorStream;
+
     private JmriJFrame frame = null;
 
     private JPopupMenu popup = new JPopupMenu();
-    
+
     private JMenuItem copySelection = null;
 
     private JMenu wrapMenu = null;
@@ -105,14 +105,14 @@ public final class SystemConsole extends JTextArea {
     private int wrapStyle = WRAP_STYLE_WORD;
 
     private static SystemConsole instance;
-    
+
     private UserPreferencesManager pref;
-    
+
     private JCheckBox autoScroll;
     private JCheckBox alwaysOnTop;
-    
-    private String alwaysScrollCheck = this.getClass().getName()+".alwaysScroll"; //NOI18N
-    private String alwaysOnTopCheck = this.getClass().getName()+".alwaysOnTop";   //NOI18N
+
+    private String alwaysScrollCheck = this.getClass().getName() + ".alwaysScroll"; //NOI18N
+    private String alwaysOnTopCheck = this.getClass().getName() + ".alwaysOnTop";   //NOI18N
 
     /**
      * Initialise the system console ensuring both System.out and System.err
@@ -124,30 +124,29 @@ public final class SystemConsole extends JTextArea {
             instance = new SystemConsole();
         }
     }
-    
+
     private SystemConsole() {
-        if (console == null) {
-            
-            // Record current System.out and System.err
-            // so that we can still send to them
-            originalOut = System.out;
-            originalErr = System.err;
+        // Record current System.out and System.err
+        // so that we can still send to them
+        originalOut = System.out;
+        originalErr = System.err;
 
-            // Create the console text area
-            console = new JTextArea();
+        // Create the console text area
+        console = new JTextArea();
 
-            // Setup the console text area
-            console.setRows(20);
-            console.setColumns(120);
-            console.setFont(new Font(fontFamily, fontStyle, fontSize));
-            console.setEditable(false);
-            setScheme(scheme);
-            setWrapStyle(wrapStyle);
+        // Setup the console text area
+        console.setRows(20);
+        console.setColumns(120);
+        console.setFont(new Font(fontFamily, fontStyle, fontSize));
+        console.setEditable(false);
+        setScheme(scheme);
+        setWrapStyle(wrapStyle);
 
-            // Then redirect to it
-            redirectSystemStreams();
+        this.outputStream = new PrintStream(outStream(STD_OUT), true);
+        this.errorStream = new PrintStream(outStream(STD_ERR), true);
 
-        }
+        // Then redirect to it
+        redirectSystemStreams();
     }
 
     public static SystemConsole getInstance() {
@@ -156,19 +155,20 @@ public final class SystemConsole extends JTextArea {
         }
         return instance;
     }
-    
+
     /**
      * Return the JFrame containing the console
+     *
      * @return console JFrame
      */
     public static JFrame getConsole() {
         return SystemConsole.getInstance().getFrame();
     }
-        
+
     public JFrame getFrame() {
 
         // Check if we've created the frame and do so if not
-        if (frame==null) {
+        if (frame == null) {
             log.debug("Creating frame for console");
             // To avoid possible locks, frame layout should be
             // performed on the Swing thread
@@ -185,7 +185,7 @@ public final class SystemConsole extends JTextArea {
                         }
                     });
                 } catch (Exception ex) {
-                    log.error("Exception creating system console frame: "+ex);
+                    log.error("Exception creating system console frame: " + ex);
                 }
             }
             log.debug("Frame created");
@@ -202,7 +202,7 @@ public final class SystemConsole extends JTextArea {
         frame = new JmriJFrame(Bundle.getMessage("TitleConsole"));
 
         pref = jmri.InstanceManager.getDefault(jmri.UserPreferencesManager.class);
-        
+
         // Grab a reference to the system clipboard
         final Clipboard clipboard = frame.getToolkit().getSystemClipboard();
 
@@ -232,7 +232,7 @@ public final class SystemConsole extends JTextArea {
             }
         });
         p.add(close);
-        
+
         JButton stackTrace = new JButton(Bundle.getMessage("ButtonStackTrace"));
         stackTrace.addActionListener(new ActionListener() {
             @Override
@@ -241,7 +241,7 @@ public final class SystemConsole extends JTextArea {
             }
         });
         p.add(stackTrace);
-        
+
         // Add checkbox to enable/disable auto-scrolling
         // Use the inverted SimplePreferenceState to default as enabled
         p.add(autoScroll = new JCheckBox(Bundle.getMessage("CheckBoxAutoScroll"),
@@ -253,7 +253,7 @@ public final class SystemConsole extends JTextArea {
                 pref.setSimplePreferenceState(alwaysScrollCheck, !autoScroll.isSelected());
             }
         });
-        
+
         // Add checkbox to enable/disable always on top
         p.add(alwaysOnTop = new JCheckBox(Bundle.getMessage("CheckBoxOnTop"),
                 pref.getSimplePreferenceState(alwaysOnTopCheck)));
@@ -266,10 +266,10 @@ public final class SystemConsole extends JTextArea {
                 pref.setSimplePreferenceState(alwaysOnTopCheck, alwaysOnTop.isSelected());
             }
         });
-        
+
         frame.setAlwaysOnTop(alwaysOnTop.isSelected());
 
-         // Define the pop-up menu
+        // Define the pop-up menu
         copySelection = new JMenuItem(Bundle.getMessage("MenuItemCopy"));
         copySelection.addActionListener(new ActionListener() {
             @Override
@@ -279,7 +279,7 @@ public final class SystemConsole extends JTextArea {
             }
         });
         popup.add(copySelection);
-        
+
         JMenuItem menuItem = new JMenuItem(Bundle.getMessage("ButtonCopyClip"));
         menuItem.addActionListener(new ActionListener() {
             @Override
@@ -297,7 +297,7 @@ public final class SystemConsole extends JTextArea {
         // Define the colour scheme sub-menu
         schemeMenu = new JMenu(rbc.getString("ConsoleSchemeMenu"));
         schemeGroup = new ButtonGroup();
-        for (final Scheme s: schemes) {
+        for (final Scheme s : schemes) {
             rbMenuItem = new JRadioButtonMenuItem(s.description);
             rbMenuItem.addActionListener(new ActionListener() {
                 @Override
@@ -305,7 +305,7 @@ public final class SystemConsole extends JTextArea {
                     setScheme(schemes.indexOf(s));
                 }
             });
-            rbMenuItem.setSelected(getScheme()==schemes.indexOf(s));
+            rbMenuItem.setSelected(getScheme() == schemes.indexOf(s));
             schemeMenu.add(rbMenuItem);
             schemeGroup.add(rbMenuItem);
         }
@@ -321,7 +321,7 @@ public final class SystemConsole extends JTextArea {
                 setWrapStyle(WRAP_STYLE_NONE);
             }
         });
-        rbMenuItem.setSelected(getWrapStyle()==WRAP_STYLE_NONE);
+        rbMenuItem.setSelected(getWrapStyle() == WRAP_STYLE_NONE);
         wrapMenu.add(rbMenuItem);
         wrapGroup.add(rbMenuItem);
 
@@ -332,7 +332,7 @@ public final class SystemConsole extends JTextArea {
                 setWrapStyle(WRAP_STYLE_LINE);
             }
         });
-        rbMenuItem.setSelected(getWrapStyle()==WRAP_STYLE_LINE);
+        rbMenuItem.setSelected(getWrapStyle() == WRAP_STYLE_LINE);
         wrapMenu.add(rbMenuItem);
         wrapGroup.add(rbMenuItem);
 
@@ -343,7 +343,7 @@ public final class SystemConsole extends JTextArea {
                 setWrapStyle(WRAP_STYLE_WORD);
             }
         });
-        rbMenuItem.setSelected(getWrapStyle()==WRAP_STYLE_WORD);
+        rbMenuItem.setSelected(getWrapStyle() == WRAP_STYLE_WORD);
         wrapMenu.add(rbMenuItem);
         wrapGroup.add(rbMenuItem);
 
@@ -385,7 +385,8 @@ public final class SystemConsole extends JTextArea {
 
     /**
      * Add text to the console
-     * @param text the text to add
+     *
+     * @param text  the text to add
      * @param which the stream that this text is for
      */
     private void updateTextArea(final String text, final int which) {
@@ -393,7 +394,7 @@ public final class SystemConsole extends JTextArea {
         // Append message to the original System.out / System.err streams
         if (which == STD_OUT) {
             originalOut.append(text);
-        } else if (which==STD_ERR) {
+        } else if (which == STD_ERR) {
             originalErr.append(text);
         }
 
@@ -404,9 +405,9 @@ public final class SystemConsole extends JTextArea {
     }
 
     /**
-     * Method to position caret at end of JTextArea ta when
-     * scroll true.
-     * @param ta Reference to JTextArea
+     * Method to position caret at end of JTextArea ta when scroll true.
+     *
+     * @param ta     Reference to JTextArea
      * @param scroll True to move to end
      */
     private void doAutoScroll(final JTextArea ta, final boolean scroll) {
@@ -416,15 +417,16 @@ public final class SystemConsole extends JTextArea {
                 int len = ta.getText().length();
                 if (scroll) {
                     ta.setCaretPosition(len);
-                } else if (ta.getCaretPosition()==len && len>0) {
-                    ta.setCaretPosition(len-1);
-                }        
+                } else if (ta.getCaretPosition() == len && len > 0) {
+                    ta.setCaretPosition(len - 1);
+                }
             }
         });
     }
 
     /**
      * Creates a new OutputStream for the specified stream
+     *
      * @param which the stream, either STD_OUT or STD_ERR
      * @return the new OutputStream
      */
@@ -432,14 +434,16 @@ public final class SystemConsole extends JTextArea {
         return new OutputStream() {
             @Override
             public void write(int b) throws IOException {
-                updateTextArea(String.valueOf((char)b), which);
+                updateTextArea(String.valueOf((char) b), which);
             }
+
             @Override
-            @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="DM_DEFAULT_ENCODING",
-                    justification="Can only be called from the same instance so default encoding OK")
+            @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "DM_DEFAULT_ENCODING",
+                    justification = "Can only be called from the same instance so default encoding OK")
             public void write(byte[] b, int off, int len) throws IOException {
                 updateTextArea(new String(b, off, len), which);
             }
+
             @Override
             public void write(byte[] b) throws IOException {
                 write(b, 0, b.length);
@@ -450,15 +454,16 @@ public final class SystemConsole extends JTextArea {
     /**
      * Method to redirect the system streams to the console
      */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="DM_DEFAULT_ENCODING",
-            justification="Can only be called from the same instance so default encoding OK")
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "DM_DEFAULT_ENCODING",
+            justification = "Can only be called from the same instance so default encoding OK")
     private void redirectSystemStreams() {
-        System.setOut(new PrintStream(outStream(STD_OUT), true));
-        System.setErr(new PrintStream(outStream(STD_ERR), true));
+        System.setOut(this.getOutputStream());
+        System.setErr(this.getErrorStream());
     }
 
     /**
      * Set the console wrapping style to one of the following:
+     *
      * @param style one of the defined style attributes - one of
      * <ul>
      * <li>{@link #WRAP_STYLE_NONE} No wrapping
@@ -468,16 +473,17 @@ public final class SystemConsole extends JTextArea {
      */
     public void setWrapStyle(int style) {
         wrapStyle = style;
-        console.setLineWrap(style!=WRAP_STYLE_NONE);
-        console.setWrapStyleWord(style==WRAP_STYLE_WORD);
+        console.setLineWrap(style != WRAP_STYLE_NONE);
+        console.setWrapStyleWord(style == WRAP_STYLE_WORD);
 
-        if (wrapGroup!=null) {
+        if (wrapGroup != null) {
             wrapGroup.setSelected(wrapMenu.getItem(style).getModel(), true);
         }
     }
 
     /**
      * Retrieve the current console wrapping style
+     *
      * @return current wrapping style - one of
      * <ul>
      * <li>{@link #WRAP_STYLE_NONE} No wrapping
@@ -491,14 +497,16 @@ public final class SystemConsole extends JTextArea {
 
     /**
      * Set the console font size
+     *
      * @param size point size of font between 6 and 24 point
      */
     public void setFontSize(int size) {
-        updateFont(fontFamily, fontStyle, (fontSize = size<6?6:size>24?24:size));
+        updateFont(fontFamily, fontStyle, (fontSize = size < 6 ? 6 : size > 24 ? 24 : size));
     }
 
     /**
      * Retrieve the current console font size (default 12 point)
+     *
      * @return selected font size in points
      */
     public int getFontSize() {
@@ -507,11 +515,14 @@ public final class SystemConsole extends JTextArea {
 
     /**
      * Set the console font style
-     * @param style one of {@link Font#BOLD}, {@link Font#ITALIC}, {@link Font#PLAIN} (default)
+     *
+     * @param style one of
+     *              {@link Font#BOLD}, {@link Font#ITALIC}, {@link Font#PLAIN}
+     *              (default)
      */
     public void setFontStyle(int style) {
 
-        if (style==Font.BOLD || style==Font.ITALIC || style==Font.PLAIN || style==(Font.BOLD|Font.ITALIC)) {
+        if (style == Font.BOLD || style == Font.ITALIC || style == Font.PLAIN || style == (Font.BOLD | Font.ITALIC)) {
             fontStyle = style;
         } else {
             fontStyle = Font.PLAIN;
@@ -529,7 +540,10 @@ public final class SystemConsole extends JTextArea {
 
     /**
      * Retrieve the current console font style
-     * @return selected font style - one of {@link Font#BOLD}, {@link Font#ITALIC}, {@link Font#PLAIN} (default)
+     *
+     * @return selected font style - one of
+     *         {@link Font#BOLD}, {@link Font#ITALIC}, {@link Font#PLAIN}
+     *         (default)
      */
     public int getFontStyle() {
         return fontStyle;
@@ -537,8 +551,9 @@ public final class SystemConsole extends JTextArea {
 
     /**
      * Update the system console font with the specified parameters
+     *
      * @param style font style
-     * @param size font size
+     * @param size  font size
      */
     private void updateFont(String family, int style, int size) {
         console.setFont(new Font(family, style, size));
@@ -561,16 +576,16 @@ public final class SystemConsole extends JTextArea {
         schemes.add(new Scheme(rbc.getString("ConsoleSchemeGreenOnDarkGray"), Color.GREEN, Color.DARK_GRAY));
         schemes.add(new Scheme(rbc.getString("ConsoleSchemeOrangeOnDarkGray"), Color.ORANGE, Color.DARK_GRAY));
     }
-    
+
     private Map<Thread, StackTraceElement[]> traces;
-    
+
     private void performStackTrace() {
         System.out.println("----------- Begin Stack Trace -----------"); //NO18N
         System.out.println("-----------------------------------------"); //NO18N
         traces = new HashMap<Thread, StackTraceElement[]>(Thread.getAllStackTraces());
-        for(Thread thread: traces.keySet()) {
-            System.out.println("["+thread.getId()+"] "+thread.getName());
-            for(StackTraceElement el: thread.getStackTrace()) {
+        for (Thread thread : traces.keySet()) {
+            System.out.println("[" + thread.getId() + "] " + thread.getName());
+            for (StackTraceElement el : thread.getStackTrace()) {
                 System.out.println("  " + el);
             }
             System.out.println("-----------------------------------------"); //NO18N
@@ -580,6 +595,7 @@ public final class SystemConsole extends JTextArea {
 
     /**
      * Set the console colour scheme
+     *
      * @param which the scheme to use
      */
     public void setScheme(int which) {
@@ -601,13 +617,22 @@ public final class SystemConsole extends JTextArea {
         console.setForeground(s.foreground);
         console.setBackground(s.background);
 
-        if (schemeGroup!=null) {
+        if (schemeGroup != null) {
             schemeGroup.setSelected(schemeMenu.getItem(scheme).getModel(), true);
         }
     }
 
+    public PrintStream getOutputStream() {
+        return this.outputStream;
+    }
+    
+    public PrintStream getErrorStream() {
+        return this.errorStream;
+    }
+    
     /**
      * Retrieve the current console colour scheme
+     *
      * @return selected colour scheme
      */
     public int getScheme() {
@@ -617,11 +642,12 @@ public final class SystemConsole extends JTextArea {
     public Scheme[] getSchemes() {
         return this.schemes.toArray(new Scheme[this.schemes.size()]);
     }
-    
+
     /**
      * Class holding details of each scheme
      */
     public static final class Scheme {
+
         public Color foreground;
         public Color background;
         public String description;
@@ -637,6 +663,7 @@ public final class SystemConsole extends JTextArea {
      * Class to deal with handling popup menu
      */
     public final class PopupListener extends MouseAdapter {
+
         @Override
         public void mousePressed(MouseEvent e) {
             maybeShowPopup(e);
@@ -649,7 +676,7 @@ public final class SystemConsole extends JTextArea {
 
         private void maybeShowPopup(MouseEvent e) {
             if (e.isPopupTrigger()) {
-                copySelection.setEnabled(console.getSelectionStart()!=console.getSelectionEnd());
+                copySelection.setEnabled(console.getSelectionStart() != console.getSelectionEnd());
                 popup.show(e.getComponent(), e.getX(), e.getY());
             }
         }

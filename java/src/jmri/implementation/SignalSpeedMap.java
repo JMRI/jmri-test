@@ -3,9 +3,13 @@
 package jmri.implementation;
 
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import jmri.util.FileUtil;
+import jmri.util.OrderedHashtable;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.slf4j.Logger;
@@ -16,18 +20,27 @@ import org.slf4j.LoggerFactory;
  * <p>
  * A singleton class for use by all SignalHeads and SignalMasts
  *
- * @author	Pete Cressman Copyright (C) 2010
+ * @author  Pete Cressman Copyright (C) 2010
  * @version     $Revision$
  */
 public class SignalSpeedMap {
 
     static private SignalSpeedMap _map;
-    static private Hashtable<String, Float> _table = new jmri.util.OrderedHashtable<String, Float>();
-    static private Hashtable<String, String> _headTable = new jmri.util.OrderedHashtable<String, String>();
-    static private boolean _percentNormal;
-    static private int _sStepDelay;
-    static private int _numSteps;
-
+    static private Hashtable<String, Float> _table;
+    static private Hashtable<String, String> _headTable;
+    static private int _interpretation;
+    static private int _sStepDelay;     // ramp step time interval
+    static private int _numSteps = 4;   // num throttle steps per ramp step - deprecated
+    private float _stepIncrement;       // ramp step throttle increment
+    private float _throttleFactor;
+    
+    public static final int PERCENT_NORMAL = 1;
+    public static final int PERCENT_THROTTLE = 2;
+    public static final int SPEED_MPH = 3;
+    public static final int SPEED_KMPH = 4;
+        
+    public SignalSpeedMap() {}
+    
     static public SignalSpeedMap getMap() {
         if (_map == null) {
             loadMap();
@@ -40,21 +53,32 @@ public class SignalSpeedMap {
 
         URL path = FileUtil.findURL("signalSpeeds.xml", new String[] {"", "xml/signals"});
         jmri.jmrit.XmlFile xf = new jmri.jmrit.XmlFile(){};
-        Element root;
         try {
-            root = xf.rootFromURL(path);
+            loadRoot(xf.rootFromURL(path));
+        } catch (org.jdom2.JDOMException e) {
+            log.error("error reading file \"" + path + "\" due to: " + e);
+        } catch (java.io.FileNotFoundException e) {
+                log.error("signalSpeeds file (" + path + ") doesn't exist in XmlFile search path.");
+                throw new IllegalArgumentException("signalSpeeds file (" + path + ") doesn't exist in XmlFile search path.");
+        } catch (java.io.IOException ioe) {
+            log.error("error reading file \"" + path + "\" due to: " + ioe);
+        }
+    }
+
+    static public void loadRoot(Element root) {
+        try {
             Element e = root.getChild("interpretation");
             String sval = e.getText().toUpperCase();
             if (sval.equals("PERCENTNORMAL")) {
-                _percentNormal = true;
+                _interpretation = PERCENT_NORMAL;
             }
             else if (sval.equals("PERCENTTHROTTLE")) {
-                _percentNormal = false;
+                _interpretation = PERCENT_THROTTLE;
             }
             else {
                 throw new JDOMException("invalid content for interpretation: "+sval);
             }
-            if (log.isDebugEnabled()) log.debug("_percentNormal "+_percentNormal);
+            if (log.isDebugEnabled()) log.debug("_interpretation= "+_interpretation);
 
             e = root.getChild("msPerIncrement");
             _sStepDelay = 250;
@@ -65,12 +89,11 @@ public class SignalSpeedMap {
             }
             if (_sStepDelay < 200) {
                 _sStepDelay = 200;
-                log.warn("\"msPerIncrement\" must be at lewast 200 milliseconds.");
+                log.warn("\"msPerIncrement\" must be at least 200 milliseconds.");
             }
             if (log.isDebugEnabled()) log.debug("_sStepDelay = "+_sStepDelay);
 
             e = root.getChild("stepsPerIncrement");
-            _numSteps = 1;
             try {
                 _numSteps = Integer.parseInt(e.getText());
             } catch (NumberFormatException nfe) {
@@ -79,9 +102,9 @@ public class SignalSpeedMap {
             if (_numSteps < 1) {
                 _numSteps = 1;
             }
-            if (log.isDebugEnabled()) log.debug("_numSteps = "+_numSteps);
 
             List<Element> list = root.getChild("aspectSpeeds").getChildren();
+            _table = new OrderedHashtable<String, Float>();
             for (int i = 0; i < list.size(); i++) {
                 String name = list.get(i).getName();
                 Float speed = Float.valueOf(0f);
@@ -95,25 +118,20 @@ public class SignalSpeedMap {
                 _table.put(name, speed);
             }
 
+            _headTable = new OrderedHashtable<String, String>();
             List<Element>l = root.getChild("appearanceSpeeds").getChildren();
             for (int i = 0; i < l.size(); i++) {
                 String name = l.get(i).getName();
                 String speed = l.get(i).getText();
                 _headTable.put(Bundle.getMessage(name), speed);
-                if (log.isDebugEnabled()) log.debug("Add "+name+"="+Bundle.getMessage(name)+", "+speed+" to AppearanceSpeed Table");
+                if (log.isDebugEnabled()) log.debug("Add "+name+"="+Bundle.getMessage(name)+", "+speed+" to AppearanceSpeed Table");               
             }
-        } catch (org.jdom2.JDOMException e) {
-            log.error("error reading file \"" + path + "\" due to: " + e);
-        } catch (java.io.FileNotFoundException e) {
-                log.error("signalSpeeds file (" + path + ") doesn't exist in XmlFile search path.");
-                throw new IllegalArgumentException("signalSpeeds file (" + path + ") doesn't exist in XmlFile search path.");
-        } catch (java.io.IOException ioe) {
-            log.error("error reading file \"" + path + "\" due to: " + ioe);
-        }
+       } catch (org.jdom2.JDOMException e) {
+            log.error("error reading speed map elements due to: " + e);
+        }       
     }
-
     public boolean checkSpeed(String name) {
-    	if (name==null) {return false; }
+        if (name==null) {return false; }
         return _table.get(name) != null;
     }
 
@@ -141,6 +159,9 @@ public class SignalSpeedMap {
                                             ", speed="+_headTable.get(name));
         return _headTable.get(name); 
     }
+    public Enumeration<String> getAppearanceIterator() {
+        return _headTable.keys();       
+    }
 
     public java.util.Vector<String> getValidSpeedNames() {
         java.util.Enumeration<String> e = _table.keys();
@@ -160,8 +181,8 @@ public class SignalSpeedMap {
         }
         Float speed = _table.get(name);
         if (speed==null) {
-        	return 0.0f;
-        }        	
+            return 0.0f;
+        }           
         return speed.floatValue();
     }
     
@@ -176,18 +197,57 @@ public class SignalSpeedMap {
         return null;
     }
 
+    @Deprecated
     public boolean isRatioOfNormalSpeed() {
-        return _percentNormal;
+        return (_interpretation==PERCENT_NORMAL);
+    }
+    public int getInterpretation() {
+        return _interpretation;
     }
 
     public int getStepDelay() {
         return _sStepDelay;
     }
+    
+    public float getStepIncrement() {
+        return _stepIncrement;
+    }
 
+    @Deprecated
     public int getNumSteps() {
         return _numSteps;
     }
 
+    public void setAspectTable(Iterator<Entry<String, Float>> iter, int interpretation) {
+        _table = new OrderedHashtable<String, Float>();
+        while (iter.hasNext() ) {
+            Entry<String, Float> ent = iter.next();
+            _table.put(ent.getKey(), ent.getValue());
+        }
+        _interpretation = interpretation;
+    }
+    public void setAppearanceTable(Iterator<Entry<String, String>> iter) {
+        _headTable = new OrderedHashtable<String, String>();
+        while (iter.hasNext() ) {
+            Entry<String, String> ent = iter.next();
+            _headTable.put(ent.getKey(), ent.getValue());
+        }
+    }
+    public void setRampParams(float throttleIncr, int msIncrTime) {
+        _sStepDelay = msIncrTime;
+        _stepIncrement = throttleIncr;
+    }
+    
+    public void setDefaultThrottleFactor(float f) {
+        _throttleFactor = f;
+    }
+    public float getDefaultThrottleFactor() {
+        return _throttleFactor;
+    }
+
+    public void setMap(SignalSpeedMap map) {
+        _map = map;
+    }
     static Logger log = LoggerFactory.getLogger(SignalSpeedMap.class.getName());
 }
 

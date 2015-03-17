@@ -3,6 +3,7 @@ package jmri.jmris.json;
 /**
  * @author Randall Wood Copyright (C) 2012
  */
+import java.awt.event.ActionEvent;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -14,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
 import jmri.swing.JTitledSeparator;
 import jmri.swing.PreferencesPanel;
 import org.slf4j.Logger;
@@ -29,10 +31,10 @@ public class JsonServerPreferencesPanel extends JPanel implements PreferencesPan
     private JButton btnCancel;
     private JsonServerPreferences preferences;
     private JFrame parentFrame = null;
-    private boolean restartRequired = false;
 
     public JsonServerPreferencesPanel() {
-        preferences = JsonServerManager.getJsonServerPreferences();
+        this.preferences = new JsonServerPreferences();
+        this.preferences.apply(JsonServerManager.getJsonServerPreferences());
         initGUI();
         setGUI();
     }
@@ -86,7 +88,6 @@ public class JsonServerPreferencesPanel extends JPanel implements PreferencesPan
                     JOptionPane.WARNING_MESSAGE);
             didSet = false;
         } else {
-            this.restartRequired = (this.preferences.getPort() != portNum);
             preferences.setPort(portNum);
         }
         return didSet;
@@ -111,6 +112,9 @@ public class JsonServerPreferencesPanel extends JPanel implements PreferencesPan
         SpinnerNumberModel spinMod = new SpinnerNumberModel(15, 1, 3600, 1);
         heartbeatIntervalSpinner = new JSpinner(spinMod);
         ((JSpinner.DefaultEditor) heartbeatIntervalSpinner.getEditor()).getTextField().setEditable(false);
+        this.heartbeatIntervalSpinner.addChangeListener((ChangeEvent e) -> {
+            this.setValues();
+        });
         panel.add(heartbeatIntervalSpinner);
         panel.add(new JLabel(Bundle.getMessage("HeartbeatLabel")));
         return panel;
@@ -121,6 +125,9 @@ public class JsonServerPreferencesPanel extends JPanel implements PreferencesPan
         port = new JTextField();
         port.setText(Integer.toString(this.preferences.getPort()));
         port.setColumns(6);
+        port.addActionListener((ActionEvent e) -> {
+            this.setValues();
+        });
         panel.add(port);
         panel.add(new JLabel(Bundle.getMessage("LabelPort")));
         return panel;
@@ -164,7 +171,8 @@ public class JsonServerPreferencesPanel extends JPanel implements PreferencesPan
     @Override
     public void savePreferences() {
         if (this.setValues()) {
-            this.preferences.save();
+            JsonServerManager.getJsonServerPreferences().apply(this.preferences);
+            JsonServerManager.getJsonServerPreferences().save();
             if (this.parentFrame != null) {
                 this.parentFrame.dispose();
             }
@@ -173,11 +181,12 @@ public class JsonServerPreferencesPanel extends JPanel implements PreferencesPan
 
     @Override
     public boolean isDirty() {
-        return this.preferences.isDirty();
+        return this.preferences.compareValuesDifferent(JsonServerManager.getJsonServerPreferences())
+                || JsonServerManager.getJsonServerPreferences().isDirty();
     }
 
     @Override
     public boolean isRestartRequired() {
-        return this.preferences.isRestartRequired();
+        return JsonServerManager.getJsonServerPreferences().isRestartRequired();
     }
 }

@@ -1,17 +1,20 @@
 package jmri.jmrix.lenz.liusbethernet;
 
-import org.apache.log4j.Logger;
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * LIUSBEthernetAdapterTest.java
  *
- * Description:	    tests for the jmri.jmrix.lenz.liusbethernet.LIUSBEthernetAdapter class
- * @author			Paul Bender
- * @version         $Revision$
+ * Description:	tests for the jmri.jmrix.lenz.liusbethernet.LIUSBEthernetAdapter
+ * class
+ *
+ * @author	Paul Bender
+ * @version $Revision$
  */
 public class LIUSBEthernetAdapterTest extends TestCase {
 
@@ -20,28 +23,32 @@ public class LIUSBEthernetAdapterTest extends TestCase {
         Assert.assertNotNull(a);
     }
 
-	// from here down is testing infrastructure
+    // from here down is testing infrastructure
+    public LIUSBEthernetAdapterTest(String s) {
+        super(s);
+    }
 
-	public LIUSBEthernetAdapterTest(String s) {
-		super(s);
-	}
+    // Main entry point
+    static public void main(String[] args) {
+        String[] testCaseName = {"-noloading", LIUSBEthernetAdapterTest.class.getName()};
+        junit.swingui.TestRunner.main(testCaseName);
+    }
 
-	// Main entry point
-	static public void main(String[] args) {
-		String[] testCaseName = {"-noloading", LIUSBEthernetAdapterTest.class.getName()};
-		junit.swingui.TestRunner.main(testCaseName);
-	}
-
-	// test suite from all defined tests
-	public static Test suite() {
-		TestSuite suite = new TestSuite(LIUSBEthernetAdapterTest.class);
-		return suite;
-	}
+    // test suite from all defined tests
+    public static Test suite() {
+        TestSuite suite = new TestSuite(LIUSBEthernetAdapterTest.class);
+        return suite;
+    }
 
     // The minimal setup for log4J
-    protected void setUp() { apps.tests.Log4JFixture.setUp(); }
-    protected void tearDown() { apps.tests.Log4JFixture.tearDown(); }
+    protected void setUp() {
+        apps.tests.Log4JFixture.setUp();
+    }
 
-    static Logger log = Logger.getLogger(LIUSBEthernetAdapterTest.class.getName());
+    protected void tearDown() {
+        apps.tests.Log4JFixture.tearDown();
+    }
+
+    static Logger log = LoggerFactory.getLogger(LIUSBEthernetAdapterTest.class.getName());
 
 }

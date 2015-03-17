@@ -1,28 +1,25 @@
 // DefaultLogixManagerTest.java
-
 package jmri.managers;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import jmri.*;
-
-import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- Tests for the jmri.managers.DefaultLogixManager class.
- * @author	Bob Jacobsen  Copyright (C) 2015
+ * Tests for the jmri.managers.DefaultLogixManager class.
+ *
+ * @author	Bob Jacobsen Copyright (C) 2015
  */
 public class DefaultLogixManagerTest extends TestCase {
 
     public void testCtor() {
         new DefaultLogixManager();
     }
-    
-    // from here down is testing infrastructure
 
+    // from here down is testing infrastructure
     public DefaultLogixManagerTest(String s) {
         super(s);
     }
@@ -58,6 +55,6 @@ public class DefaultLogixManagerTest extends TestCase {
         return suite;
     }
 
-    static Logger log = Logger.getLogger(DefaultLogixManagerTest.class.getName());
+    static Logger log = LoggerFactory.getLogger(DefaultLogixManagerTest.class.getName());
 
 }

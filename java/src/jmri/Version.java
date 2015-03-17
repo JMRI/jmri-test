@@ -30,8 +30,8 @@ public class Version {
     static final public int major = Integer.parseInt(versionBundle.getString("release.major")); // NOI18N
 
     /**
-     * Minor number changes with each production versionBundle. Odd is development,
-     * even is production.
+     * Minor number changes with each production versionBundle. Odd is
+     * development, even is production.
      */
     static final public int minor = Integer.parseInt(versionBundle.getString("release.minor")); // NOI18N;
 
@@ -72,9 +72,9 @@ public class Version {
     /**
      * Provide the current version string.
      * <P>
- This string is built using various known build parameters, including the
- versionBundle.{major,minor,build} values, the SVN revision ID (if known) and
- the branched & versionBundle.official statuses.
+     * This string is built using various known build parameters, including the
+     * versionBundle.{major,minor,build} values, the SVN revision ID (if known)
+     * and the branched & versionBundle.official statuses.
      *
      * @return The current version string
      */
@@ -127,9 +127,9 @@ public class Version {
      *
      * @param version
      * @return -1, 0, or 1 if version is less than, equal to, or greater than
-     * JMRI canonical version
+     *         JMRI canonical version
      * @throws IllegalArgumentException if version is not a canonical version
-     * string
+     *                                  string
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     static public int compareCanonicalVersions(String version) throws IllegalArgumentException {
@@ -144,9 +144,9 @@ public class Version {
      * @param version1 a canonical version string
      * @param version2 a canonical version string
      * @return -1, 0, or 1 if version1 is less than, equal to, or greater than
-     * version2
+     *         version2
      * @throws IllegalArgumentException if either version string is not a
-     * canonical version string
+     *                                  canonical version string
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     static public int compareCanonicalVersions(String version1, String version2) throws IllegalArgumentException {
@@ -190,9 +190,9 @@ public class Version {
     /**
      * Standalone print of version string and exit.
      *
-     * This is used in the build.xml to generate parts of the installer versionBundle
- file name, so take care in altering this code to make sure the ant
- recipes are also suitably modified.
+     * This is used in the build.xml to generate parts of the installer
+     * versionBundle file name, so take care in altering this code to make sure
+     * the ant recipes are also suitably modified.
      *
      * @param args
      */

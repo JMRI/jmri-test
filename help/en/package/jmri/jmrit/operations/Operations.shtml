@@ -57,6 +57,7 @@
    <UL>
     <LI><A HREF="#newUserAdvice">New User Advice</A></LI>
     <LI><A HREF="#demo">Operations Demo Files</A></LI>
+    <LI><A HREF="#Display">Display</A></LI>
     <LI><A HREF="#QuickStartHelp">Quick Start Help</A></LI>
     <LI><A HREF="#Settings">Settings</A>
      <UL>
@@ -86,7 +87,7 @@
        </UL></LI>
        <LI><A HREF="#Sidings">Spurs</A>
        <UL>
-        <LI><A HREF="#Schedule">Schedules</A></LI>
+        <LI><A HREF="#Schedules">Schedules</A></LI>
         <LI><A HREF="#SchedulesAndLoads">Schedules and Loads</A></LI>
         <LI><A HREF="#ShowSchedulesByCarTypeAndLoad">Show Schedules by Car Type and Load</A></LI>
         <LI><A HREF="#AlternateTrack">Alternate Track</A></LI>
@@ -101,6 +102,7 @@
         <LI><A HREF="#StagingAndCarLoads">Staging and Car loads</A></LI>
         <LI><A HREF="#BlockingCarsFromStaging">Blocking Cars from Staging</A></LI>
         <LI><A HREF="#LoopingTrainsThroughStaging">Looping Trains through Staging</A></LI>
+        <LI><A HREF="#OffLayoutStorage">Off Layout Storage / Staging</A>
        </UL></LI>
       <LI><A HREF="#TrackTools">Track Tools</A>
        <UL>
@@ -137,6 +139,7 @@
         <LI><A HREF="#ReturnWhenEmpty">Return When Empty</A></LI>
        </UL></LI>
       <LI><A HREF="#SetCars">Set Cars</A></LI>
+      <LI><A HREF="#CarsTools">Cars Tools</A></LI>
      </UL></LI>
     <LI><A HREF="#Locomotives">Locomotives</A>
      <UL>
@@ -153,6 +156,7 @@
       <LI><A HREF="#AddRoute">Add Route</A></LI>
       <LI><A HREF="#EditRoute">Edit Route</A></LI>
       <LI><A HREF="#PassengerTrainRoute">Passenger Train Route</A></LI>
+      <LI><A HREF="#DepartingStagingRoute">Departing Staging Route</A></LI>
       <LI><A HREF="#RouteFeatures">Route Features</A></LI>
       <LI><A HREF="#RouteTools">Route Tools</A>
        <UL>
@@ -241,6 +245,15 @@
     train using the "departure" track, car pulls directly into the train rather than to a specific
     departure track makes the operations run more smoothly.  By not specifying the A/D tracks, you're
     letting your operators, and not the program, decide which tracks to use when servicing a train.</P>
+    
+    <A NAME="Display"></A>
+    <H3>Display</H3>
+    
+    To adjust the display font size or appearance of the JMRI windows, select "Preferences.." found under
+    "Edit" in the main window menu bar. A new window will appear with options to make layout connections, change
+    the "Display" appearance and font size, and many other settings including the "Railroad Name". Most
+    JMRI windows have as part of the menu bar the "Help" option. Select "Window Help.." to get information
+    about the window you're using. 
 
    <A NAME="demo"></A>
    <H3>Operations Demo Files</H3>
@@ -377,7 +390,7 @@
    <H2>Settings</H2>
 
    The Settings window contains general parameters for the operations program. Select from the JMRI
-   main window "Tools-&gt;Operations-&gt;Settings" to open the Settings window. The Setting window
+   main window "Tools-&gt;Operations-&gt;Settings" to open the Settings window. The Settings window
    has fields and buttons to allow you to enter your railroad name, the directions your train's
    travel, the scale that you are using, printer and icon controls, and the ability to create
    backups and restore files for operations.
@@ -520,7 +533,7 @@
 
    <H3>Save</H3>
 
-   When you're finished with the settings window, press the save button to store the setting in a
+   When you're finished with the settings window, press the save button to store your settings in a
    file called "Operations.xml". You can find this file in your JMRI directory in a folder called
    "operations". OperationsPro&trade; will also create a backup file each time you press the save button. 
    
@@ -535,7 +548,7 @@
     of the automatic backups is to make a copy of the files for "safe keeping" before changes are
     made to the main operations files. This way, if anything gets messed up, there is a copy of the
     last known good data that can easily be restored to undo the damage. In normal operation, an
-    automatic backup is made each time OperationsPro&trade; starts (if the "Auto Backup" setting is checked
+    automatic backup is made each time OperationsPro&trade; starts (if the "Auto Backup" option is checked
     on the Settings page), and right before a Restore, Reset Database, or Load Demo Files operation
     is done.</p>
 
@@ -801,7 +814,7 @@
     </tr>
     <tr>
      <td>CC</td>
-     <td>Change Locos and Caboose</td>
+     <td>Change Caboose</td>
     </tr>
     <tr>
      <td>CL</td>
@@ -1490,7 +1503,7 @@
    </P>
 
    <A NAME="Schedules"></A>
-   <H3>Schedule</H3>
+   <H3>Schedules</H3>
 
    If you would like to see cars delivered in a particular sequence, or with a specific load for
    delivery or shipping, the program allows you to apply a schedule to a spur. This is an optional
@@ -1511,8 +1524,9 @@
     Enter a name for your schedule and press the "Add Schedule" button at the bottom of the window.
     Now add your first delivery for this spur by selecting a car type in the menu box found in the
     lower left corner of the window and pressing the "Add car type" button. A new item should appear
-    in your schedule containing the type of car, pull down menus for delivery, roads, loads,
-    destinations, and pickup. The schedule item also includes count of 1 and a wait of 0. 
+    in your schedule containing the type of car, pull down menus for random, delivery, roads, loads,
+    destinations, and pickup. The schedule item also includes count of 1 and a wait of 0. Leave the
+    pull down menu item blank for any field you don't care about.
     </p>
     <P>You can if
     you wish specify a particular road for the type of car you entered, or leave it blank if you
@@ -1525,6 +1539,12 @@
     car will only be serviced when that train timetable is active. See Trains-&gt;Tools-&gt;<A
      HREF="#Timetable">Timetable</A> to select the train timetable for your session.
    </P>
+   <P>You can also select a random value for any schedule item. If you select a value of 15, it
+    means that the item has a 15 percent chance of being selected if all of the other criteria for
+    the schedule item was met, and there was track space available for the car. This feature is
+    useful for a RIP track where you would want cars to be randomly sent to the repair facility. For
+    example, a random value of 2 would mean that roughly 1 in 50 cars could be sent the to RIP
+    track.</P>
 
    <P>If you wanted more than one car type to be delivered consecutively, increase the count to
     the number that you wish. The maximum count is 100 and the minimum is 1. In the schedule shown
@@ -1946,6 +1966,18 @@
     is activated when the train is terminated into staging.
    </P>
    
+   <A Name="OffLayoutStorage"></A>
+   <H3>Off Layout Storage / Staging</H3>
+
+   Some lucky folks have more locomotives and cars than track on their layout and want the program to
+   gather rolling stock from storage boxes to build trains from staging. One way to do this is to
+   create a "five finger" route for a train that will visit your storage boxes, and pull cars from
+   each of the boxes to create a train. This train's route can depart and terminate to one of your
+   existing staging locations, this way the train also returns rolling stock to your storage
+   boxes. Some storage boxes only fit a certain number of cars, you can control how many cars a box
+   can hold by creating the right number of tracks of a certain length for the box. The "copy"
+   location and track features make the creation of storage boxes a bit easier. 
+   
    <A NAME="TrackTools"></A>
    <H3>Track Tools</H3>
 
@@ -1997,11 +2029,11 @@
     the two industry tracks, the program can borrow space from the other industry if needed. So now
     the program could set out up to four cars at each industry, but no more than four cars total.</p>
 
-   <p>If you don't set a minimum, then one industry could hog all of the track. By setting a
+   <p>If you don't set a minimum, then one industry could hog all of the track. By entering a
     minimum of say 55' for each industry, it means that the most any one industry is going to get is
     three cars. There will always be space available for at least one car at each industry. Note
     that the maximum number of cars in all cases is four. It is only how the cars are distributed
-    that changes when setting a minimum.</p>
+    that changes when entering a minimum.</p>
 
    <p>Anther use of a "pool" is with regard to schedules. For the power user, you might find
     that a single schedule assigned to a spur doesn't quite do what you want. But if the track could
@@ -2432,6 +2464,7 @@
      HREF="#EditCarAttributes">Car Edit Attributes</A> section, the edit car loads window allows you
     to set the load's type, priority, pick up and set out messages.</P>
  
+    <A NAME="LoadType"></A>
     <H4>Load Type</H4>   
     
     A load type of "Load" means the
@@ -2506,11 +2539,11 @@
 
    You can also optionally enter the location and track that you want the car to return to when the
    car's load status becomes empty. You can also replace the car's default empty load "E" with one
-   from the return when empty (RWE) load menu. Only custom loads that are type "Empty" are shown in
-   the combo box. When you specify a custom RWE load for a car, the program will use the RWE load
-   instead of the default empty "E" in all cases where the "E" load would normally occur. Note that
-   the RWE load also overrides the generation of custom loads out of staging since the "E" load
-   isn't used by the program for this car.
+   from the return when empty (RWE) load menu. Only custom loads that are type
+   <A HREF="#LoadType">Empty</A> are shown in the combo box. When you specify a custom RWE load for
+   a car, the program will use the RWE load instead of the default empty "E" in all cases where the
+   "E" load would normally occur. Note that the RWE load also overrides the generation of custom
+   loads out of staging since the "E" load isn't used by the program for this car.
 
    <P>Note that manually changing the load status to empty "E" will not cause the Return When
     Empty (RWE) destination to become active, only when the car is set out by the program will the
@@ -2542,7 +2575,7 @@
    specifies happens to be full, the program will search for a yard to place the car. When the track
    becomes available, the program will move the car from the yard to the track specified.
 
-   <P>When setting a destination, you don't have to specify a track. And when setting a
+   <P>When selecting a final destination, you don't have to specify a track. And when selecting a
     destination that is staging, you shouldn't select a destination track, let the program do that
     for you.</P>
 
@@ -2860,6 +2893,19 @@
    To eliminate this statement, simply add a comment to each location in the train's route. Use the
    Edit Route window, and for each location, you can add a comment or edit an existing one. 
    
+   <A NAME="DepartingStagingRoute"></A>
+   <H3>Departing Staging Route</H3>
+
+   The program gives you several route options with regards to trains that depart from staging. You
+   can control which trains in staging have the proper length or number of cars by adjusting the
+   route's maximum train length and requested car moves. For example, if you set the route's
+   departure staging location maximum length train length to 800 feet, the program will ignore when
+   building the train all staging tracks that have more than 800 feet of rolling stock. And if you
+   set the car moves for the departure staging location to 15, the program will ignore all staging
+   tracks that have more than 15 cars. However, if you set the route's staging departure car moves
+   count to "0", the program will select a staging track that doesn't have any cars, as long as the
+   train doesn't require a caboose or car with FRED. The staging track can have locomotives.
+   
    <A NAME="RouteFeatures"></A>
    <H3>Route Features</H3>
 
@@ -3012,20 +3058,37 @@
    the locomotive's model and road. If you don't want the program assigning locomotives to your
    train, select 0 as the number of locos required. If you want two or more locomotives assigned to
    a train, the locomotives must be part of a
-   <A HREF="#LocomotivesAdd">consist</A>. If you select "Auto", the program will calculate the
-   number of locomotives required for this train based on the weight of the train, the track grade,
-   and the horsepower of the locomotives.
+   <A HREF="#LocomotivesAdd">consist</A> or you can select the option to build a consist from single
+   locos. See <A
+    HREF="#BuildlocoConsist">Build loco consist from single locos</A> under the <A
+    HREF="#TrainBuildOptions">Train Build Options</A> for more information.
+
    <P>
-    You can also on a per train basis, ask the program to dynamically construct the consist for the
-    train. See <A HREF="#BuildlocoConsist">Build loco consist from single locos</A> under
-    the <A HREF="#TrainBuildOptions">Train Build Options</A> for more information.
+    There are two other options available when requesting locomotives, "Auto" and "Auto HPT". "Auto"
+    determines the maximum number of cars that could be assigned to a train, and does a simple
+    locomotive consist assignment based on the number of cars and the route grades. The assignment
+    is done before building the train, so the number of locomotives assigned has nothing to due with
+    engine HP or the train's tonnage. A better choice is the <A HREF="#BuildlocoConsist">Build
+     loco consist from single locos</A>, that option determines the number of locomotives to assign to a
+    train by tonnage and route grades.
+   </P>
+
+   <P>
+    "Auto HPT" is useful when you want to assign a single locomotive to a train based on the train's
+    tonnage, route grades, and locomotive horsepower. You can if you wish use this option along with
+    the <A HREF="#BuildlocoConsist">Build loco consist from single locos</A> option. The program
+    will first assign a single locomotive at the start of the train build process, and at the end of
+    the build, determine if the assigned locomotive has the appropriate HP for the train's tonnage
+    and grades. If a single locomotive can't be found that meets the requirements, the build will
+    fail unless you've also selected the option to <A HREF="#BuildlocoConsist">Build loco
+     consist from single locos</A>.
    </P>
 
    <P>
     You can also require a <A HREF="#CabooseFredHazardous">caboose or car with FRED (Flashing
-     Rear End Device)</A> as the last car in the train, and you can optionally specify the road for
-    the caboose or car with FRED. If you leave the road blank, the program will try and find a
-    caboose with the same road as the locomotive.
+     Rear End Device)</A> as the last car in the train, and you can optionally specify the road for the
+    caboose or car with FRED. If you leave the road blank, the program will try and find a caboose
+    with the same road as the locomotive.
    </P>
 
    <A NAME="TrainReset"></A>
@@ -3096,7 +3159,11 @@
 
    Normally the program allows cars to travel from the train's departure location (origin) to its
    last location (terminal). Deselect this option if you don't want the train to carry cars from the
-   train's origin to the terminal.
+   train's origin to the terminal. For example, say the train departs Boston (origin), and services
+   Worcester, Springfield, and terminates in New York (terminal). If the option is selected, then
+   the cars could travel from Boston to Worcester, Springfield, or New York. If not selected, then
+   cars from Boston can only travel to Worcester or Springfield, and cars from Worcester or Springfield
+   could go to New York. But through cars from Boston to New York are not allowed.
 
    <H4>Service all cars with a final destination</H4>
 
@@ -3831,10 +3898,14 @@
    the train doesn't have any work. If you deselect this option, then the program only prints out
    trains that have work at that location.
 
-   <P>The next option "Page per Train" when selected causes the program to print a train's
+   <P>The next option controls how much paper is used when printing out switch lists. The
+    "Normal" mode uses the least amount of paper, and will list the trains servicing the location
+    one after another. The "Page per Train" option when selected causes the program to print a train's
     switch list on a new page for each train. This way your operators when completing the work for a
     train, can simply discard the paperwork for that train. This mode is also useful if you have
-    more than one operator working a location, this way they can easily hand out the work by train.</P>
+    more than one operator working a location, this way they can easily hand out the work by train. The final
+    option is "Page per Visit", this option prints a new page each time a train visits the location. Useful
+    if you don't want multiple visits by a train to be on the same set of pages.</P>
 
    <P>The last option "Real Time" is whether you want your switch lists in real time or
     consolidation mode. Normally you would generate your switch lists in real time. In this mode the

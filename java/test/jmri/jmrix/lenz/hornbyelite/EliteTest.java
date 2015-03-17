@@ -1,22 +1,21 @@
 // EliteTest.java
-
-
 package jmri.jmrix.lenz.hornbyelite;
 
-import org.apache.log4j.Logger;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests for the jmri.jmrix.lenz.hornbyelite package
- * @author                      Paul Bender  
- * @version                     $Revision$
+ *
+ * @author Paul Bender
+ * @version $Revision$
  */
 public class EliteTest extends TestCase {
 
     // from here down is testing infrastructure
-
     public EliteTest(String s) {
         super(s);
     }
@@ -42,7 +41,6 @@ public class EliteTest extends TestCase {
         return suite;
     }
 
-    static Logger log = Logger.getLogger(EliteTest.class.getName());
+    static Logger log = LoggerFactory.getLogger(EliteTest.class.getName());
 
 }
-

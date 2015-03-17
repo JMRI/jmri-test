@@ -1,22 +1,21 @@
 // LI100Test.java
-
-
 package jmri.jmrix.lenz.li100;
 
-import org.apache.log4j.Logger;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests for the jmri.jmrix.lenz.li100 package
- * @author                      Paul Bender  
- * @version                     $Revision$
+ *
+ * @author Paul Bender
+ * @version $Revision$
  */
 public class LI100Test extends TestCase {
 
     // from here down is testing infrastructure
-
     public LI100Test(String s) {
         super(s);
     }
@@ -36,7 +35,6 @@ public class LI100Test extends TestCase {
         return suite;
     }
 
-    static Logger log = Logger.getLogger(LI100Test.class.getName());
+    static Logger log = LoggerFactory.getLogger(LI100Test.class.getName());
 
 }
-

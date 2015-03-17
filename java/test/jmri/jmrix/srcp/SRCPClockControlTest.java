@@ -1,10 +1,11 @@
 package jmri.jmrix.srcp;
 
-import org.apache.log4j.Logger;
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SRCPClockControlTest.java
@@ -17,11 +18,11 @@ import junit.framework.TestSuite;
 public class SRCPClockControlTest extends TestCase {
 
     public void testCtor() {
-        SRCPBusConnectionMemo sm=new SRCPBusConnectionMemo(new SRCPTrafficController(){
-          @Override
-          public void sendSRCPMessage(SRCPMessage m, SRCPListener reply) {
-           }
-        },"A",1);
+        SRCPBusConnectionMemo sm = new SRCPBusConnectionMemo(new SRCPTrafficController() {
+            @Override
+            public void sendSRCPMessage(SRCPMessage m, SRCPListener reply) {
+            }
+        }, "A", 1);
         SRCPClockControl m = new SRCPClockControl(sm);
         Assert.assertNotNull(m);
     }
@@ -53,5 +54,5 @@ public class SRCPClockControlTest extends TestCase {
     protected void tearDown() {
         apps.tests.Log4JFixture.tearDown();
     }
-    static Logger log = Logger.getLogger(SRCPClockControlTest.class.getName());
+    static Logger log = LoggerFactory.getLogger(SRCPClockControlTest.class.getName());
 }

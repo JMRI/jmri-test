@@ -1,5 +1,4 @@
 // PortController.java
-
 package jmri.jmrix.can.adapters.lawicell;
 
 import java.io.DataInputStream;
@@ -10,28 +9,30 @@ import jmri.jmrix.can.CanSystemConnectionMemo;
 /**
  * Abstract base for classes representing a LAWICELL communications port
  *
- * @author			Bob Jacobsen    Copyright (C) 2001, 2008
- * @author          Andrew Crosland 2008
- * @version			$Revision$
+ * @author	Bob Jacobsen Copyright (C) 2001, 2008
+ * @author Andrew Crosland 2008
+ * @version	$Revision$
  */
 public abstract class PortController extends jmri.jmrix.AbstractSerialPortController {
-	// base class. Implementations will provide InputStream and OutputStream
-	// objects to TrafficController classes, who in turn will deal in messages.
+    // base class. Implementations will provide InputStream and OutputStream
+    // objects to TrafficController classes, who in turn will deal in messages.
 
-	// returns the InputStream from the port
-	public abstract DataInputStream getInputStream();
+    protected PortController(SystemConnectionMemo connectionMemo) {
+        super(connectionMemo);
+    }
 
-	// returns the outputStream to the port
-	public abstract DataOutputStream getOutputStream();
+    // returns the InputStream from the port
+    public abstract DataInputStream getInputStream();
 
-	// check that this object is ready to operate
-	public abstract boolean status();
-    
-    protected jmri.jmrix.can.CanSystemConnectionMemo adaptermemo;
-    
+    // returns the outputStream to the port
+    public abstract DataOutputStream getOutputStream();
+
+    // check that this object is ready to operate
+    public abstract boolean status();
+
     @Override
     public CanSystemConnectionMemo getSystemConnectionMemo() {
-        return this.adaptermemo;
+        return (CanSystemConnectionMemo) super.getSystemConnectionMemo();
     }
 }
 /* @(#)PortController.java */

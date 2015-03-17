@@ -1,13 +1,16 @@
 // FollowerActionTest.java
-
 package jmri.jmrit.ussctc;
 
-import org.apache.log4j.Logger;
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests for classes in the jmri.jmrit.ussctc.FollowerAction class
- * @author	Bob Jacobsen  Copyright 2003, 2007
+ *
+ * @author	Bob Jacobsen Copyright 2003, 2007
  * @version	$Revision$
  */
 public class FollowerActionTest extends TestCase {
@@ -20,9 +23,7 @@ public class FollowerActionTest extends TestCase {
         new FollowerAction("test").actionPerformed(null);
     }
 
-
     // from here down is testing infrastructure
-
     public FollowerActionTest(String s) {
         super(s);
     }
@@ -39,6 +40,6 @@ public class FollowerActionTest extends TestCase {
         return suite;
     }
 
-    static Logger log = Logger.getLogger(FollowerActionTest.class.getName());
+    static Logger log = LoggerFactory.getLogger(FollowerActionTest.class.getName());
 
 }

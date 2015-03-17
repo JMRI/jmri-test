@@ -1,22 +1,21 @@
 // z21Test.java
-
-
 package jmri.jmrix.roco.z21;
 
-import org.apache.log4j.Logger;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests for the jmri.jmrix.roco.z21 package
- * @author                      Paul Bender  
- * @version                     $Revision$
+ *
+ * @author Paul Bender
+ * @version $Revision$
  */
 public class z21Test extends TestCase {
 
     // from here down is testing infrastructure
-
     public z21Test(String s) {
         super(s);
     }
@@ -40,7 +39,6 @@ public class z21Test extends TestCase {
         return suite;
     }
 
-    static Logger log = Logger.getLogger(z21Test.class.getName());
+    static Logger log = LoggerFactory.getLogger(z21Test.class.getName());
 
 }
-

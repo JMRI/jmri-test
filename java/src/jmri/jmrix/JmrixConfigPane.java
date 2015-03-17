@@ -39,11 +39,9 @@ import org.slf4j.LoggerFactory;
  */
 public class JmrixConfigPane extends JPanel implements PreferencesPanel {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -6184977238513337292L;
     private static final ResourceBundle acb = ResourceBundle.getBundle("apps.AppsConfigBundle");
+    private boolean isDirty = false;
 
     /**
      * Get access to a pane describing existing configuration information, or
@@ -88,6 +86,9 @@ public class JmrixConfigPane extends JPanel implements PreferencesPanel {
         log.debug("findInstance returned " + c);
         retval = new JmrixConfigPane((ConnectionConfig) c);
         configPaneTable.put(index, retval);
+        if (c == null) {
+            retval.isDirty = true;
+        }
         return retval;
     }
 
@@ -444,11 +445,17 @@ public class JmrixConfigPane extends JPanel implements PreferencesPanel {
 
     @Override
     public boolean isDirty() {
-        return this.ccCurrent.isDirty();
+        // avoid potentially expensive exrta test for isDirty
+        if (log.isDebugEnabled()) {
+            log.debug("Connection \"{}\" is {}.",
+                    this.getConnectionName(),
+                    (this.isDirty || ((this.ccCurrent != null) ? this.ccCurrent.isDirty() : true) ? "dirty" : "clean"));
+        }
+        return this.isDirty || ((this.ccCurrent != null) ? this.ccCurrent.isDirty() : true);
     }
 
     @Override
     public boolean isRestartRequired() {
-        return this.ccCurrent.isRestartRequired();
+        return (this.ccCurrent != null) ? this.ccCurrent.isRestartRequired() : this.isDirty();
     }
 }

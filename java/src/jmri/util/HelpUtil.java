@@ -35,7 +35,7 @@ public class HelpUtil {
 
     /**
      * @param direct true if this call should complete the help menu by adding
-     * the general help
+     *               the general help
      * @return new Help menu, in case user wants to add more items
      */
     static public JMenu helpMenu(JMenuBar menuBar, String ref, boolean direct) {
@@ -189,10 +189,10 @@ public class HelpUtil {
     static public Action getHelpAction(final String name, final Icon icon, final String id) {
         return new AbstractAction(name, icon) {
             /**
-			 * 
-			 */
-			private static final long serialVersionUID = -6252106625080009829L;
-			String helpID = id;
+             *
+             */
+            private static final long serialVersionUID = -6252106625080009829L;
+            String helpID = id;
 
             public void actionPerformed(ActionEvent event) {
                 globalHelpBroker.setCurrentID(helpID);

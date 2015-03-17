@@ -38,6 +38,7 @@ abstract public class AbstractNetworkConnectionConfig extends AbstractConnection
 
     /**
      * Ctor for an object being created during load process
+     *
      * @param p
      */
     public AbstractNetworkConnectionConfig(NetworkPortAdapter p) {
@@ -293,10 +294,10 @@ abstract public class AbstractNetworkConnectionConfig extends AbstractConnection
                 JComboBox<String> opt = new JComboBox<String>(adapter.getOptionChoices(i));
                 opt.setSelectedItem(adapter.getOptionState(i));
                 // check that it worked
-                if (! adapter.getOptionState(i).equals(opt.getSelectedItem())) {
+                if (!adapter.getOptionState(i).equals(opt.getSelectedItem())) {
                     // no, set 1st option choice
                     opt.setSelectedIndex(0);
-                    adapter.setOptionState(i, (String)opt.getSelectedItem());
+                    adapter.setOptionState(i, (String) opt.getSelectedItem());
                     log.warn("Loading found invalid value for option {}, found \"{}\", setting to \"{}\"", i, adapter.getOptionState(i), opt.getSelectedItem());
                 }
                 options.put(i, new Option(adapter.getOptionDisplayName(i), opt, adapter.isOptionAdvanced(i)));
@@ -457,7 +458,7 @@ abstract public class AbstractNetworkConnectionConfig extends AbstractConnection
         cL.gridwidth = 1;
         if (_details.getParent() != null && _details.getParent() instanceof javax.swing.JViewport) {
             javax.swing.JViewport vp = (javax.swing.JViewport) _details.getParent();
-            vp.validate();
+            vp.revalidate();
             vp.repaint();
         }
     }

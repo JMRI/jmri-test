@@ -1,6 +1,7 @@
 //SimpleOperationsServer.java
 package jmri.jmris.simpleserver;
 
+import java.beans.PropertyChangeEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,9 +10,9 @@ import java.util.List;
 import javax.management.Attribute;
 import jmri.JmriException;
 import jmri.jmris.AbstractOperationsServer;
+import jmri.jmris.JmriConnection;
 import jmri.jmrit.operations.locations.Location;
 import jmri.jmrit.operations.trains.Train;
-import org.eclipse.jetty.websocket.WebSocket.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,9 +119,9 @@ public class SimpleOperationsServer extends AbstractOperationsServer {
     public static final String FIELDSEPARATOR = "=";
 
     private DataOutputStream output;
-    private Connection connection;
+    private JmriConnection connection;
 
-    public SimpleOperationsServer(Connection connection) {
+    public SimpleOperationsServer(JmriConnection connection) {
         super();
         this.connection = connection;
     }
@@ -138,7 +139,7 @@ public class SimpleOperationsServer extends AbstractOperationsServer {
      * composed of a set of attributes.
      *
      * @param contents is the ArrayList of Attributes to be sent. A linefeed
-     * ('\n") is appended to the String.
+     *                 ('\n") is appended to the String.
      * @throws java.io.IOException
      */
     @Override
@@ -156,7 +157,7 @@ public class SimpleOperationsServer extends AbstractOperationsServer {
      * </ul>
      *
      * @param errorStatus is the error message. It need not include any padding
-     * - this method will add it. It should be plain text.
+     *                    - this method will add it. It should be plain text.
      * @throws IOException if there is a problem sending the error message
      */
     @Override
@@ -180,12 +181,13 @@ public class SimpleOperationsServer extends AbstractOperationsServer {
      * a response.
      *
      * @param contents is an array of Attributes. An Attribute is a String (tag)
-     * and a value. For this use, the value will always be a String or null.
-     * Thus, "=" and REQUEST_DELIMITER are illegal in a tag and
-     * REQUEST_DELIMITER is illegal in a value.
+     *                 and a value. For this use, the value will always be a
+     *                 String or null. Thus, "=" and REQUEST_DELIMITER are
+     *                 illegal in a tag and REQUEST_DELIMITER is illegal in a
+     *                 value.
      * @return a String which is a serialized version of the attribute array,
-     * which can be sent to an SimpleOperationsServer or received from a
-     * SimpleOperationsServer
+     *         which can be sent to an SimpleOperationsServer or received from a
+     *         SimpleOperationsServer
      */
     public static String constructOperationsMessage(ArrayList<Attribute> contents) {
         StringBuilder result = new StringBuilder(OPERATIONS);
@@ -210,7 +212,7 @@ public class SimpleOperationsServer extends AbstractOperationsServer {
      *
      * @param message is the String received
      * @return an ArrayList of Attributes of the constituent pieces of the
-     * message
+     *         message
      */
     public static ArrayList<Attribute> parseOperationsMessage(String message) {
         ArrayList<Attribute> contents = new ArrayList<Attribute>();
@@ -246,6 +248,7 @@ public class SimpleOperationsServer extends AbstractOperationsServer {
      * Parse operation commands. They all start with "OPERATIONS" followed by a
      * command like "LOCATIONS". A command like "TRAINLENGTH" requires a train
      * name. The delimiter is the tab character.
+     *
      * @param statusString
      * @throws jmri.JmriException
      * @throws java.io.IOException
@@ -386,6 +389,17 @@ public class SimpleOperationsServer extends AbstractOperationsServer {
             status.add(new Attribute(TRAINLEADLOCO, constructTrainLeadLoco(train.getName())));
             status.add(new Attribute(TRAINCABOOSE, constructTrainCaboose(train.getName())));
             sendMessage(status);
+        }
+    }
+
+    public void propertyChange(PropertyChangeEvent e) {
+        log.debug("property change: {} old: {} new: {}", e.getPropertyName(), e.getOldValue(), e.getNewValue());
+        if (e.getPropertyName().equals(Train.BUILT_CHANGED_PROPERTY)) {
+            try {
+                sendFullStatus((Train) e.getSource());
+            } catch (IOException e1) {
+                log.error(e1.getLocalizedMessage(), e1);
+            }
         }
     }
 

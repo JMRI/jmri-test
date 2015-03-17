@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="/xml/XSLT/DecoderID.xsl" type="text/xsl"?>
 <decoderIndex-config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jmri.org/xml/schema/decoder.xsd">
-  <!--Written by JMRI version 20150122-0411-heap on Thu Jan 22 15:11:50 EST 2015 $Id$-->
-  <decoderIndex version="540">
+  <!--Written by JMRI version 20150316-1347-jake on Mon Mar 16 06:47:20 PDT 2015 $Id$-->
+  <decoderIndex version="572">
     <mfgList nmraListDate="2014-09-22" updated="2014-10-11" lastadd="107,124">
       <manufacturer mfg="NMRA" mfgID="999" />
       <manufacturer mfg="A-Train Electronics" mfgID="137" />
@@ -126,6 +126,7 @@
       <manufacturer mfg="Shourt Line" mfgID="90" />
       <manufacturer mfg="Signaling Solution" mfgID="119" />
       <manufacturer mfg="Silicon Railway" mfgID="33" />
+      <manufacturer mfg="SoundTraxx (Throttle-Up)" mfgID="141" />
       <manufacturer mfg="Spectrum Engineering" mfgID="80" />
       <manufacturer mfg="T4T - Technology for Trains GmbH" mfgID="20" />
       <manufacturer mfg="TCH Technology" mfgID="54" />
@@ -769,6 +770,109 @@
           <output name="Ditch" />
           <output name="Motor" />
           <output name="BEMF" />
+        </model>
+      </family>
+      <family name="DCC Concepts Zen" mfg="DCC Concepts" lowVersionID="34" highVersionID="35" file="DCC_Concepts_Zen.xml">
+        <model model="ZBHP Buddha" numOuts="6" numFns="14" maxMotorCurrent="3A (peak=5A)" productID="ZBHP" formFactor="O" connector="other" comment="O-scale, with screw connectors">
+          <output name="1" label="White" connection="other" maxcurrent="250 mA" />
+          <output name="2" label="Yellow" connection="other" maxcurrent="250 mA" />
+          <output name="3" label="Green" connection="other" maxcurrent="250 mA" />
+          <output name="4" label="Purple" connection="other" maxcurrent="250 mA" />
+          <output name="5" label="Pink" connection="other" maxcurrent="250 mA" />
+          <output name="6" label="Brown" connection="other" maxcurrent="250 mA" />
+          <output name="7" label="Rule 17|Dimming" />
+          <!-- virtual "output" -->
+          <output name="8" label="Ditch|Blink" />
+          <!-- virtual "output" -->
+          <output name="9" label="Motor|Control" />
+          <!-- virtual "output" -->
+          <output name="10" label="BEMF|Control" />
+          <!-- virtual "output" -->
+          <size length="40" width="25" height="10" units="mm" />
+        </model>
+        <model model="Z218" numOuts="4" numFns="14" maxMotorCurrent="0.750A (peak=1A)" productID="Z218" formFactor="HO" connector="21MTC" comment="HO-scale, with 21MTC/NEM652 harness">
+          <output name="1" label="White|Pin 8" connection="plug" maxcurrent="100 mA" />
+          <output name="2" label="Yellow|Pin 7" connection="plug" maxcurrent="100 mA" />
+          <output name="3" label="Green|Pin 15" connection="plug" maxcurrent="100 mA" />
+          <output name="4" label="Purple|Pin 14" connection="plug" maxcurrent="100 mA" />
+          <output name="7" label="Rule 17|Dimming" />
+          <!-- virtual "output" -->
+          <output name="8" label="Ditch|Blink" />
+          <!-- virtual "output" -->
+          <output name="9" label="Motor|Control" />
+          <!-- virtual "output" -->
+          <output name="10" label="BEMF|Control" />
+          <!-- virtual "output" -->
+          <size length="22" width="16" height="4.5" units="mm" />
+        </model>
+        <model model="Z360" numOuts="4" numFns="14" maxMotorCurrent="0.750A (peak=1A)" productID="Z360" formFactor="HO" connector="Wires/NEM652" comment="HO-scale, direct NEM652">
+          <output name="1" label="White|Pin 6" connection="plug" maxcurrent="100 mA" />
+          <output name="2" label="Yellow|Pin 2" connection="plug" maxcurrent="100 mA" />
+          <output name="3" label="Green|Pin 3" connection="plug" maxcurrent="100 mA" />
+          <output name="4" label="Purple|Wire" connection="wire" maxcurrent="100 mA" />
+          <output name="7" label="Rule 17|Dimming" />
+          <!-- virtual "output" -->
+          <output name="8" label="Ditch|Blink" />
+          <!-- virtual "output" -->
+          <output name="9" label="Motor|Control" />
+          <!-- virtual "output" -->
+          <output name="10" label="BEMF|Control" />
+          <!-- virtual "output" -->
+          <size length="14.2" width="12.5" height="3.5" units="mm" />
+        </model>
+        <model model="ZN6D" numOuts="2" numFns="14" maxMotorCurrent="0.750A (peak=1A)" productID="ZN6D" formFactor="N" connector="NEM651" comment="Nano 6-pin direct NEM651">
+          <output name="1" label="White|Pin 5" connection="plug" maxcurrent="100 mA" />
+          <output name="2" label="Yellow|Pin 6" connection="plug" maxcurrent="100 mA" />
+          <output name="7" label="Rule 17|Dimming" />
+          <!-- virtual "output" -->
+          <output name="8" label="Ditch|Blink" />
+          <!-- virtual "output" -->
+          <output name="9" label="Motor|Control" />
+          <!-- virtual "output" -->
+          <output name="10" label="BEMF|Control" />
+          <!-- virtual "output" -->
+          <size length="13.5" width="8.5" height="3" units="mm" />
+        </model>
+        <model model="ZN68" numOuts="2" numFns="14" maxMotorCurrent="0.750A (peak=1A)" productID="ZN68" formFactor="N" connector="NEM651" comment="Nano 6-pin universal w/ NEM651/NEM652 harness">
+          <output name="1" label="White|Pin 5" connection="plug" maxcurrent="100 mA" />
+          <output name="2" label="Yellow|Pin 6" connection="plug" maxcurrent="100 mA" />
+          <output name="7" label="Rule 17|Dimming" />
+          <!-- virtual "output" -->
+          <output name="8" label="Ditch|Blink" />
+          <!-- virtual "output" -->
+          <output name="9" label="Motor|Control" />
+          <!-- virtual "output" -->
+          <output name="10" label="BEMF|Control" />
+          <!-- virtual "output" -->
+          <size length="13.5" width="8.5" height="3" units="mm" />
+        </model>
+        <model model="ZN8D" numOuts="4" numFns="14" maxMotorCurrent="0.750A (peak=1A)" productID="ZN8D" formFactor="N" connector="Wires/NEM652" comment="Nano 8-pin direct NEM652">
+          <output name="1" label="White|Pin 6" connection="plug" maxcurrent="100 mA" />
+          <output name="2" label="Yellow|Pin 2" connection="plug" maxcurrent="100 mA" />
+          <output name="3" label="Green|Pin 3" connection="plug" maxcurrent="100 mA" />
+          <output name="4" label="Purple|Wire" connection="wire" maxcurrent="100 mA" />
+          <output name="7" label="Rule 17|Dimming" />
+          <!-- virtual "output" -->
+          <output name="8" label="Ditch|Blink" />
+          <!-- virtual "output" -->
+          <output name="9" label="Motor|Control" />
+          <!-- virtual "output" -->
+          <output name="10" label="BEMF|Control" />
+          <!-- virtual "output" -->
+          <size length="15" width="7" height="2.7" units="mm" />
+        </model>
+        <model model="ZN8H" numOuts="2" numFns="14" maxMotorCurrent="0.750A (peak=1A)" productID="ZN8H" formFactor="N" connector="NEM652" comment="Nano 8-pin wired with NEM652 harness">
+          <output name="1" label="White|Pin 6" connection="plug" maxcurrent="100 mA" />
+          <output name="2" label="Yellow|Pin 2" connection="plug" maxcurrent="100 mA" />
+          <output name="7" label="Rule 17|Dimming" />
+          <!-- virtual "output" -->
+          <output name="8" label="Ditch|Blink" />
+          <!-- virtual "output" -->
+          <output name="9" label="Motor|Control" />
+          <!-- virtual "output" -->
+          <output name="10" label="BEMF|Control" />
+          <!-- virtual "output" -->
+          <size length="15" width="7" height="2.7" units="mm" />
         </model>
       </family>
       <family name="Locomotive lighting" mfg="Digirails" file="Digirails_DR80010.xml">
@@ -1892,7 +1996,7 @@
           <size length="1.2" width=".66" height="0.25" units="inches" />
         </model>
       </family>
-      <family name="Economy Series 6 with FX3, silent" mfg="Digitrax" lowVersionID="52" highVersionID="64" file="Digitrax_Economy_Series6.xml">
+      <family name="Economy Series 6 with FX3, silent" mfg="Digitrax" lowVersionID="51" highVersionID="64" file="Digitrax_Economy_Series6.xml">
         <model model="DH126D" numOuts="2" numFns="5" maxMotorCurrent="1.5A (peak=2A)" formFactor="HO" connector="9pin" comment="HO-Scale, wired">
           <output name="1" label="White" connection="wire" />
           <output name="2" label="Yellow" connection="wire" />
@@ -1967,46 +2071,19 @@
           </protocols>
         </model>
       </family>
-      <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_Fn_decoders.xml">
-        <model model="FH05A" lowVersionID="1" highVersionID="1" numOuts="4" numFns="14" productID="FH05A" comment="FH05A-0 / FH05A-1 / FH05A-3" maxInputVolts="30V" maxTotalCurrent="0.5A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <size length="13.7" width="7.8" height="1.5" units="mm" />
-          <protocols>
-            <protocol>dcc</protocol>
-            <protocol>selectrix</protocol>
-          </protocols>
-        </model>
-      </family>
-      <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_Loc_decoders.xml">
-        <model model="DH05A/B" lowVersionID="1" highVersionID="2" numOuts="4" numFns="14" productID="DH05AB" comment="DH05A/B-0 / DH05A/B-1 / DH05A/B-3" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+      <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.02_DH05AB.xml">
+        <model model="DH05A/B" lowVersionID="1" highVersionID="2" numOuts="4" numFns="16" productID="DH05AB" comment="DH05A/B-0 / DH05A/B-1 / DH05A/B-3" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="13.2" width="6.8" height="1.4" units="mm" />
-          <protocols>
-            <protocol>dcc</protocol>
-            <protocol>selectrix</protocol>
-          </protocols>
-        </model>
-      </family>
-      <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_Loc_decoders_noDC.xml">
-        <model model="DH06A" lowVersionID="3" highVersionID="3" numOuts="3" numFns="14" productID="DH06A" comment="DH06A for Köf with no analog support" maxInputVolts="30V" maxMotorCurrent="0.3A" maxTotalCurrent="0.3A">
-          <output name="1" label="Front Light" maxcurrent="20mA" />
-          <output name="2" label="Rear Light" maxcurrent="20mA" />
-          <output name="3" label="Onboard light LED" maxcurrent="20mA" />
-          <size length="16" width="9.3" units="mm" />
-          <protocols>
-            <protocol>dcc</protocol>
-            <protocol>selectrix</protocol>
-          </protocols>
-        </model>
-      </family>
-      <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_Loc_generic.xml">
-        <model model="Generic" numOuts="6" numFns="14" productID="generic" comment="Generic profile for unknown or unlisted decoders">
           <protocols>
             <protocol>dcc</protocol>
             <protocol>selectrix</protocol>
@@ -2014,11 +2091,17 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.02_DH05C.xml">
-        <model model="DH05C" lowVersionID="3" highVersionID="3" numOuts="4" numFns="14" productID="DH05C" comment="DH05C-0 / DH05C-1 / DH05C-3" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+        <model model="DH05C" lowVersionID="3" highVersionID="3" numOuts="4" numFns="16" productID="DH05C" comment="DH05C-0 / DH05C-1 / DH05C-3" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="13.2" width="6.8" height="1.4" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2026,12 +2109,38 @@
           </protocols>
         </model>
       </family>
+      <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.02_DH06A.xml">
+        <model model="DH06A" lowVersionID="3" highVersionID="3" numOuts="3" numFns="16" productID="DH06A" comment="DH06A for Köf with no analog support" maxInputVolts="30V" maxMotorCurrent="0.3A" maxTotalCurrent="0.3A">
+          <output name="1" label="Front|Light" maxcurrent="20mA" />
+          <output name="2" label="Rear|Light" maxcurrent="20mA" />
+          <output name="3" label="Onboard|LED" maxcurrent="20mA" />
+          <output name="4" label="|" />
+          <!-- not available for this decoder -->
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="16" width="9.3" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+          </protocols>
+        </model>
+      </family>
       <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.02_DH10AB.xml">
-        <model model="DH10A/B" lowVersionID="1" highVersionID="2" numOuts="4" numFns="14" productID="DH10AB" comment="DH10A/B-0 / DH10A/B-1 / DH10A/B-3" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+        <model model="DH10A/B" lowVersionID="1" highVersionID="2" numOuts="4" numFns="16" productID="DH10AB" comment="DH10A/B-0 / DH10A/B-1 / DH10A/B-3" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="14.3" width="9.2" height="1.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2040,11 +2149,17 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.02_DH10C.xml">
-        <model model="DH10C" lowVersionID="3" highVersionID="3" numOuts="4" numFns="14" productID="DH10C" comment="DH10C-0 / DH10C-1 / DH10C-3" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+        <model model="DH10C" lowVersionID="3" highVersionID="3" numOuts="4" numFns="16" productID="DH10C" comment="DH10C-0 / DH10C-1 / DH10C-3" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="14.2" width="9.3" height="1.5" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2053,13 +2168,15 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.02_DH12A.xml">
-        <model model="DH12A" lowVersionID="3" highVersionID="3" numOuts="6" numFns="14" productID="DH12A" comment="DH12A" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX12">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3" maxcurrent="NC - Logic Level" />
-          <output name="6" label="AUX 4" maxcurrent="NC - Logic Level" />
+        <model model="DH12A" lowVersionID="3" highVersionID="3" numOuts="6" numFns="16" productID="DH12A" comment="DH12A" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX12">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="NC - Logic Level" />
+          <output name="6" label="AUX|4" maxcurrent="NC - Logic Level" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="14.5" width="8" height="2.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2068,13 +2185,15 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.02_DH16A.xml">
-        <model model="DH16A" lowVersionID="3" highVersionID="3" numOuts="6" numFns="14" productID="DH16A" comment="DH16A-0 /DH16A-1 /DH16A-2 /DH16A-3" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX16">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3" maxcurrent="1.0A" />
-          <output name="6" label="AUX 4" maxcurrent="1.0A" />
+        <model model="DH16A" lowVersionID="3" highVersionID="3" numOuts="6" numFns="16" productID="DH16A" comment="DH16A-0 /DH16A-1 /DH16A-2 /DH16A-3" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX16">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1.0A" />
+          <output name="6" label="AUX|4" maxcurrent="1.0A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="16.7" width="10.9" height="2.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2083,13 +2202,15 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.02_DH18A.xml">
-        <model model="DH18A" lowVersionID="3" highVersionID="3" numOuts="6" numFns="14" productID="DH18A" comment="DH18A" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Next18">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3" maxcurrent="Logic" />
-          <output name="6" label="AUX 4" maxcurrent="Logic" />
+        <model model="DH18A" lowVersionID="3" highVersionID="3" numOuts="6" numFns="16" productID="DH18A" comment="DH18A" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Next18">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="NC - Logic Level" />
+          <output name="6" label="AUX|4" maxcurrent="NC - Logic Level" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="13.5" width="9.0" height="2.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2098,10 +2219,18 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.02_DHP160.xml">
-        <model model="DHP160/161/163" lowVersionID="8" highVersionID="8" numOuts="3" numFns="14" productID="DHP160" comment="DHP160 / DHP161 / DHP163" maxInputVolts="25V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651/NEM652">
-          <output name="1" label="Front Light" maxcurrent="300mA" />
-          <output name="2" label="Rear Light" maxcurrent="300mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
+        <model model="DHP160/161/163" lowVersionID="8" highVersionID="8" numOuts="3" numFns="16" productID="DHP160" comment="DHP160 / DHP161 / DHP163" maxInputVolts="25V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651/NEM652">
+          <output name="1" label="Front|Light" maxcurrent="300mA" />
+          <output name="2" label="Rear|Light" maxcurrent="300mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="|" />
+          <!-- not available for this decoder -->
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="14.2" width="9.2" height="2.0" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2110,13 +2239,15 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.02_DHP250.xml">
-        <model model="DHP250/252/253" lowVersionID="8" highVersionID="8" numOuts="6" numFns="14" productID="DHP250" comment="DHP250/252/253" maxInputVolts="25V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Wires/NEM652">
-          <output name="1" label="Front Light" maxcurrent="300mA" />
-          <output name="2" label="Rear Light" maxcurrent="300mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="1.0A" />
-          <output name="5" label="AUX 3" maxcurrent="1.0A" />
-          <output name="6" label="AUX 4" maxcurrent="1.0A" />
+        <model model="DHP250/252/253" lowVersionID="8" highVersionID="8" numOuts="6" numFns="16" productID="DHP250" comment="DHP250/252/253" maxInputVolts="25V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Wires/NEM652">
+          <output name="1" label="Front|Light" maxcurrent="300mA" />
+          <output name="2" label="Rear|Light" maxcurrent="300mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="1.0A" />
+          <output name="5" label="AUX|3" maxcurrent="1.0A" />
+          <output name="6" label="AUX|4" maxcurrent="1.0A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="23.3" width="12.9" height="2.7" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2125,13 +2256,15 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.02_DHP260.xml">
-        <model model="DHP260" lowVersionID="8" highVersionID="8" numOuts="6" numFns="14" productID="DHP260" comment="DHP260" maxInputVolts="25V" maxMotorCurrent="2.0A" maxTotalCurrent="2.0A" connector="21MTC">
-          <output name="1" label="Front Light" maxcurrent="300mA" />
-          <output name="2" label="Rear Light" maxcurrent="300mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="1.0A" />
-          <output name="5" label="AUX 3" maxcurrent="1.0A" />
-          <output name="6" label="AUX 4" maxcurrent="1.0A" />
+        <model model="DHP260" lowVersionID="8" highVersionID="8" numOuts="6" numFns="16" productID="DHP260" comment="DHP260" maxInputVolts="25V" maxMotorCurrent="2.0A" maxTotalCurrent="2.0A" connector="21MTC">
+          <output name="1" label="Front|Light" maxcurrent="300mA" />
+          <output name="2" label="Rear|Light" maxcurrent="300mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="1.0A" />
+          <output name="5" label="AUX|3" maxcurrent="1.0A" />
+          <output name="6" label="AUX|4" maxcurrent="1.0A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="22.2" width="15.7" height="5.7" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2139,12 +2272,45 @@
           </protocols>
         </model>
       </family>
+      <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.02_FH05A.xml">
+        <model model="FH05A" lowVersionID="1" highVersionID="1" numOuts="4" numFns="16" productID="FH05A" comment="FH05A-0 / FH05A-1 / FH05A-3" maxInputVolts="30V" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="13.7" width="7.8" height="1.5" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+          </protocols>
+        </model>
+      </family>
+      <family name="Train Decoders (firmware 3.02+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.02_generic.xml">
+        <model model="Generic" numOuts="6" numFns="16" productID="generic" comment="Generic profile for unknown or unlisted decoders">
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+          </protocols>
+        </model>
+      </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_DH05A.xml">
-        <model model="DH05A v1.10 (firmware 3.03+)" lowVersionID="1" highVersionID="1" numOuts="4" numFns="14" productID="DH05A_3.03" comment="DH05A-0 / DH05A-1 / DH05A-3 with update from 15 Jan 2014" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+        <model model="DH05A v1.10 (firmware 3.03+)" lowVersionID="1" highVersionID="1" numOuts="4" numFns="16" productID="DH05A_3.03" comment="DH05A-0 / DH05A-1 / DH05A-3 with update from 15 Jan 2014" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="13.2" width="6.8" height="1.4" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2153,11 +2319,17 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_DH05B.xml">
-        <model model="DH05B v2.08 (firmware 3.03+)" lowVersionID="2" highVersionID="2" numOuts="4" numFns="14" productID="DH05B_3.03" comment="DH05B-0 / DH05B-1 / DH05B-3 with update from 15 Jan 2014" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+        <model model="DH05B v2.08 (firmware 3.03+)" lowVersionID="2" highVersionID="2" numOuts="4" numFns="16" productID="DH05B_3.03" comment="DH05B-0 / DH05B-1 / DH05B-3 with update from 15 Jan 2014" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="13.2" width="6.8" height="1.4" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2166,15 +2338,17 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_DH05C.xml">
-        <model model="DH05C v3.03 (firmware 3.03+)" lowVersionID="3" highVersionID="3" numOuts="6" numFns="14" productID="DH05C_3.03" comment="DH05C-0 / DH05C-1 / DH05C-3 with update from 15 Jan 2014" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3 (or SUSI ZCLK)" maxcurrent="300mA" />
+        <model model="DH05C v3.03 (firmware 3.03+)" lowVersionID="3" highVersionID="3" numOuts="6" numFns="16" productID="DH05C_3.03" comment="DH05C-0 / DH05C-1 / DH05C-3 with update from 15 Jan 2014" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX 3|(or SUSI ZCLK)" maxcurrent="20mA" />
           <!-- New from fw3.03  -->
-          <output name="6" label="AUX 4 (or SUSI ZDAT)" maxcurrent="300mA" />
+          <output name="6" label="AUX 4|(or SUSI ZDAT)" maxcurrent="20mA" />
           <!-- New from fw3.03  -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="13.2" width="6.8" height="1.4" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2183,10 +2357,18 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_DH06A.xml">
-        <model model="DH06A v3.03 (firmware 3.03+)" lowVersionID="3" highVersionID="3" numOuts="3" numFns="14" productID="DH06A_3.03" comment="DH06A for Köf with no analog support, with update from 15 Jan 2014" maxInputVolts="30V" maxMotorCurrent="0.3A" maxTotalCurrent="0.3A">
-          <output name="1" label="Front Light" maxcurrent="20mA" />
-          <output name="2" label="Rear Light" maxcurrent="20mA" />
-          <output name="3" label="Onboard light LED" maxcurrent="20mA" />
+        <model model="DH06A v3.03 (firmware 3.03+)" lowVersionID="3" highVersionID="3" numOuts="3" numFns="16" productID="DH06A_3.03" comment="DH06A for Köf with no analog support, with update from 15 Jan 2014" maxInputVolts="30V" maxMotorCurrent="0.3A" maxTotalCurrent="0.3A">
+          <output name="1" label="Front|Light" maxcurrent="20mA" />
+          <output name="2" label="Rear|Light" maxcurrent="20mA" />
+          <output name="3" label="Onboard|LED" maxcurrent="20mA" />
+          <output name="4" label="|" />
+          <!-- not available for this decoder -->
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="16" width="9.3" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2195,11 +2377,17 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_DH10A.xml">
-        <model model="DH10A v1.10 (firmware 3.03+)" lowVersionID="1" highVersionID="1" numOuts="4" numFns="14" productID="DH10A_3.03" comment="DH10A-0 / DH10A-1 / DH10A-3 with update from 15 Jan 2014" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+        <model model="DH10A v1.10 (firmware 3.03+)" lowVersionID="1" highVersionID="1" numOuts="4" numFns="16" productID="DH10A_3.03" comment="DH10A-0 / DH10A-1 / DH10A-3 with update from 15 Jan 2014" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="14.3" width="9.2" height="1.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2208,11 +2396,17 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_DH10B.xml">
-        <model model="DH10B v2.08 (firmware 3.03+)" lowVersionID="2" highVersionID="2" numOuts="4" numFns="14" productID="DH10B_3.03" comment="DH10B-0 / DH10B-1 / DH10B-3 with update from 15 Jan 2014" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+        <model model="DH10B v2.08 (firmware 3.03+)" lowVersionID="2" highVersionID="2" numOuts="4" numFns="16" productID="DH10B_3.03" comment="DH10B-0 / DH10B-1 / DH10B-3 with update from 15 Jan 2014" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="14.3" width="9.2" height="1.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2221,15 +2415,17 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_DH10C.xml">
-        <model model="DH10C v3.03 (firmware 3.03+)" lowVersionID="3" highVersionID="3" numOuts="6" numFns="14" productID="DH10C_3.03" comment="DH10C-0 / DH10C-1 / DH10C-3 with update from 15 Jan 2014" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3 (or SUSI ZCLK)" maxcurrent="300mA" />
+        <model model="DH10C v3.03 (firmware 3.03+)" lowVersionID="3" highVersionID="3" numOuts="6" numFns="16" productID="DH10C_3.03" comment="DH10C-0 / DH10C-1 / DH10C-3 with update from 15 Jan 2014" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX 3|(or SUSI ZCLK)" maxcurrent="20mA" />
           <!-- New from fw3.03  -->
-          <output name="6" label="AUX 4 (or SUSI ZDAT)" maxcurrent="300mA" />
+          <output name="6" label="AUX 4|(or SUSI ZDAT)" maxcurrent="20mA" />
           <!-- New from fw3.03  -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="14.2" width="9.3" height="1.5" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2238,13 +2434,15 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_DH12A.xml">
-        <model model="DH12A v3.03 (firmware 3.03+)" lowVersionID="3" highVersionID="3" numOuts="6" numFns="14" productID="DH12A_3.03" comment="DH12A with update from 15 Jan 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX12">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3" maxcurrent="NC - Logic Level" />
-          <output name="6" label="AUX 4" maxcurrent="NC - Logic Level" />
+        <model model="DH12A v3.03 (firmware 3.03+)" lowVersionID="3" highVersionID="3" numOuts="6" numFns="16" productID="DH12A_3.03" comment="DH12A with update from 15 Jan 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX12">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="NC - Logic Level" />
+          <output name="6" label="AUX|4" maxcurrent="NC - Logic Level" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="14.5" width="8" height="2.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2253,13 +2451,15 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_DH16A.xml">
-        <model model="DH16A v3.03 (firmware 3.03+)" lowVersionID="3" highVersionID="3" numOuts="6" numFns="14" productID="DH16A_3.03" comment="DH16A-0 /DH16A-1 /DH16A-2 /DH16A-3 with update from 15 Jan 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX16">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3" maxcurrent="1.0A" />
-          <output name="6" label="AUX 4" maxcurrent="1.0A" />
+        <model model="DH16A v3.03 (firmware 3.03+)" lowVersionID="3" highVersionID="3" numOuts="6" numFns="16" productID="DH16A_3.03" comment="DH16A-0 /DH16A-1 /DH16A-2 /DH16A-3 with update from 15 Jan 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX16">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1.0A" />
+          <output name="6" label="AUX|4" maxcurrent="1.0A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="16.7" width="10.9" height="2.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2268,13 +2468,15 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_DH18A.xml">
-        <model model="DH18A v3.03 (firmware 3.03+)" lowVersionID="3" highVersionID="3" numOuts="6" numFns="14" productID="DH18A_3.03" comment="DH18A with update from 15 Jan 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Next18">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3" maxcurrent="Logic" />
-          <output name="6" label="AUX 4" maxcurrent="Logic" />
+        <model model="DH18A v3.03 (firmware 3.03+)" lowVersionID="3" highVersionID="3" numOuts="6" numFns="16" productID="DH18A_3.03" comment="DH18A with update from 15 Jan 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Next18">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="NC - Logic Level" />
+          <output name="6" label="AUX|4" maxcurrent="NC - Logic Level" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="13.5" width="9.0" height="2.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2283,13 +2485,15 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_DH21A.xml">
-        <model model="DH21A v3.03 (firmware 3.03+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="14" productID="DH21A_3.03" comment="DH21A with release firmware" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A" connector="21MTC">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3" maxcurrent="1A" />
-          <output name="6" label="AUX 4" maxcurrent="1A" />
+        <model model="DH21A v3.03 (firmware 3.03+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="16" productID="DH21A_3.03" comment="DH21A with release firmware" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A" connector="21MTC">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1A" />
+          <output name="6" label="AUX|4" maxcurrent="1A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="20.7" width="15.8" height="5.2" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2298,10 +2502,18 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_DHP160.xml">
-        <model model="DHP160/161/163 v8.10 (firmware 3.03+)" lowVersionID="8" highVersionID="8" numOuts="3" numFns="14" productID="DHP160_3.03" comment="DHP160 / DHP161 / DHP163 with update from 15 Jan 2014" maxInputVolts="25V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651/NEM652">
-          <output name="1" label="Front Light" maxcurrent="300mA" />
-          <output name="2" label="Rear Light" maxcurrent="300mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
+        <model model="DHP160/161/163 v8.10 (firmware 3.03+)" lowVersionID="8" highVersionID="8" numOuts="3" numFns="16" productID="DHP160_3.03" comment="DHP160 / DHP161 / DHP163 with update from 15 Jan 2014" maxInputVolts="25V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651/NEM652">
+          <output name="1" label="Front|Light" maxcurrent="300mA" />
+          <output name="2" label="Rear|Light" maxcurrent="300mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="|" />
+          <!-- not available for this decoder -->
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="14.2" width="9.2" height="2.0" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2310,13 +2522,15 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_DHP250.xml">
-        <model model="DHP250/252/253 v8.10 (firmware 3.03+)" lowVersionID="8" highVersionID="8" numOuts="6" numFns="14" productID="DHP250_3.03" comment="DHP250/252/253 with update from 15 Jan 2014" maxInputVolts="25V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Wires/NEM652">
-          <output name="1" label="Front Light" maxcurrent="300mA" />
-          <output name="2" label="Rear Light" maxcurrent="300mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="1.0A" />
-          <output name="5" label="AUX 3" maxcurrent="1.0A" />
-          <output name="6" label="AUX 4" maxcurrent="1.0A" />
+        <model model="DHP250/252/253 v8.10 (firmware 3.03+)" lowVersionID="8" highVersionID="8" numOuts="6" numFns="16" productID="DHP250_3.03" comment="DHP250/252/253 with update from 15 Jan 2014" maxInputVolts="25V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Wires/NEM652">
+          <output name="1" label="Front|Light" maxcurrent="300mA" />
+          <output name="2" label="Rear|Light" maxcurrent="300mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="1.0A" />
+          <output name="5" label="AUX|3" maxcurrent="1.0A" />
+          <output name="6" label="AUX|4" maxcurrent="1.0A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="23.3" width="12.9" height="2.7" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2325,13 +2539,15 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_DHP260.xml">
-        <model model="DHP260 v8.10 (firmware 3.03+)" lowVersionID="8" highVersionID="8" numOuts="6" numFns="14" productID="DHP260_3.03" comment="DHP260 with update from 15 Jan 2014" maxInputVolts="25V" maxMotorCurrent="2.0A" maxTotalCurrent="2.0A" connector="21MTC">
-          <output name="1" label="Front Light" maxcurrent="300mA" />
-          <output name="2" label="Rear Light" maxcurrent="300mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="1.0A" />
-          <output name="5" label="AUX 3" maxcurrent="1.0A" />
-          <output name="6" label="AUX 4" maxcurrent="1.0A" />
+        <model model="DHP260 v8.10 (firmware 3.03+)" lowVersionID="8" highVersionID="8" numOuts="6" numFns="16" productID="DHP260_3.03" comment="DHP260 with update from 15 Jan 2014" maxInputVolts="25V" maxMotorCurrent="2.0A" maxTotalCurrent="2.0A" connector="21MTC">
+          <output name="1" label="Front|Light" maxcurrent="300mA" />
+          <output name="2" label="Rear|Light" maxcurrent="300mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="1.0A" />
+          <output name="5" label="AUX|3" maxcurrent="1.0A" />
+          <output name="6" label="AUX|4" maxcurrent="1.0A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="22.2" width="15.7" height="5.7" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2340,15 +2556,17 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_FH05A.xml">
-        <model model="FH05A v1.10 (firmware 3.03+)" lowVersionID="1" highVersionID="1" numOuts="6" numFns="14" productID="FH05A_3.03" comment="FH05A-0 / FH05A-1 / FH05A-3 with update from 15 Jan 2014" maxInputVolts="30V" maxTotalCurrent="0.5A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3 (or SUSI ZCLK)" maxcurrent="300mA" />
+        <model model="FH05A v1.10 (firmware 3.03+)" lowVersionID="1" highVersionID="1" numOuts="6" numFns="16" productID="FH05A_3.03" comment="FH05A-0 / FH05A-1 / FH05A-3 with update from 15 Jan 2014" maxInputVolts="30V" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX 3|(or SUSI ZCLK)" maxcurrent="20mA" />
           <!-- New from fw3.03  -->
-          <output name="6" label="AUX 4 (or SUSI ZDAT)" maxcurrent="300mA" />
+          <output name="6" label="AUX 4|(or SUSI ZDAT)" maxcurrent="20mA" />
           <!-- New from fw3.03  -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="13.7" width="7.8" height="1.5" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2357,7 +2575,7 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.03+)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.03_generic.xml">
-        <model model="Generic DH v3.03 (firmware 3.03+)" numOuts="6" numFns="14" productID="GenericDH_3.03" comment="Generic DH profile for unknown or unlisted decoders with update from 15 Jan 2014">
+        <model model="Generic DH v3.03 (firmware 3.03+)" numOuts="6" numFns="16" productID="GenericDH_3.03" comment="Generic DH profile for unknown or unlisted decoders with update from 15 Jan 2014">
           <protocols>
             <protocol>dcc</protocol>
             <protocol>selectrix</protocol>
@@ -2365,43 +2583,55 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DH05A.xml">
-        <model model="DH05A v1.11 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="4" numFns="14" productID="DH05A_3.04" comment="DH05A-0 / DH05A-1 / DH05A-3 with update from 31 May 2014" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+        <model model="DH05A v1.11 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="4" numFns="16" productID="DH05A_3.04" comment="DH05A-0 / DH05A-1 / DH05A-3 with update from 31 May 2014" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="13.2" width="6.8" height="1.4" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
             <protocol>selectrix</protocol>
-            <protocol>motorola</protocol>
           </protocols>
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DH05B.xml">
-        <model model="DH05B v2.09 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="4" numFns="14" productID="DH05B_3.04" comment="DH05B-0 / DH05B-1 / DH05B-3 with update from 31 May 2014" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+        <model model="DH05B v2.09 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="4" numFns="16" productID="DH05B_3.04" comment="DH05B-0 / DH05B-1 / DH05B-3 with update from 31 May 2014" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="13.2" width="6.8" height="1.4" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
             <protocol>selectrix</protocol>
-            <protocol>motorola</protocol>
           </protocols>
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DH05C.xml">
-        <model model="DH05C v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="14" productID="DH05C_3.04" comment="DH05C-0 / DH05C-1 / DH05C-3 with update from 31 May 2014" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3 (or SUSI ZCLK)" maxcurrent="300mA" />
+        <model model="DH05C v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="16" productID="DH05C_3.04" comment="DH05C-0 / DH05C-1 / DH05C-3 with update from 31 May 2014" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX 3|(or SUSI ZCLK)" maxcurrent="20mA" />
           <!-- New from fw3.03  -->
-          <output name="6" label="AUX 4 (or SUSI ZDAT)" maxcurrent="300mA" />
+          <output name="6" label="AUX 4|(or SUSI ZDAT)" maxcurrent="20mA" />
           <!-- New from fw3.03  -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="13.2" width="6.8" height="1.4" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2411,10 +2641,18 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DH06A.xml">
-        <model model="DH06A v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="3" numFns="14" productID="DH06A_3.04" comment="DH06A for Köf with no analog support, with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="0.3A" maxTotalCurrent="0.3A">
-          <output name="1" label="Front Light" maxcurrent="20mA" />
-          <output name="2" label="Rear Light" maxcurrent="20mA" />
-          <output name="3" label="Onboard light LED" maxcurrent="20mA" />
+        <model model="DH06A v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="3" numFns="16" productID="DH06A_3.04" comment="DH06A for Köf with no analog support, with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="0.3A" maxTotalCurrent="0.3A">
+          <output name="1" label="Front|Light" maxcurrent="20mA" />
+          <output name="2" label="Rear|Light" maxcurrent="20mA" />
+          <output name="3" label="Onboard|LED" maxcurrent="20mA" />
+          <output name="4" label="|" />
+          <!-- not available for this decoder -->
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="16" width="9.3" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2424,43 +2662,55 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DH10A.xml">
-        <model model="DH10A v1.11 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="4" numFns="14" productID="DH10A_3.04" comment="DH10A-0 / DH10A-1 / DH10A-3 with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+        <model model="DH10A v1.11 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="4" numFns="16" productID="DH10A_3.04" comment="DH10A-0 / DH10A-1 / DH10A-3 with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="14.3" width="9.2" height="1.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
             <protocol>selectrix</protocol>
-            <protocol>motorola</protocol>
           </protocols>
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DH10B.xml">
-        <model model="DH10B v2.09 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="4" numFns="14" productID="DH10B_3.04" comment="DH10B-0 / DH10B-1 / DH10B-3 with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+        <model model="DH10B v2.09 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="4" numFns="16" productID="DH10B_3.04" comment="DH10B-0 / DH10B-1 / DH10B-3 with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="14.3" width="9.2" height="1.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
             <protocol>selectrix</protocol>
-            <protocol>motorola</protocol>
           </protocols>
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DH10C.xml">
-        <model model="DH10C v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="14" productID="DH10C_3.04" comment="DH10C-0 / DH10C-1 / DH10C-3 with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3 (or SUSI ZCLK)" maxcurrent="300mA" />
+        <model model="DH10C v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="16" productID="DH10C_3.04" comment="DH10C-0 / DH10C-1 / DH10C-3 with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX 3|(or SUSI ZCLK)" maxcurrent="20mA" />
           <!-- New from fw3.03  -->
-          <output name="6" label="AUX 4 (or SUSI ZDAT)" maxcurrent="300mA" />
+          <output name="6" label="AUX 4|(or SUSI ZDAT)" maxcurrent="20mA" />
           <!-- New from fw3.03  -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="14.2" width="9.3" height="1.5" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2470,13 +2720,15 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DH12A.xml">
-        <model model="DH12A v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="14" productID="DH12A_3.04" comment="DH12A with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX12">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3" maxcurrent="NC - Logic Level" />
-          <output name="6" label="AUX 4" maxcurrent="NC - Logic Level" />
+        <model model="DH12A v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="16" productID="DH12A_3.04" comment="DH12A with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX12">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="NC - Logic Level" />
+          <output name="6" label="AUX|4" maxcurrent="NC - Logic Level" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="14.5" width="8" height="2.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2486,13 +2738,15 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DH16A.xml">
-        <model model="DH16A v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="14" productID="DH16A_3.04" comment="DH16A-0 /DH16A-1 /DH16A-2 /DH16A-3 with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX16">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3" maxcurrent="1.0A" />
-          <output name="6" label="AUX 4" maxcurrent="1.0A" />
+        <model model="DH16A v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="16" productID="DH16A_3.04" comment="DH16A-0 /DH16A-1 /DH16A-2 /DH16A-3 with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX16">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1.0A" />
+          <output name="6" label="AUX|4" maxcurrent="1.0A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="16.7" width="10.9" height="2.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2502,13 +2756,15 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DH18A.xml">
-        <model model="DH18A v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="14" productID="DH18A_3.04" comment="DH18A with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Next18">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3" maxcurrent="Logic" />
-          <output name="6" label="AUX 4" maxcurrent="Logic" />
+        <model model="DH18A v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="16" productID="DH18A_3.04" comment="DH18A with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Next18">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="NC - Logic Level" />
+          <output name="6" label="AUX|4" maxcurrent="NC - Logic Level" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="13.5" width="9.0" height="2.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2518,13 +2774,33 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DH21A.xml">
-        <model model="DH21A v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="14" productID="DH21A_3.04" comment="DH21A with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A" connector="21MTC">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3" maxcurrent="1A" />
-          <output name="6" label="AUX 4" maxcurrent="1A" />
+        <model model="DH21A v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="16" productID="DH21A_3.04" comment="DH21A with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A" connector="21MTC">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1A" />
+          <output name="6" label="AUX|4" maxcurrent="1A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="20.7" width="15.8" height="5.2" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+      </family>
+      <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DH22A.xml">
+        <model model="DH22A v3.04 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="16" productID="DH22A_3.04" comment="DH22A with update from 31 May 2014" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A" connector="PluX22">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1A" />
+          <output name="6" label="AUX|4" maxcurrent="1A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="20.7" width="15.8" height="5.2" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2534,61 +2810,80 @@
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DHP160.xml">
-        <model model="DHP160/161/163 v8.11 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="3" numFns="14" productID="DHP160_3.04" comment="DHP160 / DHP161 / DHP163 with update from 31 May 2014" maxInputVolts="25V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651/NEM652">
-          <output name="1" label="Front Light" maxcurrent="300mA" />
-          <output name="2" label="Rear Light" maxcurrent="300mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
+        <model model="DHP160/161/163 v8.11 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="3" numFns="16" productID="DHP160_3.04" comment="DHP160 / DHP161 / DHP163 with update from 31 May 2014" maxInputVolts="25V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651/NEM652">
+          <output name="1" label="Front|Light" maxcurrent="300mA" />
+          <output name="2" label="Rear|Light" maxcurrent="300mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="|" />
+          <!-- not available for this decoder -->
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="14.2" width="9.2" height="2.0" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
             <protocol>selectrix</protocol>
-            <protocol>motorola</protocol>
           </protocols>
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DHP250.xml">
-        <model model="DHP250/252/253 v8.11 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="14" productID="DHP250_3.04" comment="DHP250/252/253 with update from 31 May 2014" maxInputVolts="25V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Wires/NEM652">
-          <output name="1" label="Front Light" maxcurrent="300mA" />
-          <output name="2" label="Rear Light" maxcurrent="300mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="1.0A" />
-          <output name="5" label="AUX 3" maxcurrent="1.0A" />
-          <output name="6" label="AUX 4" maxcurrent="1.0A" />
+        <model model="DHP250/252/253 v8.11 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="16" productID="DHP250_3.04" comment="DHP250/252/253 with update from 31 May 2014" maxInputVolts="25V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Wires/NEM652">
+          <output name="1" label="Front|Light" maxcurrent="300mA" />
+          <output name="2" label="Rear|Light" maxcurrent="300mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="1.0A" />
+          <output name="5" label="AUX|3" maxcurrent="1.0A" />
+          <output name="6" label="AUX|4" maxcurrent="1.0A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="23.3" width="12.9" height="2.7" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
             <protocol>selectrix</protocol>
-            <protocol>motorola</protocol>
           </protocols>
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_DHP260.xml">
-        <model model="DHP260 v8.11 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="14" productID="DHP260_3.04" comment="DHP260 with update from 31 May 2014" maxInputVolts="25V" maxMotorCurrent="2.0A" maxTotalCurrent="2.0A" connector="21MTC">
-          <output name="1" label="Front Light" maxcurrent="300mA" />
-          <output name="2" label="Rear Light" maxcurrent="300mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="1.0A" />
-          <output name="5" label="AUX 3" maxcurrent="1.0A" />
-          <output name="6" label="AUX 4" maxcurrent="1.0A" />
+        <model model="DHP260 v8.11 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="16" productID="DHP260_3.04" comment="DHP260 with update from 31 May 2014" maxInputVolts="25V" maxMotorCurrent="2.0A" maxTotalCurrent="2.0A" connector="21MTC">
+          <output name="1" label="Front|Light" maxcurrent="300mA" />
+          <output name="2" label="Rear|Light" maxcurrent="300mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="1.0A" />
+          <output name="5" label="AUX|3" maxcurrent="1.0A" />
+          <output name="6" label="AUX|4" maxcurrent="1.0A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="22.2" width="15.7" height="5.7" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
             <protocol>selectrix</protocol>
-            <protocol>motorola</protocol>
           </protocols>
         </model>
       </family>
       <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_FH05A.xml">
-        <model model="FH05A v1.11 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="14" productID="FH05A_3.04" comment="FH05A-0 / FH05A-1 / FH05A-3 with update from 31 May 2014" maxInputVolts="30V" maxTotalCurrent="0.5A" connector="Wires/NEM651">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3 (or SUSI ZCLK)" maxcurrent="300mA" />
+        <model model="FH05A v1.11 (firmware 3.04+)" lowVersionID="54" highVersionID="54" numOuts="6" numFns="16" productID="FH05A_3.04" comment="FH05A-0 / FH05A-1 / FH05A-3 with update from 31 May 2014" maxInputVolts="30V" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX 3|(or SUSI ZCLK)" maxcurrent="20mA" />
           <!-- New from fw3.03  -->
-          <output name="6" label="AUX 4 (or SUSI ZDAT)" maxcurrent="300mA" />
+          <output name="6" label="AUX 4|(or SUSI ZDAT)" maxcurrent="20mA" />
           <!-- New from fw3.03  -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="13.7" width="7.8" height="1.5" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+          </protocols>
+        </model>
+      </family>
+      <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_generic.xml">
+        <model model="Generic DH v3.04 (firmware 3.04+)" numOuts="6" numFns="16" productID="GenericDH_3.04" comment="Generic DH profile for unknown or unlisted decoders with update from 31 May 2014">
           <protocols>
             <protocol>dcc</protocol>
             <protocol>selectrix</protocol>
@@ -2596,8 +2891,448 @@
           </protocols>
         </model>
       </family>
-      <family name="Train Decoders (firmware 3.04 - May 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.04_generic.xml">
-        <model model="Generic DH v3.04 (firmware 3.04+)" numOuts="6" numFns="14" productID="GenericDH_3.04" comment="Generic DH profile for unknown or unlisted decoders with update from 31 May 2014">
+      <family name="Train Decoders (firmware 3.05 - Oct 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.05_DH05C.xml">
+        <model model="DH05C v3.05.104 (firmware 3.05+)" lowVersionID="104" highVersionID="104" numOuts="6" numFns="16" productID="DH05C_2014.10" comment="DH05C-0 / DH05C-1 / DH05C-3 with update from October 2014" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX 3|(or SUSI ZCLK)" maxcurrent="20mA" />
+          <!-- New from fw3.03  -->
+          <output name="6" label="AUX 4|(or SUSI ZDAT)" maxcurrent="20mA" />
+          <!-- New from fw3.03  -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="13.2" width="6.8" height="1.4" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH05C v3.05.114 (firmware 3.05+)" lowVersionID="114" highVersionID="114" numOuts="6" numFns="16" productID="DH05C_2014.11" comment="DH05C-0 / DH05C-1 / DH05C-3 with update from November 2014" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX 3|(or SUSI ZCLK)" maxcurrent="20mA" />
+          <!-- New from fw3.03  -->
+          <output name="6" label="AUX 4|(or SUSI ZDAT)" maxcurrent="20mA" />
+          <!-- New from fw3.03  -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="13.2" width="6.8" height="1.4" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH05C v3.05.15 (firmware 3.05+)" lowVersionID="15" highVersionID="15" numOuts="6" numFns="16" productID="DH05C_2015.01" comment="DH05C-0 / DH05C-1 / DH05C-3 with update from January 2015" maxInputVolts="18V" maxMotorCurrent="0.5A" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX 3|(or SUSI ZCLK)" maxcurrent="20mA" />
+          <!-- New from fw3.03  -->
+          <output name="6" label="AUX 4|(or SUSI ZDAT)" maxcurrent="20mA" />
+          <!-- New from fw3.03  -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="13.2" width="6.8" height="1.4" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+      </family>
+      <family name="Train Decoders (firmware 3.05 - Oct 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.05_DH06A.xml">
+        <model model="DH06A v3.05.104 (firmware 3.05+)" lowVersionID="104" highVersionID="104" numOuts="3" numFns="16" productID="DH06A_2014.10" comment="DH06A for Köf with no analog support, with update from October 2014" maxInputVolts="30V" maxMotorCurrent="0.3A" maxTotalCurrent="0.3A">
+          <output name="1" label="Front|Light" maxcurrent="20mA" />
+          <output name="2" label="Rear|Light" maxcurrent="20mA" />
+          <output name="3" label="Onboard|LED" maxcurrent="20mA" />
+          <output name="4" label="|" />
+          <!-- not available for this decoder -->
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="16" width="9.3" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH06A v3.05.114 (firmware 3.05+)" lowVersionID="114" highVersionID="114" numOuts="3" numFns="16" productID="DH06A_2014.11" comment="DH06A for Köf with no analog support, with update from November 2014" maxInputVolts="30V" maxMotorCurrent="0.3A" maxTotalCurrent="0.3A">
+          <output name="1" label="Front|Light" maxcurrent="20mA" />
+          <output name="2" label="Rear|Light" maxcurrent="20mA" />
+          <output name="3" label="Onboard|LED" maxcurrent="20mA" />
+          <output name="4" label="|" />
+          <!-- not available for this decoder -->
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="16" width="9.3" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH06A v3.05.15 (firmware 3.05+)" lowVersionID="15" highVersionID="15" numOuts="3" numFns="16" productID="DH06A_2015.01" comment="DH06A for Köf with no analog support, with update from January 2015" maxInputVolts="30V" maxMotorCurrent="0.3A" maxTotalCurrent="0.3A">
+          <output name="1" label="Front|Light" maxcurrent="20mA" />
+          <output name="2" label="Rear|Light" maxcurrent="20mA" />
+          <output name="3" label="Onboard|LED" maxcurrent="20mA" />
+          <output name="4" label="|" />
+          <!-- not available for this decoder -->
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="16" width="9.3" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+      </family>
+      <family name="Train Decoders (firmware 3.05 - Oct 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.05_DH10C.xml">
+        <model model="DH10C v3.05.104 (firmware 3.05+)" lowVersionID="104" highVersionID="104" numOuts="6" numFns="16" productID="DH10C_2014.10" comment="DH10C-0 / DH10C-1 / DH10C-3 with update from October 2014" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX 3|(or SUSI ZCLK)" maxcurrent="20mA" />
+          <!-- New from fw3.03  -->
+          <output name="6" label="AUX 4|(or SUSI ZDAT)" maxcurrent="20mA" />
+          <!-- New from fw3.03  -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="14.2" width="9.3" height="1.5" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH10C v3.05.114 (firmware 3.05+)" lowVersionID="114" highVersionID="114" numOuts="6" numFns="16" productID="DH10C_2014.11" comment="DH10C-0 / DH10C-1 / DH10C-3 with update from November 2014" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX 3|(or SUSI ZCLK)" maxcurrent="20mA" />
+          <!-- New from fw3.03  -->
+          <output name="6" label="AUX 4|(or SUSI ZDAT)" maxcurrent="20mA" />
+          <!-- New from fw3.03  -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="14.2" width="9.3" height="1.5" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH10C v3.05.15 (firmware 3.05+)" lowVersionID="15" highVersionID="15" numOuts="6" numFns="16" productID="DH10C_2015.01" comment="DH10C-0 / DH10C-1 / DH10C-3 with update from January 2015" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX 3|(or SUSI ZCLK)" maxcurrent="20mA" />
+          <!-- New from fw3.03  -->
+          <output name="6" label="AUX 4|(or SUSI ZDAT)" maxcurrent="20mA" />
+          <!-- New from fw3.03  -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="14.2" width="9.3" height="1.5" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+      </family>
+      <family name="Train Decoders (firmware 3.05 - Oct 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.05_DH12A.xml">
+        <model model="DH12A v3.05.104 (firmware 3.05+)" lowVersionID="104" highVersionID="104" numOuts="6" numFns="16" productID="DH12A_2014.10" comment="DH12A with update from October 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX12">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="NC - Logic Level" />
+          <output name="6" label="AUX|4" maxcurrent="NC - Logic Level" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="14.5" width="8" height="2.8" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH12A v3.05.114 (firmware 3.05+)" lowVersionID="114" highVersionID="114" numOuts="6" numFns="16" productID="DH12A_2014.11" comment="DH12A with update from November 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX12">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="NC - Logic Level" />
+          <output name="6" label="AUX|4" maxcurrent="NC - Logic Level" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="14.5" width="8" height="2.8" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH12A v3.05.15 (firmware 3.05+)" lowVersionID="15" highVersionID="15" numOuts="6" numFns="16" productID="DH12A_2015.01" comment="DH12A with update from January 2015" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX12">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="NC - Logic Level" />
+          <output name="6" label="AUX|4" maxcurrent="NC - Logic Level" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="14.5" width="8" height="2.8" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+      </family>
+      <family name="Train Decoders (firmware 3.05 - Oct 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.05_DH16A.xml">
+        <model model="DH16A v3.05.104 (firmware 3.05+)" lowVersionID="104" highVersionID="104" numOuts="6" numFns="16" productID="DH16A_2014.10" comment="DH16A-0 /DH16A-1 /DH16A-2 /DH16A-3 with update from October 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX16">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1.0A" />
+          <output name="6" label="AUX|4" maxcurrent="1.0A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="16.7" width="10.9" height="2.8" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH16A v3.05.114 (firmware 3.05+)" lowVersionID="114" highVersionID="114" numOuts="6" numFns="16" productID="DH16A_2014.11" comment="DH16A-0 /DH16A-1 /DH16A-2 /DH16A-3 with update from November 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX16">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1.0A" />
+          <output name="6" label="AUX|4" maxcurrent="1.0A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="16.7" width="10.9" height="2.8" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH16A v3.05.15 (firmware 3.05+)" lowVersionID="15" highVersionID="15" numOuts="6" numFns="16" productID="DH16A_2015.01" comment="DH16A-0 /DH16A-1 /DH16A-2 /DH16A-3 with update from January 2015" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="PluX16">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1.0A" />
+          <output name="6" label="AUX|4" maxcurrent="1.0A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="16.7" width="10.9" height="2.8" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+      </family>
+      <family name="Train Decoders (firmware 3.05 - Oct 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.05_DH18A.xml">
+        <model model="DH18A v3.05.104 (firmware 3.05+)" lowVersionID="104" highVersionID="104" numOuts="6" numFns="16" productID="DH18A_2014.10" comment="DH18A with update from October 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Next18">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="NC - Logic Level" />
+          <output name="6" label="AUX|4" maxcurrent="NC - Logic Level" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="13.5" width="9.0" height="2.8" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH18A v3.05.114 (firmware 3.05+)" lowVersionID="114" highVersionID="114" numOuts="6" numFns="16" productID="DH18A_2014.11" comment="DH18A with update from November 2014" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Next18">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="NC - Logic Level" />
+          <output name="6" label="AUX|4" maxcurrent="NC - Logic Level" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="13.5" width="9.0" height="2.8" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH18A v3.05.15 (firmware 3.05+)" lowVersionID="15" highVersionID="15" numOuts="6" numFns="16" productID="DH18A_2015.01" comment="DH18A with update from January 2015" maxInputVolts="30V" maxMotorCurrent="1.5A" maxTotalCurrent="1.5A" connector="Next18">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="NC - Logic Level" />
+          <output name="6" label="AUX|4" maxcurrent="NC - Logic Level" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="13.5" width="9.0" height="2.8" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+      </family>
+      <family name="Train Decoders (firmware 3.05 - Oct 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.05_DH21A.xml">
+        <model model="DH21A v3.05.104 (firmware 3.05+)" lowVersionID="104" highVersionID="104" numOuts="6" numFns="16" productID="DH21A_2014.10" comment="DH21A with update from October 2014" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A" connector="21MTC">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1A" />
+          <output name="6" label="AUX|4" maxcurrent="1A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="20.7" width="15.8" height="5.2" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH21A v3.05.114 (firmware 3.05+)" lowVersionID="114" highVersionID="114" numOuts="6" numFns="16" productID="DH21A_2014.11" comment="DH21A with update from November 2014" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A" connector="21MTC">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1A" />
+          <output name="6" label="AUX|4" maxcurrent="1A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="20.7" width="15.8" height="5.2" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH21A v3.05.15 (firmware 3.05+)" lowVersionID="15" highVersionID="15" numOuts="6" numFns="16" productID="DH21A_2015.01" comment="DH21A with update from January 2015" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A" connector="21MTC">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1A" />
+          <output name="6" label="AUX|4" maxcurrent="1A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="20.7" width="15.8" height="5.2" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+      </family>
+      <family name="Train Decoders (firmware 3.05 - Oct 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.05_DH22A.xml">
+        <model model="DH22A v3.05.104 (firmware 3.05+)" lowVersionID="104" highVersionID="104" numOuts="6" numFns="16" productID="DH22A_2014.10" comment="DH22A with update from October 2014" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A" connector="PluX22">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1A" />
+          <output name="6" label="AUX|4" maxcurrent="1A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="20.7" width="15.8" height="5.2" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH22A v3.05.114 (firmware 3.05+)" lowVersionID="114" highVersionID="114" numOuts="6" numFns="16" productID="DH22A_2014.11" comment="DH22A with update from November 2014" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A" connector="PluX22">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1A" />
+          <output name="6" label="AUX|4" maxcurrent="1A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="20.7" width="15.8" height="5.2" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="DH22A v3.05.15 (firmware 3.05+)" lowVersionID="15" highVersionID="15" numOuts="6" numFns="16" productID="DH22A_2015.01" comment="DH22A with update from January 2015" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A" connector="PluX22">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1A" />
+          <output name="6" label="AUX|4" maxcurrent="1A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="20.7" width="15.8" height="5.2" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+      </family>
+      <family name="Train Decoders (firmware 3.05 - Oct 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.05_FH05A.xml">
+        <model model="FH05A v1.12.104 (firmware 3.05+)" lowVersionID="104" highVersionID="104" numOuts="6" numFns="16" productID="FH05A_2014.10" comment="FH05A-0 / FH05A-1 / FH05A-3 with update from October 2014" maxInputVolts="30V" maxTotalCurrent="0.5A" connector="Wires/NEM651">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX 3|(or SUSI ZCLK)" maxcurrent="20mA" />
+          <!-- New from fw3.03  -->
+          <output name="6" label="AUX 4|(or SUSI ZDAT)" maxcurrent="20mA" />
+          <!-- New from fw3.03  -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="13.7" width="7.8" height="1.5" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+          </protocols>
+        </model>
+      </family>
+      <family name="Train Decoders (firmware 3.05 - Oct 2014)" mfg="Doehler und Haass" file="Doehler_Haass_fw3.05_generic.xml">
+        <model model="Generic DH v3.05 (firmware 3.05+)" numOuts="6" numFns="16" productID="GenericDH_2014.10" comment="Generic DH profile for unknown or unlisted decoders with update from October 2014">
           <protocols>
             <protocol>dcc</protocol>
             <protocol>selectrix</protocol>
@@ -2606,22 +3341,34 @@
         </model>
       </family>
       <family name="Combo sound decoders" mfg="Doehler und Haass" file="Doehler_Haass_sd_SD18A.xml">
-        <model model="SD18A (firmware 1.00+)" lowVersionID="1" highVersionID="1" numOuts="4" numFns="14" productID="SD18A_1.00" comment="SD18A with original firmware" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Next18">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+        <model model="SD18A (firmware 1.00+)" lowVersionID="1" highVersionID="1" numOuts="4" numFns="16" productID="SD18A_1.00" comment="SD18A with original firmware" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Next18">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="25.0" width="9.5" height="2.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
             <protocol>selectrix</protocol>
           </protocols>
         </model>
-        <model model="SD18A (firmware 1.01+)" lowVersionID="1" highVersionID="1" numOuts="4" numFns="14" productID="SD18A_1.01" comment="SD18A with firmware 1.01" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Next18">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+        <model model="SD18A (firmware 1.01+)" lowVersionID="1" highVersionID="1" numOuts="4" numFns="16" productID="SD18A_1.01" comment="SD18A with firmware 1.01" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Next18">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="25.0" width="9.5" height="2.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2629,11 +3376,35 @@
             <protocol>motorola</protocol>
           </protocols>
         </model>
-        <model model="SD18A (firmware 1.02+)" lowVersionID="74" highVersionID="74" numOuts="4" numFns="14" productID="SD18A_1.02" comment="SD18A with July 2014 firmware" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Next18">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
+        <model model="SD18A (firmware 1.02+)" lowVersionID="74" highVersionID="74" numOuts="4" numFns="16" productID="SD18A_1.02" comment="SD18A with July 2014 firmware" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Next18">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="|" />
+          <!-- not available for this decoder -->
+          <output name="6" label="|" />
+          <!-- not available for this decoder -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="25.0" width="9.5" height="2.8" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="SD18A (firmware 1.03+)" lowVersionID="104" highVersionID="104" numOuts="6" numFns="16" productID="SD18A_1.03" comment="SD18A with October 2014 firmware" maxInputVolts="30V" maxMotorCurrent="1A" maxTotalCurrent="1A" connector="Next18">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX 3|(or SUSI ZCLK)" maxcurrent="20mA" />
+          <!-- New from fw1.03  -->
+          <output name="6" label="AUX 4|(or SUSI ZDAT)" maxcurrent="20mA" />
+          <!-- New from fw1.03  -->
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="25.0" width="9.5" height="2.8" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2643,13 +3414,15 @@
         </model>
       </family>
       <family name="Combo sound decoders" mfg="Doehler und Haass" file="Doehler_Haass_sd_SD21A.xml">
-        <model model="SD21A (firmware 1.01+)" lowVersionID="1" highVersionID="1" numOuts="6" numFns="14" productID="SD21A_1.01" comment="SD21A with firmware 1.01" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3" maxcurrent="1A" />
-          <output name="6" label="AUX 4" maxcurrent="1A" />
+        <model model="SD21A (firmware 1.01+)" lowVersionID="1" highVersionID="1" numOuts="6" numFns="16" productID="SD21A_1.01" comment="SD21A with firmware 1.01" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1A" />
+          <output name="6" label="AUX|4" maxcurrent="1A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="30.2" width="15.8" height="5.2" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2657,13 +3430,31 @@
             <protocol>motorola</protocol>
           </protocols>
         </model>
-        <model model="SD21A (firmware 1.02+)" lowVersionID="74" highVersionID="74" numOuts="6" numFns="14" productID="SD21A_1.02" comment="SD21A with July 2014 firmware" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A">
-          <output name="1" label="Front Light" maxcurrent="150mA" />
-          <output name="2" label="Rear Light" maxcurrent="150mA" />
-          <output name="3" label="AUX 1" maxcurrent="300mA" />
-          <output name="4" label="AUX 2" maxcurrent="300mA" />
-          <output name="5" label="AUX 3" maxcurrent="1A" />
-          <output name="6" label="AUX 4" maxcurrent="1A" />
+        <model model="SD21A (firmware 1.02+)" lowVersionID="74" highVersionID="74" numOuts="6" numFns="16" productID="SD21A_1.02" comment="SD21A with July 2014 firmware" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1A" />
+          <output name="6" label="AUX|4" maxcurrent="1A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
+          <size length="30.2" width="15.8" height="5.2" units="mm" />
+          <protocols>
+            <protocol>dcc</protocol>
+            <protocol>selectrix</protocol>
+            <protocol>motorola</protocol>
+          </protocols>
+        </model>
+        <model model="SD21A (firmware 1.03+)" lowVersionID="104" highVersionID="104" numOuts="6" numFns="16" productID="SD21A_1.03" comment="SD21A with October 2014 firmware" maxInputVolts="30V" maxMotorCurrent="2A" maxTotalCurrent="2A">
+          <output name="1" label="Front|Light" maxcurrent="150mA" />
+          <output name="2" label="Rear|Light" maxcurrent="150mA" />
+          <output name="3" label="AUX|1" maxcurrent="300mA" />
+          <output name="4" label="AUX|2" maxcurrent="300mA" />
+          <output name="5" label="AUX|3" maxcurrent="1A" />
+          <output name="6" label="AUX|4" maxcurrent="1A" />
+          <output name="7" label="Dimmed|Lights" />
+          <output name="8" label="Shunting|Speed" />
           <size length="30.2" width="15.8" height="5.2" units="mm" />
           <protocols>
             <protocol>dcc</protocol>
@@ -2686,6 +3477,9 @@
           <size length="20" width="12" height="1.9" units="mm" />
         </model>
         <model model="SH10A (firmware 1.04+)" numOuts="0" numFns="0" productID="SH10A_1.04" comment="SH10A with firmware 1.04 or later" maxInputVolts="30V" connector="SUSI">
+          <size length="20" width="12" height="1.9" units="mm" />
+        </model>
+        <model model="SH10A (firmware 1.05+)" numOuts="0" numFns="0" productID="SH10A_1.05" comment="SH10A with firmware 1.05 or later" maxInputVolts="30V" connector="SUSI">
           <size length="20" width="12" height="1.9" units="mm" />
         </model>
       </family>
@@ -3151,6 +3945,69 @@
         </functionlabels>
       </family>
       <family name="ESU LokSound Select" mfg="Electronic Solutions Ulm GmbH" lowVersionID="168" highVersionID="168" file="ESU_LokSound_Select.xml">
+        <model model="LokSound Select Diesel Generic" numOuts="92" numFns="40" maxMotorCurrent="1.1A" extFnsESU="yes" productID="Diesel Generic">
+          <size length="1.41" width=".51" height=".25" units="inches" />
+          <functionlabels>
+            <functionlabel num="0" lockable="true" />
+            <functionlabel num="1" lockable="true" />
+            <functionlabel num="2" lockable="false" />
+            <functionlabel num="3" lockable="true" />
+            <functionlabel num="4" lockable="true" />
+            <functionlabel num="5" lockable="true" />
+            <functionlabel num="6" lockable="true" />
+            <functionlabel num="7" lockable="true" />
+            <functionlabel num="8" lockable="true" />
+            <functionlabel num="9" lockable="true" />
+            <functionlabel num="10" lockable="true" />
+            <functionlabel num="11" lockable="true" />
+            <functionlabel num="12" lockable="true" />
+            <functionlabel num="13" lockable="true" />
+            <functionlabel num="14" lockable="true" />
+            <functionlabel num="15" lockable="true" />
+            <functionlabel num="16" lockable="true" />
+            <functionlabel num="17" lockable="true" />
+            <functionlabel num="18" lockable="true" />
+            <functionlabel num="19" lockable="true" />
+            <functionlabel num="20" lockable="true" />
+            <functionlabel num="21" lockable="true" />
+            <functionlabel num="22" lockable="true" />
+            <functionlabel num="23" lockable="true" />
+            <functionlabel num="24" lockable="true" />
+            <functionlabel num="25" lockable="true" />
+            <functionlabel num="26" lockable="true" />
+            <functionlabel num="27" lockable="true" />
+            <functionlabel num="28" lockable="true" />
+          </functionlabels>
+          <soundlabels>
+            <soundlabel num="1" />
+            <soundlabel num="2" />
+            <soundlabel num="3" />
+            <soundlabel num="4" />
+            <soundlabel num="5" />
+            <soundlabel num="6" />
+            <soundlabel num="7" />
+            <soundlabel num="8" />
+            <soundlabel num="9" />
+            <soundlabel num="10" />
+            <soundlabel num="11" />
+            <soundlabel num="12" />
+            <soundlabel num="13" />
+            <soundlabel num="14" />
+            <soundlabel num="15" />
+            <soundlabel num="16" />
+            <soundlabel num="17" />
+            <soundlabel num="18" />
+            <soundlabel num="19" />
+            <soundlabel num="20" />
+            <soundlabel num="21" />
+            <soundlabel num="22" />
+            <soundlabel num="23" />
+            <soundlabel num="24" />
+            <soundlabel num="25">Random sounds</soundlabel>
+            <soundlabel num="26">Automatic brake sound</soundlabel>
+            <soundlabel num="27">Gear shift sound</soundlabel>
+          </soundlabels>
+        </model>
         <model model="LokSound Select Alco 244" numOuts="92" numFns="40" maxMotorCurrent="1.1A" extFnsESU="yes" productID="73401">
           <size length="1.41" width=".51" height=".25" units="inches" />
         </model>
@@ -3233,25 +4090,25 @@
           <functionlabel num="0" lockable="true">Headlight</functionlabel>
           <functionlabel num="1" lockable="true">Bell</functionlabel>
           <functionlabel num="2" lockable="false">Horn</functionlabel>
-          <functionlabel num="3" lockable="false">Coupler</functionlabel>
+          <functionlabel num="3" lockable="true">Coupler</functionlabel>
           <functionlabel num="4" lockable="true">Dynamic Brake</functionlabel>
-          <functionlabel num="5" lockable="false">Mars Light</functionlabel>
-          <functionlabel num="6" lockable="false">Ditch Light</functionlabel>
+          <functionlabel num="5" lockable="true">Mars Light</functionlabel>
+          <functionlabel num="6" lockable="true">Ditch Light</functionlabel>
           <functionlabel num="7" lockable="true">Switching</functionlabel>
           <functionlabel num="8" lockable="true">Sound On</functionlabel>
           <functionlabel num="9" lockable="true">Notch Up</functionlabel>
-          <functionlabel num="10" lockable="false">Notch Down</functionlabel>
+          <functionlabel num="10" lockable="true">Notch Down</functionlabel>
           <functionlabel num="11" lockable="true">Radiator Fan</functionlabel>
-          <functionlabel num="12" lockable="false">Dimmer</functionlabel>
-          <functionlabel num="13" lockable="false">AUX4</functionlabel>
-          <functionlabel num="14" lockable="false">Detector</functionlabel>
-          <functionlabel num="15" lockable="false">Crossing</functionlabel>
-          <functionlabel num="16" lockable="false">Rail Clack</functionlabel>
-          <functionlabel num="17" lockable="false">Brake Set/Rel</functionlabel>
-          <functionlabel num="18" lockable="false">Sanding</functionlabel>
-          <functionlabel num="19" lockable="false">Air</functionlabel>
-          <functionlabel num="20" lockable="false">Compressor</functionlabel>
-          <functionlabel num="21" lockable="false">Spitter Valve</functionlabel>
+          <functionlabel num="12" lockable="true">Dimmer</functionlabel>
+          <functionlabel num="13" lockable="true">AUX4</functionlabel>
+          <functionlabel num="14" lockable="true">Detector</functionlabel>
+          <functionlabel num="15" lockable="true">Crossing</functionlabel>
+          <functionlabel num="16" lockable="true">Rail Clack</functionlabel>
+          <functionlabel num="17" lockable="true">Brake Set/Rel</functionlabel>
+          <functionlabel num="18" lockable="true">Sanding</functionlabel>
+          <functionlabel num="19" lockable="true">Air</functionlabel>
+          <functionlabel num="20" lockable="true">Compressor</functionlabel>
+          <functionlabel num="21" lockable="true">Spitter Valve</functionlabel>
         </functionlabels>
         <soundlabels>
           <soundlabel num="1">Diesel</soundlabel>
@@ -3275,6 +4132,69 @@
         </soundlabels>
       </family>
       <family name="ESU LokSound Select" mfg="Electronic Solutions Ulm GmbH" lowVersionID="168" highVersionID="168" file="ESU_LokSound_Select_Steam.xml">
+        <model model="LokSound Select Steam Generic" numOuts="92" numFns="40" maxMotorCurrent="1.1A" extFnsESU="yes" productID="Steam Generic">
+          <size length="1.41" width=".51" height=".25" units="inches" />
+          <functionlabels>
+            <functionlabel num="0" lockable="true" />
+            <functionlabel num="1" lockable="true" />
+            <functionlabel num="2" lockable="false" />
+            <functionlabel num="3" lockable="true" />
+            <functionlabel num="4" lockable="true" />
+            <functionlabel num="5" lockable="true" />
+            <functionlabel num="6" lockable="true" />
+            <functionlabel num="7" lockable="true" />
+            <functionlabel num="8" lockable="true" />
+            <functionlabel num="9" lockable="true" />
+            <functionlabel num="10" lockable="true" />
+            <functionlabel num="11" lockable="true" />
+            <functionlabel num="12" lockable="true" />
+            <functionlabel num="13" lockable="true" />
+            <functionlabel num="14" lockable="true" />
+            <functionlabel num="15" lockable="true" />
+            <functionlabel num="16" lockable="true" />
+            <functionlabel num="17" lockable="true" />
+            <functionlabel num="18" lockable="true" />
+            <functionlabel num="19" lockable="true" />
+            <functionlabel num="20" lockable="true" />
+            <functionlabel num="21" lockable="true" />
+            <functionlabel num="22" lockable="true" />
+            <functionlabel num="23" lockable="true" />
+            <functionlabel num="24" lockable="true" />
+            <functionlabel num="25" lockable="true" />
+            <functionlabel num="26" lockable="true" />
+            <functionlabel num="27" lockable="true" />
+            <functionlabel num="28" lockable="true" />
+          </functionlabels>
+          <soundlabels>
+            <soundlabel num="1" />
+            <soundlabel num="2" />
+            <soundlabel num="3" />
+            <soundlabel num="4" />
+            <soundlabel num="5" />
+            <soundlabel num="6" />
+            <soundlabel num="7" />
+            <soundlabel num="8" />
+            <soundlabel num="9" />
+            <soundlabel num="10" />
+            <soundlabel num="11" />
+            <soundlabel num="12" />
+            <soundlabel num="13" />
+            <soundlabel num="14" />
+            <soundlabel num="15" />
+            <soundlabel num="16" />
+            <soundlabel num="17" />
+            <soundlabel num="18" />
+            <soundlabel num="19" />
+            <soundlabel num="20" />
+            <soundlabel num="21" />
+            <soundlabel num="22" />
+            <soundlabel num="23" />
+            <soundlabel num="24" />
+            <soundlabel num="25">Random sounds</soundlabel>
+            <soundlabel num="26">Automatic brake sound</soundlabel>
+            <soundlabel num="27" />
+          </soundlabels>
+        </model>
         <model model="LokSound Select Big Boy 4-8-8-4" numOuts="92" numFns="40" maxMotorCurrent="1.1A" extFnsESU="yes" productID="73416">
           <size length="1.41" width=".51" height=".25" units="inches" />
         </model>
@@ -3303,24 +4223,24 @@
           <functionlabel num="0" lockable="true">Light</functionlabel>
           <functionlabel num="1" lockable="true">Bell</functionlabel>
           <functionlabel num="2" lockable="false">Whistle</functionlabel>
-          <functionlabel num="3" lockable="false">Coupler</functionlabel>
+          <functionlabel num="3" lockable="true">Coupler</functionlabel>
           <functionlabel num="4" lockable="true">Blower</functionlabel>
-          <functionlabel num="5" lockable="false">AUX3</functionlabel>
-          <functionlabel num="6" lockable="false">AUX1+AUX2</functionlabel>
+          <functionlabel num="5" lockable="true">AUX3</functionlabel>
+          <functionlabel num="6" lockable="true">AUX1+AUX2</functionlabel>
           <functionlabel num="7" lockable="true">Switching</functionlabel>
           <functionlabel num="8" lockable="true">Sound On</functionlabel>
           <functionlabel num="9" lockable="true">Dimmer</functionlabel>
-          <functionlabel num="10" lockable="false">Air Pump</functionlabel>
+          <functionlabel num="10" lockable="true">Air Pump</functionlabel>
           <functionlabel num="11" lockable="true">Oil Burner</functionlabel>
-          <functionlabel num="12" lockable="false">Coal Shovelling</functionlabel>
-          <functionlabel num="13" lockable="false">AUX4</functionlabel>
-          <functionlabel num="14" lockable="false">Injector</functionlabel>
-          <functionlabel num="15" lockable="false">Crossing Comm</functionlabel>
-          <functionlabel num="16" lockable="false">Rail Clank</functionlabel>
-          <functionlabel num="17" lockable="false">Brake Set/Rel</functionlabel>
-          <functionlabel num="18" lockable="false">Sanding Valve</functionlabel>
-          <functionlabel num="19" lockable="false">Cylinder Cocks</functionlabel>
-          <functionlabel num="20" lockable="false">Short Whistle</functionlabel>
+          <functionlabel num="12" lockable="true">Coal Shovelling</functionlabel>
+          <functionlabel num="13" lockable="true">AUX4</functionlabel>
+          <functionlabel num="14" lockable="true">Injector</functionlabel>
+          <functionlabel num="15" lockable="true">Crossing Comm</functionlabel>
+          <functionlabel num="16" lockable="true">Rail Clank</functionlabel>
+          <functionlabel num="17" lockable="true">Brake Set/Rel</functionlabel>
+          <functionlabel num="18" lockable="true">Sanding Valve</functionlabel>
+          <functionlabel num="19" lockable="true">Cylinder Cocks</functionlabel>
+          <functionlabel num="20" lockable="true">Short Whistle</functionlabel>
         </functionlabels>
         <soundlabels>
           <soundlabel num="1">Chuff #1</soundlabel>
@@ -3806,8 +4726,8 @@
           <output name="5" label="E" maxcurrent="0.5A" />
         </model>
         <model model="Gold+ mini wired 10410-01" numOuts="2" numFns="31" maxMotorCurrent="0.5A" formFactor="N" maxTotalCurrent="0.5A">
-          <output name="1" label="A|White" maxcurrent="0.3A" />
-          <output name="2" label="B|Yellow" maxcurrent="0.3A" />
+          <output name="1" label="A - White" maxcurrent="0.3A" />
+          <output name="2" label="B - Yellow" maxcurrent="0.3A" />
         </model>
         <model model="Gold+ mini NEM651 10411-01" numOuts="2" numFns="31" maxMotorCurrent="0.5A" formFactor="N" maxTotalCurrent="0.5A">
           <output name="1" label="A" maxcurrent="0.3A" />
@@ -9111,6 +10031,53 @@
           <functionlabel num="12" lockable="true">Coupler</functionlabel>
         </functionlabels>
       </family>
+      <family name="Tsunami Diesel Bachmann OEM" mfg="SoundTraxx (Throttle-Up)" comment="DCC Sound On-Board" file="SoundTraxx_Tsu_Diesel_Bachmann.xml">
+        <model model="On30 Whitcomb 50-Ton Center-Cab" numOuts="2" numFns="14" connector="other" productID="Whitcomb" comment="DCC Sound On-Board, Plug-and-Play Sound Module">
+          <versionCV lowVersionID="83" />
+          <output name="3" label="FX5|Rule 17">
+            <label xml:lang="it">FX5|Regola 17</label>
+          </output>
+          <output name="4" label="FX6|Mode">
+            <label xml:lang="it">FX6|Modo</label>
+          </output>
+          <output name="5" label="Air Horn| " />
+          <output name="6" label="  Bell  | " />
+          <output name="7" label=" Not | Used " />
+          <!-- dynamic brakes -->
+          <output name="8" label=" Short | Horn ">
+            <label xml:lang="it">Breve|Tromba</label>
+          </output>
+          <output name="9" label="|" />
+          <!-- not used -->
+          <output name="10" label=" Fans |RPM +" />
+          <output name="11" label="Dimming| " />
+          <output name="12" label=" Mute | " />
+          <output name="13" label="Compressor|RPM -" />
+          <output name="14" label="Brakes| " />
+          <output name="15" label="Coupler| " />
+        </model>
+        <functionlabels>
+          <functionlabel num="0" lockable="true">Headlight</functionlabel>
+          <functionlabel num="1" lockable="true">Bell</functionlabel>
+          <functionlabel num="2" lockable="false">Horn</functionlabel>
+          <functionlabel num="3" lockable="true">Short Horn</functionlabel>
+          <functionlabel num="5" lockable="true">Compressor</functionlabel>
+          <functionlabel num="6" lockable="true">Fans</functionlabel>
+          <functionlabel num="7" lockable="true">Coupler</functionlabel>
+          <functionlabel num="8" lockable="true">Mute</functionlabel>
+          <!-- regular Soundtraxx functions, not used for Bachmann
+        <functionlabel num="4" lockable="true">Dynamic Brake</functionlabel>
+        <functionlabel num="5" lockable="true">FX5 Light</functionlabel>
+        <functionlabel num="6" lockable="true">FX6 Light</functionlabel>
+        <functionlabel num="7" lockable="true">Dimmer</functionlabel>
+        <functionlabel num="8" lockable="true">Mute</functionlabel>
+        <functionlabel num="9" lockable="true">Fans</functionlabel>
+        <functionlabel num="10" lockable="true">Air Compressor</functionlabel>
+        <functionlabel num="11" lockable="true">Brake Squeal</functionlabel>
+        <functionlabel num="12" lockable="true">Coupler</functionlabel>
+      -->
+        </functionlabels>
+      </family>
       <family name="Tsunami Diesel Bowser OEM" mfg="SoundTraxx (Throttle-Up)" comment="These are OEM for Bowser Tsunami diesel decoders" file="SoundTraxx_Tsu_Diesel_Bowser.xml">
         <model model="Alco C-628" numOuts="4" numFns="14" connector="other" productID="Century">
           <versionCV lowVersionID="64" />
@@ -13221,11 +14188,10 @@
           <output name="Brake" />
           <size length="0.834" width="0.361" height="0.101" units="inches" />
         </model>
-        <model model="CN-GP" numOuts="4" numFns="14" maxMotorCurrent="1A (peak=2A)" formFactor="PnP" comment="Fits  GP-style N locos with split lighting board, 4 functions" lowVersionID="86" highVersionID="88" productID="23">
+        <model model="CN-GP" numOuts="3" numFns="14" maxMotorCurrent="1A (peak=2A)" formFactor="PnP" comment="Fits  GP-style N locos with split lighting board, 3 functions" lowVersionID="86" highVersionID="88" productID="23">
           <output name="1" label="White" connection="solder" maxcurrent="100 mA" />
           <output name="2" label="Yellow" connection="solder" maxcurrent="100 mA" />
           <output name="3" label="Green" connection="solder" maxcurrent="100 mA" />
-          <output name="4" label="Purple" connection="solder" maxcurrent="100 mA" />
           <output name="Dim" />
           <output name="Ditch" />
           <output name="Motor" />
@@ -14467,54 +15433,8 @@
           <output name="Brake" />
         </model>
       </family>
-      <family name="WOW Sound" mfg="Train Control Systems" comment="TCS FW Starting Jan 2012" file="TCS_WOW_FW01.xml">
-        <model show="no" model="WOWSound Steam" numOuts="6" numFns="14" maxMotorCurrent="1.3A (peak=2A)" formFactor="TBD" lowVersionID="1" highVersionID="1" productID="61" replacementModel="WOW Sound 100" replacementFamily="WOW Sound">
-          <output name="1" label="White" connection="solder" maxcurrent="100 mA" />
-          <output name="2" label="Yellow" connection="solder" maxcurrent="100 mA" />
-          <output name="3" label="Green" connection="solder" maxcurrent="100 mA" />
-          <output name="4" label="Purple" connection="solder" maxcurrent="100 mA" />
-          <output name="5" label="Brown" connection="solder" maxcurrent="100 mA" />
-          <output name="6" label="Pink" connection="solder" maxcurrent="100 mA" />
-          <output name="Dim" />
-          <output name="Ditch" />
-          <output name="Motor" />
-          <output name="BEMF" />
-          <output name="Brake" />
-          <size length="2.860" width="0.680" height="0.145" units="inches" />
-        </model>
-        <model model="WOW Sound 100" numOuts="6" numFns="14" maxMotorCurrent="1.3A (peak=2A)" formFactor="TBD" lowVersionID="1" highVersionID="1" productID="61">
-          <output name="1" label="White" connection="solder" maxcurrent="100 mA" />
-          <output name="2" label="Yellow" connection="solder" maxcurrent="100 mA" />
-          <output name="3" label="Green" connection="solder" maxcurrent="100 mA" />
-          <output name="4" label="Purple" connection="solder" maxcurrent="100 mA" />
-          <output name="5" label="Brown" connection="solder" maxcurrent="100 mA" />
-          <output name="6" label="Pink" connection="solder" maxcurrent="100 mA" />
-          <output name="Dim" />
-          <output name="Ditch" />
-          <output name="Motor" />
-          <output name="BEMF" />
-          <output name="Brake" />
-          <size length="2.860" width="0.680" height="0.145" units="inches" />
-        </model>
-      </family>
-      <family name="WOW Sound Set 2" mfg="Train Control Systems" comment="TCS FW Starting Jan 2012" file="TCS_WOW_FW02.xml">
-        <model model="WOW Sound 101" numOuts="6" numFns="14" maxMotorCurrent="1.3A (peak=2A)" formFactor="TBD" lowVersionID="2" highVersionID="2" productID="130">
-          <output name="1" label="White" connection="solder" maxcurrent="100 mA" />
-          <output name="2" label="Yellow" connection="solder" maxcurrent="100 mA" />
-          <output name="3" label="Green" connection="solder" maxcurrent="100 mA" />
-          <output name="4" label="Purple" connection="solder" maxcurrent="100 mA" />
-          <output name="5" label="Brown" connection="solder" maxcurrent="100 mA" />
-          <output name="6" label="Pink" connection="solder" maxcurrent="100 mA" />
-          <output name="Dim" />
-          <output name="Ditch" />
-          <output name="Motor" />
-          <output name="BEMF" />
-          <output name="Brake" />
-          <size length="2.860" width="0.680" height="0.145" units="inches" />
-        </model>
-      </family>
-      <family name="WOW Sound Set 3" mfg="Train Control Systems" comment="TCS FW Starting Jan 2012" file="TCS_WOW_FW03.xml">
-        <model model="WOW Sound 101" numOuts="6" numFns="14" maxMotorCurrent="1.3A (peak=2A)" formFactor="TBD" lowVersionID="3" highVersionID="3" productID="130">
+      <family name="WOW Diesel Sound Set 1 EMD" mfg="Train Control Systems" file="TCS_WOW_EMD01.xml">
+        <model model="WOW Diesel 101 EMD" numOuts="6" numFns="14" maxMotorCurrent="1.3A (peak=2A)" formFactor="9pin" lowVersionID="1" highVersionID="1" productID="170">
           <output name="1" label="White" connection="solder" maxcurrent="100 mA" />
           <output name="2" label="Yellow" connection="solder" maxcurrent="100 mA" />
           <output name="3" label="Green" connection="solder" maxcurrent="100 mA" />
@@ -14528,7 +15448,7 @@
           <output name="Brake" />
           <size length="1.35" width="0.66" height="0.22" units="inches" />
         </model>
-        <model model="WOW Sound 121" numOuts="6" numFns="14" maxMotorCurrent="1.3A (peak=2A)" formFactor="TBD" lowVersionID="3" highVersionID="3" productID="131">
+        <model model="WOW Diesel 121 EMD" numOuts="6" numFns="14" maxMotorCurrent="1.3A (peak=2A)" formFactor="21pin" lowVersionID="1" highVersionID="1" productID="171">
           <output name="1" label="White" connection="solder" maxcurrent="100 mA" />
           <output name="2" label="Yellow" connection="solder" maxcurrent="100 mA" />
           <output name="3" label="Green" connection="solder" maxcurrent="100 mA" />
@@ -14542,6 +15462,172 @@
           <output name="Brake" />
           <size length="1.28" width="0.69" height="0.22" units="inches" />
         </model>
+        <functionlabels>
+          <functionlabel num="0" lockable="true">Headlight</functionlabel>
+          <functionlabel num="1" lockable="true">Bell</functionlabel>
+          <functionlabel num="2" lockable="false">Horn Long</functionlabel>
+          <functionlabel num="3" lockable="true">Horn Short</functionlabel>
+          <functionlabel num="4" lockable="true">Horn Quill</functionlabel>
+          <functionlabel num="5" lockable="true">Dynamic Brake</functionlabel>
+          <functionlabel num="6" lockable="true">Brake Release</functionlabel>
+          <functionlabel num="7" lockable="true">Train Brake</functionlabel>
+          <functionlabel num="8" lockable="true">Mute</functionlabel>
+          <functionlabel num="9" lockable="true">Rotate Horn/Bell</functionlabel>
+          <functionlabel num="10" lockable="true">Manual Notch Up</functionlabel>
+          <functionlabel num="11" lockable="true">Manual Notch Down</functionlabel>
+          <functionlabel num="12" lockable="true">Prime Mover</functionlabel>
+          <functionlabel num="13" lockable="true">Coupling</functionlabel>
+          <functionlabel num="14" lockable="true">Uncoupling</functionlabel>
+          <functionlabel num="15" lockable="true">Mainline/Switching Momentum</functionlabel>
+          <functionlabel num="16" lockable="true">Crew Alert</functionlabel>
+          <functionlabel num="17" lockable="true">Windshield Wipers</functionlabel>
+          <functionlabel num="18" lockable="true">Air Spitter</functionlabel>
+        </functionlabels>
+      </family>
+      <family name="WOW Sound" mfg="Train Control Systems" comment="TCS FW Starting Jan 2012" file="TCS_WOW_FW01.xml">
+        <model show="no" model="WOWSound Steam" numOuts="6" numFns="14" maxMotorCurrent="1.3A (peak=2A)" formFactor="Wires" lowVersionID="1" highVersionID="1" productID="61" replacementModel="WOW Sound 100" replacementFamily="WOW Sound">
+          <output name="1" label="White" connection="solder" maxcurrent="100 mA" />
+          <output name="2" label="Yellow" connection="solder" maxcurrent="100 mA" />
+          <output name="3" label="Green" connection="solder" maxcurrent="100 mA" />
+          <output name="4" label="Purple" connection="solder" maxcurrent="100 mA" />
+          <output name="5" label="Brown" connection="solder" maxcurrent="100 mA" />
+          <output name="6" label="Pink" connection="solder" maxcurrent="100 mA" />
+          <output name="Dim" />
+          <output name="Ditch" />
+          <output name="Motor" />
+          <output name="BEMF" />
+          <output name="Brake" />
+          <size length="2.860" width="0.680" height="0.145" units="inches" />
+        </model>
+        <model model="WOW Sound 100" numOuts="6" numFns="14" maxMotorCurrent="1.3A (peak=2A)" formFactor="Wires" lowVersionID="1" highVersionID="1" productID="61">
+          <output name="1" label="White" connection="solder" maxcurrent="100 mA" />
+          <output name="2" label="Yellow" connection="solder" maxcurrent="100 mA" />
+          <output name="3" label="Green" connection="solder" maxcurrent="100 mA" />
+          <output name="4" label="Purple" connection="solder" maxcurrent="100 mA" />
+          <output name="5" label="Brown" connection="solder" maxcurrent="100 mA" />
+          <output name="6" label="Pink" connection="solder" maxcurrent="100 mA" />
+          <output name="Dim" />
+          <output name="Ditch" />
+          <output name="Motor" />
+          <output name="BEMF" />
+          <output name="Brake" />
+          <size length="2.860" width="0.680" height="0.145" units="inches" />
+        </model>
+        <functionlabels>
+          <functionlabel num="0" lockable="true">Headlight</functionlabel>
+          <functionlabel num="1" lockable="true">Bell</functionlabel>
+          <functionlabel num="2" lockable="false">Whistle long</functionlabel>
+          <functionlabel num="3" lockable="false">Whistle short</functionlabel>
+          <functionlabel num="4" lockable="true">Whistle quill</functionlabel>
+          <functionlabel num="5" lockable="true">Cylinder cocks</functionlabel>
+          <functionlabel num="6" lockable="true">Brake release</functionlabel>
+          <functionlabel num="7" lockable="true">Brake</functionlabel>
+          <functionlabel num="8" lockable="true">Mute</functionlabel>
+          <functionlabel num="9" lockable="true">Whistle rotate</functionlabel>
+          <functionlabel num="10" lockable="true">Coupler</functionlabel>
+          <functionlabel num="11" lockable="true">Coupler</functionlabel>
+          <functionlabel num="12" lockable="true">Injector</functionlabel>
+          <functionlabel num="13" lockable="true">Air pump</functionlabel>
+          <functionlabel num="14" lockable="true">Blower</functionlabel>
+          <functionlabel num="15" lockable="true">Idling</functionlabel>
+          <functionlabel num="16" lockable="true">Horn</functionlabel>
+          <functionlabel num="17" lockable="true">Shovelling</functionlabel>
+          <functionlabel num="18" lockable="true">Blow down</functionlabel>
+          <functionlabel num="19" lockable="true">Ash dump</functionlabel>
+          <functionlabel num="20" lockable="true">Water fill</functionlabel>
+        </functionlabels>
+      </family>
+      <family name="WOW Sound Set 2" mfg="Train Control Systems" comment="TCS FW Starting Jan 2012" file="TCS_WOW_FW02.xml">
+        <model model="WOW Sound 101" numOuts="6" numFns="14" maxMotorCurrent="1.3A (peak=2A)" formFactor="9pin" lowVersionID="2" highVersionID="2" productID="130">
+          <output name="1" label="White" connection="solder" maxcurrent="100 mA" />
+          <output name="2" label="Yellow" connection="solder" maxcurrent="100 mA" />
+          <output name="3" label="Green" connection="solder" maxcurrent="100 mA" />
+          <output name="4" label="Purple" connection="solder" maxcurrent="100 mA" />
+          <output name="5" label="Brown" connection="solder" maxcurrent="100 mA" />
+          <output name="6" label="Pink" connection="solder" maxcurrent="100 mA" />
+          <output name="Dim" />
+          <output name="Ditch" />
+          <output name="Motor" />
+          <output name="BEMF" />
+          <output name="Brake" />
+          <size length="2.860" width="0.680" height="0.145" units="inches" />
+        </model>
+        <functionlabels>
+          <functionlabel num="0" lockable="true">Headlight</functionlabel>
+          <functionlabel num="1" lockable="true">Bell</functionlabel>
+          <functionlabel num="2" lockable="false">Whistle long</functionlabel>
+          <functionlabel num="3" lockable="false">Whistle short</functionlabel>
+          <functionlabel num="4" lockable="true">Whistle quill</functionlabel>
+          <functionlabel num="5" lockable="true">Cylinder cocks</functionlabel>
+          <functionlabel num="6" lockable="true">Brake release</functionlabel>
+          <functionlabel num="7" lockable="true">Brake</functionlabel>
+          <functionlabel num="8" lockable="true">Mute</functionlabel>
+          <functionlabel num="9" lockable="true">Whistle rotate</functionlabel>
+          <functionlabel num="10" lockable="true">Coupler</functionlabel>
+          <functionlabel num="11" lockable="true">Coupler</functionlabel>
+          <functionlabel num="12" lockable="true">Injector</functionlabel>
+          <functionlabel num="13" lockable="true">Air pump</functionlabel>
+          <functionlabel num="14" lockable="true">Blower</functionlabel>
+          <functionlabel num="15" lockable="true">Idling</functionlabel>
+          <functionlabel num="16" lockable="true">Horn</functionlabel>
+          <functionlabel num="17" lockable="true">Shovelling</functionlabel>
+          <functionlabel num="18" lockable="true">Blow down</functionlabel>
+          <functionlabel num="19" lockable="true">Ash dump</functionlabel>
+          <functionlabel num="20" lockable="true">Water fill</functionlabel>
+        </functionlabels>
+      </family>
+      <family name="WOW Sound Set 3" mfg="Train Control Systems" comment="TCS FW Starting Jan 2012" file="TCS_WOW_FW03.xml">
+        <model model="WOW Sound 101" numOuts="6" numFns="14" maxMotorCurrent="1.3A (peak=2A)" formFactor="9pin" lowVersionID="3" highVersionID="3" productID="130">
+          <output name="1" label="White" connection="solder" maxcurrent="100 mA" />
+          <output name="2" label="Yellow" connection="solder" maxcurrent="100 mA" />
+          <output name="3" label="Green" connection="solder" maxcurrent="100 mA" />
+          <output name="4" label="Purple" connection="solder" maxcurrent="100 mA" />
+          <output name="5" label="Brown" connection="solder" maxcurrent="100 mA" />
+          <output name="6" label="Pink" connection="solder" maxcurrent="100 mA" />
+          <output name="Dim" />
+          <output name="Ditch" />
+          <output name="Motor" />
+          <output name="BEMF" />
+          <output name="Brake" />
+          <size length="1.35" width="0.66" height="0.22" units="inches" />
+        </model>
+        <model model="WOW Sound 121" numOuts="6" numFns="14" maxMotorCurrent="1.3A (peak=2A)" formFactor="21pin" lowVersionID="3" highVersionID="3" productID="131">
+          <output name="1" label="White" connection="solder" maxcurrent="100 mA" />
+          <output name="2" label="Yellow" connection="solder" maxcurrent="100 mA" />
+          <output name="3" label="Green" connection="solder" maxcurrent="100 mA" />
+          <output name="4" label="Purple" connection="solder" maxcurrent="100 mA" />
+          <output name="5" label="Brown" connection="solder" maxcurrent="100 mA" />
+          <output name="6" label="Pink" connection="solder" maxcurrent="100 mA" />
+          <output name="Dim" />
+          <output name="Ditch" />
+          <output name="Motor" />
+          <output name="BEMF" />
+          <output name="Brake" />
+          <size length="1.28" width="0.69" height="0.22" units="inches" />
+        </model>
+        <functionlabels>
+          <functionlabel num="0" lockable="true">Headlight</functionlabel>
+          <functionlabel num="1" lockable="true">Bell</functionlabel>
+          <functionlabel num="2" lockable="false">Whistle long</functionlabel>
+          <functionlabel num="3" lockable="false">Whistle short</functionlabel>
+          <functionlabel num="4" lockable="false">Whistle quill</functionlabel>
+          <functionlabel num="5" lockable="true">Cylinder cocks</functionlabel>
+          <functionlabel num="6" lockable="true">Brake release</functionlabel>
+          <functionlabel num="7" lockable="true">Brake</functionlabel>
+          <functionlabel num="8" lockable="true">Mute</functionlabel>
+          <functionlabel num="9" lockable="true">Whistle rotate</functionlabel>
+          <functionlabel num="10" lockable="true">Coupler</functionlabel>
+          <functionlabel num="11" lockable="true">Coupler</functionlabel>
+          <functionlabel num="12" lockable="true">Injector</functionlabel>
+          <functionlabel num="13" lockable="true">Air pump</functionlabel>
+          <functionlabel num="14" lockable="true">Blower</functionlabel>
+          <functionlabel num="15" lockable="true">Idling</functionlabel>
+          <functionlabel num="16" lockable="true">Horn</functionlabel>
+          <functionlabel num="17" lockable="true">Shovelling</functionlabel>
+          <functionlabel num="18" lockable="true">Blow down</functionlabel>
+          <functionlabel num="19" lockable="true">Ash dump</functionlabel>
+          <functionlabel num="20" lockable="true">Water fill</functionlabel>
+        </functionlabels>
       </family>
       <family name="TCS X Series Decoders" mfg="Train Control Systems" file="TCS_X.xml">
         <model show="no" model="A4X" numOuts="4" numFns="14" lowVersionID="30" highVersionID="40" maxMotorCurrent="1.3A (peak=2A)" formFactor="PnP" replacementModel="A4X" replacementFamily="Jan 2000">
@@ -18633,6 +19719,106 @@
           <size length="55" width="26" height="18" units="mm" />
         </model>
       </family>
+      <family name="Zimo Unified software (version 32+)" mfg="Zimo" file="Zimo_Unified_software_v32_MX633.xml">
+        <model model="MX633 version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="35V" maxMotorCurrent="1.2A" maxTotalCurrent="1.2A" formFactor="HO" numOuts="10" numFns="14" productID="237">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5" />
+          <output name="8" label="FO 6" />
+          <output name="9" label="FO 7" />
+          <output name="10" label="FO 8" />
+          <size length="22" width="15" height="3.5" units="mm" />
+        </model>
+        <model model="MX633R version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="35V" maxMotorCurrent="1.2A" maxTotalCurrent="1.2A" formFactor="HO" connector="NMRAmedium" numOuts="10" numFns="14" productID="237">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5" />
+          <output name="8" label="FO 6" />
+          <output name="9" label="FO 7" />
+          <output name="10" label="FO 8" />
+          <size length="22" width="15" height="3.5" units="mm" />
+        </model>
+        <model model="MX633P22 version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="35V" maxMotorCurrent="1.2A" maxTotalCurrent="1.2A" formFactor="HO" connector="PluX22" numOuts="10" numFns="14" productID="237">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5" />
+          <output name="8" label="FO 6" />
+          <output name="9" label="FO 7" />
+          <output name="10" label="FO 8" />
+          <size length="22" width="15" height="3.5" units="mm" />
+        </model>
+      </family>
+      <family name="Zimo Unified software (version 32+)" mfg="Zimo" file="Zimo_Unified_software_v32_MX634.xml">
+        <model model="MX634 version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="35V" maxMotorCurrent="1.2A" maxTotalCurrent="2.5A" formFactor="HO" numOuts="8" numFns="14" productID="240">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5 (+5v)" />
+          <output name="8" label="FO 6 (+5v)" />
+          <size length="20.5" width="15.5" height="4" units="mm" />
+        </model>
+        <model model="MX634R version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="35V" maxMotorCurrent="1.2A" maxTotalCurrent="2.5A" formFactor="HO" connector="NMRAmedium" numOuts="8" numFns="14" productID="240">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5 (+5v)" />
+          <output name="8" label="FO 6 (+5v)" />
+          <size length="20.5" width="15.5" height="4" units="mm" />
+        </model>
+        <model model="MX634F version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="35V" maxMotorCurrent="1.2A" maxTotalCurrent="2.5A" formFactor="HO" connector="NMRAsmall" numOuts="8" numFns="14" productID="240">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5 (+5v)" />
+          <output name="8" label="FO 6 (+5v)" />
+          <size length="20.5" width="15.5" height="4" units="mm" />
+        </model>
+        <model model="MX634D version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="35V" maxMotorCurrent="1.2A" maxTotalCurrent="2.5A" formFactor="HO" connector="21MTC" numOuts="8" numFns="14" productID="240">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5 (+5v)" />
+          <output name="8" label="FO 6 (+5v)" />
+          <size length="20.5" width="15.5" height="4" units="mm" />
+        </model>
+      </family>
+      <family name="Zimo Unified software (version 32+)" mfg="Zimo" file="Zimo_Unified_software_v32_MX634C.xml">
+        <model model="MX634C version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="35V" maxMotorCurrent="1.2A" maxTotalCurrent="2.5A" formFactor="HO" connector="21MTC" numOuts="8" numFns="14" productID="240">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3 (+5v)" />
+          <output name="6" label="FO 4 (+5v)" />
+          <output name="7" label="FO 5 (+5v)" />
+          <output name="8" label="FO 6 (+5v)" />
+          <size length="20.5" width="15.5" height="4" units="mm" />
+        </model>
+      </family>
       <family name="Zimo Unified software (version 32+)" mfg="Zimo" file="Zimo_Unified_software_v32_MX640.xml">
         <model model="MX640 version 32+" lowVersionID="32" highVersionID="35" maxInputVolts="24V" maxMotorCurrent="1.2A, peak=2.5A" maxTotalCurrent="1.2A" formFactor="HO" numOuts="11" numFns="14" productID="210">
           <output name="1" label="Front Light" />
@@ -18706,7 +19892,29 @@
         </model>
       </family>
       <family name="Zimo Unified software (version 32+)" mfg="Zimo" file="Zimo_Unified_software_v32_MX644.xml">
-        <model model="MX644 version 32+" lowVersionID="32" highVersionID="35" maxInputVolts="35V" maxMotorCurrent="1.2A, peak=2.5A" maxTotalCurrent="1.2A" formFactor="HO" connector="21MTC" numOuts="8" numFns="14" productID="222">
+        <model model="MX644 version 32+" show="no" lowVersionID="32" highVersionID="42" maxInputVolts="35V" maxMotorCurrent="1.2A, peak=2.5A" maxTotalCurrent="1.2A" formFactor="HO" connector="21MTC" numOuts="8" numFns="14" productID="222">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3 (+5v)" />
+          <output name="6" label="FO 4 (+5v)" />
+          <output name="7" label="FO 5" />
+          <output name="8" label="FO 6" />
+          <size length="30" width="15" height="4" units="mm" />
+        </model>
+        <model model="MX644C version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="35V" maxMotorCurrent="1.2A, peak=2.5A" maxTotalCurrent="1.2A" formFactor="HO" connector="21MTC" numOuts="8" numFns="14" productID="222">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3 (+5v)" />
+          <output name="6" label="FO 4 (+5v)" />
+          <output name="7" label="FO 5" />
+          <output name="8" label="FO 6" />
+          <size length="30" width="15" height="4" units="mm" />
+        </model>
+        <model model="MX644D version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="35V" maxMotorCurrent="1.2A, peak=2.5A" maxTotalCurrent="1.2A" formFactor="HO" connector="21MTC" numOuts="8" numFns="14" productID="222">
           <output name="1" label="Front Light" />
           <output name="2" label="Rear Light" />
           <output name="3" label="FO 1" />
@@ -18810,8 +20018,54 @@
           <size length="28" width="10.5" height="4" units="mm" />
         </model>
       </family>
+      <family name="Zimo Unified software (version 32+)" mfg="Zimo" file="Zimo_Unified_software_v32_MX648+.xml">
+        <model model="MX648 version 33+" lowVersionID="33" highVersionID="42" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" numOuts="8" numFns="14" productID="225">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3 (+5v)" />
+          <output name="6" label="FO 4 (+5v)" />
+          <output name="7" label="FO 5 (+5v)" />
+          <output name="8" label="FO 6 (+5v)" />
+          <size length="20" width="11" height="4" units="mm" />
+        </model>
+        <model model="MX648R version 33+" lowVersionID="33" highVersionID="42" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAmedium" numOuts="8" numFns="14" productID="225">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5 (+5v)" />
+          <output name="8" label="FO 6 (+5v)" />
+          <size length="20" width="11" height="4" units="mm" />
+        </model>
+        <model model="MX648F version 33+" lowVersionID="33" highVersionID="42" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAsmall" numOuts="8" numFns="14" productID="225">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5 (+5v)" />
+          <output name="8" label="FO 6 (+5v)" />
+          <size length="28" width="10.5" height="4" units="mm" />
+        </model>
+        <model model="MX648N version 33+" lowVersionID="33" highVersionID="42" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAsmall" numOuts="8" numFns="14" productID="225">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5 (+5v)" />
+          <output name="8" label="FO 6 (+5v)" />
+          <size length="20" width="11" height="4" units="mm" />
+        </model>
+      </family>
       <family name="Zimo Unified software (version 32+)" mfg="Zimo" file="Zimo_Unified_software_v32_MX648.xml">
-        <model model="MX648 version 32+" lowVersionID="32" highVersionID="38" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" numOuts="6" numFns="14" productID="225">
+        <model model="MX648 version 32+" lowVersionID="32" highVersionID="32" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" numOuts="6" numFns="14" productID="225">
           <output name="1" label="Front Light" />
           <output name="2" label="Rear Light" />
           <output name="3" label="FO 1" />
@@ -18820,7 +20074,7 @@
           <output name="6" label="FO 4 (+5v)" />
           <size length="20" width="11" height="4" units="mm" />
         </model>
-        <model model="MX648R version 32+" lowVersionID="32" highVersionID="38" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAmedium" numOuts="6" numFns="14" productID="225">
+        <model model="MX648R version 32+" lowVersionID="32" highVersionID="32" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAmedium" numOuts="6" numFns="14" productID="225">
           <output name="1" label="Front Light" />
           <output name="2" label="Rear Light" />
           <output name="3" label="FO 1" />
@@ -18829,7 +20083,7 @@
           <output name="6" label="FO 4" />
           <size length="20" width="11" height="4" units="mm" />
         </model>
-        <model model="MX648F version 32+" lowVersionID="32" highVersionID="38" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAsmall" numOuts="6" numFns="14" productID="225">
+        <model model="MX648F version 32+" lowVersionID="32" highVersionID="32" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAsmall" numOuts="6" numFns="14" productID="225">
           <output name="1" label="Front Light" />
           <output name="2" label="Rear Light" />
           <output name="3" label="FO 1" />
@@ -18838,7 +20092,242 @@
           <output name="6" label="FO 4" />
           <size length="28" width="10.5" height="4" units="mm" />
         </model>
-        <model model="MX648N version 32+" lowVersionID="32" highVersionID="38" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAsmall" numOuts="6" numFns="14" productID="225">
+        <model model="MX648N version 32+" lowVersionID="32" highVersionID="32" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAsmall" numOuts="6" numFns="14" productID="225">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <size length="20" width="11" height="4" units="mm" />
+        </model>
+      </family>
+      <family name="Zimo Unified software (version 32+)" mfg="Zimo" file="Zimo_Unified_software_v32_MX695_696_697V.xml">
+        <model model="MX695KV version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="30 V" maxMotorCurrent="6 A (peak 10 A)" maxTotalCurrent="6 A (peak 10 A)" numOuts="14" numFns="14" formFactor="G" connector="other" productID="224">
+          <output name="1" label="Front light" maxcurrent="2 A total per group" connection="plug" />
+          <output name="2" label="Rear light " maxcurrent="2 A total per group" connection="plug" />
+          <output name="3" label="   FO  1   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="4" label="   FO  2   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="5" label="   FO  3   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="6" label="   FO  4   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="7" label="   FO  5   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="8" label="   FO  6   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="9" label="   FO  7   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="10" label="   FO  8   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="11" label="   FO  9   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="12" label="   FO 10   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="13" label="   FO 11   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="14" label="   FO 12   " maxcurrent="2 A total per group" connection="plug" />
+          <size length="50" width="40" height="14" units="mm" />
+        </model>
+        <model model="MX695LV version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="30 V" maxMotorCurrent="6 A (peak 10 A)" maxTotalCurrent="6 A (peak 10 A)" numOuts="14" numFns="14" formFactor="G" connector="other" productID="224">
+          <output name="1" label="Front light" maxcurrent="2 A total per group" connection="plug" />
+          <output name="2" label="Rear light " maxcurrent="2 A total per group" connection="plug" />
+          <output name="3" label="   FO  1   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="4" label="   FO  2   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="5" label="   FO  3   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="6" label="   FO  4   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="7" label="   FO  5   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="8" label="   FO  6   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="9" label="   FO  7   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="10" label="   FO  8   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="11" label="   FO  9   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="12" label="   FO 10   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="13" label="   FO 11   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="14" label="   FO 12   " maxcurrent="2 A total per group" connection="plug" />
+          <size length="50" width="40" height="14" units="mm" />
+        </model>
+        <model model="MX695KS version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="30 V" maxMotorCurrent="6 A (peak 10 A)" maxTotalCurrent="6 A (peak 10 A)" numOuts="8" numFns="14" formFactor="G" connector="other" productID="224">
+          <output name="1" label="Front light" maxcurrent="2 A total per group" connection="plug" />
+          <output name="2" label="Rear light " maxcurrent="2 A total per group" connection="plug" />
+          <output name="3" label="   FO  1   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="4" label="   FO  2   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="5" label="   FO  3   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="6" label="   FO  4   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="7" label="   FO  5   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="8" label="   FO  6   " maxcurrent="2 A total per group" connection="plug" />
+          <size length="50" width="40" height="14" units="mm" />
+        </model>
+        <model model="MX695LS version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="30 V" maxMotorCurrent="6 A (peak 10 A)" maxTotalCurrent="6 A (peak 10 A)" numOuts="8" numFns="14" formFactor="G" connector="other" productID="224">
+          <output name="1" label="Front light" maxcurrent="2 A total per group" connection="plug" />
+          <output name="2" label="Rear light " maxcurrent="2 A total per group" connection="plug" />
+          <output name="3" label="   FO  1   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="4" label="   FO  2   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="5" label="   FO  3   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="6" label="   FO  4   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="7" label="   FO  5   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="8" label="   FO  6   " maxcurrent="2 A total per group" connection="plug" />
+          <size length="50" width="40" height="14" units="mm" />
+        </model>
+        <model model="MX696V version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="30 V" maxMotorCurrent="4 A (peak 10 A)" maxTotalCurrent="4 A (peak 10 A)" numOuts="14" numFns="14" formFactor="G" connector="other" productID="230">
+          <output name="1" label="Front light" maxcurrent="2 A total per group" connection="plug" />
+          <output name="2" label="Rear light " maxcurrent="2 A total per group" connection="plug" />
+          <output name="3" label="   FO  1   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="4" label="   FO  2   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="5" label="   FO  3   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="6" label="   FO  4   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="7" label="   FO  5   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="8" label="   FO  6   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="9" label="   FO  7   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="10" label="   FO  8   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="11" label="   FO  9   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="12" label="   FO 10   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="13" label="   FO 11   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="14" label="   FO 12   " maxcurrent="2 A total per group" connection="plug" />
+          <size length="55" width="29" height="16" units="mm" />
+        </model>
+        <model model="MX696KV version 32+" lowVersionID="32" highVersionID="42" maxInputVolts="30 V" maxMotorCurrent="4 A (peak 10 A)" maxTotalCurrent="4 A (peak 10 A)" numOuts="14" numFns="14" formFactor="G" connector="other" productID="230">
+          <output name="1" label="Front light" maxcurrent="2 A total per group" connection="plug" />
+          <output name="2" label="Rear light " maxcurrent="2 A total per group" connection="plug" />
+          <output name="3" label="   FO  1   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="4" label="   FO  2   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="5" label="   FO  3   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="6" label="   FO  4   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="7" label="   FO  5   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="8" label="   FO  6   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="9" label="   FO  7   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="10" label="   FO  8   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="11" label="   FO  9   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="12" label="   FO 10   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="13" label="   FO 11   " maxcurrent="2 A total per group" connection="plug" />
+          <output name="14" label="   FO 12   " maxcurrent="2 A total per group" connection="plug" />
+          <size length="55" width="29" height="16" units="mm" />
+        </model>
+      </family>
+      <family name="Zimo Unified software (version 34+)" mfg="Zimo" file="Zimo_Unified_software_v34_MX644.xml">
+        <model model="MX644 version 34+" lowVersionID="34" highVersionID="35" maxInputVolts="35V" maxMotorCurrent="1.2A, peak=2.5A" maxTotalCurrent="1.2A" formFactor="HO" connector="21MTC" numOuts="8" numFns="14" productID="222">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5" />
+          <output name="8" label="FO 6" />
+          <size length="30" width="15" height="4" units="mm" />
+        </model>
+      </family>
+      <family name="Zimo Unified software (version 34+)" mfg="Zimo" file="Zimo_Unified_software_v34_MX645.xml">
+        <model model="MX645 version 34+" lowVersionID="34" highVersionID="35" maxInputVolts="35V" maxMotorCurrent="1.2A, peak=2.5A" maxTotalCurrent="1.2A" formFactor="HO" numOuts="10" numFns="14" productID="221">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5" />
+          <output name="8" label="FO 6" />
+          <output name="9" label="FO 7 (+5v)" />
+          <output name="10" label="FO 8 (+5v)" />
+          <size length="30" width="15" height="4" units="mm" />
+        </model>
+        <model model="MX645R version 34+" lowVersionID="34" highVersionID="35" maxInputVolts="35V" maxMotorCurrent="1.2A, peak=2.5A" maxTotalCurrent="1.2A" formFactor="HO" connector="NMRAmedium" numOuts="10" numFns="14" productID="221">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5" />
+          <output name="8" label="FO 6" />
+          <output name="9" label="FO 7 (+5v)" />
+          <output name="10" label="FO 8 (+5v)" />
+          <size length="30" width="15" height="4" units="mm" />
+        </model>
+        <model model="MX645F version 34+" lowVersionID="34" highVersionID="35" maxInputVolts="35V" maxMotorCurrent="1.2A, peak=2.5A" maxTotalCurrent="1.2A" formFactor="HO" connector="NMRAsmall" numOuts="10" numFns="14" productID="221">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5" />
+          <output name="8" label="FO 6" />
+          <output name="9" label="FO 7 (+5v)" />
+          <output name="10" label="FO 8 (+5v)" />
+          <size length="30" width="15" height="4" units="mm" />
+        </model>
+        <model model="MX645P22 version 34+" lowVersionID="34" highVersionID="35" maxInputVolts="35V" maxMotorCurrent="1.2A, peak=2.5A" maxTotalCurrent="1.2A" formFactor="HO" connector="PluX22" numOuts="10" numFns="14" productID="221">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <output name="7" label="FO 5" />
+          <output name="8" label="FO 6" />
+          <output name="9" label="FO 7" />
+          <output name="10" label="FO 8" />
+          <size length="30" width="15" height="4" units="mm" />
+        </model>
+      </family>
+      <family name="Zimo Unified software (version 34+)" mfg="Zimo" file="Zimo_Unified_software_v34_MX646.xml">
+        <model model="MX646 version 34+" lowVersionID="34" highVersionID="35" maxInputVolts="30V" maxMotorCurrent="1.0A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" numOuts="6" numFns="14" productID="217">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3 (+5v)" />
+          <output name="6" label="FO 4 (+5v)" />
+          <size length="28" width="10.5" height="4" units="mm" />
+        </model>
+        <model model="MX646R version 34+" lowVersionID="34" highVersionID="35" maxInputVolts="30V" maxMotorCurrent="1.0A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAmedium" numOuts="6" numFns="14" productID="217">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3 (+5v)" />
+          <output name="6" label="FO 4 (+5v)" />
+          <size length="28" width="10.5" height="4" units="mm" />
+        </model>
+        <model model="MX646F version 34+" lowVersionID="34" highVersionID="35" maxInputVolts="30V" maxMotorCurrent="1.0A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAsmall" numOuts="6" numFns="14" productID="217">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3 (+5v)" />
+          <output name="6" label="FO 4 (+5v)" />
+          <size length="28" width="10.5" height="4" units="mm" />
+        </model>
+        <model model="MX646N version 34+" lowVersionID="34" highVersionID="35" maxInputVolts="30V" maxMotorCurrent="1.0A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAsmall" numOuts="6" numFns="14" productID="217">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3 (+5v)" />
+          <output name="6" label="FO 4 (+5v)" />
+          <size length="28" width="10.5" height="4" units="mm" />
+        </model>
+      </family>
+      <family name="Zimo Unified software (version 34+)" mfg="Zimo" file="Zimo_Unified_software_v34_MX648.xml">
+        <model model="MX648 version 34+" lowVersionID="34" highVersionID="38" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" numOuts="6" numFns="14" productID="225">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3 (+5v)" />
+          <output name="6" label="FO 4 (+5v)" />
+          <size length="20" width="11" height="4" units="mm" />
+        </model>
+        <model model="MX648R version 34+" lowVersionID="34" highVersionID="38" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAmedium" numOuts="6" numFns="14" productID="225">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <size length="20" width="11" height="4" units="mm" />
+        </model>
+        <model model="MX648F version 34+" lowVersionID="34" highVersionID="38" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAsmall" numOuts="6" numFns="14" productID="225">
+          <output name="1" label="Front Light" />
+          <output name="2" label="Rear Light" />
+          <output name="3" label="FO 1" />
+          <output name="4" label="FO 2" />
+          <output name="5" label="FO 3" />
+          <output name="6" label="FO 4" />
+          <size length="28" width="10.5" height="4" units="mm" />
+        </model>
+        <model model="MX648N version 34+" lowVersionID="34" highVersionID="38" maxInputVolts="30V" maxMotorCurrent="0.8A, peak=1.5A" maxTotalCurrent="1.2A" formFactor="N" connector="NMRAsmall" numOuts="6" numFns="14" productID="225">
           <output name="1" label="Front Light" />
           <output name="2" label="Rear Light" />
           <output name="3" label="FO 1" />

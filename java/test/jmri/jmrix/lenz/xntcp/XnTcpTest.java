@@ -1,22 +1,21 @@
 // XNTCPTest.java
-
-
 package jmri.jmrix.lenz.xntcp;
 
-import org.apache.log4j.Logger;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests for the jmri.jmrix.lenz.xntcp package
- * @author                      Paul Bender  
- * @version                     $Revision$
+ *
+ * @author Paul Bender
+ * @version $Revision$
  */
 public class XnTcpTest extends TestCase {
 
     // from here down is testing infrastructure
-
     public XnTcpTest(String s) {
         super(s);
     }
@@ -35,7 +34,6 @@ public class XnTcpTest extends TestCase {
         return suite;
     }
 
-    static Logger log = Logger.getLogger(XnTcpTest.class.getName());
+    static Logger log = LoggerFactory.getLogger(XnTcpTest.class.getName());
 
 }
-

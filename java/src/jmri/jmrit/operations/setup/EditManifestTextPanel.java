@@ -31,7 +31,7 @@ public class EditManifestTextPanel extends OperationsPreferencesPanel {
 
     // major buttons
     JButton saveButton = new JButton(Bundle.getMessage("Save"));
-    JButton resetButton = new JButton(rb.getString("Reset"));
+    JButton resetButton = new JButton(Bundle.getMessage("Reset"));
 
     // text field
     JTextField manifestForTrainTextField = new JTextField(60);
@@ -282,7 +282,7 @@ public class EditManifestTextPanel extends OperationsPreferencesPanel {
 
     @Override
     public String getTabbedPreferencesTitle() {
-        return Bundle.getMessage("TitleManifestText"); // NOI18N
+        return Bundle.getMessage("TitleManifestText");
     }
 
     @Override

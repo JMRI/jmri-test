@@ -38,6 +38,7 @@ import jmri.web.servlet.ServletUtil;
 import static jmri.web.servlet.ServletUtil.IMAGE_PNG;
 import static jmri.web.servlet.ServletUtil.UTF8;
 import static jmri.web.servlet.ServletUtil.UTF8_APPLICATION_JSON;
+import static jmri.web.servlet.ServletUtil.UTF8_APPLICATION_XML;
 import static jmri.web.servlet.ServletUtil.UTF8_TEXT_HTML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,11 +58,11 @@ import org.slf4j.LoggerFactory;
 public class RosterServlet extends HttpServlet {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -178879218045310132L;
+     *
+     */
+    private static final long serialVersionUID = -178879218045310132L;
 
-	private ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     static Logger log = LoggerFactory.getLogger(RosterServlet.class.getName());
 
@@ -251,16 +252,28 @@ public class RosterServlet extends HttpServlet {
                 // this should be an entirely different format than the table
                 this.doRoster(request, response, this.mapper.createObjectNode().put(ID, id), false);
             } else if (type.equals(JSON.IMAGE)) {
-                this.doImage(request, response, FileUtil.getFile(re.getImagePath()));
+                if (re.getImagePath() != null) {
+                    this.doImage(request, response, FileUtil.getFile(re.getImagePath()));
+                } else {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                }
             } else if (type.equals(JSON.ICON)) {
                 int function = -1;
                 if (pathInfo.length != (2 + idOffset)) {
                     function = Integer.parseInt(pathInfo[pathInfo.length - 2].substring(1));
                 }
                 if (function == -1) {
-                    this.doImage(request, response, FileUtil.getFile(re.getIconPath()));
+                    if (re.getIconPath() != null) {
+                        this.doImage(request, response, FileUtil.getFile(re.getIconPath()));
+                    } else {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    }
                 } else {
-                    this.doImage(request, response, FileUtil.getFile(re.getFunctionImage(function)));
+                    if (re.getFunctionImage(function) != null) {
+                        this.doImage(request, response, FileUtil.getFile(re.getFunctionImage(function)));
+                    } else {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    }
                 }
             } else if (type.equals(JSON.SELECTED_ICON)) {
                 if (pathInfo.length != (2 + idOffset)) {
@@ -304,6 +317,12 @@ public class RosterServlet extends HttpServlet {
         if (JSON.JSON.equals(request.getParameter("format"))) { // NOI18N
             response.setContentType(UTF8_APPLICATION_JSON);
             response.getWriter().print(JsonUtil.getRoster(request.getLocale(), filter));
+        } else if (JSON.XML.equals(request.getParameter("format"))) { // NOI18N
+            response.setContentType(UTF8_APPLICATION_XML);
+            File roster = new File(Roster.defaultRosterFilename());
+            if (roster.exists()) {
+                response.getWriter().print(FileUtil.readFile(new File(Roster.defaultRosterFilename())));
+            }
         } else if (("html").equals(request.getParameter("format"))) {
             String row;
             if ("simple".equals(request.getParameter("view"))) {
@@ -375,7 +394,7 @@ public class RosterServlet extends HttpServlet {
      *
      * @param request
      * @param response
-     * @param file {@link java.io.File} object containing an image
+     * @param file     {@link java.io.File} object containing an image
      * @throws ServletException
      * @throws IOException
      */

@@ -1,22 +1,18 @@
 // SerialDriverAdapter.java
-
 package jmri.jmrix.bachrus.serialdriver;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jmri.jmrix.bachrus.SpeedoPortController;
-import jmri.jmrix.bachrus.SpeedoTrafficController;
-import jmri.jmrix.bachrus.SpeedoSystemConnectionMemo;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.util.TooManyListenersException;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
-import jmri.jmrix.SystemConnectionMemo;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.util.TooManyListenersException;
+import jmri.jmrix.bachrus.SpeedoPortController;
+import jmri.jmrix.bachrus.SpeedoSystemConnectionMemo;
+import jmri.jmrix.bachrus.SpeedoTrafficController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements SerialPortAdapter for the Bachrus speedo.
@@ -24,38 +20,36 @@ import jmri.jmrix.SystemConnectionMemo;
  * This connects a bachrus speedo reader interface via a serial com port.
  * Normally controlled by the SerialDriverFrame class.
  * <P>
- * The current implementation only handles the 9,600 baud rate, and does
- * not use any other options at configuration time.
- * 
- * Updated January 2010 for gnu io (RXTX) - Andrew Berridge. Comments tagged with
- * "AJB" indicate changes or observations by me
+ * The current implementation only handles the 9,600 baud rate, and does not use
+ * any other options at configuration time.
  *
- * @author	Bob Jacobsen   Copyright (C) 2001, 2002
- * @author	Andrew Crosland   Copyright (C) 2010
+ * Updated January 2010 for gnu io (RXTX) - Andrew Berridge. Comments tagged
+ * with "AJB" indicate changes or observations by me
+ *
+ * @author	Bob Jacobsen Copyright (C) 2001, 2002
+ * @author	Andrew Crosland Copyright (C) 2010
  * @version	$Revision$
  */
 public class SerialDriverAdapter extends SpeedoPortController implements jmri.jmrix.SerialPortAdapter {
 
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
     // There can only be one instance
     public SerialDriverAdapter() {
-        super();
-        adaptermemo = new SpeedoSystemConnectionMemo();
+        super(new SpeedoSystemConnectionMemo());
         setManufacturer(jmri.jmrix.DCCManufacturerList.BACHRUS);
-        mInstance=this;
+        mInstance = this;
     }
 
     SerialPort activeSerialPort = null;
 
-    public String openPort(String portName, String appName)  {
+    public String openPort(String portName, String appName) {
         // open the port, check ability to set moderators
         try {
             // get and open the primary port
             CommPortIdentifier portID = CommPortIdentifier.getPortIdentifier(portName);
             try {
                 activeSerialPort = (SerialPort) portID.open(appName, 2000);  // name of program, msec to wait
-            }
-            catch (PortInUseException p) {
+            } catch (PortInUseException p) {
                 return handlePortBusy(p, portName, log);
             }
 
@@ -63,8 +57,8 @@ public class SerialDriverAdapter extends SpeedoPortController implements jmri.jm
             try {
                 activeSerialPort.setSerialPortParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
             } catch (gnu.io.UnsupportedCommOperationException e) {
-                log.error("Cannot set serial parameters on port "+portName+": "+e.getMessage());
-                return "Cannot set serial parameters on port "+portName+": "+e.getMessage();
+                log.error("Cannot set serial parameters on port " + portName + ": " + e.getMessage());
+                return "Cannot set serial parameters on port " + portName + ": " + e.getMessage();
             }
 
             // set RTS high, DTR high
@@ -78,74 +72,76 @@ public class SerialDriverAdapter extends SpeedoPortController implements jmri.jm
 
             // set timeout
             // activeSerialPort.enableReceiveTimeout(1000);
-            log.debug("Serial timeout was observed as: "+activeSerialPort.getReceiveTimeout()
-                      +" "+activeSerialPort.isReceiveTimeoutEnabled());
+            log.debug("Serial timeout was observed as: " + activeSerialPort.getReceiveTimeout()
+                    + " " + activeSerialPort.isReceiveTimeoutEnabled());
 
             // get and save stream
             serialStream = activeSerialPort.getInputStream();
 
             // purge contents, if any
             int count = serialStream.available();
-            log.debug("input stream shows "+count+" bytes available");
-            while ( count > 0) {
+            log.debug("input stream shows " + count + " bytes available");
+            while (count > 0) {
                 serialStream.skip(count);
                 count = serialStream.available();
             }
 
             // report status?
             if (log.isInfoEnabled()) {
-                log.info(portName+" port opened at "
-                         +activeSerialPort.getBaudRate()+" baud, sees "
-                         +" DTR: "+activeSerialPort.isDTR()
-                         +" RTS: "+activeSerialPort.isRTS()
-                         +" DSR: "+activeSerialPort.isDSR()
-                         +" CTS: "+activeSerialPort.isCTS()
-                         +"  CD: "+activeSerialPort.isCD()
-                         );
+                log.info(portName + " port opened at "
+                        + activeSerialPort.getBaudRate() + " baud, sees "
+                        + " DTR: " + activeSerialPort.isDTR()
+                        + " RTS: " + activeSerialPort.isRTS()
+                        + " DSR: " + activeSerialPort.isDSR()
+                        + " CTS: " + activeSerialPort.isCTS()
+                        + "  CD: " + activeSerialPort.isCD()
+                );
             }
-            
+
             //AJB - add Sprog Traffic Controller as event listener
             try {
                 activeSerialPort.addEventListener(SpeedoTrafficController.instance());
-             } catch (TooManyListenersException e) {}setManufacturer(jmri.jmrix.DCCManufacturerList.BACHRUS);
-             
-             // AJB - activate the DATA_AVAILABLE notifier
-             activeSerialPort.notifyOnDataAvailable(true);
-             
+            } catch (TooManyListenersException e) {
+            }
+            setManufacturer(jmri.jmrix.DCCManufacturerList.BACHRUS);
+
+            // AJB - activate the DATA_AVAILABLE notifier
+            activeSerialPort.notifyOnDataAvailable(true);
+
             opened = true;
 
         } catch (gnu.io.NoSuchPortException p) {
             return handlePortNotFound(p, portName, log);
         } catch (Exception ex) {
-            log.error("Unexpected exception while opening port "+portName+" trace follows: "+ex);
+            log.error("Unexpected exception while opening port " + portName + " trace follows: " + ex);
             ex.printStackTrace();
-            return "Unexpected error while opening port "+portName+": "+ex;
+            return "Unexpected error while opening port " + portName + ": " + ex;
         }
 
         return null; // indicates OK return
 
     }
 
-    public void setHandshake (int mode) {
-      try {
-        activeSerialPort.setFlowControlMode(mode);
-      } catch (Exception ex) {
-            log.error("Unexpected exception while setting COM port handshake mode trace follows: "+ex);
+    public void setHandshake(int mode) {
+        try {
+            activeSerialPort.setFlowControlMode(mode);
+        } catch (Exception ex) {
+            log.error("Unexpected exception while setting COM port handshake mode trace follows: " + ex);
             ex.printStackTrace();
-      }
+        }
 
     }
 
     /**
-     * set up all of the other objects to operate with an Sprog command
-     * station connected to this port
+     * set up all of the other objects to operate with an Sprog command station
+     * connected to this port
      */
     public void configure() {
         // connect to the traffic controller
         SpeedoTrafficController control = SpeedoTrafficController.instance();
         control.connectPort(this);
-        
-        adaptermemo.configureManagers();
+
+        this.getSystemConnectionMemo().configureManagers();
 
         jmri.jmrix.bachrus.ActiveFlag.setActive();
 
@@ -161,17 +157,20 @@ public class SerialDriverAdapter extends SpeedoPortController implements jmri.jm
     }
 
     public DataOutputStream getOutputStream() {
-        if (!opened) log.error("getOutputStream called before load(), stream not available");
+        if (!opened) {
+            log.error("getOutputStream called before load(), stream not available");
+        }
         try {
             return new DataOutputStream(activeSerialPort.getOutputStream());
+        } catch (java.io.IOException e) {
+            log.error("getOutputStream exception: " + e);
         }
-     	catch (java.io.IOException e) {
-            log.error("getOutputStream exception: "+e);
-     	}
-     	return null;
+        return null;
     }
 
-    public boolean status() {return opened;}
+    public boolean status() {
+        return opened;
+    }
 
     /**
      * Get an array of valid baud rates. This is currently only 19,200 bps
@@ -184,25 +183,14 @@ public class SerialDriverAdapter extends SpeedoPortController implements jmri.jm
     InputStream serialStream = null;
 
     static public synchronized SerialDriverAdapter instance() {
-        if (mInstance == null){
-                mInstance = new SerialDriverAdapter();
-                mInstance.setManufacturer(jmri.jmrix.DCCManufacturerList.BACHRUS);
-            }
+        if (mInstance == null) {
+            mInstance = new SerialDriverAdapter();
+            mInstance.setManufacturer(jmri.jmrix.DCCManufacturerList.BACHRUS);
+        }
         return mInstance;
     }
     static SerialDriverAdapter mInstance = null;
-    
-    public void dispose(){
-        if(adaptermemo!=null){
-            adaptermemo.dispose();
-        }
-        adaptermemo = null;
-    }
-    static Logger log = LoggerFactory.getLogger(SerialDriverAdapter.class.getName());
 
-    @Override
-    public SpeedoSystemConnectionMemo getSystemConnectionMemo() {
-        return this.adaptermemo;
-    }
+    static Logger log = LoggerFactory.getLogger(SerialDriverAdapter.class.getName());
 
 }

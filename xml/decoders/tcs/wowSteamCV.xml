@@ -29,6 +29,25 @@
 		<comment xml:lang="it">Valori 0-255</comment>
 		<tooltip xml:lang="it">Progr. grado decellerazione (ritardo o inerzia), valori 0-255</tooltip>
 	</variable>
+	<variable CV="61" mask="XXXXXXXV" default="1" item="EMF Enable" tooltip="Turn off/on(default) BEMF, enabling BEMF disables Dither">
+		<xi:include href="http://jmri.org/xml/decoders/parts/enum-disabledEnabled.xml"/>
+		<label>BEMF Enable</label>
+		<label xml:lang="it">Abilitazione BEMF</label>
+		<tooltip xml:lang="it">Abilita (default=on) BEMF, abilitando la BEMF si disabilitano le Fluttuazioni</tooltip>
+	</variable>
+	<!-- Manual 4 CV programming -->
+	<variable CV="201" item="CV201" default="0">
+		<decVal max="255"/>
+	</variable>
+	<variable CV="202" item="CV202" default="0">
+		<decVal max="255"/>
+	</variable>
+	<variable CV="203" item="CV203" default="0">
+		<decVal max="255"/>
+	</variable>
+	<variable CV="204" item="CV204" default="0">
+		<decVal max="255"/>
+	</variable>
 	<!-- Chuff Rate CV -->
 	<variable item="Step 1 Chuff Rate" CV="T2CV.3.1" default="46592" mask="VVVVVVVVVVVVVVVV">
 		<decVal max="65535"/>
@@ -482,9 +501,8 @@
 			<xi:include href="http://jmri.org/xml/decoders/parts/enum-OnOff.xml"/>
 			<label>Random Sound 4 enable</label>
 		</variable> 
-		<variable item="Sound Setting 35" CV="T2CV.4.13" default="15" >
+		<variable item="Brake grinding noise start speed" CV="T2CV.4.13" default="15" >
 			<decVal max="126"/>
-			<label>Brake grinding noise start speed</label>
 		</variable>
 		<variable label="Dual function F0F" CV="T2CV.4.14" default="1" mask="XXXXXXXXXXXXXXXV" tooltip="for fxns F0F-F14, set bit to have sound and light active in both modes">
 			<xi:include href="http://jmri.org/xml/decoders/parts/enum-OffOn.xml"/>

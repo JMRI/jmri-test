@@ -1,17 +1,18 @@
 //SRCPTest.java
-
 package jmri.jmris.srcp;
 
-import org.apache.log4j.Logger;
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests for the jmri.jmris.srcp.JmriSRCPServer class
- * @author                      Paul Bender
- * @version                     $Revision$
+ *
+ * @author Paul Bender
+ * @version $Revision$
  */
 public class JmriSRCPServerTest extends TestCase {
 
@@ -25,9 +26,7 @@ public class JmriSRCPServerTest extends TestCase {
         Assert.assertNotNull(a);
     }
 
-
     // from here down is testing infrastructure
-
     public JmriSRCPServerTest(String s) {
         super(s);
     }
@@ -45,7 +44,6 @@ public class JmriSRCPServerTest extends TestCase {
         return suite;
     }
 
-    static Logger log = Logger.getLogger(JmriSRCPServerTest.class.getName());
+    static Logger log = LoggerFactory.getLogger(JmriSRCPServerTest.class.getName());
 
 }
-

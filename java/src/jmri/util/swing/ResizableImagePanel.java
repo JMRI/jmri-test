@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public class ResizableImagePanel extends JPanel implements ComponentListener {
 
     public static final String IMAGE_PATH = "imagePath";
-    
+
     /**
      *
      */
@@ -74,8 +74,8 @@ public class ResizableImagePanel extends JPanel implements ComponentListener {
      * Constructor for ResizableImagePanel with forced initial size
      *
      * @param imagePath Path to image to display
-     * @param w Panel width
-     * @param h Panel height
+     * @param w         Panel width
+     * @param h         Panel height
      */
     public ResizableImagePanel(String imagePath, int w, int h) {
         super();

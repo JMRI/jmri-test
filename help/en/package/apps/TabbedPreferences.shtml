@@ -45,6 +45,7 @@ Clicking on each preference will then populate the right hand side, with the var
 <a href="#Profiles">Config Profiles</a><br>
 <a href="#JSONServer">JSON Server</a><br>
 <a href="#WebServer">Web Server</a><br>
+<a href="#Warrants">Warrants</a><br>
 <p>Perhaps the most important control is at the bottom of this section:
 The "Save" button!  
 <p>
@@ -317,6 +318,45 @@ and work with your railroad.
 This tab lets you control what the web server provides.
 For more information, see the 
 <a href="../../html/web/index.shtml#Configure">web server preference pane</a> page.
+<p>
+<a name="Warrants">
+<h2>Warrants and Speed Map</h2></a>
+
+This panel sets parameters used in computing routes for Warrants and for
+controlling the events that warranted trains may encounter.
+<p>
+When an automatically running train encounters a signal that calls for a speed change,
+or progress is blocked by occupancy ahead, the speed map table is used to make the 
+necessary speed change.  Other parameters control the way the speed change is ramped. 
+
+<h3>Speed Map</h3>
+
+The Speed Map maps the speed names found in the aspects definition of a signal system to a value.
+It is important that all the speed names used in your signal system be listed in the Speed Map Table.
+The value associated with a speed name can be interpreted in four different ways: As a percentage of 
+the current throttle setting as recorded or set by an NXWarrant ("PercentNormal"), or as a percentage
+of the full throttle setting ("PercentFullThrottle").  The last two ways interpret the value as
+a scale track speed; Miles per Hour or Kilometers per Hour.  Use the radio buttons to select how
+the code should interpret the Speed Map. 
+<p>
+The Head Appearance Map is used when Signal Heads are used as signals.  It maps the appearance to a speed
+name which in turn is mapped by the speed map table.
+<p>
+It is important that the correct scale is chosen and that the value of "Throttle Setting/Speed Factor" is reasonable for
+engine addresses that run on warrants.  The factor adjusts the throttle setting to be scale track speed.  
+The Throttle Factor set here is the global default, but factors for
+individual engine address can be determined with NXWarrants.
+<p>
+The "Max Number of Blocks in Route" is the depth to which JMRI will search for a route when defining
+a warrant.  This is a global value that can be overridden when creating a warrant.
+<p>
+The remaining items on the panel are used when JMRI makes a speed change due to a signal aspect or
+occupancy ahead. The speed change is made with a series of incremental throttle settings.  "Ramp
+Step Time" is the duration of each step and "Ramp Step Throttle Increment" is the amount of 
+throttle setting change.
+<p> 
+For more information on warrant preferences, see  
+<a href="../jmri/jmrit/logix/Warrant.shtml#SpeedMap">About Warrants</a> and follow its links.
 
 <!--#include virtual="/Footer" -->
 </body>

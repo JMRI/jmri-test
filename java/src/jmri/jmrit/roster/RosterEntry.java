@@ -639,7 +639,6 @@ public class RosterEntry extends RosterObject implements BasicRosterEntry {
 // Temporarily ignore soundlabels in Roster Entry until  they are user-editable and resettable to defaults.
 // Needed to correct bad sound labels from ESU definitions - only ones used to date.
 //         loadSounds(e.getChild("soundlabels"), "RosterEntry");
-
         loadAttributes(e.getChild("attributepairs"));
 
         if (e.getChild(RosterEntry.SPEED_PROFILE) != null) {
@@ -775,7 +774,7 @@ public class RosterEntry extends RosterObject implements BasicRosterEntry {
     /**
      * Define label for a specific function
      *
-     * @param fn function number, starting with 0
+     * @param fn    function number, starting with 0
      * @param label
      */
     public void setFunctionLabel(int fn, String label) {
@@ -807,7 +806,7 @@ public class RosterEntry extends RosterObject implements BasicRosterEntry {
     /**
      * Define label for a specific sound
      *
-     * @param fn sound number, starting with 0
+     * @param fn    sound number, starting with 0
      * @param label
      */
     public void setSoundLabel(int fn, String label) {
@@ -871,7 +870,7 @@ public class RosterEntry extends RosterObject implements BasicRosterEntry {
     /**
      * Define whether a specific function is lockable.
      *
-     * @param fn function number, starting with 0
+     * @param fn       function number, starting with 0
      * @param lockable
      */
     public void setFunctionLockable(int fn, boolean lockable) {
@@ -1151,7 +1150,7 @@ public class RosterEntry extends RosterObject implements BasicRosterEntry {
      * contents is passed through the parameters, as the actual XML creation is
      * done in the LocoFile class.
      *
-     * @param cvModel CV contents to include in file
+     * @param cvModel       CV contents to include in file
      * @param iCvModel
      * @param variableModel Variable contents to include in file
      *
@@ -1205,7 +1204,7 @@ public class RosterEntry extends RosterObject implements BasicRosterEntry {
      * Load a pre-existing CvTableModel object with the CV contents of this
      * entry
      *
-     * @param cvModel Model to load, must exist
+     * @param cvModel  Model to load, must exist
      * @param iCvModel
      */
     public void loadCvModel(CvTableModel cvModel, IndexedCvTableModel iCvModel) {

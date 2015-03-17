@@ -1,22 +1,21 @@
 // StackMonTest.java
-
-
 package jmri.jmrix.lenz.swing.stackmon;
 
-import org.apache.log4j.Logger;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests for the jmri.jmrix.lenz.swing.stackmon package
- * @author                      Paul Bender  
- * @version                     $Revision$
+ *
+ * @author Paul Bender
+ * @version $Revision$
  */
 public class StackMonTest extends TestCase {
 
     // from here down is testing infrastructure
-
     public StackMonTest(String s) {
         super(s);
     }
@@ -34,7 +33,6 @@ public class StackMonTest extends TestCase {
         return suite;
     }
 
-    static Logger log = Logger.getLogger(StackMonTest.class.getName());
+    static Logger log = LoggerFactory.getLogger(StackMonTest.class.getName());
 
 }
-

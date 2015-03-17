@@ -16,11 +16,11 @@ import static jmri.web.servlet.ServletUtil.UTF8_TEXT_HTML;
 public class HomeServlet extends HttpServlet {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -1852868042825396772L;
+     *
+     */
+    private static final long serialVersionUID = -1852868042825396772L;
 
-	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (!request.getRequestURI().equals("/")) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -40,10 +40,10 @@ public class HomeServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -54,10 +54,10 @@ public class HomeServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

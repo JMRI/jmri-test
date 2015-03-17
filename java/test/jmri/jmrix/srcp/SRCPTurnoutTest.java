@@ -1,10 +1,11 @@
 package jmri.jmrix.srcp;
 
-import org.apache.log4j.Logger;
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SRCPTurnoutTest.java
@@ -17,15 +18,15 @@ import junit.framework.TestSuite;
 public class SRCPTurnoutTest extends TestCase {
 
     public void testCtor() {
-        SRCPTrafficController et = new SRCPTrafficController(){
+        SRCPTrafficController et = new SRCPTrafficController() {
             @Override
-            public void sendSRCPMessage(SRCPMessage m,SRCPListener l){
+            public void sendSRCPMessage(SRCPMessage m, SRCPListener l) {
                 // we aren't actually sending anything to a layout.
             }
         };
-        SRCPBusConnectionMemo memo = new SRCPBusConnectionMemo(et,"TEST",1);
-        memo.setTurnoutManager(new SRCPTurnoutManager(memo,memo.getBus()));
-        SRCPTurnout m = new SRCPTurnout(1,memo);
+        SRCPBusConnectionMemo memo = new SRCPBusConnectionMemo(et, "TEST", 1);
+        memo.setTurnoutManager(new SRCPTurnoutManager(memo, memo.getBus()));
+        SRCPTurnout m = new SRCPTurnout(1, memo);
         Assert.assertNotNull(m);
     }
 
@@ -56,5 +57,5 @@ public class SRCPTurnoutTest extends TestCase {
     protected void tearDown() {
         apps.tests.Log4JFixture.tearDown();
     }
-    static Logger log = Logger.getLogger(SRCPTurnoutTest.class.getName());
+    static Logger log = LoggerFactory.getLogger(SRCPTurnoutTest.class.getName());
 }

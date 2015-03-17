@@ -4,6 +4,7 @@ package jmri.jmris.json;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -56,7 +57,7 @@ public class JsonOperationsServer extends AbstractOperationsServer {
      * Constructs an error message and sends it to the client as a JSON message
      *
      * @param errorStatus is the error message. It need not include any padding
-     * - this method will add it. It should be plain text.
+     *                    - this method will add it. It should be plain text.
      * @throws IOException if there is a problem sending the error message
      */
     @Override
@@ -123,6 +124,19 @@ public class JsonOperationsServer extends AbstractOperationsServer {
             this.connection.sendMessage(this.mapper.writeValueAsString(JsonUtil.getTrain(this.connection.getLocale(), train.getId())));
         } catch (JsonException ex) {
             this.connection.sendMessage(this.mapper.writeValueAsString(ex.getJsonMessage()));
+        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent e) {
+        log.debug("property change: {} old: {} new: {}", e.getPropertyName(), e.getOldValue(), e.getNewValue());
+        if (e.getPropertyName().equals(Train.BUILT_CHANGED_PROPERTY)
+                || e.getPropertyName().equals(Train.TRAIN_MOVE_COMPLETE_CHANGED_PROPERTY)) {
+            try {
+                sendFullStatus((Train) e.getSource());
+            } catch (IOException e1) {
+                log.error(e1.getLocalizedMessage(), e1);
+            }
         }
     }
 

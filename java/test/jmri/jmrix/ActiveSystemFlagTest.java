@@ -1,19 +1,18 @@
 // ActiveSystemFlagTest.java
-
 package jmri.jmrix;
 
-import org.apache.log4j.Logger;
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests for the XmlFile class.
  *
- * @author	    Bob Jacobsen  Copyright 2008
- * @version         $Revision$
+ * @author	Bob Jacobsen Copyright 2008
+ * @version $Revision$
  */
 public class ActiveSystemFlagTest extends TestCase {
 
@@ -30,11 +29,11 @@ public class ActiveSystemFlagTest extends TestCase {
         try {
             Assert.assertTrue(ActiveSystemFlag.isActive("jmri.foo"));
             Assert.fail("Didn't throw exception");
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     // from here down is testing infrastructure
-    
     public ActiveSystemFlagTest(String s) {
         super(s);
     }
@@ -52,6 +51,6 @@ public class ActiveSystemFlagTest extends TestCase {
     }
 
     // protected access for subclass
-    static protected Logger log = Logger.getLogger(ActiveSystemFlagTest.class.getName());
+    static protected Logger log = LoggerFactory.getLogger(ActiveSystemFlagTest.class.getName());
 
 }

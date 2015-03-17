@@ -1,19 +1,20 @@
 package jmri.jmrix.loconet.sdfeditor;
 
-import org.apache.log4j.Logger;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests for the jmri.jmrix.loconet.sdfeditor package.
+ *
  * @author	Bob Jacobsen Copyright 2007
- * @version     $Revision$
+ * @version $Revision$
  */
 public class SdfEditorTest extends TestCase {
 
     // from here down is testing infrastructure
-
     public SdfEditorTest(String s) {
         super(s);
     }
@@ -33,6 +34,6 @@ public class SdfEditorTest extends TestCase {
         return suite;
     }
 
-    static Logger log = Logger.getLogger(SdfEditorTest.class.getName());
+    static Logger log = LoggerFactory.getLogger(SdfEditorTest.class.getName());
 
 }

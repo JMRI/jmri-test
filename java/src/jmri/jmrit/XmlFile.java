@@ -99,12 +99,12 @@ public abstract class XmlFile {
      *
      * Exceptions are only thrown when local recovery is impossible.
      *
-     * @throws org.jdom2.JDOMException only when all methods have failed
+     * @throws org.jdom2.JDOMException       only when all methods have failed
      * @throws java.io.FileNotFoundException
      * @param file File to be parsed. A FileNotFoundException is thrown if it
-     * doesn't exist.
+     *             doesn't exist.
      * @return root element from the file. This should never be null, as an
-     * exception should be thrown if anything goes wrong.
+     *         exception should be thrown if anything goes wrong.
      */
     public Element rootFromFile(File file) throws JDOMException, IOException {
         if (log.isDebugEnabled()) {
@@ -124,11 +124,11 @@ public abstract class XmlFile {
      *
      * Exceptions are only thrown when local recovery is impossible.
      *
-     * @throws org.jdom2.JDOMException only when all methods have failed
+     * @throws org.jdom2.JDOMException       only when all methods have failed
      * @throws java.io.FileNotFoundException
      * @param stream InputStream to be parsed.
      * @return root element from the file. This should never be null, as an
-     * exception should be thrown if anything goes wrong.
+     *         exception should be thrown if anything goes wrong.
      */
     public Element rootFromInputStream(InputStream stream) throws JDOMException, IOException {
         return getRoot(verify, stream);
@@ -143,7 +143,7 @@ public abstract class XmlFile {
      * @throws FileNotFoundException
      * @param url URL locating the data file
      * @return root element from the file. This should never be null, as an
-     * exception should be thrown if anything goes wrong.
+     *         exception should be thrown if anything goes wrong.
      */
     public Element rootFromURL(URL url) throws JDOMException, IOException {
         if (log.isDebugEnabled()) {
@@ -160,11 +160,11 @@ public abstract class XmlFile {
      * Get the root element from an XML document in a stream.
      *
      * @param verify true if the XML document should be validated against its
-     * schema
+     *               schema
      * @param stream input containing the XML document
      * @return the root element of the XML document
      * @throws org.jdom2.JDOMException if the XML document is invalid
-     * @throws java.io.IOException if the input cannot be read
+     * @throws java.io.IOException     if the input cannot be read
      */
     protected Element getRoot(boolean verify, InputStream stream) throws JDOMException, IOException {
         if (log.isDebugEnabled()) {
@@ -184,11 +184,11 @@ public abstract class XmlFile {
      *
      *
      * @param verify true if the XML document should be validated against its
-     * schema
+     *               schema
      * @param reader input containing the XML document
      * @return the root element of the XML document
      * @throws org.jdom2.JDOMException if the XML document is invalid
-     * @throws java.io.IOException if the input cannot be read
+     * @throws java.io.IOException     if the input cannot be read
      * @since 3.1.5
      */
     protected Element getRoot(boolean verify, InputStreamReader reader) throws JDOMException, IOException {
@@ -207,18 +207,20 @@ public abstract class XmlFile {
      *
      * @throws FileNotFoundException
      * @param file File to be created.
-     * @param doc Document to be written out. This should never be null.
+     * @param doc  Document to be written out. This should never be null.
      */
     public void writeXML(File file, Document doc) throws IOException, FileNotFoundException {
         // ensure parent directory exists
-        if (file.getParent()!=null) FileUtil.createDirectory(file.getParent());
+        if (file.getParent() != null) {
+            FileUtil.createDirectory(file.getParent());
+        }
         // write the result to selected file
         FileOutputStream o = new FileOutputStream(file);
         try {
             XMLOutputter fmt = new XMLOutputter();
             fmt.setFormat(Format.getPrettyFormat()
-                                .setLineSeparator(System.getProperty("line.separator"))
-                                .setTextMode(Format.TextMode.TRIM_FULL_WHITE));
+                    .setLineSeparator(System.getProperty("line.separator"))
+                    .setTextMode(Format.TextMode.TRIM_FULL_WHITE));
             fmt.output(doc, o);
         } finally {
             o.close();
@@ -243,7 +245,7 @@ public abstract class XmlFile {
         } else {
             File fx = new File(xmlDir() + name);
             return fx.exists();
-    }
+        }
     }
 
     /**
@@ -256,7 +258,7 @@ public abstract class XmlFile {
      * absolute name. </OL>
      *
      * @param name Filename perhaps containing subdirectory information (e.g.
-     * "decoders/Mine.xml")
+     *             "decoders/Mine.xml")
      * @return null if file found, otherwise the located File
      */
     protected File findFile(String name) {
@@ -293,7 +295,7 @@ public abstract class XmlFile {
      * of the file.
      *
      * @param name Last part of file pathname i.e. subdir/name, without the
-     * pathname for either the xml or preferences directory.
+     *             pathname for either the xml or preferences directory.
      */
     public void makeBackupFile(String name) {
         File file = findFile(name);
@@ -319,8 +321,8 @@ public abstract class XmlFile {
      * Move original file to backup directory.
      *
      * @param directory the backup directory to use.
-     * @param file the file to be backed up. The file name will have the current
-     * date embedded in the backup name.
+     * @param file      the file to be backed up. The file name will have the
+     *                  current date embedded in the backup name.
      * @return true if successful.
      */
     public boolean makeBackupFile(String directory, File file) {
@@ -371,7 +373,7 @@ public abstract class XmlFile {
      * Revert to original file from backup. Use this for testing backup files.
      *
      * @param name Last part of file pathname i.e. subdir/name, without the
-     * pathname for either the xml or preferences directory.
+     *             pathname for either the xml or preferences directory.
      */
     public void revertBackupFile(String name) {
         File file = findFile(name);
@@ -401,9 +403,9 @@ public abstract class XmlFile {
      * preferences directory tree.
      *
      * @param name Filename without preference path information, e.g.
-     * "decoders/Mine.xml".
+     *             "decoders/Mine.xml".
      * @return Complete filename, including path information into preferences
-     * directory
+     *         directory
      */
     public String backupFileName(String name) {
         String f = name + ".bak";
@@ -425,8 +427,8 @@ public abstract class XmlFile {
 
     /**
      * @return String based on the current date in the format of year month day
-     * hour minute second. The date is fixed length and always returns a date
-     * represented by 14 characters.
+     *         hour minute second. The date is fixed length and always returns a
+     *         date represented by 14 characters.
      */
     private String getDate() {
         Calendar now = Calendar.getInstance();
@@ -458,7 +460,7 @@ public abstract class XmlFile {
         String date = "" + now.get(Calendar.YEAR) + m + d + h + min + sec;
         return date;
     }
-    
+
     /**
      * Execute the Processing Instructions in the file.
      *
@@ -471,47 +473,53 @@ public abstract class XmlFile {
         for (Object c : doc.getContent()) { // type Content
             if (c instanceof ProcessingInstruction) {
                 try {
-                    doc = processOneInstruction((ProcessingInstruction)c, doc);
+                    doc = processOneInstruction((ProcessingInstruction) c, doc);
                 } catch (org.jdom2.transform.XSLTransformException ex) {
-                    log.error("XSLT error while transforming with "+c+", ignoring transform", ex);
+                    log.error("XSLT error while transforming with " + c + ", ignoring transform", ex);
                 } catch (org.jdom2.JDOMException ex) {
-                    log.error("JDOM error while transforming with "+c+", ignoring transform", ex);
+                    log.error("JDOM error while transforming with " + c + ", ignoring transform", ex);
                 } catch (java.io.IOException ex) {
-                    log.error("IO error while transforming with "+c+", ignoring transform", ex);
+                    log.error("IO error while transforming with " + c + ", ignoring transform", ex);
                 }
             }
         }
-        
-        return doc ;
+
+        return doc;
     }
-    
+
     Document processOneInstruction(ProcessingInstruction p, Document doc) throws org.jdom2.transform.XSLTransformException, org.jdom2.JDOMException, java.io.IOException {
-        log.debug("handling ",p);
-        
+        log.debug("handling ", p);
+
         // check target
         String target = p.getTarget();
-        if (!target.equals("transform-xslt")) return doc;
-        
+        if (!target.equals("transform-xslt")) {
+            return doc;
+        }
+
         String href = p.getPseudoAttributeValue("href");
         // we expect this to start with http://jmri.org/ and refer to the JMRI file tree
-        if (! href.startsWith("http://jmri.org/")) return doc;
+        if (!href.startsWith("http://jmri.org/")) {
+            return doc;
+        }
         href = href.substring(16);
-        
+
         // if starts with 'xml/' we remove that; findFile will put it back
-        if (href.startsWith("xml/")) href = href.substring(4);
-        
+        if (href.startsWith("xml/")) {
+            href = href.substring(4);
+        }
+
         // read the XSLT transform into a Document to get XInclude done
         SAXBuilder builder = getBuilder(false);  // argument controls validation
         Document xdoc = builder.build(new BufferedInputStream(new FileInputStream(findFile(href))));
         org.jdom2.transform.XSLTransformer transformer = new org.jdom2.transform.XSLTransformer(xdoc);
         return transformer.transform(doc);
     }
-    
+
     /**
      * Create the Document object to store a particular root Element.
      *
      * @param root Root element of the final document
-     * @param dtd name of an external DTD
+     * @param dtd  name of an external DTD
      * @return new Document, with root installed
      */
     static public Document newDocument(Element root, String dtd) {
@@ -535,12 +543,15 @@ public abstract class XmlFile {
     }
 
     /**
-     * Add default information to the XML before writing it out. <P> Currently,
-     * this is identification information as an XML comment. This includes: <UL>
+     * Add default information to the XML before writing it out.
+     * <P>
+     * Currently, this is identification information as an XML comment. This
+     * includes: <UL>
      * <LI>The JMRI version used <LI>Date of writing <LI>A CVS id string, in
-     * case the file gets checked in or out </UL> <P> It may be necessary to
-     * extend this to check whether the info is already present, e.g. if
-     * re-writing a file.
+     * case the file gets checked in or out </UL>
+     * <P>
+     * It may be necessary to extend this to check whether the info is already
+     * present, e.g. if re-writing a file.
      *
      * @param root The root element of the document that will be written.
      */
@@ -579,10 +590,10 @@ public abstract class XmlFile {
      * Provide a JFileChooser initialized to the default user location, and with
      * a default filter.
      *
-     * @param filter Title for the filter, may not be null
+     * @param filter  Title for the filter, may not be null
      * @param suffix1 An allowed suffix, or null
      * @param suffix2 A second allowed suffix, or null. If both arguments are
-     * null, no specific filtering is done.
+     *                null, no specific filtering is done.
      * @return a file chooser
      */
     public static JFileChooser userFileChooser(

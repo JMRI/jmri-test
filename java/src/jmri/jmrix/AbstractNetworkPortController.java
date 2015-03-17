@@ -28,10 +28,10 @@ abstract public class AbstractNetworkPortController extends AbstractPortControll
     // keep the socket provides our connection.
     protected Socket socketConn = null;
 
-    public AbstractNetworkPortController(){
-       super();
-       setHostName(""); // give the host name a default value of 
-                        // the empty string.
+    protected AbstractNetworkPortController(SystemConnectionMemo connectionMemo) {
+        super(connectionMemo);
+        setHostName(""); // give the host name a default value of
+        // the empty string.
     }
 
     @Override
@@ -157,10 +157,10 @@ abstract public class AbstractNetworkPortController extends AbstractPortControll
     @Override
     public String getCurrentPortName() {
         String t;
-        if(getMdnsConfigure()){
-           t=getHostAddress();
+        if (getMdnsConfigure()) {
+            t = getHostAddress();
         } else {
-           t = getHostName();
+            t = getHostName();
         }
         int p = getPort();
         if (t != null && !t.equals("")) {
@@ -269,11 +269,9 @@ abstract public class AbstractNetworkPortController extends AbstractPortControll
         return null;
     }
 
-    /*Dispose should be handled by the port adapters and this should be abstract
-     However this is in place until all the other code has been refactored */
-
     @Override
     public void dispose() {
+        super.dispose();
     }
 
     //private boolean allowConnectionRecovery = false;

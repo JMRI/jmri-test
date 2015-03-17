@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Abstract interface between the a JMRI Programmer and a network connection
- *<p>
+ * <p>
  * Connects to default global programmer at construction time.
  *
  * @author Paul Bender Copyright (C) 2012
@@ -18,8 +18,11 @@ import org.slf4j.LoggerFactory;
 abstract public class AbstractProgrammerServer implements jmri.ProgListener {
 
     private Programmer p = null;
-    protected Programmer getProgrammer() { return p; }
-    
+
+    protected Programmer getProgrammer() {
+        return p;
+    }
+
     protected int lastCV = -1;
 
     public AbstractProgrammerServer() {
@@ -91,9 +94,10 @@ abstract public class AbstractProgrammerServer implements jmri.ProgListener {
     /**
      * Receive a callback at the end of a programming operation.
      *
-     * @param value Value from a read operation, or value written on a write
+     * @param value  Value from a read operation, or value written on a write
      * @param status Denotes the completion code. Note that this is a bitwise
-     * combination of the various status coded defined in this interface.
+     *               combination of the various status coded defined in this
+     *               interface.
      */
     public void programmingOpReply(int value, int status) {
         if (log.isDebugEnabled()) {

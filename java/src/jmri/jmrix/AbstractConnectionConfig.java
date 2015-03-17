@@ -33,7 +33,7 @@ abstract public class AbstractConnectionConfig implements ConnectionConfig {
 
     protected final UserPreferencesManager pref = InstanceManager.getDefault(UserPreferencesManager.class);
 
-    abstract void checkInitDone();
+    abstract protected void checkInitDone();
 
     abstract public void updateAdapter();
 
@@ -62,7 +62,7 @@ abstract public class AbstractConnectionConfig implements ConnectionConfig {
      */
     @Override
     public boolean isDirty() {
-        return this.getAdapter().isDirty();
+        return (this.getAdapter() != null) ? this.getAdapter().isDirty() : true;
     }
 
     /**
@@ -76,7 +76,7 @@ abstract public class AbstractConnectionConfig implements ConnectionConfig {
      */
     @Override
     public boolean isRestartRequired() {
-        return this.getAdapter().isRestartRequired();
+        return (this.getAdapter() != null) ? this.getAdapter().isRestartRequired() : true;
     }
 
     protected static class Option {
@@ -146,7 +146,7 @@ abstract public class AbstractConnectionConfig implements ConnectionConfig {
     protected GridBagConstraints cL = new GridBagConstraints();
     protected GridBagConstraints cR = new GridBagConstraints();
 
-    abstract void showAdvancedItems();
+    abstract protected void showAdvancedItems();
 
     protected int addStandardDetails(PortAdapter adapter, boolean incAdvanced, int i) {
         for (String item : options.keySet()) {

@@ -1,35 +1,36 @@
 //SimpleReporterServerTest.java
-
 package jmri.jmris.simpleserver;
 
-import org.apache.log4j.Logger;
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests for the jmri.jmris.simpleserver.SimpleReporterServer class
- * @author                      Paul Bender
- * @version                     $Revision$
+ *
+ * @author Paul Bender
+ * @version $Revision$
  */
 public class SimpleReporterServerTest extends TestCase {
 
     public void testCtor() {
-	    java.io.DataOutputStream output=new java.io.DataOutputStream(
-	        new java.io.OutputStream() {
-	        // null output string drops characters
-	        // could be replaced by one that checks for specific outputs
-            @Override
-            public void write(int b) throws java.io.IOException {}
-	    });
+        java.io.DataOutputStream output = new java.io.DataOutputStream(
+                new java.io.OutputStream() {
+                    // null output string drops characters
+                    // could be replaced by one that checks for specific outputs
+                    @Override
+                    public void write(int b) throws java.io.IOException {
+                    }
+                });
         java.io.DataInputStream input = new java.io.DataInputStream(System.in);
-        SimpleReporterServer a = new SimpleReporterServer(input,output);
+        SimpleReporterServer a = new SimpleReporterServer(input, output);
         Assert.assertNotNull(a);
     }
 
     // from here down is testing infrastructure
-
     public SimpleReporterServerTest(String s) {
         super(s);
     }
@@ -47,7 +48,6 @@ public class SimpleReporterServerTest extends TestCase {
         return suite;
     }
 
-    static Logger log = Logger.getLogger(SimpleReporterServerTest.class.getName());
+    static Logger log = LoggerFactory.getLogger(SimpleReporterServerTest.class.getName());
 
 }
-

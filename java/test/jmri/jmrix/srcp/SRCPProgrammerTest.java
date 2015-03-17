@@ -1,10 +1,11 @@
 package jmri.jmrix.srcp;
 
-import org.apache.log4j.Logger;
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SRCPProgrammerTest.java
@@ -17,11 +18,11 @@ import junit.framework.TestSuite;
 public class SRCPProgrammerTest extends TestCase {
 
     public void testCtor() {
-        SRCPBusConnectionMemo sm=new SRCPBusConnectionMemo(new SRCPTrafficController(){
-          @Override
-          public void sendSRCPMessage(SRCPMessage m, SRCPListener reply) {
-           }
-        },"A",1);
+        SRCPBusConnectionMemo sm = new SRCPBusConnectionMemo(new SRCPTrafficController() {
+            @Override
+            public void sendSRCPMessage(SRCPMessage m, SRCPListener reply) {
+            }
+        }, "A", 1);
         SRCPProgrammer s = new SRCPProgrammer(sm);
         Assert.assertNotNull(s);
     }
@@ -53,5 +54,5 @@ public class SRCPProgrammerTest extends TestCase {
     protected void tearDown() {
         apps.tests.Log4JFixture.tearDown();
     }
-    static Logger log = Logger.getLogger(SRCPProgrammerTest.class.getName());
+    static Logger log = LoggerFactory.getLogger(SRCPProgrammerTest.class.getName());
 }

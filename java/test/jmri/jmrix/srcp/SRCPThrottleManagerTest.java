@@ -1,10 +1,11 @@
 package jmri.jmrix.srcp;
 
-import org.apache.log4j.Logger;
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SRCPThrottleManagerTest.java
@@ -17,11 +18,11 @@ import junit.framework.TestSuite;
 public class SRCPThrottleManagerTest extends TestCase {
 
     public void testCtor() {
-        SRCPBusConnectionMemo sm=new SRCPBusConnectionMemo(new SRCPTrafficController(){
-          @Override
-          public void sendSRCPMessage(SRCPMessage m, SRCPListener reply) {
-           }
-        }, "A",1);
+        SRCPBusConnectionMemo sm = new SRCPBusConnectionMemo(new SRCPTrafficController() {
+            @Override
+            public void sendSRCPMessage(SRCPMessage m, SRCPListener reply) {
+            }
+        }, "A", 1);
 
         SRCPThrottleManager m = new SRCPThrottleManager(sm);
         Assert.assertNotNull(m);
@@ -54,5 +55,5 @@ public class SRCPThrottleManagerTest extends TestCase {
     protected void tearDown() {
         apps.tests.Log4JFixture.tearDown();
     }
-    static Logger log = Logger.getLogger(SRCPThrottleManagerTest.class.getName());
+    static Logger log = LoggerFactory.getLogger(SRCPThrottleManagerTest.class.getName());
 }

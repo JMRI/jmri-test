@@ -50,7 +50,7 @@
 <!ATTLIST location physicalLocation CDATA #IMPLIED>
 <!ATTLIST location idReader CDATA #IMPLIED>
 
-<!ATTLIST track id				CDATA #REQUIRED>          
+<!ATTLIST track id				CDATA #IMPLIED>          
 <!ATTLIST track name			CDATA #IMPLIED>
 <!ATTLIST track locType			CDATA #IMPLIED>       
 <!ATTLIST track dir				CDATA #IMPLIED> 
@@ -106,7 +106,9 @@
 <!ATTLIST item comment			CDATA #IMPLIED>
 <!ATTLIST item wait				CDATA #IMPLIED>
 <!ATTLIST item trainScheduleId	CDATA #IMPLIED>
+<!ATTLIST item pickupTrainScheduleId	CDATA #IMPLIED>
 <!ATTLIST item hits				CDATA #IMPLIED>
+<!ATTLIST item random			CDATA #IMPLIED>
 
 <!ATTLIST locationEditOptions x		CDATA #IMPLIED> 
 <!ATTLIST locationEditOptions y		CDATA #IMPLIED> 
@@ -138,7 +140,7 @@
 <!ELEMENT pickupId EMPTY>
 <!ATTLIST pickupId id					CDATA #IMPLIED> 
 
-<!ELEMENT comments (both | pickup | setout)*>
+<!ELEMENT comments (track | both | pickup | setout)*>
 <!ELEMENT both EMPTY>
 <!ELEMENT pickup EMPTY>
 <!ELEMENT setout EMPTY>

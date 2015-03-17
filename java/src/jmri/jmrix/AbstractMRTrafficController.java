@@ -68,9 +68,9 @@ abstract public class AbstractMRTrafficController {
     /**
      * Forward a Message to registered listeners.
      *
-     * @param m Message to be forwarded intact
+     * @param m     Message to be forwarded intact
      * @param notMe One (optional) listener to be skipped, usually because it's
-     * the originating object.
+     *              the originating object.
      */
     @SuppressWarnings("unchecked")
     protected void notifyMessage(AbstractMRMessage m, AbstractMRListener notMe) {
@@ -163,9 +163,9 @@ abstract public class AbstractMRTrafficController {
     /**
      * Forward a "Reply" from layout to registered listeners.
      *
-     * @param r Reply to be forwarded intact
+     * @param r    Reply to be forwarded intact
      * @param dest One (optional) listener to be skipped, usually because it's
-     * the originating object.
+     *             the originating object.
      */
     @SuppressWarnings("unchecked")
     protected void notifyReply(AbstractMRReply r, AbstractMRListener dest) {
@@ -484,7 +484,7 @@ abstract public class AbstractMRTrafficController {
     /**
      * Add trailer to the outgoing byte stream.
      *
-     * @param msg The output byte stream
+     * @param msg    The output byte stream
      * @param offset the first byte not yet used
      */
     protected void addTrailerToOutput(byte[] msg, int offset, AbstractMRMessage m) {
@@ -790,7 +790,7 @@ abstract public class AbstractMRTrafficController {
      * <P>
      * Handles timeouts on read by ignoring zero-length reads.
      *
-     * @param msg message to fill
+     * @param msg     message to fill
      * @param istream character source.
      * @throws IOException when presented by the input source.
      */
@@ -823,12 +823,11 @@ abstract public class AbstractMRTrafficController {
      * Override in the system specific code if necessary
      *
      * @return true if it is okay to buffer receive characters into a reply
-     * message. When false, discard char received
+     *         message. When false, discard char received
      */
     protected boolean canReceive() {
         return true;
     }
-
 
     private int retransmitCount = 0;
 
@@ -877,15 +876,15 @@ abstract public class AbstractMRTrafficController {
                     // to automatically handle by re-queueing the last sent
                     // message, otherwise go on to the next message
                     if (msg.isRetransmittableErrorMsg()) {
-                        log.debug("Automatic Recovery from Error Message: {}.  Retransmitted {} times.", msg.toString(),retransmitCount);
+                        log.debug("Automatic Recovery from Error Message: {}.  Retransmitted {} times.", msg.toString(), retransmitCount);
                         synchronized (xmtRunnable) {
                             mCurrentState = AUTORETRYSTATE;
-                            if(retransmitCount>0) {
-                               try{
-                                  xmtRunnable.wait(retransmitCount*100);
-                               } catch (InterruptedException e) {
-                                  Thread.currentThread().interrupt(); // retain if needed later
-                               }
+                            if (retransmitCount > 0) {
+                                try {
+                                    xmtRunnable.wait(retransmitCount * 100);
+                                } catch (InterruptedException e) {
+                                    Thread.currentThread().interrupt(); // retain if needed later
+                                }
                             }
                             replyInDispatch = false;
                             xmtRunnable.notify();

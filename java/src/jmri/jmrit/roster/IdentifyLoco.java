@@ -1,25 +1,23 @@
 // IdentifyLoco.java
-
 package jmri.jmrit.roster;
 
+import jmri.InstanceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jmri.*;
 
 /**
- * Interact with a programmer to identify the RosterEntry for a loco
- * on the programming track.
+ * Interact with a programmer to identify the
+ * {@link jmri.jmrit.roster.RosterEntry} for a loco on the programming track.
+ * <p>
+ * This is a class (instead of a {@link jmri.jmrit.roster.Roster} member
+ * function) to simplify use of ProgListener callbacks. It is abstract as we
+ * expect that local classes will define the message and done members.
+ * <p>
  *
- * This is a class (instead of a Roster member function) to simplify use of
- * ProgListener callbacks. It is abstract as we expect that local classes
- * will define the message and done members.
- *
- * Once started, this maintains a List of possible RosterEntrys as
- * it works through the identification progress.
- *
- * @author	Bob Jacobsen   Copyright (C) 2001
- * @version     $Revision$
- * @see         jmri.jmrit.roster.RosterEntry
+ * @author	Bob Jacobsen Copyright (C) 2001, 2015
+ * @version $Revision$
+ * @see jmri.jmrit.symbolicprog.CombinedLocoSelPane
+ * @see jmri.jmrit.symbolicprog.NewLocoSelPane
  */
 abstract public class IdentifyLoco extends jmri.jmrit.AbstractIdentify {
 
@@ -42,7 +40,7 @@ abstract public class IdentifyLoco extends jmri.jmrit.AbstractIdentify {
 
     public boolean test2(int value) {
         // check for long address vs short address
-        if ( (value&0x20) != 0 ) {
+        if ((value & 0x20) != 0) {
             // long address needed
             shortAddr = false;
             statusUpdate(java.util.ResourceBundle.getBundle("jmri/jmrit/roster/JmritRosterBundle").getString("LONG ADDRESS - READ CV 17"));
@@ -72,7 +70,7 @@ abstract public class IdentifyLoco extends jmri.jmrit.AbstractIdentify {
             return false;
         }
     }
-    
+
     public boolean test4(int value) {
         // only for long address
         if (shortAddr) {
@@ -80,19 +78,19 @@ abstract public class IdentifyLoco extends jmri.jmrit.AbstractIdentify {
             statusUpdate(java.util.ResourceBundle.getBundle("jmri/jmrit/roster/JmritRosterBundle").getString("READMFGVER"));
             readCV(8);
             return false;
-            
+
         }
 
         // value is CV18, calculate address
         cv18val = value;
-        address = (cv17val&0x3f)*256 + cv18val;
+        address = (cv17val & 0x3f) * 256 + cv18val;
         statusUpdate(java.util.ResourceBundle.getBundle("jmri/jmrit/roster/JmritRosterBundle").getString("READMFG"));
         readCV(7);
         return false;
     }
 
     public boolean test5(int value) {
-        if(shortAddr){
+        if (shortAddr) {
             cv8val = value;
             //We have read manufacturer and decoder version details
             return true;
@@ -104,7 +102,7 @@ abstract public class IdentifyLoco extends jmri.jmrit.AbstractIdentify {
     }
 
     public boolean test6(int value) {
-        if(shortAddr){
+        if (shortAddr) {
             log.error("test4 routine reached in short address mode");
             return true;
         }
@@ -113,19 +111,22 @@ abstract public class IdentifyLoco extends jmri.jmrit.AbstractIdentify {
     }
 
     public boolean test7(int value) {
-        log.error("unexpected step 7 reached with value: "+value);
+        log.error("unexpected step 7 reached with value: " + value);
         return true;
     }
 
     public boolean test8(int value) {
-        log.error("unexpected step 8 reached with value: "+value);
+        log.error("unexpected step 8 reached with value: " + value);
         return true;
     }
 
     protected void statusUpdate(String s) {
         message(s);
-        if (s.equals("Done")) done(address);
-        else if (log.isDebugEnabled()) log.debug("received status: "+s);
+        if (s.equals("Done")) {
+            done(address);
+        } else if (log.isDebugEnabled()) {
+            log.debug("received status: " + s);
+        }
     }
 
     abstract protected void done(int address);

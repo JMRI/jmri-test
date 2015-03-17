@@ -24,15 +24,18 @@ import jmri.jmrit.jython.JynstrumentFactory;
 import jmri.jmrix.ConnectionConfig;
 import jmri.jmrix.ConnectionStatus;
 import jmri.jmrix.JmrixConfigPane;
+import jmri.util.FileUtil;
 import jmri.util.iharder.dnd.FileDrop;
 import jmri.util.iharder.dnd.FileDrop.Listener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for pane filling main frame (window) of traditional-style JMRI applications
+ * Base class for pane filling main frame (window) of traditional-style JMRI
+ * applications
  * <P>
- * This is for launching after the system is initialized, so it does none of that.
+ * This is for launching after the system is initialized, so it does none of
+ * that.
  *
  * @author	Bob Jacobsen Copyright 2003, 2007, 2008, 2010, 2014
  * @author Dennis Miller Copyright 2005
@@ -43,10 +46,10 @@ import org.slf4j.LoggerFactory;
 public abstract class AppsLaunchPane extends JPanel implements PropertyChangeListener {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 4491168291678104991L;
-	static String profileFilename;
+     *
+     */
+    private static final long serialVersionUID = 4491168291678104991L;
+    static String profileFilename;
 
     public AppsLaunchPane() {
 
@@ -57,8 +60,6 @@ public abstract class AppsLaunchPane extends JPanel implements PropertyChangeLis
 
         jmri.Application.setLogo(logo());
         jmri.Application.setURL(line2());
-
-
 
         // Add actions to abstractActionModel
         // Done here as initial non-GUI initialisation is completed
@@ -231,7 +232,7 @@ public abstract class AppsLaunchPane extends JPanel implements PropertyChangeLis
         JPanel pane1 = new JPanel();
         pane1.setLayout(new BoxLayout(pane1, BoxLayout.X_AXIS));
         log.debug("Fetch main logo: {}", logo());
-        pane1.add(new JLabel(new ImageIcon(getToolkit().getImage(logo()), "JMRI logo"), JLabel.LEFT));
+        pane1.add(new JLabel(new ImageIcon(getToolkit().getImage(FileUtil.findURL(logo(), FileUtil.Location.INSTALLED)), "JMRI logo"), JLabel.LEFT));
         pane1.add(Box.createRigidArea(new Dimension(15, 0))); // Some spacing between logo and status panel
 
         log.debug("start labels");
@@ -344,7 +345,6 @@ public abstract class AppsLaunchPane extends JPanel implements PropertyChangeLis
         return MessageFormat.format(Bundle.getMessage("ConnectionCredit"),
                 new Object[]{AppConfigBase.getConnection(3), AppConfigBase.getPort(3), AppConfigBase.getManufacturerName(3)});
     }
-    
 
     /**
      * Set up the configuration file name at startup.
@@ -363,7 +363,7 @@ public abstract class AppsLaunchPane extends JPanel implements PropertyChangeLis
      * not exist when the program first starts up. This name may be proceeded
      * with <em>config=</em> and may not contain the equals sign (=).
      *
-     * @param def Default value if no other is provided
+     * @param def  Default value if no other is provided
      * @param args Argument array from the main routine
      */
     static protected void setConfigFilename(String def, String[] args) {

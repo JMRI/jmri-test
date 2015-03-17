@@ -4,12 +4,11 @@ package jmri.jmris.simpleserver;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.eclipse.jetty.websocket.WebSocket.Connection;
-
 import jmri.PowerManager;
 import jmri.jmris.AbstractPowerServer;
+import jmri.jmris.JmriConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple Server interface between the JMRI power manager and a network
@@ -21,7 +20,7 @@ import jmri.jmris.AbstractPowerServer;
 public class SimplePowerServer extends AbstractPowerServer {
 
     private DataOutputStream output;
-    private Connection connection;
+    private JmriConnection connection;
     static Logger log = LoggerFactory.getLogger(SimplePowerServer.class.getName());
 
     public SimplePowerServer(DataInputStream inStream, DataOutputStream outStream) {
@@ -29,9 +28,9 @@ public class SimplePowerServer extends AbstractPowerServer {
         mgrOK();
     }
 
-    public SimplePowerServer(Connection cnctn) {
-    	this.connection = cnctn;
-    	mgrOK();
+    public SimplePowerServer(JmriConnection cnctn) {
+        this.connection = cnctn;
+        mgrOK();
     }
 
     /*
@@ -67,12 +66,12 @@ public class SimplePowerServer extends AbstractPowerServer {
             setOffStatus();
         }
     }
-    
+
     public void sendStatus(String status) throws IOException {
-    	if (this.output != null) {
-    		this.output.writeBytes(status);
-    	} else {
-    		this.connection.sendMessage(status);
-    	}
+        if (this.output != null) {
+            this.output.writeBytes(status);
+        } else {
+            this.connection.sendMessage(status);
+        }
     }
 }

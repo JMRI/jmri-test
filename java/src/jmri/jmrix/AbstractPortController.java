@@ -4,6 +4,8 @@ package jmri.jmrix;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.HashMap;
+import javax.annotation.Nonnull;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +31,33 @@ abstract public class AbstractPortController implements PortAdapter {
     // returns the outputStream to the port
     @Override
     public abstract DataOutputStream getOutputStream();
+
+    protected String manufacturerName = null;
+
+    // By making this private, and not protected, we are able to require that
+    // all access is through the getter and setter, and that subclasses that
+    // override the getter and setter must call the super implemenations of the
+    // getter and setter. By channelling setting through a single method, we can
+    // ensure this is never null.
+    private SystemConnectionMemo connectionMemo;
+
+    protected AbstractPortController(SystemConnectionMemo connectionMemo) {
+        AbstractPortController.this.setSystemConnectionMemo(connectionMemo);
+    }
+
+    /**
+     * Clean up before removal.
+     *
+     * Overriding methods must call <code>super.dispose()</code> or document why
+     * they are not calling the overridden implementation. In most cases,
+     * failure to call the overridden implementation will cause user-visible
+     * error.
+     */
+    @Override
+    @OverridingMethodsMustInvokeSuper
+    public void dispose() {
+        this.getSystemConnectionMemo().dispose();
+    }
 
     // check that this object is ready to operate
     @Override
@@ -227,29 +256,20 @@ abstract public class AbstractPortController implements PortAdapter {
         }
     }
 
-    /**
-     * Get and set of the Manufacturer for network (TCP/IP) based connections is
-     * handled by the ConnectionConfig code in each connector. this is here as
-     * we implement the serialdriveradpter.
-     */
     @Override
     public String getManufacturer() {
-        return mManufacturer;
+        return this.manufacturerName;
     }
 
     @Override
     public void setManufacturer(String manufacturer) {
-        log.debug("update manufacturer from " + mManufacturer + " to " + manufacturer);
-        mManufacturer = manufacturer;
+        log.debug("update manufacturer from {} to {}", this.manufacturerName, manufacturer);
+        this.manufacturerName = manufacturer;
     }
-    protected String mManufacturer = null;
 
     @Override
     public boolean getDisabled() {
-        if (this.getSystemConnectionMemo() != null) {
-            return this.getSystemConnectionMemo().getDisabled();
-        }
-        return this.mDisabled;
+        return this.getSystemConnectionMemo().getDisabled();
     }
 
     /**
@@ -265,17 +285,32 @@ abstract public class AbstractPortController implements PortAdapter {
      */
     @Override
     public void setDisabled(boolean disabled) {
-        if (this.loadedDisabled == null) {
-            this.loadedDisabled = disabled;
-        }
-        if (this.getSystemConnectionMemo() != null) {
-            this.getSystemConnectionMemo().setDisabled(disabled);
-        }
-        this.mDisabled = disabled;
+        this.getSystemConnectionMemo().setDisabled(disabled);
     }
 
-    protected boolean mDisabled = false;
-    private Boolean loadedDisabled = null;
+    @Override
+    public String getSystemPrefix() {
+        return this.getSystemConnectionMemo().getSystemPrefix();
+    }
+
+    @Override
+    public void setSystemPrefix(String systemPrefix) {
+        if (!this.getSystemConnectionMemo().setSystemPrefix(systemPrefix)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public String getUserName() {
+        return this.getSystemConnectionMemo().getUserName();
+    }
+
+    @Override
+    public void setUserName(String userName) {
+        if (!this.getSystemConnectionMemo().setUserName(userName)) {
+            throw new IllegalArgumentException();
+        }
+    }
 
     protected boolean allowConnectionRecovery = false;
 
@@ -295,10 +330,7 @@ abstract public class AbstractPortController implements PortAdapter {
 
     @Override
     public boolean isDirty() {
-        boolean isDirty = false;
-        if (this.loadedDisabled != null) {
-            isDirty = (this.loadedDisabled.booleanValue() != this.getDisabled());
-        }
+        boolean isDirty = this.getSystemConnectionMemo().isDirty();
         if (!isDirty) {
             for (Option option : this.options.values()) {
                 isDirty = option.isDirty();
@@ -315,6 +347,43 @@ abstract public class AbstractPortController implements PortAdapter {
         // Override if any option should not be considered when determining if a
         // change requires JMRI to be restarted.
         return this.isDirty();
+    }
+
+    /**
+     * Get the {@link jmri.jmrix.SystemConnectionMemo} associated with this
+     * object.
+     *
+     * This method should only be overridden to ensure that a specific subclass
+     * of SystemConnectionMemo is returned. The recommended pattern is: <code>
+     * public MySystemConnectionMemo getSystemConnectionMemo() {
+     *  return (MySystemConnectionMemo) super.getSystemConnectionMemo();
+     * }
+     * </code>
+     *
+     * @return a SystemConnectionMemo
+     */
+    @Override
+    public SystemConnectionMemo getSystemConnectionMemo() {
+        return this.connectionMemo;
+    }
+
+    /**
+     * Set the {@link jmri.jmrix.SystemConnectionMemo} associated with this
+     * object.
+     *
+     * Overriding implementations must call
+     * <code>super.setSystemConnectionMemo(memo)</code> at some point to ensure
+     * the SystemConnectionMemo gets set.
+     *
+     * @param connectionMemo
+     */
+    @Override
+    @OverridingMethodsMustInvokeSuper
+    public void setSystemConnectionMemo(@Nonnull SystemConnectionMemo connectionMemo) {
+        if (connectionMemo == null) {
+            throw new NullPointerException();
+        }
+        this.connectionMemo = connectionMemo;
     }
 
     static private Logger log = LoggerFactory.getLogger(AbstractPortController.class.getName());

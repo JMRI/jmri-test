@@ -130,7 +130,7 @@
         <pathelement location="${libdir}/joal.jar"/>
         <pathelement location="${libdir}/jython.jar"/>
         <pathelement location="${libdir}/log4j-1.2.17.jar"/>
-        <pathelement location="${libdir}/servlet-api-3.0.jar"/>
+        <pathelement location="${libdir}/javax.servlet-api-3.1.0.jar"/>
         <pathelement location="${libdir}/vecmath.jar"/>
         <pathelement location="${libdir}/mailapi.jar"/>
         <pathelement location="${libdir}/smtp.jar"/>
@@ -143,17 +143,24 @@
         <pathelement location="${libdir}/jackson-core-2.0.6.jar"/>
         <pathelement location="${libdir}/jackson-annotations-2.0.6.jar"/>
         <pathelement location="${libdir}/jackson-databind-2.0.6.jar"/>
-        <pathelement location="${libdir}/jetty-continuation-8.1.11.v20130520.jar"/>
-        <pathelement location="${libdir}/jetty-http-8.1.11.v20130520.jar"/>
-        <pathelement location="${libdir}/jetty-security-8.1.11.v20130520.jar"/>
-        <pathelement location="${libdir}/jetty-server-8.1.11.v20130520.jar"/>
-        <pathelement location="${libdir}/jetty-servlet-8.1.11.v20130520.jar"/>
-        <pathelement location="${libdir}/jetty-util-8.1.11.v20130520.jar"/>
-        <pathelement location="${libdir}/jetty-io-8.1.11.v20130520.jar"/>
-        <pathelement location="${libdir}/jetty-websocket-8.1.11.v20130520.jar"/>
+        <pathelement location="${libdir}/jetty-http-9.2.7.v20150116.jar"/>
+        <pathelement location="${libdir}/jetty-security-9.2.7.v20150116.jar"/>
+        <pathelement location="${libdir}/jetty-server-9.2.7.v20150116.jar"/>
+        <pathelement location="${libdir}/jetty-servlet-9.2.7.v20150116.jar"/>
+        <pathelement location="${libdir}/jetty-util-9.2.7.v20150116.jar"/>
+        <pathelement location="${libdir}/jetty-io-9.2.7.v20150116.jar"/>
+        <pathelement location="${libdir}/websocket-api-9.2.7.v20150116.jar"/>
+        <pathelement location="${libdir}/websocket-client-9.2.7.v20150116.jar"/>
+        <pathelement location="${libdir}/websocket-common-9.2.7.v20150116.jar"/>
+        <pathelement location="${libdir}/websocket-server-9.2.7.v20150116.jar"/>
+        <pathelement location="${libdir}/websocket-servlet-9.2.7.v20150116.jar"/>
         <pathelement location="${libdir}/slf4j-api-1.7.6.jar"/>
         <pathelement location="${libdir}/slf4j-log4j12-1.7.6.jar"/>
         <pathelement location="${libdir}/xbee-api-0.9.jar"/>
+        <pathelement location="${libdir}/pi4j-core.jar"/>
+        <pathelement location="${libdir}/pi4j-device.jar"/>
+        <pathelement location="${libdir}/pi4j-gpio-extension.jar"/>
+        <pathelement location="${libdir}/pi4j-service.jar"/>
     </path>
 
     <pathconvert property="runtime.class.jars" refid="runtime.class.path"/>
@@ -1033,7 +1040,7 @@
             <doctitle><![CDATA[<h1>JMRI Library API</h1>]]>
             </doctitle>
             <bottom><![CDATA[<i>Copyright &copy; ${jmri.copyright.year} JMRI Community.
-                    <br>JMRI, DecoderPro, PanelPro, SoundPro, DispatcherPro and associated logos are our trademarks.</i>
+                    <br>JMRI&reg;, DecoderPro&reg;, PanelPro, SignalPro, SoundPro, DispatcherPro, TrainPro and associated logos are our trademarks.</i>
                        <br><a href="http://jmri.org/Copyright.html">Additional information on copyright, trademarks and licenses is linked here.</a>
                        <br>Site hosted by:
                        <a href="http://sourceforge.net/projects/jmri">
@@ -1051,6 +1058,7 @@
             <link href="http://download.java.net/media/joal/builds/nightly/javadoc_public"/>
             <link href="http://download.oracle.com/javase/8/docs/api/"/>
             <link href="http://download.java.net/media/joal/builds/nightly/javadoc_public"/>
+            <link href="https://commons.apache.org/proper/commons-lang/javadocs/api-release"/>
         </javadoc>
     </target>
 
@@ -1103,7 +1111,7 @@
             <doctitle><![CDATA[<h1>JMRI Library API</h1>]]>
             </doctitle>
             <bottom><![CDATA[<i>Copyright &copy; ${jmri.copyright.year} JMRI Community.
-                    <br>JMRI, DecoderPro, PanelPro, SoundPro, DispatcherPro and associated logos are our trademarks.</i>
+                    <br>JMRI&reg;, DecoderPro&reg;, PanelPro, SignalPro, SoundPro, DispatcherPro, TrainPro and associated logos are our trademarks.</i>
                        <br><a href="http://jmri.org/Copyright.html">Additional information on copyright, trademarks and licenses is linked here.</a>
                        <br>Site hosted by:
                        <a href="http://sourceforge.net/projects/jmri">
@@ -1121,6 +1129,7 @@
             <link href="http://download.java.net/media/joal/builds/nightly/javadoc_public"/>
             <link href="http://download.oracle.com/javase/8/docs/api/"/>
             <link href="http://download.java.net/media/joal/builds/nightly/javadoc_public"/>
+            <link href="https://commons.apache.org/proper/commons-lang/javadocs/api-release"/>
         </javadoc>
         <apply executable="dot" dest="${doctarget}" parallel="false">
             <arg value="-Tpng"/>

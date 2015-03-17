@@ -20,11 +20,13 @@ public final class JSON {
      * Protocol version 1.0 was first introduced in JMRI 3.4<br>
      * Protocol version 1.1 was first introduced in JMRI 3.7.1 and finalized in
      * JMRI 3.8<br>
-     * Protocol version 2.0 was first introduced in JMRI 3.9.3
+     * Protocol version 2.0 was first introduced in JMRI 3.9.3 and finalized in
+     * JMRI 3.10<br>
+     * Protocol version 3.0 was first introduced in JMRI 3.11.2.
      * <p>
      * {@value #JSON_PROTOCOL_VERSION}
      */
-    public static final String JSON_PROTOCOL_VERSION = "2.0"; // NOI18N
+    public static final String JSON_PROTOCOL_VERSION = "3.0"; // NOI18N
 
     /* JSON structure */
     /**
@@ -147,6 +149,12 @@ public final class JSON {
      * @since 1.1
      */
     public static final String NODE = "node"; // NOI18N
+    /**
+     * {@value #ACTIVE_PROFILE}
+     * <p>
+     * @since 3.0
+     */
+    public static final String ACTIVE_PROFILE = "activeProfile"; // NOI18N
     /**
      * {@value #FORMER_NODES}
      * <p>
@@ -456,7 +464,7 @@ public final class JSON {
     /**
      * {@value #DESTINATION_TRACK}
      */
-    public static final String DESTINATION_TRACK = "destinationTrack"; // NOI18N
+    public static final String DESTINATION_TRACK = "dest&track"; // NOI18N
     /**
      * {@value #LOCATION_TRACK}
      */

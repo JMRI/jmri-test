@@ -41,43 +41,52 @@ public class HtmlManifest extends HtmlTrainCommon {
         // build manifest from JSON manifest
         StringBuilder builder = new StringBuilder();
         ArrayNode locations = (ArrayNode) this.getJsonManifest().path(JSON.LOCATIONS);
+        String previousLocationName = null;
         boolean hasWork;
-        for (int r = 0; r < locations.size(); r++) {
-            JsonNode location = locations.get(r);
-            RouteLocation routeLocation = this.train.getRoute().getLocationById(location.path(JSON.ID).textValue());
+        for (JsonNode location : locations) {
+            RouteLocation routeLocation = train.getRoute().getLocationById(location.path(JSON.ID).textValue());
             log.debug("Processing {} ({})", routeLocation.getName(), location.path(JSON.ID).textValue());
             String routeLocationName = location.path(JSON.NAME).textValue();
             builder.append(String.format(locale, strings.getProperty("LocationStart"), routeLocation.getId())); // NOI18N
             hasWork = (location.path(JSON.CARS).path(JSON.ADD).size() > 0
                     || location.path(JSON.CARS).path(JSON.REMOVE).size() > 0
-                    || location.path(JSON.ENGINES).path(JSON.ADD).size() > 0
-                    || location.path(JSON.ENGINES).path(JSON.REMOVE).size() > 0);
-            if (hasWork) {
+                    || location.path(JSON.ENGINES).path(JSON.ADD).size() > 0 || location.path(JSON.ENGINES).path(
+                            JSON.REMOVE).size() > 0);
+            if (hasWork && !routeLocationName.equals(previousLocationName)) {
                 if (!train.isShowArrivalAndDepartureTimesEnabled()) {
                     builder.append(String.format(locale, strings.getProperty("ScheduledWorkAt"), routeLocationName)); // NOI18N
-                } else if (r == 0) {
-                    builder.append(String.format(locale, strings.getProperty("WorkDepartureTime"), routeLocationName, train.getFormatedDepartureTime())); // NOI18N
-                } else if (!routeLocation.getDepartureTime().equals("")) {
-                    builder.append(String.format(locale, strings.getProperty("WorkDepartureTime"), routeLocationName, routeLocation.getFormatedDepartureTime())); // NOI18N
-                } else if (Setup.isUseDepartureTimeEnabled() && r != locations.size() - 1) {
-                    builder.append(String.format(locale, strings.getProperty("WorkDepartureTime"), routeLocationName, train.getExpectedDepartureTime(routeLocation))); // NOI18N
-                } else if (!train.getExpectedArrivalTime(routeLocation).equals("-1")) { // NOI18N
-                    builder.append(String.format(locale, strings.getProperty("WorkArrivalTime"), routeLocationName, train.getExpectedArrivalTime(routeLocation))); // NOI18N
+                } else if (routeLocation == train.getRoute().getDepartsRouteLocation()) {
+                    builder.append(String.format(locale, strings.getProperty("WorkDepartureTime"), routeLocationName,
+                            train.getFormatedDepartureTime())); // NOI18N
+                } else if (!routeLocation.getDepartureTime().equals(RouteLocation.NONE)) {
+                    builder.append(String.format(locale, strings.getProperty("WorkDepartureTime"), routeLocationName,
+                            routeLocation.getFormatedDepartureTime())); // NOI18N
+                } else if (Setup.isUseDepartureTimeEnabled()
+                        && routeLocation != train.getRoute().getTerminatesRouteLocation()) {
+                    builder.append(String.format(locale, strings.getProperty("WorkDepartureTime"), routeLocationName,
+                            train.getExpectedDepartureTime(routeLocation))); // NOI18N
+                } else if (!train.getExpectedArrivalTime(routeLocation).equals(Train.ALREADY_SERVICED)) { // NOI18N
+                    builder.append(String.format(locale, strings.getProperty("WorkArrivalTime"), routeLocationName,
+                            train.getExpectedArrivalTime(routeLocation))); // NOI18N
                 } else {
                     builder.append(String.format(locale, strings.getProperty("ScheduledWorkAt"), routeLocationName)); // NOI18N
                 }
                 // add route comment
-                if (!location.path(JSON.COMMENT).textValue().trim().equals("")) {
-                    builder.append(String.format(locale, strings.getProperty("RouteLocationComment"), routeLocation.getComment().trim()));
+                if (!location.path(JSON.COMMENT).textValue().trim().isEmpty()) {
+                    builder.append(String.format(locale, strings.getProperty("RouteLocationComment"), location.path(JSON.COMMENT).textValue()));
                 }
 
                 builder.append(getTrackComments(location.path(JSON.TRACK), location.path(JSON.CARS)));
 
                 // add location comment
-                if (Setup.isPrintLocationCommentsEnabled() && !routeLocation.getLocation().getComment().trim().equals("")) {
-                    builder.append(String.format(locale, strings.getProperty("LocationComment"), routeLocation.getLocation().getComment()));
+                if (Setup.isPrintLocationCommentsEnabled()
+                        && !location.path(JSON.LOCATION).path(JSON.COMMENT).textValue().trim().isEmpty()) {
+                    builder.append(String.format(locale, strings.getProperty("LocationComment"), location.path(
+                            JSON.LOCATION).path(JSON.COMMENT).textValue()));
                 }
             }
+
+            previousLocationName = routeLocationName;
 
             // engine change or helper service?
             if (location.path(JSON.OPTIONS).size() > 0) {
@@ -109,73 +118,78 @@ public class HtmlManifest extends HtmlTrainCommon {
             builder.append(blockCars(location.path(JSON.CARS), routeLocation, true));
             builder.append(dropEngines(location.path(JSON.ENGINES).path(JSON.REMOVE)));
 
-            if (r != locations.size() - 1) {
-                // work to be done?
-                if (hasWork) {
-                    if (!Setup.isPrintLoadsAndEmptiesEnabled()) {
-                        // Message format: Train departs Boston Westbound with 12 cars, 450 feet, 3000 tons
-                        builder.append(String.format(strings.getProperty("TrainDepartsCars"),
-                                routeLocationName,
-                                strings.getProperty("Heading" + Setup.getDirectionString(location.path(JSON.DIRECTION).intValue())),
-                                location.path(JSON.LENGTH).path(JSON.LENGTH).intValue(),
-                                location.path(JSON.LENGTH).path(JSON.UNIT).asText().toLowerCase(),
-                                location.path(JSON.WEIGHT).intValue(),
-                                location.path(JSON.CARS).path(JSON.TOTAL).intValue()));
-                    } else {
-                        // Message format: Train departs Boston Westbound with 4 loads, 8 empties, 450 feet, 3000 tons
-                        builder.append(String.format(strings.getProperty("TrainDepartsLoads"),
-                                routeLocationName,
-                                strings.getProperty("Heading" + Setup.getDirectionString(location.path(JSON.DIRECTION).intValue())),
-                                location.path(JSON.LENGTH).path(JSON.LENGTH).asText(),
-                                location.path(JSON.LENGTH).path(JSON.UNIT).asText().toLowerCase(),
-                                location.path(JSON.WEIGHT),
-                                location.path(JSON.CARS).path(JSON.LOADS).intValue(),
-                                location.path(JSON.CARS).path(JSON.EMPTIES).intValue()));
-                    }
-                } else {
-                    log.debug("No work ({})", routeLocation.getComment());
-                    if (routeLocation.getComment().trim().isEmpty()) {
-                        // no route comment, no work at this location
-                        if (train.isShowArrivalAndDepartureTimesEnabled()) {
-                            if (r == 0) {
-                                builder.append(String.format(locale, strings.getProperty("NoScheduledWorkAtWithDepartureTime"),
-                                        routeLocationName,
-                                        train.getFormatedDepartureTime()));
-                            } else if (!routeLocation.getDepartureTime().isEmpty()) {
-                                builder.append(String.format(locale, strings.getProperty("NoScheduledWorkAtWithDepartureTime"),
-                                        routeLocationName,
-                                        routeLocation.getFormatedDepartureTime()));
-                            } else if (Setup.isUseDepartureTimeEnabled()) {
-                                builder.append(String.format(locale, strings.getProperty("NoScheduledWorkAtWithDepartureTime"),
-                                        routeLocationName,
-                                        location.path(JSON.EXPECTED_DEPARTURE)));
-                            } else { // fall back to generic no scheduled work message
-                                builder.append(String.format(locale, strings.getProperty("NoScheduledWorkAt"), routeLocationName));
-                            }
+            if (routeLocation != train.getRoute().getTerminatesRouteLocation()) {
+                // Is the next location the same as the current?
+                RouteLocation rlNext = train.getRoute().getNextRouteLocation(routeLocation);
+                if (!routeLocationName.equals(splitString(rlNext.getName()))) {
+                    if (hasWork) {
+                        if (!Setup.isPrintLoadsAndEmptiesEnabled()) {
+                            // Message format: Train departs Boston Westbound with 12 cars, 450 feet, 3000 tons
+                            builder.append(String.format(strings.getProperty("TrainDepartsCars"), routeLocationName,
+                                    strings.getProperty("Heading"
+                                            + Setup.getDirectionString(location.path(JSON.DIRECTION).intValue())),
+                                    location.path(JSON.LENGTH).path(JSON.LENGTH).intValue(), location.path(JSON.LENGTH)
+                                    .path(JSON.UNIT).asText().toLowerCase(), location.path(JSON.WEIGHT)
+                                    .intValue(), location.path(JSON.CARS).path(JSON.TOTAL).intValue()));
                         } else {
-                            builder.append(String.format(locale, strings.getProperty("NoScheduledWorkAt"), routeLocationName));
+                            // Message format: Train departs Boston Westbound with 4 loads, 8 empties, 450 feet, 3000
+                            // tons
+                            builder.append(String.format(strings.getProperty("TrainDepartsLoads"), routeLocationName,
+                                    strings.getProperty("Heading"
+                                            + Setup.getDirectionString(location.path(JSON.DIRECTION).intValue())),
+                                    location.path(JSON.LENGTH).path(JSON.LENGTH).intValue(), location.path(JSON.LENGTH)
+                                    .path(JSON.UNIT).asText().toLowerCase(), location.path(JSON.WEIGHT)
+                                    .intValue(), location.path(JSON.CARS).path(JSON.LOADS).intValue(), location
+                                    .path(JSON.CARS).path(JSON.EMPTIES).intValue()));
                         }
                     } else {
-                        // route comment, so only use location and route comment (for passenger trains)
-                        if (train.isShowArrivalAndDepartureTimesEnabled()) {
-                            if (r == 0) {
-                                builder.append(String.format(locale, strings.getProperty("CommentAtWithDepartureTime"),
-                                        routeLocationName,
-                                        train.getFormatedDepartureTime(),
-                                        routeLocation.getComment()));
-                            } else if (!routeLocation.getDepartureTime().isEmpty()) {
-                                builder.append(String.format(locale, strings.getProperty("CommentAtWithDepartureTime"),
-                                        routeLocationName,
-                                        routeLocation.getFormatedDepartureTime(),
-                                        routeLocation.getComment()));
+                        log.debug("No work ({})", routeLocation.getComment());
+                        if (routeLocation.getComment().trim().isEmpty()) {
+                            // no route comment, no work at this location
+                            if (train.isShowArrivalAndDepartureTimesEnabled()) {
+                                if (routeLocation == train.getRoute().getDepartsRouteLocation()) {
+                                    builder.append(String.format(locale, strings
+                                            .getProperty("NoScheduledWorkAtWithDepartureTime"), routeLocationName,
+                                            train.getFormatedDepartureTime()));
+                                } else if (!routeLocation.getDepartureTime().isEmpty()) {
+                                    builder.append(String.format(locale, strings
+                                            .getProperty("NoScheduledWorkAtWithDepartureTime"), routeLocationName,
+                                            routeLocation.getFormatedDepartureTime()));
+                                } else if (Setup.isUseDepartureTimeEnabled()) {
+                                    builder.append(String.format(locale, strings
+                                            .getProperty("NoScheduledWorkAtWithDepartureTime"), routeLocationName,
+                                            location.path(JSON.EXPECTED_DEPARTURE)));
+                                } else { // fall back to generic no scheduled work message
+                                    builder.append(String.format(locale, strings.getProperty("NoScheduledWorkAt"),
+                                            routeLocationName));
+                                }
+                            } else {
+                                builder.append(String.format(locale, strings.getProperty("NoScheduledWorkAt"),
+                                        routeLocationName));
                             }
                         } else {
-                            builder.append(String.format(locale, strings.getProperty("CommentAt"), routeLocationName, null, routeLocation.getComment()));
+                            // route comment, so only use location and route comment (for passenger trains)
+                            if (train.isShowArrivalAndDepartureTimesEnabled()) {
+                                if (routeLocation == train.getRoute().getDepartsRouteLocation()) {
+                                    builder.append(String.format(locale, strings
+                                            .getProperty("CommentAtWithDepartureTime"), routeLocationName, train
+                                            .getFormatedDepartureTime(), routeLocation.getComment()));
+                                } else if (!routeLocation.getDepartureTime().isEmpty()) {
+                                    builder.append(String.format(locale, strings
+                                            .getProperty("CommentAtWithDepartureTime"), routeLocationName,
+                                            routeLocation.getFormatedDepartureTime(), routeLocation.getComment()));
+                                }
+                            } else {
+                                builder.append(String.format(locale, strings.getProperty("CommentAt"),
+                                        routeLocationName, null, routeLocation.getComment()));
+                            }
                         }
-                    }
-                    // add location comment
-                    if (Setup.isPrintLocationCommentsEnabled() && !routeLocation.getLocation().getComment().isEmpty()) {
-                        builder.append(String.format(locale, strings.getProperty("LocationComment"), routeLocation.getLocation().getComment()));
+                        // add location comment
+                        if (Setup.isPrintLocationCommentsEnabled()
+                                && !routeLocation.getLocation().getComment().isEmpty()) {
+                            builder.append(String.format(locale, strings.getProperty("LocationComment"), routeLocation
+                                    .getLocation().getComment()));
+                        }
                     }
                 }
             } else {
@@ -191,13 +205,16 @@ public class HtmlManifest extends HtmlTrainCommon {
             if (cars.path(JSON.ADD).size() > 0) {
                 for (JsonNode car : cars.path(JSON.ADD)) {
                     if (!this.isLocalMove(car)) {
-                        if (this.isUtilityCar(car)) {
-                            builder.append(pickupUtilityCars(cars, car, location, isManifest));
-                        } // use truncated format if there's a switch list
-                        else if (isManifest && Setup.isTruncateManifestEnabled() && location.getLocation().isSwitchListEnabled()) {
-                            builder.append(pickUpCar(car, Setup.getTruncatedPickupManifestMessageFormat()));
+                        // TODO utility format not quite ready, so display each car in manifest for now.
+                        // if (this.isUtilityCar(car)) {
+                        // builder.append(pickupUtilityCars(cars, car, location, isManifest));
+                        // } // use truncated format if there's a switch list
+                        // else
+                        if (isManifest && Setup.isTruncateManifestEnabled()
+                                && location.getLocation().isSwitchListEnabled()) {
+                            builder.append(pickUpCar(car, Setup.getPickupTruncatedManifestMessageFormat()));
                         } else {
-                            builder.append(pickUpCar(car, Setup.getPickupCarMessageFormat()));
+                            builder.append(pickUpCar(car, Setup.getPickupManifestMessageFormat()));
                         }
                     }
                 }
@@ -205,17 +222,23 @@ public class HtmlManifest extends HtmlTrainCommon {
             if (cars.path(JSON.REMOVE).size() > 0) {
                 for (JsonNode car : cars.path(JSON.REMOVE)) {
                     boolean local = isLocalMove(car);
-                    if (this.isUtilityCar(car)) {
-                        builder.append(setoutUtilityCars(cars, car, location, isManifest));
-                    } else if (isManifest && Setup.isTruncateManifestEnabled() && location.getLocation().isSwitchListEnabled()) {
+                    // TODO utility format not quite ready, so display each car in manifest for now.
+                    // if (this.isUtilityCar(car)) {
+                    // builder.append(setoutUtilityCars(cars, car, location, isManifest));
+                    // } else
+                    if (isManifest && Setup.isTruncateManifestEnabled() && location.getLocation().isSwitchListEnabled()) {
                         // use truncated format if there's a switch list
-                        builder.append(dropCar(car, Setup.getTruncatedSetoutManifestMessageFormat(), this.isLocalMove(car)));
+                        builder.append(dropCar(car, Setup.getDropTruncatedManifestMessageFormat(), local));
                     } else {
-                        String[] format = (!local) ? Setup.getSwitchListDropCarMessageFormat() : Setup.getSwitchListLocalMessageFormat();
-                        if (isManifest || Setup.isSwitchListFormatSameAsManifest()) {
-                            format = (!local) ? Setup.getDropCarMessageFormat() : Setup.getLocalMessageFormat();
+                        String[] format;
+                        if (isManifest) {
+                            format = (!local) ? Setup.getDropManifestMessageFormat() : Setup
+                                    .getLocalManifestMessageFormat();
+                        } else {
+                            format = (!local) ? Setup.getDropSwitchListMessageFormat() : Setup
+                                    .getLocalSwitchListMessageFormat();
                         }
-                        builder.append(dropCar(car, format, this.isLocalMove(car)));
+                        builder.append(dropCar(car, format, local));
                     }
                 }
             }
@@ -225,34 +248,35 @@ public class HtmlManifest extends HtmlTrainCommon {
 
     protected String pickupUtilityCars(JsonNode cars, JsonNode car, RouteLocation location, boolean isManifest) {
         // list utility cars by type, track, length, and load
-        String[] messageFormat = Setup.getSwitchListPickupUtilityCarMessageFormat();
-        if (isManifest || Setup.isSwitchListFormatSameAsManifest()) {
-            messageFormat = Setup.getPickupUtilityCarMessageFormat();
+        String[] messageFormat;
+        if (isManifest) {
+            messageFormat = Setup.getPickupUtilityManifestMessageFormat();
+        } else {
+            messageFormat = Setup.getPickupUtilitySwitchListMessageFormat();
         }
         // TODO: reimplement following commented out code
-//        if (this.countUtilityCars(messageFormat, carList, car, location, rld, PICKUP) == 0) {
-//            return ""; // already printed out this car type
-//        }
+        // if (this.countUtilityCars(messageFormat, carList, car, location, rld, PICKUP) == 0) {
+        // return ""; // already printed out this car type
+        // }
         return this.pickUpCar(car, messageFormat);
     }
 
     protected String setoutUtilityCars(JsonNode cars, JsonNode car, RouteLocation location, boolean isManifest) {
         boolean isLocal = isLocalMove(car);
-        if (Setup.isSwitchListFormatSameAsManifest()) {
-            isManifest = true;
-        }
-        String[] messageFormat = Setup.getSetoutUtilityCarMessageFormat();
+        String[] messageFormat;
         if (isLocal && isManifest) {
-            messageFormat = Setup.getLocalUtilityCarMessageFormat();
+            messageFormat = Setup.getLocalUtilityManifestMessageFormat();
         } else if (isLocal && !isManifest) {
-            messageFormat = Setup.getSwitchListLocalUtilityCarMessageFormat();
+            messageFormat = Setup.getLocalUtilitySwitchListMessageFormat();
         } else if (!isLocal && !isManifest) {
-            messageFormat = Setup.getSwitchListSetoutUtilityCarMessageFormat();
+            messageFormat = Setup.getDropUtilitySwitchListMessageFormat();
+        } else {
+            messageFormat = Setup.getDropUtilityManifestMessageFormat();
         }
         // TODO: reimplement following commented out code
-//        if (countUtilityCars(messageFormat, carList, car, location, null, !PICKUP) == 0) {
-//            return ""; // already printed out this car type
-//        }
+        // if (countUtilityCars(messageFormat, carList, car, location, null, !PICKUP) == 0) {
+        // return ""; // already printed out this car type
+        // }
         return dropCar(car, messageFormat, isLocal);
     }
 
@@ -265,8 +289,19 @@ public class HtmlManifest extends HtmlTrainCommon {
             if (!attribute.trim().equals("")) {
                 attribute = attribute.toLowerCase();
                 log.debug("Adding car with attribute {}", attribute);
-                if (attribute.equals(JSON.LOCATION)) {
-                    builder.append(this.getFormattedAttribute(attribute, this.getPickupLocation(car.path(attribute), ShowLocation.track))).append(" "); // NOI18N
+                if (attribute.equals(JSON.LOCATION) || attribute.equals(JSON.TRACK)) {
+                    attribute = JSON.LOCATION; // treat "track" as "location"
+                    builder.append(
+                            this.getFormattedAttribute(attribute, this.getPickupLocation(car.path(attribute),
+                                            ShowLocation.track))).append(" "); // NOI18N
+                } else if (attribute.equals(JSON.DESTINATION)) {
+                    builder.append(
+                            this.getFormattedAttribute(attribute, this.getDropLocation(car.path(attribute),
+                                            ShowLocation.location))).append(" "); // NOI18N
+                } else if (attribute.equals(JSON.DESTINATION_TRACK)) {
+                    builder.append(
+                            this.getFormattedAttribute(attribute, this.getDropLocation(car.path(JSON.LOCATION),
+                                            ShowLocation.both))).append(" "); // NOI18N
                 } else {
                     builder.append(this.getTextAttribute(attribute, car)).append(" "); // NOI18N
                 }
@@ -282,10 +317,19 @@ public class HtmlManifest extends HtmlTrainCommon {
             if (!attribute.trim().equals("")) {
                 attribute = attribute.toLowerCase();
                 log.debug("Removing car with attribute {}", attribute);
-                if (attribute.equals(JSON.DESTINATION)) {
-                    builder.append(this.getFormattedAttribute(attribute, this.getDropLocation(car.path(attribute), ShowLocation.track))).append(" "); // NOI18N
+                if (attribute.equals(JSON.DESTINATION) || attribute.equals(JSON.TRACK)) {
+                    attribute = JSON.DESTINATION; // treat "track" as "destination"
+                    builder.append(
+                            this.getFormattedAttribute(attribute, this.getDropLocation(car.path(attribute),
+                                            ShowLocation.track))).append(" "); // NOI18N
+                } else if (attribute.equals(JSON.LOCATION) && isLocal) {
+                    builder.append(
+                            this.getFormattedAttribute(attribute, this.getPickupLocation(car.path(attribute),
+                                            ShowLocation.track))).append(" "); // NOI18N
                 } else if (attribute.equals(JSON.LOCATION)) {
-                    builder.append(this.getFormattedAttribute(attribute, this.getPickupLocation(car.path(attribute), ShowLocation.track))).append(" "); // NOI18N
+                    builder.append(
+                            this.getFormattedAttribute(attribute, this.getPickupLocation(car.path(attribute),
+                                            ShowLocation.location))).append(" "); // NOI18N
                 } else {
                     builder.append(this.getTextAttribute(attribute, car)).append(" "); // NOI18N
                 }
@@ -314,8 +358,11 @@ public class HtmlManifest extends HtmlTrainCommon {
         for (String attribute : Setup.getDropEngineMessageFormat()) {
             if (!attribute.trim().equals("")) {
                 attribute = attribute.toLowerCase();
-                if (attribute.equals(JSON.DESTINATION)) {
-                    builder.append(this.getFormattedAttribute(attribute, this.getDropLocation(engine.path(attribute), ShowLocation.track))).append(" "); // NOI18N
+                if (attribute.equals(JSON.DESTINATION) || attribute.equals(JSON.TRACK)) {
+                    attribute = JSON.DESTINATION; // treat "track" as "destination"
+                    builder.append(
+                            this.getFormattedAttribute(attribute, this.getDropLocation(engine.path(attribute),
+                                            ShowLocation.track))).append(" "); // NOI18N
                 } else {
                     builder.append(this.getTextAttribute(attribute, engine)).append(" "); // NOI18N
                 }
@@ -341,8 +388,11 @@ public class HtmlManifest extends HtmlTrainCommon {
         for (String attribute : Setup.getPickupEngineMessageFormat()) {
             if (!attribute.trim().equals("")) {
                 attribute = attribute.toLowerCase();
-                if (attribute.equals(JSON.LOCATION)) {
-                    builder.append(this.getFormattedAttribute(attribute, this.getPickupLocation(engine.path(attribute), ShowLocation.track))).append(" "); // NOI18N
+                if (attribute.equals(JSON.LOCATION) || attribute.equals(JSON.TRACK)) {
+                    attribute = JSON.LOCATION; // treat "track" as "location"
+                    builder.append(
+                            this.getFormattedAttribute(attribute, this.getPickupLocation(engine.path(attribute),
+                                            ShowLocation.track))).append(" "); // NOI18N
                 } else {
                     builder.append(this.getTextAttribute(attribute, engine)).append(" "); // NOI18N
                 }
@@ -362,35 +412,39 @@ public class HtmlManifest extends HtmlTrainCommon {
 
     protected String getTextAttribute(String attribute, JsonNode rollingStock) {
         if (attribute.equals(JSON.HAZARDOUS)) {
-            return this.getFormattedAttribute(attribute, (rollingStock.path(attribute).asBoolean() ? Setup.getHazardousMsg() : "")); // NOI18N
+            return this.getFormattedAttribute(attribute, (rollingStock.path(attribute).asBoolean() ? Setup
+                    .getHazardousMsg() : "")); // NOI18N
         } else if (attribute.equals(Setup.PICKUP_COMMENT.toLowerCase())) { // NOI18N
             return this.getFormattedAttribute(JSON.ADD_COMMENT, rollingStock.path(JSON.ADD_COMMENT).textValue());
         } else if (attribute.equals(Setup.DROP_COMMENT.toLowerCase())) { // NOI18N
             return this.getFormattedAttribute(JSON.ADD_COMMENT, rollingStock.path(JSON.ADD_COMMENT).textValue());
         } else if (attribute.equals(Setup.RWE.toLowerCase())) {
-            return this.getFormattedAttribute(JSON.RETURN_WHEN_EMPTY, this.getFormattedLocation(rollingStock.path(JSON.RETURN_WHEN_EMPTY), ShowLocation.both, "RWE")); // NOI18N
+            return this.getFormattedAttribute(JSON.RETURN_WHEN_EMPTY, this.getFormattedLocation(rollingStock
+                    .path(JSON.RETURN_WHEN_EMPTY), ShowLocation.both, "RWE")); // NOI18N
         } else if (attribute.equals(Setup.FINAL_DEST.toLowerCase())) {
-            return this.getFormattedAttribute(JSON.FINAL_DESTINATION, this.getFormattedLocation(rollingStock.path(JSON.FINAL_DESTINATION), ShowLocation.location, "FinalDestination")); // NOI18N
+            return this.getFormattedAttribute(JSON.FINAL_DESTINATION, this.getFormattedLocation(rollingStock
+                    .path(JSON.FINAL_DESTINATION), ShowLocation.location, "FinalDestination")); // NOI18N
         } else if (attribute.equals(Setup.FINAL_DEST_TRACK.toLowerCase())) {
-            return this.getFormattedAttribute(JSON.FINAL_DESTINATION, this.getFormattedLocation(rollingStock.path(JSON.FINAL_DESTINATION), ShowLocation.track, "FinalDestination")); // NOI18N
+            return this.getFormattedAttribute(JSON.FINAL_DESTINATION, this.getFormattedLocation(rollingStock
+                    .path(JSON.FINAL_DESTINATION), ShowLocation.track, "FinalDestination")); // NOI18N
         }
         return this.getFormattedAttribute(attribute, rollingStock.path(attribute).textValue());
     }
 
     protected String getFormattedAttribute(String attribute, String value) {
-        return String.format(locale, strings.getProperty("Attribute"), value, attribute);
+        return String.format(locale, strings.getProperty("Attribute"), StringEscapeUtils.escapeHtml4(value), attribute);
     }
 
     protected String getFormattedLocation(JsonNode location, ShowLocation show, String prefix) {
         // TODO handle tracks without names
         switch (show) {
             case location:
-                return String.format(locale, strings.getProperty(prefix + "Location"), StringEscapeUtils.escapeHtml4(location.path(JSON.NAME).asText()));
+                return String.format(locale, strings.getProperty(prefix + "Location"), location.path(JSON.NAME).asText());
             case track:
-                return String.format(locale, strings.getProperty(prefix + "Track"), StringEscapeUtils.escapeHtml4(location.path(JSON.TRACK).path(JSON.NAME).asText()));
+                return String.format(locale, strings.getProperty(prefix + "Track"), location.path(JSON.TRACK).path(JSON.NAME).asText());
             case both:
             default: // default here ensures the method always returns
-                return String.format(locale, strings.getProperty(prefix + "LocationAndTrack"), StringEscapeUtils.escapeHtml4(location.path(JSON.TRACK).path(JSON.NAME).asText()));
+                return String.format(locale, strings.getProperty(prefix + "LocationAndTrack"), location.path(JSON.NAME).asText(), location.path(JSON.TRACK).path(JSON.NAME).asText());
         }
     }
 
@@ -419,11 +473,14 @@ public class HtmlManifest extends HtmlTrainCommon {
                     }
                 }
                 if (pickup && setout) {
-                    builder.append(String.format(locale, strings.getProperty("TrackComments"), track.getValue().path(JSON.ADD_AND_REMOVE).textValue()));
+                    builder.append(String.format(locale, strings.getProperty("TrackComments"), track.getValue().path(
+                            JSON.ADD_AND_REMOVE).textValue()));
                 } else if (pickup) {
-                    builder.append(String.format(locale, strings.getProperty("TrackComments"), track.getValue().path(JSON.ADD).textValue()));
+                    builder.append(String.format(locale, strings.getProperty("TrackComments"), track.getValue().path(
+                            JSON.ADD).textValue()));
                 } else if (setout) {
-                    builder.append(String.format(locale, strings.getProperty("TrackComments"), track.getValue().path(JSON.REMOVE).textValue()));
+                    builder.append(String.format(locale, strings.getProperty("TrackComments"), track.getValue().path(
+                            JSON.REMOVE).textValue()));
                 }
             }
         }
@@ -453,17 +510,16 @@ public class HtmlManifest extends HtmlTrainCommon {
     public String getValidity() {
         try {
             if (Setup.isPrintTimetableNameEnabled()) {
-                return String.format(locale,
-                        strings.getProperty(this.resourcePrefix + "ValidityWithSchedule"),
+                return String.format(locale, strings.getProperty(this.resourcePrefix + "ValidityWithSchedule"),
                         getDate((new ISO8601DateFormat()).parse(this.getJsonManifest().path(JSON.DATE).textValue())),
                         TrainScheduleManager.instance().getScheduleById(train.getId()));
             } else {
-                return String.format(locale,
-                        strings.getProperty(this.resourcePrefix + "Validity"),
+                return String.format(locale, strings.getProperty(this.resourcePrefix + "Validity"),
                         getDate((new ISO8601DateFormat()).parse(this.getJsonManifest().path(JSON.DATE).textValue())));
             }
         } catch (NullPointerException ex) {
-            log.warn("Manifest for train {} (id {}) does not have any validity.", this.train.getIconName(), this.train.getId());
+            log.warn("Manifest for train {} (id {}) does not have any validity.", this.train.getIconName(), this.train
+                    .getId());
         } catch (ParseException ex) {
             log.error("Date of JSON manifest could not be parsed as a Date.");
         } catch (IOException ex) {

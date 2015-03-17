@@ -1,22 +1,20 @@
 package jmri.jmrit.logix.configurexml;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.util.List;
 import java.util.Iterator;
-
-import org.jdom2.Element;
-import org.jdom2.Attribute;
-
-import jmri.InstanceManager;
+import java.util.List;
 import jmri.DccLocoAddress;
+import jmri.InstanceManager;
+import jmri.jmrit.logix.BlockOrder;
 import jmri.jmrit.logix.NXFrame;
+import jmri.jmrit.logix.OBlock;
 import jmri.jmrit.logix.OBlockManager;
+import jmri.jmrit.logix.ThrottleSetting;
 import jmri.jmrit.logix.Warrant;
 import jmri.jmrit.logix.WarrantManager;
-import jmri.jmrit.logix.OBlock;
-import jmri.jmrit.logix.BlockOrder;
-import jmri.jmrit.logix.ThrottleSetting;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides the abstract base and store functionality for
@@ -33,7 +31,7 @@ public class WarrantManagerXml //extends XmlFile
 
     public WarrantManagerXml() {
     }
-	
+    
     /**
      * Store the contents of a WarrantManager.
      *
@@ -106,6 +104,9 @@ public class WarrantManagerXml //extends XmlFile
         str = warrant.getTrainName();
         if (str==null) str = "";
         elem.setAttribute("trainName", str);
+        
+        float fac = warrant.getThrottleFactor();
+        elem.setAttribute("factor", Float.toString(fac));
 
         return elem;
     }
@@ -162,17 +163,14 @@ public class WarrantManagerXml //extends XmlFile
     
     void storeNXParams (Element element) {
         if (jmri.InstanceManager.getDefault(OBlockManager.class).getSystemNameList().size() < 1) {
-        	return;
+            return;
         }
         Element elem = new Element("nxparams");
         NXFrame nxFrame = NXFrame.getInstance();
-        Element e = new Element("scale");
-        e.addContent(Float.toString(nxFrame.getScale()));
-        elem.addContent(e);
-        e = new Element("maxspeed");
+        Element e = new Element("maxspeed");
         e.addContent(Float.toString(nxFrame.getMaxSpeed()));
         elem.addContent(e);
-        e = new Element("minspeed");
+/*        e = new Element("minspeed");
         e.addContent(Float.toString(nxFrame.getMinSpeed()));
         elem.addContent(e);
         e = new Element("timeinterval");
@@ -180,7 +178,7 @@ public class WarrantManagerXml //extends XmlFile
         elem.addContent(e);
         e = new Element("numsteps");
         e.addContent(Integer.toString(nxFrame.getNumSteps()));
-        elem.addContent(e);
+        elem.addContent(e);*/
         e = new Element("haltstart");
         e.addContent(nxFrame.getStartHalt()?"yes":"no");
         elem.addContent(e);
@@ -241,11 +239,11 @@ public class WarrantManagerXml //extends XmlFile
             
             Element order = elem.getChild("viaOrder");
             if (order!=null) {
-                warrant.setViaOrder(loadBlockOrder(order));            	
+                warrant.setViaOrder(loadBlockOrder(order));             
             }
             order = elem.getChild("avoidOrder");
             if (order!=null) {
-                warrant.setAvoidOrder(loadBlockOrder(order));            	
+                warrant.setAvoidOrder(loadBlockOrder(order));               
             }
             
             List<Element> throttleCmds = elem.getChildren("throttleCommand");
@@ -254,7 +252,7 @@ public class WarrantManagerXml //extends XmlFile
             }
             Element train = elem.getChild("train");
             if (train!=null) {
-            	loadTrain(train, warrant);
+                loadTrain(train, warrant);
             }
         }
         return true;
@@ -273,7 +271,7 @@ public class WarrantManagerXml //extends XmlFile
             try {
                address = elem.getAttribute("dccAddress").getIntValue();
             } catch (org.jdom2.DataConversionException dce) {
-                log.error(dce.toString()+ " in Warrant "+warrant.getDisplayName());
+                log.error(dce.toString()+ " for dccAddress in Warrant "+warrant.getDisplayName());
             }
             boolean isLong = true;
             if (elem.getAttribute("dccType") != null) {
@@ -286,6 +284,15 @@ public class WarrantManagerXml //extends XmlFile
         }
         if (elem.getAttribute("trainName") != null) {
             warrant.setTrainName(elem.getAttribute("trainName").getValue());
+        }
+        if (elem.getAttribute("factor") != null) {
+            float fac = 0.75f;
+            try {
+               fac = elem.getAttribute("factor").getFloatValue();
+            } catch (org.jdom2.DataConversionException dce) {
+                log.error(dce.toString()+ " for factor in Warrant "+warrant.getDisplayName());
+            }
+            warrant.setThrottleFactor(fac);
         }
     }
 
@@ -349,58 +356,50 @@ public class WarrantManagerXml //extends XmlFile
         return new ThrottleSetting(time, command, value, block);
     }
     void loadNXParams(NXFrame nxFrame, Element elem) {
-    	if (elem==null) {
-    		return;
-    	}
+        if (elem==null) {
+            return;
+        }
         nxFrame.setVisible(false);
-    	Element e = elem.getChild("scale");
-    	if (e!=null) {
-        	try {
-        		nxFrame.setScale(Float.valueOf(e.getValue()));
-        	} catch (NumberFormatException nfe) {
-                log.error("Layout Scale; "+nfe);    		
-        	}    		
-    	}
-    	e = elem.getChild("maxspeed");
-    	if (e!=null) {
-        	try {
-        		nxFrame.setMaxSpeed(Float.valueOf(e.getValue()));
-        	} catch (NumberFormatException nfe) {
-                log.error("NXWarrant MaxSpeed; "+nfe);    		
-        	}    		
-    	}
-    	e = elem.getChild("minspeed");
-    	if (e!=null) {
-        	try {
-        		nxFrame.setMinSpeed(Float.valueOf(e.getValue()));
-        	} catch (NumberFormatException nfe) {
-                log.error("NXWarrant MinSpeed; "+nfe);    		
-        	}    		
-    	}
-    	e = elem.getChild("timeinterval");
-    	if (e!=null) {
-        	try {
-        		nxFrame.setTimeInterval(Float.valueOf(e.getValue()));
-        	} catch (NumberFormatException nfe) {
-                log.error("NXWarrant timeinterval; "+nfe);    		
-        	}    		
-    	}
-    	e = elem.getChild("numsteps");
-    	if (e!=null) {
-        	try {
-        		nxFrame.setNumSteps(Integer.valueOf(e.getValue()));
-        	} catch (NumberFormatException nfe) {
-                log.error("NXWarrant numSteps; "+nfe);    		
-        	}    		
-    	}
-    	e = elem.getChild("haltstart");
-    	if (e!=null) {
-    		if (e.getValue().equals("yes")) {
-    			nxFrame.setStartHalt(true);
-    		} else {
-    			nxFrame.setStartHalt(false);
-    		}
-    	}
+        Element e = elem.getChild("maxspeed");
+        if (e!=null) {
+            try {
+                nxFrame.setMaxSpeed(Float.valueOf(e.getValue()));
+            } catch (NumberFormatException nfe) {
+                log.error("NXWarrant MaxSpeed; "+nfe);          
+            }           
+        }
+/*        e = elem.getChild("minspeed");
+        if (e!=null) {
+            try {
+                nxFrame.setMinSpeed(Float.valueOf(e.getValue()));
+            } catch (NumberFormatException nfe) {
+                log.error("NXWarrant MinSpeed; "+nfe);          
+            }           
+        }
+      e = elem.getChild("timeinterval");
+        if (e!=null) {
+            try {
+                nxFrame.setTimeInterval(Float.valueOf(e.getValue()));
+            } catch (NumberFormatException nfe) {
+                log.error("NXWarrant timeinterval; "+nfe);          
+            }           
+        }
+        e = elem.getChild("numsteps");
+        if (e!=null) {
+            try {
+                nxFrame.setNumSteps(Integer.valueOf(e.getValue()));
+            } catch (NumberFormatException nfe) {
+                log.error("NXWarrant numSteps; "+nfe);          
+            }           
+        }*/
+        e = elem.getChild("haltstart");
+        if (e!=null) {
+            if (e.getValue().equals("yes")) {
+                nxFrame.setStartHalt(true);
+            } else {
+                nxFrame.setStartHalt(false);
+            }
+        }
     }
     
     public int loadOrder(){
