@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * Builds a train and creates the train's manifest.
  *
  * @author Daniel Boudreau Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013,
- * 2014
+ * 2014, 2015
  * @version $Revision$
  */
 public class TrainBuilder extends TrainCommon {
@@ -3157,6 +3157,13 @@ public class TrainBuilder extends TrainCommon {
             }
             addLine(_buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("buildTrySpurLoad"), new Object[]{
                 track.getLocation().getName(), track.getName(), car.getLoadName()}));
+            if (!car.getTrack().acceptsDestination(track.getLocation())) {
+                addLine(_buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("buildDestinationNotServiced"),
+                        new Object[]{track.getLocation().getName(), car.getTrackName()}));
+                // restore car's load
+                car.setLoadName(oldCarLoad);
+                continue;
+            }
             if (!track.isSpaceAvailable(car)) {
                 addLine(_buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("buildNoDestTrackSpace"),
                         new Object[]{car.toString(), track.getLocation().getName(), track.getName(),
@@ -3235,6 +3242,12 @@ public class TrainBuilder extends TrainCommon {
             }
             if (locationsNotReachable.contains(track.getLocation())) {
                 log.debug("Location ({}) not reachable", track.getLocation().getName());
+                continue;
+            }
+            if (!car.getTrack().acceptsDestination(track.getLocation())) {
+                addLine(_buildReport, SEVEN, MessageFormat.format(Bundle.getMessage("buildDestinationNotServiced"),
+                        new Object[]{track.getLocation().getName(), car.getTrackName()}));
+                locationsNotReachable.add(track.getLocation());
                 continue;
             }
             if (_terminateStageTrack != null && track.getLocation() == _terminateStageTrack.getLocation()) {
@@ -4188,7 +4201,7 @@ public class TrainBuilder extends TrainCommon {
             car.setLoadName(loads.get(rnd));
             // check to see if car is now accepted by staging
             String status = car.testDestination(stageTrack.getLocation(), stageTrack); // will staging accept this car?
-            if (status.equals(Track.OKAY) || status.startsWith(Track.LENGTH)) {
+            if (status.equals(Track.OKAY) || (status.startsWith(Track.LENGTH) && stageTrack != _terminateStageTrack)) {
                 car.setLoadGeneratedFromStaging(true);
                 car.setFinalDestination(stageTrack.getLocation());
                 car.setFinalDestinationTrack(null); // don't assign the track, that will be done later

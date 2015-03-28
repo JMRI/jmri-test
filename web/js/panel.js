@@ -1400,8 +1400,8 @@ var requestPanelXML = function(panelName) {
         success: function(data, textStatus, jqXHR) {
             processPanelXML(data, textStatus, jqXHR);
         },
-        error: function() {
-            alert("Timeout waiting for panel xml from server.  Please press OK to retry.");
+        error: function( jqXHR, textStatus, errorThrown) {
+            alert("Error retrieving panel xml from server.  Please press OK to retry.\n\nDetails: " + textStatus + " - " + errorThrown);
             window.location = window.location.pathname;
         },
         async: true,
@@ -1494,18 +1494,31 @@ var $drawAllIconWidgets = function() {
     });
 };
 
-function updateWidgets(systemName, state) {
-    if (systemNames[systemName]) {
-        $.each(systemNames[systemName], function(index, widgetId) {
+function updateWidgets(name, state, data) {
+    //if systemName not in systemNames list, replace userName with systemName
+	if (!systemNames[name] && name != data.userName) {
+        if (window.console)
+		  console.log("replacing userName " + data.userName + " with systemName " + name);    	
+		if (systemNames[data.userName]) {  										  //if found by userName
+			systemNames[name] = systemNames[data.userName];  //copy entry over
+			delete systemNames[data.userName];  							 //delete old one
+		}
+    }
+	//update all widgets based on the element that changed 
+    if (systemNames[name]) {
+        $.each(systemNames[name], function(index, widgetId) {
             $setWidgetState(widgetId, state);
         });
+    } else {
+        if (window.console)
+          console.log("system name " + name + " not found, can't set state to " + state);
     }
 }
 
 function updateOccupancy(occupancyName, state) {
     if (occupancyNames[occupancyName]) {
         if (window.console)
-            console.log("setting occupancies for sensor" + occupancyName + " to " + state);
+            console.log("setting occupancies for sensor " + occupancyName + " to " + state);
         $.each(occupancyNames[occupancyName], function(index, widgetId) {
             $widget = $gWidgets[widgetId];
             if ($widget.blockname) {
@@ -1618,29 +1631,29 @@ $(document).ready(function() {
                 location.reload(false);
             },
             light: function(name, state, data) {
-                updateWidgets(name, state);
+                updateWidgets(name, state, data);
             },
             memory: function(name, value, data) {
-                updateWidgets(name, value);
+                updateWidgets(name, value, data);
             },
             reporter: function(name, value, data) {
-                updateWidgets(name, value);
+                updateWidgets(name, value, data);
             },
             route: function(name, state, data) {
-                updateWidgets(name, state);
+                updateWidgets(name, state, data);
             },
             sensor: function(name, state, data) {
-                updateWidgets(name, state);
+                updateWidgets(name, state, data);
                 updateOccupancy(name, state);
             },
             signalHead: function(name, state, data) {
-                updateWidgets(name, state);
+                updateWidgets(name, state, data);
             },
             signalMast: function(name, state, data) {
-                updateWidgets(name, state);
+                updateWidgets(name, state, data);
             },
             turnout: function(name, state, data) {
-                updateWidgets(name, state);
+                updateWidgets(name, state, data);
             }
         });
         $("#panel-list").addClass("hidden").removeClass("show");
