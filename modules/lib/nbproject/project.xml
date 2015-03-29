@@ -216,7 +216,6 @@
                     <test-dependency>
                         <code-name-base>org.netbeans.modules.nbjunit</code-name-base>
                         <compile-dependency/>
-                        <recursive/>
                     </test-dependency>
                 </test-type>
             </test-dependencies>
