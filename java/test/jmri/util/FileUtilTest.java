@@ -4,6 +4,7 @@ package jmri.util;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 import junit.framework.Assert;
 import org.netbeans.junit.NbTestCase;
 import org.netbeans.junit.NbTestSuite;
@@ -28,6 +30,9 @@ import org.slf4j.LoggerFactory;
  * @version	$Revision$
  */
 public class FileUtilTest extends NbTestCase {
+
+    private File programTestFile;
+    private File preferencesTestFile;
 
     // tests of internal to external mapping
     // relative file with no prefix: Leave relative in system-specific form
@@ -294,6 +299,72 @@ public class FileUtilTest extends NbTestCase {
         Assert.assertEquals(text, lines.get(0));
     }
 
+    public void testFindURIPath() {
+        URI uri = this.programTestFile.toURI();
+        Assert.assertNotNull(uri);
+        Assert.assertEquals(uri, FileUtil.findURI(this.programTestFile.getName()));
+        Assert.assertEquals(uri, FileUtil.findURI(FileUtil.PROGRAM + this.programTestFile.getName()));
+        Assert.assertNull(FileUtil.findURI(FileUtil.PREFERENCES + this.programTestFile.getName()));
+        uri = this.preferencesTestFile.toURI();
+        Assert.assertNotNull(uri);
+        Assert.assertEquals(uri, FileUtil.findURI(this.preferencesTestFile.getName()));
+        Assert.assertEquals(uri, FileUtil.findURI(FileUtil.PREFERENCES + this.preferencesTestFile.getName()));
+        Assert.assertNull(FileUtil.findURI(FileUtil.PROGRAM + this.preferencesTestFile.getName()));
+    }
+
+    public void testFindURIPathLocation() {
+        URI uri = this.programTestFile.toURI();
+        Assert.assertNotNull(uri);
+        Assert.assertEquals(uri, FileUtil.findURI(this.programTestFile.getName(), FileUtil.Location.INSTALLED));
+        Assert.assertEquals(uri, FileUtil.findURI(this.programTestFile.getName(), FileUtil.Location.ALL));
+        Assert.assertNull(FileUtil.findURI(this.programTestFile.getName(), FileUtil.Location.USER));
+        uri = this.preferencesTestFile.toURI();
+        Assert.assertNotNull(uri);
+        Assert.assertEquals(uri, FileUtil.findURI(this.preferencesTestFile.getName(), FileUtil.Location.USER));
+        Assert.assertEquals(uri, FileUtil.findURI(this.preferencesTestFile.getName(), FileUtil.Location.ALL));
+        Assert.assertNull(FileUtil.findURI(this.preferencesTestFile.getName(), FileUtil.Location.INSTALLED));
+    }
+
+    public void testFindURIPathSearchPaths() {
+        URI uri = this.programTestFile.toURI();
+        Assert.assertNotNull(uri);
+        Assert.assertEquals(uri, FileUtil.findURI(this.programTestFile.getName(), new String[]{FileUtil.getProgramPath()}));
+        Assert.assertEquals(uri, FileUtil.findURI(this.programTestFile.getName(), new String[]{FileUtil.getPreferencesPath(), FileUtil.getProgramPath()}));
+        Assert.assertEquals(uri, FileUtil.findURI(this.programTestFile.getName(), new String[]{FileUtil.getPreferencesPath()}));
+        uri = this.preferencesTestFile.toURI();
+        Assert.assertNotNull(uri);
+        Assert.assertEquals(uri, FileUtil.findURI(this.preferencesTestFile.getName(), new String[]{FileUtil.getPreferencesPath()}));
+        Assert.assertEquals(uri, FileUtil.findURI(this.preferencesTestFile.getName(), new String[]{FileUtil.getPreferencesPath(), FileUtil.getProgramPath()}));
+        Assert.assertEquals(uri, FileUtil.findURI(this.preferencesTestFile.getName(), new String[]{FileUtil.getProgramPath()}));
+    }
+
+    public void testFindExternalFilename() {
+        URI uri = this.programTestFile.toURI();
+        Assert.assertNotNull(uri);
+        Assert.assertEquals(uri, FileUtil.findExternalFilename(this.programTestFile.getName()));
+        Assert.assertEquals(uri, FileUtil.findExternalFilename(FileUtil.PROGRAM + this.programTestFile.getName()));
+        Assert.assertNull(FileUtil.findExternalFilename(FileUtil.PREFERENCES + this.programTestFile.getName()));
+        uri = this.preferencesTestFile.toURI();
+        Assert.assertNotNull(uri);
+        Assert.assertEquals(uri, FileUtil.findExternalFilename(this.preferencesTestFile.getName()));
+        Assert.assertEquals(uri, FileUtil.findExternalFilename(FileUtil.PREFERENCES + this.preferencesTestFile.getName()));
+        Assert.assertNull(FileUtil.findExternalFilename(FileUtil.PROGRAM + this.preferencesTestFile.getName()));
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        this.programTestFile = new File(UUID.randomUUID().toString());
+        this.programTestFile.createNewFile();
+        this.preferencesTestFile = new File(FileUtil.getProfilePath() + UUID.randomUUID().toString());
+        this.preferencesTestFile.createNewFile();
+    }
+
+    @Override
+    protected void tearDown() {
+        this.programTestFile.delete();
+        this.preferencesTestFile.delete();
+    }
+
     // from here down is testing infrastructure
     public FileUtilTest(String s) {
         super(s);
@@ -310,5 +381,6 @@ public class FileUtilTest extends NbTestCase {
         NbTestSuite suite = new NbTestSuite(FileUtilTest.class);
         return suite;
     }
+
     static Logger log = LoggerFactory.getLogger(FileUtilTest.class.getName());
 }

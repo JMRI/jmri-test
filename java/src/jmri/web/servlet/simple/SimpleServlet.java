@@ -2,8 +2,6 @@
 package jmri.web.servlet.simple;
 
 import java.io.IOException;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -43,11 +41,7 @@ import org.slf4j.LoggerFactory;
 @ServiceProvider(service = HttpServlet.class)
 public class SimpleServlet extends WebSocketServlet {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 3435613482175230757L;
-    private final Set<SimpleWebSocket> sockets = new CopyOnWriteArraySet<>();
     private static final Logger log = LoggerFactory.getLogger(SimpleServlet.class);
 
     @Override
