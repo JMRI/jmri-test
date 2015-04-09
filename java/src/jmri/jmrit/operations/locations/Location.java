@@ -6,6 +6,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import javax.swing.JComboBox;
+import jmri.Reporter;
 import jmri.jmrit.operations.OperationsXml;
 import jmri.jmrit.operations.rollingstock.RollingStock;
 import jmri.jmrit.operations.rollingstock.cars.Car;
@@ -57,6 +58,9 @@ public class Location implements java.beans.PropertyChangeListener {
     protected Hashtable<String, Track> _trackHashTable = new Hashtable<String, Track>();
     protected PhysicalLocation _physicalLocation = new PhysicalLocation();
     protected List<String> _listTypes = new ArrayList<String>();
+
+    // IdTag reader associated with this location.
+    protected Reporter reader = null;
 
     // Pool
     protected int _idPoolNumber = 0;
@@ -1269,6 +1273,14 @@ public class Location implements java.beans.PropertyChangeListener {
                 register(new Track(eTrack, this));
             }
         }
+        if (e.getAttribute(Xml.READER) != null){
+            @SuppressWarnings("unchecked")
+            Reporter r = jmri.InstanceManager
+                             .reporterManagerInstance()
+                             .provideReporter(
+                                e.getAttribute(Xml.READER).getValue());
+            setReporter(r);
+        } 
         addPropertyChangeListeners();
     }
 
@@ -1307,6 +1319,8 @@ public class Location implements java.beans.PropertyChangeListener {
             e.setAttribute(Xml.SOUTH_TRAIN_ICON_X, Integer.toString(getTrainIconSouth().x));
             e.setAttribute(Xml.SOUTH_TRAIN_ICON_Y, Integer.toString(getTrainIconSouth().y));
         }
+        if(reader!=null)
+            e.setAttribute(Xml.READER,reader.getDisplayName());
         // build list of rolling stock types for this location
         String[] types = getTypeNames();
         // Old way of saving car types
@@ -1396,6 +1410,18 @@ public class Location implements java.beans.PropertyChangeListener {
             deleteTypeName(oldType);
         }
     }
+
+    /*
+     * set the jmri.Reporter object associated with this location.
+     * @param reader jmri.Reporter object.
+     */
+    protected void setReporter(Reporter r){ reader = r; }
+
+    /*
+     * get the jmri.Reporter object associated with this location.
+     * @return jmri.Reporter object.
+     */
+    public Reporter getReporter(){ return reader; }
 
     private void replaceRoad(String oldRoad, String newRoad) {
         // now adjust any track locations

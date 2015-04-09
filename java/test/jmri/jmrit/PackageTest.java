@@ -74,6 +74,7 @@ public class PackageTest extends NbTestCase {
         if (!System.getProperty("jmri.headlesstest", "false").equals("true")) {
             suite.addTest(jmri.jmrit.ussctc.UssCtcTest.suite());
         }
+        suite.addTest(jmri.jmrit.consisttool.PackageTest.suite());
 
         return suite;
     }

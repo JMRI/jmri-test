@@ -33,7 +33,6 @@ public class PackageTest extends NbTestCase {
         suite.addTest(NamedBeanTest.suite());
 
         // implementations
-        suite.addTest(AbstractLocoAddressTest.suite());
         suite.addTest(AccessoryOpsModeProgrammerFacadeTest.suite());
         suite.addTest(AddressedHighCvProgrammerFacadeTest.suite());
         suite.addTest(DccSignalHeadTest.suite());
