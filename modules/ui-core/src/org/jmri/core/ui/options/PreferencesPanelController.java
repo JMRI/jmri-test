@@ -79,19 +79,28 @@ public abstract class PreferencesPanelController extends OptionsPanelController 
         });
     }
 
+    /**
+     * If any action needs to be taken when the Options dialog is dismissed
+     * without pressing OK, this method should be overridden.
+     */
     @Override
     public void cancel() {
-        // if any action needs to be taken when the Options dialog is dismissed
-        // without pressing OK, this method should be overridden
+        // do nothing by default
     }
 
+    /**
+     * Return true if preferences can be saved or applied.
+     * 
+     * Override this method to indicate that a preferences setting is not
+     * valid, for example, there are no connections defined, or a numeric
+     * setting is outside the valid range. If your PreferencesPanel uses
+     * persistent preferences, ensure you return true only if super.isValid()
+     * is true when overriding this method.
+     *
+     * @return true if preferences can be saved or applied.
+     */
     @Override
     public boolean isValid() {
-        // override this method to indicate that a preferences setting is not
-        // valid, for example, there are no connections defined, or a numeric
-        // setting is outside the valid range. If your PreferencesPanel uses
-        // persistant perferences, ensure you return true only is super.isValid
-        // is true when overriding this method
         return (InstanceManager.getDefault(TabbedPreferences.class).init() == TabbedPreferences.INITIALISED);
     }
 
