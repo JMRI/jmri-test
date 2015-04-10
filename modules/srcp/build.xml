@@ -51,6 +51,8 @@
 
     <target name="-pre-clean" depends="files-init">
         <!-- src.dir is not defined when cleaning, so use ${basedir}/src -->
+        <!-- make directory if needed to prevent failure -->
+        <mkdir dir="${basedir}/src/jmri"/>
         <delete includeemptydirs="true">
             <fileset dir="${basedir}/src/jmri" defaultexcludes="false"/>
         </delete>
