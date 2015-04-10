@@ -109,7 +109,6 @@ import jmri.util.swing.SliderSnap;
 import jmri.util.swing.WindowInterface;
 import jmri.web.server.WebServerAction;
 import org.jmri.managers.NetBeansShutDownManager;
-import org.netbeans.api.options.OptionsDisplayer;
 import org.openide.util.Lookup;
 import org.slf4j.LoggerFactory;
 
@@ -598,16 +597,7 @@ public class ClassicApplication extends JPanel implements PropertyChangeListener
     }
 
     protected void toolsMenu(JMenuBar menuBar, WindowInterface wi) {
-        // menuBar.add(new ToolsMenu(rb.getString("MenuTools")));
-        // TEMPORARY UNTIL TABBED PREFERENCES IS REPLACED WITH NETBEANS PREFERENCES
         ToolsMenu toolsMenu = new ToolsMenu(AppsBundle.getMessage("MenuTools"));
-        toolsMenu.addSeparator();
-        toolsMenu.add(new AbstractAction("NetBeans Options") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                OptionsDisplayer.getDefault().open();
-            }
-        });
         menuBar.add(toolsMenu);
     }
 
