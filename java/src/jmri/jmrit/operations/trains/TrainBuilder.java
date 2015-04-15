@@ -2429,8 +2429,9 @@ public class TrainBuilder extends TrainCommon {
                 addLine(_buildReport, FIVE, MessageFormat.format(Bundle.getMessage("buildCanNotPickupCarLength"),
                         new Object[]{car.toString(), length, Setup.getLengthUnit().toLowerCase()}));
                 addLine(_buildReport, FIVE, MessageFormat.format(Bundle.getMessage("buildCanNotPickupCarLength2"),
-                        new Object[]{rlt.getMaxTrainLength(), Setup.getLengthUnit().toLowerCase(), rlt.getName(),
-                            rlt.getId()}));
+                        new Object[]{rlt.getMaxTrainLength(), Setup.getLengthUnit().toLowerCase(),
+                                rlt.getTrainLength() + length - rlt.getMaxTrainLength(),
+                                rlt.getName(), rlt.getId()}));
                 return false;
             }
         }
@@ -4092,8 +4093,8 @@ public class TrainBuilder extends TrainCommon {
         if (trackSave != null) {
             if (finalDestinationTrackSave != null) {
                 car.setFinalDestination(finalDestinationTrackSave.getLocation());
+                car.setFinalDestinationTrack(finalDestinationTrackSave);
             }
-            car.setFinalDestinationTrack(finalDestinationTrackSave);
             addCarToTrain(car, rl, rldSave, trackSave);
             return true;
         }
