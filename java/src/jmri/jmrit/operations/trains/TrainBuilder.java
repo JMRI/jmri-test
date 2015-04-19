@@ -2429,8 +2429,9 @@ public class TrainBuilder extends TrainCommon {
                 addLine(_buildReport, FIVE, MessageFormat.format(Bundle.getMessage("buildCanNotPickupCarLength"),
                         new Object[]{car.toString(), length, Setup.getLengthUnit().toLowerCase()}));
                 addLine(_buildReport, FIVE, MessageFormat.format(Bundle.getMessage("buildCanNotPickupCarLength2"),
-                        new Object[]{rlt.getMaxTrainLength(), Setup.getLengthUnit().toLowerCase(), rlt.getName(),
-                            rlt.getId()}));
+                        new Object[]{rlt.getMaxTrainLength(), Setup.getLengthUnit().toLowerCase(),
+                                rlt.getTrainLength() + length - rlt.getMaxTrainLength(),
+                                rlt.getName(), rlt.getId()}));
                 return false;
             }
         }
@@ -3272,7 +3273,8 @@ public class TrainBuilder extends TrainCommon {
             }
         }
         // No staging tracks reachable, try the track the train is terminating to
-        if (_train.isAllowThroughCarsEnabled()
+        if (_train.isAllowThroughCarsEnabled() && _terminateStageTrack != null 
+                && car.getTrack().acceptsDestination(_terminateStageTrack.getLocation())
                 && generateLoadCarDepartingAndTerminatingIntoStaging(car, _terminateStageTrack)) {
             return true;
         }

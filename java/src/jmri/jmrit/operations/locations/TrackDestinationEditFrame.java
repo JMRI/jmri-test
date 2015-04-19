@@ -249,51 +249,58 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
             }
         }
     }
-    
-//    JmriJFrame statusFrame;
-//    JLabel text;
+
+    //    JmriJFrame statusFrame;
+    //    JLabel text;
 
     private void checkDestinationsValid() {
         // create a status frame
-//      statusFrame = new JmriJFrame(Bundle.getMessage("TitleEditTrackDestinations"));
-//      JPanel ps = new JPanel();
-//      ps.setLayout(new BoxLayout(ps, BoxLayout.Y_AXIS));
-//      text = new JLabel("Start with this");
-//      ps.add(text);
-//    
-//      statusFrame.getContentPane().add(ps);
-//      statusFrame.pack();
-//      statusFrame.setSize(Control.panelWidth700, 100);
-//      statusFrame.setVisible(true);
-      
+        //      statusFrame = new JmriJFrame(Bundle.getMessage("TitleEditTrackDestinations"));
+        //      JPanel ps = new JPanel();
+        //      ps.setLayout(new BoxLayout(ps, BoxLayout.Y_AXIS));
+        //      text = new JLabel("Start with this");
+        //      ps.add(text);
+        //    
+        //      statusFrame.getContentPane().add(ps);
+        //      statusFrame.pack();
+        //      statusFrame.setSize(Control.panelWidth700, 100);
+        //      statusFrame.setVisible(true);
+
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (checkLocationsLoop())
                     JOptionPane.showMessageDialog(null, Bundle.getMessage("OkayMessage"));
                 checkDestinationsButton.setEnabled(true);
-//                statusFrame.dispose();
+                //                statusFrame.dispose();
             }
         });
     }
 
     private boolean checkLocationsLoop() {
+        boolean noIssues = true;
         for (Location destination : locationManager.getLocationsByNameList()) {
             if (_track.acceptsDestination(destination)) {
                 log.debug("Track ({}) accepts destination ({})", _track.getName(), destination.getName());
-//                text.setText("Destination : " + destination.getName());
-//                statusFrame.revalidate();
-//                statusFrame.repaint();
+                //                text.setText("Destination : " + destination.getName());
+                //                statusFrame.revalidate();
+                //                statusFrame.repaint();
+                if (_track.getLocation() == destination) {
+                    continue;
+                }
                 // now check to see if the track's rolling stock is accepted by the destination
                 checkTypes: for (String type : CarTypes.instance().getNames()) {
                     if (!_track.acceptsTypeName(type)) {
                         continue;
                     }
                     if (!destination.acceptsTypeName(type)) {
-                        JOptionPane.showMessageDialog(this,
+                        noIssues = false;
+                        int response = JOptionPane.showConfirmDialog(this,
                                 MessageFormat.format(Bundle.getMessage("WarningDestinationCarType"), new Object[]{
                                         destination.getName(), type}), Bundle.getMessage("WarningCarMayNotMove"),
-                                JOptionPane.WARNING_MESSAGE);
-                        return false; // done when first issue is found
+                                JOptionPane.OK_CANCEL_OPTION);
+                        if (response == JOptionPane.OK_OPTION)
+                            continue;
+                        return false; // done
                     }
                     // now determine if there's a track willing to service car type
                     for (Track track : destination.getTrackList()) {
@@ -301,11 +308,14 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
                             continue checkTypes; // yes there's a track
                         }
                     }
-                    JOptionPane.showMessageDialog(this, MessageFormat
+                    noIssues = false;
+                    int response = JOptionPane.showConfirmDialog(this, MessageFormat
                             .format(Bundle.getMessage("WarningDestinationTrackCarType"), new Object[]{
                                     destination.getName(), type}), Bundle.getMessage("WarningCarMayNotMove"),
-                            JOptionPane.WARNING_MESSAGE);
-                    return false; // done when first issue is found
+                            JOptionPane.OK_CANCEL_OPTION);
+                    if (response == JOptionPane.OK_OPTION)
+                        continue;
+                    return false; // done
                 }
                 // now check road names
                 checkRoads: for (String road : CarRoads.instance().getNames()) {
@@ -318,11 +328,14 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
                             continue checkRoads; // yes there's a track
                         }
                     }
-                    JOptionPane.showMessageDialog(this, MessageFormat
+                    noIssues = false;
+                    int response = JOptionPane.showConfirmDialog(this, MessageFormat
                             .format(Bundle.getMessage("WarningDestinationTrackCarRoad"), new Object[]{
                                     destination.getName(), road}), Bundle.getMessage("WarningCarMayNotMove"),
-                            JOptionPane.WARNING_MESSAGE);
-                    return false; // done when first issue is found
+                            JOptionPane.OK_CANCEL_OPTION);
+                    if (response == JOptionPane.OK_OPTION)
+                        continue;
+                    return false; // done
                 }
                 // now check load names
                 for (String type : CarTypes.instance().getNames()) {
@@ -340,10 +353,13 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
                                 continue checkLoads;
                             }
                         }
-                        JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle
+                        noIssues = false;
+                        int response = JOptionPane.showConfirmDialog(this, MessageFormat.format(Bundle
                                 .getMessage("WarningDestinationTrackCarLoad"), new Object[]{destination.getName(),
-                                type, load}), Bundle.getMessage("WarningCarMayNotMove"), JOptionPane.WARNING_MESSAGE);
-                        return false; // done when first issue is found
+                                type, load}), Bundle.getMessage("WarningCarMayNotMove"), JOptionPane.OK_CANCEL_OPTION);
+                        if (response == JOptionPane.OK_OPTION)
+                            continue;
+                        return false; // done
                     }
                     // now check car type and load combinations
                     checkLoads: for (String load : loads) {
@@ -356,16 +372,19 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
                                 continue checkLoads;
                             }
                         }
-                        JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle
+                        noIssues = false;
+                        int response = JOptionPane.showConfirmDialog(this, MessageFormat.format(Bundle
                                 .getMessage("WarningDestinationTrackCarLoad"), new Object[]{destination.getName(),
-                                type, load}), Bundle.getMessage("WarningCarMayNotMove"), JOptionPane.WARNING_MESSAGE);
-                        return false; // done when first issue is found
+                                type, load}), Bundle.getMessage("WarningCarMayNotMove"), JOptionPane.OK_CANCEL_OPTION);
+                        if (response == JOptionPane.OK_OPTION)
+                            continue;
+                        return false; // done
                     }
                 }
                 // now determine if there's a train or trains that can move a car from this track to the destinations
                 // need to check all car types, loads, and roads that this track services
                 Car car = new Car();
-                car.setLength("0");
+                car.setLength(Integer.toString(-RollingStock.COUPLER)); // set car length to net out to zero
                 for (String type : CarTypes.instance().getNames()) {
                     if (!_track.acceptsTypeName(type)) {
                         continue;
@@ -393,23 +412,56 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
                             if (!foundCar) {
                                 continue; // no car with this road name
                             }
-                            if (_track.getLocation() == destination)
-                                continue;
+
                             car.setTypeName(type);
                             car.setRoadName(road);
                             car.setLoadName(load);
                             car.setTrack(_track);
                             car.setFinalDestination(destination);
+                            
+                            // does the destination accept this car?
+                            // this checks tracks that have schedules
+                            String testDest = "";
+                            for (Track track : destination.getTrackList()) {
+                                if (track.getScheduleMode() == Track.SEQUENTIAL) {
+                                    // must test in match mode
+                                    track.setScheduleMode(Track.MATCH);
+                                    String itemId = track.getScheduleItemId();
+                                    testDest = car.testDestination(destination, track);
+                                    track.setScheduleMode(Track.SEQUENTIAL);
+                                    track.setScheduleItemId(itemId);
+                                } else {
+                                    testDest = car.testDestination(destination, track);
+                                }
+                                if (testDest.equals(Track.OKAY)) {
+                                    break; // done
+                                }
+                            }
+                            
+                            if (!testDest.equals(Track.OKAY)) {
+                                noIssues = false;
+                                int response = JOptionPane.showConfirmDialog(this, MessageFormat.format(Bundle
+                                        .getMessage("WarningNoTrack"), new Object[]{destination.getName(), type, road, load,
+                                        destination.getName()}), Bundle.getMessage("WarningCarMayNotMove"),
+                                        JOptionPane.OK_CANCEL_OPTION);
+                                if (response == JOptionPane.OK_OPTION)
+                                    continue;
+                                return false; // done
+                            }
+                            
                             log.debug("Find train for car type ({}), road ({}), load ({})", type, road, load);
 
                             boolean results = Router.instance().setDestination(car, null, null);
                             car.setDestination(null, null); // clear destination if set by router
                             if (!results) {
-                                JOptionPane.showMessageDialog(this, MessageFormat.format(Bundle
+                                noIssues = false;
+                                int response = JOptionPane.showConfirmDialog(this, MessageFormat.format(Bundle
                                         .getMessage("WarningNoTrain"), new Object[]{type, road, load,
                                         destination.getName()}), Bundle.getMessage("WarningCarMayNotMove"),
-                                        JOptionPane.WARNING_MESSAGE);
-                                return false; // done when the first problem is found
+                                        JOptionPane.OK_CANCEL_OPTION);
+                                if (response == JOptionPane.OK_OPTION)
+                                    continue;
+                                return false; // done
                             }
                             // TODO need to check owners and car built dates
                         }
@@ -417,9 +469,8 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
                 }
             }
         }
-        return true;
+        return noIssues;
     }
-
 
     public void dispose() {
         if (_track != null) {
