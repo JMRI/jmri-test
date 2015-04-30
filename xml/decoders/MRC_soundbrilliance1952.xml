@@ -14,13 +14,19 @@
 <!-- See the GNU General Public License for more details.                    -->
 <!--                                                                         -->
 <decoder-config xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jmri.org/xml/schema/decoder.xsd">
+  <version author="Alain Le Marchand" version="3" lastUpdated="20150427"/>
   <version author="Peter Ulvestad" version="2" lastUpdated="20131030"/>
   <version author="Peter Ulvestad" version="1" lastUpdated="20131013"/>
   <!--   version 1 - Created from Synch Diesel Sound (16-bit) 1957 - N Scale KATO F Series ver. 1 by John Sebastian-->
   <!--   version 2 - Switch to includes for common vars-->
+  <!--   version 3 Replacement models - renamed decoder and family                   -->
+  <!--  ...........................................................................  -->
+  <!--                                                                               -->
+  <!--  Deprecated file - DO NOT USE ANYMORE - only kept for compatibility           -->
+  <!--  ...........................................................................  -->
   <decoder>
     <family name="Brilliance Sound Decoders" mfg="MRC" lowVersionID="32" highVersionID="45">
-      <model model="Synch Diesel Sound (16-bit) 1952 - N Scale GG1" numOuts="2" numFns="28" maxTotalCurrent="1.00A" extFnsMRC="yes">
+      <model show="no" model="Synch Diesel Sound (16-bit) 1952 - N Scale GG1" replacementModel="1952 - N Scale - Kato GG1" replacementFamily="Sound Decoders - N Scale" numOuts="2" numFns="28" maxTotalCurrent="1.00A" extFnsMRC="yes">
         <size length="66" width="14" height="3.5" units="mm"/>
       </model>
     </family>

@@ -13,6 +13,12 @@
 <!-- FITNESS FOR A PARTICULAR PURPOSE.                                       -->
 <!-- See the GNU General Public License for more details.                    -->
 <decoder-config xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jmri.org/xml/schema/decoder.xsd">
+  <!--  ...........................................................................  -->
+  <!--                                                                               -->
+  <!--  Deprecated file - DO NOT USE ANYMORE - only kept for compatibility           -->
+  <!--  ...........................................................................  -->
+  <version author="Alain Le Marchand" version="3" lastUpdated="20150427"/>
+  <!--  version 3 Replacement models - renamed decoder and family                    -->
   <version author="Jim Wolters" version="2" lastUpdated="20111115"/>
   <version author="Peter Ulvestad" version="1" lastUpdated="20100227"/>
   <!--   version 1 created from MRC 1800 ver. 2 definition-->
@@ -20,7 +26,7 @@
   <!-- added function label defaults, corrected default for CV21 -->
   <decoder>
     <family name="Brilliance Sound Decoders" mfg="MRC" lowVersionID="32" highVersionID="60">
-      <model model="Synch Diesel Sound 1812 - N Scale Atlas Short Board Dropin" numOuts="2" numFns="28" maxTotalCurrent="0.75A" extFnsMRC="yes">
+      <model show="no" model="Synch Diesel Sound 1812 - N Scale Atlas Short Board Dropin" replacementModel="1812 - N Scale - Atlas Short Board Diesels" replacementFamily="Sound Decoders - N Scale" numOuts="2" numFns="28" maxTotalCurrent="0.75A" extFnsMRC="yes">
         <size length="" width="" height="" units="mm"/>
       </model>
       <functionlabels>

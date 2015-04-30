@@ -13,6 +13,7 @@
 <!-- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License  -->
 <!-- for more details.                                                      -->
 <decoder-config xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jmri.org/xml/schema/decoder.xsd">
+  <version author="Alain Le Marchand" version="5" lastUpdated="20150427"/>
   <version author="Peter Ulvestad" version="4" lastUpdated="20111107"/>
   <version author="Peter Ulvestad" version="3" lastUpdated="20091003"/>
   <version author="Bob Jacobsen" version="2" lastUpdated="20071223"/>
@@ -21,9 +22,14 @@
   <!-- version 2 fixed a problem in CV 115/116 -->
   <!-- version 3 added many tooltips -->
   <!-- restore function variables which were accidentaly removed -->
+  <!--  ...........................................................................  -->
+  <!--                                                                               -->
+  <!--  Deprecated file - DO NOT USE ANYMORE - only kept for compatibility           -->
+  <!--  ...........................................................................  -->
+  <!--  version 5 Replacement models - renamed decoder and family                    -->
   <decoder>
     <family name="Brilliance Sound Decoders" mfg="MRC" lowVersionID="32" highVersionID="32">
-      <model model="Synch Diesel Sound 1636" numOuts="2" numFns="12" maxTotalCurrent="0.75A" extFnsMRC="yes">
+      <model show="no" model="Synch Diesel Sound 1636" replacementModel="1636 - N Scale - Atlas Diesels" replacementFamily="Sound Decoders - N Scale" numOuts="2" numFns="12" maxTotalCurrent="0.75A" extFnsMRC="yes">
         <!-- note only F0 to F12 are NMRA compatible -->
         <size length="70" width="9.2" height="5.8" units="mm"/>
       </model>

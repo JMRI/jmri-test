@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TrainCommon {
 
-    private static final String LENGTHABV = Setup.LENGTHABV; // Length symbol
+    protected static final String LENGTHABV = Setup.LENGTHABV; // Length symbol
     protected static final String TAB = "    "; // NOI18N
     protected static final String NEW_LINE = "\n"; // NOI18N
     protected static final String SPACE = " ";
@@ -1390,6 +1390,8 @@ public class TrainCommon {
                             + splitString(rs.getLocationName()), locationManager.getMaxLocationNameLength()
                             + TrainManifestText.getStringFrom().length() + 1);
         } else if (attribute.equals(Setup.DESTINATION) && isPickup) {
+            if (rs.getDestination() == null)
+                return "";
             if (Setup.isPrintHeadersEnabled()) {
                 return " "
                         + padAndTruncateString(splitString(rs.getDestinationName()), locationManager

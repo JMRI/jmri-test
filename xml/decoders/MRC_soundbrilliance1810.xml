@@ -14,11 +14,17 @@
 <!-- See the GNU General Public License for more details.                    -->
 <!--                                                                         -->
 <decoder-config xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jmri.org/xml/schema/decoder.xsd">
+  <version author="Alain Le Marchand" version="2" lastUpdated="20150427"/>
   <version author="Peter Ulvestad" version="1" lastUpdated="20091228"/>
   <!--   version 1  Created from MRC 1806 ver. 1.6 -->
+  <!--  ...........................................................................  -->
+  <!--                                                                               -->
+  <!--  Deprecated file - DO NOT USE ANYMORE - only kept for compatibility           -->
+  <!--  ...........................................................................  -->
+  <!--  version 2 Replacement models - renamed decoder and family                    -->
   <decoder>
     <family name="Brilliance Sound Decoders" mfg="MRC" lowVersionID="32" highVersionID="45">
-      <model model="Synch Diesel Sound 1810 - N Scale KATO F40PH" numOuts="2" numFns="28" maxTotalCurrent="0.75A" extFnsMRC="yes">
+      <model show="no" model="Synch Diesel Sound 1810 - N Scale KATO F40PH" replacementModel="1810 - N Scale - Kato F40PH" replacementFamily="Sound Decoders - N Scale" numOuts="2" numFns="28" maxTotalCurrent="0.75A" extFnsMRC="yes">
         <size length="66" width="14" height="3.5" units="mm"/>
       </model>
     </family>

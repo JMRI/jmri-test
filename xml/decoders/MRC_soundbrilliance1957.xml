@@ -14,15 +14,21 @@
 <!-- See the GNU General Public License for more details.                    -->
 <!--                                                                         -->
 <decoder-config xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jmri.org/xml/schema/decoder.xsd">
-  <version author="Peter Ulvestad" version="2" lastUpdated="20131102"/>
+  <version author="Alain Le Marchand" version="4" lastUpdated="20150427"/>
+  <version author="Peter Ulvestad" version="3" lastUpdated="20131102"/>
   <version author="Peter Ulvestad" version="2" lastUpdated="20131030"/>
   <version author="John Sebastian, JohnSeb@pacbell.net" version="1" lastUpdated="20120217"/>
   <!--   version 1  Created from MRC 1810 ver. 1.6 by Peter Ulvestad-->
   <!--   version 2  Corrected Long address not showing and Switch to includes for common vars-->
   <!--   version 3  Corrected BEMF not showing and light pane-->
+  <!--   version 4  Replacement models - renamed decoder and family                  -->
+  <!--  ...........................................................................  -->
+  <!--                                                                               -->
+  <!--  Deprecated file - DO NOT USE ANYMORE - only kept for compatibility           -->
+  <!--  ...........................................................................  -->
   <decoder>
     <family name="Brilliance Sound Decoders" mfg="MRC" lowVersionID="32" highVersionID="32">
-      <model model="Synch Diesel Sound (16-bit) 1957 - N Scale KATO F Series" numOuts="2" numFns="28" maxTotalCurrent="1.00A" extFnsMRC="yes"/>
+      <model show="no" model="Synch Diesel Sound (16-bit) 1957 - N Scale KATO F Series" replacementModel="1957 - N Scale - Kato EMD F Series" replacementFamily="Sound Decoders - N Scale" numOuts="2" numFns="28" maxTotalCurrent="1.00A" extFnsMRC="yes"/>
       <functionlabels>
         <functionlabel num="0" lockable="true">Light</functionlabel>
         <functionlabel num="1" lockable="true">Bell</functionlabel>

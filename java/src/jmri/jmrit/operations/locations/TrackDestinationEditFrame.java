@@ -391,9 +391,6 @@ public class TrackDestinationEditFrame extends OperationsFrame implements java.b
                     }
                     List<String> loads = CarLoads.instance().getNames(type);
                     for (String load : loads) {
-                        if (!_track.acceptsLoadName(load)) {
-                            continue;
-                        }
                         if (!_track.acceptsLoad(load, type)) {
                             continue;
                         }

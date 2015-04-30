@@ -105,32 +105,27 @@ public abstract class AbstractMonPane extends JmriPanel {
         self = this;
     }
 
-    @Override
-    public void initComponents() throws Exception {
-        p = jmri.InstanceManager.getDefault(jmri.UserPreferencesManager.class);
-        // the following code sets the frame's initial state
-        clearButton.setText(Bundle.getMessage("ButtonClearScreen")); // NOI18N
-        clearButton.setVisible(true);
-        clearButton.setToolTipText(Bundle.getMessage("TooltipClearMonHistory")); // NOI18N
-
-        freezeButton.setText(Bundle.getMessage("ButtonFreezeScreen")); // NOI18N
-        freezeButton.setVisible(true);
-        freezeButton.setToolTipText(Bundle.getMessage("TooltipStopScroll")); // NOI18N
-
-        enterButton.setText(Bundle.getMessage("ButtonAddMessage")); // NOI18N
-        enterButton.setVisible(true);
-        enterButton.setToolTipText(Bundle.getMessage("TooltipAddMessage")); // NOI18N
-
-        monTextPane.setVisible(true);
-        monTextPane.setToolTipText(Bundle.getMessage("TooltipMonTextPane")); // NOI18N
-        monTextPane.setEditable(false);
+    /**
+     * By default, creates just one place (one data pane) to put trace data
+     */
+    protected void createDataPanes() {
+        configureDataPane(monTextPane);
+    }
+    
+    /**
+     * Do default configuration of a data pane
+     */
+    protected void configureDataPane(JTextArea textPane) {
+        textPane.setVisible(true);
+        textPane.setToolTipText(Bundle.getMessage("TooltipMonTextPane")); // NOI18N
+        textPane.setEditable(false);
 
         // Add document listener to scroll to end when modified if required
-        monTextPane.getDocument().addDocumentListener(new DocumentListener() {
+        textPane.getDocument().addDocumentListener(new DocumentListener() {
 
             // References to the JTextArea and JCheckBox
             // of this instantiation
-            JTextArea ta = monTextPane;
+            JTextArea ta = textPane;
             JCheckBox chk = autoScrollCheckBox;
 
             @Override
@@ -148,6 +143,58 @@ public abstract class AbstractMonPane extends JmriPanel {
                 doAutoScroll(ta, chk.isSelected());
             }
         });
+    }
+    
+    /**
+     * Provide initial preferred line length.
+     * Used to size the initial GUI
+     */
+    protected int getInitialPreferredLineLength() { return 80; }
+    /**
+     * Provide initial number of lines to display
+     * Used to size the initial GUI
+     */
+    protected int getInitialPreferredLineCount() { return 10; }
+    
+    
+    /**
+     * Put data pane(s) in the GUI
+     */
+    protected void addDataPanes() {
+
+        // fix a width for current character set
+        JTextField t = new JTextField(getInitialPreferredLineLength());
+        int x = jScrollPane1.getPreferredSize().width + t.getPreferredSize().width;
+        int y = jScrollPane1.getPreferredSize().height + getInitialPreferredLineCount() * t.getPreferredSize().height;
+
+        jScrollPane1.getViewport().add(monTextPane);
+        jScrollPane1.setPreferredSize(new Dimension(x, y));
+        jScrollPane1.setVisible(true);
+
+        // add in a JPanel that stays sized as the window changes size
+        JPanel p = new JPanel();
+        p.setLayout(new BoxLayout(p, BoxLayout.X_AXIS));
+        p.add(jScrollPane1);
+        add(p);
+    }
+    
+    @Override
+    public void initComponents() throws Exception {
+        p = jmri.InstanceManager.getDefault(jmri.UserPreferencesManager.class);
+        // the following code sets the frame's initial state
+        clearButton.setText(Bundle.getMessage("ButtonClearScreen")); // NOI18N
+        clearButton.setVisible(true);
+        clearButton.setToolTipText(Bundle.getMessage("TooltipClearMonHistory")); // NOI18N
+
+        freezeButton.setText(Bundle.getMessage("ButtonFreezeScreen")); // NOI18N
+        freezeButton.setVisible(true);
+        freezeButton.setToolTipText(Bundle.getMessage("TooltipStopScroll")); // NOI18N
+
+        enterButton.setText(Bundle.getMessage("ButtonAddMessage")); // NOI18N
+        enterButton.setVisible(true);
+        enterButton.setToolTipText(Bundle.getMessage("TooltipAddMessage")); // NOI18N
+
+        createDataPanes();
 
         entryField.setToolTipText(Bundle.getMessage("TooltipEntryPane")); // NOI18N
         // cap vertical size to avoid over-growth
@@ -180,15 +227,6 @@ public abstract class AbstractMonPane extends JmriPanel {
             }
         });
 
-        // fix a width for current character set
-        JTextField t = new JTextField(80);
-        int x = jScrollPane1.getPreferredSize().width + t.getPreferredSize().width;
-        int y = jScrollPane1.getPreferredSize().height + 10 * t.getPreferredSize().height;
-
-        jScrollPane1.getViewport().add(monTextPane);
-        jScrollPane1.setPreferredSize(new Dimension(x, y));
-        jScrollPane1.setVisible(true);
-
         startLogButton.setText(Bundle.getMessage("ButtonStartLogging")); // NOI18N
         startLogButton.setVisible(true);
         startLogButton.setToolTipText(Bundle.getMessage("TooltipStartLogging")); // NOI18N
@@ -200,17 +238,17 @@ public abstract class AbstractMonPane extends JmriPanel {
         rawCheckBox.setText(Bundle.getMessage("ButtonShowRaw")); // NOI18N
         rawCheckBox.setVisible(true);
         rawCheckBox.setToolTipText(Bundle.getMessage("TooltipShowRaw")); // NOI18N
-        rawCheckBox.setSelected(p.getSimplePreferenceState(rawDataCheck));
+        if (p!=null) rawCheckBox.setSelected(p.getSimplePreferenceState(rawDataCheck));
 
         timeCheckBox.setText(Bundle.getMessage("ButtonShowTimestamps")); // NOI18N
         timeCheckBox.setVisible(true);
         timeCheckBox.setToolTipText(Bundle.getMessage("TooltipShowTimestamps")); // NOI18N
-        timeCheckBox.setSelected(p.getSimplePreferenceState(timeStampCheck));
+        if (p!=null) timeCheckBox.setSelected(p.getSimplePreferenceState(timeStampCheck));
 
         alwaysOnTopCheckBox.setText(Bundle.getMessage("ButtonWindowOnTop")); // NOI18N
         alwaysOnTopCheckBox.setVisible(true);
         alwaysOnTopCheckBox.setToolTipText(Bundle.getMessage("TooltipWindowOnTop")); // NOI18N
-        alwaysOnTopCheckBox.setSelected(p.getSimplePreferenceState(alwaysOnTopCheck));
+        if (p!=null) alwaysOnTopCheckBox.setSelected(p.getSimplePreferenceState(alwaysOnTopCheck));
         if (getTopLevelAncestor() != null) {
             ((jmri.util.JmriJFrame) getTopLevelAncestor()).setAlwaysOnTop(alwaysOnTopCheckBox.isSelected());
         }
@@ -218,7 +256,7 @@ public abstract class AbstractMonPane extends JmriPanel {
         autoScrollCheckBox.setText(Bundle.getMessage("ButtonAutoScroll")); // NOI18N
         autoScrollCheckBox.setVisible(true);
         autoScrollCheckBox.setToolTipText(Bundle.getMessage("TooltipAutoScroll")); // NOI18N
-        autoScrollCheckBox.setSelected(!p.getSimplePreferenceState(autoScrollCheck));
+        if (p!=null) autoScrollCheckBox.setSelected(!p.getSimplePreferenceState(autoScrollCheck));
 
         openFileChooserButton.setText(Bundle.getMessage("ButtonChooseLogFile")); // NOI18N
         openFileChooserButton.setVisible(true);
@@ -227,7 +265,7 @@ public abstract class AbstractMonPane extends JmriPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         // add items to GUI
-        add(jScrollPane1);
+        addDataPanes();
 
         JPanel paneA = new JPanel();
         paneA.setLayout(new BoxLayout(paneA, BoxLayout.Y_AXIS));
@@ -339,11 +377,15 @@ public abstract class AbstractMonPane extends JmriPanel {
         nextLineWithTime(new Date(), line, raw);
     }
 
+    /**
+     * Handle display of traffic.
+     *
+     * @param timestamp
+     * @param line The traffic in normal parsed form, ending with \n
+     * @param raw The traffic in raw form, ending with \n
+     */
     public void nextLineWithTime(Date timestamp, String line, String raw) {
 
-        // handle display of traffic
-        // line is the traffic in 'normal form', raw is the "raw form"
-        // Both should be one or more well-formed lines, e.g. end with \n
         StringBuffer sb = new StringBuffer(120);
 
         // display the timestamp if requested
@@ -356,7 +398,7 @@ public abstract class AbstractMonPane extends JmriPanel {
             sb.append('[').append(raw).append("]  "); // NOI18N
         }
 
-        // display decoded data
+        // display parsed data
         sb.append(line);
         synchronized (self) {
             linesBuffer.append(sb.toString());
@@ -479,7 +521,7 @@ public abstract class AbstractMonPane extends JmriPanel {
     }
 
     public synchronized String getFrameText() {
-        return linesBuffer.toString();
+        return monTextPane.getText();
     }
 
     /**
