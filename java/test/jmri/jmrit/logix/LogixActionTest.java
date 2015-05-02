@@ -8,7 +8,9 @@ import jmri.SignalHead;
 import jmri.Turnout;
 import jmri.util.JUnitUtil;
 import junit.framework.Assert;
-import org.netbeans.junit.NbTestSuite;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Tests for the OPath class
@@ -16,25 +18,22 @@ import org.netbeans.junit.NbTestSuite;
  * @author	Pete Cressman Copyright 2014
  * @version $Revision: 17977 $
  */
-public class LogixActionTest extends jmri.util.SwingTestCase {
+public class LogixActionTest extends TestCase {
 
     public void testLogixAction() throws Exception {
         jmri.configurexml.ConfigXmlManager cm = new jmri.configurexml.ConfigXmlManager() {
         };
 
-        // uses warrants, which require screen, so end if headless now
+        /* headless OK
         if (System.getProperty("jmri.headlesstest", "false").equals("true")) {
             return;
-        }
+        }*/ 
 
-        // load and display sample file
+        // load and display sample file. Panel file does not display screen
         java.io.File f = new java.io.File("java/test/jmri/jmrit/logix/valid/LogixActionTest.xml");
         cm.load(f);
-        sleep(100); // time for internal listeners to calm down
-/*		
-         Editor window = (Editor) jmri.util.JmriJFrame.getFrame("Logix Action Test");
-         Assert.assertNotNull("Window", window);
-         */
+        InstanceManager.logixManagerInstance().activateAllLogixs();
+
         Memory im6 = InstanceManager.memoryManagerInstance().getMemory("IM6");
         Assert.assertNotNull("Memory IM6", im6);
         Assert.assertEquals("Contents IM6", "EastToWestOnSiding", im6.getValue());
@@ -50,6 +49,8 @@ public class LogixActionTest extends jmri.util.SwingTestCase {
         Sensor sensor = InstanceManager.sensorManagerInstance().getSensor("enableButton");
         Assert.assertNotNull("Sensor IS5", sensor);
         sensor.setState(Sensor.ACTIVE);
+        sensor.setState(Sensor.INACTIVE);
+        sensor.setState(Sensor.ACTIVE);
         SignalHead sh1 = InstanceManager.signalHeadManagerInstance().getSignalHead("IH1");
         Assert.assertEquals("SignalHead IH1", SignalHead.RED, sh1.getAppearance());
 
@@ -61,7 +62,6 @@ public class LogixActionTest extends jmri.util.SwingTestCase {
         sensor = InstanceManager.sensorManagerInstance().getSensor("ISINDIRECT");
         sensor.setState(Sensor.ACTIVE);		// activate Indirect logix action
         Assert.assertEquals("Indirect set Sensor IS1 inactive", Sensor.INACTIVE, is1.getState());		// action
-        sleep(1000);	// allow 1 sec delay to display
 
         // SignalHead buttons
         Sensor is4 = InstanceManager.sensorManagerInstance().getSensor("IS4");
@@ -168,7 +168,7 @@ public class LogixActionTest extends jmri.util.SwingTestCase {
 
     // The minimal setup for log4J
     protected void setUp() throws Exception {
-        super.setUp();
+//        super.setUp();
         apps.tests.Log4JFixture.setUp();
         JUnitUtil.resetInstanceManager();
         JUnitUtil.initConfigureManager();
@@ -178,11 +178,13 @@ public class LogixActionTest extends jmri.util.SwingTestCase {
         JUnitUtil.initInternalSignalHeadManager();
         JUnitUtil.initMemoryManager();
         JUnitUtil.initOBlockManager();
+        JUnitUtil.initLogixManager();
+        JUnitUtil.initConditionalManager();
     }
 
     protected void tearDown() throws Exception {
         JUnitUtil.resetInstanceManager();
         apps.tests.Log4JFixture.tearDown();
-        super.tearDown();
+//        super.tearDown();
     }
 }
