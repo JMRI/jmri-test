@@ -119,7 +119,8 @@ public class AbstractIdentifyTest extends NbTestCase {
 
     // internal class for testing
     class AITest extends AbstractIdentify {
-
+        public AITest() { super(null);}
+        
         public boolean test1() {
             invoked = 1;
             return retval;

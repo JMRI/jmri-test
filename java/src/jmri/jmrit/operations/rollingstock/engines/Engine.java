@@ -51,7 +51,7 @@ public class Engine extends RollingStock {
      * @param type Locomotive type: Steam, Diesel, Gas Turbine, etc.
      */
     public void setTypeName(String type) {
-        if (getModel().equals("")) {
+        if (getModel() == null) {
             return;
         }
         String old = getTypeName();
@@ -109,26 +109,40 @@ public class Engine extends RollingStock {
      */
     public void setLength(String length) {
         super.setLength(length);
-        if (getModel().equals("")) {
-            return;
+        try {
+           if (getModel().equals("")) {
+               return;
+           }
+           engineModels.setModelLength(getModel(), length);
+        } catch(java.lang.NullPointerException npe){
+          // failed, but the model may not have been set.
+          log.debug("NPE getting lenght for Engine ({})", toString());
         }
-        engineModels.setModelLength(getModel(), length);
+        return;
     }
 
     public String getLength() {
-        String length = engineModels.getModelLength(getModel());
-        if (length == null) {
-            length = "";
-        }
-        if (!length.equals(_length)) {
-            if (_lengthChange) // return "old" length, used for track reserve changes
-            {
-                return _length;
+        try {
+            String length = super.getLength();
+            if (getModel() != null && !getModel().equals("")) {
+                length = engineModels.getModelLength(getModel());
             }
-            log.debug("Loco ({}) length has been modified", toString());
-            super.setLength(length); // adjust track lengths
+            if (length == null) {
+                length = "";
+            }
+            if (!length.equals(_length)) {
+                if (_lengthChange) // return "old" length, used for track reserve changes
+                {
+                    return _length;
+                }
+                log.debug("Loco ({}) length has been modified", toString());
+                super.setLength(length); // adjust track lengths
+            }
+            return length;
+        } catch (java.lang.NullPointerException npe) {
+            log.debug("NPE setting length for Engine ({})", toString());
         }
-        return length;
+        return "";
     }
 
     /**
@@ -137,22 +151,34 @@ public class Engine extends RollingStock {
      * @param weight locomotive weight
      */
     public void setWeightTons(String weight) {
-        if (getModel().equals("")) {
-            return;
-        }
-        String old = getWeightTons();
-        engineModels.setModelWeight(getModel(), weight);
-        if (!old.equals(weight)) {
-            setDirtyAndFirePropertyChange("Engine Weight Tons", old, weight); // NOI18N
+        try {
+           if (getModel().equals("")) {
+               return;
+           }
+           String old = getWeightTons();
+           super.setWeightTons(weight);
+           engineModels.setModelWeight(getModel(), weight);
+           if (!old.equals(weight)) {
+              setDirtyAndFirePropertyChange("Engine Weight Tons", old, weight); // NOI18N
+           }
+        } catch(java.lang.NullPointerException npe) {
+           // this failed, was the model set?
+           log.debug("NPE setting Weight Tons for Engine ({})", toString());
         }
     }
 
     public String getWeightTons() {
-        String weight = engineModels.getModelWeight(getModel());
-        if (weight == null) {
-            weight = "";
-        }
-        return weight;
+        String weight = null;
+        try{
+           weight = engineModels.getModelWeight(getModel());
+           if (weight == null) {
+               weight = "";
+           }
+       } catch(java.lang.NullPointerException npe){
+          log.debug("NPE getting Weight Tons for Engine ({})", toString());
+          weight = "";
+       }
+       return weight;
     }
 
     /**
@@ -234,6 +260,7 @@ public class Engine extends RollingStock {
      * @param e Engine XML element
      */
     public Engine(org.jdom2.Element e) {
+        super(e); // MUST create the rolling stock first!
         org.jdom2.Attribute a;
         // must set _model first so locomotive hp, length, type and weight is set properly
         if ((a = e.getAttribute(Xml.MODEL)) != null) {
@@ -265,7 +292,6 @@ public class Engine extends RollingStock {
                 log.error("Consist " + a.getValue() + " does not exist");
             }
         }
-        super.rollingStock(e);
         addPropertyChangeListeners();
     }
 

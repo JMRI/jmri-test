@@ -27,7 +27,7 @@ public class IdentifyLocoTest extends NbTestCase {
         jmri.InstanceManager.setProgrammerManager(new jmri.managers.DefaultProgrammerManager(p));
 
         // create our test object
-        IdentifyLoco i = new IdentifyLoco() {
+        IdentifyLoco i = new IdentifyLoco(p) {
             public void message(String m) {
             }
 
@@ -72,7 +72,7 @@ public class IdentifyLocoTest extends NbTestCase {
         jmri.InstanceManager.setProgrammerManager(new jmri.managers.DefaultProgrammerManager(p));
 
         // create our test object
-        IdentifyLoco i = new IdentifyLoco() {
+        IdentifyLoco i = new IdentifyLoco(p) {
             public void message(String m) {
             }
 
