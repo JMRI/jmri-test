@@ -844,6 +844,8 @@ public class RollingStock implements java.beans.PropertyChangeListener {
      * @return date
      */
     public String getLastDate() {
+        if( _lastDate.equals((new java.util.GregorianCalendar()).getGregorianChange())) 
+            return ""; // return an empty string for the default date.
         SimpleDateFormat format=
                     new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         return format.format(_lastDate);  
@@ -1124,7 +1126,7 @@ public class RollingStock implements java.beans.PropertyChangeListener {
             _weight = a.getValue();
         }
         if ((a = e.getAttribute(Xml.WEIGHT_TONS)) != null) {
-            setWeightTons(a.getValue()); // so engine model will get proper weight
+            _weightTons = a.getValue();
         }
         if ((a = e.getAttribute(Xml.BUILT)) != null) {
             _built = a.getValue();

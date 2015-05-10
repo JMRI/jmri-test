@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import jmri.jmrit.operations.locations.Location;
+import jmri.jmrit.operations.locations.Track;
 import jmri.jmrit.operations.trains.Train;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +55,7 @@ public class RollingStockManager {
     /**
      * Get rolling stock by road and number
      *
-     * @param road   RollingStock road
+     * @param road RollingStock road
      * @param number RollingStock number
      * @return requested RollingStock object or null if none exists
      */
@@ -401,12 +403,22 @@ public class RollingStockManager {
     }
 
     /**
-     * Sort by rolling stock last date used
+     * Get a list of all rolling stock sorted last date used
      *
      * @return list of RollingStock ordered by last date
      */
     public List<RollingStock> getByLastDateList() {
-        return getByList(getByIdList(),BY_LAST);
+        return getByList(getByIdList(), BY_LAST);
+    }
+
+    /**
+     * Sort a specific list of rolling stock last date used
+     * 
+     * @param inList list of rolling stock to sort.
+     * @return list of RollingStock ordered by last date
+     */
+    public List<RollingStock> getByLastDateList(List<RollingStock> inList) {
+        return getByList(inList, BY_LAST);
     }
 
     private static final int pageSize = 64;
@@ -414,7 +426,7 @@ public class RollingStockManager {
     protected List<RollingStock> getByList(List<RollingStock> sortIn, int attribute) {
         List<RollingStock> out = new ArrayList<RollingStock>();
         sortIn.forEach(n -> out.add(n));
-        Collections.sort(out,getComparator(attribute)); 
+        Collections.sort(out, getComparator(attribute));
         return out;
     }
 
@@ -448,35 +460,39 @@ public class RollingStockManager {
     protected java.util.Comparator<RollingStock> getComparator(int attribute) {
         switch (attribute) {
             case BY_NUMBER:
-                return (r1,r2) -> (r1.getNumber().compareToIgnoreCase(r2.getNumber()));
+                return (r1, r2) -> (r1.getNumber().compareToIgnoreCase(r2.getNumber()));
             case BY_ROAD:
-                return (r1,r2) -> (r1.getRoadName().compareToIgnoreCase(r2.getRoadName()));
+                return (r1, r2) -> (r1.getRoadName().compareToIgnoreCase(r2.getRoadName()));
             case BY_TYPE:
-                return (r1,r2) -> (r1.getTypeName().compareToIgnoreCase(r2.getTypeName()));
+                return (r1, r2) -> (r1.getTypeName().compareToIgnoreCase(r2.getTypeName()));
             case BY_COLOR:
-                return (r1,r2) -> (r1.getColor().compareToIgnoreCase(r2.getColor()));
+                return (r1, r2) -> (r1.getColor().compareToIgnoreCase(r2.getColor()));
             case BY_LOCATION:
-                return (r1,r2) -> (r1.getStatus() + r1.getLocationName() + r1.getTrackName()).compareToIgnoreCase(r2.getStatus() + r2.getLocationName() + r2.getTrackName());
+                return (r1, r2) -> (r1.getStatus() + r1.getLocationName() + r1.getTrackName()).compareToIgnoreCase(r2.getStatus() +
+                        r2.getLocationName() +
+                        r2.getTrackName());
             case BY_DESTINATION:
-                return (r1,r2) -> (r1.getDestinationName() + r1.getDestinationTrackName()).compareToIgnoreCase(r2.getDestinationName() + r2.getDestinationTrackName());
+                return (r1, r2) -> (r1.getDestinationName() + r1.getDestinationTrackName()).compareToIgnoreCase(r2.getDestinationName() +
+                        r2.getDestinationTrackName());
             case BY_TRAIN:
-                return (r1,r2) -> (r1.getTrainName().compareToIgnoreCase(r2.getTrainName()));
+                return (r1, r2) -> (r1.getTrainName().compareToIgnoreCase(r2.getTrainName()));
             case BY_MOVES:
-                return (r1,r2) -> (r1.getMoves() - r2.getMoves());
+                return (r1, r2) -> (r1.getMoves() - r2.getMoves());
             case BY_BUILT:
-                return (r1,r2) ->  (convertBuildDate(r1.getBuilt()).compareToIgnoreCase(convertBuildDate(r2.getBuilt())));
+                return (r1, r2) -> (convertBuildDate(r1.getBuilt()).compareToIgnoreCase(convertBuildDate(r2.getBuilt())));
             case BY_OWNER:
-                return (r1,r2) -> (r1.getOwner().compareToIgnoreCase(r2.getOwner())); 
+                return (r1, r2) -> (r1.getOwner().compareToIgnoreCase(r2.getOwner()));
             case BY_RFID:
-                return (r1,r2) -> (r1.getRfid().compareToIgnoreCase(r2.getRfid()));
+                return (r1, r2) -> (r1.getRfid().compareToIgnoreCase(r2.getRfid()));
             case BY_VALUE:
-                return (r1,r2) -> (r1.getValue().compareToIgnoreCase(r2.getValue()));
+                return (r1, r2) -> (r1.getValue().compareToIgnoreCase(r2.getValue()));
             case BY_LAST:
-                return (r1,r2) -> (r1.getLastMoveDate().compareTo(r2.getLastMoveDate())); 
+                return (r1, r2) -> (r1.getLastMoveDate().compareTo(r2.getLastMoveDate()));
             case BY_BLOCKING:
-                return (r1,r2) -> ( r1.getBlocking() - r2.getBlocking());
+                return (r1, r2) -> (r1.getBlocking() - r2.getBlocking());
             default:
-                return (r1,r2) -> ((r1.getRoadName()+r1.getNumber()).compareToIgnoreCase(r2.getRoadName()+r2.getNumber()));
+                return (r1, r2) -> ((r1.getRoadName() + r1.getNumber()).compareToIgnoreCase(r2.getRoadName() +
+                        r2.getNumber()));
         }
     }
 
@@ -525,14 +541,36 @@ public class RollingStockManager {
         return out;
     }
 
-    // not written!
-    // protected List<RollingStock> shuffle(List<RollingStock> list) {
-    // List<RollingStock> out = new ArrayList<RollingStock>();
-    // for (int i = 0; i < list.size(); i++) {
-    // out.add(i, list.get(i));
-    // }
-    // return out;
-    // }
+    /**
+     * Returns a list (no order) of RollingStock at a location.
+     * 
+     * @param location location to search for.
+     * @return list of RollingStock
+     */
+    public List<RollingStock> getList(Location location) {
+        List<RollingStock> out = new ArrayList<RollingStock>();
+        _hashTable.forEach((key, rs) -> {
+            if (rs.getLocation() == location)
+                out.add(rs);
+        });
+        return out;
+    }
+
+    /**
+     * Returns a list (no order) of RollingStock at a location.
+     * 
+     * @param track Track to search for.
+     * @return list of RollingStock
+     */
+    public List<RollingStock> getList(Track track) {
+        List<RollingStock> out = new ArrayList<RollingStock>();
+        _hashTable.forEach((key, rs) -> {
+            if (rs.getTrack() == track)
+                out.add(rs);
+        });
+        return out;
+    }
+    
     java.beans.PropertyChangeSupport pcs = new java.beans.PropertyChangeSupport(this);
 
     public synchronized void addPropertyChangeListener(java.beans.PropertyChangeListener l) {
