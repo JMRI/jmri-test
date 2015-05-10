@@ -98,7 +98,7 @@ public abstract class PreferencesPanelController extends OptionsPanelController 
      */
     @Override
     public boolean isValid() {
-        return true;
+        return this.preferencesPanel.isPreferencesValid();
     }
 
     @Override

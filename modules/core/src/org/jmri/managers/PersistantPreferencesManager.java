@@ -39,4 +39,8 @@ public class PersistantPreferencesManager extends AppConfigBase {
     public boolean isDirty() {
         return this.preferencesPanels.values().stream().anyMatch((panel) -> (panel.isDirty()));
     }
+    
+    public boolean isPreferencesValid() {
+        return this.preferencesPanels.values().stream().anyMatch((panel) -> (panel.isPreferencesValid()));
+    }
 }
