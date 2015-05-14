@@ -32,7 +32,7 @@ public class DecoderPro extends Gui3Application {
 
     private static String menuFile = null;
     private static String toolbarFile = null;
-    private static final String applicationName = "DecoderPro 3";
+    private static final String applicationName = "DecoderPro";
 
     public DecoderPro(String[] args) {
         super(applicationName, "DecoderProConfig3.xml", args);
