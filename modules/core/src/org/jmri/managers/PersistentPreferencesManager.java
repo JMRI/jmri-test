@@ -12,8 +12,8 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author Randall Wood
  */
-@ServiceProvider(service = PersistantPreferencesManager.class)
-public class PersistantPreferencesManager extends AppConfigBase {
+@ServiceProvider(service = PersistentPreferencesManager.class)
+public class PersistentPreferencesManager extends AppConfigBase {
 
     private static final long serialVersionUID = -9062945353256849209L;
 
