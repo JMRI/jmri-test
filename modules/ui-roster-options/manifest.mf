@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: org.jmri.roster.ui.options
+OpenIDE-Module-Localizing-Bundle: org/jmri/roster/ui/options/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
