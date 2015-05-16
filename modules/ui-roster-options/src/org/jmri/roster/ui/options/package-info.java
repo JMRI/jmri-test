@@ -6,7 +6,7 @@
 @OptionsPanelController.ContainerRegistration(
         id = "Roster",
         categoryName = "#OptionsCategory_Name_Roster",
-        iconBase = "org/jmri/roster/ui/RosterGroup.png",
+        iconBase = "org/jmri/roster/ui/options/RosterGroup.png",
         keywords = "#OptionsCategory_Keywords_Roster", 
         keywordsCategory = "Roster")
 @NbBundle.Messages({
