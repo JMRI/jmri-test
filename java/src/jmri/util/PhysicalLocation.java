@@ -16,7 +16,7 @@ package jmri.util;
  * <P>
  *
  * @author			Mark Underwood Copyright (C) 2011
- * @version			$Revision: 18568 $
+ * @version			$Revision$
  */
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -232,6 +232,9 @@ public class PhysicalLocation extends Vector3f {
      * Constructor from X, Y, Z (float)
      */
     public PhysicalLocation(float x, float y, float z) {
+        setX(x);
+        setY(y);
+        setZ(z);
         _isTunnel = false;
 
     }

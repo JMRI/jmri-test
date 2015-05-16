@@ -373,7 +373,9 @@ public class CarManager extends RollingStockManager {
     }
 
     /**
-     * Get a list of Cars assigned to a train sorted by destination track names.
+     * Get a list of Cars assigned to a train sorted by destination track blocking order
+     * or by track names. If a train is to be blocked by track blocking order, all of
+     * the tracks at that location need a blocking number greater than 0.
      * Passenger cars will be placed at the end of the list. Caboose or car with
      * FRED will be the last car(s) in the list. Kernels are placed together by
      * blocking number.
@@ -384,20 +386,32 @@ public class CarManager extends RollingStockManager {
     public List<Car> getByTrainDestinationList(Train train) {
         List<RollingStock> byFinal = getByList(getList(train), BY_FINAL_DEST);
         List<RollingStock> byLocation = getByList(byFinal, BY_LOCATION);
-        // now sort by track destination
+        List<RollingStock> byDestination = getByList(byLocation, BY_DESTINATION);
+        // now place cabooses, cars with FRED, and passenger cars at the rear of the train
         List<Car> out = new ArrayList<Car>();
         int lastCarsIndex = 0; // incremented each time a car is added to the end of the list
-        for (RollingStock rs : byLocation) {
+        for (RollingStock rs : byDestination) {
             Car car = (Car) rs;
             if (car.getKernel() != null && !car.getKernel().isLead(car)) {
                 continue; // not the lead car, skip for now.
             }
             if (!car.isCaboose() && !car.hasFred() && !car.isPassenger()) {
-                String carDestination = car.getDestinationTrackName();
-                for (int j = 0; j < out.size(); j++) {
-                    if (carDestination.compareToIgnoreCase(out.get(j).getDestinationTrackName()) < 0) {
-                        out.add(j, car);
-                        break;
+                // sort order based on train direction when serving track, low to high if West or North bound trains
+                if (car.getDestinationTrack() != null && car.getDestinationTrack().getBlockingOrder() > 0) {
+                    for (int j = 0; j < out.size(); j++) {
+                        if (car.getRouteDestination() != null &&
+                                (car.getRouteDestination().getTrainDirectionString().equals(RouteLocation.WEST_DIR)
+                                || car.getRouteDestination().getTrainDirectionString().equals(RouteLocation.NORTH_DIR))) {
+                            if (car.getDestinationTrack().getBlockingOrder() < out.get(j).getDestinationTrack().getBlockingOrder()) {
+                                out.add(j, car);
+                                break;
+                            }
+                        } else {
+                            if (car.getDestinationTrack().getBlockingOrder() > out.get(j).getDestinationTrack().getBlockingOrder()) {
+                                out.add(j, car);
+                                break;
+                            }
+                        }
                     }
                 }
                 if (!out.contains(car)) {

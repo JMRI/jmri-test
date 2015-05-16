@@ -255,7 +255,8 @@ public class ProfileManagerDialog extends JDialog {
     }//GEN-LAST:event_btnUseExistingActionPerformed
 
     private void formWindowOpened(WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        countDown = 10; // TODO: make this a profileManager property
+        countDown = ProfileManager.defaultManager().getAutoStartActiveProfileTimeout();
+        countDownLbl.setText(Integer.toString(countDown));
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -273,7 +274,9 @@ public class ProfileManagerDialog extends JDialog {
             }
         });
         timer.setRepeats(true);
-        if (profiles.getModel().getSize() > 0 && null != ProfileManager.defaultManager().getActiveProfile()) {
+        if (profiles.getModel().getSize() > 0
+                && null != ProfileManager.defaultManager().getActiveProfile()
+                && countDown > 0) {
             timer.start();
         } else {
             countDownLbl.setVisible(false);
