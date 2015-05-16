@@ -2,9 +2,9 @@ package apps.gui3;
 
 import java.awt.event.ActionEvent;
 import javax.swing.Icon;
-import javax.swing.SwingUtilities;
 import jmri.util.swing.JmriPanel;
 import jmri.util.swing.WindowInterface;
+import org.netbeans.api.options.OptionsDisplayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,9 +17,6 @@ import org.slf4j.LoggerFactory;
  */
 public class TabbedPreferencesAction extends jmri.util.swing.JmriAbstractAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 7214016766558164269L;
 
     /**
@@ -35,7 +32,6 @@ public class TabbedPreferencesAction extends jmri.util.swing.JmriAbstractAction 
     public TabbedPreferencesAction(String s, String category, String subCategory) {
         super(s);
         preferencesItem = category;
-        preferenceSubCat = subCategory;
     }
 
     public TabbedPreferencesAction(String s, String category) {
@@ -62,7 +58,6 @@ public class TabbedPreferencesAction extends jmri.util.swing.JmriAbstractAction 
     public TabbedPreferencesAction(String s, WindowInterface wi, String category, String subCategory) {
         super(s, wi);
         preferencesItem = category;
-        preferenceSubCat = subCategory;
     }
 
     public TabbedPreferencesAction(String s, Icon i, WindowInterface wi, String category) {
@@ -70,62 +65,20 @@ public class TabbedPreferencesAction extends jmri.util.swing.JmriAbstractAction 
         preferencesItem = category;
     }
 
-    static TabbedPreferencesFrame f;
     String preferencesItem = null;
-    String preferenceSubCat = null;
-    static boolean inWait = false;
 
     public void actionPerformed() {
-        // create the JTable model, with changes for specific NamedBean
-        // create the frame
-        if (inWait) {
-            log.info("We are already waiting for the preferences to be displayed");
-            return;
-        }
-
-        if (f == null) {
-            f = new TabbedPreferencesFrame() {
-
-                /**
-                 *
-                 */
-                private static final long serialVersionUID = 400412053977528653L;
-            };
-            Runnable r = new Runnable() {
-                public void run() {
-                    try {
-                        setWait(true);
-                        while (jmri.InstanceManager.tabbedPreferencesInstance().init() != 0x02) {
-                            Thread.sleep(50);
-                        }
-                        SwingUtilities.updateComponentTreeUI(f);
-                        showPreferences();
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                        setWait(false);
-                    }
-                }
-            };
-            Thread thr = new Thread(r);
-            thr.start();
-        } else {
-            showPreferences();
-        }
+        this.showPreferences();
     }
 
     private void showPreferences() {
-        // Update the GUI Look and Feel
-        // This is needed as certain controls are instantiated
-        // prior to the setup of the Look and Feel
-        setWait(false);
-        f.gotoPreferenceItem(preferencesItem, preferenceSubCat);
-        f.pack();
-
-        f.setVisible(true);
+        if (preferencesItem != null) {
+            OptionsDisplayer.getDefault().open(preferencesItem);
+        }
+        OptionsDisplayer.getDefault().open();
     }
 
     synchronized static void setWait(boolean boo) {
-        inWait = boo;
     }
 
     @Override

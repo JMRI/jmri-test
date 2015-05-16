@@ -1,5 +1,6 @@
 package apps.gui3;
 
+import jmri.profile.ProfilePreferencesPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,7 @@ public class TabbedPreferencesProfileAction extends TabbedPreferencesAction {
     public TabbedPreferencesProfileAction() {
         super(Bundle.getMessage("MenuItemPreferencesProfile"));
         //preferencesItem = jmri.profile.Bundle.getMessage("ProfilePreferencesPanel.enabledPanel.TabConstraints.tabTitle");
-        preferencesItem = "Profiles";
+        preferencesItem = ProfilePreferencesPanel.class.getName();
     }
 
     static Logger log = LoggerFactory.getLogger(TabbedPreferencesProfileAction.class.getName());
