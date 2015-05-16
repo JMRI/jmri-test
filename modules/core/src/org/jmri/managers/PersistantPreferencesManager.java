@@ -5,8 +5,12 @@ import jmri.swing.PreferencesPanel;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
+ * An eventual replacement for TabbedPreferences and AppConfigBase.
  *
- * @author rhwood
+ * The TabbedPreferences window is too tightly integrated into specific
+ * preferences to be easily replaced.
+ *
+ * @author Randall Wood
  */
 @ServiceProvider(service = PersistantPreferencesManager.class)
 public class PersistantPreferencesManager extends AppConfigBase {
@@ -23,7 +27,7 @@ public class PersistantPreferencesManager extends AppConfigBase {
             items.add(panel);
         }
     }
-    
+
     public void savePreferences() {
         this.savePreferences(this.isRestartRequired());
     }
@@ -31,7 +35,7 @@ public class PersistantPreferencesManager extends AppConfigBase {
     public void savePreferences(boolean isRestartRequired) {
         this.savePressed(isRestartRequired);
     }
-    
+
     public boolean isRestartRequired() {
         return this.preferencesPanels.values().stream().anyMatch((panel) -> (panel.isRestartRequired()));
     }
@@ -39,7 +43,7 @@ public class PersistantPreferencesManager extends AppConfigBase {
     public boolean isDirty() {
         return this.preferencesPanels.values().stream().anyMatch((panel) -> (panel.isDirty()));
     }
-    
+
     public boolean isPreferencesValid() {
         return this.preferencesPanels.values().stream().anyMatch((panel) -> (panel.isPreferencesValid()));
     }
