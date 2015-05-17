@@ -1,14 +1,22 @@
 package org.jmri.core.ui.options;
 
+import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
+import jmri.Application;
 import jmri.swing.PreferencesPanel;
 import org.jmri.managers.PersistentPreferencesManager;
 import org.netbeans.spi.options.OptionsPanelController;
+import org.openide.DialogDisplayer;
+import org.openide.LifecycleManager;
+import org.openide.NotifyDescriptor;
+import org.openide.awt.NotificationDisplayer;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
+import org.openide.util.NbBundle.Messages;
 
 /**
  * Abstract OptionsPanelController that maps the standard OptionsPanelController
@@ -17,6 +25,13 @@ import org.openide.util.Lookup;
  * @author Randall Wood <randall.h.wood@alexandriasoftware.com>
  */
 public abstract class PreferencesPanelController extends OptionsPanelController {
+
+    @Messages({
+        "# {0} - Application name",
+        "restartConfirmation.message=Click here to restart {0} and apply your preferences.",
+        "# {0} - Application name",
+        "restartConfirmation.title=Restart {0}."
+    })
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private final PreferencesPanel preferencesPanel;
@@ -65,12 +80,12 @@ public abstract class PreferencesPanelController extends OptionsPanelController 
     protected void applyChanges(boolean isPersistent) {
         SwingUtilities.invokeLater(() -> {
             this.preferencesPanel.savePreferences();
+            boolean isRestartRequired = false;
             if (isPersistent && this.preferencesPanel.isDirty()) {
                 // this may result in multiple writes to the profile configuration
                 // if a persistant PreferencesPanel sets itself to dirty after
                 // another PreferencesPanel has already written the configuration
                 PersistentPreferencesManager manager = Lookup.getDefault().lookup(PersistentPreferencesManager.class);
-                boolean isRestartRequired = false;
                 for (PreferencesPanel panel : manager.getPreferencesPanels().values()) {
                     if (panel.isRestartRequired()) {
                         isRestartRequired = true;
@@ -78,6 +93,9 @@ public abstract class PreferencesPanelController extends OptionsPanelController 
                     }
                 }
                 manager.savePreferences(isRestartRequired);
+            }
+            if (isRestartRequired || this.preferencesPanel.isRestartRequired()) {
+                this.promptToRestart();
             }
         });
     }
@@ -137,4 +155,28 @@ public abstract class PreferencesPanelController extends OptionsPanelController 
         }
     }
 
+    public void promptToRestart() {
+        if (NotifyDescriptor.YES_OPTION.equals(DialogDisplayer.getDefault().notify(
+                new NotifyDescriptor.Confirmation(
+                        Bundle.restartConfirmation_message(Application.getApplicationName()),
+                        Bundle.restartConfirmation_title(Application.getApplicationName()),
+                        NotifyDescriptor.YES_NO_OPTION)))) {
+            LifecycleManager.getDefault().markForRestart();
+            LifecycleManager.getDefault().exit();
+        } else {
+            this.notifyToRestart();
+        }
+    }
+
+    public void notifyToRestart() {
+        NotificationDisplayer.getDefault().notify(Bundle.restartConfirmation_title(Application.getApplicationName()),
+                new ImageIcon("org/jmri/core/ui/options/Gnome-view-refresh.png"),
+                Bundle.restartConfirmation_title(Application.getApplicationName()),
+                (ActionEvent e) -> {
+                    LifecycleManager.getDefault().markForRestart();
+                    LifecycleManager.getDefault().exit();
+                },
+                NotificationDisplayer.Priority.HIGH,
+                NotificationDisplayer.Category.INFO);
+    }
 }
