@@ -340,9 +340,9 @@
                 <attr name="noIconInMenu" boolvalue="false"/>
                 <attr name="position" intvalue="469"/>
             </file>
-            <file name="jmri-jmrix-zimo-zimomon-Mx1MonAction.instance">
-                <attr name="delegate" newvalue="jmri.jmrix.zimo.zimomon.Mx1MonAction"/>
-                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.zimo.zimomon.Mx1MonAction"/>
+            <file name="jmri-jmrix-zimo-swing-monitor-Mx1MonPanel.instance">
+                <attr name="delegate" newvalue="jmri.jmrix.zimo.swing.monitor.Mx1MonPanel"/>
+                <attr name="displayName" bundlevalue="apps.ActionListBundle#jmri.jmrix.zimo.swing.monitor.Mx1MonPanel$Default"/>
                 <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
                 <attr name="iconBase" stringvalue="org/jmri/core/ui/toolbar/generic.gif"/>
                 <attr name="noIconInMenu" boolvalue="false"/>
