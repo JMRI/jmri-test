@@ -12,7 +12,6 @@
 package org.jmri.core.ui.toolbar.power;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.swing.ImageIcon;
@@ -33,18 +32,15 @@ import org.slf4j.LoggerFactory;
 public class PowerPanel extends javax.swing.JPanel {
 
     private static final Logger log = LoggerFactory.getLogger(PowerPanel.class);
+    private static final long serialVersionUID = 1562614022779638493L;
 
     /**
      * Creates new form PowerPanel
      */
     public PowerPanel() {
         initComponents();
-        ToolbarPool.getDefault().addPropertyChangeListener(new PropertyChangeListener() {
-
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                powerManagerPropertyChange(evt);
-            }
+        ToolbarPool.getDefault().addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            powerManagerPropertyChange(evt);
         });
     }
 
@@ -90,14 +86,16 @@ public class PowerPanel extends javax.swing.JPanel {
 
     private void btnPowerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPowerActionPerformed
         try {
-            switch (InstanceManager.powerManagerInstance().getPower()) {
-                case PowerManager.OFF:
-                case PowerManager.UNKNOWN:
-                    InstanceManager.powerManagerInstance().setPower(PowerManager.ON);
-                    break;
-                case PowerManager.ON:
-                    InstanceManager.powerManagerInstance().setPower(PowerManager.OFF);
-                    break;
+            if (InstanceManager.powerManagerInstance() != null) {
+                switch (InstanceManager.powerManagerInstance().getPower()) {
+                    case PowerManager.OFF:
+                    case PowerManager.UNKNOWN:
+                        InstanceManager.powerManagerInstance().setPower(PowerManager.ON);
+                        break;
+                    case PowerManager.ON:
+                        InstanceManager.powerManagerInstance().setPower(PowerManager.OFF);
+                        break;
+                }
             }
         } catch (JmriException ex) {
             log.error("Unable to set layout power state.", ex);
@@ -107,13 +105,11 @@ public class PowerPanel extends javax.swing.JPanel {
 
     private void applicationPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_applicationPropertyChange
         if (application.isShown()) {
-            InstanceManager.powerManagerInstance().addPropertyChangeListener(new PropertyChangeListener() {
-
-                @Override
-                public void propertyChange(PropertyChangeEvent evt) {
-                    powerManagerPropertyChange(evt);
-                }
-            });
+            if (InstanceManager.powerManagerInstance() != null) {
+                InstanceManager.powerManagerInstance().addPropertyChangeListener((PropertyChangeEvent evt1) -> {
+                    powerManagerPropertyChange(evt1);
+                });
+            }
             this.powerManagerPropertyChange(null);
         }
     }//GEN-LAST:event_applicationPropertyChange
@@ -124,7 +120,7 @@ public class PowerPanel extends javax.swing.JPanel {
             if (ToolbarPool.getDefault().getPreferredIconSize() == 24) {
                 appendage = "24" + appendage;
             }
-            if (application.isShown()) {
+            if (application.isShown() && InstanceManager.powerManagerInstance() != null) {
                 try {
                     switch (InstanceManager.powerManagerInstance().getPower()) {
                         case PowerManager.OFF:
