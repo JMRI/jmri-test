@@ -13,5 +13,6 @@ junit-results.xml
 *.class
 /temp
 
-# OS X filesystem garbage
-.DS_Store
+# OS junk files
+[Tt]humbs.db
+*.DS_Store
