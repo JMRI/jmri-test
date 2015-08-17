@@ -10,7 +10,7 @@ junit-results.xml
 messages.log*
 session.log
 
-# temporary items
+# transient artifacts
 .ant-targets-build.xml
 /java/classes
 /java/tmp
