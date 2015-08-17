@@ -13,6 +13,9 @@ junit-results.xml
 *.class
 /temp
 
+# IDE junk files
+/nbproject/private
+
 # OS junk files
 [Tt]humbs.db
 *.DS_Store
