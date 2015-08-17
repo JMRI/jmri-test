@@ -1,0 +1,17 @@
+# build artifacts
+jmri.jar
+/dist
+java/docs
+
+# test artifacts
+junit-results.xml
+
+# temporary items
+.ant-targets-build.xml
+/java/classes
+/java/tmp
+*.class
+/temp
+
+# OS X filesystem garbage
+.DS_Store
