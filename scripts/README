@@ -1,8 +1,8 @@
-This is the JMRI CVSROOT/scripts directory.
+This is the JMRI SVNROOT/scripts directory.
 
 This directory contains the scripts needed
 for JMRI distributions, including the scripts to 
 build the distribution and those included within it.
 
-Development scripts are found in the CVSROOT/java 
+Development scripts are found in the SVNROOT/java 
 directory.
