@@ -93,3 +93,5 @@ log4j.category.org.eclipse.jetty.server.handler=WARN
 # log4j.category.jmri.jmrix.openlcb=DEBUG
 # log4j.category.jmri.jmrix.nce.NceTrafficController=WARN
 # log4j.category.org.eclipse.jetty=INFO
+
+# adding a null line to test forked-repository merge
