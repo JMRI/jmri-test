@@ -456,4 +456,5 @@
   <xi:include href="http://jmri.org/xml/decoders/esu/v4fnOutCVs.xml"/>
 <!--   <xi:include href="http://jmri.org/xml/decoders/esu/v4testCVs.xml"/> -->
 <!-- test 1 -->
+<!-- test 2 -->
 </variables>
