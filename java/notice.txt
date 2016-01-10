@@ -1,4 +1,5 @@
- This file contains the JMRI copyright notice in various forms.
+Make a change
+This file contains the JMRI copyright notice in various forms.
  Please duplicate one of these into every JMRI file you create or update.
  
  
